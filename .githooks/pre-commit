@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+repo_root=$(git rev-parse --show-toplevel)
+godot_bin=${GODOT_BIN:-C:/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console.exe}
+
+git diff --cached --check
+
+if [ ! -f "$godot_bin" ]; then
+	printf 'Godot executable not found: %s\n' "$godot_bin" >&2
+	exit 1
+fi
+
+"$godot_bin" --headless --path "$repo_root" --script res://scripts/preflight.gd

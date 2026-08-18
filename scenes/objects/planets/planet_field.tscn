@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/objects/seeded_layout.gd" id="1_layout"]
 [ext_resource type="PackedScene" path="res://scenes/objects/planets/planet.tscn" id="2_planet"]
@@ -13,6 +13,8 @@
 [ext_resource type="Texture2D" path="res://assets/objects/planets/planet_09_paper.svg" id="11_paper"]
 [ext_resource type="Texture2D" path="res://assets/objects/planets/planet_10_golden.svg" id="12_golden"]
 [ext_resource type="PackedScene" path="res://scenes/objects/meteors/toxic_orbit_asteroid.tscn" id="13_toxic_orbit"]
+[ext_resource type="Script" path="res://scripts/objects/planets/planet_network.gd" id="14_network"]
+[ext_resource type="Script" path="res://scripts/objects/workers/worker_manager.gd" id="15_workers"]
 
 [node name="PlanetField" type="Node2D"]
 z_index = 20
@@ -88,3 +90,11 @@ planet_role = &"rare_resource"
 planet_texture = ExtResource("12_golden")
 
 [node name="ToxicOrbitAsteroid" parent="." instance=ExtResource("13_toxic_orbit")]
+
+[node name="PlanetNetwork" type="Node2D" parent="."]
+z_index = 5
+script = ExtResource("14_network")
+
+[node name="WorkerManager" type="Node2D" parent="."]
+z_index = 10
+script = ExtResource("15_workers")

@@ -11,6 +11,12 @@
 - Planet size belongs to the Node2D layout scale; keep `planet.gd`'s `visual_scale` at 1.0 to avoid double scaling.
 - The current minimal meteor design uses four direct Sprite2D children controlled by `meteor_field.gd`; no per-meteor scene/script is required.
 - ToxicOrbit resolves the `planet_toxic` group; avoid restoring a relative NodePath target.
+- Workers are intentionally stationary after spawning; planets own the spawn state/timer and `worker_count`, while `WorkerManager` only instantiates/registers them and preserves the selected destination for later movement.
+- Spawn tiers are part of the MVP contract: XL = 3 workers/5 s, L = 2/7 s, variable planets = 1/10 s.
+
+## Interaction and assets
+- Planet clicks require the planet `Area2D`/shape; worker graphics remain collision-free. The destination `PopupMenu` must be created with `call_deferred()` because adding it to the root during child setup triggers Godot's "parent node is busy setting up children" error.
+- Worker visuals use the same pixel contract as meteors: `worker.gd` derives its Sprite2D scale from the SVG width for a 10 px target; do not replace it with a relative scale.
 
 ## Godot pitfalls
 - Godot 4.7 `@export_enum` requires String/Integer-compatible variables, not `StringName`.
@@ -20,3 +26,6 @@
 ## Repository
 - This project has its own nested Git repository; operate from the project root rather than the enclosing user-home repository.
 - Local commit author identity may be absent; use per-command `GIT_AUTHOR_*`/`GIT_COMMITTER_*` environment variables instead of changing Git config.
+
+## Git hooks
+- Local `core.hooksPath` is `.githooks`: `pre-commit` runs `res://scripts/preflight.gd`, `commit-msg` requires one reason sentence per staged file, and `post-commit` pushes the current branch to `origin`.

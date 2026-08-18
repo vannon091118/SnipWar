@@ -111,6 +111,7 @@ func regenerate() -> void:
 		var item_position := cell_center + offset
 		item_position.x = clampf(item_position.x, padding, target_size.x - padding)
 		item_position.y = clampf(item_position.y, padding, target_size.y - padding)
+		item.set_meta("layout_slot", slot)
 		item.position = item_position
 		item.scale = Vector2.ONE * _scale_for(item, rng)
 

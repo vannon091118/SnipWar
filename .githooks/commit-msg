@@ -1,0 +1,36 @@
+#!/bin/sh
+set -eu
+
+message_file=$1
+missing=0
+files=$(git diff --cached --name-only --diff-filter=ACDMRTUXB)
+
+if [ -z "$files" ]; then
+	exit 0
+fi
+
+while IFS= read -r file; do
+	[ -z "$file" ] && continue
+	if ! awk -v file="$file" '
+		{
+			prefix = "- " file ":"
+			if (index($0, prefix) == 1) {
+				reason = substr($0, length(prefix) + 1)
+				if (reason ~ /[[:alpha:]]/ && reason ~ /[.!?][[:space:]]*$/)
+					found = 1
+			}
+		}
+		END { exit(found ? 0 : 1) }
+	' "$message_file"; then
+		printf 'Fehlende Dateibegründung: %s\n' "$file" >&2
+		missing=1
+	fi
+done <<EOF
+$files
+EOF
+
+if [ "$missing" -ne 0 ]; then
+	printf '\nJede gestagte Datei braucht eine eigene Begründungszeile:\n' >&2
+	printf '%s\n' '- pfad/zur/datei: Dieser Satz begründet die Änderung.' >&2
+	exit 1
+fi
