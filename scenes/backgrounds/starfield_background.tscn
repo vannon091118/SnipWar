@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/backgrounds/starfield_background.gd" id="1_background"]
+[ext_resource type="PackedScene" path="res://scenes/objects/planets/planet_field.tscn" id="2_planet_field"]
+
+[node name="Background" type="Node2D"]
+z_index = -100
+script = ExtResource("1_background")
+
+[node name="PlanetField" parent="." instance=ExtResource("2_planet_field")]

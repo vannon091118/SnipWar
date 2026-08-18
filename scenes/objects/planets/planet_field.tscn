@@ -1,0 +1,79 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/objects/seeded_layout.gd" id="1_layout"]
+[ext_resource type="PackedScene" path="res://scenes/objects/planets/planet.tscn" id="2_planet"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_01_ember.svg" id="3_ember"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean.svg" id="4_ocean"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_03_ice.svg" id="5_ice"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_04_violet.svg" id="6_violet"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_05_desert.svg" id="7_desert"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_06_toxic.svg" id="8_toxic"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_07_storm.svg" id="9_storm"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_08_volcanic.svg" id="10_volcanic"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_09_paper.svg" id="11_paper"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_10_golden.svg" id="12_golden"]
+
+[node name="PlanetField" type="Node2D"]
+z_index = 20
+script = ExtResource("1_layout")
+layout_seed = 241119
+target_size = Vector2(960, 540)
+columns = 5
+jitter = 0.12
+minimum_scale = 0.48
+maximum_scale = 0.92
+padding = 120.0
+
+[node name="Ember" parent="." instance=ExtResource("2_planet")]
+planet_id = &"ember"
+planet_role = &"resource"
+planet_texture = ExtResource("3_ember")
+
+[node name="Ocean" parent="." instance=ExtResource("2_planet")]
+planet_id = &"ocean"
+planet_role = &"homeworld"
+planet_texture = ExtResource("4_ocean")
+
+[node name="Ice" parent="." instance=ExtResource("2_planet")]
+planet_id = &"ice"
+planet_role = &"resource"
+planet_texture = ExtResource("5_ice")
+
+[node name="Violet" parent="." instance=ExtResource("2_planet")]
+planet_id = &"violet"
+planet_role = &"gas_giant"
+planet_texture = ExtResource("6_violet")
+
+[node name="Desert" parent="." instance=ExtResource("2_planet")]
+planet_id = &"desert"
+planet_role = &"resource"
+planet_texture = ExtResource("7_desert")
+
+[node name="Toxic" parent="." instance=ExtResource("2_planet")]
+planet_id = &"toxic"
+planet_role = &"danger"
+faction = &"a"
+planet_texture = ExtResource("8_toxic")
+
+[node name="Storm" parent="." instance=ExtResource("2_planet")]
+planet_id = &"storm"
+planet_role = &"gas_giant"
+faction = &"a"
+planet_texture = ExtResource("9_storm")
+
+[node name="Volcanic" parent="." instance=ExtResource("2_planet")]
+planet_id = &"volcanic"
+planet_role = &"danger"
+faction = &"b"
+planet_texture = ExtResource("10_volcanic")
+
+[node name="Paper" parent="." instance=ExtResource("2_planet")]
+planet_id = &"paper"
+planet_role = &"homeworld"
+faction = &"b"
+planet_texture = ExtResource("11_paper")
+
+[node name="Golden" parent="." instance=ExtResource("2_planet")]
+planet_id = &"golden"
+planet_role = &"rare_resource"
+planet_texture = ExtResource("12_golden")
