@@ -1,6 +1,13 @@
 @tool
 extends Node2D
 
+const SIZE_RANGES: Dictionary = {
+	&"l": Vector2(0.37, 0.43),
+	&"xl": Vector2(0.48, 0.525)
+}
+const VARIABLE_SCALE_MIN := 0.18
+const VARIABLE_SCALE_MAX := 0.43
+
 @export var layout_seed: int = 241119:
 	set(value):
 		layout_seed = value
@@ -16,22 +23,12 @@ extends Node2D
 		columns = maxi(1, value)
 		_queue_layout()
 
-@export_range(0.0, 0.4, 0.01) var jitter: float = 0.18:
+@export_range(0.0, 0.4, 0.01) var jitter: float = 0.12:
 	set(value):
 		jitter = clampf(value, 0.0, 0.4)
 		_queue_layout()
 
-@export_range(0.2, 1.5, 0.05) var minimum_scale: float = 0.32:
-	set(value):
-		minimum_scale = value
-		_queue_layout()
-
-@export_range(0.2, 1.5, 0.05) var maximum_scale: float = 0.58:
-	set(value):
-		maximum_scale = value
-		_queue_layout()
-
-@export_range(0.0, 160.0, 1.0) var padding: float = 38.0:
+@export_range(0.0, 160.0, 1.0) var padding: float = 132.0:
 	set(value):
 		padding = value
 		_queue_layout()
@@ -42,7 +39,7 @@ func _ready() -> void:
 func regenerate() -> void:
 	var layout_items: Array[Node2D] = []
 	for child in get_children():
-		if child is Node2D:
+		if child is Node2D and child.get("layout_size") != null:
 			layout_items.append(child)
 
 	if layout_items.is_empty():
@@ -50,32 +47,98 @@ func regenerate() -> void:
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = layout_seed
-
 	var rows: int = ceili(float(layout_items.size()) / float(columns))
 	var cell_size := Vector2(
 		target_size.x / float(columns),
 		target_size.y / float(rows)
 	)
+	var assigned_slots: Dictionary = {}
+	var occupied_slots: Dictionary = {}
+	var xl_items: Array[Node2D] = []
+	var l_items: Array[Node2D] = []
+	var remaining_items: Array[Node2D] = []
 
-	for index in layout_items.size():
-		var column: int = index % columns
-		var row: int = floori(float(index) / float(columns))
+	for item in layout_items:
+		var size_class: StringName = _size_class(item)
+		if size_class == &"xl":
+			xl_items.append(item)
+		elif size_class == &"l":
+			l_items.append(item)
+		else:
+			remaining_items.append(item)
+
+	if not xl_items.is_empty():
+		_assign_slot(xl_items[0], 0, assigned_slots, occupied_slots)
+	if xl_items.size() > 1:
+		_assign_slot(xl_items[1], layout_items.size() - 1, assigned_slots, occupied_slots)
+	for index in range(2, xl_items.size()):
+		remaining_items.append(xl_items[index])
+	if not l_items.is_empty():
+		_assign_slot(l_items[0], _crossing_slot(layout_items.size(), occupied_slots), assigned_slots, occupied_slots)
+
+	for item in l_items:
+		if not assigned_slots.has(item):
+			remaining_items.append(item)
+
+	var free_slots: Array[int] = []
+	for slot in layout_items.size():
+		if not occupied_slots.has(slot):
+			free_slots.append(slot)
+
+	for item in remaining_items:
+		var slot: int = free_slots.pop_front()
+		_assign_slot(item, slot, assigned_slots, occupied_slots)
+
+	for item in layout_items:
+		var slot: int = assigned_slots[item]
+		var column: int = slot % columns
+		var row: int = floori(float(slot) / float(columns))
 		var cell_center := Vector2(
 			(float(column) + 0.5) * cell_size.x,
 			(float(row) + 0.5) * cell_size.y
 		)
-		var offset := Vector2(
-			rng.randf_range(-cell_size.x * jitter, cell_size.x * jitter),
-			rng.randf_range(-cell_size.y * jitter, cell_size.y * jitter)
-		)
+		var offset := Vector2.ZERO
+		var is_outer_column: bool = column == 0 or column == columns - 1
+		if _size_class(item) != &"xl":
+			if is_outer_column:
+				var inward_offset: float = cell_size.x * 0.12
+				offset.x = inward_offset if column == 0 else -inward_offset
+			else:
+				offset = Vector2(
+					rng.randf_range(-cell_size.x * jitter, cell_size.x * jitter),
+					rng.randf_range(-cell_size.y * jitter, cell_size.y * jitter)
+				)
 		var item_position := cell_center + offset
 		item_position.x = clampf(item_position.x, padding, target_size.x - padding)
 		item_position.y = clampf(item_position.y, padding, target_size.y - padding)
-
-		var item_scale: float = rng.randf_range(minimum_scale, maximum_scale)
-		var item: Node2D = layout_items[index]
 		item.position = item_position
-		item.scale = Vector2.ONE * item_scale
+		item.scale = Vector2.ONE * _scale_for(item, rng)
+
+func _assign_slot(item: Node2D, slot: int, assigned_slots: Dictionary, occupied_slots: Dictionary) -> void:
+	assigned_slots[item] = slot
+	occupied_slots[slot] = true
+
+func _crossing_slot(item_count: int, occupied_slots: Dictionary) -> int:
+	var preferred_slot: int = columns / 2
+	if preferred_slot < item_count and not occupied_slots.has(preferred_slot):
+		return preferred_slot
+	for slot in item_count:
+		if not occupied_slots.has(slot):
+			return slot
+	return 0
+
+func _size_class(item: Node2D) -> StringName:
+	var value: Variant = item.get("layout_size")
+	if value == null:
+		return &"variable"
+	return StringName(value)
+
+func _scale_for(item: Node2D, rng: RandomNumberGenerator) -> float:
+	var size_class: StringName = _size_class(item)
+	if size_class == &"variable":
+		return rng.randf_range(VARIABLE_SCALE_MIN, VARIABLE_SCALE_MAX)
+	var size_range: Vector2 = SIZE_RANGES[size_class]
+	return rng.randf_range(size_range.x, size_range.y)
 
 func _queue_layout() -> void:
 	if is_inside_tree():

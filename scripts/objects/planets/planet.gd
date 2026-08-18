@@ -2,6 +2,7 @@
 extends Node2D
 
 @export var planet_id: StringName = &"planet"
+@export_enum("variable", "l", "xl") var layout_size: String = "variable"
 @export var faction: StringName = &"neutral":
 	set(value):
 		if is_inside_tree() and faction != value:
@@ -35,6 +36,7 @@ func _ready() -> void:
 	_apply_visuals()
 
 func _sync_groups() -> void:
+	add_to_group(StringName("planet_" + String(planet_id)))
 	add_to_group(_faction_group(faction))
 	add_to_group(_role_group(planet_role))
 

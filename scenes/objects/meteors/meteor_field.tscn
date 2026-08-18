@@ -1,0 +1,23 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/objects/meteors/meteor_field.gd" id="1_field"]
+[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_01_rock.svg" id="2_rock"]
+[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_02_ice.svg" id="3_ice"]
+[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_03_metal.svg" id="4_metal"]
+[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_04_molten.svg" id="5_molten"]
+
+[node name="MeteorField" type="Node2D"]
+z_index = 35
+script = ExtResource("1_field")
+
+[node name="RockMeteor" type="Sprite2D" parent="."]
+texture = ExtResource("2_rock")
+
+[node name="IceMeteor" type="Sprite2D" parent="."]
+texture = ExtResource("3_ice")
+
+[node name="MetalMeteor" type="Sprite2D" parent="."]
+texture = ExtResource("4_metal")
+
+[node name="MoltenMeteor" type="Sprite2D" parent="."]
+texture = ExtResource("5_molten")
