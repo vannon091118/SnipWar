@@ -3,6 +3,7 @@ extends Node2D
 
 signal planet_selected(planet: Node2D)
 signal workers_spawn_requested(planet: Node2D, amount: int)
+signal worker_count_changed(planet: Node2D, count: int)
 
 enum WorkerState { IDLE, SPAWNING, PAUSED }
 
@@ -83,9 +84,11 @@ func _spawn_count() -> int:
 
 func register_worker(_worker: Node2D) -> void:
 	worker_count += 1
+	worker_count_changed.emit(self, worker_count)
 
 func unregister_worker(_worker: Node2D) -> void:
 	worker_count = maxi(0, worker_count - 1)
+	worker_count_changed.emit(self, worker_count)
 
 func _sync_groups() -> void:
 	add_to_group(StringName("planet_" + String(planet_id)))

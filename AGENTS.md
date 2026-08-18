@@ -15,7 +15,7 @@
 - Spawn tiers are part of the MVP contract: XL = 3 workers/5 s, L = 2/7 s, variable planets = 1/10 s.
 
 ## Interaction and assets
-- Planet clicks require the planet `Area2D`/shape; worker graphics remain collision-free. The destination `PopupMenu` must be created with `call_deferred()` because adding it to the root during child setup triggers Godot's "parent node is busy setting up children" error.
+- Planet clicks require the planet `Area2D`/shape; worker graphics remain collision-free. The persistent destination tab UI must be created with `call_deferred()` because adding viewport UI during child setup triggers Godot's "parent node is busy setting up children" error.
 - Worker visuals use the same pixel contract as meteors: `worker.gd` derives its Sprite2D scale from the SVG width for a 10 px target; do not replace it with a relative scale.
 
 ## Godot pitfalls

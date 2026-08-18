@@ -1,15 +1,17 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://ds4q1ugkyn17l"]
 
-[ext_resource type="Script" path="res://scripts/backgrounds/starfield_background.gd" id="1_background"]
+[ext_resource type="Script" uid="uid://bradt0hpvtxxc" path="res://scripts/backgrounds/starfield_background.gd" id="1_background"]
 [ext_resource type="PackedScene" path="res://scenes/objects/planets/planet_field.tscn" id="2_planet_field"]
 [ext_resource type="Script" uid="uid://b5kvkwu5mpr8r" path="res://scripts/bootstrap/bootstrap.gd" id="3_bootstrap"]
 [ext_resource type="PackedScene" path="res://scenes/objects/meteors/meteor_field.tscn" id="4_meteor_field"]
 
-[node name="Background" type="Node2D"]
+[node name="Background" type="Node2D" unique_id=345278981]
 z_index = -100
 script = ExtResource("1_background")
 
-[node name="PlanetField" parent="." instance=ExtResource("2_planet_field")]
+[node name="PlanetField" parent="." unique_id=332234759 instance=ExtResource("2_planet_field")]
+position = Vector2(37, -69)
+layout_seed = 241111
 
 [node name="Bootstrap" type="Node" parent="." unique_id=276504563]
 script = ExtResource("3_bootstrap")

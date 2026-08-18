@@ -44,13 +44,17 @@ func _init() -> void:
 			workers.append(child)
 	if not _check(workers.size() == 6, "worker spawn totals are wrong"):
 		return
+	var count_labels: Dictionary = network.get("_count_labels")
+	var ocean_count_label: Label = count_labels[ocean]
+	if not _check(ocean_count_label.text == "Ocean: 3", "planet tab count is not live"):
+		return
 	var worker_position: Vector2 = workers[0].global_position
 	await create_timer(0.2).timeout
 	if not _check(workers[0].global_position == worker_position, "worker moves autonomously"):
 		return
 	workers[0].queue_free()
 	await process_frame
-	if not _check(ocean.worker_count == 2, "worker removal did not update planet count"):
+	if not _check(ocean.worker_count == 2 and ocean_count_label.text == "Ocean: 2", "worker removal did not update planet count"):
 		return
 
 	var event := InputEventMouseButton.new()
@@ -58,17 +62,31 @@ func _init() -> void:
 	event.pressed = true
 	ocean.call("_on_click_area_input_event", null, event, 0)
 	await process_frame
-	var menu: PopupMenu = network.get("_menu")
+	var panel: PanelContainer = network.get("_panel")
+	var destination_option: OptionButton = network.get("_destination_option")
 	var neighbors: Array[Node2D] = network.get_neighbors(ocean)
-	if not _check(menu.visible and menu.get_item_count() == 9 and not neighbors.is_empty(), "planet menu or neighbors are missing"):
+	if not _check(panel.visible and destination_option.item_count == 9 and count_labels.size() == 10 and not neighbors.is_empty(), "planet tab or neighbors are missing"):
+		return
+	network.call("_toggle_panel")
+	if not _check(not panel.visible, "planet tab did not close"):
+		return
+	network.call("_toggle_panel")
+	if not _check(panel.visible, "planet tab did not reopen"):
 		return
 	var line_phase: float = network.get("_line_phase")
 	await create_timer(0.2).timeout
 	if not _check(float(network.get("_line_phase")) != line_phase, "neighbor line animation is inactive"):
 		return
 	var destination: Node2D = neighbors[0]
-	network.call("_on_destination_selected", destination.get_instance_id())
-	if not _check(network.get_destination(ocean) == destination and not menu.visible, "destination route was not stored"):
+	var destination_index := -1
+	for index in destination_option.item_count:
+		if destination_option.get_item_text(index) == destination.name:
+			destination_index = index
+			break
+	if not _check(destination_index >= 0, "destination is missing from planet tab"):
+		return
+	network.call("_on_destination_selected", destination_index)
+	if not _check(network.get_destination(ocean) == destination and panel.visible, "destination route was not stored"):
 		return
 	manager.call("_spawn_workers", ocean, 1)
 	await process_frame
