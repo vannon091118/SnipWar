@@ -62,6 +62,7 @@ enum WorkerState { IDLE, SPAWNING }
 		_apply_visuals()
 
 @onready var _sprite: Sprite2D = $Sprite2D
+@onready var _details: PlanetDetails = $PlanetDetails
 
 var worker_state: WorkerState = WorkerState.IDLE
 var worker_count := 0
@@ -127,6 +128,9 @@ func set_faction(value: StringName) -> void:
 
 func set_planet_role(value: StringName) -> void:
 	planet_role = value
+
+func set_detail_seed(value: int) -> void:
+	_details.set_seed(value)
 
 func set_group_enabled(enabled: bool) -> void:
 	visible = enabled

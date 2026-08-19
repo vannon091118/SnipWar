@@ -34,7 +34,7 @@ Zehn Planeten bilden ein unruhiges Netz aus Ressourcen, Heimatwelten und Gefahre
 - Der deterministische Generator verteilt zwei XL-Welten und einen L-Sektor als große Fixpunkte.
 - Die Größenverteilung hängt am Seed; dadurch ändern sich Position und Spawn-Rhythmus gemeinsam, ohne die Rollen der Planeten zu verlieren.
 - **Toxic**, **Volcanic** und **Storm** markieren Zonen, in denen die Karte nicht neutral bleibt.
-- Meteore ziehen durch den Vordergrund; um Toxic kreist ein eigener kleiner Himmelskörper.
+- Meteore ziehen durch den Vordergrund; PlanetDetails ergänzt seed-basiert bis zu drei Extras, bei Toxic unter anderem einen Satelliten und mehrere Asteroiden in der Umlaufbahn.
 - Ein Netzwerk aus Nachbarfeldern macht erreichbare Ziele sichtbar, statt sie in Menüs zu verstecken.
 
 ## ░ DIE KRIEGSMASCHINE

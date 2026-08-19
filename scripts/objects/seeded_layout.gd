@@ -136,6 +136,7 @@ func _assign_size_classes(items: Array[Planet], rng: RandomNumberGenerator) -> v
 		shuffled_items[swap_index] = item
 	for index in shuffled_items.size():
 		shuffled_items[index].set("layout_size", size_classes[index])
+		shuffled_items[index].set_detail_seed(rng.randi())
 
 func _assign_slot(item: Planet, slot: int, assigned_slots: Dictionary, occupied_slots: Dictionary) -> void:
 	assigned_slots[item] = slot

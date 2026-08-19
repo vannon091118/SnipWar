@@ -211,11 +211,26 @@ func _init() -> void:
 	if not _check(respawn_meteor.position != Vector2(-100.0, 270.0), "meteor respawn is inactive"):
 		return
 
-	var orbit: Node = field.get_node("ToxicOrbitAsteroid")
-	var orbit_position: Vector2 = orbit.global_position
-	await create_timer(0.2).timeout
-	if not _check(orbit.global_position != orbit_position, "Toxic orbit is inactive"):
+	var toxic_details: PlanetDetails = field.get_node("Toxic/PlanetDetails") as PlanetDetails
+	var toxic_types := toxic_details.get_detail_types()
+	if not _check(toxic_types.size() >= 2 and toxic_types.size() <= 3 and toxic_types.has(&"satellite") and toxic_types.has(&"asteroid_belt"), "Toxic details are incomplete"):
 		return
+	var stable_types := toxic_types.duplicate()
+	toxic_details.set_seed(777)
+	var seeded_types := toxic_details.get_detail_types()
+	toxic_details.set_seed(777)
+	if not _check(seeded_types == toxic_details.get_detail_types() and stable_types.size() <= 3, "planet details are not seed-stable"):
+		return
+	var orbit: PlanetDetailOrbit = toxic_details.get_node("AsteroidOrbit_0") as PlanetDetailOrbit
+	var orbit_angle := orbit.rotation
+	await create_timer(0.2).timeout
+	if not _check(absf(orbit.rotation - orbit_angle) > 0.001, "Toxic detail orbit is inactive"):
+		return
+	for child in field.get_children():
+		if child is Planet:
+			var details: PlanetDetails = child.get_node("PlanetDetails") as PlanetDetails
+			if not _check(details.get_detail_types().size() <= 3, "%s has too many planet details" % child.name):
+				return
 
 	print("PASS: SnipWar preflight")
 	quit()

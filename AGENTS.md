@@ -10,12 +10,15 @@
 - The runtime Bootstrap replaces the editor fallback seed 241119 on F5; the seed is configured on `PlanetField`, not the `Background` root.
 - Runtime re-layout assigns `Planet.layout_size` after the initial scene setup; its setter must restart an existing spawn timer so generated size and spawn cadence remain synchronized.
 - `seeded_layout.gd` must only lay out `Planet` children; the Toxic orbit child is intentionally not a planet slot.
+- `PlanetDetails` is a child module inside `planet.tscn`; its final seed arrives from `seeded_layout.gd` after child `_ready()`, so it must not finalize its detail set during `_ready()` alone.
+- The detail cap counts logical types via `get_detail_types()`; an `asteroid_belt` is one detail even though it creates five orbit nodes. Toxic's belt must not be reintroduced as a separate field-level orbit.
 - Planet size belongs to the Node2D layout scale; keep `planet.gd`'s `visual_scale` at 1.0 to avoid double scaling.
 - The current minimal meteor design uses four direct Sprite2D children controlled by `meteor_field.gd`; no per-meteor scene/script is required.
-- ToxicOrbit resolves the `planet_toxic` group; avoid restoring a relative NodePath target.
+- `planet_details.gd` owns seeded extras; Toxic always showcases a satellite plus an asteroid belt, with an optional third ring, while other planets get up to three deterministic detail types.
 - Workers spawn stationary as a planet's garrison. `WorkerManager._dispatch_workers` launches them as visible transit assets via per-worker Tweens; each re-registers with the destination on arrival (source drops at launch, destination rises on arrival).
 - Spawn tiers are part of the MVP contract: XL = 3 workers/5 s, L = 2/7 s, variable planets = 1/10 s.
 - `flight_time.gd`, `dispatch.gd`, `planet_network.gd`, `planet_network_ui.gd`, `worker.gd`, `worker_manager.gd`, and `preflight.gd` change/commit together; preflight uses PlanetNetworkUI getters and reaches into worker internals (`_registered_planet`, `_arrive`).
+- `planet.tscn`, `planet.gd`, `planet_details.gd`, `planet_detail_orbit.gd`, `planet_detail_ring.gd`, `seeded_layout.gd`, and the planet SVG/import assets change together for seeded details.
 - `PlanetNetwork` resolves destinations and passes them to `WorkerManager`; keep the manager independent of the network lookup. `planet_network.gd` owns routing/lines, while `planet_network_ui.gd` owns the CanvasLayer controls and emits UI signals.
 - Do not keep unused `WorkerState` values as placeholders; add a state only when its transition behavior exists.
 - Flight duration = distance × factor, so real dispatches take hundreds of seconds; headless tests simulate arrival by calling the arrival path directly (e.g. `worker._arrive()`) and assert movement via "distance to destination decreased", never by awaiting flight end or exact positions.
@@ -23,6 +26,7 @@
 ## Interaction and assets
 - Planet clicks require the planet `Area2D`/shape; worker graphics remain collision-free. The persistent destination tab UI must be created with `call_deferred()` because adding viewport UI during child setup triggers Godot's "parent node is busy setting up children" error.
 - Worker visuals use the same pixel contract as meteors: `worker.gd` derives its Sprite2D scale from the SVG width for a 10 px target; do not replace it with a relative scale.
+- New SVG planet/detail assets cause Godot to generate tracked `.svg.import` files during the headless scan; commit the import sidecars with their source SVGs.
 
 ## Godot pitfalls
 - Godot 4.7 `@export_enum` requires String/Integer-compatible variables, not `StringName`.
