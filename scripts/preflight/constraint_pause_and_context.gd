@@ -12,6 +12,18 @@ func run(ctx: PreflightContext) -> bool:
 	var network: Node = ctx.network
 	var field: Node = ctx.field
 	var game_state: Node = ctx.game_state
+	if not ctx.check(InputMap.has_action(&"ui_cancel") and InputMap.has_action(&"ui_accept") and InputMap.has_action(&"pause"), "InputMap is missing ui_cancel/ui_accept/pause actions"):
+		return false
+	var esc_check := InputEventKey.new()
+	esc_check.keycode = KEY_ESCAPE
+	esc_check.pressed = true
+	if not ctx.check(esc_check.is_action_pressed(&"ui_cancel"), "ui_cancel does not resolve to Escape"):
+		return false
+	var space_check := InputEventKey.new()
+	space_check.keycode = KEY_SPACE
+	space_check.pressed = true
+	if not ctx.check(space_check.is_action_pressed(&"pause"), "pause does not resolve to Space"):
+		return false
 	var pause_menu: Node = background.get_node_or_null("PauseMenu")
 	if not ctx.check(pause_menu != null, "pause menu is missing from the background scene"):
 		return false

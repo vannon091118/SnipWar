@@ -11,6 +11,8 @@ signal planet_context_requested(planet: Node2D, screen_position: Vector2)
 signal workers_spawn_requested(planet: Node2D, amount: int)
 signal worker_count_changed(planet: Node2D, count: int)
 signal worker_production_changed(planet: Node2D, enabled: bool)
+signal planet_hovered(planet: Node2D)
+signal planet_unhovered(planet: Node2D)
 
 enum WorkerState { IDLE, SPAWNING }
 
@@ -72,6 +74,8 @@ const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/c
 
 func _ready() -> void:
 	$ClickArea.input_event.connect(_on_click_area_input_event)
+	$ClickArea.mouse_entered.connect(_on_click_area_mouse_entered)
+	$ClickArea.mouse_exited.connect(_on_click_area_mouse_exited)
 	add_to_group("planets")
 	if not Engine.is_editor_hint():
 		var state: Node = _game_state()
@@ -135,6 +139,12 @@ func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_index
 	elif event is InputEventScreenTouch and event.pressed:
 		planet_selected.emit(self)
 		get_viewport().set_input_as_handled()
+
+func _on_click_area_mouse_entered() -> void:
+	planet_hovered.emit(self)
+
+func _on_click_area_mouse_exited() -> void:
+	planet_unhovered.emit(self)
 
 func _ensure_spawn_timer() -> void:
 	if is_instance_valid(_spawn_timer):
@@ -300,6 +310,17 @@ func resolve_arrival(source_faction: StringName, amount: int) -> StringName:
 	set_faction(source_faction)
 	register_workers(incoming - defenders)
 	return ARRIVAL_CAPTURED
+
+## Spawns the "+N" landing label above this planet for an arrival that landed
+## workers or ships. No-op for non-positive amounts and outside the tree.
+func show_arrival_feedback(amount: int, faction: StringName) -> void:
+	if amount <= 0 or not is_inside_tree():
+		return
+	var parent: Node = get_parent()
+	if parent == null:
+		return
+	var tint: Color = DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", faction)
+	FloatingText.spawn(parent, "+%d" % amount, position, tint)
 
 # Number of surviving attackers registered as workers on a captured planet when
 # the result comes from a fleet-vs-fleet FleetBattleSimulator outcome. The

@@ -40,6 +40,8 @@ func _ready() -> void:
 			child.planet_context_requested.connect(_on_planet_context_requested)
 			child.worker_count_changed.connect(_on_worker_count_changed)
 			child.workers_spawn_requested.connect(_on_workers_spawn_requested)
+			child.planet_hovered.connect(_on_planet_hovered)
+			child.planet_unhovered.connect(_on_planet_unhovered)
 	if not transit_config_identity_valid():
 		push_error("PlanetNetwork and WorkerManager must share the same TransitConfig resource")
 	_connect_map_camera.call_deferred()
@@ -93,6 +95,14 @@ func _on_planet_context_requested(planet: Node2D, screen_position: Vector2) -> v
 		return
 	_context_active_planet = planet
 	_context_menu.popup(Rect2(screen_position, Vector2.ZERO))
+
+func _on_planet_hovered(planet: Node2D) -> void:
+	if is_instance_valid(_ui):
+		_ui.show_planet_tooltip(planet)
+
+func _on_planet_unhovered(_planet: Node2D) -> void:
+	if is_instance_valid(_ui):
+		_ui.hide_planet_tooltip()
 
 func _on_context_action(id: int) -> void:
 	var planet: Node2D = _context_active_planet

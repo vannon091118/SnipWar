@@ -71,6 +71,7 @@ func _arrive_cluster(cluster: WorkerCluster) -> StringName:
 			var dest_planet: Planet = cluster.destination_planet as Planet
 			if dest_planet != null:
 				var result: Dictionary = dest_planet.resolve_ship_arrival(fleet)
+				dest_planet.show_arrival_feedback(int(result.get("surviving_attackers", 0)), fleet.faction)
 				cluster.queue_free()
 				return result.get(&"result", &"rejected") as StringName
 	return cluster._arrive()

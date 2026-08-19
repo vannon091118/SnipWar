@@ -11,6 +11,8 @@ const ARRIVAL_FRIENDLY := &"friendly"
 const ARRIVAL_REPELLED := &"repelled"
 const ARRIVAL_CAPTURED := &"captured"
 const ARRIVAL_REJECTED := &"rejected"
+const ARRIVAL_SETTLED := &"settled"
+const ARRIVAL_COLLECTED := &"collected"
 
 var unit_count := 1
 var source_faction: StringName = &"neutral"
@@ -46,11 +48,19 @@ func attach_object(object: Node2D, offset := Vector2.ZERO) -> void:
 func _arrive() -> StringName:
 	if is_instance_valid(destination_planet):
 		arrival_result = destination_planet.resolve_mission(source_faction, unit_count, mission_type, source_planet_id)
+		_spawn_arrival_feedback()
 	else:
 		arrival_result = ARRIVAL_REJECTED
 	destination_planet = null
 	queue_free()
 	return arrival_result
+
+## Pops a "+N" label above the destination for outcomes that land workers,
+## delegating the spawn to Planet.show_arrival_feedback.
+func _spawn_arrival_feedback() -> void:
+	if arrival_result != ARRIVAL_FRIENDLY and arrival_result != ARRIVAL_CAPTURED and arrival_result != ARRIVAL_SETTLED:
+		return
+	destination_planet.show_arrival_feedback(unit_count, source_faction)
 
 func _apply_visuals() -> void:
 	if not is_instance_valid(_sprite):

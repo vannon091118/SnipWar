@@ -707,7 +707,7 @@ func _make_separator() -> HSeparator:
 	return separator
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE and _open:
+	if event.is_action_pressed(&"ui_cancel") and _open:
 		_set_open(false)
 		get_viewport().set_input_as_handled()
 

@@ -12,6 +12,8 @@ signal send_pressed()
 var _theme_config: UIThemeConfig = DEFAULT_THEME
 var _panel_open: bool = false
 var _panel_tween: Tween
+var _tooltip_panel: PanelContainer
+var _tooltip_label: Label
 
 @onready var _tab_button: Button = get_node_or_null("PlanetTabUI/PlanetTab")
 @onready var _vault_bar: VaultBar = get_node_or_null("PlanetTabUI/VaultBar")
@@ -239,9 +241,66 @@ func _animate_panel_transition(open: bool) -> void:
 		_panel.modulate.a = 1.0
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE and _panel_open:
+	if event.is_action_pressed(&"ui_cancel") and _panel_open:
 		_set_panel_open(false)
 		get_viewport().set_input_as_handled()
+
+# --- planet hover tooltip ---
+
+func _process(_delta: float) -> void:
+	if is_instance_valid(_tooltip_panel) and _tooltip_panel.visible:
+		_update_tooltip_position()
+
+func show_planet_tooltip(planet: Node2D) -> void:
+	if not is_instance_valid(_tooltip_panel):
+		_build_tooltip()
+	var text := "???"
+	if _is_planet_known(planet):
+		var name_text: String = String(planet.get("display_name"))
+		if name_text.is_empty():
+			name_text = String(planet.get("planet_id"))
+		text = "%s · %d" % [name_text, int(planet.get("worker_count"))]
+	_tooltip_label.text = text
+	_tooltip_panel.visible = true
+	_update_tooltip_position()
+
+func hide_planet_tooltip() -> void:
+	if is_instance_valid(_tooltip_panel):
+		_tooltip_panel.visible = false
+
+func _build_tooltip() -> void:
+	var box: StyleBoxFlat = _style_box(Color(0.05, 0.06, 0.09, 0.94), _theme_config.panel_border, 1, _theme_config.panel_corner_radius)
+	box.content_margin_left = 8.0
+	box.content_margin_right = 8.0
+	box.content_margin_top = 4.0
+	box.content_margin_bottom = 4.0
+	_tooltip_panel = PanelContainer.new()
+	_tooltip_panel.name = "PlanetTooltip"
+	_tooltip_panel.visible = false
+	_tooltip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_tooltip_panel.add_theme_stylebox_override("panel", box)
+	add_child(_tooltip_panel)
+	_tooltip_label = Label.new()
+	_tooltip_label.name = "PlanetTooltipLabel"
+	_tooltip_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_tooltip_panel.add_child(_tooltip_label)
+
+func _is_planet_known(planet: Node2D) -> bool:
+	var state: Node = get_tree().root.get_node_or_null("GameState")
+	if state == null:
+		return true
+	return state.is_known(planet.get("planet_id"), GameState.FACTION_PLAYER)
+
+func _update_tooltip_position() -> void:
+	if not is_instance_valid(_tooltip_panel) or not _tooltip_panel.visible:
+		return
+	var label_min: Vector2 = _tooltip_label.get_combined_minimum_size()
+	_tooltip_panel.size = label_min + Vector2(16.0, 8.0)
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+	var pos: Vector2 = get_viewport().get_mouse_position() + Vector2(14.0, 14.0)
+	pos.x = minf(pos.x, viewport_size.x - _tooltip_panel.size.x - 4.0)
+	pos.y = minf(pos.y, viewport_size.y - _tooltip_panel.size.y - 4.0)
+	_tooltip_panel.position = pos
 
 # --- signal forwards ---
 

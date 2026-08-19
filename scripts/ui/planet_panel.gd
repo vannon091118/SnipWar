@@ -526,3 +526,8 @@ func _on_amount_changed(value: float) -> void:
 
 func _on_send_pressed() -> void:
 	send_pressed.emit()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if visible and _send_button != null and not _send_button.disabled and event.is_action_pressed(&"ui_accept"):
+		_on_send_pressed()
+		get_viewport().set_input_as_handled()

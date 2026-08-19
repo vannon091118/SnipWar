@@ -136,7 +136,8 @@ func _on_ship_base_arrived(ship: Node2D) -> void:
 		return
 	var destination_planet: Planet = ship_base.destination
 	if destination_planet != null and is_instance_valid(destination_planet):
-		destination_planet.resolve_ship_arrival(ship_base.fleet)
+		var result: Dictionary = destination_planet.resolve_ship_arrival(ship_base.fleet)
+		destination_planet.show_arrival_feedback(int(result.get("surviving_attackers", 0)), ship_base.fleet.faction)
 	if is_instance_valid(ship):
 		ship.queue_free()
 

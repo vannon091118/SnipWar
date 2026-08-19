@@ -49,14 +49,21 @@ func _build_ui() -> void:
 	_content.add_child(_resume_button)
 
 	_hint = Label.new()
-	_hint.text = "ESC zum Fortsetzen"
+	_hint.text = "ESC / LEERTASTE zum Fortsetzen"
 	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_hint.add_theme_font_size_override("font_size", 14)
 	_hint.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
 	_content.add_child(_hint)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not (event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE):
+	if event.is_action_pressed(&"pause"):
+		if get_tree().paused:
+			resume()
+		else:
+			pause()
+		get_viewport().set_input_as_handled()
+		return
+	if not event.is_action_pressed(&"ui_cancel"):
 		return
 	if get_tree().paused:
 		resume()
