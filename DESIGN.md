@@ -27,5 +27,5 @@ SnipWar ist momentan ein spielbarer Overworld-Vertical-Slice: zehn deterministis
 
 ## Bewusst aus dem MVP herausgenommen
 
-- **Render-Budget-Kompression:** Ein Draw-Call-Median mit `250/225`-Hysterese ist als mögliche spätere Messregel beschrieben, aber keine aktive Laufzeitlogik. Die feste K/M/L-Packung und die Transit-Sichtbarkeit sind für das MVP ausreichend; eine spätere Implementierung muss auf dem Zielgerät kalibriert werden.
+- **Render-Budget-Kompression:** Wiederholte Sterne und Staub werden über `MultiMeshInstance2D` gebatcht; Falten und Grain werden je Stilfarbe über `draw_multiline()` zusammengefasst. Die Anzahl der wesentlichen Draw-Aufträge bleibt damit weitgehend unabhängig von Stern-/Staubdichte und wird bei Viewport-Größenänderung neu aufgebaut. Die konkrete GPU-Messung bleibt zielgeräteabhängig.
 - **4K-Kamera und Gefechtsansicht** sowie Mech-Klassen, Loadouts, Ressourcenrisiko und Siegbedingungen bleiben spätere Ausbaustufen.

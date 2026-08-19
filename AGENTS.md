@@ -5,6 +5,7 @@
 - `--headless --path . --quit-after 2` exercises the real main scene; temporary lifecycle checks run with `--headless --path . --script res://.tmp_*.gd` and must be removed afterward.
 - No GUT framework; `scripts/preflight.gd` is the persistent headless test suite (`--headless --path . --script res://scripts/preflight.gd`).
 - A headless editor scan can exit 0 while reporting an `EditorFileServer` port-6010 conflict and aborting its scan thread; trust runtime preflight and the main-scene smoke test for execution validation.
+- Background render-budget assertions estimate CanvasItem submissions; they are not a GPU benchmark and still require target-hardware frame-time measurements.
 - The seed-variation check calls `PlanetField.set_layout_seed(...)`, waits two frames for deferred regeneration, compares positions, then restores the original `world_config.layout_seed` before the remaining assertions.
 
 ## Architecture constraints
@@ -44,6 +45,9 @@
 - `WorldConfig.route_mode` is `all_planets` for the MVP, so the UI lists every other planet while neighbor lines remain orientation hints; `neighbors_only` is the explicit alternative and must constrain both destination lists and stored routes.
 - `PlanetNetwork` injects `UIThemeConfig` into the dynamically created `PlanetNetworkUI`; panel offsets must be recomputed on viewport `size_changed`, not replaced with fixed pixel positions.
 - `BackgroundConfig` controls starfield density/visual ranges and `MeteorConfig` controls meteor size/speed; WorldConfig remains the source for world bounds and decorative seed, and the scene assignments must stay connected.
+- `StarfieldBackground` batches stars/dust with `MultiMeshInstance2D` and folds/grain with `draw_multiline()`; viewport resize must rebuild transforms, and per-element draw loops should not be reintroduced for high-density maps.
+- Background batch children inherit the Background z-layer; MeteorField's higher z-index and PlanetField's relative z-index keep gameplay in front, so changing those z-orders can make batches cover meteors or planets.
+- Fold/grain batching intentionally averages per-element alpha; use configurable alpha buckets if visual fidelity must improve instead of restoring one draw call per element. `batch_texture_size` tunes the generated shape textures, not map density.
 - Do not keep unused `WorkerState` values as placeholders; add a state only when its transition behavior exists.
 - Flight duration uses a smooth logical-unit load only, so the visual tier switch does not make speed jump; normalized tuning is `distance / TransitConfig.distance_unit × base_seconds_per_distance_unit`. Transit arrival tests should call the manager's `_arrive_cluster()` wrapper, assert movement via "distance to destination decreased", and inspect launch formation synchronously because a frame wait can move fast clusters before exact source offsets are checked.
 

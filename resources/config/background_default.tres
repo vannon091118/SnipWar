@@ -12,6 +12,7 @@ star_count = 120
 fold_count = 20
 grain_count = 220
 dust_count = 260
+batch_texture_size = 32
 star_radius_range = Vector2(0.4, 1.5)
 star_alpha_range = Vector2(0.22, 0.78)
 star_bright_chance = 0.09

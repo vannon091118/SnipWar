@@ -6,6 +6,7 @@ extends Resource
 @export_range(0, 10000, 1) var fold_count: int
 @export_range(0, 10000, 1) var grain_count: int
 @export_range(0, 10000, 1) var dust_count: int
+@export_range(8, 128, 8) var batch_texture_size: int
 @export var star_radius_range: Vector2
 @export var star_alpha_range: Vector2
 @export_range(0.0, 1.0, 0.01) var star_bright_chance: float
@@ -51,6 +52,8 @@ func validate() -> PackedStringArray:
 		errors.append("background star_layer_range is invalid")
 	if fold_point_count < 2 or nebula_layer_count < 1:
 		errors.append("background point and layer counts are invalid")
+	if batch_texture_size < 8 or batch_texture_size > 128:
+		errors.append("background batch_texture_size is invalid")
 	if nebula_radius_base < 0.0 or nebula_radius_step < 0.0 or nebula_alpha_base < 0.0 or nebula_alpha_step < 0.0:
 		errors.append("background nebula values cannot be negative")
 	if far_star_alpha_multiplier < 0.0 or near_star_radius_multiplier <= 0.0:

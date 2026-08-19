@@ -53,6 +53,17 @@ func _init() -> void:
 	var background_config: BackgroundConfig = background.get("background_config") as BackgroundConfig
 	if not _check(background_config != null and background_config.validate().is_empty(), "background config validation failed"):
 		return
+	var background_render_stats: Dictionary = background.call("get_render_batch_stats")
+	var background_batch_count: int = int(background_render_stats.get("batch_count", 0))
+	var background_batched_elements: int = int(background_render_stats.get("batched_elements", 0))
+	var background_source_elements: int = int(background_render_stats.get("source_elements", 0))
+	var background_draw_calls: int = int(background_render_stats.get("estimated_draw_calls", 0))
+	if not _check(background_batch_count >= 2 and background_batch_count <= 3, "background render batches are missing"):
+		return
+	if not _check(background_batched_elements == background_config.star_count + background_config.dust_count, "background batched element count is wrong"):
+		return
+	if not _check(background_source_elements > background_draw_calls * 4 and background_draw_calls <= 24, "background draw-call budget is not compressed"):
+		return
 	var meteor_config: MeteorConfig = background.get_node("MeteorField").get("meteor_config") as MeteorConfig
 	if not _check(meteor_config != null and meteor_config.validate().is_empty(), "meteor config validation failed"):
 		return
