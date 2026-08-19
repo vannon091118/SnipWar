@@ -73,7 +73,4 @@ func _cluster_radius(groups: Array[int], tier_bonus: int = 0) -> float:
 	return max_width * 0.5
 
 func _path_distance(path: Array[Vector2]) -> float:
-	var distance := 0.0
-	for index in range(path.size() - 1):
-		distance += path[index].distance_to(path[index + 1])
-	return distance
+	return PathUtils.distance(path)

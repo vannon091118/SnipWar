@@ -5,6 +5,8 @@ const _Dispatch := preload("res://scripts/dispatch.gd")
 const DEFAULT_CONFIG: TransitConfig = preload("res://resources/config/transit_default.tres")
 const DEFAULT_UI_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
 const PLANET_NETWORK_UI_SCENE: PackedScene = preload("res://scenes/ui/planet_network_ui.tscn")
+const TECHNOLOGY_MENU_SCENE: PackedScene = preload("res://scenes/ui/technology_menu.tscn")
+const MESSAGE_FEED_SCENE: PackedScene = preload("res://scenes/ui/message_feed.tscn")
 
 @export var transit_config: TransitConfig = DEFAULT_CONFIG
 @export var ui_theme_config: UIThemeConfig = DEFAULT_UI_THEME
@@ -17,6 +19,8 @@ var _routes: Dictionary = {}
 var _active_planet: Node2D
 var _destination_planets: Array[Node2D] = []
 var _ui: PlanetNetworkUI
+var _technology_menu: TechnologyMenu
+var _message_feed: MessageFeed
 var _line_phase := 0.0
 var _neighbor_cache: Dictionary = {}
 var _neighbor_cache_valid := false
@@ -47,6 +51,8 @@ func _create_ui() -> void:
 	_ui.destination_selected.connect(_on_destination_selected)
 	_ui.amount_changed.connect(_on_amount_changed)
 	_ui.send_pressed.connect(_on_send_pressed)
+	_create_technology_menu.call_deferred()
+	_create_message_feed.call_deferred()
 
 func _process(delta: float) -> void:
 	if _active_planet != null and is_instance_valid(_ui) and _ui.is_panel_visible():
@@ -66,7 +72,36 @@ func _draw() -> void:
 		for index in range(route_path.size() - 1):
 			draw_line(to_local(route_path[index]), to_local(route_path[index + 1]), route_color, theme.route_line_width, true)
 
-func _on_panel_visibility_changed(_visible: bool) -> void:
+func _create_technology_menu() -> void:
+	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
+	if ship_manager == null:
+		return
+	_technology_menu = TECHNOLOGY_MENU_SCENE.instantiate() as TechnologyMenu
+	add_child(_technology_menu)
+	_technology_menu.setup(ship_manager, ui_theme_config)
+	_technology_menu.opened.connect(_on_technology_opened)
+
+func _on_technology_opened() -> void:
+	if is_instance_valid(_ui):
+		_ui.close_panel()
+
+func _create_message_feed() -> void:
+	var event_log: Node = get_tree().root.get_node_or_null("EventLog")
+	if event_log == null:
+		return
+	_message_feed = MESSAGE_FEED_SCENE.instantiate() as MessageFeed
+	add_child(_message_feed)
+	_message_feed.setup(event_log, ui_theme_config)
+
+func get_technology_menu() -> TechnologyMenu:
+	return _technology_menu
+
+func get_message_feed() -> MessageFeed:
+	return _message_feed
+
+func _on_panel_visibility_changed(visible: bool) -> void:
+	if visible and is_instance_valid(_technology_menu):
+		_technology_menu.close()
 	queue_redraw()
 
 func _on_workers_spawn_requested(source: Node2D, amount: int) -> void:
@@ -159,10 +194,7 @@ func get_route_path(source: Node2D, destination: Node2D) -> Array[Vector2]:
 	return [source.global_position, destination.global_position]
 
 func _path_distance(path: Array[Vector2]) -> float:
-	var distance := 0.0
-	for index in range(path.size() - 1):
-		distance += path[index].distance_to(path[index + 1])
-	return distance
+	return PathUtils.distance(path)
 
 func get_destination(source: Node2D) -> Node2D:
 	var selected = _routes.get(source)

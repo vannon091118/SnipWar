@@ -5,10 +5,13 @@ extends Node2D
 const PLANET_SCENE: PackedScene = preload("res://scenes/objects/planets/planet.tscn")
 const PLANET_ECONOMY_MANAGER_SCRIPT: Script = preload("res://scripts/objects/planets/economy_manager.gd")
 const CPU_DISPATCH_AI_SCRIPT: Script = preload("res://scripts/objects/planets/cpu_dispatch_ai.gd")
+const SHIP_MANAGER_SCRIPT: Script = preload("res://scripts/objects/ships/ship_manager.gd")
 const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_default.tres")
 const DEFAULT_PLANET_CATALOG: PlanetCatalog = preload("res://resources/config/planet_catalog.tres")
 const DEFAULT_ECONOMY_CONFIG: EconomyConfig = preload("res://resources/config/economy_default.tres")
 const DEFAULT_CPU_DISPATCH_CONFIG: CpuDispatchConfig = preload("res://resources/config/cpu_dispatch_default.tres")
+const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_default.tres")
+const DEFAULT_TECHNOLOGY_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
 
 @export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG:
 	set(value):
@@ -22,6 +25,8 @@ const DEFAULT_CPU_DISPATCH_CONFIG: CpuDispatchConfig = preload("res://resources/
 		_queue_layout()
 @export var economy_config: EconomyConfig = DEFAULT_ECONOMY_CONFIG
 @export var cpu_dispatch_config: CpuDispatchConfig = DEFAULT_CPU_DISPATCH_CONFIG
+@export var ship_config: ShipConfig = DEFAULT_SHIP_CONFIG
+@export var technology_catalog: TechnologyCatalog = DEFAULT_TECHNOLOGY_CATALOG
 
 signal layout_completed(planets: Array[Planet])
 
@@ -114,6 +119,11 @@ func _create_runtime_modules() -> void:
 	cpu_ai.name = "CpuDispatchAI"
 	cpu_ai.call("configure", self, network, worker_manager, cpu_dispatch_config if cpu_dispatch_config != null else DEFAULT_CPU_DISPATCH_CONFIG)
 	add_child(cpu_ai)
+
+	var ship_manager: Node = SHIP_MANAGER_SCRIPT.new()
+	ship_manager.name = "ShipManager"
+	ship_manager.call("configure", self, get_node_or_null("NavigationField"), ship_config if ship_config != null else DEFAULT_SHIP_CONFIG, technology_catalog if technology_catalog != null else DEFAULT_TECHNOLOGY_CATALOG)
+	add_child(ship_manager)
 	_runtime_modules_created = true
 
 func _generate_catalog_planets() -> void:

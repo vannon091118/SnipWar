@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/message_feed.gd" id="1_feed"]
+
+[node name="MessageFeed" type="CanvasLayer"]
+layer = 70
+script = ExtResource("1_feed")
+
+[node name="FeedRoot" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ToastList" type="VBoxContainer" parent="FeedRoot"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -192.0
+offset_right = 420.0
+offset_bottom = -16.0
+grow_vertical = 0
+theme_override_constants/separation = 4
+mouse_filter = 2

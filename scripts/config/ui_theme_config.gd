@@ -41,6 +41,11 @@ extends Resource
 @export_range(8, 64, 1) var panel_title_font_size: int = 20
 @export_range(0, 24, 1) var card_padding: int = 10
 @export_range(20.0, 64.0, 1.0) var section_row_height: float = 30.0
+@export_group("Message Feed")
+@export_range(0.5, 30.0, 0.5) var message_toast_duration: float = 4.0
+@export_range(0.1, 2.0, 0.1) var message_toast_fade_duration: float = 0.5
+@export_range(1, 20, 1) var message_max_visible_toasts: int = 6
+@export_range(20.0, 128.0, 1.0) var technology_icon_size: float = 42.0
 @export var card_background: Color = Color(0.045, 0.07, 0.13, 0.96)
 @export var input_background: Color = Color(0.025, 0.04, 0.08, 0.98)
 @export var input_hover_background: Color = Color(0.08, 0.13, 0.2, 0.98)
@@ -77,6 +82,24 @@ func branch_color(branch: StringName) -> Color:
 		&"infrastructure": return branch_infrastructure_color
 		_: return accent_text_color
 
+func make_style_box(background: Color, border: Color = Color.TRANSPARENT, border_width: int = 0, radius: int = 0) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = background
+	style.border_color = border
+	style.border_width_left = border_width
+	style.border_width_top = border_width
+	style.border_width_right = border_width
+	style.border_width_bottom = border_width
+	style.corner_radius_top_left = radius
+	style.corner_radius_top_right = radius
+	style.corner_radius_bottom_left = radius
+	style.corner_radius_bottom_right = radius
+	style.content_margin_left = float(card_padding)
+	style.content_margin_top = float(card_padding)
+	style.content_margin_right = float(card_padding)
+	style.content_margin_bottom = float(card_padding)
+	return style
+
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
 	if panel_width_ratio <= 0.0:
@@ -97,6 +120,10 @@ func validate() -> PackedStringArray:
 		errors.append("UI font sizes must be positive")
 	if card_padding < 0 or section_row_height <= 0.0:
 		errors.append("UI card spacing values are invalid")
+	if message_toast_duration <= 0.0 or message_toast_fade_duration <= 0.0 or message_max_visible_toasts < 1:
+		errors.append("UI message feed tuning is invalid")
+	if technology_icon_size <= 0.0:
+		errors.append("UI technology_icon_size must be positive")
 	if route_line_alpha < 0.0 or route_line_alpha > 1.0 or route_line_pulse_alpha < 0.0 or route_line_alpha + route_line_pulse_alpha > 1.0:
 		errors.append("UI route line alpha values are invalid")
 	if route_line_pulse_speed < 0.0 or route_line_width <= 0.0:

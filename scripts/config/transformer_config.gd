@@ -16,6 +16,12 @@ extends Resource
 @export_range(4.0, 128.0, 1.0) var sprite_size: float = 24.0
 @export_range(0.0, 60.0, 1.0) var faction_ring_margin: float = 10.0
 @export_range(1.0, 16.0, 0.5) var faction_ring_width: float = 4.0
+@export_range(0.1, 1.0, 0.01) var planet_visual_radius_ratio: float = 0.375
+@export_range(6, 96, 1) var strength_label_font_size: int = 15
+@export_range(0, 16, 1) var strength_label_outline_size: int = 3
+@export var strength_label_outline_color: Color = Color(0.0, 0.0, 0.0, 0.9)
+@export var strength_label_size: Vector2 = Vector2(80.0, 22.0)
+@export_range(0.0, 60.0, 0.5) var strength_label_offset_y: float = 6.0
 
 func resolve_tint(tint_mode: StringName, faction: StringName) -> Color:
 	match tint_mode:
@@ -52,4 +58,14 @@ func validate() -> PackedStringArray:
 		errors.append("transformer faction_ring_margin cannot be negative")
 	if faction_ring_width <= 0.0:
 		errors.append("transformer faction_ring_width must be positive")
+	if planet_visual_radius_ratio <= 0.0 or planet_visual_radius_ratio > 1.0:
+		errors.append("transformer planet_visual_radius_ratio must be within (0, 1]")
+	if strength_label_font_size < 1:
+		errors.append("transformer strength_label_font_size must be positive")
+	if strength_label_outline_size < 0:
+		errors.append("transformer strength_label_outline_size cannot be negative")
+	if strength_label_size.x <= 0.0 or strength_label_size.y <= 0.0:
+		errors.append("transformer strength_label_size must be positive")
+	if strength_label_offset_y < 0.0:
+		errors.append("transformer strength_label_offset_y cannot be negative")
 	return errors

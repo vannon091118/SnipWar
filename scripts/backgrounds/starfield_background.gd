@@ -77,7 +77,15 @@ func _configure_meteor_field(map: MapDefinition, scenario: ScenarioDefinition) -
 func get_active_scenario() -> ScenarioDefinition:
 	return active_scenario
 
+func _disable_collision_debug_overlay() -> void:
+	# The editor's "Visible Collision Shapes" toggle draws cyan circles around every
+	# ClickArea. Force it off in the running game so faction rings stay readable.
+	var tree := get_tree()
+	if tree != null:
+		tree.set("debug_collisions_hint", false)
+
 func _ready() -> void:
+	_disable_collision_debug_overlay()
 	_generate_elements()
 	_rebuild_render_batches()
 	var viewport := get_viewport()

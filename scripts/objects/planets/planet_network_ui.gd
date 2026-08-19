@@ -238,22 +238,7 @@ func _apply_theme() -> void:
 		_count_list.add_theme_constant_override("separation", _theme_config.list_separation)
 
 func _style_box(background: Color, border: Color = Color.TRANSPARENT, border_width: int = 0, radius: int = 0) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = background
-	style.border_color = border
-	style.border_width_left = border_width
-	style.border_width_top = border_width
-	style.border_width_right = border_width
-	style.border_width_bottom = border_width
-	style.corner_radius_top_left = radius
-	style.corner_radius_top_right = radius
-	style.corner_radius_bottom_left = radius
-	style.corner_radius_bottom_right = radius
-	style.content_margin_left = float(_theme_config.card_padding)
-	style.content_margin_top = float(_theme_config.card_padding)
-	style.content_margin_right = float(_theme_config.card_padding)
-	style.content_margin_bottom = float(_theme_config.card_padding)
-	return style
+	return _theme_config.make_style_box(background, border, border_width, radius)
 
 func _connect_internal_signals() -> void:
 	if _tab_button != null and not _tab_button.pressed.is_connected(_toggle_panel):
@@ -510,6 +495,9 @@ func is_panel_visible() -> bool:
 
 func toggle_panel() -> void:
 	_toggle_panel()
+
+func close_panel() -> void:
+	_set_panel_open(false)
 
 func get_panel() -> PanelContainer:
 	_ensure_node_references()

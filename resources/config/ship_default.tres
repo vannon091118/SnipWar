@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ShipConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/config/ship_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+scout_hull_tech_id = &"scout_hull"
+scout_scanner_tech_id = &"scanner_drone"
+scout_build_cost_resource = &"material"
+scout_build_cost_amount = 5
+scout_speed = 80.0

@@ -1,0 +1,80 @@
+[gd_resource type="Resource" script_class="TechnologyCatalog" format=3]
+
+[ext_resource type="Script" path="res://scripts/config/technology_catalog.gd" id="1_catalog"]
+[ext_resource type="Script" path="res://scripts/config/technology_definition.gd" id="2_definition"]
+[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_k.svg" id="3_scout_hull"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_satellite.svg" id="4_scanner"]
+[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_l.svg" id="5_mech"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean.svg" id="6_planet_survey"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_04_violet.svg" id="7_planet_extraction"]
+
+[sub_resource type="Resource" id="Tech_scout_hull"]
+script = ExtResource("2_definition")
+id = &"scout_hull"
+category = &"ships"
+display_name = "Aufklärungsrumpf T1"
+description = "Freischaltung eines leichten Tier-1-Scout-Schiffes mit Scanner-Aufhängung."
+cost_resource = &"material"
+cost_amount = 15
+visual_asset = ExtResource("3_scout_hull")
+effect_id = &"scout_hull"
+mechanic_description = "Mechanik: ShipManager erlaubt danach den Bau eines Tier-1-Scout-Schiffs."
+production_multiplier = 1.0
+
+[sub_resource type="Resource" id="Tech_scanner_drone"]
+script = ExtResource("2_definition")
+id = &"scanner_drone"
+category = &"ships"
+display_name = "Scanner-Drohne T1"
+description = "Montierbare Scanner-Drohne; entdeckt unbekannte Planeten bei Ankunft."
+cost_resource = &"energy"
+cost_amount = 10
+prerequisite_tech_id = &"scout_hull"
+visual_asset = ExtResource("4_scanner")
+effect_id = &"scanner_drone"
+mechanic_description = "Mechanik: ScoutShip ruft bei Ankunft GameState.discover_planet() auf."
+production_multiplier = 1.0
+
+[sub_resource type="Resource" id="Tech_mech_frame"]
+script = ExtResource("2_definition")
+id = &"mech_frame"
+category = &"mech"
+display_name = "Mech-Chassis T1"
+description = "Grundrahmen für Layer-3-Mechs."
+cost_resource = &"volatile"
+cost_amount = 25
+visual_asset = ExtResource("5_mech")
+effect_id = &"mech_frame_layer3"
+mechanic_description = "Mechanik: Layer-3-Chassis wird registriert; der taktische Mech-Kampf bleibt bis Layer 3 inert."
+production_multiplier = 1.0
+
+[sub_resource type="Resource" id="Tech_planetary_survey"]
+script = ExtResource("2_definition")
+id = &"planetary_survey"
+category = &"planet"
+display_name = "Planetare Vermessung"
+description = "Analysiert die lokale Signatur eines bekannten eigenen Planeten."
+cost_resource = &"rare"
+cost_amount = 10
+visual_asset = ExtResource("6_planet_survey")
+effect_id = &"planet_production_survey"
+mechanic_description = "Mechanik: Die Ressourcenproduktion dieses Planeten steigt auf 125 %."
+production_multiplier = 1.25
+
+[sub_resource type="Resource" id="Tech_planetary_extraction"]
+script = ExtResource("2_definition")
+id = &"planetary_extraction"
+category = &"planet"
+display_name = "Planetare Extraktion"
+description = "Baut die Vermessung zu einer spezialisierten Förderkette aus."
+cost_resource = &"material"
+cost_amount = 20
+prerequisite_tech_id = &"planetary_survey"
+visual_asset = ExtResource("7_planet_extraction")
+effect_id = &"planet_production_extraction"
+mechanic_description = "Mechanik: Die Ressourcenproduktion dieses Planeten steigt zusätzlich auf 150 %."
+production_multiplier = 1.5
+
+[resource]
+script = ExtResource("1_catalog")
+technologies = [SubResource("Tech_scout_hull"), SubResource("Tech_scanner_drone"), SubResource("Tech_mech_frame"), SubResource("Tech_planetary_survey"), SubResource("Tech_planetary_extraction")]

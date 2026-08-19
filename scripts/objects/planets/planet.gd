@@ -295,7 +295,7 @@ func _draw() -> void:
 func _faction_ring_radius() -> float:
 	if not is_instance_valid(_sprite) or _sprite.texture == null:
 		return 0.0
-	var planet_visual_radius: float = float(_sprite.texture.get_width()) * 0.375 * _sprite.scale.x
+	var planet_visual_radius: float = float(_sprite.texture.get_width()) * DEFAULT_TRANSFORMER_CONFIG.planet_visual_radius_ratio * _sprite.scale.x
 	return planet_visual_radius + DEFAULT_TRANSFORMER_CONFIG.faction_ring_margin
 
 func _ensure_strength_label() -> void:
@@ -306,20 +306,22 @@ func _ensure_strength_label() -> void:
 	_strength_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_strength_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_strength_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_strength_label.add_theme_font_size_override("font_size", 15)
-	_strength_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.9))
-	_strength_label.add_theme_constant_override("outline_size", 3)
+	_strength_label.add_theme_font_size_override("font_size", DEFAULT_TRANSFORMER_CONFIG.strength_label_font_size)
+	_strength_label.add_theme_color_override("font_outline_color", DEFAULT_TRANSFORMER_CONFIG.strength_label_outline_color)
+	_strength_label.add_theme_constant_override("outline_size", DEFAULT_TRANSFORMER_CONFIG.strength_label_outline_size)
 	add_child(_strength_label)
 	_update_strength_indicator()
 
 func _update_strength_indicator() -> void:
 	if _strength_label == null or not is_instance_valid(_strength_label):
 		return
+	var config := DEFAULT_TRANSFORMER_CONFIG
 	_strength_label.text = str(worker_count)
-	_strength_label.add_theme_color_override("font_color", DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", get_faction()))
+	_strength_label.add_theme_color_override("font_color", config.resolve_tint(&"faction", get_faction()))
 	var ring_radius: float = _faction_ring_radius()
-	_strength_label.position = Vector2(-40.0, ring_radius + 6.0 - 11.0)
-	_strength_label.size = Vector2(80.0, 22.0)
+	var label_size: Vector2 = config.strength_label_size
+	_strength_label.position = Vector2(-label_size.x * 0.5, ring_radius + config.strength_label_offset_y - label_size.y * 0.5)
+	_strength_label.size = label_size
 	_strength_label.scale = Vector2.ONE * (1.0 / maxf(scale.x, 0.001))
 
 func _faction_group(value: StringName) -> StringName:
@@ -344,12 +346,7 @@ func set_faction(value: StringName) -> void:
 	faction = value
 
 func _game_state() -> Node:
-	if Engine.is_editor_hint() or not is_inside_tree():
-		return null
-	var root_node: Node = get_tree().root
-	if root_node == null:
-		return null
-	return root_node.get_node_or_null("GameState")
+	return GameStateAccess.autoload(self)
 
 func set_planet_role(value: StringName) -> void:
 	planet_role = value
