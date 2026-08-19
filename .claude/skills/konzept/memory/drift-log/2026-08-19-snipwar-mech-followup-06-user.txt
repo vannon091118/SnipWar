@@ -1,0 +1,9 @@
+> Exakte Koeffizienten der Flugzeitformel.
+Balanced moel nicht zu komplex zur reskallierung bei bedaarf
+
+> Automatische Wahl der Kompressionsstufe
+
+Ich würde sgen "ressorcen" abhängig wie weniger auf der map los ist esto mehr darf angezeigt werden
+
+> Paperclip/Clip-Art oder doch Papercut bedeutet.
+die Aktuelle projekt Struktur enthält nur ein Oberwelt layer mit mechanik tests und ausbau mechs sind noch nicht implaentier aktuell Aber cell shade paperclip bleibt  ur mehr "beleuchtungen und schatierugen sind wichtig

@@ -1,0 +1,13 @@
+Entscheidungen bestätigt:
+- Flugzeit: additives Hybridmodell aus linearer und gedämpfter Komponente.
+- Zielzähler: ein logischer Zähler; Versand reduziert die Quelle beim Start und erhöht das Ziel bei Ankunft um die vollständige Menge.
+
+Recherche:
+- Godot 4.7 ResourceImporterSVG importiert automatisch skalierbare SVG-Texturen für UI und 2D.
+- SVG kann als DPITexture zur Laufzeit passend zum Oversampling-Faktor rasterisiert werden; komplexe SVGs und nicht in Pfade umgewandelter Text bleiben Einschränkungen.
+- Range.value_changed läuft beim Slider kontinuierlich; Live-Vorschau muss billig oder gedrosselt sein.
+- create_tween()/tween_property() passen zu dynamischen Transit-Zielen; finished markiert Ankunft und gebundene Tweens enden mit ihrem Node.
+
+Gespeichert:
+- konzept-snipwar-mech-2026-08-19.md mit Entscheidungen, offenen Punkten, Recherche und IST/SOLL-Abgleich.
+- INDEX.md mit dem Konzept an erster Stelle.

@@ -1,0 +1,12 @@
+Drift-Auswertung:
+- Die Flugzeit soll als Hybrid aus linearer und abnehmender Verlangsamung wachsen.
+- „Senden“ übersetzt die gewählte logische Menge in sichtbare Einheiten-Assets, die zum Ziel reisen.
+- Der Quellzähler wird beim Start um die gesamte gewählte Menge reduziert.
+- Der Zielzähler wird erst bei Ankunft um die transportierte Menge erhöht.
+- Der Kompressionsfaktor bleibt vorläufig; sichtbare Assets sind nicht zwingend 1:1 mit logischen Einheiten.
+
+Vorläufige Stilannahme: Paperclip-/Clip-Art-Comic mit skalierbaren Grundformen.
+
+Offene Klärungen:
+1. Welche konkrete Mischform aus linearer und abnehmender Flugzeit gilt als Standardmodell?
+2. Soll der Zielzähler ausschließlich die logische Menge erhöhen oder zusätzlich sichtbare Assets separat ausweisen?

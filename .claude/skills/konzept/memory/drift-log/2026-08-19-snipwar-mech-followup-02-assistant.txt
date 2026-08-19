@@ -1,0 +1,10 @@
+Drift-Auswertung:
+- Die Hybrid-Richtung bleibt bestehen; neu ist eine konkrete Befehlssequenz für Einheitenversand.
+- Die Auswahl soll über einen Slider von 1 bis zur verfügbaren Menge erfolgen.
+- „Senden“ soll einen weiteren Auswahl-/Bestätigungsschritt auslösen, der Flugzeit und Weg sichtbar macht.
+- Jede logische Einheit bleibt konzeptionell sichtbar, die Darstellung wird aber bei höchstens 100 sichtbaren Truppen komprimiert.
+- K=1, M=5 und L=100 sind ausdrücklich Testwerte, keine finalen Balancing-Regeln.
+
+Offen:
+1. Erfolgt die Flugzeit-/Wegvorschau vor oder nach der Zielbestätigung?
+2. Sind K/M/L Darstellungsfaktoren oder Planetengrößen-/Einheitentiers?

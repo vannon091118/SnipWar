@@ -1,0 +1,6 @@
+nn entsteht die Flugzeit-/Wegvorschau?
+
+sobld einheiten anzahl gewählt wurde mehr einheiten= langsaamer
+
+Kompressionsfaktor → ein sichtbares Symbol steht für 1, 5 oder 100 logische Einheiten.
+ fürs erste
