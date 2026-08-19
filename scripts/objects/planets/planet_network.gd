@@ -3,6 +3,8 @@ extends Node2D
 const _FlightTime := preload("res://scripts/flight_time.gd")
 const _Dispatch := preload("res://scripts/dispatch.gd")
 
+@onready var _worker_manager: Node = get_parent().get_node("WorkerManager")
+
 var _planets: Array[Node2D] = []
 var _routes: Dictionary = {}
 var _active_planet: Node2D
@@ -17,6 +19,7 @@ var _destination_planets: Array[Node2D] = []
 var _count_labels: Dictionary = {}
 var _amount_slider: HSlider
 var _preview_label: Label
+var _send_button: Button
 var _line_phase := 0.0
 
 func _ready() -> void:
@@ -28,6 +31,16 @@ func _ready() -> void:
 	_create_ui.call_deferred()
 
 func _create_ui() -> void:
+	_create_ui_layer()
+	_create_tab_button()
+	_create_panel()
+	var content := _create_panel_content()
+	_create_header_labels(content)
+	_create_destination_controls(content)
+	_create_dispatch_controls(content)
+	_create_units_list(content)
+
+func _create_ui_layer() -> void:
 	_ui_layer = CanvasLayer.new()
 	_ui_layer.name = "PlanetTabLayer"
 	_ui_layer.layer = 50
@@ -39,6 +52,7 @@ func _create_ui() -> void:
 	_ui_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_ui_layer.add_child(_ui_root)
 
+func _create_tab_button() -> void:
 	_tab_button = Button.new()
 	_tab_button.name = "PlanetTab"
 	_tab_button.text = "PLANETEN"
@@ -54,6 +68,7 @@ func _create_ui() -> void:
 	_tab_button.pressed.connect(_toggle_panel)
 	_ui_root.add_child(_tab_button)
 
+func _create_panel() -> void:
 	_panel = PanelContainer.new()
 	_panel.name = "PlanetPanel"
 	_panel.anchor_left = 1.0
@@ -78,6 +93,7 @@ func _create_ui() -> void:
 	_panel.add_theme_stylebox_override("panel", panel_style)
 	_ui_root.add_child(_panel)
 
+func _create_panel_content() -> VBoxContainer:
 	var margin := MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 14)
 	margin.add_theme_constant_override("margin_top", 12)
@@ -88,7 +104,9 @@ func _create_ui() -> void:
 	var content := VBoxContainer.new()
 	content.add_theme_constant_override("separation", 8)
 	margin.add_child(content)
+	return content
 
+func _create_header_labels(content: VBoxContainer) -> void:
 	var heading := Label.new()
 	heading.text = "PLANETENMENÜ"
 	heading.add_theme_font_size_override("font_size", 18)
@@ -106,6 +124,7 @@ func _create_ui() -> void:
 	_selected_count_label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.70, 1.0))
 	content.add_child(_selected_count_label)
 
+func _create_destination_controls(content: VBoxContainer) -> void:
 	var destination_heading := Label.new()
 	destination_heading.text = "Zielplanet"
 	destination_heading.add_theme_color_override("font_color", Color(0.68, 0.82, 0.92, 1.0))
@@ -119,8 +138,7 @@ func _create_ui() -> void:
 	_destination_option.item_selected.connect(_on_destination_selected)
 	content.add_child(_destination_option)
 
-	_create_dispatch_controls(content)
-
+func _create_units_list(content: VBoxContainer) -> void:
 	var separator := HSeparator.new()
 	content.add_child(separator)
 
@@ -167,6 +185,13 @@ func _create_dispatch_controls(content: VBoxContainer) -> void:
 	_preview_label.text = "Keine Einheiten verfügbar"
 	_preview_label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.70, 1.0))
 	content.add_child(_preview_label)
+
+	_send_button = Button.new()
+	_send_button.name = "SendButton"
+	_send_button.text = "SENDEN"
+	_send_button.disabled = true
+	_send_button.pressed.connect(_on_send_pressed)
+	content.add_child(_send_button)
 
 func _process(delta: float) -> void:
 	if _active_planet != null and is_instance_valid(_panel) and _panel.visible:
@@ -271,7 +296,14 @@ func _refresh_slider_bounds() -> void:
 	_amount_slider.editable = bounds.y > 0
 	if _amount_slider.value > bounds.y:
 		_amount_slider.value = bounds.y
+	if is_instance_valid(_send_button):
+		_send_button.disabled = bounds.y <= 0
 	_update_preview()
+
+func _on_send_pressed() -> void:
+	if _active_planet == null or not is_instance_valid(_amount_slider):
+		return
+	_worker_manager.call("_dispatch_workers", _active_planet, int(_amount_slider.value))
 
 func get_destination(source: Node2D) -> Node2D:
 	var selected = _routes.get(source)

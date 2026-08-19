@@ -12,9 +12,10 @@
 - Planet size belongs to the Node2D layout scale; keep `planet.gd`'s `visual_scale` at 1.0 to avoid double scaling.
 - The current minimal meteor design uses four direct Sprite2D children controlled by `meteor_field.gd`; no per-meteor scene/script is required.
 - ToxicOrbit resolves the `planet_toxic` group; avoid restoring a relative NodePath target.
-- Workers are intentionally stationary after spawning; planets own the spawn state/timer and `worker_count`, while `WorkerManager` only instantiates/registers them and preserves the selected destination for later movement.
+- Workers spawn stationary as a planet's garrison. `WorkerManager._dispatch_workers` launches them as visible transit assets via per-worker Tweens; each re-registers with the destination on arrival (source drops at launch, destination rises on arrival).
 - Spawn tiers are part of the MVP contract: XL = 3 workers/5 s, L = 2/7 s, variable planets = 1/10 s.
-- `flight_time.gd`, `dispatch.gd`, `planet_network.gd`, and `preflight.gd` change/commit together; preflight reaches into planet_network internals (`_amount_slider`, `_preview_label`).
+- `flight_time.gd`, `dispatch.gd`, `planet_network.gd`, `worker.gd`, `worker_manager.gd`, and `preflight.gd` change/commit together; preflight reaches into planet_network internals (`_amount_slider`, `_preview_label`) and worker internals (`_flying`, `_arrive`).
+- Flight duration = distance × factor, so real dispatches take hundreds of seconds; headless tests simulate arrival by calling the arrival path directly (e.g. `worker._arrive()`) and assert movement via "distance to destination decreased", never by awaiting flight end or exact positions.
 
 ## Interaction and assets
 - Planet clicks require the planet `Area2D`/shape; worker graphics remain collision-free. The persistent destination tab UI must be created with `call_deferred()` because adding viewport UI during child setup triggers Godot's "parent node is busy setting up children" error.
@@ -26,6 +27,9 @@
 - Meteor sizes are pixel-based: `meteor_field.gd` converts 4-10 px targets using each SVG texture width; keep this visible-size contract instead of restoring relative 0.004-0.01 scales.
 - `SceneTree.quit()` does not halt the current function; test scripts must `return` after `quit()` or the success path falls through to the failure branch.
 - GDScript `:=` errors with "value doesn't have a set type" on members of `Node`-typed children; use explicit types and casts like `(ocean as Node2D).global_position`.
+- Headless `--script` runs hang (timeout) when `_init` errors or returns before `quit()`; only fail via `_check`→`quit(1)` and always end with `quit()`.
+- GDScript 4 warns `INTEGER_DIVISION` on `int / int`; use `int(a / 2.0)` when a float quotient is intended.
+- Connect a Tween's `finished` to a method not on the statically-typed base class with `Callable(node, "_method")`; `node._method` is an unsafe member access.
 
 ## Documentation and presentation
 - README product copy should use original wording, distinguish the 4K presentation target from the current prototype, and state unfinished gameplay explicitly.

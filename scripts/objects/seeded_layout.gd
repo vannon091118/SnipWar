@@ -120,7 +120,7 @@ func _assign_slot(item: Node2D, slot: int, assigned_slots: Dictionary, occupied_
 	occupied_slots[slot] = true
 
 func _crossing_slot(item_count: int, occupied_slots: Dictionary) -> int:
-	var preferred_slot: int = columns / 2
+	var preferred_slot: int = int(columns / 2.0)
 	if preferred_slot < item_count and not occupied_slots.has(preferred_slot):
 		return preferred_slot
 	for slot in item_count:

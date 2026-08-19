@@ -24,6 +24,14 @@ func _init() -> void:
 		return
 	if not _check(_Dispatch.amount_range(-1) == Vector2i.ZERO, "dispatch range for negative count is wrong"):
 		return
+	if not _check(_Dispatch.launch_amount(3, 2) == 2, "launch amount should match request"):
+		return
+	if not _check(_Dispatch.launch_amount(2, 5) == 2, "launch amount should clamp to available"):
+		return
+	if not _check(_Dispatch.launch_amount(0, 3) == 0, "launch amount from empty planet should be zero"):
+		return
+	if not _check(_Dispatch.launch_amount(3, 0) == 0, "launch amount with zero requested should be zero"):
+		return
 
 	var scene: PackedScene = preload("res://scenes/backgrounds/starfield_background.tscn")
 	var background: Node = scene.instantiate()
@@ -97,6 +105,31 @@ func _init() -> void:
 	var real_distance: float = (ocean as Node2D).global_position.distance_to(preview_destination.global_position)
 	if not _check(absf(_flight_seconds(preview_label.text) - real_distance) <= 0.05, "dispatch preview does not use real distance"):
 		return
+	var preview_distance_before := _flight_seconds(preview_label.text)
+	var alternate: Node2D = preview_destination
+	for candidate in neighbors:
+		if candidate == preview_destination:
+			continue
+		var candidate_distance: float = (ocean as Node2D).global_position.distance_to(candidate.global_position)
+		if absf(candidate_distance - real_distance) > 0.1:
+			alternate = candidate
+			break
+	if not _check(alternate != preview_destination, "no alternate destination with different distance"):
+		return
+	var alternate_index := -1
+	for index in destination_option.item_count:
+		if destination_option.get_item_text(index) == alternate.name:
+			alternate_index = index
+			break
+	if not _check(alternate_index >= 0, "alternate destination is missing from planet tab"):
+		return
+	network.call("_on_destination_selected", alternate_index)
+	await process_frame
+	var alternate_distance: float = (ocean as Node2D).global_position.distance_to(alternate.global_position)
+	if not _check(absf(_flight_seconds(preview_label.text) - alternate_distance) <= 0.05, "destination change did not update the preview distance"):
+		return
+	if not _check(_flight_seconds(preview_label.text) != preview_distance_before, "destination change did not alter the preview distance"):
+		return
 	var preview_at_one := preview_label.text
 	amount_slider.value = 2
 	await process_frame
@@ -130,6 +163,32 @@ func _init() -> void:
 		if child.get_script() == worker_script:
 			newest_worker = child
 	if not _check(newest_worker.destination_planet == destination, "worker destination was not assigned"):
+		return
+	var send_button: Button = network.get("_send_button")
+	if not _check(is_instance_valid(send_button) and not send_button.disabled, "send button is missing or disabled"):
+		return
+	amount_slider.value = 2
+	await process_frame
+	var destination_count_before := int(destination.get("worker_count"))
+	network.call("_on_send_pressed")
+	await process_frame
+	if not _check(int(ocean.get("worker_count")) == 1, "send did not deduct the source count"):
+		return
+	var transit_workers: Array[Node] = []
+	for child in manager.get_children():
+		if child.get_script() == worker_script and child.get("_flying"):
+			transit_workers.append(child)
+	if not _check(transit_workers.size() == 2, "send did not launch the selected number of transit workers"):
+		return
+	var transit_distance_before: float = (transit_workers[0] as Node2D).global_position.distance_to(destination.global_position)
+	await create_timer(0.5).timeout
+	var transit_distance_after: float = (transit_workers[0] as Node2D).global_position.distance_to(destination.global_position)
+	if not _check(transit_distance_after < transit_distance_before, "transit workers do not move toward the destination"):
+		return
+	for transit in transit_workers:
+		transit.call("_arrive")
+	await process_frame
+	if not _check(int(destination.get("worker_count")) == destination_count_before + 2, "arrival did not add the destination count"):
 		return
 
 	var meteor_field: Node = background.get_node("MeteorField")
