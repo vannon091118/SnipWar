@@ -25,8 +25,13 @@ func calculate_stats(catalog: ShipPartCatalog = null) -> void:
 
 	for ship in ships:
 		var hull_id: StringName = ship.get("hull", &"") as StringName
+		var drive_id: StringName = ship.get("drive", &"") as StringName
+		var weapon_id: StringName = ship.get("weapon", &"") as StringName
+		var shield_id: StringName = ship.get("shield", &"") as StringName
 		var scanner_id: StringName = ship.get("scanner", &"") as StringName
 		var modules: Array = ship.get("modules", [])
+		var variant_ids: Dictionary = ship.get("variants", {}) as Dictionary
+		var utility_variant_ids: Array = variant_ids.get(&"utility", []) as Array
 
 		var ship_hp := 50.0
 		var ship_dps := 10.0
@@ -35,26 +40,50 @@ func calculate_stats(catalog: ShipPartCatalog = null) -> void:
 
 		if cat != null:
 			var hull_part := cat.resolve(hull_id)
+			var hull_trait: TraitDefinition = cat.combined_trait(hull_part, cat.resolve_variant(hull_part, variant_ids.get(&"hull", &"") as StringName))
 			if hull_part != null:
 				ship_hp += float(hull_part.tier * 30)
-				if hull_part.trait_definition != null:
-					ship_hp += float(hull_part.trait_definition.hull_hp_bonus)
-					ship_dps += hull_part.trait_definition.dps_bonus
-					ship_speed *= hull_part.trait_definition.transfer_speed_multiplier
+				if hull_trait != null:
+					ship_hp += float(hull_trait.hull_hp_bonus)
+					ship_dps += hull_trait.dps_bonus
+					ship_speed *= hull_trait.transfer_speed_multiplier
+
+			var drive_part := cat.resolve(drive_id)
+			var drive_trait: TraitDefinition = cat.combined_trait(drive_part, cat.resolve_variant(drive_part, variant_ids.get(&"drive", &"") as StringName))
+			if drive_trait != null:
+				ship_speed *= drive_trait.transfer_speed_multiplier
+
+			var weapon_part := cat.resolve(weapon_id)
+			var weapon_trait: TraitDefinition = cat.combined_trait(weapon_part, cat.resolve_variant(weapon_part, variant_ids.get(&"weapon", &"") as StringName))
+			if weapon_part != null:
+				ship_dps += float(weapon_part.tier * 5)
+				if weapon_trait != null:
+					ship_dps += weapon_trait.dps_bonus
+					ship_range += weapon_trait.attack_range_bonus
+
+			var shield_part := cat.resolve(shield_id)
+			var shield_trait: TraitDefinition = cat.combined_trait(shield_part, cat.resolve_variant(shield_part, variant_ids.get(&"shield", &"") as StringName))
+			if shield_part != null:
+				ship_hp += float(shield_part.tier * 20)
+				if shield_trait != null:
+					ship_hp += float(shield_trait.hull_hp_bonus)
 
 			var scanner_part := cat.resolve(scanner_id)
+			var scanner_trait: TraitDefinition = cat.combined_trait(scanner_part, cat.resolve_variant(scanner_part, variant_ids.get(&"scanner", &"") as StringName))
 			if scanner_part != null:
 				ship_range += float(scanner_part.tier * 40)
-				if scanner_part.trait_definition != null:
-					ship_range += scanner_part.trait_definition.range_bonus
+				if scanner_trait != null:
+					ship_range += scanner_trait.range_bonus
 
-			for mod_val in modules:
-				var mod_part := cat.resolve(mod_val as StringName)
+			for mod_index in range(modules.size()):
+				var mod_part := cat.resolve(modules[mod_index] as StringName)
+				var utility_variant_id: StringName = utility_variant_ids[mod_index] as StringName if mod_index < utility_variant_ids.size() else &""
+				var mod_trait: TraitDefinition = cat.combined_trait(mod_part, cat.resolve_variant(mod_part, utility_variant_id))
 				if mod_part != null:
 					ship_dps += float(mod_part.tier * 5)
-					if mod_part.trait_definition != null:
-						ship_dps += mod_part.trait_definition.dps_bonus
-						ship_hp += float(mod_part.trait_definition.hull_hp_bonus)
+					if mod_trait != null:
+						ship_dps += mod_trait.dps_bonus
+						ship_hp += float(mod_trait.hull_hp_bonus)
 
 		total_hull_hp += ship_hp
 		total_dps += ship_dps

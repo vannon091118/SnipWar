@@ -18,8 +18,10 @@ var _worker_source: OptionButton
 var _worker_button: Button
 var _builder_source: OptionButton
 var _builder_hull: OptionButton
-var _builder_scanner: OptionButton
+var _builder_drive: OptionButton
 var _builder_weapon: OptionButton
+var _builder_shield: OptionButton
+var _builder_scanner: OptionButton
 var _builder_modules: Array[OptionButton] = []
 var _builder_dynamic: VBoxContainer
 
@@ -162,8 +164,10 @@ func _refresh() -> void:
 	_worker_button = null
 	_builder_source = null
 	_builder_hull = null
-	_builder_scanner = null
+	_builder_drive = null
 	_builder_weapon = null
+	_builder_shield = null
+	_builder_scanner = null
 	_builder_modules = []
 	_builder_dynamic = null
 	if _ship_manager == null:
@@ -456,6 +460,9 @@ func _populate_builder_dynamic(state: Node) -> void:
 		_builder_dynamic.remove_child(child)
 		child.queue_free()
 	_builder_hull = null
+	_builder_drive = null
+	_builder_weapon = null
+	_builder_shield = null
 	_builder_scanner = null
 	_builder_modules = []
 	var source: Planet = _selected_option_planet(_builder_source)
@@ -488,12 +495,18 @@ func _populate_builder_dynamic(state: Node) -> void:
 	_builder_dynamic.add_child(_make_label("Hülle", _theme_config.secondary_text_color, _theme_config.small_font_size))
 	_builder_hull = _builder_slot_option(inventory, ShipPartDefinition.SLOT_HULL)
 	_builder_dynamic.add_child(_builder_hull)
-	_builder_dynamic.add_child(_make_label("Scanner", _theme_config.secondary_text_color, _theme_config.small_font_size))
-	_builder_scanner = _builder_slot_option(inventory, ShipPartDefinition.SLOT_SCANNER)
-	_builder_dynamic.add_child(_builder_scanner)
+	_builder_dynamic.add_child(_make_label("Antrieb", _theme_config.secondary_text_color, _theme_config.small_font_size))
+	_builder_drive = _builder_slot_option(inventory, ShipPartDefinition.SLOT_DRIVE)
+	_builder_dynamic.add_child(_builder_drive)
 	_builder_dynamic.add_child(_make_label("Waffe (optional — macht das Schiff militärisch)", _theme_config.secondary_text_color, _theme_config.small_font_size))
 	_builder_weapon = _builder_slot_option(inventory, ShipPartDefinition.SLOT_WEAPON, true)
 	_builder_dynamic.add_child(_builder_weapon)
+	_builder_dynamic.add_child(_make_label("Schild", _theme_config.secondary_text_color, _theme_config.small_font_size))
+	_builder_shield = _builder_slot_option(inventory, ShipPartDefinition.SLOT_SHIELD)
+	_builder_dynamic.add_child(_builder_shield)
+	_builder_dynamic.add_child(_make_label("Scanner", _theme_config.secondary_text_color, _theme_config.small_font_size))
+	_builder_scanner = _builder_slot_option(inventory, ShipPartDefinition.SLOT_SCANNER)
+	_builder_dynamic.add_child(_builder_scanner)
 	for index in catalog.max_module_slots:
 		_builder_dynamic.add_child(_make_label("Modul %d" % (index + 1), _theme_config.secondary_text_color, _theme_config.small_font_size))
 		var module_option: OptionButton = _builder_slot_option(inventory, ShipPartDefinition.SLOT_MODULE, true)
@@ -554,11 +567,13 @@ func _builder_selected_part(option: OptionButton) -> StringName:
 
 func _builder_can_assemble() -> bool:
 	var source: Planet = _selected_option_planet(_builder_source)
-	if source == null or _builder_hull == null or _builder_scanner == null:
+	if source == null or _builder_hull == null or _builder_drive == null or _builder_shield == null or _builder_scanner == null:
 		return false
 	var hull_id := _builder_selected_part(_builder_hull)
+	var drive_id := _builder_selected_part(_builder_drive)
+	var shield_id := _builder_selected_part(_builder_shield)
 	var scanner_id := _builder_selected_part(_builder_scanner)
-	if String(hull_id).is_empty() or String(scanner_id).is_empty():
+	if String(hull_id).is_empty() or String(drive_id).is_empty() or String(shield_id).is_empty() or String(scanner_id).is_empty():
 		return false
 	var weapon_id := _builder_selected_part(_builder_weapon)
 	var module_ids: Array = []
@@ -566,24 +581,33 @@ func _builder_can_assemble() -> bool:
 		var module_id := _builder_selected_part(option)
 		if not String(module_id).is_empty():
 			module_ids.append(module_id)
-	return _ship_manager.can_assemble_ship(source, hull_id, scanner_id, module_ids, weapon_id)
+	return _ship_manager.can_assemble_ship(source, hull_id, scanner_id, module_ids, weapon_id, drive_id, shield_id)
 
 func _assembly_description(catalog: ShipPartCatalog, assembly: Dictionary) -> String:
 	var hull := catalog.resolve(assembly.get("hull", &"") as StringName)
-	var scanner := catalog.resolve(assembly.get("scanner", &"") as StringName)
+	var drive := catalog.resolve(assembly.get("drive", &"") as StringName)
 	var weapon := catalog.resolve(assembly.get("weapon", &"") as StringName)
+	var shield := catalog.resolve(assembly.get("shield", &"") as StringName)
+	var scanner := catalog.resolve(assembly.get("scanner", &"") as StringName)
 	var hull_name: String = hull.display_name if hull != null else String(assembly.get("hull", ""))
+	var drive_name: String = drive.display_name if drive != null else String(assembly.get("drive", ""))
 	var scanner_name: String = scanner.display_name if scanner != null else String(assembly.get("scanner", ""))
-	var module_names: Array[String] = []
+	var shield_name: String = shield.display_name if shield != null else String(assembly.get("shield", ""))
+	var component_names: Array[String] = []
+	if not hull_name.is_empty():
+		component_names.append(hull_name)
+	if not drive_name.is_empty():
+		component_names.append(drive_name)
 	if weapon != null:
-		module_names.append(weapon.display_name)
+		component_names.append(weapon.display_name)
+	if not shield_name.is_empty():
+		component_names.append(shield_name)
+	if not scanner_name.is_empty():
+		component_names.append(scanner_name)
 	for module_value in assembly.get("modules", []):
 		var module := catalog.resolve(module_value as StringName)
-		module_names.append(module.display_name if module != null else String(module_value))
-	var text := "%s + %s" % [hull_name, scanner_name]
-	if not module_names.is_empty():
-		text += " + " + ", ".join(module_names)
-	return text
+		component_names.append(module.display_name if module != null else String(module_value))
+	return " + ".join(component_names)
 
 func _on_builder_source_changed(_index: int) -> void:
 	_populate_builder_dynamic(_game_state())
@@ -595,9 +619,11 @@ func _on_buy_part(part_id: StringName) -> void:
 
 func _on_assemble_ship() -> void:
 	var source: Planet = _selected_option_planet(_builder_source)
-	if source == null or _builder_hull == null or _builder_scanner == null:
+	if source == null or _builder_hull == null or _builder_drive == null or _builder_shield == null or _builder_scanner == null:
 		return
 	var hull_id := _builder_selected_part(_builder_hull)
+	var drive_id := _builder_selected_part(_builder_drive)
+	var shield_id := _builder_selected_part(_builder_shield)
 	var scanner_id := _builder_selected_part(_builder_scanner)
 	var weapon_id := _builder_selected_part(_builder_weapon)
 	var module_ids: Array = []
@@ -605,7 +631,7 @@ func _on_assemble_ship() -> void:
 		var module_id := _builder_selected_part(option)
 		if not String(module_id).is_empty():
 			module_ids.append(module_id)
-	_ship_manager.assemble_ship(source, hull_id, scanner_id, module_ids, weapon_id)
+	_ship_manager.assemble_ship(source, hull_id, scanner_id, module_ids, weapon_id, drive_id, shield_id)
 	_populate_builder_dynamic(_game_state())
 
 func _on_disassemble_ship(ship_id: StringName) -> void:

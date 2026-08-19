@@ -61,7 +61,20 @@ func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_
 		tween.finished.connect(Callable(self, "_arrive_cluster").bind(cluster))
 
 func _arrive_cluster(cluster: WorkerCluster) -> StringName:
+	# When a cluster carries a FleetSnapshot (assembled ships), route the arrival
+	# through Planet.resolve_ship_arrival – the deterministic FleetBattle / Conquest
+	# simulator path – instead of the worker-count MVP rule.
+	var snapshot: Variant = cluster.get(&"fleet_snapshot")
+	if snapshot is FleetSnapshot:
+		var fleet: FleetSnapshot = snapshot
+		if not fleet.ships.is_empty():
+			var dest_planet: Planet = cluster.destination_planet as Planet
+			if dest_planet != null:
+				var result: Dictionary = dest_planet.resolve_ship_arrival(fleet)
+				cluster.queue_free()
+				return result.get(&"result", &"rejected") as StringName
 	return cluster._arrive()
+
 
 func _formation_offsets(count: int, direction: Vector2, perpendicular: Vector2, spacing: float) -> Array[Vector2]:
 	var offsets: Array[Vector2] = []

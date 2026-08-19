@@ -142,12 +142,12 @@ Ein Scout benötigt:
 
 ## 8. Ship Builder: aktueller Umfang
 
-`ShipPartCatalog` enthält die Slottypen Hull, Scanner, Waffe und Module sowie zwei maximale Modulplätze. Der Default-Katalog enthält zwei Hüllen (T1/T2), einen Scanner, ein Impulsgeschütz und drei Module.
+`ShipPartCatalog` enthält die Slottypen Hull, Antrieb, Waffe, Schild, Scanner und Module sowie zwei maximale Modulplätze. Der Default-Katalog enthält zwei Hüllen (T1/T2), einen Antrieb, ein Impulsgeschütz, einen Schild, einen Scanner und drei Module; Antrieb, Waffe und Schild tragen Varianten-Pools (gewichtete, seed-deterministische Auswahl mit sichtbaren Overlays).
 
 Kaufen, Montieren und Zerlegen sind in `GameState`, `ShipManager` und `TechnologyMenu` implementiert. Eine Assembly besteht aktuell aus:
 
 ```text
-hull + scanner + optional weapon + module_ids
+hull + drive + shield + scanner + optional weapon + module_ids
 ```
 
 Ein Schiff mit Waffe gilt als militärisch — der erste bewaffnete Bauauftrag ist das erste Militärschiff (Worker-Fertiger und Scout bleiben separate Pfade).
@@ -155,6 +155,8 @@ Ein Schiff mit Waffe gilt als militärisch — der erste bewaffnete Bauauftrag i
 **Tech-Gating:** Jedes Bauteil trägt `required_tech_id`; der Kauf ist gesperrt, bis die Fraktion die Technologie erforscht hat. `hull_t1` braucht `shipyard_construction`, `scanner_t1` braucht `scanner_drone`, `hull_t2`/`weapon_t1` brauchen `weapon_systems`. Das verhindert, dass sinnlose Optionen ohne Progression nutzbar sind.
 
 **Timer statt Sofort-Freischaltung:** `TechnologyDefinition.research_time` und `ShipPartDefinition.build_time` machen Forschung und Montage zu zeitgesteuerten Aufträgen in `GameState` (`_research_jobs`, `_ship_build_jobs`). Kosten werden beim Start gezahlt; `advance_research()`/`advance_builds()` treiben die Jobs im Live-Spiel über `_process` voran (Preflight friert sie über `set_jobs_auto_advance(false)` ein und tickt deterministisch). `technology_researched`/`ship_assembled` feuern erst bei Abschluss.
+
+**Pacing:** Die Montagezeit skaliert mit Schiff und Modul: Der Rumpf trägt die Tier-Basiszeit (T1 = 60 s, T2 = 120 s), jedes Utility-Modul addiert +10 s und eine Waffe +15 s. Antrieb, Schild und Scanner sind Rumpf-Komponenten ohne eigene Montagezeit.
 
 Assemblies sind weiterhin Inventar-/Display-Zustand. Sie werden nicht als Dispatch-Fleet oder Kampfeinheit verwendet. Der einzige aktiv fliegende Schiffstyp ist `ScoutShip`. Das Ersetzen der Worker-Missionstypen/K/M/L-Clustertiers durch fliegende Builder-Schiffe ist ein eigener Migrationsschritt und noch offen.
 

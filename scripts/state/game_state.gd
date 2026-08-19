@@ -663,7 +663,7 @@ func buy_ship_part(planet_id: StringName, part_id: StringName, catalog: ShipPart
 	ship_part_purchased.emit(planet_id, part_id)
 	return true
 
-func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, catalog: ShipPartCatalog = null, weapon_id: StringName = &"") -> bool:
+func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, catalog: ShipPartCatalog = null, weapon_id: StringName = &"", drive_id: StringName = &"", shield_id: StringName = &"") -> bool:
 	var cat: ShipPartCatalog = catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG
 	if cat == null:
 		return false
@@ -683,6 +683,19 @@ func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: S
 	if not _part_tech_unlocked(faction, scanner):
 		return false
 	var required: Dictionary = {hull_id: 1, scanner_id: 1}
+	for slot_value in [[drive_id, ShipPartDefinition.SLOT_DRIVE], [shield_id, ShipPartDefinition.SLOT_SHIELD]]:
+		var slot_id: StringName = slot_value[0] as StringName
+		var expected_slot: StringName = slot_value[1] as StringName
+		if String(slot_id).is_empty():
+			continue
+		var slot_part: ShipPartDefinition = cat.resolve(slot_id)
+		if slot_part == null or slot_part.slot_type != expected_slot:
+			return false
+		if slot_id == hull_id or slot_id == scanner_id:
+			return false
+		if not _part_tech_unlocked(faction, slot_part):
+			return false
+		required[slot_id] = int(required.get(slot_id, 0)) + 1
 	if not String(weapon_id).is_empty():
 		var weapon := cat.resolve(weapon_id)
 		if weapon == null or weapon.slot_type != ShipPartDefinition.SLOT_WEAPON:
@@ -695,7 +708,7 @@ func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: S
 	for module_value in module_ids:
 		var module_id: StringName = module_value as StringName
 		var module := cat.resolve(module_id)
-		if module == null or module.slot_type != ShipPartDefinition.SLOT_MODULE:
+		if module == null or not ShipPartDefinition.is_utility_slot(module.slot_type):
 			return false
 		if module_id == hull_id or module_id == scanner_id or module_id == weapon_id:
 			return false
@@ -712,24 +725,38 @@ func _part_tech_unlocked(faction: StringName, part: ShipPartDefinition) -> bool:
 		return true
 	return has_technology(faction, part.required_tech_id)
 
-func assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, catalog: ShipPartCatalog = null, weapon_id: StringName = &"") -> StringName:
-	if not can_assemble_ship(planet_id, hull_id, scanner_id, module_ids, catalog, weapon_id):
+func assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, catalog: ShipPartCatalog = null, weapon_id: StringName = &"", drive_id: StringName = &"", shield_id: StringName = &"", blueprint_id: StringName = &"", instance_seed: int = -1) -> StringName:
+	if not can_assemble_ship(planet_id, hull_id, scanner_id, module_ids, catalog, weapon_id, drive_id, shield_id):
 		return &""
 	var cat: ShipPartCatalog = catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG
+	var blueprint: ShipBlueprint = cat.resolve_blueprint(blueprint_id)
+	if not String(blueprint_id).is_empty() and blueprint == null:
+		return &""
 	_remove_ship_part(planet_id, hull_id, 1)
 	_remove_ship_part(planet_id, scanner_id, 1)
+	if not String(drive_id).is_empty():
+		_remove_ship_part(planet_id, drive_id, 1)
+	if not String(shield_id).is_empty():
+		_remove_ship_part(planet_id, shield_id, 1)
 	for module_value in module_ids:
 		_remove_ship_part(planet_id, module_value as StringName, 1)
 	if not String(weapon_id).is_empty():
 		_remove_ship_part(planet_id, weapon_id, 1)
-	var ship_id := _next_ship_id()
-	var total_time := _ship_build_time(cat, hull_id, scanner_id, weapon_id, module_ids)
+	var ship_id: StringName = _next_ship_id()
+	var resolved_instance_seed: int = _next_ship_index if instance_seed < 0 else instance_seed
+	var variant_ids: Dictionary = _select_variant_ids(cat, blueprint, resolved_instance_seed, hull_id, drive_id, weapon_id, shield_id, scanner_id, module_ids)
+	var total_time := _ship_build_time(cat, hull_id, scanner_id, weapon_id, module_ids, drive_id, shield_id)
 	if total_time > 0.0:
 		var jobs: Dictionary = _ship_build_jobs.get(planet_id, {})
 		jobs[ship_id] = {
 			"hull": hull_id,
-			"scanner": scanner_id,
+			"drive": drive_id,
+			"blueprint": blueprint.id if blueprint != null else &"",
+			"instance_seed": resolved_instance_seed,
+			"variants": variant_ids,
 			"weapon": weapon_id,
+			"shield": shield_id,
+			"scanner": scanner_id,
 			"modules": module_ids.duplicate(),
 			"remaining": total_time
 		}
@@ -738,8 +765,13 @@ func assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: Strin
 		return ship_id
 	var assembly: Dictionary = {
 		"hull": hull_id,
-		"scanner": scanner_id,
+		"drive": drive_id,
+		"blueprint": blueprint.id if blueprint != null else &"",
+		"instance_seed": resolved_instance_seed,
+		"variants": variant_ids,
 		"weapon": weapon_id,
+		"shield": shield_id,
+		"scanner": scanner_id,
 		"modules": module_ids.duplicate(),
 	}
 	var assemblies: Dictionary = _ship_assemblies.get(planet_id, {})
@@ -748,9 +780,35 @@ func assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: Strin
 	ship_assembled.emit(planet_id, ship_id)
 	return ship_id
 
-func _ship_build_time(cat: ShipPartCatalog, hull_id: StringName, scanner_id: StringName, weapon_id: StringName, module_ids: Array) -> float:
+func _select_variant_ids(cat: ShipPartCatalog, blueprint: ShipBlueprint, instance_seed: int, hull_id: StringName, drive_id: StringName, weapon_id: StringName, shield_id: StringName, scanner_id: StringName, module_ids: Array) -> Dictionary:
+	var result: Dictionary = {}
+	if cat == null or blueprint == null:
+		return result
+	var slot_ids: Dictionary = {
+		&"hull": hull_id,
+		&"drive": drive_id,
+		&"weapon": weapon_id,
+		&"shield": shield_id,
+		&"scanner": scanner_id,
+	}
+	for slot_name in slot_ids:
+		var part_id: StringName = slot_ids[slot_name] as StringName
+		if String(part_id).is_empty():
+			continue
+		var part: ShipPartDefinition = cat.resolve(part_id)
+		var variant: ShipComponentVariant = cat.select_variant(part, blueprint, instance_seed, -1, slot_name as StringName)
+		result[slot_name] = variant.id if variant != null else &""
+	var utility_variants: Array[StringName] = []
+	for index in range(module_ids.size()):
+		var utility_part: ShipPartDefinition = cat.resolve(module_ids[index] as StringName)
+		var utility_variant: ShipComponentVariant = cat.select_variant(utility_part, blueprint, instance_seed, -1, StringName("utility_%d" % index))
+		utility_variants.append(utility_variant.id if utility_variant != null else &"")
+	result[&"utility"] = utility_variants
+	return result
+
+func _ship_build_time(cat: ShipPartCatalog, hull_id: StringName, scanner_id: StringName, weapon_id: StringName, module_ids: Array, drive_id: StringName = &"", shield_id: StringName = &"") -> float:
 	var total := 0.0
-	for part_value in [hull_id, scanner_id, weapon_id]:
+	for part_value in [hull_id, drive_id, weapon_id, shield_id, scanner_id]:
 		var part := cat.resolve(part_value as StringName)
 		if part != null:
 			total += part.build_time
@@ -790,8 +848,13 @@ func advance_builds(seconds: float) -> void:
 			jobs.erase(ship_id)
 			var assembly: Dictionary = {
 				"hull": job.get("hull", &""),
-				"scanner": job.get("scanner", &""),
+				"drive": job.get("drive", &""),
+				"blueprint": job.get("blueprint", &""),
+				"instance_seed": int(job.get("instance_seed", 0)),
+				"variants": (job.get("variants", {}) as Dictionary).duplicate(true),
 				"weapon": job.get("weapon", &""),
+				"shield": job.get("shield", &""),
+				"scanner": job.get("scanner", &""),
 				"modules": (job.get("modules", []) as Array).duplicate(),
 			}
 			var assemblies: Dictionary = _ship_assemblies.get(planet_id, {})
@@ -819,9 +882,15 @@ func disassemble_ship(planet_id: StringName, ship_id: StringName) -> bool:
 		return false
 	var assembly: Dictionary = assemblies[ship_id]
 	_add_ship_part(planet_id, assembly.get("hull", &"") as StringName, 1)
+	var drive_id: StringName = assembly.get("drive", &"") as StringName
+	if not String(drive_id).is_empty():
+		_add_ship_part(planet_id, drive_id, 1)
 	_add_ship_part(planet_id, assembly.get("scanner", &"") as StringName, 1)
 	if not String(assembly.get("weapon", &"")).is_empty():
 		_add_ship_part(planet_id, assembly.get("weapon", &"") as StringName, 1)
+	var shield_id: StringName = assembly.get("shield", &"") as StringName
+	if not String(shield_id).is_empty():
+		_add_ship_part(planet_id, shield_id, 1)
 	for module_value in assembly.get("modules", []):
 		_add_ship_part(planet_id, module_value as StringName, 1)
 	assemblies.erase(ship_id)

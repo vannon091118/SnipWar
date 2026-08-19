@@ -30,6 +30,13 @@ extends Resource
 @export var ship_scanner_offset: Vector2 = Vector2(8.0, -6.0)
 @export var ship_module_offsets: Array[Vector2] = [Vector2(-10.0, 6.0), Vector2(10.0, 6.0), Vector2(-14.0, 0.0), Vector2(14.0, 0.0)]
 @export var ship_scanner_scale: Vector2 = Vector2(0.5, 0.5)
+@export var ship_weapon_offset: Vector2 = Vector2(0.0, -4.0)
+@export var ship_engine_offset: Vector2 = Vector2(0.0, 10.0)
+@export var ship_shield_offset: Vector2 = Vector2.ZERO
+@export var ship_weapon_scale: Vector2 = Vector2(0.28, 0.28)
+@export var ship_engine_scale: Vector2 = Vector2(0.34, 0.34)
+@export var ship_shield_scale: Vector2 = Vector2(0.62, 0.62)
+@export var ship_shield_overlay_tint: Color = Color(0.75, 0.9, 1.0, 0.72)
 @export var ship_module_scale: Vector2 = Vector2(0.4, 0.4)
 
 func resolve_tint(tint_mode: StringName, faction: StringName) -> Color:
@@ -79,6 +86,12 @@ func validate() -> PackedStringArray:
 		errors.append("transformer strength_label_offset_y cannot be negative")
 	if ship_scanner_scale.x <= 0.0 or ship_scanner_scale.y <= 0.0:
 		errors.append("transformer ship_scanner_scale must be positive")
+	if ship_weapon_scale.x <= 0.0 or ship_weapon_scale.y <= 0.0:
+		errors.append("transformer ship_weapon_scale must be positive")
+	if ship_engine_scale.x <= 0.0 or ship_engine_scale.y <= 0.0:
+		errors.append("transformer ship_engine_scale must be positive")
+	if ship_shield_scale.x <= 0.0 or ship_shield_scale.y <= 0.0:
+		errors.append("transformer ship_shield_scale must be positive")
 	if ship_module_scale.x <= 0.0 or ship_module_scale.y <= 0.0:
 		errors.append("transformer ship_module_scale must be positive")
 	return errors

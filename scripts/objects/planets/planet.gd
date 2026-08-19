@@ -301,6 +301,91 @@ func resolve_arrival(source_faction: StringName, amount: int) -> StringName:
 	register_workers(incoming - defenders)
 	return ARRIVAL_CAPTURED
 
+# Number of surviving attackers registered as workers on a captured planet when
+# the result comes from a fleet-vs-fleet FleetBattleSimulator outcome. The
+# simulator returns surviving ships (not workers); we convert ships to workers
+# at this fixed rate so capture always produces a measurable garrison on the
+# destination. ConquestSimulator already operates on workers directly.
+const _CAPTURED_WORKER_PER_SHIP := 10
+
+## Resolves an incoming FleetSnapshot (assembled ships) through the existing
+## deterministic FleetBattleSimulator (fleet-vs-fleet) and ConquestSimulator
+## (fleet-vs-ground) – the worker-count MVP rule in resolve_arrival() stays for
+## pure-worker transit.
+##
+## defender_fleet: non-null with ships → FleetBattleSimulator; null/empty →
+## ConquestSimulator using this planet's defenders.
+##
+## Returns a Dictionary with `result` (ARRIVAL_*), `surviving_attackers` (int)
+## and `duration` (float). Side effects when captured: set_faction(
+## attacking_faction) and register_workers(survivor_count).
+func resolve_ship_arrival(arriving_fleet: FleetSnapshot, defender_fleet: FleetSnapshot = null, battle_seed: int = 1337, conquest_seed: int = 42) -> Dictionary:
+	var out: Dictionary = {"result": ARRIVAL_REJECTED, "surviving_attackers": 0, "duration": 0.0}
+	if arriving_fleet == null or arriving_fleet.ships.is_empty():
+		return out
+	var attacking_faction: StringName = arriving_fleet.faction
+	if String(attacking_faction).is_empty() or attacking_faction == GameState.FACTION_NEUTRAL:
+		return out
+	var defending_faction: StringName = get_faction()
+	if defending_faction == attacking_faction:
+		out["result"] = ARRIVAL_FRIENDLY
+		var gain: int = arriving_fleet.ships.size() * _CAPTURED_WORKER_PER_SHIP
+		if gain > 0:
+			register_workers(gain)
+		out["surviving_attackers"] = gain
+		return out
+	if defender_fleet != null and not defender_fleet.ships.is_empty():
+		return _resolve_ship_vs_fleet(arriving_fleet, defender_fleet, battle_seed, attacking_faction, out)
+	return _resolve_ship_vs_planet(arriving_fleet, conquest_seed, attacking_faction, out)
+
+
+func _resolve_ship_vs_fleet(arriving_fleet: FleetSnapshot, defender_fleet: FleetSnapshot, battle_seed: int, attacking_faction: StringName, out: Dictionary) -> Dictionary:
+	var battle: Dictionary = FleetBattleSimulator.simulate_battle(arriving_fleet, defender_fleet, battle_seed)
+	var winner: StringName = battle.get("winner", &"neutral") as StringName
+	var survivors: Array = battle.get("survivors_a", [])
+	if winner == attacking_faction:
+		set_faction(attacking_faction)
+		var gain: int = survivors.size() * _CAPTURED_WORKER_PER_SHIP
+		if gain > 0:
+			register_workers(gain)
+		out["result"] = ARRIVAL_CAPTURED
+		out["surviving_attackers"] = gain
+	else:
+		out["result"] = ARRIVAL_REPELLED
+	out["duration"] = float(battle.get("duration", 0.0))
+	return out
+
+
+func _resolve_ship_vs_planet(arriving_fleet: FleetSnapshot, conquest_seed: int, attacking_faction: StringName, out: Dictionary) -> Dictionary:
+	var defender_workers: int = worker_count
+	var defense_rating := _aggregate_defense_rating()
+	var conquest: Dictionary = ConquestSimulator.simulate_conquest(
+		arriving_fleet, 0, defender_workers, defense_rating,
+		get_perimeter_slots(), get_defense_range(), conquest_seed)
+	if bool(conquest.get("captured", false)):
+		set_faction(attacking_faction)
+		var gain: int = int(conquest.get("surviving_attackers", 0))
+		if gain > 0:
+			register_workers(gain)
+		out["result"] = ARRIVAL_CAPTURED
+		out["surviving_attackers"] = gain
+	else:
+		out["result"] = ARRIVAL_REPELLED
+	out["duration"] = float(conquest.get("duration", 0.0))
+	return out
+
+
+func _aggregate_defense_rating() -> int:
+	var total := 0
+	var state: Node = _game_state()
+	if state == null:
+		return total
+	for up_id in state.get_planet_upgrades(planet_id):
+		var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
+		if def != null and def.trait_definition != null:
+			total += def.trait_definition.defense_rating
+	return total
+
 func resolve_mission(source_faction: StringName, amount: int, mission_type: StringName = &"military", source_planet_id: StringName = &"") -> StringName:
 	if mission_type == GameState.MISSION_COLONY:
 		return _resolve_colony(source_faction, amount)
@@ -308,7 +393,31 @@ func resolve_mission(source_faction: StringName, amount: int, mission_type: Stri
 		return _resolve_cargo(source_faction, amount)
 	if mission_type == GameState.MISSION_COLLECT:
 		return _resolve_collect(source_faction, amount, source_planet_id)
+	return resolve_military_arrival(source_faction, amount, source_planet_id)
+
+## Resolves a military arrival by drafting the source planet's assembled ships into
+## a FleetSnapshot (create_fleet_from_planet) and running the deterministic
+## FleetBattleSimulator (fleet-vs-fleet) or ConquestSimulator (fleet-vs-ground)
+## through resolve_ship_arrival(). When the source carries no assembled ships the
+## legacy worker-count rule in resolve_arrival() handles pure-worker transit.
+func resolve_military_arrival(source_faction: StringName, amount: int, source_planet_id: StringName = &"") -> StringName:
+	var state: Node = _game_state()
+	var attacking_fleet: FleetSnapshot = _build_fleet_from_assemblies(state, source_planet_id)
+	if attacking_fleet != null and not attacking_fleet.ships.is_empty():
+		var defender_fleet: FleetSnapshot = _build_fleet_from_assemblies(state, planet_id)
+		var result: Dictionary = resolve_ship_arrival(attacking_fleet, defender_fleet)
+		return result.get(&"result", ARRIVAL_REJECTED) as StringName
 	return resolve_arrival(source_faction, amount)
+
+
+func _build_fleet_from_assemblies(state: Node, target_planet_id: StringName) -> FleetSnapshot:
+	if state == null or String(target_planet_id).is_empty():
+		return null
+	var assemblies: Dictionary = state.get_ship_assemblies(target_planet_id)
+	if assemblies.is_empty():
+		return null
+	var ship_ids: Array = assemblies.keys()
+	return state.create_fleet_from_planet(target_planet_id, ship_ids) as FleetSnapshot
 
 func _resolve_colony(source_faction: StringName, amount: int) -> StringName:
 	var incoming: int = maxi(amount, 0)

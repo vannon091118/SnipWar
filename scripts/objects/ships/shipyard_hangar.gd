@@ -20,43 +20,56 @@ func set_worker_production_visible(visible: bool) -> void:
 	worker_production_visible = visible
 	_rebuild_worker_slots()
 
-func show_ship(hull_texture: Texture2D, scanner_texture: Texture2D, module_textures: Array[Texture2D]) -> void:
+func show_ship_parts(
+	hull: ShipPartDefinition,
+	scanner: ShipPartDefinition,
+	drive: ShipPartDefinition,
+	weapon: ShipPartDefinition,
+	shield: ShipPartDefinition,
+	modules: Array[ShipPartDefinition],
+	faction: StringName = &"a",
+	variants: Dictionary = {}
+) -> void:
 	var builder: Node2D = get_node_or_null("FutureShipBuilder") as Node2D
 	if builder == null:
 		return
-	_clear_ship_visual(builder)
+	var view: CompositeShipView = _prepare_composite_view(builder)
 	builder.visible = true
-	var config: ShipConfig = _ship_config if _ship_config != null else DEFAULT_SHIP_CONFIG
-	if hull_texture != null:
-		_add_ship_sprite(builder, "HullSprite", hull_texture, Vector2.ZERO, config.worker_visual_size * 2.0)
-	if scanner_texture != null:
-		_add_ship_sprite(builder, "ScannerSprite", scanner_texture, config.scanner_offset * 2.0, config.worker_visual_size)
-	for index in module_textures.size():
-		var lateral := (float(index) - float(module_textures.size() - 1) * 0.5) * config.hangar_slot_spacing
-		_add_ship_sprite(builder, "ModuleSprite_%d" % index, module_textures[index], Vector2(lateral, config.hangar_worker_offset.y), config.worker_visual_size)
+	view.visible = true
+	view.scale = _view_scale(hull.visual_asset if hull != null else null)
+	view.setup_from_parts(hull, scanner, drive, weapon, shield, modules, faction, null, variants)
 
 func hide_ship() -> void:
 	var builder: Node2D = get_node_or_null("FutureShipBuilder") as Node2D
 	if builder == null:
 		return
-	_clear_ship_visual(builder)
+	var view: CompositeShipView = builder.get_node_or_null("CompositeShipView") as CompositeShipView
+	if view != null:
+		view.clear()
+		view.visible = false
+	_clear_ship_visual(builder, view)
 	builder.visible = false
 
-func _clear_ship_visual(builder: Node2D) -> void:
+func _prepare_composite_view(builder: Node2D) -> CompositeShipView:
+	var view: CompositeShipView = builder.get_node_or_null("CompositeShipView") as CompositeShipView
+	if view == null:
+		view = CompositeShipView.new()
+		view.name = "CompositeShipView"
+		builder.add_child(view)
+	_clear_ship_visual(builder, view)
+	return view
+
+func _clear_ship_visual(builder: Node2D, keep: Node = null) -> void:
 	for child in builder.get_children():
+		if child == keep:
+			continue
 		builder.remove_child(child)
 		child.queue_free()
 
-func _add_ship_sprite(builder: Node2D, sprite_name: String, texture: Texture2D, offset: Vector2, target_width: float) -> void:
-	var sprite := Sprite2D.new()
-	sprite.name = sprite_name
-	sprite.texture = texture
-	var texture_width: float = 1.0
-	if texture != null:
-		texture_width = float(texture.get_width())
-	sprite.scale = Vector2.ONE * (target_width / maxf(texture_width, 1.0))
-	sprite.position = offset
-	builder.add_child(sprite)
+func _view_scale(hull_texture: Texture2D) -> Vector2:
+	var config: ShipConfig = _ship_config if _ship_config != null else DEFAULT_SHIP_CONFIG
+	var texture_width: float = float(hull_texture.get_width()) if hull_texture != null else 96.0
+	return Vector2.ONE * (config.worker_visual_size * 2.0 / maxf(texture_width, 1.0))
 
 func _ready() -> void:
 	_rebuild_worker_slots()

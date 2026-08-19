@@ -17,14 +17,86 @@ func run(ctx: PreflightContext) -> bool:
 	var catalog: ShipPartCatalog = ship_manager.get_part_catalog()
 	if not ctx.check(catalog != null and catalog.validate().is_empty(), "ship part catalog validation failed"):
 		return false
-	if not ctx.check(not catalog.for_slot(ShipPartDefinition.SLOT_HULL).is_empty() and not catalog.for_slot(ShipPartDefinition.SLOT_SCANNER).is_empty() and not catalog.for_slot(ShipPartDefinition.SLOT_MODULE).is_empty() and not catalog.for_slot(ShipPartDefinition.SLOT_WEAPON).is_empty(), "ship part catalog is missing a hull, scanner, module, or weapon branch"):
+	if not ctx.check(
+		not catalog.for_slot(ShipPartDefinition.SLOT_HULL).is_empty()
+		and not catalog.for_slot(ShipPartDefinition.SLOT_DRIVE).is_empty()
+		and not catalog.for_slot(ShipPartDefinition.SLOT_WEAPON).is_empty()
+		and not catalog.for_slot(ShipPartDefinition.SLOT_SHIELD).is_empty()
+		and not catalog.for_slot(ShipPartDefinition.SLOT_SCANNER).is_empty()
+		and not catalog.for_slot(ShipPartDefinition.SLOT_MODULE).is_empty(),
+		"ship part catalog is missing a hull, drive, weapon, shield, scanner, or module branch"):
 		return false
 	var source: Planet = ctx.find_planet_by_id(field, game_state.homeworld_for(GameState.FACTION_PLAYER) as StringName)
 	if not ctx.check(source != null and game_state.has_planet_upgrade(source.planet_id, ShipManager.SHIPYARD_UPGRADE_ID), "player homeworld should carry a shipyard before the ship builder runs"):
 		return false
 	var hull_part: ShipPartDefinition = catalog.for_slot(ShipPartDefinition.SLOT_HULL)[0]
+	var drive_part: ShipPartDefinition = catalog.for_slot(ShipPartDefinition.SLOT_DRIVE)[0]
+	var weapon_part: ShipPartDefinition = catalog.for_slot(ShipPartDefinition.SLOT_WEAPON)[0]
+	var shield_part: ShipPartDefinition = catalog.for_slot(ShipPartDefinition.SLOT_SHIELD)[0]
 	var scanner_part: ShipPartDefinition = catalog.for_slot(ShipPartDefinition.SLOT_SCANNER)[0]
 	var module_part: ShipPartDefinition = catalog.for_slot(ShipPartDefinition.SLOT_MODULE)[0]
+	if not ctx.check(drive_part.trait_definition != null and weapon_part.trait_definition != null and shield_part.trait_definition != null, "drive, weapon, and shield parts must carry trait definitions"):
+		return false
+	# --- PACING: hull carries the tier base; weapon and modules extend it ---
+	var hull_t2: ShipPartDefinition = catalog.resolve(&"hull_t2")
+	if not ctx.check(
+		hull_part.build_time == 60.0
+		and hull_t2 != null and hull_t2.build_time == 120.0
+		and weapon_part.build_time == 15.0
+		and module_part.build_time == 10.0,
+		"build time should scale with hull tier (60/120s) plus weapon and modules"):
+		return false
+	if not ctx.check(not catalog.for_slot(ShipPartDefinition.SLOT_UTILITY).is_empty(), "ship part catalog is missing the utility slot"):
+		return false
+	var blueprint: ShipBlueprint = catalog.default_blueprint()
+	if not ctx.check(blueprint != null and blueprint.validate().is_empty(), "default ship blueprint is missing or invalid"):
+		return false
+	var first_variant: ShipComponentVariant = catalog.select_variant(drive_part, blueprint, 7, drive_part.tier, &"drive")
+	var repeat_variant: ShipComponentVariant = catalog.select_variant(drive_part, blueprint, 7, drive_part.tier, &"drive")
+	if not ctx.check(first_variant != null and repeat_variant != null and first_variant.id == repeat_variant.id, "variant selection must be deterministic for identical blueprint and instance seeds"):
+		return false
+	var variant_changed: bool = false
+	for seed in range(8, 32):
+		var candidate: ShipComponentVariant = catalog.select_variant(drive_part, blueprint, seed, drive_part.tier, &"drive")
+		if candidate != null and candidate.id != first_variant.id:
+			variant_changed = true
+			break
+	if not ctx.check(variant_changed, "variant selection should expose seed-based instance variation"):
+		return false
+	if not ctx.check(catalog.combined_trait(drive_part, first_variant) != null, "variant trait merge returned no drive trait"):
+		return false
+	var weapon_variant: ShipComponentVariant = catalog.select_variant(weapon_part, blueprint, 7, weapon_part.tier, &"weapon")
+	var shield_variant: ShipComponentVariant = catalog.select_variant(shield_part, blueprint, 7, shield_part.tier, &"shield")
+	if not ctx.check(weapon_variant != null and shield_variant != null, "weapon and shield variants should be selectable"):
+		return false
+	var overlay_variants: Dictionary = {
+		&"drive": first_variant,
+		&"weapon": weapon_variant,
+		&"shield": shield_variant,
+	}
+
+	var build_view: CompositeShipView = CompositeShipView.new()
+	var build_modules: Array[ShipPartDefinition] = [module_part]
+	build_view.setup_from_parts(hull_part, scanner_part, drive_part, weapon_part, shield_part, build_modules, GameState.FACTION_PLAYER, null, overlay_variants)
+	if not ctx.check(build_view.get_node_or_null("EngineOverlay").visible, "CompositeShipView did not render the drive overlay"):
+		return false
+	if not ctx.check(build_view.get_node_or_null("WeaponOverlay").visible, "CompositeShipView did not render the weapon overlay"):
+		return false
+	if not ctx.check(build_view.get_node_or_null("ShieldOverlay").visible, "CompositeShipView did not render the shield overlay"):
+		return false
+	if not ctx.check(not String(build_view.get_node_or_null("EngineOverlay").get_meta("trait_id", "")).is_empty(), "engine overlay lost its trait readback metadata"):
+		return false
+	if not ctx.check(not String(build_view.get_node_or_null("WeaponOverlay").get_meta("trait_id", "")).is_empty(), "weapon overlay lost its trait readback metadata"):
+		return false
+	if not ctx.check(not String(build_view.get_node_or_null("ShieldOverlay").get_meta("trait_id", "")).is_empty(), "shield overlay lost its trait readback metadata"):
+		return false
+	if not ctx.check(String(build_view.get_node_or_null("EngineOverlay").get_meta("variant_id", "")) == String(first_variant.id), "engine overlay did not retain the selected variant"):
+		return false
+	if not ctx.check(String(build_view.get_node_or_null("WeaponOverlay").get_meta("variant_id", "")) == String(weapon_variant.id), "weapon overlay did not retain the selected variant"):
+		return false
+	if not ctx.check(String(build_view.get_node_or_null("ShieldOverlay").get_meta("variant_id", "")) == String(shield_variant.id), "shield overlay did not retain the selected variant"):
+		return false
+	build_view.queue_free()
 
 	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"material", 100)
 	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"energy", 100)
@@ -38,12 +110,22 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(ship_manager.buy_part(source, module_part.id), "module part purchase should succeed"):
 		return false
-	if not ctx.check(game_state.get_ship_part_count(source.planet_id, hull_part.id) == 1 and game_state.get_ship_part_count(source.planet_id, scanner_part.id) == 1 and game_state.get_ship_part_count(source.planet_id, module_part.id) == 1, "purchased parts were not recorded in the inventory"):
+	if not ctx.check(ship_manager.buy_part(source, drive_part.id), "drive part purchase should succeed"):
+		return false
+	if not ctx.check(ship_manager.buy_part(source, shield_part.id), "shield part purchase should succeed"):
+		return false
+	if not ctx.check(
+		game_state.get_ship_part_count(source.planet_id, hull_part.id) == 1
+		and game_state.get_ship_part_count(source.planet_id, scanner_part.id) == 1
+		and game_state.get_ship_part_count(source.planet_id, module_part.id) == 1
+		and game_state.get_ship_part_count(source.planet_id, drive_part.id) == 1
+		and game_state.get_ship_part_count(source.planet_id, shield_part.id) == 1,
+		"purchased parts were not recorded in the inventory"):
 		return false
 
-	if not ctx.check(not game_state.can_assemble_ship(source.planet_id, hull_part.id, scanner_part.id, [module_part.id, module_part.id], catalog), "assembling beyond module ownership should be rejected"):
+	if not ctx.check(not game_state.can_assemble_ship(source.planet_id, hull_part.id, scanner_part.id, [module_part.id, module_part.id], catalog, &"", drive_part.id, shield_part.id), "assembling beyond module ownership should be rejected"):
 		return false
-	var ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [module_part.id])
+	var ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [module_part.id], &"", drive_part.id, shield_part.id)
 	if not ctx.check(not String(ship_id).is_empty(), "ship assembly did not start (ship_id=%s)" % ship_id):
 		return false
 	if not ctx.check(game_state.call("ship_build_in_progress", source.planet_id, ship_id), "timed ship build was not queued"):
@@ -53,7 +135,13 @@ func run(ctx: PreflightContext) -> bool:
 	game_state.call("advance_builds", 999.0)
 	if not ctx.check(game_state.has_ship_assembly(source.planet_id, ship_id), "ship assembly did not register after the build timer (ship_id=%s)" % ship_id):
 		return false
-	if not ctx.check(game_state.get_ship_part_count(source.planet_id, hull_part.id) == 0 and game_state.get_ship_part_count(source.planet_id, scanner_part.id) == 0 and game_state.get_ship_part_count(source.planet_id, module_part.id) == 0, "ship assembly did not consume the parts"):
+	if not ctx.check(
+		game_state.get_ship_part_count(source.planet_id, hull_part.id) == 0
+		and game_state.get_ship_part_count(source.planet_id, scanner_part.id) == 0
+		and game_state.get_ship_part_count(source.planet_id, module_part.id) == 0
+		and game_state.get_ship_part_count(source.planet_id, drive_part.id) == 0
+		and game_state.get_ship_part_count(source.planet_id, shield_part.id) == 0,
+		"ship assembly did not consume the parts"):
 		return false
 	var hangar: ShipyardHangar = source.get_node_or_null("PlanetDetails/UpgradeStructure_shipyard/Hangar") as ShipyardHangar
 	var builder_node: Node2D = hangar.get_node_or_null("FutureShipBuilder") as Node2D if hangar != null else null
@@ -64,19 +152,23 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(not game_state.has_ship_assembly(source.planet_id, ship_id), "disassembled ship should be removed"):
 		return false
-	if not ctx.check(game_state.get_ship_part_count(source.planet_id, hull_part.id) == 1 and game_state.get_ship_part_count(source.planet_id, scanner_part.id) == 1 and game_state.get_ship_part_count(source.planet_id, module_part.id) == 1, "disassembly did not refund the parts"):
+	if not ctx.check(
+		game_state.get_ship_part_count(source.planet_id, hull_part.id) == 1
+		and game_state.get_ship_part_count(source.planet_id, scanner_part.id) == 1
+		and game_state.get_ship_part_count(source.planet_id, module_part.id) == 1
+		and game_state.get_ship_part_count(source.planet_id, drive_part.id) == 1
+		and game_state.get_ship_part_count(source.planet_id, shield_part.id) == 1,
+		"disassembly did not refund the parts"):
 		return false
 	if not ctx.check(builder_node != null and not builder_node.visible, "disassembled ship did not hide the FutureShipBuilder display"):
 		return false
 
 	# --- WEAPON SLOT + TECH GATING + TIMED RESEARCH ---
 	var tech_catalog: TechnologyCatalog = ship_manager.get_technology_catalog()
-	var weapon_part: ShipPartDefinition = catalog.for_slot(ShipPartDefinition.SLOT_WEAPON)[0]
 	if not ctx.check(weapon_part.required_tech_id == &"weapon_systems", "weapon part should require the weapon_systems tech"):
 		return false
 	if not ctx.check(not game_state.can_buy_ship_part(source.planet_id, weapon_part.id, catalog), "weapon part should be locked before weapon_systems research"):
 		return false
-	var hull_t2: ShipPartDefinition = catalog.resolve(&"hull_t2")
 	if not ctx.check(hull_t2 != null and not game_state.can_buy_ship_part(source.planet_id, hull_t2.id, catalog), "tier-2 hull should be locked before weapon_systems research"):
 		return false
 	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"volatile", 50)
@@ -95,13 +187,55 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(ship_manager.buy_part(source, weapon_part.id), "weapon part purchase should succeed"):
 		return false
-	var military_ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [], weapon_part.id)
+	var military_ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [], weapon_part.id, drive_part.id, shield_part.id)
 	if not ctx.check(not String(military_ship_id).is_empty() and game_state.call("ship_build_in_progress", source.planet_id, military_ship_id), "armed ship build did not start"):
 		return false
 	game_state.call("advance_builds", 999.0)
 	var military_assembly: Dictionary = game_state.get_ship_assembly(source.planet_id, military_ship_id)
 	if not ctx.check(military_assembly.get("weapon", &"") == weapon_part.id, "armed ship did not record its weapon"):
 		return false
-	if not ctx.check(ship_manager.disassemble_ship(source, military_ship_id) and game_state.get_ship_part_count(source.planet_id, weapon_part.id) >= 1, "armed ship disassembly did not refund the weapon"):
+	var stored_variants: Dictionary = military_assembly.get("variants", {}) as Dictionary
+	if not ctx.check(not String(stored_variants.get(&"drive", &"")).is_empty() and not String(stored_variants.get(&"weapon", &"")).is_empty(), "assembled ship did not persist selected drive and weapon variants"):
+		return false
+	if not ctx.check(
+		ship_manager.disassemble_ship(source, military_ship_id)
+		and game_state.get_ship_part_count(source.planet_id, weapon_part.id) >= 1
+		and game_state.get_ship_part_count(source.planet_id, drive_part.id) >= 1
+		and game_state.get_ship_part_count(source.planet_id, shield_part.id) >= 1,
+		"armed ship disassembly did not refund the weapon, drive, and shield"):
+		return false
+
+	# --- FLYING SHIPBASE: dispatch consumes the assembly and spawns a flyable instance ---
+	var flight_ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [], weapon_part.id, drive_part.id, shield_part.id)
+	if not ctx.check(not String(flight_ship_id).is_empty(), "flight ship assembly did not start"):
+		return false
+	game_state.call("advance_builds", 999.0)
+	if not ctx.check(game_state.has_ship_assembly(source.planet_id, flight_ship_id), "flight ship did not finish its build job"):
+		return false
+	var neutral_home: StringName = game_state.homeworld_for(GameState.FACTION_NEUTRAL) as StringName
+	var flight_destination: Planet = null
+	for child in field.get_children():
+		if child is Planet and (child as Planet).get_faction() == GameState.FACTION_NEUTRAL and (child as Planet).planet_id != neutral_home and child != source:
+			flight_destination = child as Planet
+			break
+	if not ctx.check(flight_destination != null, "no disposable neutral planet available for ship flight test"):
+		return false
+	var ship_base: ShipBase = ship_manager.dispatch_ship(source, flight_destination, flight_ship_id)
+	if not ctx.check(ship_base != null, "dispatch_ship did not spawn a flyable ShipBase"):
+		return false
+	if not ctx.check(not game_state.has_ship_assembly(source.planet_id, flight_ship_id), "dispatch did not consume the assembly from inventory"):
+		return false
+	if not ctx.check(ship_base.fleet != null and ship_base.fleet.faction == GameState.FACTION_PLAYER and ship_base.fleet.ships.size() == 1, "flyable ShipBase lost its fleet payload"):
+		return false
+	if not ctx.check(ship_base.destination == flight_destination, "flyable ShipBase lost its destination"):
+		return false
+	var ship_visual: CompositeShipView = ship_base.get_node_or_null("ShipVisual") as CompositeShipView
+	if not ctx.check(ship_visual != null and ship_visual.get_node_or_null("WeaponOverlay").visible and ship_visual.get_node_or_null("EngineOverlay").visible and ship_visual.get_node_or_null("ShieldOverlay").visible, "flyable ShipBase did not composite its drive/weapon/shield overlays"):
+		return false
+	if not ctx.check(not ship_base.has_arrived(), "ShipBase reported arrival before its flight finished"):
+		return false
+	ship_base.call("_arrive")
+	await ctx.await_frame()
+	if not ctx.check(not is_instance_valid(ship_base), "arrived ShipBase was not freed after resolving arrival"):
 		return false
 	return true

@@ -1,14 +1,146 @@
-[gd_resource type="Resource" script_class="ShipPartCatalog" load_steps=9 format=3]
+[gd_resource type="Resource" script_class="ShipPartCatalog" load_steps=38 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/ship_part_catalog.gd" id="1_catalog"]
 [ext_resource type="Script" path="res://scripts/config/ship_part_definition.gd" id="2_part"]
-[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_k.svg" id="3_hull_k"]
-[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_m.svg" id="4_hull_m"]
-[ext_resource type="Texture2D" path="res://assets/objects/satellites/planet_satellite.svg" id="5_scanner"]
-[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_03_metal.svg" id="6_armor"]
-[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_04_molten.svg" id="7_fuel"]
-[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_01_rock.svg" id="8_cargo"]
-[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_l.svg" id="9_weapon"]
+[ext_resource type="Script" path="res://scripts/config/trait_definition.gd" id="3_trait"]
+[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_k.svg" id="4_hull_k"]
+[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_m.svg" id="5_hull_m"]
+[ext_resource type="Texture2D" path="res://assets/objects/satellites/planet_satellite.svg" id="6_scanner"]
+[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_03_metal.svg" id="7_armor"]
+[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_04_molten.svg" id="8_fuel"]
+[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_01_rock.svg" id="9_cargo"]
+[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_l.svg" id="10_weapon"]
+[ext_resource type="Texture2D" path="res://assets/objects/navigation/navigation_comet.svg" id="11_drive"]
+[ext_resource type="Texture2D" path="res://assets/objects/navigation/navigation_moon.svg" id="12_shield"]
+[ext_resource type="Script" path="res://scripts/config/ship_component_variant.gd" id="13_variant"]
+[ext_resource type="Script" path="res://scripts/config/ship_blueprint.gd" id="14_blueprint"]
+[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_02_ice.svg" id="15_ice"]
+
+[sub_resource type="Resource" id="Trait_drive_t1"]
+script = ExtResource("3_trait")
+id = &"trait_drive_t1"
+display_name = "Ionenantrieb T1"
+description = "Verbessert die Transfergeschwindigkeit des Schiffs."
+transfer_speed_multiplier = 1.15
+
+[sub_resource type="Resource" id="Trait_weapon_t1"]
+script = ExtResource("3_trait")
+id = &"trait_weapon_t1"
+display_name = "Impulswaffe T1"
+description = "Erhöht Schaden und Angriffsreichweite."
+dps_bonus = 8.0
+attack_range_bonus = 20.0
+
+[sub_resource type="Resource" id="Trait_shield_t1"]
+script = ExtResource("3_trait")
+id = &"trait_shield_t1"
+display_name = "Deflektorschild T1"
+description = "Erhöht die Hüllenintegrität des Schiffs."
+hull_hp_bonus = 30
+
+[sub_resource type="Resource" id="Trait_drive_variant_fast"]
+script = ExtResource("3_trait")
+id = &"trait_drive_variant_fast"
+display_name = "Überladener Ionenstrom"
+description = "Mehr Geschwindigkeit, aber instabiler Antrieb."
+transfer_speed_multiplier = 1.1
+
+[sub_resource type="Resource" id="Trait_drive_variant_stable"]
+script = ExtResource("3_trait")
+id = &"trait_drive_variant_stable"
+display_name = "Stabilisierter Ionenstrom"
+description = "Robuster Standardstrom für lange Routen."
+transfer_speed_multiplier = 0.98
+
+[sub_resource type="Resource" id="Trait_weapon_variant_precision"]
+script = ExtResource("3_trait")
+id = &"trait_weapon_variant_precision"
+display_name = "Präzisionskern"
+description = "Verbessert Reichweite und kontrollierten Schaden."
+dps_bonus = 4.0
+attack_range_bonus = 12.0
+
+[sub_resource type="Resource" id="Trait_weapon_variant_burst"]
+script = ExtResource("3_trait")
+id = &"trait_weapon_variant_burst"
+display_name = "Salvenkern"
+description = "Mehr Schaden bei kürzerer effektiver Reichweite."
+dps_bonus = 10.0
+attack_range_bonus = -8.0
+
+[sub_resource type="Resource" id="Trait_shield_variant_lattice"]
+script = ExtResource("3_trait")
+id = &"trait_shield_variant_lattice"
+display_name = "Gitterfeld"
+description = "Verteilt Treffer über die gesamte Hülle."
+hull_hp_bonus = 12
+
+[sub_resource type="Resource" id="Trait_shield_variant_reactive"]
+script = ExtResource("3_trait")
+id = &"trait_shield_variant_reactive"
+display_name = "Reaktivfeld"
+description = "Stärkerer, aber aggressiver Deflektorschild."
+hull_hp_bonus = 25
+
+[sub_resource type="Resource" id="Variant_drive_fast"]
+script = ExtResource("13_variant")
+id = &"drive_fast"
+display_name = "Überladener Ionenstrom"
+visual_asset = ExtResource("11_drive")
+trait_modifiers = SubResource("Trait_drive_variant_fast")
+weight = 1.0
+min_tier = 1
+
+[sub_resource type="Resource" id="Variant_drive_stable"]
+script = ExtResource("13_variant")
+id = &"drive_stable"
+display_name = "Stabilisierter Ionenstrom"
+visual_asset = ExtResource("8_fuel")
+trait_modifiers = SubResource("Trait_drive_variant_stable")
+weight = 2.0
+min_tier = 1
+
+[sub_resource type="Resource" id="Variant_weapon_precision"]
+script = ExtResource("13_variant")
+id = &"weapon_precision"
+display_name = "Präzisionskern"
+visual_asset = ExtResource("11_drive")
+trait_modifiers = SubResource("Trait_weapon_variant_precision")
+weight = 2.0
+min_tier = 1
+
+[sub_resource type="Resource" id="Variant_weapon_burst"]
+script = ExtResource("13_variant")
+id = &"weapon_burst"
+display_name = "Salvenkern"
+visual_asset = ExtResource("10_weapon")
+trait_modifiers = SubResource("Trait_weapon_variant_burst")
+weight = 1.0
+min_tier = 1
+
+[sub_resource type="Resource" id="Variant_shield_lattice"]
+script = ExtResource("13_variant")
+id = &"shield_lattice"
+display_name = "Gitterfeld"
+visual_asset = ExtResource("12_shield")
+trait_modifiers = SubResource("Trait_shield_variant_lattice")
+weight = 2.0
+min_tier = 1
+
+[sub_resource type="Resource" id="Variant_shield_reactive"]
+script = ExtResource("13_variant")
+id = &"shield_reactive"
+display_name = "Reaktivfeld"
+visual_asset = ExtResource("15_ice")
+trait_modifiers = SubResource("Trait_shield_variant_reactive")
+weight = 1.0
+min_tier = 1
+
+[sub_resource type="Resource" id="Blueprint_standard"]
+script = ExtResource("14_blueprint")
+id = &"standard"
+display_name = "Standard-Rahmen"
+seed_base = 271828
 
 [sub_resource type="Resource" id="Part_hull_t1"]
 script = ExtResource("2_part")
@@ -19,9 +151,9 @@ description = "Leichter Standard-Rumpf für Scout-Schiffe."
 cost_resource = &"material"
 cost_amount = 5
 tier = 1
-visual_asset = ExtResource("3_hull_k")
+visual_asset = ExtResource("4_hull_k")
 required_tech_id = &"shipyard_construction"
-build_time = 3.0
+build_time = 60.0
 
 [sub_resource type="Resource" id="Part_hull_t2"]
 script = ExtResource("2_part")
@@ -32,9 +164,9 @@ description = "Verstärkter Rumpf für größere Aufbauten."
 cost_resource = &"material"
 cost_amount = 10
 tier = 2
-visual_asset = ExtResource("4_hull_m")
+visual_asset = ExtResource("5_hull_m")
 required_tech_id = &"weapon_systems"
-build_time = 5.0
+build_time = 120.0
 
 [sub_resource type="Resource" id="Part_scanner_t1"]
 script = ExtResource("2_part")
@@ -45,9 +177,22 @@ description = "Kartografiert bei Ankunft einen unbekannten Planeten."
 cost_resource = &"energy"
 cost_amount = 6
 tier = 1
-visual_asset = ExtResource("5_scanner")
+visual_asset = ExtResource("6_scanner")
 required_tech_id = &"scanner_drone"
-build_time = 2.0
+
+[sub_resource type="Resource" id="Part_drive_t1"]
+script = ExtResource("2_part")
+id = &"drive_t1"
+slot_type = &"drive"
+display_name = "Ionenantrieb T1"
+description = "Der Antrieb bestimmt die Transfergeschwindigkeit des Schiffs."
+cost_resource = &"volatile"
+cost_amount = 6
+tier = 1
+visual_asset = ExtResource("11_drive")
+trait_definition = SubResource("Trait_drive_t1")
+variant_pool = [SubResource("Variant_drive_fast"), SubResource("Variant_drive_stable")]
+required_tech_id = &"shipyard_construction"
 
 [sub_resource type="Resource" id="Part_weapon_t1"]
 script = ExtResource("2_part")
@@ -58,47 +203,64 @@ description = "Erste Bordbewaffnung; macht aus einem Montageauftrag ein militär
 cost_resource = &"volatile"
 cost_amount = 8
 tier = 1
-visual_asset = ExtResource("9_weapon")
+visual_asset = ExtResource("10_weapon")
+trait_definition = SubResource("Trait_weapon_t1")
+variant_pool = [SubResource("Variant_weapon_precision"), SubResource("Variant_weapon_burst")]
 required_tech_id = &"weapon_systems"
-build_time = 4.0
+build_time = 15.0
+
+[sub_resource type="Resource" id="Part_shield_t1"]
+script = ExtResource("2_part")
+id = &"shield_t1"
+slot_type = &"shield"
+display_name = "Deflektorschild T1"
+description = "Schützt den Rumpf und macht die Hüllenstärke im Readback sichtbar."
+cost_resource = &"energy"
+cost_amount = 8
+tier = 1
+visual_asset = ExtResource("12_shield")
+trait_definition = SubResource("Trait_shield_t1")
+variant_pool = [SubResource("Variant_shield_lattice"), SubResource("Variant_shield_reactive")]
+required_tech_id = &"shipyard_construction"
 
 [sub_resource type="Resource" id="Part_module_armor"]
 script = ExtResource("2_part")
 id = &"module_armor"
-slot_type = &"module"
+slot_type = &"utility"
 display_name = "Panzermodul"
 description = "Zusätzliche Hüllenpanzerung für das Schiff."
 cost_resource = &"material"
 cost_amount = 4
 tier = 1
-visual_asset = ExtResource("6_armor")
-build_time = 2.0
+visual_asset = ExtResource("7_armor")
+build_time = 10.0
 
 [sub_resource type="Resource" id="Part_module_fuel"]
 script = ExtResource("2_part")
 id = &"module_fuel"
-slot_type = &"module"
+slot_type = &"utility"
 display_name = "Treibstoffmodul"
 description = "Erweiterter Tank für längere Routen."
 cost_resource = &"volatile"
 cost_amount = 4
 tier = 1
-visual_asset = ExtResource("7_fuel")
-build_time = 2.0
+visual_asset = ExtResource("8_fuel")
+build_time = 10.0
 
 [sub_resource type="Resource" id="Part_module_cargo"]
 script = ExtResource("2_part")
 id = &"module_cargo"
-slot_type = &"module"
+slot_type = &"utility"
 display_name = "Frachtmodul"
 description = "Zusätzlicher Laderaum für Versorgungsmissionen."
 cost_resource = &"material"
 cost_amount = 4
 tier = 1
-visual_asset = ExtResource("8_cargo")
-build_time = 2.0
+visual_asset = ExtResource("9_cargo")
+build_time = 10.0
 
 [resource]
 script = ExtResource("1_catalog")
 max_module_slots = 2
-parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t2"), SubResource("Part_scanner_t1"), SubResource("Part_weapon_t1"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo")]
+blueprints = [SubResource("Blueprint_standard")]
+parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t2"), SubResource("Part_scanner_t1"), SubResource("Part_drive_t1"), SubResource("Part_weapon_t1"), SubResource("Part_shield_t1"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo")]
