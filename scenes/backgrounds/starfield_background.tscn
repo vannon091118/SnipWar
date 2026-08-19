@@ -10,8 +10,8 @@ z_index = -100
 script = ExtResource("1_background")
 
 [node name="PlanetField" parent="." unique_id=332234759 instance=ExtResource("2_planet_field")]
-position = Vector2(37, -69)
-layout_seed = 241104
+position = Vector2(43, -81)
+layout_seed = 17
 
 [node name="Bootstrap" type="Node" parent="." unique_id=276504563]
 script = ExtResource("3_bootstrap")
