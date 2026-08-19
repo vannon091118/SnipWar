@@ -17,4 +17,5 @@ transit_config = ExtResource("3_transit")
 ui_theme_config = ExtResource("4_ui")
 background_config = ExtResource("5_background")
 meteor_config = ExtResource("6_meteor")
+route_mode = "all_planets"
 randomize_layout_seed = true

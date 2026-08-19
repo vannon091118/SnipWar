@@ -62,6 +62,8 @@ func _init() -> void:
 	var active_scenario: ScenarioDefinition = background.get("active_scenario") as ScenarioDefinition
 	if not _check(active_scenario != null and active_scenario.id == &"default", "default scenario was not selected"):
 		return
+	if not _check(active_scenario.route_mode == ScenarioDefinition.ROUTE_MODE_ALL_PLANETS and active_scenario.route_mode == world_config.route_mode, "default scenario route rule was not applied"):
+		return
 	if not _check(active_scenario.map_definition != null and active_scenario.map_definition.world_config == world_config, "active scenario map was not applied"):
 		return
 	var background_config: BackgroundConfig = background.get("background_config") as BackgroundConfig
@@ -130,6 +132,12 @@ func _init() -> void:
 		return
 	var navigation_config: NavigationConfig = navigation.get("navigation_config") as NavigationConfig
 	if not _check(navigation_config != null and navigation_config.validate().is_empty(), "navigation config validation failed"):
+		return
+	if not _check(navigation_config.waypoint_catalog != null and navigation_config.waypoint_catalog.definitions.size() >= 2, "navigation waypoint catalog is missing styles"):
+		return
+	var first_waypoint_definition: NavigationWaypointDefinition = navigation_config.waypoint_for_edge(0)
+	var second_waypoint_definition: NavigationWaypointDefinition = navigation_config.waypoint_for_edge(1)
+	if not _check(first_waypoint_definition != null and second_waypoint_definition != null and first_waypoint_definition.waypoint_type == "comet" and second_waypoint_definition.waypoint_type == "moon", "default waypoint catalog cadence is wrong"):
 		return
 	var expected_waypoint_count: int = 0
 	for navigation_planet in field.get_children():
@@ -472,7 +480,11 @@ func _run_scenario_case(scene: PackedScene, catalog: ScenarioCatalog, scenario_i
 		route_count = scenario_network.get_route_destinations(planets[0]).size()
 		neighbor_count = scenario_network.get_neighbors(planets[0]).size()
 	var fixed_seed_applied: bool = map != null and scenario_world != null and scenario_world.layout_seed == map.world_config.layout_seed
-	var passed: bool = active_scenario != null and active_scenario.id == scenario_id and not active_scenario.randomize_layout_seed and map != null and scenario_world != null and scenario_world.design_size.distance_to(Vector2(1920.0, 1080.0)) <= 0.01 and scenario_world.route_mode == WorldConfig.ROUTE_MODE_NEIGHBORS_ONLY and field.get("planet_catalog") == map.planet_catalog and scenario_navigation.get("navigation_config") == map.navigation_config and planets.size() == map.planet_catalog.planets.size() and route_count == neighbor_count and fixed_seed_applied
+	var scenario_waypoint_catalog: NavigationWaypointCatalog = null
+	if map != null and map.navigation_config != null:
+		scenario_waypoint_catalog = map.navigation_config.waypoint_catalog
+	var wide_waypoint_cadence_valid: bool = scenario_waypoint_catalog != null and scenario_waypoint_catalog.definition_for_edge(0).id == &"comet_sparse" and scenario_waypoint_catalog.definition_for_edge(1).id == &"moon" and scenario_waypoint_catalog.definition_for_edge(3).id == &"comet_sparse"
+	var passed: bool = active_scenario != null and active_scenario.id == scenario_id and active_scenario.route_mode == ScenarioDefinition.ROUTE_MODE_NEIGHBORS_ONLY and not active_scenario.randomize_layout_seed and map != null and scenario_world != null and scenario_world.design_size.distance_to(Vector2(1920.0, 1080.0)) <= 0.01 and scenario_world.route_mode == active_scenario.route_mode and scenario_world.route_mode == WorldConfig.ROUTE_MODE_NEIGHBORS_ONLY and field.get("planet_catalog") == map.planet_catalog and scenario_navigation.get("navigation_config") == map.navigation_config and scenario_waypoint_catalog != null and scenario_waypoint_catalog.definitions.size() >= 2 and scenario_waypoint_catalog != (preload("res://resources/config/navigation_default.tres") as NavigationConfig).waypoint_catalog and wide_waypoint_cadence_valid and planets.size() == map.planet_catalog.planets.size() and route_count == neighbor_count and fixed_seed_applied
 	scenario_background.queue_free()
 	await process_frame
 	return passed

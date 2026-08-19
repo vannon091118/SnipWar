@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="NavigationConfig" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/navigation_config.gd" id="1_navigation"]
-[ext_resource type="Resource" path="res://resources/config/navigation_waypoints/default.tres" id="2_catalog"]
+[ext_resource type="Resource" path="res://resources/config/navigation_waypoints/wide.tres" id="2_catalog"]
 
 [resource]
 script = ExtResource("1_navigation")
 waypoint_catalog = ExtResource("2_catalog")
-midpoint_jitter = 12.0
-edge_color = Color(0.25, 0.85, 1, 1)
-edge_alpha = 0.22
-edge_width = 1.2
+midpoint_jitter = 18.0
+edge_color = Color(0.35, 0.95, 1, 1)
+edge_alpha = 0.28
+edge_width = 1.4

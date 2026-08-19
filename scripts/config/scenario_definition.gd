@@ -2,6 +2,9 @@
 class_name ScenarioDefinition
 extends Resource
 
+const ROUTE_MODE_ALL_PLANETS := "all_planets"
+const ROUTE_MODE_NEIGHBORS_ONLY := "neighbors_only"
+
 @export var id: StringName
 @export var display_name: String
 @export_multiline var description: String
@@ -10,7 +13,11 @@ extends Resource
 @export var ui_theme_config: UIThemeConfig
 @export var background_config: BackgroundConfig
 @export var meteor_config: MeteorConfig
+@export_enum("all_planets", "neighbors_only") var route_mode: String = ROUTE_MODE_ALL_PLANETS
 @export var randomize_layout_seed := true
+
+func resolved_route_mode() -> String:
+	return route_mode
 
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
@@ -23,6 +30,8 @@ func validate() -> PackedStringArray:
 	else:
 		for map_error in map_definition.validate():
 			errors.append("scenario map: " + map_error)
+		if map_definition.world_config != null and map_definition.world_config.route_mode != route_mode:
+			errors.append("scenario route_mode differs from map world_config")
 	if transit_config == null:
 		errors.append("scenario definition transit_config is missing")
 	else:
@@ -43,4 +52,6 @@ func validate() -> PackedStringArray:
 	else:
 		for meteor_error in meteor_config.validate():
 			errors.append("scenario meteor: " + meteor_error)
+	if route_mode != ROUTE_MODE_ALL_PLANETS and route_mode != ROUTE_MODE_NEIGHBORS_ONLY:
+		errors.append("scenario route_mode is invalid")
 	return errors

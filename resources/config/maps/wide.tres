@@ -6,7 +6,7 @@
 [ext_resource type="Resource" path="res://resources/config/planet_sizes/variable.tres" id="4_variable"]
 [ext_resource type="Resource" path="res://resources/config/planet_sizes/large.tres" id="5_large"]
 [ext_resource type="Resource" path="res://resources/config/planet_sizes/extra_large.tres" id="6_extra_large"]
-[ext_resource type="Resource" path="res://resources/config/navigation_default.tres" id="7_navigation"]
+[ext_resource type="Resource" path="res://resources/config/navigation_wide.tres" id="7_navigation"]
 
 [resource]
 script = ExtResource("1_map")

@@ -7,7 +7,8 @@ SnipWar ist momentan ein spielbarer Overworld-Vertical-Slice: zehn deterministis
 ## Abgeschlossene Entscheidungen
 
 - **Zielauswahl:** Das Ziel wird vor dem Senden im Planeten-Tab gewählt. Der Sendeknopf startet danach direkt den Transit; es gibt keinen zweiten Bestätigungsschritt.
-- **Routenregel:** Das MVP verwendet `all_planets`: Jeder andere Planet darf gewählt werden; Nachbarlinien bleiben räumliche Orientierung. `neighbors_only` ist als konfigurierbare Regel für spätere Szenarien vorgesehen. Jede Auswahl läuft trotzdem über das AStar2D-Netz aus benachbarten Planeten und deterministischen Mond-/Kometen-Wegpunkten; direkte Luftlinien sind nur der Fallback bei einem ungültigen Netzpunkt.
+- **Routenregel:** Die aktive `ScenarioDefinition` trägt die Routenregel explizit: `default` verwendet `all_planets`, `wide` verwendet `neighbors_only`. Jeder erlaubte Transit läuft trotzdem über das AStar2D-Netz aus benachbarten Planeten; direkte Luftlinien sind nur der Fallback bei einem ungültigen Netzpunkt.
+- **Waypoint-Katalog:** `NavigationConfig` referenziert einen typisierten `NavigationWaypointCatalog`. Der Katalog wählt deterministisch pro Layoutkante eine validierte Moon-/Comet-Definition; Maps dürfen eigene Kataloge und Cadences verwenden, ohne `NavigationField`-Code zu ändern.
 - **Flugzeit:** Die Vorschau reagiert sofort auf die Slider-Menge und verwendet die Länge des Navigationspfads statt der direkten Luftlinie. Das MVP verwendet das glatte, reskalierbare Modell:
 
   ```text
@@ -20,7 +21,7 @@ SnipWar ist momentan ein spielbarer Overworld-Vertical-Slice: zehn deterministis
 - **Planetendetails:** Seed-basiert, maximal drei logische Details. Toxic garantiert Satellit und Asteroidengürtel und kann einen Kometen erhalten. Der ungeplante cyanfarbene Orbitalring ist entfernt.
 - **Stil:** Cell-shaded Paperclip-Comic mit klaren Silhouetten, Beleuchtung und Schattierung. K/M/L sind generische, erweiterbare SVG-Assets mit `Attachments` für spätere Objekte.
 - **Präsentation:** Der aktuelle technische Raum ist `960×540` mit Canvas-Item-Stretch und einem `1280×720`-Fenster-Override. Das UI nutzt ein konfiguriertes responsives Panel; Hintergrund- und Meteor-Tuning liegen in eigenen Resources. 4K bleibt eine spätere Präsentationsstufe, keine MVP-Anforderung.
-- **Szenario-/Kartenschicht:** `MapDefinition` bündelt WorldConfig, PlanetCatalog, Größenprofile und Navigation; `ScenarioDefinition` ergänzt Transit- und Präsentations-Configs. `ScenarioCatalog` wählt vor dem Eintritt des PlanetField einen aktiven Datensatz. Der MVP enthält `default` mit Laufzeit-Seed und `wide`/`Frontier Ring` mit festem Seed und `neighbors_only`; ein Katalogwechsel im laufenden PlanetField ist noch nicht vorgesehen.
+- **Szenario-/Kartenschicht:** `MapDefinition` bündelt WorldConfig, PlanetCatalog, Größenprofile und Navigation; `ScenarioDefinition` ergänzt Routenregel, Transit- und Präsentations-Configs. `ScenarioCatalog` wählt vor dem Eintritt des PlanetField einen aktiven Datensatz. Der MVP enthält `default` mit Laufzeit-Seed und Standard-Waypoint-Katalog sowie `wide`/`Frontier Ring` mit festem Seed, eigener Waypoint-Cadence und `neighbors_only`; ein Katalogwechsel im laufenden PlanetField ist noch nicht vorgesehen.
 
 ## Validierter Vertical Slice
 

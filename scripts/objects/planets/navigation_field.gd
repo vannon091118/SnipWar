@@ -64,17 +64,14 @@ func rebuild() -> void:
 			var direction := (second.global_position - first.global_position).normalized()
 			var perpendicular := Vector2(-direction.y, direction.x)
 			midpoint += perpendicular * rng.randf_range(-waypoint_config.midpoint_jitter, waypoint_config.midpoint_jitter)
-			var is_comet := edge_index % waypoint_config.comet_every == 0
-			var waypoint_type: StringName = &"comet" if is_comet else &"moon"
+			var waypoint_definition: NavigationWaypointDefinition = waypoint_config.waypoint_for_edge(edge_index)
+			if waypoint_definition == null:
+				continue
 			var waypoint: NavigationWaypoint = WAYPOINT_SCENE.instantiate()
-			waypoint.name = "%sWaypoint_%d" % [String(waypoint_type).capitalize(), edge_index]
+			waypoint.name = "%sWaypoint_%d" % [waypoint_definition.waypoint_type.capitalize(), edge_index]
 			add_child(waypoint)
 			waypoint.global_position = midpoint
-			waypoint.configure(
-				waypoint_type,
-				waypoint_config.comet_texture if is_comet else waypoint_config.moon_texture,
-				waypoint_config.comet_size_pixels if is_comet else waypoint_config.moon_size_pixels
-			)
+			waypoint.configure(waypoint_definition)
 			_waypoints.append(waypoint)
 			var waypoint_id := _add_graph_point(midpoint)
 			_connect_graph_points(_point_ids[first], waypoint_id)

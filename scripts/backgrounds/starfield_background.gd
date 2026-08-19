@@ -33,6 +33,8 @@ func _apply_active_scenario() -> void:
 	active_scenario = scenario
 	active_scenario_id = scenario.id
 	var map: MapDefinition = scenario.map_definition
+	if map.world_config != null:
+		map.world_config.route_mode = scenario.resolved_route_mode()
 	world_config = map.world_config if map.world_config != null else world_config
 	background_config = scenario.background_config if scenario.background_config != null else background_config
 

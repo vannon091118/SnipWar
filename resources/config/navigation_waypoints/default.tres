@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="NavigationWaypointCatalog" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/navigation_waypoint_catalog.gd" id="1_catalog"]
+[ext_resource type="Resource" path="res://resources/config/navigation_waypoints/comet.tres" id="2_comet"]
+[ext_resource type="Resource" path="res://resources/config/navigation_waypoints/moon.tres" id="3_moon"]
+
+[resource]
+script = ExtResource("1_catalog")
+definitions = Array[ExtResource("2_comet")]([ExtResource("2_comet"), ExtResource("3_moon")])

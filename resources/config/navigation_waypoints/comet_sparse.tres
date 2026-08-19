@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="NavigationWaypointDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/navigation_waypoint_definition.gd" id="1_definition"]
+[ext_resource type="Texture2D" path="res://assets/objects/navigation/navigation_comet.svg" id="2_texture"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"comet_sparse"
+waypoint_type = "comet"
+texture = ExtResource("2_texture")
+size_pixels = 20.0
+every_n_edges = 3
