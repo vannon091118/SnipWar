@@ -19,7 +19,7 @@ func validate() -> PackedStringArray:
 		errors.append("planet detail node_name_prefix is empty")
 	if orbit_radius_range.x < 0.0 or orbit_radius_range.y < orbit_radius_range.x:
 		errors.append("planet detail orbit_radius_range is invalid")
-	if angular_speed_range.y < angular_speed_range.x:
+	if not is_finite(angular_speed_range.x) or not is_finite(angular_speed_range.y) or angular_speed_range.y < angular_speed_range.x:
 		errors.append("planet detail angular_speed_range is invalid")
 	if phase_range.y < phase_range.x:
 		errors.append("planet detail phase_range is invalid")

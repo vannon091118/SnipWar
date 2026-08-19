@@ -8,4 +8,5 @@ id = &"xl"
 scale_range = Vector2(0.48, 0.525)
 spawn_interval = 5.0
 spawn_count = 3
+starting_workers = 6
 jitter_factor = 0.65

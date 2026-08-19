@@ -9,6 +9,6 @@ script = ExtResource("1_definition")
 planet_id = &"volcanic"
 display_name = "Volcanic"
 planet_role = &"danger"
-faction = &"b"
+faction = &"neutral"
 planet_texture = ExtResource("2_texture")
 detail_profile = ExtResource("3_details")

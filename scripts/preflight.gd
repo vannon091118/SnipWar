@@ -6,6 +6,9 @@ const _Dispatch := preload("res://scripts/dispatch.gd")
 var _observed_planet: Node2D
 var _observed_state := -1
 var _observed_amount := -1
+var _observed_faction_planet: StringName = &""
+var _observed_old_faction: StringName = &""
+var _observed_new_faction: StringName = &""
 
 func _init() -> void:
 	if not _check(is_equal_approx(_FlightTime.seconds_for(100.0, 1), 8.0), "flight time baseline is wrong"):
@@ -43,18 +46,28 @@ func _init() -> void:
 	await process_frame
 	await process_frame
 
+	var background_node: Node2D = background as Node2D
 	var field: Node = background.get_node("PlanetField")
 	var planet_field_node: Node2D = field as Node2D
 	var meteor_field_node: Node2D = background.get_node("MeteorField") as Node2D
-	if not _check(planet_field_node.position.distance_to(Vector2.ZERO) <= 0.01, "PlanetField has an unexpected scene offset"):
+	if not _check(background_node.global_position.distance_to(Vector2.ZERO) <= 0.01, "Background has an unexpected scene offset"):
 		return
-	if not _check(meteor_field_node.position.distance_to(Vector2.ZERO) <= 0.01, "MeteorField has an unexpected scene offset"):
+	if not _check(planet_field_node.position.distance_to(Vector2.ZERO) <= 0.01 and planet_field_node.global_position.distance_to(background_node.global_position) <= 0.01, "PlanetField has an unexpected scene offset"):
+		return
+	if not _check(meteor_field_node.position.distance_to(Vector2.ZERO) <= 0.01 and meteor_field_node.global_position.distance_to(background_node.global_position) <= 0.01, "MeteorField has an unexpected scene offset"):
 		return
 	var world_config: WorldConfig = field.get("world_config") as WorldConfig
 	if not _check(world_config != null, "world config is missing"):
 		return
 	var viewport_size: Vector2 = get_root().get_viewport().get_visible_rect().size
 	if not _check(viewport_size.distance_to(world_config.design_size) <= 0.01, "world design size differs from the Godot viewport"):
+		return
+	var game_state: Node = get_root().get_node_or_null("GameState")
+	if not _check(game_state != null, "GameState autoload is missing"):
+		return
+	if not game_state.faction_changed.is_connected(_capture_faction_changed):
+		game_state.faction_changed.connect(_capture_faction_changed)
+	if not _check(game_state.validate().is_empty(), "GameState ownership validation failed"):
 		return
 	var scenario_catalog: ScenarioCatalog = background.get("scenario_catalog") as ScenarioCatalog
 	if not _check(scenario_catalog != null and scenario_catalog.validate().is_empty(), "scenario catalog validation failed"):
@@ -89,9 +102,22 @@ func _init() -> void:
 	var catalog_errors := planet_catalog.validate()
 	if not _check(catalog_errors.is_empty(), "planet catalog validation failed"):
 		return
+	if not _check(game_state.validate_starting_setup().is_empty(), "GameState starting setup validation failed"):
+		return
+	if not _check(game_state.get_ownership_count(GameState.FACTION_NEUTRAL) == 8 and game_state.get_ownership_count(GameState.FACTION_PLAYER) == 1 and game_state.get_ownership_count(GameState.FACTION_CPU) == 1, "GameState ownership seed does not match the default catalog"):
+		return
+	if not _check(game_state.homeworld_for(GameState.FACTION_PLAYER) == &"ocean" and game_state.homeworld_for(GameState.FACTION_CPU) == &"paper", "GameState homeworld assignment is wrong"):
+		return
+	if not _check(game_state.faction_of(&"toxic") == GameState.FACTION_NEUTRAL and game_state.faction_of(&"volcanic") == GameState.FACTION_NEUTRAL and game_state.faction_of(&"ember") == GameState.FACTION_NEUTRAL, "GameState faction lookup is wrong"):
+		return
 	var positions_before: Dictionary = _planet_positions(field)
 	if not _check(positions_before.size() == planet_catalog.planets.size(), "generated planets do not match the catalog"):
 		return
+	for initial_planet in field.get_children():
+		if initial_planet is Planet:
+			var expected_initial_workers: int = game_state.starting_workers_of((initial_planet as Planet).planet_id)
+			if not _check((initial_planet as Planet).worker_count == expected_initial_workers, "%s initial worker distribution is wrong" % initial_planet.name):
+				return
 	for planet_node in field.get_children():
 		if planet_node is Planet:
 			var global_planet_position: Vector2 = (planet_node as Planet).global_position
@@ -169,16 +195,35 @@ func _init() -> void:
 	var ui_theme_config: UIThemeConfig = network.get("ui_theme_config") as UIThemeConfig
 	if not _check(ui_theme_config != null and ui_theme_config.validate().is_empty(), "UI theme config validation failed"):
 		return
+	if not _check(ui_theme_config.route_line_width > 0.0 and ui_theme_config.route_line_alpha > 0.0 and ui_theme_config.route_line_alpha + ui_theme_config.route_line_pulse_alpha <= 1.0, "route visualization config is invalid"):
+		return
 	var transit_config: TransitConfig = manager.get("transit_config") as TransitConfig
 	if not _check(transit_config != null, "transit config is missing"):
 		return
+	if not _check(network.transit_config_identity_valid(), "PlanetNetwork and WorkerManager use different TransitConfig resources"):
+		return
 	var transit_errors := transit_config.validate()
 	if not _check(transit_errors.is_empty(), "transit config validation failed"):
+		return
+	var satellite_definition: PlanetDetailDefinition = preload("res://resources/config/planet_details/satellite.tres")
+	if not _check(satellite_definition.validate().is_empty() and is_equal_approx(satellite_definition.angular_speed_range.x, 0.18) and is_equal_approx(satellite_definition.angular_speed_range.y, 0.18), "satellite angular speed config is invalid"):
 		return
 	var source: Planet = _find_planet_with_size(field, &"xl") as Planet
 	var large_planet: Node = _find_planet_with_size(field, &"l")
 	var variable_planet: Node = _find_planet_with_size(field, &"variable")
 	if not _check(source != null and large_planet != null and variable_planet != null, "generated planet sizes are missing"):
+		return
+	var source_starting_workers: int = source.worker_count
+	var source_faction: StringName = source.get_faction()
+	if not _check(source_faction == game_state.faction_of(source.planet_id) and source.is_in_group("faction_" + String(source_faction)), "planet faction does not follow the GameState source of truth"):
+		return
+	game_state.set_faction(source.planet_id, GameState.FACTION_CPU)
+	await process_frame
+	if not _check(source.get_faction() == GameState.FACTION_CPU and game_state.faction_of(source.planet_id) == GameState.FACTION_CPU and source.is_in_group("faction_" + String(GameState.FACTION_CPU)) and not source.is_in_group("faction_" + String(source_faction)), "GameState faction change did not propagate to the planet"):
+		return
+	game_state.set_faction(source.planet_id, source_faction)
+	await process_frame
+	if not _check(source.get_faction() == source_faction and game_state.faction_of(source.planet_id) == source_faction, "GameState faction revert was not applied"):
 		return
 	if not _check(_count_planets_with_size(field, &"xl") == 2 and _count_planets_with_size(field, &"l") == 1, "generated planet size distribution is wrong"):
 		return
@@ -201,14 +246,14 @@ func _init() -> void:
 	await process_frame
 	if not _check(_observed_state == 1 and _observed_amount == 3 and int(source.worker_state) == 0, "planet state transition is wrong"):
 		return
-	if not _check(source.worker_count == 3 and large_planet.worker_count == 2 and variable_planet.worker_count == 1, "planet worker counts are wrong"):
+	if not _check(source.worker_count == source_starting_workers + 3 and large_planet.worker_count == game_state.starting_workers_of((large_planet as Planet).planet_id) + 2 and variable_planet.worker_count == game_state.starting_workers_of((variable_planet as Planet).planet_id) + 1, "planet worker counts are wrong"):
 		return
 
 	var cluster_script: Script = preload("res://scripts/objects/workers/worker_cluster.gd")
 	if not _check(manager.get_child_count() == 0, "idle units should remain count-only"):
 		return
 	var source_count_label: Label = ui.get_count_label(source)
-	if not _check(source_count_label.text == "%s: 3" % source.name, "planet tab count is not live"):
+	if not _check(source_count_label.text == "%s: %d" % [source.name, source.worker_count], "planet tab count is not live"):
 		return
 
 	var event := InputEventMouseButton.new()
@@ -236,11 +281,21 @@ func _init() -> void:
 	var preview_label: Label = ui.get_preview_label()
 	if not _check(is_instance_valid(amount_slider) and is_instance_valid(preview_label), "dispatch slider or preview is missing"):
 		return
-	if not _check(amount_slider.min_value == 1 and amount_slider.max_value == 3 and amount_slider.step == 1, "dispatch slider bounds are wrong"):
+	if not _check(amount_slider.min_value == 1 and amount_slider.max_value == source.worker_count and amount_slider.step == 1, "dispatch slider bounds are wrong"):
 		return
 	var preview_destination: Node2D = network.get_destination(source)
 	var preview_path: Array[Vector2] = network.get_route_path(source, preview_destination)
 	var preview_route_distance: float = _path_distance(preview_path)
+	var non_neighbor_destination: Node2D = null
+	for candidate in route_destinations:
+		if not neighbors.has(candidate):
+			non_neighbor_destination = candidate
+			break
+	if not _check(non_neighbor_destination != null, "all_planets has no non-neighbor destination for multi-hop validation"):
+		return
+	var multi_hop_path: Array[Vector2] = network.get_route_path(source, non_neighbor_destination)
+	if not _check(multi_hop_path.size() >= 5 and _path_contains_planet(multi_hop_path, field, source, non_neighbor_destination), "all_planets non-neighbor route does not traverse the navigation graph"):
+		return
 	var direct_distance: float = source.global_position.distance_to(preview_destination.global_position)
 	var expected_preview_seconds: float = _FlightTime.seconds_for(preview_route_distance, ui.selected_amount(), transit_config)
 	if not _check(preview_path.size() >= 3 and preview_route_distance >= direct_distance, "dispatch preview does not use the navigation path"):
@@ -286,7 +341,7 @@ func _init() -> void:
 	await create_timer(0.2).timeout
 	if not _check(network.get_line_phase() != line_phase, "neighbor line animation is inactive"):
 		return
-	var destination: Node2D = neighbors[0]
+	var destination: Planet = neighbors[0] as Planet
 	var destination_index := ui.index_of_destination(destination.name)
 	if not _check(destination_index >= 0, "destination is missing from planet tab"):
 		return
@@ -295,16 +350,25 @@ func _init() -> void:
 		return
 	manager.call("_spawn_clusters", source, 1)
 	await process_frame
-	if not _check(source.worker_count == 4 and manager.get_child_count() == 0, "idle spawn should only update the planet counter"):
+	if not _check(source.worker_count == source_starting_workers + 4 and manager.get_child_count() == 0, "idle spawn should only update the planet counter"):
 		return
 	var send_button: Button = ui.get_send_button()
 	if not _check(is_instance_valid(send_button) and not send_button.disabled, "send button is missing or disabled"):
 		return
 	amount_slider.value = 3
 	await process_frame
-	var destination_count_before := int(destination.get("worker_count"))
+	var original_source_faction: StringName = source.get_faction()
+	var original_destination_faction: StringName = destination.get_faction()
+	var attack_faction: StringName = GameState.FACTION_PLAYER
+	game_state.set_faction(source.planet_id, attack_faction)
+	game_state.set_faction(destination.planet_id, GameState.FACTION_NEUTRAL)
+	destination.unregister_workers(destination.worker_count)
+	_observed_faction_planet = &""
+	_observed_old_faction = &""
+	_observed_new_faction = &""
+	var destination_count_before: int = destination.worker_count
 	network.call("_on_send_pressed")
-	if not _check(int(source.get("worker_count")) == 1, "send did not deduct the source count"):
+	if not _check(int(source.get("worker_count")) == source_starting_workers + 1, "send did not deduct the source count"):
 		return
 	var transit_clusters: Array[Node] = []
 	for child in manager.get_children():
@@ -313,7 +377,7 @@ func _init() -> void:
 	if not _check(transit_clusters.size() == 3, "send did not launch all packed cluster groups"):
 		return
 	for transit in transit_clusters:
-		if not _check(transit.get_unit_count() == 1, "cluster group sizes are wrong"):
+		if not _check(transit.get_unit_count() == 1 and transit.get("source_faction") == attack_faction, "cluster group sizes or source faction are wrong"):
 			return
 	var route_direction: Vector2 = (destination.global_position - source.global_position).normalized()
 	var route_perpendicular: Vector2 = Vector2(-route_direction.y, route_direction.x)
@@ -340,11 +404,35 @@ func _init() -> void:
 		return
 	if not _check(_offsets_match_shape(destination_offsets, expected_offsets, 0.05), "destination formation offset drifted"):
 		return
+	var arrival_results: Array[StringName] = []
 	for transit in transit_clusters:
-		manager.call("_arrive_cluster", transit)
+		var arrival_result: StringName = manager.call("_arrive_cluster", transit)
+		arrival_results.append(arrival_result)
 	await process_frame
-	if not _check(int(destination.get("worker_count")) == destination_count_before + 3, "arrival did not add the destination count"):
+	if not _check(arrival_results.size() == 3 and arrival_results[0] == Planet.ARRIVAL_CAPTURED and arrival_results[1] == Planet.ARRIVAL_FRIENDLY and arrival_results[2] == Planet.ARRIVAL_FRIENDLY, "arrival conflict results are wrong"):
 		return
+	if not _check(int(destination.get("worker_count")) == destination_count_before + 3 and destination.get_faction() == attack_faction and game_state.faction_of(destination.planet_id) == attack_faction, "capture did not transfer ownership and survivors"):
+		return
+	if not _check(_observed_faction_planet == destination.planet_id and _observed_old_faction == GameState.FACTION_NEUTRAL and _observed_new_faction == attack_faction, "capture did not emit faction_changed"):
+		return
+	var friendly_before: int = destination.worker_count
+	var friendly_result: StringName = destination.resolve_arrival(attack_faction, 2)
+	if not _check(friendly_result == Planet.ARRIVAL_FRIENDLY and destination.worker_count == friendly_before + 2, "friendly arrival did not reinforce the destination"):
+		return
+	var repel_target: Planet = null
+	for candidate in field.get_children():
+		if candidate is Planet and candidate != source and candidate != destination and (candidate as Planet).worker_count >= 2:
+			repel_target = candidate as Planet
+			break
+	if not _check(repel_target != null, "no defended planet available for repel test"):
+		return
+	game_state.set_faction(repel_target.planet_id, GameState.FACTION_NEUTRAL)
+	var repel_before: int = repel_target.worker_count
+	var repel_result: StringName = repel_target.resolve_arrival(attack_faction, 1)
+	if not _check(repel_result == Planet.ARRIVAL_REPELLED and repel_target.worker_count == repel_before - 1 and repel_target.get_faction() == GameState.FACTION_NEUTRAL, "defended arrival was not repelled"):
+		return
+	game_state.set_faction(source.planet_id, original_source_faction)
+	game_state.set_faction(destination.planet_id, original_destination_faction)
 	await process_frame
 	if not _check(manager.get_child_count() == 0, "arrived units should no longer render"):
 		return
@@ -507,6 +595,11 @@ func _capture_spawn(planet: Node2D, amount: int) -> void:
 		_observed_state = int(planet.worker_state)
 		_observed_amount = amount
 
+func _capture_faction_changed(planet_id: StringName, old_faction: StringName, new_faction: StringName) -> void:
+	_observed_faction_planet = planet_id
+	_observed_old_faction = old_faction
+	_observed_new_faction = new_faction
+
 func _planet_positions(field: Node) -> Dictionary:
 	var positions: Dictionary = {}
 	for child in field.get_children():
@@ -561,6 +654,13 @@ func _path_distance(path: Array[Vector2]) -> float:
 	for index in range(path.size() - 1):
 		distance += path[index].distance_to(path[index + 1])
 	return distance
+
+func _path_contains_planet(path: Array[Vector2], field: Node, source: Planet, destination: Node2D) -> bool:
+	for point_index in range(1, path.size() - 1):
+		for child in field.get_children():
+			if child is Planet and child != source and child != destination and (child as Planet).global_position.distance_to(path[point_index]) <= 0.05:
+				return true
+	return false
 
 func _flight_seconds(text: String) -> float:
 	return float(text.trim_prefix("Flugzeit: ").trim_suffix(" s"))
