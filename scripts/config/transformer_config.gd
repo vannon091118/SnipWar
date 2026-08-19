@@ -14,6 +14,8 @@ extends Resource
 @export_range(0.0, 5.0, 0.01) var orbit_angular_speed: float = 0.4
 @export_range(0.0, 10.0, 0.01) var orbit_phase_step: float = 1.2
 @export_range(4.0, 128.0, 1.0) var sprite_size: float = 24.0
+@export_range(0.0, 60.0, 1.0) var faction_ring_margin: float = 10.0
+@export_range(1.0, 16.0, 0.5) var faction_ring_width: float = 4.0
 
 func resolve_tint(tint_mode: StringName, faction: StringName) -> Color:
 	match tint_mode:
@@ -46,4 +48,8 @@ func validate() -> PackedStringArray:
 		errors.append("transformer orbit_angular_speed cannot be negative")
 	if sprite_size <= 0.0:
 		errors.append("transformer sprite_size must be positive")
+	if faction_ring_margin < 0.0:
+		errors.append("transformer faction_ring_margin cannot be negative")
+	if faction_ring_width <= 0.0:
+		errors.append("transformer faction_ring_width must be positive")
 	return errors

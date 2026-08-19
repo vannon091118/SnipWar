@@ -13,3 +13,5 @@ orbit_radius_step = 15.0
 orbit_angular_speed = 0.4
 orbit_phase_step = 1.2
 sprite_size = 24.0
+faction_ring_margin = 10.0
+faction_ring_width = 4.0

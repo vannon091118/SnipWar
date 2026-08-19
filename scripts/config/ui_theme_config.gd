@@ -93,7 +93,7 @@ func validate() -> PackedStringArray:
 		errors.append("UI panel style values cannot be negative")
 	if resource_bar_max_width <= 0.0 or resource_bar_height <= 0.0 or tab_width <= 0.0:
 		errors.append("UI HUD dimensions must be positive")
-	if body_font_size < 1 or small_font_size < 1 or section_font_size < 1 or panel_title_font_size < 1:
+	if tab_font_size < 1 or heading_font_size < 1 or selected_count_font_size < 1 or body_font_size < 1 or small_font_size < 1 or section_font_size < 1 or panel_title_font_size < 1:
 		errors.append("UI font sizes must be positive")
 	if card_padding < 0 or section_row_height <= 0.0:
 		errors.append("UI card spacing values are invalid")

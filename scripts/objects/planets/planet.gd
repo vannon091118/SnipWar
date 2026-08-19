@@ -59,6 +59,7 @@ var _spawn_timer: Timer
 var _detail_seed := 0
 var _planet_ready := false
 var _initial_workers_applied := false
+var _strength_label: Label
 
 const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
 const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/transformer_default.tres")
@@ -81,7 +82,9 @@ func _ready() -> void:
 	_planet_ready = true
 	_apply_detail_seed()
 	if not Engine.is_editor_hint():
+		_ensure_strength_label()
 		_start_spawn_timer.call_deferred()
+	queue_redraw()
 
 func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_index: int) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -97,10 +100,15 @@ func _start_spawn_timer() -> void:
 func _on_spawn_timer() -> void:
 	worker_state = WorkerState.SPAWNING
 	workers_spawn_requested.emit(self, _spawn_count())
-	var state: Node = _game_state()
-	if state != null and is_inside_tree() and not Engine.is_editor_hint():
-		state.generate_resources_for_planet(planet_id, DEFAULT_UPGRADE_CATALOG, _active_size_profile().resource_base)
 	worker_state = WorkerState.IDLE
+
+func generate_economy_resources() -> int:
+	if Engine.is_editor_hint() or not is_inside_tree():
+		return 0
+	var state: Node = _game_state()
+	if state == null:
+		return 0
+	return state.generate_resources_for_planet(planet_id, DEFAULT_UPGRADE_CATALOG, _active_size_profile().resource_base)
 
 func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 	var details: PlanetDetails = _details if is_instance_valid(_details) else get_node_or_null("PlanetDetails") as PlanetDetails
@@ -165,6 +173,7 @@ func set_initial_workers(amount: int) -> void:
 	_initial_workers_applied = true
 	if _planet_ready:
 		worker_count_changed.emit(self, worker_count)
+		_update_strength_indicator()
 
 func resolve_arrival(source_faction: StringName, amount: int) -> StringName:
 	var incoming: int = maxi(amount, 0)
@@ -241,10 +250,12 @@ func get_cluster_tier_bonus() -> int:
 func register_workers(amount: int) -> void:
 	worker_count += maxi(amount, 0)
 	worker_count_changed.emit(self, worker_count)
+	_update_strength_indicator()
 
 func unregister_workers(amount: int) -> void:
 	worker_count = maxi(0, worker_count - maxi(amount, 0))
 	worker_count_changed.emit(self, worker_count)
+	_update_strength_indicator()
 
 func _sync_groups() -> void:
 	add_to_group(StringName("planet_" + String(planet_id)))
@@ -256,12 +267,60 @@ func _on_faction_changed(changed_planet_id: StringName, _old_faction: StringName
 		remove_from_group(_faction_group(faction))
 		faction = new_faction
 		add_to_group(_faction_group(faction))
+		queue_redraw()
+		_update_strength_indicator()
 
 func _apply_visuals() -> void:
 	if not is_instance_valid(_sprite):
 		return
 	_sprite.texture = planet_texture
 	_sprite.scale = Vector2.ONE * visual_scale
+	queue_redraw()
+
+func _process(_delta: float) -> void:
+	if _strength_label != null and is_instance_valid(_strength_label):
+		var desired_scale := 1.0 / maxf(scale.x, 0.001)
+		if not is_equal_approx(_strength_label.scale.x, desired_scale):
+			_strength_label.scale = Vector2.ONE * desired_scale
+
+func _draw() -> void:
+	if Engine.is_editor_hint():
+		return
+	var ring_radius: float = _faction_ring_radius()
+	if ring_radius <= 0.0:
+		return
+	var ring_color: Color = DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", get_faction())
+	draw_arc(Vector2.ZERO, ring_radius, 0.0, TAU, 64, ring_color, DEFAULT_TRANSFORMER_CONFIG.faction_ring_width, true)
+
+func _faction_ring_radius() -> float:
+	if not is_instance_valid(_sprite) or _sprite.texture == null:
+		return 0.0
+	var planet_visual_radius: float = float(_sprite.texture.get_width()) * 0.375 * _sprite.scale.x
+	return planet_visual_radius + DEFAULT_TRANSFORMER_CONFIG.faction_ring_margin
+
+func _ensure_strength_label() -> void:
+	if _strength_label != null and is_instance_valid(_strength_label):
+		return
+	_strength_label = Label.new()
+	_strength_label.name = "StrengthLabel"
+	_strength_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_strength_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_strength_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_strength_label.add_theme_font_size_override("font_size", 15)
+	_strength_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.9))
+	_strength_label.add_theme_constant_override("outline_size", 3)
+	add_child(_strength_label)
+	_update_strength_indicator()
+
+func _update_strength_indicator() -> void:
+	if _strength_label == null or not is_instance_valid(_strength_label):
+		return
+	_strength_label.text = str(worker_count)
+	_strength_label.add_theme_color_override("font_color", DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", get_faction()))
+	var ring_radius: float = _faction_ring_radius()
+	_strength_label.position = Vector2(-40.0, ring_radius + 6.0 - 11.0)
+	_strength_label.size = Vector2(80.0, 22.0)
+	_strength_label.scale = Vector2.ONE * (1.0 / maxf(scale.x, 0.001))
 
 func _faction_group(value: StringName) -> StringName:
 	return StringName("faction_" + String(value))

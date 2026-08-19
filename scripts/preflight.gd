@@ -182,6 +182,19 @@ func _init() -> void:
 	var navigation: NavigationField = field.get_node("NavigationField") as NavigationField
 	var ui: PlanetNetworkUI = network.get_ui()
 	var manager: Node = field.get_node("WorkerManager")
+	var economy_manager: Node = field.get_node_or_null("EconomyManager")
+	var cpu_ai: Node = field.get_node_or_null("CpuDispatchAI")
+	if not _check(economy_manager != null and cpu_ai != null, "runtime economy and CPU modules are missing"):
+		return
+	var economy_config: EconomyConfig = economy_manager.get("economy_config") as EconomyConfig
+	var cpu_dispatch_config: CpuDispatchConfig = cpu_ai.get("dispatch_config") as CpuDispatchConfig
+	if not _check(economy_config != null and economy_config.validate().is_empty(), "economy config validation failed"):
+		return
+	if not _check(cpu_dispatch_config != null and cpu_dispatch_config.validate().is_empty(), "CPU dispatch config validation failed"):
+		return
+	# Keep the persistent suite deterministic; both modules expose manual test hooks.
+	economy_manager.call("set_enabled", false)
+	cpu_ai.call("set_enabled", false)
 	if not _check(navigation != null, "navigation field is missing"):
 		return
 	var navigation_config: NavigationConfig = navigation.get("navigation_config") as NavigationConfig
@@ -273,6 +286,8 @@ func _init() -> void:
 	if not _check(source_timer.wait_time == 5.0 and large_timer.wait_time == 7.0 and variable_timer.wait_time == 10.0, "spawn intervals are wrong"):
 		return
 
+	var player_vault_before_spawn: Dictionary = game_state.get_faction_vault_snapshot(GameState.FACTION_PLAYER)
+	var cpu_vault_before_spawn: Dictionary = game_state.get_faction_vault_snapshot(GameState.FACTION_CPU)
 	_observed_planet = source
 	source.workers_spawn_requested.connect(_capture_spawn)
 	source.call("_on_spawn_timer")
@@ -282,6 +297,20 @@ func _init() -> void:
 	if not _check(_observed_state == 1 and _observed_amount == 3 and int(source.worker_state) == 0, "planet state transition is wrong"):
 		return
 	if not _check(source.worker_count == source_starting_workers + 3 and large_planet.worker_count == game_state.starting_workers_of((large_planet as Planet).planet_id) + 2 and variable_planet.worker_count == game_state.starting_workers_of((variable_planet as Planet).planet_id) + 1, "planet worker counts are wrong"):
+		return
+	var source_strength_label: Label = source.get_node_or_null("StrengthLabel") as Label
+	if not _check(source_strength_label != null and source_strength_label.text == str(source.worker_count), "planet strength indicator does not match worker count"):
+		return
+	if not _check(player_vault_before_spawn == game_state.get_faction_vault_snapshot(GameState.FACTION_PLAYER) and cpu_vault_before_spawn == game_state.get_faction_vault_snapshot(GameState.FACTION_CPU), "worker spawn timer still changes passive economy"):
+		return
+	var economy_planet: Planet = _find_planet_by_id(field, game_state.homeworld_for(GameState.FACTION_PLAYER))
+	if not _check(economy_planet != null, "player homeworld for economy test is missing"):
+		return
+	var economy_resource_id: StringName = game_state.resource_of(economy_planet.planet_id)
+	var economy_before: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, economy_resource_id)
+	var economy_generated: int = economy_manager.call("tick_now")
+	var economy_after: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, economy_resource_id)
+	if not _check(economy_generated > 0 and economy_after >= economy_before + economy_planet.get_size_profile().resource_base, "independent economy tick did not generate resources"):
 		return
 
 	var cluster_script: Script = preload("res://scripts/objects/workers/worker_cluster.gd")
@@ -310,6 +339,11 @@ func _init() -> void:
 	if not _check(panel.visible and destination_option.item_count == route_destinations.size() and route_destinations.size() == 9 and not neighbors.is_empty(), "planet tab or neighbors are missing"):
 		return
 	await process_frame
+	var tab_button: Button = ui.get_node("PlanetTabUI/PlanetTab") as Button
+	var heading_label: Label = ui.get_node("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/HeadingLabel") as Label
+	var selected_count_label: Label = ui.get_node("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SelectedCountLabel") as Label
+	if not _check(tab_button.get_theme_font_size("font_size") == ui_theme_config.tab_font_size and heading_label.get_theme_font_size("font_size") == ui_theme_config.heading_font_size and selected_count_label.get_theme_font_size("font_size") == ui_theme_config.selected_count_font_size, "UI theme font sizes are not applied from the config"):
+		return
 	var panel_width: float = panel.size.x
 	if not _check(panel_width >= ui_theme_config.panel_min_width - 0.1 and panel_width <= ui_theme_config.panel_max_width + 0.1, "responsive UI panel width is outside the configured range (got %f)" % panel_width):
 		return
@@ -693,6 +727,11 @@ func _init() -> void:
 	var mission_option: OptionButton = ui.get_destination_option()
 	# We can't easily test the mission selector without a planet selected, but we verified constants exist
 
+	# Faction indicators must be visually distinct per faction.
+	var faction_transformer_config: TransformerConfig = preload("res://resources/config/transformer_default.tres")
+	if not _check(faction_transformer_config.faction_player_tint != faction_transformer_config.faction_cpu_tint and faction_transformer_config.faction_player_tint != faction_transformer_config.faction_neutral_tint and faction_transformer_config.faction_cpu_tint != faction_transformer_config.faction_neutral_tint, "faction indicator colors are not distinguishable"):
+		return
+
 	# Test transformer tint modes
 	if not _check(extractor.transformer_tint_mode == &"resource", "extractor should use resource tint"):
 		return
@@ -756,6 +795,34 @@ func _init() -> void:
 	# Military missions keep attack semantics via resolve_arrival
 	var military_result: StringName = mission_neutral.resolve_mission(GameState.FACTION_CPU, 4, GameState.MISSION_MILITARY)
 	if not _check(military_result == Planet.ARRIVAL_CAPTURED and mission_neutral.get_faction() == GameState.FACTION_CPU, "military mission should capture an undefended planet"):
+		return
+
+	# --- CPU DISPATCH ---
+	var cpu_homeworld: Planet = _find_planet_by_id(field, game_state.homeworld_for(GameState.FACTION_CPU))
+	if not _check(cpu_homeworld != null, "CPU homeworld for dispatch test is missing"):
+		return
+	var cpu_workers_before: int = cpu_homeworld.worker_count
+	if cpu_workers_before < cpu_dispatch_config.minimum_source_workers:
+		cpu_homeworld.register_workers(cpu_dispatch_config.minimum_source_workers - cpu_workers_before)
+	cpu_workers_before = cpu_homeworld.worker_count
+	var manager_children_before_cpu: int = manager.get_child_count()
+	var cpu_dispatched: bool = cpu_ai.call("dispatch_once", true)
+	if not _check(cpu_dispatched and manager.get_child_count() > manager_children_before_cpu, "CPU dispatch AI did not launch a mission"):
+		return
+	var cpu_cluster: WorkerCluster = null
+	for manager_child in manager.get_children():
+		if manager_child is WorkerCluster:
+			cpu_cluster = manager_child as WorkerCluster
+			break
+	if not _check(cpu_cluster != null and cpu_cluster.source_faction == GameState.FACTION_CPU and cpu_cluster.mission_type == GameState.MISSION_COLONY, "CPU dispatch AI did not choose a colony mission"):
+		return
+	for manager_child in manager.get_children():
+		if manager_child is WorkerCluster:
+			(manager_child as WorkerCluster).queue_free()
+	await process_frame
+	if cpu_homeworld.worker_count < cpu_workers_before:
+		cpu_homeworld.register_workers(cpu_workers_before - cpu_homeworld.worker_count)
+	if not _check(cpu_homeworld.worker_count == cpu_workers_before, "CPU dispatch test did not restore source workers"):
 		return
 
 	# --- WORKER COSTS ---
@@ -995,6 +1062,12 @@ func _count_planets_with_size(field: Node, size_class: StringName) -> int:
 		if child.get("layout_size") != null and StringName(child.get("layout_size")) == size_class:
 			count += 1
 	return count
+
+func _find_planet_by_id(field: Node, planet_id: StringName) -> Planet:
+	for child in field.get_children():
+		if child is Planet and (child as Planet).planet_id == planet_id:
+			return child as Planet
+	return null
 
 func _find_timer(planet: Node) -> Timer:
 	for child in planet.get_children():

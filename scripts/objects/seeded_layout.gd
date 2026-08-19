@@ -3,8 +3,12 @@ class_name SeededLayout
 extends Node2D
 
 const PLANET_SCENE: PackedScene = preload("res://scenes/objects/planets/planet.tscn")
+const PLANET_ECONOMY_MANAGER_SCRIPT: Script = preload("res://scripts/objects/planets/economy_manager.gd")
+const CPU_DISPATCH_AI_SCRIPT: Script = preload("res://scripts/objects/planets/cpu_dispatch_ai.gd")
 const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_default.tres")
 const DEFAULT_PLANET_CATALOG: PlanetCatalog = preload("res://resources/config/planet_catalog.tres")
+const DEFAULT_ECONOMY_CONFIG: EconomyConfig = preload("res://resources/config/economy_default.tres")
+const DEFAULT_CPU_DISPATCH_CONFIG: CpuDispatchConfig = preload("res://resources/config/cpu_dispatch_default.tres")
 
 @export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG:
 	set(value):
@@ -16,16 +20,20 @@ const DEFAULT_PLANET_CATALOG: PlanetCatalog = preload("res://resources/config/pl
 	set(value):
 		size_profiles = value
 		_queue_layout()
+@export var economy_config: EconomyConfig = DEFAULT_ECONOMY_CONFIG
+@export var cpu_dispatch_config: CpuDispatchConfig = DEFAULT_CPU_DISPATCH_CONFIG
 
 signal layout_completed(planets: Array[Planet])
 
 var _catalog_generated := false
+var _runtime_modules_created: bool = false
 
 func _enter_tree() -> void:
 	_generate_catalog_planets()
 
 func _ready() -> void:
 	regenerate()
+	_create_runtime_modules()
 
 func set_layout_seed(value: int) -> void:
 	world_config.layout_seed = value
@@ -89,6 +97,24 @@ func regenerate() -> void:
 		var network: Node = get_node_or_null("PlanetNetwork")
 		if network != null and network.has_method("invalidate_neighbor_cache"):
 			network.call("invalidate_neighbor_cache")
+
+func _create_runtime_modules() -> void:
+	if Engine.is_editor_hint() or _runtime_modules_created:
+		return
+	var network: Node = get_node_or_null("PlanetNetwork")
+	var worker_manager: Node = get_node_or_null("WorkerManager")
+	if network == null or worker_manager == null:
+		return
+	var economy_manager: Node = PLANET_ECONOMY_MANAGER_SCRIPT.new()
+	economy_manager.name = "EconomyManager"
+	economy_manager.set("economy_config", economy_config if economy_config != null else DEFAULT_ECONOMY_CONFIG)
+	add_child(economy_manager)
+
+	var cpu_ai: Node = CPU_DISPATCH_AI_SCRIPT.new()
+	cpu_ai.name = "CpuDispatchAI"
+	cpu_ai.call("configure", self, network, worker_manager, cpu_dispatch_config if cpu_dispatch_config != null else DEFAULT_CPU_DISPATCH_CONFIG)
+	add_child(cpu_ai)
+	_runtime_modules_created = true
 
 func _generate_catalog_planets() -> void:
 	if _catalog_generated:

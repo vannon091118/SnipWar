@@ -10,6 +10,9 @@ const _FlightTime := preload("res://scripts/flight_time.gd")
 func _spawn_clusters(source: Planet, amount: int) -> void:
 	source.register_workers(maxi(amount, 0))
 
+func dispatch_mission(source: Planet, destination: Planet, amount: int, route_path: Array[Vector2] = [], mission_type: StringName = &"military") -> void:
+	_dispatch_clusters(source, destination, amount, route_path, mission_type)
+
 func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_path: Array[Vector2] = [], mission_type: StringName = &"military") -> void:
 	var dispatch_count := _Dispatch.launch_amount(source.worker_count, amount)
 	if dispatch_count <= 0:

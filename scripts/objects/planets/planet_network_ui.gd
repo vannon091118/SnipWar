@@ -184,7 +184,7 @@ func _apply_theme() -> void:
 	if _vault_bar != null:
 		_vault_bar.add_theme_stylebox_override("panel", _style_box(_theme_config.panel_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
 	if _tab_button != null:
-		_tab_button.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+		_tab_button.add_theme_font_size_override("font_size", _theme_config.tab_font_size)
 		_tab_button.add_theme_color_override("font_color", _theme_config.tab_text_color)
 		_tab_button.add_theme_stylebox_override("normal", _style_box(_theme_config.button_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
 		_tab_button.add_theme_stylebox_override("hover", _style_box(_theme_config.button_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
@@ -200,7 +200,7 @@ func _apply_theme() -> void:
 	if _vault_label != null:
 		_vault_label.add_theme_font_size_override("normal_font_size", _theme_config.small_font_size)
 	if _heading_label != null:
-		_heading_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+		_heading_label.add_theme_font_size_override("font_size", _theme_config.heading_font_size)
 		_heading_label.add_theme_color_override("font_color", _theme_config.muted_text_color)
 	if _selected_planet_label != null:
 		_selected_planet_label.add_theme_font_size_override("font_size", _theme_config.panel_title_font_size)
@@ -210,7 +210,7 @@ func _apply_theme() -> void:
 	if _resource_label != null:
 		_resource_label.add_theme_font_size_override("font_size", _theme_config.body_font_size)
 	if _selected_count_label != null:
-		_selected_count_label.add_theme_font_size_override("font_size", _theme_config.body_font_size)
+		_selected_count_label.add_theme_font_size_override("font_size", _theme_config.selected_count_font_size)
 		_selected_count_label.add_theme_color_override("font_color", _theme_config.selected_count_text_color)
 	var headings: Array[Label] = [_destination_heading, _mission_heading, _send_heading, _upgrade_heading, _units_heading]
 	for heading in headings:
