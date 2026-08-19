@@ -43,7 +43,7 @@
 - `SceneTree.quit()` doesn't halt the current function; test scripts must `return` after `quit()`. Headless `--script` runs hang when `_init` errors or returns before `quit()`; only fail via `_check`→`quit(1)` and always end with `quit()`. Keep `--quit-after 2` for the smoke test only.
 - GDScript `:=` fails inference on `Node`-typed children and preflight helper returns; use explicit types/casts (e.g. `(ocean as Node2D).global_position`). `int / int` warns `INTEGER_DIVISION`; use `int(a / 2.0)` for a float quotient.
 - Connect a Tween's `finished` to a non-base-class method with `Callable(node, "_method")`; `node._method` is an unsafe member access.
-- Compatibility renderer may log `Debug CanvasItem Redraw is not available yet` (benign). A cyan circle around each planet is the collision-debug overlay for `ClickArea/CollisionShape2D` (radius 120); disable `Debug > Visible Collision Shapes` for captures.
+- Compatibility renderer may log `Debug CanvasItem Redraw is not available yet` (benign). It is triggered by the editor's `Debug > Canvas Item Redraw` toggle sending `set_debug_redraw` to the running game — no project code or project setting causes it (verified by search); silence it via that editor menu. A cyan circle around each planet is the collision-debug overlay for `ClickArea/CollisionShape2D` (radius 120); disable `Debug > Visible Collision Shapes` for captures.
 
 ## Documentation and presentation
 - README: original wording, 4K target vs prototype distinction, unfinished gameplay explicit. `VISION.md` non-binding; `DESIGN.md` is the MVP contract; keep future concept language conditional. Use explicit `<a id="...">` anchors for README badges (GitHub slugs unreliable).

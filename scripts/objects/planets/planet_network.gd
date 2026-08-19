@@ -4,6 +4,7 @@ const _FlightTime := preload("res://scripts/flight_time.gd")
 const _Dispatch := preload("res://scripts/dispatch.gd")
 const DEFAULT_CONFIG: TransitConfig = preload("res://resources/config/transit_default.tres")
 const DEFAULT_UI_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
+const PLANET_NETWORK_UI_SCENE: PackedScene = preload("res://scenes/ui/planet_network_ui.tscn")
 
 @export var transit_config: TransitConfig = DEFAULT_CONFIG
 @export var ui_theme_config: UIThemeConfig = DEFAULT_UI_THEME
@@ -32,7 +33,7 @@ func _ready() -> void:
 	_create_ui.call_deferred()
 
 func _create_ui() -> void:
-	_ui = PlanetNetworkUI.new()
+	_ui = PLANET_NETWORK_UI_SCENE.instantiate() as PlanetNetworkUI
 	add_child(_ui)
 	_ui.setup(_planets, ui_theme_config)
 	_ui.panel_visibility_changed.connect(_on_panel_visibility_changed)

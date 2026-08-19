@@ -1,0 +1,107 @@
+[gd_scene format=3 uid="uid://ci158v1r54nui"]
+
+[ext_resource type="Script" path="res://scripts/objects/planets/planet_network_ui.gd" id="1_network_ui"]
+
+[node name="PlanetNetworkUI" type="CanvasLayer"]
+layer = 50
+script = ExtResource("1_network_ui")
+
+[node name="PlanetTabUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PlanetTab" type="Button" parent="PlanetTabUI"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -280.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 52.0
+grow_horizontal = 0
+toggle_mode = true
+text = "PLANETEN"
+
+[node name="PlanetPanel" type="PanelContainer" parent="PlanetTabUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -280.0
+offset_top = 60.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PlanetTabUI/PlanetPanel"]
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="PlanetTabUI/PlanetPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="HeadingLabel" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+text = "PLANETENMENÜ"
+
+[node name="SelectedPlanetLabel" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+text = "Kein Planet ausgewählt"
+
+[node name="SelectedCountLabel" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+text = "Einheiten: 0"
+
+[node name="DestinationHeading" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+text = "Zielplanet"
+
+[node name="DestinationSelect" type="OptionButton" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Planet auswählen"
+
+[node name="SendHeading" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+text = "EINHEITEN SENDEN"
+
+[node name="AmountSlider" type="HSlider" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+min_value = 1.0
+max_value = 1.0
+value = 1.0
+editable = false
+
+[node name="PreviewLabel" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+text = "Keine Einheiten verfügbar"
+
+[node name="SendButton" type="Button" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+disabled = true
+text = "SENDEN"
+
+[node name="HSeparator" type="HSeparator" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+
+[node name="UnitsHeading" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+text = "EINHEITEN PRO PLANET"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CountList" type="VBoxContainer" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
