@@ -4,6 +4,7 @@
 - Godot is not on PATH; use `C:/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console.exe`.
 - `--headless --path . --quit-after 2` exercises the real main scene; temporary lifecycle checks run with `--headless --path . --script res://.tmp_*.gd` and must be removed afterward.
 - No GUT framework; `scripts/preflight.gd` is the persistent headless test suite (`--headless --path . --script res://scripts/preflight.gd`).
+- A headless editor scan can exit 0 while reporting an `EditorFileServer` port-6010 conflict and aborting its scan thread; trust runtime preflight and the main-scene smoke test for execution validation.
 - The seed-variation check calls `PlanetField.set_layout_seed(...)`, waits two frames for deferred regeneration, compares positions, then restores the original `world_config.layout_seed` before the remaining assertions.
 
 ## Architecture constraints
@@ -12,6 +13,8 @@
 - `WorldConfig` is shared by Background, PlanetField, and MeteorField; Bootstrap mutates only `layout_seed`, while the background consumes `decorative_seed`. Keep these consumers on the same resource when changing world dimensions or seeds.
 - `WorldConfig.design_size` intentionally mirrors the Godot viewport in `project.godot`; project settings cannot reference a Resource, so preflight must keep both values synchronized.
 - The scale preflight cases duplicate WorldConfig and PlanetCatalog, set them before adding a fresh PlanetField to the tree, then verify bounds, unique slots, counts, and route connectivity for multiple logical world sizes.
+- `NavigationField` resolves WorldConfig from its `PlanetField` parent and must rebuild after layout positions change; otherwise custom scale cases retain stale scene-local columns or seeds.
+- One Moon/Comet waypoint represents each layout-neighbor edge; AStar2D routes every selected destination through this graph, and both preview and WorkerManager must consume the same global-coordinate path.
 - Runtime re-layout assigns `Planet.size_profile` and its derived `layout_size` after the initial scene setup; the layout/profile setter must restart an existing spawn timer so generated size and spawn cadence remain synchronized.
 - `seeded_layout.gd` must only lay out `Planet` children; the Toxic orbit child is intentionally not a planet slot.
 - `SeededLayout._enter_tree()` must generate catalog planets before sibling `PlanetNetwork` enters `_ready()`; generating in `_ready()` makes the network miss planet signal connections and UI entries.
@@ -34,6 +37,7 @@
 - Transit groups use a route-aligned deterministic V/wedge formation with the same offsets at source and destination, so the fleet remains ordered until arrival. The cluster still exposes `Attachments` for later object assets such as cannons, drones, and upgrades.
 - Spawn tiers are part of the MVP contract: XL = 3 workers/5 s, L = 2/7 s, variable planets = 1/10 s.
 - `flight_time.gd`, `dispatch.gd`, `scripts/config/transit_config.gd`, `scripts/config/cluster_tier_definition.gd`, `resources/config/transit_default.tres`, `resources/config/cluster_tiers/*`, `planet_network.gd`, `planet_network_ui.gd`, `scripts/config/ui_theme_config.gd`, `resources/config/ui_theme_default.tres`, `worker_cluster.gd`, `worker_cluster.tscn`, `worker_manager.gd`, and `preflight.gd` change/commit together; preflight uses PlanetNetworkUI getters and the manager's `_arrive_cluster()` wrapper. The flight formula uses only logical unit load; visual K/M/L thresholds must not add a discontinuous speed jump.
+- Navigation changes span `scripts/config/navigation_config.gd`, `resources/config/navigation_default.tres`, `scripts/objects/planets/navigation_field.gd`, `scripts/objects/planets/navigation_waypoint.gd`, its scene/SVG import sidecars, `seeded_layout.gd`, `planet_network.gd`, `worker_manager.gd`, `transit_config.gd`, `flight_time.gd`, and `preflight.gd`; update them as one pathing contract.
 - `planet.tscn`, `planet.gd`, `planet_details.gd`, `planet_detail_orbit.gd`, `seeded_layout.gd`, `scripts/config/world_config.gd`, `scripts/config/planet_size_profile.gd`, `scripts/config/planet_definition.gd`, `scripts/config/planet_catalog.gd`, `scripts/config/planet_detail_definition.gd`, `scripts/config/planet_detail_profile.gd`, `resources/config/world_default.tres`, `resources/config/planet_sizes/*`, `resources/config/planet_catalog.tres`, `resources/config/planets/*`, `resources/config/planet_details/*`, and the planet/detail SVG/import assets change together for catalog-driven content. `planet_details.gd` reuses meteor SVGs for asteroid/comet extras; `planet_detail_ring.gd` no longer exists and must not return without a concept-level decision.
 - `scripts/backgrounds/starfield_background.gd`, `scripts/config/background_config.gd`, `scripts/config/background_nebula_definition.gd`, `resources/config/background_default.tres`, `resources/config/background_nebula/*`, `scripts/objects/meteors/meteor_field.gd`, `scripts/config/meteor_config.gd`, `resources/config/meteor_default.tres`, and their scenes change together for presentation tuning.
 - `PlanetNetwork` resolves destinations and passes them to `WorkerManager`; keep the manager independent of the network lookup. `planet_network.gd` owns routing/lines, while `planet_network_ui.gd` owns the CanvasLayer controls and emits UI signals.
@@ -41,7 +45,7 @@
 - `PlanetNetwork` injects `UIThemeConfig` into the dynamically created `PlanetNetworkUI`; panel offsets must be recomputed on viewport `size_changed`, not replaced with fixed pixel positions.
 - `BackgroundConfig` controls starfield density/visual ranges and `MeteorConfig` controls meteor size/speed; WorldConfig remains the source for world bounds and decorative seed, and the scene assignments must stay connected.
 - Do not keep unused `WorkerState` values as placeholders; add a state only when its transition behavior exists.
-- Flight duration uses a smooth logical-unit load only, so the visual tier switch does not make speed jump; transit arrival tests should call the manager's `_arrive_cluster()` wrapper, which registers the logical amount and frees the visual cluster, and assert movement via "distance to destination decreased", never by awaiting flight end or exact positions.
+- Flight duration uses a smooth logical-unit load only, so the visual tier switch does not make speed jump; normalized tuning is `distance / TransitConfig.distance_unit × base_seconds_per_distance_unit`. Transit arrival tests should call the manager's `_arrive_cluster()` wrapper, assert movement via "distance to destination decreased", and inspect launch formation synchronously because a frame wait can move fast clusters before exact source offsets are checked.
 
 ## Interaction and assets
 - Planet clicks require the planet `Area2D`/shape; cluster graphics remain collision-free. The persistent destination tab UI must be created with `call_deferred()` because adding viewport UI during child setup triggers Godot's "parent node is busy setting up children" error.
@@ -51,7 +55,9 @@
 
 ## Godot pitfalls
 - Godot 4.7 `@export_enum` requires String/Integer-compatible variables, not `StringName`.
-- Resource scripts consumed by `@tool` planet/layout scripts must also be marked `@tool`; otherwise the editor scan creates placeholder Resources and calls such as `PlanetDetailProfile.definition_for()` fail even when the runtime preflight passes.
+- Resource and waypoint scripts consumed by `@tool` planet/layout scripts must also be marked `@tool`; otherwise editor-time generation can produce placeholders or skip waypoint configuration even when runtime preflight passes.
+- `NavigationWaypoint.configure()` may run before the node enters the tree during graph rebuild; do not rely on an `@onready` Sprite2D there, and add the node before assigning its global position so PlanetField offsets are not applied twice.
+- `NavigationField`'s route method must not be named `get_path`: that collides with native `Node.get_path()` and causes a misleading signature/override parse error; use a distinct name such as `find_route()`.
 - Meteor respawn must disable processing before emitting the exit signal; the callback immediately respawns and re-enables the meteor.
 - Meteor sizes are pixel-based: `meteor_field.gd` converts 4-10 px targets using each SVG texture width; keep this visible-size contract instead of restoring relative 0.004-0.01 scales.
 - `SceneTree.quit()` does not halt the current function; test scripts must `return` after `quit()` or the success path falls through to the failure branch.

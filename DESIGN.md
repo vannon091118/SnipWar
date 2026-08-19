@@ -7,11 +7,11 @@ SnipWar ist momentan ein spielbarer Overworld-Vertical-Slice: zehn deterministis
 ## Abgeschlossene Entscheidungen
 
 - **Zielauswahl:** Das Ziel wird vor dem Senden im Planeten-Tab gewählt. Der Sendeknopf startet danach direkt den Transit; es gibt keinen zweiten Bestätigungsschritt.
-- **Routenregel:** Das MVP verwendet `all_planets`: Jeder andere Planet darf direkt gewählt werden; Nachbarlinien bleiben räumliche Orientierung. `neighbors_only` ist als konfigurierbare Regel für spätere Szenarien vorgesehen.
-- **Flugzeit:** Die Vorschau reagiert sofort auf die Slider-Menge. Das MVP verwendet das glatte, reskalierbare Modell:
+- **Routenregel:** Das MVP verwendet `all_planets`: Jeder andere Planet darf gewählt werden; Nachbarlinien bleiben räumliche Orientierung. `neighbors_only` ist als konfigurierbare Regel für spätere Szenarien vorgesehen. Jede Auswahl läuft trotzdem über das AStar2D-Netz aus benachbarten Planeten und deterministischen Mond-/Kometen-Wegpunkten; direkte Luftlinien sind nur der Fallback bei einem ungültigen Netzpunkt.
+- **Flugzeit:** Die Vorschau reagiert sofort auf die Slider-Menge und verwendet die Länge des Navigationspfads statt der direkten Luftlinie. Das MVP verwendet das glatte, reskalierbare Modell:
 
   ```text
-  Distanz × (1 + 0.12 × sqrt(max(Einheiten − 1, 0)))
+  (Distanz / 100) × 8 × (1 + 0.05 × sqrt(max(Einheiten − 1, 0)))
   ```
 
   Die Preflight-Suite deckt Basiswert, Mengenlast und monotones Wachstum ab.

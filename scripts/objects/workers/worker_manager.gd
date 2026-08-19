@@ -10,7 +10,7 @@ const _FlightTime := preload("res://scripts/flight_time.gd")
 func _spawn_clusters(source: Planet, amount: int) -> void:
 	source.register_workers(maxi(amount, 0))
 
-func _dispatch_clusters(source: Planet, destination: Planet, amount: int) -> void:
+func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_path: Array[Vector2] = []) -> void:
 	var dispatch_count := _Dispatch.launch_amount(source.worker_count, amount)
 	if dispatch_count <= 0:
 		return
@@ -19,7 +19,8 @@ func _dispatch_clusters(source: Planet, destination: Planet, amount: int) -> voi
 		return
 	var source_position := source.global_position
 	var destination_position := destination.global_position
-	var distance := source_position.distance_to(destination_position)
+	var resolved_path: Array[Vector2] = route_path if route_path.size() >= 2 else [source_position, destination_position]
+	var distance := _path_distance(resolved_path)
 	var duration := _FlightTime.seconds_for(distance, dispatch_count, transit_config)
 	source.unregister_workers(dispatch_count)
 
@@ -30,9 +31,16 @@ func _dispatch_clusters(source: Planet, destination: Planet, amount: int) -> voi
 	for index in groups.size():
 		var cluster: WorkerCluster = CLUSTER_SCENE.instantiate()
 		add_child(cluster)
-		cluster.configure_transit(source_position + offsets[index], destination, groups[index], transit_config)
+		var offset_path: Array[Vector2] = []
+		for point in resolved_path:
+			offset_path.append(point + offsets[index])
+		var offset_distance: float = _path_distance(offset_path)
+		cluster.configure_transit(offset_path[0], destination, groups[index], transit_config)
 		var tween: Tween = cluster.create_tween()
-		tween.tween_property(cluster, "global_position", destination_position + offsets[index], duration).set_trans(Tween.TRANS_LINEAR)
+		for point_index in range(1, offset_path.size()):
+			var segment_distance: float = offset_path[point_index - 1].distance_to(offset_path[point_index])
+			var segment_duration: float = duration * segment_distance / offset_distance if offset_distance > 0.0 else 0.0
+			tween.tween_property(cluster, "global_position", offset_path[point_index], segment_duration).set_trans(Tween.TRANS_LINEAR)
 		tween.finished.connect(Callable(self, "_arrive_cluster").bind(cluster))
 
 func _arrive_cluster(cluster: WorkerCluster) -> void:
@@ -58,3 +66,9 @@ func _cluster_radius(groups: Array[int]) -> float:
 	for group in groups:
 		max_width = maxf(max_width, WorkerCluster.pixel_width(group, transit_config))
 	return max_width * 0.5
+
+func _path_distance(path: Array[Vector2]) -> float:
+	var distance := 0.0
+	for index in range(path.size() - 1):
+		distance += path[index].distance_to(path[index + 1])
+	return distance

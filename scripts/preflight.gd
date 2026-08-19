@@ -8,13 +8,13 @@ var _observed_state := -1
 var _observed_amount := -1
 
 func _init() -> void:
-	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 1), 10.0), "flight time baseline is wrong"):
+	if not _check(is_equal_approx(_FlightTime.seconds_for(100.0, 1), 8.0), "flight time baseline is wrong"):
 		return
-	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 2), 11.2), "flight time unit load is wrong"):
+	if not _check(is_equal_approx(_FlightTime.seconds_for(100.0, 2), 8.4), "flight time unit load is wrong"):
 		return
-	if not _check(is_equal_approx(_FlightTime.seconds_for(20.0, 5), 24.8), "flight time medium load is wrong"):
+	if not _check(is_equal_approx(_FlightTime.seconds_for(200.0, 5), 17.6), "flight time medium load is wrong"):
 		return
-	if not _check(_FlightTime.seconds_for(10.0, 6) > _FlightTime.seconds_for(10.0, 5), "flight time unit scaling is wrong"):
+	if not _check(_FlightTime.seconds_for(100.0, 6) > _FlightTime.seconds_for(100.0, 5), "flight time unit scaling is wrong"):
 		return
 	if not _check(_Dispatch.cluster_groups(1) == [1] and _Dispatch.cluster_groups(4) == [1, 1, 1, 1] and _Dispatch.cluster_groups(5) == [5] and _Dispatch.cluster_groups(7) == [5, 1, 1] and _Dispatch.cluster_groups(100) == [100], "cluster packing thresholds are wrong"):
 		return
@@ -93,8 +93,41 @@ func _init() -> void:
 	await process_frame
 
 	var network: Node = field.get_node("PlanetNetwork")
+	var navigation: NavigationField = field.get_node("NavigationField") as NavigationField
 	var ui: PlanetNetworkUI = network.get_ui()
 	var manager: Node = field.get_node("WorkerManager")
+	if not _check(navigation != null, "navigation field is missing"):
+		return
+	var navigation_config: NavigationConfig = navigation.get("navigation_config") as NavigationConfig
+	if not _check(navigation_config != null and navigation_config.validate().is_empty(), "navigation config validation failed"):
+		return
+	var expected_waypoint_count: int = 0
+	for navigation_planet in field.get_children():
+		if navigation_planet is Planet:
+			expected_waypoint_count += network.get_neighbors(navigation_planet).size()
+	expected_waypoint_count = int(float(expected_waypoint_count) / 2.0)
+	if not _check(navigation.get_waypoint_count() == expected_waypoint_count and expected_waypoint_count > 0, "navigation waypoint count is wrong"):
+		return
+	var graph_edges: Array[Array] = navigation.get_edges()
+	var rendered_waypoint_count: int = 0
+	for waypoint_node in navigation.get_children():
+		if waypoint_node is NavigationWaypoint:
+			rendered_waypoint_count += 1
+			var waypoint_sprite: Sprite2D = waypoint_node.get_node_or_null("Sprite2D") as Sprite2D
+			var waypoint_position: Vector2 = (waypoint_node as Node2D).global_position
+			var waypoint_on_graph: bool = false
+			for edge in graph_edges:
+				if edge.size() == 2 and (waypoint_position.distance_to(edge[0]) <= 0.05 or waypoint_position.distance_to(edge[1]) <= 0.05):
+					waypoint_on_graph = true
+					break
+			if not _check((waypoint_node as NavigationWaypoint).waypoint_type == &"moon" or (waypoint_node as NavigationWaypoint).waypoint_type == &"comet", "navigation waypoint type is invalid"):
+				return
+			if not _check(waypoint_sprite != null and waypoint_sprite.texture != null and waypoint_sprite.scale.x > 0.0, "navigation waypoint visual is missing"):
+				return
+			if not _check(waypoint_on_graph, "navigation waypoint is detached from its graph edge"):
+				return
+	if not _check(rendered_waypoint_count == expected_waypoint_count, "navigation waypoint visuals are incomplete"):
+		return
 	var ui_theme_config: UIThemeConfig = network.get("ui_theme_config") as UIThemeConfig
 	if not _check(ui_theme_config != null and ui_theme_config.validate().is_empty(), "UI theme config validation failed"):
 		return
@@ -104,7 +137,7 @@ func _init() -> void:
 	var transit_errors := transit_config.validate()
 	if not _check(transit_errors.is_empty(), "transit config validation failed"):
 		return
-	var source: Node = _find_planet_with_size(field, &"xl")
+	var source: Planet = _find_planet_with_size(field, &"xl") as Planet
 	var large_planet: Node = _find_planet_with_size(field, &"l")
 	var variable_planet: Node = _find_planet_with_size(field, &"variable")
 	if not _check(source != null and large_planet != null and variable_planet != null, "generated planet sizes are missing"):
@@ -168,16 +201,22 @@ func _init() -> void:
 	if not _check(amount_slider.min_value == 1 and amount_slider.max_value == 3 and amount_slider.step == 1, "dispatch slider bounds are wrong"):
 		return
 	var preview_destination: Node2D = network.get_destination(source)
-	var real_distance: float = (source as Node2D).global_position.distance_to(preview_destination.global_position)
-	if not _check(absf(_flight_seconds(preview_label.text) - real_distance) <= 0.05, "dispatch preview does not use real distance"):
+	var preview_path: Array[Vector2] = network.get_route_path(source, preview_destination)
+	var preview_route_distance: float = _path_distance(preview_path)
+	var direct_distance: float = source.global_position.distance_to(preview_destination.global_position)
+	var expected_preview_seconds: float = _FlightTime.seconds_for(preview_route_distance, ui.selected_amount(), transit_config)
+	if not _check(preview_path.size() >= 3 and preview_route_distance >= direct_distance, "dispatch preview does not use the navigation path"):
 		return
-	var preview_distance_before := _flight_seconds(preview_label.text)
+	if not _check(absf(_flight_seconds(preview_label.text) - expected_preview_seconds) <= 0.11, "dispatch preview does not use real route distance"):
+		return
+	var preview_seconds_before: float = _flight_seconds(preview_label.text)
 	var alternate: Node2D = preview_destination
 	for candidate in neighbors:
 		if candidate == preview_destination:
 			continue
-		var candidate_distance: float = (source as Node2D).global_position.distance_to(candidate.global_position)
-		if absf(candidate_distance - real_distance) > 0.1:
+		var candidate_path: Array[Vector2] = network.get_route_path(source, candidate)
+		var candidate_distance: float = _path_distance(candidate_path)
+		if absf(candidate_distance - preview_route_distance) > 0.1:
 			alternate = candidate
 			break
 	if not _check(alternate != preview_destination, "no alternate destination with different distance"):
@@ -187,10 +226,12 @@ func _init() -> void:
 		return
 	network.call("_on_destination_selected", alternate_index)
 	await process_frame
-	var alternate_distance: float = (source as Node2D).global_position.distance_to(alternate.global_position)
-	if not _check(absf(_flight_seconds(preview_label.text) - alternate_distance) <= 0.05, "destination change did not update the preview distance"):
+	var alternate_path: Array[Vector2] = network.get_route_path(source, alternate)
+	var alternate_distance: float = _path_distance(alternate_path)
+	var expected_alternate_seconds: float = _FlightTime.seconds_for(alternate_distance, ui.selected_amount(), transit_config)
+	if not _check(absf(_flight_seconds(preview_label.text) - expected_alternate_seconds) <= 0.11, "destination change did not update the preview route distance"):
 		return
-	if not _check(_flight_seconds(preview_label.text) != preview_distance_before, "destination change did not alter the preview distance"):
+	if not _check(_flight_seconds(preview_label.text) != preview_seconds_before, "destination change did not alter the preview distance"):
 		return
 	var preview_at_one := preview_label.text
 	amount_slider.value = 2
@@ -225,7 +266,6 @@ func _init() -> void:
 	await process_frame
 	var destination_count_before := int(destination.get("worker_count"))
 	network.call("_on_send_pressed")
-	await process_frame
 	if not _check(int(source.get("worker_count")) == 1, "send did not deduct the source count"):
 		return
 	var transit_clusters: Array[Node] = []
@@ -329,6 +369,7 @@ func _run_layout_scale_case(source_field: Node, base_catalog: PlanetCatalog, des
 	custom_config.large_count = mini(custom_config.large_count, maxi(0, planet_count - custom_config.extra_large_count))
 	custom_field.set("world_config", custom_config)
 	custom_field.set("planet_catalog", _catalog_for_count(base_catalog, planet_count))
+	custom_field.set("position", Vector2(37.0, -29.0))
 	custom_field.set("size_profiles", source_field.get("size_profiles"))
 	root.add_child(custom_field)
 	await process_frame
@@ -354,9 +395,20 @@ func _run_layout_scale_case(source_field: Node, base_catalog: PlanetCatalog, des
 				await process_frame
 				return false
 	var network: Node = custom_field.get_node("PlanetNetwork")
-	var route_count: int = network.get_route_destinations(planets[0]).size() if not planets.is_empty() else 0
+	var navigation: NavigationField = custom_field.get_node("NavigationField") as NavigationField
+	var route_count: int = 0
+	if not planets.is_empty():
+		route_count = network.get_route_destinations(planets[0]).size()
 	var expected_route_count: int = planet_count - 1
-	var passed: bool = planets.size() == planet_count and slots.size() == planet_count and route_count == expected_route_count
+	var expected_waypoint_count: int = 0
+	for planet in planets:
+		expected_waypoint_count += network.get_neighbors(planet).size()
+	expected_waypoint_count = int(float(expected_waypoint_count) / 2.0)
+	var route_path: Array[Vector2] = []
+	if planets.size() >= 2:
+		route_path = network.get_route_path(planets[0], planets[1])
+	var navigation_valid: bool = navigation != null and navigation.get_waypoint_count() == expected_waypoint_count and (planets.size() < 2 or route_path.size() >= 3)
+	var passed: bool = planets.size() == planet_count and slots.size() == planet_count and route_count == expected_route_count and navigation_valid
 	custom_field.queue_free()
 	await process_frame
 	return passed
@@ -427,6 +479,12 @@ func _find_timer(planet: Node) -> Timer:
 		if child is Timer:
 			return child
 	return null
+
+func _path_distance(path: Array[Vector2]) -> float:
+	var distance: float = 0.0
+	for index in range(path.size() - 1):
+		distance += path[index].distance_to(path[index + 1])
+	return distance
 
 func _flight_seconds(text: String) -> float:
 	return float(text.trim_prefix("Flugzeit: ").trim_suffix(" s"))

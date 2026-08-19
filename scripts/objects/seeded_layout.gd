@@ -77,6 +77,11 @@ func regenerate() -> void:
 		item.position = item_position
 		item.scale = Vector2.ONE * _scale_for(item, rng)
 
+	var navigation: NavigationField = get_node_or_null("NavigationField") as NavigationField
+	if navigation != null:
+		navigation.world_config = config
+		navigation.request_rebuild()
+
 func _generate_catalog_planets() -> void:
 	if _catalog_generated:
 		return

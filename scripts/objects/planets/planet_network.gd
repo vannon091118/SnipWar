@@ -9,6 +9,7 @@ const DEFAULT_UI_THEME: UIThemeConfig = preload("res://resources/config/ui_theme
 @export var ui_theme_config: UIThemeConfig = DEFAULT_UI_THEME
 
 @onready var _worker_manager: Node = get_parent().get_node("WorkerManager")
+@onready var _navigation: NavigationField = get_parent().get_node("NavigationField")
 
 var _planets: Array[Node2D] = []
 var _routes: Dictionary = {}
@@ -43,14 +44,13 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	if _active_planet == null or not is_instance_valid(_ui) or not _ui.is_panel_visible():
 		return
-	var neighbors := get_neighbors(_active_planet)
-	for index in neighbors.size():
-		var pulse := 0.5 + sin(_line_phase * 2.0 + float(index)) * 0.18
-		var color := Color(0.25, 0.85, 1.0, pulse)
-		draw_line(to_local(_active_planet.global_position), to_local(neighbors[index].global_position), color, 2.0, true)
 	var destination := get_destination(_active_planet)
 	if destination != null:
-		draw_line(to_local(_active_planet.global_position), to_local(destination.global_position), Color(1.0, 0.85, 0.2, 0.9), 3.0, true)
+		var route_path := get_route_path(_active_planet, destination)
+		var route_alpha := 0.82 + sin(_line_phase * 2.0) * 0.08
+		var route_color := Color(1.0, 0.85, 0.2, route_alpha)
+		for index in range(route_path.size() - 1):
+			draw_line(to_local(route_path[index]), to_local(route_path[index + 1]), route_color, 3.0, true)
 
 func _on_panel_visibility_changed(_visible: bool) -> void:
 	queue_redraw()
@@ -107,7 +107,8 @@ func _update_preview() -> void:
 	if destination == null:
 		_ui.set_preview("Kein Ziel verfügbar")
 		return
-	var distance := _active_planet.global_position.distance_to(destination.global_position)
+	var route_path := get_route_path(_active_planet, destination)
+	var distance := _path_distance(route_path)
 	var seconds := _FlightTime.seconds_for(distance, _ui.selected_amount(), transit_config)
 	_ui.set_preview("Flugzeit: %.1f s" % seconds)
 
@@ -123,13 +124,24 @@ func _on_send_pressed() -> void:
 		return
 	var destination := get_destination(_active_planet)
 	if destination != null:
-		_worker_manager.call("_dispatch_clusters", _active_planet, destination, _ui.selected_amount())
+		_worker_manager.call("_dispatch_clusters", _active_planet, destination, _ui.selected_amount(), get_route_path(_active_planet, destination))
 
 func get_ui() -> PlanetNetworkUI:
 	return _ui
 
 func get_line_phase() -> float:
 	return _line_phase
+
+func get_route_path(source: Node2D, destination: Node2D) -> Array[Vector2]:
+	if is_instance_valid(_navigation):
+		return _navigation.find_route(source, destination)
+	return [source.global_position, destination.global_position]
+
+func _path_distance(path: Array[Vector2]) -> float:
+	var distance := 0.0
+	for index in range(path.size() - 1):
+		distance += path[index].distance_to(path[index + 1])
+	return distance
 
 func get_destination(source: Node2D) -> Node2D:
 	var selected = _routes.get(source)

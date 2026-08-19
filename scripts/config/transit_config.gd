@@ -2,7 +2,8 @@
 class_name TransitConfig
 extends Resource
 
-@export_range(0.0, 1000.0, 0.01) var base_seconds_per_distance: float
+@export_range(0.01, 10000.0, 0.01) var distance_unit: float
+@export_range(0.0, 1000.0, 0.01) var base_seconds_per_distance_unit: float
 @export_range(0.0, 10.0, 0.01) var unit_load_factor: float
 @export_range(0.01, 1.0, 0.01) var overlap_budget: float
 @export_range(0.0, 2.0, 0.01) var formation_depth_ratio: float
@@ -36,8 +37,10 @@ func tier_for_amount(amount: int) -> ClusterTierDefinition:
 
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
-	if base_seconds_per_distance < 0.0:
-		errors.append("transit base_seconds_per_distance cannot be negative")
+	if distance_unit <= 0.0:
+		errors.append("transit distance_unit must be positive")
+	if base_seconds_per_distance_unit < 0.0:
+		errors.append("transit base_seconds_per_distance_unit cannot be negative")
 	if unit_load_factor < 0.0:
 		errors.append("transit unit_load_factor cannot be negative")
 	if overlap_budget <= 0.0 or overlap_budget > 1.0:

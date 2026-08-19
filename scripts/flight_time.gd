@@ -5,4 +5,6 @@ const DEFAULT_CONFIG: TransitConfig = preload("res://resources/config/transit_de
 static func seconds_for(distance: float, unit_count: int, config: TransitConfig = null) -> float:
 	var resolved_config: TransitConfig = config if config != null else DEFAULT_CONFIG
 	var extra_units := maxi(unit_count - 1, 0)
-	return distance * (resolved_config.base_seconds_per_distance + resolved_config.unit_load_factor * sqrt(extra_units))
+	var normalized_distance: float = maxf(distance, 0.0) / resolved_config.distance_unit
+	var load_multiplier := 1.0 + resolved_config.unit_load_factor * sqrt(extra_units)
+	return normalized_distance * resolved_config.base_seconds_per_distance_unit * load_multiplier

@@ -8,8 +8,9 @@
 
 [resource]
 script = ExtResource("1_transit")
-base_seconds_per_distance = 1.0
-unit_load_factor = 0.12
+distance_unit = 100.0
+base_seconds_per_distance_unit = 8.0
+unit_load_factor = 0.05
 overlap_budget = 0.85
 formation_depth_ratio = 0.7
 cluster_tiers = Array[ExtResource("5_cluster_tier")]([ExtResource("2_k"), ExtResource("3_m"), ExtResource("4_l")])
