@@ -31,8 +31,8 @@ Die geplante Endfassung denkt in 4K — nicht als bloße Auflösung, sondern als
 
 Zehn Planeten bilden ein unruhiges Netz aus Ressourcen, Heimatwelten und Gefahren. Ihre Positionen werden deterministisch verteilt, damit ein Seed reproduzierbare taktische Räume erzeugt, während der Laufstart später für neue Karten sorgen kann.
 
-- **Ocean** und **Golden** setzen als XL-Welten die großen Fixpunkte.
-- **Desert** bringt als L-Sektor einen eigenen Rhythmus in die Versorgung.
+- Der deterministische Generator verteilt zwei XL-Welten und einen L-Sektor als große Fixpunkte.
+- Die Größenverteilung hängt am Seed; dadurch ändern sich Position und Spawn-Rhythmus gemeinsam, ohne die Rollen der Planeten zu verlieren.
 - **Toxic**, **Volcanic** und **Storm** markieren Zonen, in denen die Karte nicht neutral bleibt.
 - Meteore ziehen durch den Vordergrund; um Toxic kreist ein eigener kleiner Himmelskörper.
 - Ein Netzwerk aus Nachbarfeldern macht erreichbare Ziele sichtbar, statt sie in Menüs zu verstecken.

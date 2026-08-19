@@ -8,18 +8,8 @@ const _Dispatch := preload("res://scripts/dispatch.gd")
 var _planets: Array[Node2D] = []
 var _routes: Dictionary = {}
 var _active_planet: Node2D
-var _ui_layer: CanvasLayer
-var _ui_root: Control
-var _tab_button: Button
-var _panel: PanelContainer
-var _selected_planet_label: Label
-var _selected_count_label: Label
-var _destination_option: OptionButton
 var _destination_planets: Array[Node2D] = []
-var _count_labels: Dictionary = {}
-var _amount_slider: HSlider
-var _preview_label: Label
-var _send_button: Button
+var _ui: PlanetNetworkUI
 var _line_phase := 0.0
 
 func _ready() -> void:
@@ -28,178 +18,25 @@ func _ready() -> void:
 			_planets.append(child)
 			child.planet_selected.connect(_on_planet_selected)
 			child.worker_count_changed.connect(_on_worker_count_changed)
+			child.workers_spawn_requested.connect(_on_workers_spawn_requested)
 	_create_ui.call_deferred()
 
 func _create_ui() -> void:
-	_create_ui_layer()
-	_create_tab_button()
-	_create_panel()
-	var content := _create_panel_content()
-	_create_header_labels(content)
-	_create_destination_controls(content)
-	_create_dispatch_controls(content)
-	_create_units_list(content)
-
-func _create_ui_layer() -> void:
-	_ui_layer = CanvasLayer.new()
-	_ui_layer.name = "PlanetTabLayer"
-	_ui_layer.layer = 50
-	add_child(_ui_layer)
-
-	_ui_root = Control.new()
-	_ui_root.name = "PlanetTabUI"
-	_ui_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_ui_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_ui_layer.add_child(_ui_root)
-
-func _create_tab_button() -> void:
-	_tab_button = Button.new()
-	_tab_button.name = "PlanetTab"
-	_tab_button.text = "PLANETEN"
-	_tab_button.toggle_mode = true
-	_tab_button.anchor_left = 1.0
-	_tab_button.anchor_right = 1.0
-	_tab_button.offset_left = -300.0
-	_tab_button.offset_top = 16.0
-	_tab_button.offset_right = -16.0
-	_tab_button.offset_bottom = 52.0
-	_tab_button.add_theme_font_size_override("font_size", 16)
-	_tab_button.add_theme_color_override("font_color", Color(0.85, 0.95, 1.0, 1.0))
-	_tab_button.pressed.connect(_toggle_panel)
-	_ui_root.add_child(_tab_button)
-
-func _create_panel() -> void:
-	_panel = PanelContainer.new()
-	_panel.name = "PlanetPanel"
-	_panel.anchor_left = 1.0
-	_panel.anchor_right = 1.0
-	_panel.anchor_bottom = 1.0
-	_panel.offset_left = -300.0
-	_panel.offset_top = 58.0
-	_panel.offset_right = -16.0
-	_panel.offset_bottom = -16.0
-	_panel.visible = false
-	var panel_style := StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.025, 0.045, 0.10, 0.94)
-	panel_style.border_color = Color(0.25, 0.82, 0.98, 0.88)
-	panel_style.border_width_left = 2
-	panel_style.border_width_top = 2
-	panel_style.border_width_right = 2
-	panel_style.border_width_bottom = 2
-	panel_style.corner_radius_top_left = 8
-	panel_style.corner_radius_top_right = 8
-	panel_style.corner_radius_bottom_left = 8
-	panel_style.corner_radius_bottom_right = 8
-	_panel.add_theme_stylebox_override("panel", panel_style)
-	_ui_root.add_child(_panel)
-
-func _create_panel_content() -> VBoxContainer:
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 14)
-	margin.add_theme_constant_override("margin_top", 12)
-	margin.add_theme_constant_override("margin_right", 14)
-	margin.add_theme_constant_override("margin_bottom", 12)
-	_panel.add_child(margin)
-
-	var content := VBoxContainer.new()
-	content.add_theme_constant_override("separation", 8)
-	margin.add_child(content)
-	return content
-
-func _create_header_labels(content: VBoxContainer) -> void:
-	var heading := Label.new()
-	heading.text = "PLANETENMENÜ"
-	heading.add_theme_font_size_override("font_size", 18)
-	heading.add_theme_color_override("font_color", Color(0.97, 0.78, 0.35, 1.0))
-	content.add_child(heading)
-
-	_selected_planet_label = Label.new()
-	_selected_planet_label.text = "Kein Planet ausgewählt"
-	_selected_planet_label.add_theme_color_override("font_color", Color(0.82, 0.91, 0.98, 1.0))
-	content.add_child(_selected_planet_label)
-
-	_selected_count_label = Label.new()
-	_selected_count_label.text = "Einheiten: 0"
-	_selected_count_label.add_theme_font_size_override("font_size", 16)
-	_selected_count_label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.70, 1.0))
-	content.add_child(_selected_count_label)
-
-func _create_destination_controls(content: VBoxContainer) -> void:
-	var destination_heading := Label.new()
-	destination_heading.text = "Zielplanet"
-	destination_heading.add_theme_color_override("font_color", Color(0.68, 0.82, 0.92, 1.0))
-	content.add_child(destination_heading)
-
-	_destination_option = OptionButton.new()
-	_destination_option.name = "DestinationSelect"
-	_destination_option.text = "Planet auswählen"
-	_destination_option.disabled = true
-	_destination_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_destination_option.item_selected.connect(_on_destination_selected)
-	content.add_child(_destination_option)
-
-func _create_units_list(content: VBoxContainer) -> void:
-	var separator := HSeparator.new()
-	content.add_child(separator)
-
-	var units_heading := Label.new()
-	units_heading.text = "EINHEITEN PRO PLANET"
-	units_heading.add_theme_color_override("font_color", Color(0.97, 0.78, 0.35, 1.0))
-	content.add_child(units_heading)
-
-	var scroll := ScrollContainer.new()
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content.add_child(scroll)
-
-	var count_list := VBoxContainer.new()
-	count_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	count_list.add_theme_constant_override("separation", 4)
-	scroll.add_child(count_list)
-	for planet in _planets:
-		var count_label := Label.new()
-		count_label.text = _count_text(planet)
-		count_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		count_label.add_theme_color_override("font_color", Color(0.80, 0.87, 0.94, 1.0))
-		_count_labels[planet] = count_label
-		count_list.add_child(count_label)
-
-func _create_dispatch_controls(content: VBoxContainer) -> void:
-	var send_heading := Label.new()
-	send_heading.text = "EINHEITEN SENDEN"
-	send_heading.add_theme_color_override("font_color", Color(0.97, 0.78, 0.35, 1.0))
-	content.add_child(send_heading)
-
-	_amount_slider = HSlider.new()
-	_amount_slider.name = "AmountSlider"
-	_amount_slider.min_value = 1
-	_amount_slider.max_value = 1
-	_amount_slider.step = 1
-	_amount_slider.value = 1
-	_amount_slider.editable = false
-	_amount_slider.value_changed.connect(_on_amount_changed)
-	content.add_child(_amount_slider)
-
-	_preview_label = Label.new()
-	_preview_label.name = "PreviewLabel"
-	_preview_label.text = "Keine Einheiten verfügbar"
-	_preview_label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.70, 1.0))
-	content.add_child(_preview_label)
-
-	_send_button = Button.new()
-	_send_button.name = "SendButton"
-	_send_button.text = "SENDEN"
-	_send_button.disabled = true
-	_send_button.pressed.connect(_on_send_pressed)
-	content.add_child(_send_button)
+	_ui = PlanetNetworkUI.new()
+	add_child(_ui)
+	_ui.setup(_planets)
+	_ui.panel_visibility_changed.connect(_on_panel_visibility_changed)
+	_ui.destination_selected.connect(_on_destination_selected)
+	_ui.amount_changed.connect(_on_amount_changed)
+	_ui.send_pressed.connect(_on_send_pressed)
 
 func _process(delta: float) -> void:
-	if _active_planet != null and is_instance_valid(_panel) and _panel.visible:
+	if _active_planet != null and is_instance_valid(_ui) and _ui.is_panel_visible():
 		_line_phase += delta
 		queue_redraw()
 
 func _draw() -> void:
-	if _active_planet == null or not is_instance_valid(_panel) or not _panel.visible:
+	if _active_planet == null or not is_instance_valid(_ui) or not _ui.is_panel_visible():
 		return
 	var neighbors := get_neighbors(_active_planet)
 	for index in neighbors.size():
@@ -210,100 +47,89 @@ func _draw() -> void:
 	if destination != null:
 		draw_line(to_local(_active_planet.global_position), to_local(destination.global_position), Color(1.0, 0.85, 0.2, 0.9), 3.0, true)
 
-func _toggle_panel() -> void:
-	if not is_instance_valid(_panel):
-		return
-	_panel.visible = not _panel.visible
-	_tab_button.set_pressed_no_signal(_panel.visible)
+func _on_panel_visibility_changed(_visible: bool) -> void:
 	queue_redraw()
 
+func _on_workers_spawn_requested(source: Node2D, amount: int) -> void:
+	var destination := get_destination(source)
+	if destination != null:
+		_worker_manager.call("_spawn_workers", source, destination, amount)
+
 func _on_planet_selected(planet: Node2D) -> void:
-	if not is_instance_valid(_panel):
+	if not is_instance_valid(_ui):
 		return
 	_active_planet = planet
-	_panel.visible = true
-	_tab_button.set_pressed_no_signal(true)
-	_selected_planet_label.text = "Planet: %s" % planet.name
-	_update_selected_count()
-	_refresh_slider_bounds()
-	if is_instance_valid(_amount_slider) and _amount_slider.editable:
-		_amount_slider.set_value_no_signal(1)
-		_update_preview()
-	_destination_option.clear()
 	_destination_planets.clear()
-	_destination_option.disabled = false
 	var default_destination := get_destination(planet)
 	for destination in _planets:
 		if destination != planet:
 			_destination_planets.append(destination)
-			_destination_option.add_item(destination.name)
-	if default_destination != null:
-		for index in _destination_option.item_count:
-			if _destination_option.get_item_text(index) == default_destination.name:
-				_destination_option.select(index)
-				break
+	_ui.show_planet(planet, _destination_planets, default_destination)
+	_update_selected_count()
+	_refresh_slider_bounds()
+	if _ui.has_selectable_amount():
+		_ui.reset_amount()
+		_update_preview()
 	queue_redraw()
 
 func _on_destination_selected(index: int) -> void:
-	if _active_planet == null or not is_instance_valid(_destination_option):
+	if _active_planet == null:
 		return
-	if index < 0 or index >= _destination_option.item_count or index >= _destination_planets.size():
+	if index < 0 or index >= _destination_planets.size():
 		return
 	_routes[_active_planet] = _destination_planets[index]
 	_update_preview()
 	queue_redraw()
 
 func _on_worker_count_changed(planet: Node2D, _count: int) -> void:
-	if _count_labels.has(planet):
-		var count_label: Label = _count_labels[planet]
-		count_label.text = _count_text(planet)
+	if is_instance_valid(_ui):
+		_ui.update_count(planet)
 	if planet == _active_planet:
 		_update_selected_count()
 		_refresh_slider_bounds()
 
 func _update_selected_count() -> void:
-	if _active_planet == null or not is_instance_valid(_selected_count_label):
+	if _active_planet == null or not is_instance_valid(_ui):
 		return
-	_selected_count_label.text = "Einheiten: %d" % int(_active_planet.get("worker_count"))
-
-func _count_text(planet: Node2D) -> String:
-	return "%s: %d" % [planet.name, int(planet.get("worker_count"))]
+	_ui.set_selected_count(int(_active_planet.get("worker_count")))
 
 func _on_amount_changed(_value: float) -> void:
 	_update_preview()
 	queue_redraw()
 
 func _update_preview() -> void:
-	if not is_instance_valid(_preview_label):
+	if not is_instance_valid(_ui):
 		return
-	if _active_planet == null or not is_instance_valid(_amount_slider) or int(_amount_slider.max_value) <= 0:
-		_preview_label.text = "Keine Einheiten verfügbar"
+	if _active_planet == null or not _ui.has_selectable_amount():
+		_ui.set_preview("Keine Einheiten verfügbar")
 		return
 	var destination := get_destination(_active_planet)
 	if destination == null:
-		_preview_label.text = "Kein Ziel verfügbar"
+		_ui.set_preview("Kein Ziel verfügbar")
 		return
 	var distance := _active_planet.global_position.distance_to(destination.global_position)
-	var seconds := _FlightTime.seconds_for(distance, int(_amount_slider.value))
-	_preview_label.text = "Flugzeit: %.1f s" % seconds
+	var seconds := _FlightTime.seconds_for(distance, _ui.selected_amount())
+	_ui.set_preview("Flugzeit: %.1f s" % seconds)
 
 func _refresh_slider_bounds() -> void:
-	if _active_planet == null or not is_instance_valid(_amount_slider):
+	if _active_planet == null or not is_instance_valid(_ui):
 		return
 	var bounds := _Dispatch.amount_range(int(_active_planet.get("worker_count")))
-	_amount_slider.min_value = bounds.x
-	_amount_slider.max_value = bounds.y
-	_amount_slider.editable = bounds.y > 0
-	if _amount_slider.value > bounds.y:
-		_amount_slider.value = bounds.y
-	if is_instance_valid(_send_button):
-		_send_button.disabled = bounds.y <= 0
+	_ui.set_amount_bounds(bounds)
 	_update_preview()
 
 func _on_send_pressed() -> void:
-	if _active_planet == null or not is_instance_valid(_amount_slider):
+	if _active_planet == null or not is_instance_valid(_ui):
 		return
-	_worker_manager.call("_dispatch_workers", _active_planet, int(_amount_slider.value))
+	var destination := get_destination(_active_planet)
+	if destination != null:
+		_worker_manager.call("_dispatch_workers", _active_planet, destination, _ui.selected_amount())
+
+func get_ui() -> PlanetNetworkUI:
+	return _ui
+
+func get_line_phase() -> float:
+	return _line_phase
 
 func get_destination(source: Node2D) -> Node2D:
 	var selected = _routes.get(source)

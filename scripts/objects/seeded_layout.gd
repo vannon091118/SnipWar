@@ -1,13 +1,6 @@
 @tool
 extends Node2D
 
-const SIZE_RANGES: Dictionary = {
-	&"l": Vector2(0.37, 0.43),
-	&"xl": Vector2(0.48, 0.525)
-}
-const VARIABLE_SCALE_MIN := 0.18
-const VARIABLE_SCALE_MAX := 0.43
-
 @export var layout_seed: int = 241119:
 	set(value):
 		layout_seed = value
@@ -21,6 +14,16 @@ const VARIABLE_SCALE_MAX := 0.43
 @export_range(1, 10, 1) var columns: int = 5:
 	set(value):
 		columns = maxi(1, value)
+		_queue_layout()
+
+@export_range(0, 20, 1) var extra_large_count: int = 2:
+	set(value):
+		extra_large_count = maxi(0, value)
+		_queue_layout()
+
+@export_range(0, 20, 1) var large_count: int = 1:
+	set(value):
+		large_count = maxi(0, value)
 		_queue_layout()
 
 @export_range(0.0, 0.4, 0.01) var jitter: float = 0.12:
@@ -37,9 +40,9 @@ func _ready() -> void:
 	regenerate()
 
 func regenerate() -> void:
-	var layout_items: Array[Node2D] = []
+	var layout_items: Array[Planet] = []
 	for child in get_children():
-		if child is Node2D and child.get("layout_size") != null:
+		if child is Planet:
 			layout_items.append(child)
 
 	if layout_items.is_empty():
@@ -47,6 +50,7 @@ func regenerate() -> void:
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = layout_seed
+	_assign_size_classes(layout_items, rng)
 	var rows: int = ceili(float(layout_items.size()) / float(columns))
 	var cell_size := Vector2(
 		target_size.x / float(columns),
@@ -54,9 +58,9 @@ func regenerate() -> void:
 	)
 	var assigned_slots: Dictionary = {}
 	var occupied_slots: Dictionary = {}
-	var xl_items: Array[Node2D] = []
-	var l_items: Array[Node2D] = []
-	var remaining_items: Array[Node2D] = []
+	var xl_items: Array[Planet] = []
+	var l_items: Array[Planet] = []
+	var remaining_items: Array[Planet] = []
 
 	for item in layout_items:
 		var size_class: StringName = _size_class(item)
@@ -115,7 +119,25 @@ func regenerate() -> void:
 		item.position = item_position
 		item.scale = Vector2.ONE * _scale_for(item, rng)
 
-func _assign_slot(item: Node2D, slot: int, assigned_slots: Dictionary, occupied_slots: Dictionary) -> void:
+func _assign_size_classes(items: Array[Planet], rng: RandomNumberGenerator) -> void:
+	var size_classes: Array[StringName] = []
+	for _index in mini(extra_large_count, items.size()):
+		size_classes.append(&"xl")
+	for _index in mini(large_count, maxi(0, items.size() - size_classes.size())):
+		size_classes.append(&"l")
+	while size_classes.size() < items.size():
+		size_classes.append(&"variable")
+
+	var shuffled_items: Array[Planet] = items.duplicate()
+	for index in range(shuffled_items.size() - 1, 0, -1):
+		var swap_index: int = rng.randi_range(0, index)
+		var item: Planet = shuffled_items[index]
+		shuffled_items[index] = shuffled_items[swap_index]
+		shuffled_items[swap_index] = item
+	for index in shuffled_items.size():
+		shuffled_items[index].set("layout_size", size_classes[index])
+
+func _assign_slot(item: Planet, slot: int, assigned_slots: Dictionary, occupied_slots: Dictionary) -> void:
 	assigned_slots[item] = slot
 	occupied_slots[slot] = true
 
@@ -128,17 +150,11 @@ func _crossing_slot(item_count: int, occupied_slots: Dictionary) -> int:
 			return slot
 	return 0
 
-func _size_class(item: Node2D) -> StringName:
-	var value: Variant = item.get("layout_size")
-	if value == null:
-		return &"variable"
-	return StringName(value)
+func _size_class(item: Planet) -> StringName:
+	return StringName(item.layout_size)
 
-func _scale_for(item: Node2D, rng: RandomNumberGenerator) -> float:
-	var size_class: StringName = _size_class(item)
-	if size_class == &"variable":
-		return rng.randf_range(VARIABLE_SCALE_MIN, VARIABLE_SCALE_MAX)
-	var size_range: Vector2 = SIZE_RANGES[size_class]
+func _scale_for(item: Planet, rng: RandomNumberGenerator) -> float:
+	var size_range: Vector2 = Planet.size_profile(_size_class(item))[&"scale_range"]
 	return rng.randf_range(size_range.x, size_range.y)
 
 func _queue_layout() -> void:

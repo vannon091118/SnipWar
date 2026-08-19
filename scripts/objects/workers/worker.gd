@@ -16,13 +16,10 @@ func configure(source: Node2D, destination: Node2D) -> void:
 	destination_planet = destination
 	source.register_worker(self)
 
-func fly_to(destination: Node2D, duration: float) -> void:
+func begin_flight(destination: Node2D) -> void:
 	destination_planet = destination
 	_registered_planet.unregister_worker(self)
 	_registered_planet = null
-	var tween := create_tween()
-	tween.tween_property(self, "global_position", destination.global_position, duration).set_trans(Tween.TRANS_LINEAR)
-	tween.finished.connect(_arrive)
 
 func _arrive() -> void:
 	if not is_instance_valid(destination_planet):

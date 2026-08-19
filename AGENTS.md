@@ -8,13 +8,16 @@
 ## Architecture constraints
 - `Background` is z=-100 and `PlanetField` uses relative z=20; lowering the field below the background makes the background draw over the planets.
 - The runtime Bootstrap replaces the editor fallback seed 241119 on F5; the seed is configured on `PlanetField`, not the `Background` root.
-- `seeded_layout.gd` must only lay out children exposing `layout_size`; the Toxic orbit child is intentionally not a planet slot.
+- Runtime re-layout assigns `Planet.layout_size` after the initial scene setup; its setter must restart an existing spawn timer so generated size and spawn cadence remain synchronized.
+- `seeded_layout.gd` must only lay out `Planet` children; the Toxic orbit child is intentionally not a planet slot.
 - Planet size belongs to the Node2D layout scale; keep `planet.gd`'s `visual_scale` at 1.0 to avoid double scaling.
 - The current minimal meteor design uses four direct Sprite2D children controlled by `meteor_field.gd`; no per-meteor scene/script is required.
 - ToxicOrbit resolves the `planet_toxic` group; avoid restoring a relative NodePath target.
 - Workers spawn stationary as a planet's garrison. `WorkerManager._dispatch_workers` launches them as visible transit assets via per-worker Tweens; each re-registers with the destination on arrival (source drops at launch, destination rises on arrival).
 - Spawn tiers are part of the MVP contract: XL = 3 workers/5 s, L = 2/7 s, variable planets = 1/10 s.
-- `flight_time.gd`, `dispatch.gd`, `planet_network.gd`, `worker.gd`, `worker_manager.gd`, and `preflight.gd` change/commit together; preflight reaches into planet_network internals (`_amount_slider`, `_preview_label`) and worker internals (`_registered_planet`, `_arrive`).
+- `flight_time.gd`, `dispatch.gd`, `planet_network.gd`, `planet_network_ui.gd`, `worker.gd`, `worker_manager.gd`, and `preflight.gd` change/commit together; preflight uses PlanetNetworkUI getters and reaches into worker internals (`_registered_planet`, `_arrive`).
+- `PlanetNetwork` resolves destinations and passes them to `WorkerManager`; keep the manager independent of the network lookup. `planet_network.gd` owns routing/lines, while `planet_network_ui.gd` owns the CanvasLayer controls and emits UI signals.
+- Do not keep unused `WorkerState` values as placeholders; add a state only when its transition behavior exists.
 - Flight duration = distance × factor, so real dispatches take hundreds of seconds; headless tests simulate arrival by calling the arrival path directly (e.g. `worker._arrive()`) and assert movement via "distance to destination decreased", never by awaiting flight end or exact positions.
 
 ## Interaction and assets
@@ -28,6 +31,8 @@
 - `SceneTree.quit()` does not halt the current function; test scripts must `return` after `quit()` or the success path falls through to the failure branch.
 - GDScript `:=` errors with "value doesn't have a set type" on members of `Node`-typed children; use explicit types and casts like `(ocean as Node2D).global_position`.
 - Headless `--script` runs hang (timeout) when `_init` errors or returns before `quit()`; only fail via `_check`→`quit(1)` and always end with `quit()`.
+- Keep `--quit-after 2` for the main-scene smoke test only; using it on `preflight.gd` can terminate before its `PASS` result and hide the real failure.
+- The Compatibility renderer may emit `Debug CanvasItem Redraw is not available yet` during startup; treat it as an engine/debug warning unless preflight or the smoke test fails.
 - GDScript 4 warns `INTEGER_DIVISION` on `int / int`; use `int(a / 2.0)` when a float quotient is intended.
 - Connect a Tween's `finished` to a method not on the statically-typed base class with `Callable(node, "_method")`; `node._method` is an unsafe member access.
 

@@ -4,15 +4,7 @@ const WORKER_SCENE: PackedScene = preload("res://scenes/objects/workers/worker.t
 const _Dispatch := preload("res://scripts/dispatch.gd")
 const _FlightTime := preload("res://scripts/flight_time.gd")
 
-@onready var _network: Node = get_parent().get_node("PlanetNetwork")
-
-func _ready() -> void:
-	for planet in get_parent().get_children():
-		if planet is Node2D and planet.get("layout_size") != null:
-			planet.workers_spawn_requested.connect(_spawn_workers)
-
-func _spawn_workers(source: Node2D, amount: int) -> void:
-	var destination: Node2D = _network.get_destination(source)
+func _spawn_workers(source: Node2D, destination: Node2D, amount: int) -> void:
 	if destination == null:
 		return
 	for index in amount:
@@ -20,8 +12,7 @@ func _spawn_workers(source: Node2D, amount: int) -> void:
 		add_child(worker)
 		worker.configure(source, destination)
 
-func _dispatch_workers(source: Node2D, amount: int) -> void:
-	var destination: Node2D = _network.get_destination(source)
+func _dispatch_workers(source: Node2D, destination: Node2D, amount: int) -> void:
 	if destination == null:
 		return
 	var dispatch_count := _Dispatch.launch_amount(int(source.get("worker_count")), amount)
@@ -31,4 +22,7 @@ func _dispatch_workers(source: Node2D, amount: int) -> void:
 		if child is Node2D and child.get("_registered_planet") == source:
 			departing.append(child as Node2D)
 	for worker in departing.slice(0, dispatch_count):
-		worker.fly_to(destination, duration)
+		worker.begin_flight(destination)
+		var tween: Tween = worker.create_tween()
+		tween.tween_property(worker, "global_position", destination.global_position, duration).set_trans(Tween.TRANS_LINEAR)
+		tween.finished.connect(Callable(worker, "_arrive"))

@@ -1,14 +1,41 @@
 @tool
+class_name Planet
 extends Node2D
+
+const SIZE_PROFILES: Dictionary = {
+	&"variable": {
+		&"scale_range": Vector2(0.18, 0.43),
+		&"spawn_interval": 10.0,
+		&"spawn_count": 1
+	},
+	&"l": {
+		&"scale_range": Vector2(0.37, 0.43),
+		&"spawn_interval": 7.0,
+		&"spawn_count": 2
+	},
+	&"xl": {
+		&"scale_range": Vector2(0.48, 0.525),
+		&"spawn_interval": 5.0,
+		&"spawn_count": 3
+	}
+}
+
+static func size_profile(size_class: StringName) -> Dictionary:
+	return SIZE_PROFILES.get(size_class, SIZE_PROFILES[&"variable"])
 
 signal planet_selected(planet: Node2D)
 signal workers_spawn_requested(planet: Node2D, amount: int)
 signal worker_count_changed(planet: Node2D, count: int)
 
-enum WorkerState { IDLE, SPAWNING, PAUSED }
+enum WorkerState { IDLE, SPAWNING }
 
 @export var planet_id: StringName = &"planet"
-@export_enum("variable", "l", "xl") var layout_size: String = "variable"
+@export_enum("variable", "l", "xl") var layout_size: String = "variable":
+	set(value):
+		layout_size = value
+		if is_instance_valid(_spawn_timer):
+			_spawn_timer.wait_time = _spawn_interval()
+			_spawn_timer.start()
 @export var faction: StringName = &"neutral":
 	set(value):
 		if is_inside_tree() and faction != value:
@@ -65,22 +92,10 @@ func _on_spawn_timer() -> void:
 	worker_state = WorkerState.IDLE
 
 func _spawn_interval() -> float:
-	match layout_size:
-		"xl":
-			return 5.0
-		"l":
-			return 7.0
-		_:
-			return 10.0
+	return float(size_profile(StringName(layout_size))[&"spawn_interval"])
 
 func _spawn_count() -> int:
-	match layout_size:
-		"xl":
-			return 3
-		"l":
-			return 2
-		_:
-			return 1
+	return int(size_profile(StringName(layout_size))[&"spawn_count"])
 
 func register_worker(_worker: Node2D) -> void:
 	worker_count += 1
