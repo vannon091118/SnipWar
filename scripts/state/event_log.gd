@@ -28,6 +28,8 @@ func _connect_game_state() -> void:
 		state.faction_changed.connect(_on_faction_changed)
 	if not state.planet_discovered.is_connected(_on_planet_discovered):
 		state.planet_discovered.connect(_on_planet_discovered)
+	if state.has_signal("planet_scanned") and not state.planet_scanned.is_connected(_on_planet_scanned):
+		state.planet_scanned.connect(_on_planet_scanned)
 	if not state.planet_upgraded.is_connected(_on_planet_upgraded):
 		state.planet_upgraded.connect(_on_planet_upgraded)
 	if not state.technology_researched.is_connected(_on_technology_researched):
@@ -36,6 +38,10 @@ func _connect_game_state() -> void:
 		state.planet_technology_researched.connect(_on_planet_technology_researched)
 	if not state.resource_generated.is_connected(_on_resource_generated):
 		state.resource_generated.connect(_on_resource_generated)
+	if state.has_signal("resources_collected") and not state.resources_collected.is_connected(_on_resources_collected):
+		state.resources_collected.connect(_on_resources_collected)
+	if state.has_signal("worker_factory_built") and not state.worker_factory_built.is_connected(_on_worker_factory_built):
+		state.worker_factory_built.connect(_on_worker_factory_built)
 
 # Push = toast + log. Use for discrete, meaningful events.
 func push(category: StringName, text: String) -> void:
@@ -78,6 +84,9 @@ func _on_faction_changed(planet_id: StringName, _old_faction: StringName, new_fa
 func _on_planet_discovered(_faction: StringName, planet_id: StringName) -> void:
 	push(&"discovery", "Scout-Signatur erfasst: %s wurde kartografiert." % _planet_name(planet_id))
 
+func _on_planet_scanned(_faction: StringName, planet_id: StringName, resource_id: StringName, size_id: StringName, build_slots: int) -> void:
+	push(&"discovery", "Scanbericht %s: %s, Größe %s, %d Bauplätze." % [_planet_name(planet_id), _resource_name(resource_id), String(size_id).to_upper(), build_slots])
+
 func _on_planet_upgraded(planet_id: StringName, upgrade_id: StringName) -> void:
 	push(&"economy", "%s: %s errichtet." % [_planet_name(planet_id), _upgrade_name(upgrade_id)])
 
@@ -89,6 +98,12 @@ func _on_planet_technology_researched(planet_id: StringName, technology_id: Stri
 
 func _on_resource_generated(planet_id: StringName, resource_id: StringName, amount: int) -> void:
 	log_silent(&"economy", "%s lieferte %d %s." % [_planet_name(planet_id), amount, _resource_name(resource_id)])
+
+func _on_resources_collected(_faction: StringName, planet_id: StringName, resource_id: StringName, amount: int) -> void:
+	push(&"economy", "Sammeltrupp auf %s barg %d %s." % [_planet_name(planet_id), amount, _resource_name(resource_id)])
+
+func _on_worker_factory_built(planet_id: StringName) -> void:
+	push(&"economy", "%s: Worker-Fertiger in der Werft aktiviert." % _planet_name(planet_id))
 
 func _planet_name(planet_id: StringName) -> String:
 	var text := String(planet_id)

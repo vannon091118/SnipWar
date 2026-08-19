@@ -251,6 +251,8 @@ func _constraint_world_planets_and_dispatch() -> bool:
 		return false
 	if not _check(cpu_dispatch_config != null and cpu_dispatch_config.validate().is_empty(), "CPU dispatch config validation failed"):
 		return false
+	if not _check(not economy_manager.call("is_enabled"), "passive economy must be disabled before worker automation"):
+		return false
 	# Keep the persistent suite deterministic; both modules expose manual test hooks.
 	economy_manager.call("set_enabled", false)
 	cpu_ai.call("set_enabled", false)
@@ -334,6 +336,8 @@ func _constraint_world_planets_and_dispatch() -> bool:
 		return false
 	if not _check(_count_planets_with_size(field, &"xl") == 2 and _count_planets_with_size(field, &"l") == 1, "generated planet size distribution is wrong"):
 		return false
+	if not _check(source.get_build_slot_count() == 3 and (large_planet as Planet).get_build_slot_count() == 2 and (variable_planet as Planet).get_build_slot_count() == 1, "planet size profiles do not control build space"):
+		return false
 	var source_timer: Timer = _find_timer(source)
 	var large_timer: Timer = _find_timer(large_planet)
 	var variable_timer: Timer = _find_timer(variable_planet)
@@ -344,10 +348,15 @@ func _constraint_world_planets_and_dispatch() -> bool:
 		return false
 	if not _check(source_timer.wait_time == 5.0 and large_timer.wait_time == 7.0 and variable_timer.wait_time == 10.0, "spawn intervals are wrong"):
 		return false
+	if not _check(not source.is_worker_spawn_enabled() and not large_planet.is_worker_spawn_enabled() and not variable_planet.is_worker_spawn_enabled(), "worker spawning must be disabled before the first worker factory"):
+		return false
 
 	var player_vault_before_spawn: Dictionary = game_state.get_faction_vault_snapshot(GameState.FACTION_PLAYER)
 	var cpu_vault_before_spawn: Dictionary = game_state.get_faction_vault_snapshot(GameState.FACTION_CPU)
 	_observed_planet = source
+	source.set_worker_spawn_enabled(true)
+	large_planet.set_worker_spawn_enabled(true)
+	variable_planet.set_worker_spawn_enabled(true)
 	source.workers_spawn_requested.connect(_capture_spawn)
 	source.call("_on_spawn_timer")
 	large_planet.call("_on_spawn_timer")
@@ -362,6 +371,9 @@ func _constraint_world_planets_and_dispatch() -> bool:
 		return false
 	if not _check(player_vault_before_spawn == game_state.get_faction_vault_snapshot(GameState.FACTION_PLAYER) and cpu_vault_before_spawn == game_state.get_faction_vault_snapshot(GameState.FACTION_CPU), "worker spawn timer still changes passive economy"):
 		return false
+	source.set_worker_spawn_enabled(false)
+	large_planet.set_worker_spawn_enabled(false)
+	variable_planet.set_worker_spawn_enabled(false)
 	var economy_planet: Planet = _find_planet_by_id(field, game_state.homeworld_for(GameState.FACTION_PLAYER))
 	if not _check(economy_planet != null, "player homeworld for economy test is missing"):
 		return false
@@ -799,7 +811,7 @@ func _constraint_upgrades_missions_and_ai() -> bool:
 		return false
 
 	# Test mission type constants
-	if not _check(GameState.MISSION_MILITARY == &"military" and GameState.MISSION_CARGO == &"cargo" and GameState.MISSION_COLONY == &"colony", "mission type constants defined"):
+	if not _check(GameState.MISSION_MILITARY == &"military" and GameState.MISSION_CARGO == &"cargo" and GameState.MISSION_COLONY == &"colony" and GameState.MISSION_COLLECT == &"collect", "mission type constants defined"):
 		return false
 
 	# Faction indicators must be visually distinct per faction.
@@ -903,6 +915,11 @@ func _constraint_upgrades_missions_and_ai() -> bool:
 		return false
 
 	# --- WORKER COSTS ---
+	var upgrade_test_technology_catalog: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"energy", 50)
+	if not game_state.has_technology(GameState.FACTION_PLAYER, &"shipyard_construction"):
+		if not _check(game_state.research_technology(GameState.FACTION_PLAYER, &"shipyard_construction", upgrade_test_technology_catalog), "shipyard construction research should unlock the shipyard build"):
+			return false
 	var shipyard_upgrade: PlanetUpgradeDefinition = upgrade_catalog.resolve(&"shipyard")
 	if not _check(shipyard_upgrade != null and shipyard_upgrade.cost_workers == 2, "shipyard should cost 2 workers"):
 		return false
@@ -985,12 +1002,15 @@ func _constraint_scout_and_discovery() -> bool:
 	var field: Node = _field
 	var network: Node = _network
 	var game_state: Node = _game_state
+	var manager: Node = _manager
+	var planet_catalog: PlanetCatalog = _planet_catalog
 	var upgrade_catalog: PlanetUpgradeCatalog = _upgrade_catalog
 	var ship_manager: ShipManager = field.get_node_or_null("ShipManager") as ShipManager
 	if not _check(ship_manager != null, "ShipManager runtime module is missing"):
 		return false
 	var tech_catalog: TechnologyCatalog = ship_manager.get_technology_catalog()
 	var ship_config: ShipConfig = ship_manager.get_ship_config()
+	game_state.deal_resources(planet_catalog, preload("res://resources/config/resource_pool_default.tres"), _world_config.layout_seed)
 	if not _check(tech_catalog != null and tech_catalog.validate().is_empty(), "technology catalog validation failed"):
 		return false
 	if not _check(ship_config != null and ship_config.validate().is_empty(), "ship config validation failed"):
@@ -1010,7 +1030,10 @@ func _constraint_scout_and_discovery() -> bool:
 		return false
 	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"material", 100)
 	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"energy", 100)
-	if not _check(game_state.can_research_technology(GameState.FACTION_PLAYER, &"scout_hull", tech_catalog), "scout_hull should be researchable"):
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"biomass", 100)
+	if not _check(game_state.research_technology(GameState.FACTION_PLAYER, &"shipyard_construction", tech_catalog), "shipyard construction research should succeed"):
+		return false
+	if not _check(game_state.can_research_technology(GameState.FACTION_PLAYER, &"scout_hull", tech_catalog), "scout_hull should be researchable after shipyard construction"):
 		return false
 	if not _check(game_state.research_technology(GameState.FACTION_PLAYER, &"scout_hull", tech_catalog), "scout_hull research should succeed"):
 		return false
@@ -1052,14 +1075,21 @@ func _constraint_scout_and_discovery() -> bool:
 		return false
 
 	# Build a scout toward an unknown planet and verify arrival discovers it.
-	var destination: Planet = _find_planet_by_id(field, &"toxic")
-	if destination == null or game_state.is_known(destination.planet_id, GameState.FACTION_PLAYER):
-		destination = null
-		for child in field.get_children():
-			if child is Planet and not game_state.is_known((child as Planet).planet_id, GameState.FACTION_PLAYER):
-				destination = child as Planet
-				break
-	if not _check(destination != null and not game_state.is_known(destination.planet_id, GameState.FACTION_PLAYER), "no unknown planet available for scout discovery"):
+	var scan_destinations: Array[Planet] = ship_manager.get_scan_destinations(source)
+	var destination: Planet = null
+	for scan_candidate in scan_destinations:
+		if scan_candidate.get_faction() == GameState.FACTION_NEUTRAL:
+			destination = scan_candidate
+			break
+	if not _check(destination != null and not game_state.is_known(destination.planet_id, GameState.FACTION_PLAYER), "no unknown adjacent neutral planet available for scout discovery"):
+		return false
+	var non_neighbor_destination: Planet = null
+	for route_candidate in network.get_route_destinations(source):
+		var route_planet: Planet = route_candidate as Planet
+		if route_planet != null and not scan_destinations.has(route_planet):
+			non_neighbor_destination = route_planet
+			break
+	if not _check(non_neighbor_destination != null and ship_manager.build_scout(source, non_neighbor_destination) == null, "scout build accepted a non-adjacent destination"):
 		return false
 	if not _check(not game_state.can_research_planet_technology(GameState.FACTION_PLAYER, destination.planet_id, &"planetary_survey", tech_catalog), "unknown planets must not accept planet research"):
 		return false
@@ -1078,11 +1108,58 @@ func _constraint_scout_and_discovery() -> bool:
 		return false
 	if not _check(game_state.known_planets_of(GameState.FACTION_PLAYER).has(destination.planet_id), "discovered planet is missing from the known list"):
 		return false
+	if not _check(game_state.has_scanned_planet(GameState.FACTION_PLAYER, destination.planet_id), "scout arrival did not store scan intel"):
+		return false
+	var scan_info: Dictionary = game_state.scan_info_for(GameState.FACTION_PLAYER, destination.planet_id)
+	if not _check(scan_info.get("resource_id", &"") == destination.get_resource_id() and int(scan_info.get("build_slots", 0)) == destination.get_build_slot_count(), "scan intel does not describe the neutral planet"):
+		return false
 	if not _check(ship_manager.scout_count() == 0, "scout was not freed after arrival"):
 		return false
 	if not _check(not game_state.discover_planet(GameState.FACTION_PLAYER, destination.planet_id), "discovering an already-known planet should be a no-op"):
 		return false
 	if not _check(ship_manager.build_scout(source, destination) == null, "scout build should reject an already-known destination"):
+		return false
+	var shipyard_hangar: ShipyardHangar = source.get_node_or_null("PlanetDetails/UpgradeStructure_shipyard/Hangar") as ShipyardHangar
+	if not _check(shipyard_hangar != null and shipyard_hangar.build_slot_count == source.get_build_slot_count(), "shipyard hangar did not inherit planet build slots"):
+		return false
+	if not _check(shipyard_hangar.get_node_or_null("FutureShipBuilder") != null and not (shipyard_hangar.get_node("FutureShipBuilder") as Node2D).visible, "future ship builder should remain hidden"):
+		return false
+	if not _check(not source.is_worker_spawn_enabled(), "worker production must remain off before worker factory construction"):
+		return false
+	if not _check(game_state.research_technology(GameState.FACTION_PLAYER, GameState.TECH_WORKER_AUTOMATION, tech_catalog), "worker automation research should unlock after the first scan"):
+		return false
+	if not _check(ship_manager.can_build_workers(source), "worker factory should be buildable after scan and research"):
+		return false
+	if not _check(ship_manager.build_workers(source), "worker factory construction should succeed"):
+		return false
+	if not _check(game_state.has_worker_factory(source.planet_id) and source.is_worker_spawn_enabled(), "worker factory did not enable automatic worker production"):
+		return false
+	var worker_slot: Node2D = shipyard_hangar.get_node_or_null("BuilderSlots/WorkerSlot_0") as Node2D
+	var worker_sprite: Sprite2D = worker_slot.get_node_or_null("Sprite2D") as Sprite2D if worker_slot != null else null
+	if not _check(worker_slot != null and worker_slot.visible and worker_sprite != null and worker_sprite.texture != null, "worker factory did not reveal its dedicated hangar asset"):
+		return false
+	var worker_count_before_factory_tick: int = source.worker_count
+	source.call("_on_spawn_timer")
+	if not _check(source.worker_count == worker_count_before_factory_tick + source.get_size_profile().spawn_count or source.worker_count > worker_count_before_factory_tick, "worker factory did not start slow automatic spawning"):
+		return false
+	var collected_resource: StringName = game_state.resource_of(destination.planet_id)
+	var collected_before: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, collected_resource)
+	var collect_workers_before: int = source.worker_count
+	if not _check(manager.call("can_dispatch_mission", source, destination, GameState.MISSION_COLLECT), "collect mission gate rejected source=%s destination=%s source_workers=%d destination_faction=%s scanned=%s" % [source.get_faction(), destination.planet_id, source.worker_count, destination.get_faction(), game_state.has_scanned_planet(GameState.FACTION_PLAYER, destination.planet_id)]):
+		return false
+	manager.call("_dispatch_clusters", source, destination, 1, network.get_route_path(source, destination), GameState.MISSION_COLLECT)
+	var collect_cluster: WorkerCluster = null
+	for manager_child in manager.get_children():
+		if manager_child is WorkerCluster and manager_child.get("destination_planet") == destination:
+			collect_cluster = manager_child as WorkerCluster
+			break
+	if not _check(collect_cluster != null, "collect mission did not launch"):
+		return false
+	var collect_result: StringName = manager.call("_arrive_cluster", collect_cluster)
+	await process_frame
+	if not _check(source.worker_count == collect_workers_before - 1, "collect mission did not consume source workers"):
+		return false
+	if not _check(collect_result == Planet.ARRIVAL_COLLECTED and game_state.get_faction_resource(GameState.FACTION_PLAYER, collected_resource) > collected_before, "collect mission did not create the first neutral income (result=%s before=%d after=%d resource=%s scanned=%s faction=%s)" % [collect_result, collected_before, game_state.get_faction_resource(GameState.FACTION_PLAYER, collected_resource), collected_resource, game_state.has_scanned_planet(GameState.FACTION_PLAYER, destination.planet_id), destination.get_faction()]):
 		return false
 
 	# The technology menu must be reachable from the network host and render the planet branch.
@@ -1128,6 +1205,17 @@ func _constraint_event_log() -> bool:
 		return false
 	var silent_entry: Dictionary = event_log.get_entries().back()
 	if not _check(not bool(silent_entry.get("visible", true)), "silent EventLog entry should not create a toast"):
+		return false
+	var history: Array[Dictionary] = event_log.get_entries()
+	var scan_report_seen: bool = false
+	var collection_report_seen: bool = false
+	var factory_report_seen: bool = false
+	for history_entry in history:
+		var history_text: String = String(history_entry.get("text", ""))
+		scan_report_seen = scan_report_seen or history_text.begins_with("Scanbericht")
+		collection_report_seen = collection_report_seen or history_text.contains("Sammeltrupp")
+		factory_report_seen = factory_report_seen or history_text.contains("Worker-Fertiger")
+	if not _check(scan_report_seen and collection_report_seen and factory_report_seen, "scan, collection or worker-factory event was not pushed"):
 		return false
 	var feed: MessageFeed = network.get_message_feed()
 	var toast_list: VBoxContainer = feed.get_node_or_null("FeedRoot/ToastList") as VBoxContainer

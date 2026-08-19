@@ -7,6 +7,8 @@ const FACTION_NEUTRAL := &"neutral"
 const MISSION_MILITARY := &"military"
 const MISSION_CARGO := &"cargo"
 const MISSION_COLONY := &"colony"
+const MISSION_COLLECT := &"collect"
+const TECH_WORKER_AUTOMATION := &"worker_automation"
 
 const DEFAULT_RESOURCE_POOL: ResourcePool = preload("res://resources/config/resource_pool_default.tres")
 const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
@@ -18,8 +20,11 @@ signal faction_resources_changed(faction: StringName, resource_id: StringName, n
 signal planet_upgraded(planet_id: StringName, upgrade_id: StringName)
 signal resource_generated(planet_id: StringName, resource_id: StringName, amount: int)
 signal planet_discovered(faction: StringName, planet_id: StringName)
+signal planet_scanned(faction: StringName, planet_id: StringName, resource_id: StringName, size_id: StringName, build_slots: int)
 signal technology_researched(faction: StringName, technology_id: StringName)
 signal planet_technology_researched(planet_id: StringName, technology_id: StringName)
+signal resources_collected(faction: StringName, planet_id: StringName, resource_id: StringName, amount: int)
+signal worker_factory_built(planet_id: StringName)
 
 var _ownership: Dictionary = {}
 var _starting_workers: Dictionary = {}
@@ -27,8 +32,11 @@ var _homeworlds: Dictionary = {}
 var _planet_resources: Dictionary = {}
 var _planet_upgrades: Dictionary = {}
 var _known_planets: Dictionary = {}
+var _scanned_planets: Dictionary = {}
+var _scan_intel: Dictionary = {}
 var _researched_techs: Dictionary = {}
 var _planet_technologies: Dictionary = {}
+var _worker_factories: Dictionary = {}
 var _faction_vaults: Dictionary = {
 	FACTION_PLAYER: {
 		&"energy": 50,
@@ -53,8 +61,11 @@ func reset_from_catalog(catalog: PlanetCatalog) -> void:
 	_planet_resources.clear()
 	_planet_upgrades.clear()
 	_known_planets.clear()
+	_scanned_planets.clear()
+	_scan_intel.clear()
 	_researched_techs.clear()
 	_planet_technologies.clear()
+	_worker_factories.clear()
 	_reset_vaults()
 	if catalog != null:
 		for definition in catalog.planets:
@@ -235,6 +246,8 @@ func can_purchase_upgrade(planet_id: StringName, upgrade_id: StringName, catalog
 	var faction := faction_of(planet_id)
 	if faction == FACTION_NEUTRAL or not _faction_vaults.has(faction):
 		return false
+	if not String(upgrade.required_technology_id).is_empty() and not has_technology(faction, upgrade.required_technology_id):
+		return false
 	var current_upgrades := get_planet_upgrades(planet_id)
 	if not cat.can_unlock(current_upgrades, upgrade_id):
 		return false
@@ -368,6 +381,37 @@ func discover_planet(faction: StringName, planet_id: StringName) -> bool:
 	planet_discovered.emit(faction, planet_id)
 	return true
 
+func scan_planet(faction: StringName, planet_id: StringName, resource_id: StringName = &"", size_id: StringName = &"", build_slots: int = 0) -> bool:
+	if String(faction).is_empty() or String(planet_id).is_empty() or faction == FACTION_NEUTRAL:
+		return false
+	if is_known(planet_id, faction):
+		return false
+	if not discover_planet(faction, planet_id):
+		return false
+	if not _scanned_planets.has(faction):
+		_scanned_planets[faction] = {}
+	if not _scan_intel.has(faction):
+		_scan_intel[faction] = {}
+	(_scanned_planets[faction] as Dictionary)[planet_id] = true
+	(_scan_intel[faction] as Dictionary)[planet_id] = {
+		"resource_id": resource_id,
+		"size_id": size_id,
+		"build_slots": maxi(build_slots, 0),
+	}
+	planet_scanned.emit(faction, planet_id, resource_id, size_id, maxi(build_slots, 0))
+	return true
+
+func has_scanned_planet(faction: StringName, planet_id: StringName = &"") -> bool:
+	var scanned: Dictionary = _scanned_planets.get(faction, {})
+	if not String(planet_id).is_empty():
+		return scanned.has(planet_id)
+	return not scanned.is_empty()
+
+func scan_info_for(faction: StringName, planet_id: StringName) -> Dictionary:
+	var faction_intel: Dictionary = _scan_intel.get(faction, {})
+	var value: Variant = faction_intel.get(planet_id, {})
+	return value.duplicate() if value is Dictionary else {}
+
 func is_known(planet_id: StringName, faction: StringName) -> bool:
 	if faction != FACTION_NEUTRAL and faction_of(planet_id) == faction:
 		return true
@@ -390,6 +434,44 @@ func has_technology(faction: StringName, technology_id: StringName) -> bool:
 	var researched: Dictionary = _researched_techs.get(faction, {})
 	return researched.has(technology_id)
 
+func has_worker_factory(planet_id: StringName) -> bool:
+	return _worker_factories.has(planet_id)
+
+func can_build_worker_factory(planet_id: StringName, cost_resource: StringName, cost_amount: int) -> bool:
+	var faction: StringName = faction_of(planet_id)
+	if faction == FACTION_NEUTRAL or not _faction_vaults.has(faction):
+		return false
+	if not has_planet_upgrade(planet_id, &"shipyard") or has_worker_factory(planet_id):
+		return false
+	if not has_scanned_planet(faction):
+		return false
+	if not has_technology(faction, TECH_WORKER_AUTOMATION):
+		return false
+	return get_faction_resource(faction, cost_resource) >= cost_amount
+
+func build_worker_factory(planet_id: StringName, cost_resource: StringName, cost_amount: int) -> bool:
+	if not can_build_worker_factory(planet_id, cost_resource, cost_amount):
+		return false
+	var faction: StringName = faction_of(planet_id)
+	if not spend_faction_resource(faction, cost_resource, cost_amount):
+		return false
+	_worker_factories[planet_id] = true
+	worker_factory_built.emit(planet_id)
+	return true
+
+func collect_resources_for_planet(faction: StringName, planet_id: StringName, worker_amount: int, base_amount: int = 1) -> int:
+	if faction == FACTION_NEUTRAL or faction.is_empty() or faction_of(planet_id) != FACTION_NEUTRAL:
+		return 0
+	if not has_scanned_planet(faction, planet_id):
+		return 0
+	var resource_id: StringName = resource_of(planet_id)
+	if String(resource_id).is_empty():
+		return 0
+	var amount: int = maxi(worker_amount, 1) * maxi(base_amount, 1)
+	add_faction_resource(faction, resource_id, amount)
+	resources_collected.emit(faction, planet_id, resource_id, amount)
+	return amount
+
 func get_technologies(faction: StringName) -> Array[StringName]:
 	var result: Array[StringName] = []
 	for technology_id in _researched_techs.get(faction, {}):
@@ -406,6 +488,8 @@ func can_research_technology(faction: StringName, technology_id: StringName, cat
 	if faction == FACTION_NEUTRAL or not _faction_vaults.has(faction):
 		return false
 	if has_technology(faction, technology_id):
+		return false
+	if technology.requires_discovery and not has_scanned_planet(faction):
 		return false
 	if not cat.can_research(get_technologies(faction), technology_id):
 		return false

@@ -9,5 +9,6 @@ scale_range = Vector2(0.48, 0.525)
 spawn_interval = 5.0
 spawn_count = 3
 starting_workers = 6
+build_slot_count = 3
 jitter_factor = 0.65
 resource_base = 3

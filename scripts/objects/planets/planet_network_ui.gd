@@ -4,6 +4,7 @@ extends CanvasLayer
 const DEFAULT_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
 const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
 const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/transformer_default.tres")
+const DEFAULT_TECHNOLOGY_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
 
 signal panel_visibility_changed(visible: bool)
 signal destination_selected(index: int)
@@ -33,6 +34,7 @@ var _branch_expanded: Dictionary = {
 @onready var _faction_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/FactionLabel")
 @onready var _resource_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/ResourceLabel")
 @onready var _selected_count_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SelectedCountLabel")
+@onready var _build_space_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/BuildSpaceLabel")
 @onready var _destination_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/DestinationHeading")
 @onready var _destination_option: OptionButton = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/DestinationSelect")
 @onready var _mission_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/MissionHeading")
@@ -83,6 +85,8 @@ func _ensure_node_references() -> void:
 		_resource_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/ResourceLabel")
 	if _selected_count_label == null:
 		_selected_count_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SelectedCountLabel")
+	if _build_space_label == null:
+		_build_space_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/BuildSpaceLabel")
 	if _destination_heading == null:
 		_destination_heading = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/DestinationHeading")
 	if _destination_option == null:
@@ -122,6 +126,8 @@ func _setup_missions() -> void:
 	_mission_option.set_item_metadata(1, &"cargo")
 	_mission_option.add_item("Kolonieschiff (Expansions-Besiedlung)", 2)
 	_mission_option.set_item_metadata(2, &"colony")
+	_mission_option.add_item("Sammeltrupp (erste Einnahmen)", 3)
+	_mission_option.set_item_metadata(3, &"collect")
 	_mission_option.select(0)
 
 func _connect_game_state_signals() -> void:
@@ -212,6 +218,9 @@ func _apply_theme() -> void:
 	if _selected_count_label != null:
 		_selected_count_label.add_theme_font_size_override("font_size", _theme_config.selected_count_font_size)
 		_selected_count_label.add_theme_color_override("font_color", _theme_config.selected_count_text_color)
+	if _build_space_label != null:
+		_build_space_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+		_build_space_label.add_theme_color_override("font_color", _theme_config.secondary_text_color)
 	var headings: Array[Label] = [_destination_heading, _mission_heading, _send_heading, _upgrade_heading, _units_heading]
 	for heading in headings:
 		if heading != null:
@@ -267,6 +276,19 @@ func _populate_units_list(planets: Array[Node2D]) -> void:
 		_count_labels[planet] = count_label
 		_count_list.add_child(count_label)
 
+func set_destinations(destinations: Array[Node2D], default_destination: Node2D) -> void:
+	_ensure_node_references()
+	_destination_option.clear()
+	_destination_option.disabled = destinations.is_empty()
+	for destination in destinations:
+		_destination_option.add_item(destination.name)
+	if default_destination != null:
+		for index in _destination_option.item_count:
+			if _destination_option.get_item_text(index) == default_destination.name:
+				_destination_option.select(index)
+				break
+	set_preview("Kein Ziel verfügbar" if destinations.is_empty() else _preview_label.text)
+
 func show_planet(planet: Node2D, destinations: Array[Node2D], default_destination: Node2D) -> void:
 	_ensure_node_references()
 	_current_active_planet = planet
@@ -283,21 +305,16 @@ func show_planet(planet: Node2D, destinations: Array[Node2D], default_destinatio
 			_faction_label.text = "Besitzer: %s" % faction_str
 			_faction_label.add_theme_color_override("font_color", DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", faction_id))
 
-		var resource_id: StringName = state.resource_of(planet_id)
-		var resource_name: String = String(resource_id).capitalize() if not String(resource_id).is_empty() else "Keine"
+		var resource_id: StringName = state.resource_of(planet_id) if state.is_known(planet_id, GameState.FACTION_PLAYER) else &""
+		var resource_name: String = String(resource_id).capitalize() if not String(resource_id).is_empty() else "Unbekannt (Scout benötigt)"
 		if _resource_label != null:
 			_resource_label.text = "Ressource: %s" % resource_name
 			_resource_label.add_theme_color_override("font_color", _theme_config.resource_color(resource_id))
+	if _build_space_label != null:
+		var selected_planet: Planet = planet as Planet
+		_build_space_label.text = "Bauplätze: %d" % (selected_planet.get_build_slot_count() if selected_planet != null else 0)
 
-	_destination_option.clear()
-	_destination_option.disabled = destinations.is_empty()
-	for destination in destinations:
-		_destination_option.add_item(destination.name)
-	if default_destination != null:
-		for index in _destination_option.item_count:
-			if _destination_option.get_item_text(index) == default_destination.name:
-				_destination_option.select(index)
-				break
+	set_destinations(destinations, default_destination)
 
 	_refresh_upgrade_list(planet)
 	call_deferred("_apply_responsive_layout")
@@ -383,6 +400,9 @@ func _create_upgrade_row(planet_id: StringName, upgrade: PlanetUpgradeDefinition
 	var trait_text := _upgrade_trait_text(upgrade)
 	if not trait_text.is_empty():
 		detail_label.text += "\n" + trait_text
+	if not String(upgrade.required_technology_id).is_empty():
+		var required_technology: TechnologyDefinition = DEFAULT_TECHNOLOGY_CATALOG.resolve(upgrade.required_technology_id)
+		detail_label.text += "\nForschung erforderlich: %s" % (required_technology.display_name if required_technology != null else String(upgrade.required_technology_id))
 	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	detail_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
 	detail_label.add_theme_color_override("font_color", _theme_config.muted_text_color)
@@ -394,7 +414,7 @@ func _create_upgrade_row(planet_id: StringName, upgrade: PlanetUpgradeDefinition
 		buy_button.text = "BAUEN"
 		buy_button.disabled = not can_buy
 		buy_button.focus_mode = Control.FOCUS_NONE
-		buy_button.custom_minimum_size = Vector2(62.0, 0.0)
+		buy_button.custom_minimum_size = Vector2(_theme_config.upgrade_button_width, 0.0)
 		buy_button.add_theme_font_size_override("font_size", _theme_config.small_font_size)
 		buy_button.add_theme_stylebox_override("normal", _style_box(_theme_config.button_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
 		buy_button.add_theme_stylebox_override("hover", _style_box(_theme_config.button_hover_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))

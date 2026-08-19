@@ -4,10 +4,13 @@ extends Node2D
 
 const DEFAULT_SIZE_PROFILE: PlanetSizeProfile = preload("res://resources/config/planet_sizes/variable.tres")
 const DEFAULT_DETAIL_PROFILE: PlanetDetailProfile = preload("res://resources/config/planet_details/default.tres")
+const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_default.tres")
 
 signal planet_selected(planet: Node2D)
 signal workers_spawn_requested(planet: Node2D, amount: int)
 signal worker_count_changed(planet: Node2D, count: int)
+signal worker_production_changed(planet: Node2D, enabled: bool)
+signal collection_started(planet: Node2D, amount: int)
 
 enum WorkerState { IDLE, SPAWNING }
 
@@ -16,6 +19,7 @@ const ARRIVAL_REPELLED := &"repelled"
 const ARRIVAL_CAPTURED := &"captured"
 const ARRIVAL_REJECTED := &"rejected"
 const ARRIVAL_SETTLED := &"settled"
+const ARRIVAL_COLLECTED := &"collected"
 
 @export var planet_id: StringName = &"planet"
 @export var display_name: String = ""
@@ -55,6 +59,8 @@ var layout_size: String = "variable":
 
 var worker_state: WorkerState = WorkerState.IDLE
 var worker_count := 0
+var gathering_worker_count: int = 0
+var _worker_spawn_enabled: bool = false
 var _spawn_timer: Timer
 var _detail_seed := 0
 var _planet_ready := false
@@ -77,27 +83,51 @@ func _ready() -> void:
 				state.catalog_reset.connect(_on_catalog_reset)
 			if not state.planet_upgraded.is_connected(_on_planet_upgraded):
 				state.planet_upgraded.connect(_on_planet_upgraded)
+			if not state.technology_researched.is_connected(_on_technology_researched):
+				state.technology_researched.connect(_on_technology_researched)
+			if not state.worker_factory_built.is_connected(_on_worker_factory_built):
+				state.worker_factory_built.connect(_on_worker_factory_built)
 	_sync_groups()
 	_apply_visuals()
 	_planet_ready = true
 	_apply_detail_seed()
 	if not Engine.is_editor_hint():
 		_ensure_strength_label()
-		_start_spawn_timer.call_deferred()
+		_ensure_spawn_timer.call_deferred()
 	queue_redraw()
 
 func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_index: int) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		planet_selected.emit(self)
 
-func _start_spawn_timer() -> void:
+func _ensure_spawn_timer() -> void:
+	if is_instance_valid(_spawn_timer):
+		_spawn_timer.wait_time = _spawn_interval()
+		return
 	_spawn_timer = Timer.new()
+	_spawn_timer.name = "WorkerSpawnTimer"
 	_spawn_timer.wait_time = _spawn_interval()
 	_spawn_timer.timeout.connect(_on_spawn_timer)
 	add_child(_spawn_timer)
-	_spawn_timer.start()
+	_spawn_timer.stop()
+
+func set_worker_spawn_enabled(enabled: bool) -> void:
+	_worker_spawn_enabled = enabled
+	_ensure_spawn_timer()
+	_spawn_timer.wait_time = _spawn_interval()
+	if enabled:
+		_spawn_timer.start()
+	else:
+		_spawn_timer.stop()
+	worker_production_changed.emit(self, enabled)
+	_refresh_shipyard_hangar()
+
+func is_worker_spawn_enabled() -> bool:
+	return _worker_spawn_enabled
 
 func _on_spawn_timer() -> void:
+	if not _worker_spawn_enabled:
+		return
 	worker_state = WorkerState.SPAWNING
 	workers_spawn_requested.emit(self, _spawn_count())
 	worker_state = WorkerState.IDLE
@@ -111,6 +141,8 @@ func generate_economy_resources() -> int:
 	return state.generate_resources_for_planet(planet_id, DEFAULT_UPGRADE_CATALOG, _active_size_profile().resource_base)
 
 func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
+	set_worker_spawn_enabled(false)
+	gathering_worker_count = 0
 	var details: PlanetDetails = _details if is_instance_valid(_details) else get_node_or_null("PlanetDetails") as PlanetDetails
 	if details != null:
 		details.clear_upgrade_structures()
@@ -126,6 +158,7 @@ func _on_planet_upgraded(changed_planet_id: StringName, upgrade_id: StringName) 
 	if details != null:
 		var tint: Color = DEFAULT_TRANSFORMER_CONFIG.resolve_tint(upgrade.transformer_tint_mode, get_faction())
 		details.add_upgrade_structure(upgrade, tint)
+		_refresh_shipyard_hangar()
 
 func apply_definition(definition: PlanetDefinition) -> void:
 	if definition == null:
@@ -151,7 +184,10 @@ func _active_size_profile() -> PlanetSizeProfile:
 func _restart_spawn_timer() -> void:
 	if is_instance_valid(_spawn_timer):
 		_spawn_timer.wait_time = _spawn_interval()
-		_spawn_timer.start()
+		if _worker_spawn_enabled:
+			_spawn_timer.start()
+		else:
+			_spawn_timer.stop()
 
 func _spawn_interval() -> float:
 	return _active_size_profile().spawn_interval
@@ -164,7 +200,19 @@ func _spawn_count() -> int:
 			var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
 			if def != null and def.trait_definition != null:
 				count += def.trait_definition.worker_spawn_bonus
-	return count
+	return mini(count, get_build_slot_count())
+
+func get_build_slot_count() -> int:
+	return maxi(_active_size_profile().build_slot_count, 1)
+
+func get_gathering_worker_count() -> int:
+	return gathering_worker_count
+
+func can_build_workers() -> bool:
+	var state: Node = _game_state()
+	if state == null:
+		return false
+	return state.can_build_worker_factory(planet_id, DEFAULT_SHIP_CONFIG.worker_build_cost_resource, DEFAULT_SHIP_CONFIG.worker_build_cost_amount)
 
 func set_initial_workers(amount: int) -> void:
 	if _initial_workers_applied:
@@ -204,6 +252,8 @@ func resolve_mission(source_faction: StringName, amount: int, mission_type: Stri
 		return _resolve_colony(source_faction, amount)
 	if mission_type == GameState.MISSION_CARGO:
 		return _resolve_cargo(source_faction, amount)
+	if mission_type == GameState.MISSION_COLLECT:
+		return _resolve_collect(source_faction, amount)
 	return resolve_arrival(source_faction, amount)
 
 func _resolve_colony(source_faction: StringName, amount: int) -> StringName:
@@ -224,6 +274,22 @@ func _resolve_cargo(source_faction: StringName, amount: int) -> StringName:
 		return ARRIVAL_REJECTED
 	register_workers(incoming)
 	return ARRIVAL_FRIENDLY
+
+func _resolve_collect(source_faction: StringName, amount: int) -> StringName:
+	var incoming: int = maxi(amount, 0)
+	if incoming <= 0 or source_faction.is_empty() or source_faction == GameState.FACTION_NEUTRAL:
+		return ARRIVAL_REJECTED
+	if get_faction() != GameState.FACTION_NEUTRAL:
+		return ARRIVAL_REJECTED
+	var state: Node = _game_state()
+	if state == null:
+		return ARRIVAL_REJECTED
+	var collected: int = state.collect_resources_for_planet(source_faction, planet_id, incoming, _active_size_profile().resource_base)
+	if collected <= 0:
+		return ARRIVAL_REJECTED
+	gathering_worker_count += incoming
+	collection_started.emit(self, incoming)
+	return ARRIVAL_COLLECTED
 
 func get_transfer_speed_multiplier() -> float:
 	var state: Node = _game_state()
@@ -261,6 +327,15 @@ func _sync_groups() -> void:
 	add_to_group(StringName("planet_" + String(planet_id)))
 	add_to_group(_faction_group(get_faction()))
 	add_to_group(_role_group(planet_role))
+
+func _on_technology_researched(changed_faction: StringName, _technology_id: StringName) -> void:
+	if changed_faction == get_faction():
+		_refresh_shipyard_hangar()
+
+func _on_worker_factory_built(changed_planet_id: StringName) -> void:
+	if changed_planet_id != planet_id:
+		return
+	set_worker_spawn_enabled(true)
 
 func _on_faction_changed(changed_planet_id: StringName, _old_faction: StringName, new_faction: StringName) -> void:
 	if changed_planet_id == planet_id:
@@ -344,6 +419,11 @@ func get_resource_id() -> StringName:
 
 func set_faction(value: StringName) -> void:
 	faction = value
+
+func _refresh_shipyard_hangar() -> void:
+	var details: PlanetDetails = _details if is_instance_valid(_details) else get_node_or_null("PlanetDetails") as PlanetDetails
+	if details != null:
+		details.refresh_shipyard_hangar()
 
 func _game_state() -> Node:
 	return GameStateAccess.autoload(self)

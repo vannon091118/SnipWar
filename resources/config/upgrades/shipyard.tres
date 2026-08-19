@@ -17,6 +17,7 @@ id = &"shipyard"
 display_name = "Orbitale Werft"
 description = "Ermöglicht den Bau fortschrittlicher Schiffstypen und erhöht den Einheiten-Nachschub."
 branch = &"military"
+required_technology_id = &"shipyard_construction"
 cost_resource = &"biomass"
 cost_amount = 20
 cost_workers = 2

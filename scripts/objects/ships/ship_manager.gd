@@ -13,12 +13,15 @@ const DEFAULT_SCANNER_TEXTURE: Texture2D = preload("res://assets/objects/planets
 
 var _field: Node
 var _navigation: NavigationField
+var _network: Node
 var _enabled := true
 var _scouts: Array[Node2D] = []
+var _active_build_counts: Dictionary = {}
 
-func configure(field: Node, navigation: Node, config: ShipConfig = null, catalog: TechnologyCatalog = null) -> void:
+func configure(field: Node, navigation: Node, config: ShipConfig = null, catalog: TechnologyCatalog = null, network: Node = null) -> void:
 	_field = field
 	_navigation = navigation as NavigationField
+	_network = network if network != null else field.get_node_or_null("PlanetNetwork")
 	ship_config = config if config != null else DEFAULT_SHIP_CONFIG
 	technology_catalog = catalog if catalog != null else DEFAULT_TECH_CATALOG
 
@@ -52,6 +55,8 @@ func can_build_scout(source: Planet) -> bool:
 		return false
 	if state.get_faction_resource(faction, config.scout_build_cost_resource) < config.scout_build_cost_amount:
 		return false
+	if get_active_build_count(source) >= source.get_build_slot_count():
+		return false
 	return true
 
 func build_scout(source: Planet, destination: Planet) -> ScoutShip:
@@ -59,7 +64,7 @@ func build_scout(source: Planet, destination: Planet) -> ScoutShip:
 		return null
 	var state: Node = _game_state()
 	var faction: StringName = source.get_faction()
-	if state == null or state.is_known(destination.planet_id, faction):
+	if state == null or not get_scan_destinations(source).has(destination):
 		return null
 	var config := get_ship_config()
 	if not state.spend_faction_resource(faction, config.scout_build_cost_resource, config.scout_build_cost_amount):
@@ -69,8 +74,9 @@ func build_scout(source: Planet, destination: Planet) -> ScoutShip:
 	var scout: ScoutShip = SCOUT_SCENE.instantiate()
 	scout.name = "Scout_%s_%s" % [source.name, destination.name]
 	add_child(scout)
-	scout.configure(destination, faction, route_path, duration, _hull_texture(), _scanner_texture())
+	scout.configure(destination, faction, route_path, duration, _hull_texture(), _scanner_texture(), source.planet_id, config)
 	scout.arrived.connect(_on_scout_arrived)
+	_active_build_counts[source.planet_id] = get_active_build_count(source) + 1
 	_scouts.append(scout)
 	scout.start_flight()
 	return scout
@@ -80,8 +86,49 @@ func dispatch_once(source: Planet, destination: Planet) -> ScoutShip:
 
 func _on_scout_arrived(scout: Node2D) -> void:
 	_scouts.erase(scout)
+	var source_planet_id: StringName = scout.get("source_planet_id") as StringName
+	if not String(source_planet_id).is_empty():
+		_active_build_counts[source_planet_id] = maxi(get_active_build_count_by_id(source_planet_id) - 1, 0)
+		if int(_active_build_counts[source_planet_id]) == 0:
+			_active_build_counts.erase(source_planet_id)
 	if is_instance_valid(scout):
 		scout.queue_free()
+
+func get_scan_destinations(source: Planet) -> Array[Planet]:
+	var result: Array[Planet] = []
+	if source == null:
+		return result
+	var state: Node = _game_state()
+	if state == null:
+		return result
+	var candidates: Array[Node2D] = []
+	if _network != null and is_instance_valid(_network) and _network.has_method("get_neighbors"):
+		candidates = _network.get_neighbors(source)
+	for candidate in candidates:
+		var planet: Planet = candidate as Planet
+		if planet != null and not state.is_known(planet.planet_id, source.get_faction()):
+			result.append(planet)
+	return result
+
+func can_build_workers(source: Planet) -> bool:
+	if not _enabled or source == null:
+		return false
+	var config := get_ship_config()
+	var state: Node = _game_state()
+	return state != null and state.can_build_worker_factory(source.planet_id, config.worker_build_cost_resource, config.worker_build_cost_amount)
+
+func build_workers(source: Planet) -> bool:
+	if not can_build_workers(source):
+		return false
+	var config := get_ship_config()
+	var state: Node = _game_state()
+	return state.build_worker_factory(source.planet_id, config.worker_build_cost_resource, config.worker_build_cost_amount)
+
+func get_active_build_count(source: Planet) -> int:
+	return get_active_build_count_by_id(source.planet_id) if source != null else 0
+
+func get_active_build_count_by_id(planet_id: StringName) -> int:
+	return int(_active_build_counts.get(planet_id, 0))
 
 func get_planets() -> Array[Planet]:
 	if _field == null or not is_instance_valid(_field):

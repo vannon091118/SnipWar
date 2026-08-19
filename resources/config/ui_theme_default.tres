@@ -37,6 +37,7 @@ panel_corner_radius = 8
 resource_bar_max_width = 560.0
 resource_bar_height = 34.0
 tab_width = 126.0
+upgrade_button_width = 62.0
 body_font_size = 13
 small_font_size = 11
 section_font_size = 12

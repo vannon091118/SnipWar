@@ -13,6 +13,7 @@ const CATEGORY_PLANET := &"planet"
 @export var cost_resource: StringName = &"energy"
 @export var cost_amount: int = 10
 @export var prerequisite_tech_id: StringName = &""
+@export var requires_discovery: bool = false
 @export var visual_asset: Texture2D
 @export_group("Mechanical Effect")
 @export var effect_id: StringName = &""

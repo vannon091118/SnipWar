@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/objects/ships/shipyard_hangar.gd" id="1_hangar"]
+
+[node name="ShipyardHangar" type="Node2D"]
+script = ExtResource("1_hangar")
+
+[node name="BuilderSlots" type="Node2D" parent="."]
+
+[node name="FutureShipBuilder" type="Node2D" parent="."]
+visible = false

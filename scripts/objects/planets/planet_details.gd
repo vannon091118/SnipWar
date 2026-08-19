@@ -5,6 +5,8 @@ extends Node2D
 const DEFAULT_PROFILE: PlanetDetailProfile = preload("res://resources/config/planet_details/default.tres")
 const DEFAULT_FIDELITY: PlanetDetailFidelity = preload("res://resources/config/planet_details/fidelity_full.tres")
 const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/transformer_default.tres")
+const SHIPYARD_HANGAR_SCENE: PackedScene = preload("res://scenes/objects/ships/shipyard_hangar.tscn")
+const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_default.tres")
 
 @export var detail_seed := 0:
 	set(value):
@@ -28,7 +30,10 @@ func regenerate() -> void:
 	if planet == null:
 		return
 	for child in get_children():
-		child.free()
+		if child.name.begins_with("UpgradeStructure_"):
+			continue
+		remove_child(child)
+		child.queue_free()
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = detail_seed
@@ -96,6 +101,15 @@ func clear_upgrade_structures() -> void:
 			remove_child(child)
 			child.queue_free()
 
+func refresh_shipyard_hangar() -> void:
+	var hangar: ShipyardHangar = get_node_or_null("UpgradeStructure_shipyard/Hangar") as ShipyardHangar
+	if hangar == null:
+		return
+	var planet := get_parent() as Planet
+	if planet == null:
+		return
+	hangar.configure(planet.get_build_slot_count(), planet.is_worker_spawn_enabled(), DEFAULT_SHIP_CONFIG)
+
 func add_upgrade_structure(upgrade: PlanetUpgradeDefinition, tint: Color = Color.WHITE) -> void:
 	if upgrade == null or upgrade.visual_asset == null:
 		return
@@ -128,3 +142,11 @@ func add_upgrade_structure(upgrade: PlanetUpgradeDefinition, tint: Color = Color
 		sprite.modulate = tint
 
 	add_child(orbit)
+	if upgrade.id == &"shipyard":
+		var hangar: ShipyardHangar = SHIPYARD_HANGAR_SCENE.instantiate() as ShipyardHangar
+		hangar.name = "Hangar"
+		orbit.add_child(hangar)
+		var planet := get_parent() as Planet
+		var slots: int = planet.get_build_slot_count() if planet != null else 1
+		var worker_visible: bool = planet != null and planet.is_worker_spawn_enabled()
+		hangar.configure(slots, worker_visible, DEFAULT_SHIP_CONFIG)

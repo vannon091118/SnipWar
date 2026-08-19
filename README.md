@@ -92,7 +92,7 @@ Godot öffnen → Projekt importieren → project.godot → F6/F5
 Der aktuelle Entwurf nutzt eine 960×540-Viewport-Basis, die später auf eine hochauflösende Präsentation skaliert werden kann. Die abgeschlossenen MVP-Entscheidungen stehen in [`DESIGN.md`](DESIGN.md); der unverbindliche größere Ausblick steht in [`VISION.md`](VISION.md). Für einen automatisierten Smoke-Test auf Windows:
 
 ```text
-C:/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console.exe --headless --path . --quit-after 2
+godot --headless --path . --quit-after 2
 ```
 
 ## ░ ROADMAP / NÄCHSTE SPRÜNGE

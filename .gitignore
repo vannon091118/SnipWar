@@ -3,3 +3,6 @@
 /android/
 
 .freebuff/
+
+# Freebuff/local agent workspace (never publish)
+.agents/

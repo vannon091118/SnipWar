@@ -9,6 +9,7 @@ extends Resource
 @export var tier: int = 1
 @export var parent_upgrade_id: StringName = &""
 @export var exclusive_with: StringName = &""
+@export var required_technology_id: StringName = &""
 @export var cost_resource: StringName = &"energy"
 @export var cost_amount: int = 10
 @export var cost_workers: int = 1

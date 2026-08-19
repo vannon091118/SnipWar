@@ -7,6 +7,20 @@
 [ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_l.svg" id="5_mech"]
 [ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean.svg" id="6_planet_survey"]
 [ext_resource type="Texture2D" path="res://assets/objects/planets/planet_04_violet.svg" id="7_planet_extraction"]
+[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_m.svg" id="8_shipyard"]
+
+[sub_resource type="Resource" id="Tech_shipyard_construction"]
+script = ExtResource("2_definition")
+id = &"shipyard_construction"
+category = &"ships"
+display_name = "Orbitales Werft-Design"
+description = "Erlaubt den Bau einer ersten orbitalen Werft am eigenen Startplaneten."
+cost_resource = &"energy"
+cost_amount = 10
+visual_asset = ExtResource("8_shipyard")
+effect_id = &"shipyard_construction"
+mechanic_description = "Mechanik: Der Ausbau Orbitale Werft wird im Planetennetz freigeschaltet."
+production_multiplier = 1.0
 
 [sub_resource type="Resource" id="Tech_scout_hull"]
 script = ExtResource("2_definition")
@@ -16,6 +30,7 @@ display_name = "Aufklärungsrumpf T1"
 description = "Freischaltung eines leichten Tier-1-Scout-Schiffes mit Scanner-Aufhängung."
 cost_resource = &"material"
 cost_amount = 15
+prerequisite_tech_id = &"shipyard_construction"
 visual_asset = ExtResource("3_scout_hull")
 effect_id = &"scout_hull"
 mechanic_description = "Mechanik: ShipManager erlaubt danach den Bau eines Tier-1-Scout-Schiffs."
@@ -33,6 +48,21 @@ prerequisite_tech_id = &"scout_hull"
 visual_asset = ExtResource("4_scanner")
 effect_id = &"scanner_drone"
 mechanic_description = "Mechanik: ScoutShip ruft bei Ankunft GameState.discover_planet() auf."
+production_multiplier = 1.0
+
+[sub_resource type="Resource" id="Tech_worker_automation"]
+script = ExtResource("2_definition")
+id = &"worker_automation"
+category = &"ships"
+display_name = "Werft-Arbeiterautomatik"
+description = "Nach dem ersten Scan kann die Werft einen Worker-Fertiger aktivieren."
+cost_resource = &"biomass"
+cost_amount = 15
+prerequisite_tech_id = &"scanner_drone"
+requires_discovery = true
+visual_asset = ExtResource("3_scout_hull")
+effect_id = &"worker_automation"
+mechanic_description = "Mechanik: Die erste Worker-Fabrik wird baubar und startet langsamen automatischen Nachschub."
 production_multiplier = 1.0
 
 [sub_resource type="Resource" id="Tech_mech_frame"]
@@ -77,4 +107,4 @@ production_multiplier = 1.5
 
 [resource]
 script = ExtResource("1_catalog")
-technologies = [SubResource("Tech_scout_hull"), SubResource("Tech_scanner_drone"), SubResource("Tech_mech_frame"), SubResource("Tech_planetary_survey"), SubResource("Tech_planetary_extraction")]
+technologies = [SubResource("Tech_shipyard_construction"), SubResource("Tech_scout_hull"), SubResource("Tech_scanner_drone"), SubResource("Tech_worker_automation"), SubResource("Tech_mech_frame"), SubResource("Tech_planetary_survey"), SubResource("Tech_planetary_extraction")]

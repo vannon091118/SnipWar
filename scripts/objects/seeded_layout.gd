@@ -122,7 +122,7 @@ func _create_runtime_modules() -> void:
 
 	var ship_manager: Node = SHIP_MANAGER_SCRIPT.new()
 	ship_manager.name = "ShipManager"
-	ship_manager.call("configure", self, get_node_or_null("NavigationField"), ship_config if ship_config != null else DEFAULT_SHIP_CONFIG, technology_catalog if technology_catalog != null else DEFAULT_TECHNOLOGY_CATALOG)
+	ship_manager.call("configure", self, get_node_or_null("NavigationField"), ship_config if ship_config != null else DEFAULT_SHIP_CONFIG, technology_catalog if technology_catalog != null else DEFAULT_TECHNOLOGY_CATALOG, network)
 	add_child(ship_manager)
 	_runtime_modules_created = true
 

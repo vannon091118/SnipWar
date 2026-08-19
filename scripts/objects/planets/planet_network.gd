@@ -49,6 +49,7 @@ func _create_ui() -> void:
 	_ui.setup(_planets, ui_theme_config)
 	_ui.panel_visibility_changed.connect(_on_panel_visibility_changed)
 	_ui.destination_selected.connect(_on_destination_selected)
+	_ui.mission_selected.connect(_on_mission_selected)
 	_ui.amount_changed.connect(_on_amount_changed)
 	_ui.send_pressed.connect(_on_send_pressed)
 	_create_technology_menu.call_deferred()
@@ -111,7 +112,7 @@ func _on_planet_selected(planet: Node2D) -> void:
 	if not is_instance_valid(_ui):
 		return
 	_active_planet = planet
-	_destination_planets = get_route_destinations(planet)
+	_destination_planets = get_mission_destinations(planet, _ui.selected_mission_type())
 	var default_destination := get_destination(planet)
 	_ui.show_planet(planet, _destination_planets, default_destination)
 	_update_selected_count()
@@ -127,6 +128,15 @@ func _on_destination_selected(index: int) -> void:
 	if index < 0 or index >= _destination_planets.size():
 		return
 	_routes[_active_planet] = _destination_planets[index]
+	_update_preview()
+	queue_redraw()
+
+func _on_mission_selected(mission_type: StringName) -> void:
+	if _active_planet == null or not is_instance_valid(_ui):
+		return
+	_destination_planets = get_mission_destinations(_active_planet, mission_type)
+	var current_destination := get_destination(_active_planet)
+	_ui.set_destinations(_destination_planets, current_destination)
 	_update_preview()
 	queue_redraw()
 
@@ -196,13 +206,16 @@ func get_route_path(source: Node2D, destination: Node2D) -> Array[Vector2]:
 func _path_distance(path: Array[Vector2]) -> float:
 	return PathUtils.distance(path)
 
+func _game_state() -> Node:
+	return GameStateAccess.autoload(self)
+
 func get_destination(source: Node2D) -> Node2D:
 	var selected = _routes.get(source)
-	var allowed_destinations := get_route_destinations(source)
+	var mission_type: StringName = _ui.selected_mission_type() if is_instance_valid(_ui) else GameState.MISSION_MILITARY
+	var allowed_destinations := get_mission_destinations(source, mission_type)
 	if selected != null and is_instance_valid(selected) and allowed_destinations.has(selected):
 		return selected as Node2D
-	var neighbors := get_neighbors(source)
-	return neighbors[0] if not neighbors.is_empty() else null
+	return allowed_destinations[0] if not allowed_destinations.is_empty() else null
 
 func get_route_destinations(source: Node2D) -> Array[Node2D]:
 	var world_config: WorldConfig = get_parent().get("world_config") as WorldConfig
@@ -211,6 +224,21 @@ func get_route_destinations(source: Node2D) -> Array[Node2D]:
 	var result: Array[Node2D] = []
 	for destination in _planets:
 		if destination != source:
+			result.append(destination)
+	return result
+
+func get_mission_destinations(source: Node2D, mission_type: StringName) -> Array[Node2D]:
+	var route_destinations: Array[Node2D] = get_route_destinations(source)
+	if mission_type != GameState.MISSION_COLLECT:
+		return route_destinations
+	var state: Node = _game_state()
+	if state == null or source == null:
+		return []
+	var result: Array[Node2D] = []
+	var source_faction: StringName = (source as Planet).get_faction()
+	for destination in route_destinations:
+		var destination_planet: Planet = destination as Planet
+		if destination_planet != null and destination_planet.get_faction() == GameState.FACTION_NEUTRAL and state.has_scanned_planet(source_faction, destination_planet.planet_id):
 			result.append(destination)
 	return result
 

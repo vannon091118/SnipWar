@@ -13,7 +13,19 @@ func _spawn_clusters(source: Planet, amount: int) -> void:
 func dispatch_mission(source: Planet, destination: Planet, amount: int, route_path: Array[Vector2] = [], mission_type: StringName = &"military") -> void:
 	_dispatch_clusters(source, destination, amount, route_path, mission_type)
 
+func can_dispatch_mission(source: Planet, destination: Planet, mission_type: StringName = &"military") -> bool:
+	if source == null or destination == null or source == destination:
+		return false
+	if mission_type != GameState.MISSION_COLLECT:
+		return true
+	var state: Node = _game_state()
+	if state == null or source.get_faction() == GameState.FACTION_NEUTRAL:
+		return false
+	return destination.get_faction() == GameState.FACTION_NEUTRAL and state.has_scanned_planet(source.get_faction(), destination.planet_id)
+
 func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_path: Array[Vector2] = [], mission_type: StringName = &"military") -> void:
+	if not can_dispatch_mission(source, destination, mission_type):
+		return
 	var dispatch_count := _Dispatch.launch_amount(source.worker_count, amount)
 	if dispatch_count <= 0:
 		return
@@ -74,3 +86,6 @@ func _cluster_radius(groups: Array[int], tier_bonus: int = 0) -> float:
 
 func _path_distance(path: Array[Vector2]) -> float:
 	return PathUtils.distance(path)
+
+func _game_state() -> Node:
+	return GameStateAccess.autoload(self)

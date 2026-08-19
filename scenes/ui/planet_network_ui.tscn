@@ -103,6 +103,10 @@ text = "Ressource: Keine"
 layout_mode = 2
 text = "Einheiten: 0"
 
+[node name="BuildSpaceLabel" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "Bauplätze: 0"
+
 [node name="HeaderSeparator" type="HSeparator" parent="PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content"]
 layout_mode = 2
 

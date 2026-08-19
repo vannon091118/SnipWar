@@ -13,6 +13,8 @@ var _open := false
 var _category: StringName = TechnologyDefinition.CATEGORY_SHIPS
 var _scout_source: OptionButton
 var _scout_destination: OptionButton
+var _worker_source: OptionButton
+var _worker_button: Button
 
 @onready var _ui_root: Control = get_node_or_null("TechTabUI")
 @onready var _tab_button: Button = get_node_or_null("TechTabUI/TechTab")
@@ -65,12 +67,16 @@ func _connect_signals() -> void:
 		return
 	if state.has_signal("planet_discovered") and not state.planet_discovered.is_connected(_on_planet_discovered):
 		state.planet_discovered.connect(_on_planet_discovered)
+	if state.has_signal("planet_scanned") and not state.planet_scanned.is_connected(_on_planet_scanned):
+		state.planet_scanned.connect(_on_planet_scanned)
 	if state.has_signal("technology_researched") and not state.technology_researched.is_connected(_on_technology_researched):
 		state.technology_researched.connect(_on_technology_researched)
 	if state.has_signal("planet_technology_researched") and not state.planet_technology_researched.is_connected(_on_planet_technology_researched):
 		state.planet_technology_researched.connect(_on_planet_technology_researched)
 	if state.has_signal("planet_upgraded") and not state.planet_upgraded.is_connected(_on_planet_upgraded):
 		state.planet_upgraded.connect(_on_planet_upgraded)
+	if state.has_signal("worker_factory_built") and not state.worker_factory_built.is_connected(_on_worker_factory_built):
+		state.worker_factory_built.connect(_on_worker_factory_built)
 
 func _build_category_tabs() -> void:
 	if _category_tabs == null:
@@ -129,6 +135,8 @@ func _refresh() -> void:
 		child.queue_free()
 	_scout_source = null
 	_scout_destination = null
+	_worker_source = null
+	_worker_button = null
 	if _ship_manager == null:
 		return
 	if _category == TechnologyDefinition.CATEGORY_SHIPS:
@@ -144,22 +152,26 @@ func _refresh_ships() -> void:
 		return
 	var catalog: TechnologyCatalog = _ship_manager.get_technology_catalog()
 	for technology in catalog.for_category(TechnologyDefinition.CATEGORY_SHIPS):
+		if technology.requires_discovery and not state.has_scanned_planet(GameState.FACTION_PLAYER):
+			continue
 		_list.add_child(_research_row(technology, state))
 	_list.add_child(_make_separator())
 	_list.add_child(_make_label("SCOUT BAUEN", _theme_config.heading_text_color, _theme_config.section_font_size))
-	_list.add_child(_make_label("Voraussetzung: Orbitale Werft auf dem Startplaneten, Rumpf + Scanner-Drohne erforscht.", _theme_config.muted_text_color, _theme_config.small_font_size))
+	_list.add_child(_make_label("Nur unbekannte benachbarte Gebiete können mit dem Scanner angeflogen werden.", _theme_config.muted_text_color, _theme_config.small_font_size))
 	var planets := _ship_manager.get_planets()
 	var source_row := _make_label("Startplanet (eigene Werft)", _theme_config.secondary_text_color, _theme_config.small_font_size)
 	_list.add_child(source_row)
 	_scout_source = OptionButton.new()
 	_scout_source.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_populate_scout_sources(_scout_source, planets, state)
+	_scout_source.item_selected.connect(_on_scout_source_changed)
 	_list.add_child(_scout_source)
-	var destination_row := _make_label("Zielplanet (unbekannt)", _theme_config.secondary_text_color, _theme_config.small_font_size)
+	var destination_row := _make_label("Zielplanet (unbekannter Nachbar)", _theme_config.secondary_text_color, _theme_config.small_font_size)
 	_list.add_child(destination_row)
 	_scout_destination = OptionButton.new()
 	_scout_destination.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_populate_scout_destinations(_scout_destination, planets, state)
+	var selected_source: Planet = _selected_option_planet(_scout_source)
+	_populate_scout_destinations(_scout_destination, selected_source, state)
 	_list.add_child(_scout_destination)
 	var start_button := Button.new()
 	start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -167,6 +179,20 @@ func _refresh_ships() -> void:
 	start_button.disabled = _scout_source.item_count == 0 or _scout_destination.item_count == 0
 	start_button.pressed.connect(_on_start_scout)
 	_list.add_child(start_button)
+
+	_list.add_child(_make_separator())
+	_list.add_child(_make_label("WORKER-FERTIGER", _theme_config.heading_text_color, _theme_config.section_font_size))
+	_list.add_child(_make_label("Nach dem ersten Scan und der Forschung wird hier die langsame Worker-Automatik aktiviert.", _theme_config.muted_text_color, _theme_config.small_font_size))
+	_worker_source = OptionButton.new()
+	_worker_source.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_populate_scout_sources(_worker_source, planets, state)
+	_list.add_child(_worker_source)
+	_worker_button = Button.new()
+	_worker_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_worker_button.text = "WORKER-FERTIGER BAUEN"
+	_worker_button.pressed.connect(_on_build_workers)
+	_list.add_child(_worker_button)
+	_refresh_worker_button()
 
 func _refresh_research(category: StringName, note: String) -> void:
 	var state := _game_state()
@@ -202,6 +228,14 @@ func _refresh_planets() -> void:
 		_list.add_child(_make_label("%s  ·  %s" % [planet_name, faction_str], _theme_config.accent_text_color, _theme_config.body_font_size))
 		var upgrades: Array[StringName] = state.get_planet_upgrades(planet.planet_id)
 		_list.add_child(_make_label("Ausbauten: %d" % upgrades.size(), _theme_config.muted_text_color, _theme_config.small_font_size))
+		var scan_info: Dictionary = state.scan_info_for(GameState.FACTION_PLAYER, planet.planet_id)
+		var intel_resource: StringName = state.resource_of(planet.planet_id) if own_planet else scan_info.get("resource_id", &"") as StringName
+		var intel_size: String = String(planet.get_size_profile().id).to_upper() if own_planet else String(scan_info.get("size_id", "")).to_upper()
+		var intel_slots: int = planet.get_build_slot_count() if own_planet else int(scan_info.get("build_slots", 0))
+		if String(intel_resource).is_empty():
+			_list.add_child(_make_label("Scan erforderlich: Ressourcen-Signatur unbekannt.", _theme_config.secondary_text_color, _theme_config.small_font_size))
+		else:
+			_list.add_child(_make_label("Signatur: %s  ·  Größe: %s  ·  Bauplätze: %d" % [String(intel_resource).capitalize(), intel_size, intel_slots], _theme_config.secondary_text_color, _theme_config.small_font_size))
 		if planet_technologies.is_empty():
 			_list.add_child(_make_label("Keine planetaren Technologien definiert.", _theme_config.muted_text_color, _theme_config.small_font_size))
 		else:
@@ -301,6 +335,9 @@ func _refresh_after_state_change() -> void:
 func _on_planet_discovered(_faction: StringName, _planet_id: StringName) -> void:
 	_refresh_after_state_change()
 
+func _on_planet_scanned(_faction: StringName, _planet_id: StringName, _resource_id: StringName, _size_id: StringName, _build_slots: int) -> void:
+	_refresh_after_state_change()
+
 func _on_technology_researched(_faction: StringName, _technology_id: StringName) -> void:
 	_refresh_after_state_change()
 
@@ -308,6 +345,9 @@ func _on_planet_technology_researched(_planet_id: StringName, _technology_id: St
 	_refresh_after_state_change()
 
 func _on_planet_upgraded(_planet_id: StringName, _upgrade_id: StringName) -> void:
+	_refresh_after_state_change()
+
+func _on_worker_factory_built(_planet_id: StringName) -> void:
 	_refresh_after_state_change()
 
 func _populate_scout_sources(option: OptionButton, planets: Array[Planet], state: Node) -> void:
@@ -318,13 +358,41 @@ func _populate_scout_sources(option: OptionButton, planets: Array[Planet], state
 			option.set_item_metadata(option.item_count - 1, planet)
 	option.disabled = option.item_count == 0
 
-func _populate_scout_destinations(option: OptionButton, planets: Array[Planet], state: Node) -> void:
+func _populate_scout_destinations(option: OptionButton, source: Planet, state: Node) -> void:
 	option.clear()
-	for planet in planets:
-		if not state.is_known(planet.planet_id, GameState.FACTION_PLAYER):
-			option.add_item(planet.name)
-			option.set_item_metadata(option.item_count - 1, planet)
+	if source != null:
+		for planet in _ship_manager.get_scan_destinations(source):
+			if not state.is_known(planet.planet_id, GameState.FACTION_PLAYER):
+				option.add_item(planet.name)
+				option.set_item_metadata(option.item_count - 1, planet)
 	option.disabled = option.item_count == 0
+
+func _selected_option_planet(option: OptionButton) -> Planet:
+	if option == null or option.selected < 0 or option.selected >= option.item_count:
+		return null
+	return option.get_item_metadata(option.selected) as Planet
+
+func _on_scout_source_changed(_index: int) -> void:
+	if _scout_destination == null:
+		return
+	var state: Node = _game_state()
+	if state != null:
+		_populate_scout_destinations(_scout_destination, _selected_option_planet(_scout_source), state)
+
+func _refresh_worker_button() -> void:
+	if _worker_button == null:
+		return
+	var source: Planet = _selected_option_planet(_worker_source)
+	_worker_button.disabled = source == null or not _ship_manager.can_build_workers(source)
+	if source == null:
+		_worker_button.tooltip_text = "Eigene Werft und Worker-Automatik nach einem Scan erforderlich."
+	else:
+		_worker_button.tooltip_text = "Bauplätze: %d" % source.get_build_slot_count()
+
+func _on_build_workers() -> void:
+	var source: Planet = _selected_option_planet(_worker_source)
+	if source != null and _ship_manager.build_workers(source):
+		_refresh()
 
 func _on_start_scout() -> void:
 	if _ship_manager == null or _scout_source == null or _scout_destination == null:

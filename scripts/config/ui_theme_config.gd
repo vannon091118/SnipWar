@@ -35,6 +35,7 @@ extends Resource
 @export_range(240.0, 1000.0, 1.0) var resource_bar_max_width: float = 560.0
 @export_range(24.0, 80.0, 1.0) var resource_bar_height: float = 34.0
 @export_range(80.0, 240.0, 1.0) var tab_width: float = 126.0
+@export_range(40.0, 240.0, 1.0) var upgrade_button_width: float = 62.0
 @export_range(8, 48, 1) var body_font_size: int = 13
 @export_range(8, 48, 1) var small_font_size: int = 11
 @export_range(8, 48, 1) var section_font_size: int = 12
@@ -114,7 +115,7 @@ func validate() -> PackedStringArray:
 		errors.append("UI separations cannot be negative")
 	if panel_border_width < 0 or panel_corner_radius < 0:
 		errors.append("UI panel style values cannot be negative")
-	if resource_bar_max_width <= 0.0 or resource_bar_height <= 0.0 or tab_width <= 0.0:
+	if resource_bar_max_width <= 0.0 or resource_bar_height <= 0.0 or tab_width <= 0.0 or upgrade_button_width <= 0.0:
 		errors.append("UI HUD dimensions must be positive")
 	if tab_font_size < 1 or heading_font_size < 1 or selected_count_font_size < 1 or body_font_size < 1 or small_font_size < 1 or section_font_size < 1 or panel_title_font_size < 1:
 		errors.append("UI font sizes must be positive")

@@ -5,16 +5,22 @@ signal arrived(scout: Node2D)
 
 var destination: Planet
 var source_faction: StringName = &""
+var source_planet_id: StringName = &""
 
 var _route_path: Array[Vector2] = []
 var _duration := 0.0
 var _arrived := false
+const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_default.tres")
+
 var _hull: Sprite2D
 var _scanner: Sprite2D
+var _ship_config: ShipConfig = DEFAULT_SHIP_CONFIG
 
-func configure(destination_planet: Planet, source_faction_name: StringName, route_path: Array[Vector2], duration: float, hull_texture: Texture2D, scanner_texture: Texture2D) -> void:
+func configure(destination_planet: Planet, source_faction_name: StringName, route_path: Array[Vector2], duration: float, hull_texture: Texture2D, scanner_texture: Texture2D, source_id: StringName = &"", config: ShipConfig = null) -> void:
 	destination = destination_planet
 	source_faction = source_faction_name
+	source_planet_id = source_id
+	_ship_config = config if config != null else DEFAULT_SHIP_CONFIG
 	_route_path = route_path.duplicate() if route_path.size() >= 2 else []
 	_duration = maxf(duration, 0.001)
 	_ensure_sprites()
@@ -45,7 +51,13 @@ func _arrive() -> void:
 	_arrived = true
 	var state: Node = _game_state()
 	if state != null and destination != null and is_instance_valid(destination) and not String(source_faction).is_empty():
-		state.discover_planet(source_faction, destination.planet_id)
+		state.scan_planet(
+			source_faction,
+			destination.planet_id,
+			destination.get_resource_id(),
+			StringName(destination.get_size_profile().id),
+			destination.get_build_slot_count()
+		)
 	arrived.emit(self)
 
 func _ensure_sprites() -> void:
@@ -61,8 +73,8 @@ func _ensure_sprites() -> void:
 			_scanner = Sprite2D.new()
 			_scanner.name = "Scanner"
 			add_child(_scanner)
-			_scanner.position = Vector2(7.0, -5.0)
-			_scanner.scale = Vector2.ONE * 0.5
+			_scanner.position = _ship_config.scanner_offset
+			_scanner.scale = Vector2.ONE * _ship_config.scanner_visual_scale
 
 func _game_state() -> Node:
 	return GameStateAccess.autoload(self)
