@@ -65,38 +65,38 @@ Der aktive Katalog enthält exakt zehn Planeten. Keiner davon wurde gefragt, ob 
 
 ```mermaid
 graph LR
-    subgraph "🟦 Player"
-        Ocean["🌊 Ocean<br/><i>Homeworld</i>"]
-    end
+	subgraph "🟦 Player"
+		Ocean["🌊 Ocean<br/><i>Homeworld</i>"]
+	end
 
-    subgraph "⬜ Neutral"
-        Ember["🔥 Ember"]
-        Ice["❄️ Ice"]
-        Violet["💜 Violet"]
-        Desert["🏜️ Desert"]
-        Toxic["☣️ Toxic"]
-        Storm["⚡ Storm"]
-        Volcanic["🌋 Volcanic"]
-        Golden["✨ Golden"]
-    end
+	subgraph "⬜ Neutral"
+		Ember["🔥 Ember"]
+		Ice["❄️ Ice"]
+		Violet["💜 Violet"]
+		Desert["🏜️ Desert"]
+		Toxic["☣️ Toxic"]
+		Storm["⚡ Storm"]
+		Volcanic["🌋 Volcanic"]
+		Golden["✨ Golden"]
+	end
 
-    subgraph "🟥 CPU"
-        Paper["📄 Paper<br/><i>Homeworld</i>"]
-    end
+	subgraph "🟥 CPU"
+		Paper["📄 Paper<br/><i>Homeworld</i>"]
+	end
 
-    Ocean -.->|"Routen"| Ember
-    Ocean -.-> Ice
-    Ember -.-> Violet
-    Ice -.-> Desert
-    Violet -.-> Toxic
-    Desert -.-> Storm
-    Toxic -.-> Volcanic
-    Storm -.-> Golden
-    Volcanic -.-> Paper
-    Golden -.-> Paper
+	Ocean -.->|"Routen"| Ember
+	Ocean -.-> Ice
+	Ember -.-> Violet
+	Ice -.-> Desert
+	Violet -.-> Toxic
+	Desert -.-> Storm
+	Toxic -.-> Volcanic
+	Storm -.-> Golden
+	Volcanic -.-> Paper
+	Golden -.-> Paper
 
-    style Ocean fill:#478cbf,color:#fff
-    style Paper fill:#ef476f,color:#fff
+	style Ocean fill:#478cbf,color:#fff
+	style Paper fill:#ef476f,color:#fff
 ```
 
 <details>
@@ -142,7 +142,7 @@ graph LR
 
 ```
 Flugzeit = (distance / 100) × 8 × (1 + 0.05 × √(max(unit_count − 1, 0)))
-           ÷ source_transfer_speed_multiplier
+		   ÷ source_transfer_speed_multiplier
 ```
 
 Ja, größere Gruppen fliegen langsamer. Das ist Physik. Oder Balancing. Oder beides.
@@ -179,26 +179,26 @@ Fünf unsichtbare `GameResource`-Typen treiben die Wirtschaft an:
 
 ```mermaid
 graph TD
-    subgraph "💰 Economy"
-        EXT["Extractor"] --> REF["Refinery"]
-        EXT --> TP["Trade Post"]
-    end
+	subgraph "💰 Economy"
+		EXT["Extractor"] --> REF["Refinery"]
+		EXT --> TP["Trade Post"]
+	end
 
-    subgraph "⚔️ Military"
-        SY["Shipyard"] --> WSY["War Shipyard"]
-        SY --> CSY["Colony Shipyard"]
-        SY --> DG["Defense Grid"]
-    end
+	subgraph "⚔️ Military"
+		SY["Shipyard"] --> WSY["War Shipyard"]
+		SY --> CSY["Colony Shipyard"]
+		SY --> DG["Defense Grid"]
+	end
 
-    subgraph "🧬 Tech"
-        TC["Tech Center"] --> WL["Weapon Lab"]
-        TC --> AL["Armor Lab"]
-    end
+	subgraph "🧬 Tech"
+		TC["Tech Center"] --> WL["Weapon Lab"]
+		TC --> AL["Armor Lab"]
+	end
 
-    subgraph "🏗️ Infrastructure"
-        OS["Orbital Station"] --> CH["Colony Hub"]
-        OS --> TN["Trade Network"]
-    end
+	subgraph "🏗️ Infrastructure"
+		OS["Orbital Station"] --> CH["Colony Hub"]
+		OS --> TN["Trade Network"]
+	end
 ```
 
 <details>
@@ -227,11 +227,11 @@ Der **Scanner-Scout** ist der einzige tatsächlich fliegende Schiffstyp:
 
 ```mermaid
 graph LR
-    A["🔬 Forschung:<br/>shipyard_construction"] --> B["🔧 Upgrade:<br/>Shipyard bauen"]
-    B --> C["📚 Forschung:<br/>scout_hull +<br/>scanner_drone"]
-    C --> D["🚀 Scout bauen"]
-    D --> E["🗺️ Unbekannten<br/>Nachbarn scannen"]
-    E --> F["📊 Intel:<br/>Ressource · Größe ·<br/>Bauplätze"]
+	A["🔬 Forschung:<br/>shipyard_construction"] --> B["🔧 Upgrade:<br/>Shipyard bauen"]
+	B --> C["📚 Forschung:<br/>scout_hull +<br/>scanner_drone"]
+	C --> D["🚀 Scout bauen"]
+	D --> E["🗺️ Unbekannten<br/>Nachbarn scannen"]
+	E --> F["📊 Intel:<br/>Ressource · Größe ·<br/>Bauplätze"]
 ```
 
 Der **modulare Ship Builder** kann Hüllen, Scanner und Module kaufen, zu Assemblies kombinieren und wieder zerlegen. Diese Assemblies sind aktuell **Inventar- und Display-Zustand** — hübsch anzusehen, aber noch nicht einsatzbereit. Baby steps.
@@ -256,9 +256,9 @@ Der **modulare Ship Builder** kann Hüllen, Scanner und Module kaufen, zu Assemb
 ## 📊 STATUS / BUILD 0.1
 
 ```
- ██████████████████████░░░░░░░░░░░  ~65% Layer 1
- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  ~0%  Layer 2
- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  ~0%  Layer 3
+ ██████████████████████████████░░░  ~90% Layer 1  — Kern vollständig, Balancing läuft
+ ██████████████████░░░░░░░░░░░░░░░  ~55% Layer 2  — Simulator + Ingame-Player fertig, UI-Integration pending
+ ███████░░░░░░░░░░░░░░░░░░░░░░░░░░  ~20% Layer 3  — Conquest-Simulator läuft, kein aktiver Loop
  ████████░░░░░░░░░░░░░░░░░░░░░░░░░  ~25% 4K Presentation
 ```
 
@@ -269,28 +269,33 @@ Der implementierte Kern ist *deutlich* größer als ein reiner Karten-Vertical-S
 
 ---
 
-## 🚫 BEWUSST NICHT IMPLEMENTIERT
+## 🚫 NOCH NICHT DRIN — oder: die ehrliche Stunde
 
-> *Transparenz ist, wenn man zugibt, was alles fehlt — und trotzdem stolz auf den Rest ist.*
+> *Transparenz ist, wenn man zugibt, was noch fehlt — und trotzdem stolz auf den Rest ist.*
 
 <details>
-<summary><b>Die ehrliche "Gibt es (noch) nicht"-Liste</b></summary>
+<summary><b>Was fehlt vs. was schon läuft</b></summary>
 
-- ❌ Layer-2-Raumschlacht oder animierte Flottensimulation
-- ❌ KI-gesteuerte Schiffskampf-Simulation
-- ❌ Ship-Loadout-Traits oder Isaac-artiger Transformer-Pool
-- ❌ Aktive Tower-Defense- oder Conquest-Szene auf Planeten
-- ❌ Angreifer-Minions aus Ship-Assemblies
-- ❌ Mech-Klassen, Mech-Kampflogik oder Gefechtsansicht
-- ❌ Ressourcensignatur pro Planetentyp
-- ❌ Echte Ressourcenveredelung in der Raffinerie
-- ❌ Ausgebaute Perimeter-Slots oder Reichweitenmechanik
-- ❌ Siegbedingungen oder Kampagnenprogression
-- ❌ Allianzen *(sorry, das "A" im Akronym)*
+| Feature | Status |
+|:---|:---:|
+| Deterministische Flottensimulation (`FleetBattleSimulator`) | ✅ Daten-Layer fertig |
+| Conquest-Simulator (Tower Defense + Ship-as-Minion) | ✅ Daten-Layer fertig |
+| Ingame-Player (Play/Pause/Scrub/Speed/Skip) | ✅ HUD-Klasse fertig |
+| Raffinerie-Konvertierung (Material + Energy → Rare) | ✅ Aktiv im Economy-Tick |
+| Ressourcen-Signaturen pro Planetentyp | ✅ Seed-deterministisch |
+| Perimeter-Slots + Reichweite als Upgrade-Trait | ✅ Datenfeld aktiv |
+| SceneDirector (Screen-Fade-Transition) | ✅ Layer 95 |
+| FloatingText (Combat-Damage-Popups) | ✅ Tween-Lifecycle |
+| Layer 2 → UI-Integration (Trigger aus Overworld) | ❌ Noch nicht verdrahtet |
+| Layer 3 → aktiver Conquest-Loop | ❌ Noch nicht verdrahtet |
+| Ship-Assembly-Traits im Kampf | ❌ Snapshot vorhanden, Wirkung pending |
+| Mech-Klassen, Mech-Kampflogik | ❌ Layer 3 Zukunft |
+| Siegbedingungen, Kampagnenprogression | ❌ Bewusst offen |
+| Allianzen *(sorry, das „A" im Akronym)* | ❌ Ehrgeiz trifft Roadmap |
 
 </details>
 
-> 📄 Verbindliche Technik: [`DESIGN.md`](DESIGN.md) · Nicht-bindende Vision: [`VISION.md`](VISION.md)
+> 📄 Verbindliche Technik: [`DESIGN.md`](DESIGN.md)
 
 ---
 
@@ -332,17 +337,17 @@ godot --headless --path . --script res://scripts/preflight.gd
 
 ```mermaid
 timeline
-    title SnipWar Entwicklungs-Roadmap
-    section Layer 1
-        01 : Ressourcenrollen, echte Upgrade-Verbraucher, belastbare Wirtschaft
-    section Ships
-        02 : Assemblies → autoritative Loadout-Snapshots
-    section Layer 2
-        03 : Deterministische Flottensimulation mit KI, Event-Stream, Animation
-    section Layer 3
-        04 : Planetare Eroberung, Ship-as-Minion, Verteidiger-Türme
-    section Presentation
-        05 : 4K UI, VFX, Kamera — das große Aufhübschen
+	title SnipWar Entwicklungs-Roadmap
+	section ✅ Layer 1
+		01 : Ressourcenrollen, echte Upgrade-Verbraucher, Raffinerie, Signaturen, belastbare Wirtschaft
+	section ✅ Daten-Simulatoren
+		02 : FleetBattleSimulator + ConquestSimulator deterministisch; Ingame-Player HUD; SceneDirector
+	section 🔮 Layer 2 Active
+		03 : UI-Trigger für Flottenkampf, Battle-Replay im Spiel verdrahten
+	section 🔮 Layer 3 Active
+		04 : Conquest-Loop aktivieren, Ship-as-Minion Loadout-Wirkung
+	section 🔮 Presentation
+		05 : 4K UI, VFX, Kamera — das große Aufhübschen
 ```
 
 ---
@@ -354,48 +359,48 @@ timeline
 
 ```mermaid
 graph TB
-    subgraph Autoloads
-        GS["GameState<br/><i>SSOT für alles</i>"]
-        EL["EventLog<br/><i>Toast & History</i>"]
-    end
+	subgraph Autoloads
+		GS["GameState<br/><i>SSOT für alles</i>"]
+		EL["EventLog<br/><i>Toast & History</i>"]
+	end
 
-    subgraph Scene["Main Scene"]
-        BG["StarfieldBackground<br/><i>z=-100</i>"]
-        BS["Bootstrap<br/><i>Seed & Init</i>"]
-        PF["PlanetField<br/><i>z=20</i>"]
-        MF["MeteorField<br/><i>Deko</i>"]
-    end
+	subgraph Scene["Main Scene"]
+		BG["StarfieldBackground<br/><i>z=-100</i>"]
+		BS["Bootstrap<br/><i>Seed & Init</i>"]
+		PF["PlanetField<br/><i>z=20</i>"]
+		MF["MeteorField<br/><i>Deko</i>"]
+	end
 
-    subgraph Runtime["Runtime Modules"]
-        SL["SeededLayout"]
-        NF["NavigationField"]
-        PN["PlanetNetwork"]
-        WM["WorkerManager"]
-        EM["EconomyManager"]
-        CPU["CpuDispatchAI"]
-        SM["ShipManager"]
-    end
+	subgraph Runtime["Runtime Modules"]
+		SL["SeededLayout"]
+		NF["NavigationField"]
+		PN["PlanetNetwork"]
+		WM["WorkerManager"]
+		EM["EconomyManager"]
+		CPU["CpuDispatchAI"]
+		SM["ShipManager"]
+	end
 
-    subgraph UI["UI Layer"]
-        PNU["PlanetNetworkUI<br/><i>Layer 50</i>"]
-        TM["TechnologyMenu<br/><i>Layer 60</i>"]
-        PM["PauseMenu<br/><i>Layer 70</i>"]
-    end
+	subgraph UI["UI Layer"]
+		PNU["PlanetNetworkUI<br/><i>Layer 50</i>"]
+		TM["TechnologyMenu<br/><i>Layer 60</i>"]
+		PM["PauseMenu<br/><i>Layer 70</i>"]
+	end
 
-    BG --> BS --> PF
-    BG --> MF
-    PF --> SL --> NF --> PN
-    PF --> WM
-    SL -.->|"Runtime"| EM
-    SL -.->|"Runtime"| CPU
-    SL -.->|"Runtime"| SM
-    PN --> PNU
-    PN --> TM
-    GS <-->|"Ownership,<br/>Resources,<br/>Research"| PF
-    EL -->|"Toasts"| PNU
+	BG --> BS --> PF
+	BG --> MF
+	PF --> SL --> NF --> PN
+	PF --> WM
+	SL -.->|"Runtime"| EM
+	SL -.->|"Runtime"| CPU
+	SL -.->|"Runtime"| SM
+	PN --> PNU
+	PN --> TM
+	GS <-->|"Ownership,<br/>Resources,<br/>Research"| PF
+	EL -->|"Toasts"| PNU
 
-    style GS fill:#478cbf,color:#fff
-    style EL fill:#478cbf,color:#fff
+	style GS fill:#478cbf,color:#fff
+	style EL fill:#478cbf,color:#fff
 ```
 
 </details>

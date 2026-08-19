@@ -213,6 +213,28 @@ func _spawn_count() -> int:
 func get_build_slot_count() -> int:
 	return maxi(_active_size_profile().build_slot_count, 1)
 
+func get_perimeter_slots() -> int:
+	var base: int = _active_size_profile().build_slot_count
+	var bonus := 0
+	var state: Node = _game_state()
+	if state != null:
+		for up_id in state.get_planet_upgrades(planet_id):
+			var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
+			if def != null and def.trait_definition != null:
+				bonus += def.trait_definition.perimeter_slots_bonus
+	return maxi(1, base + bonus)
+
+func get_defense_range() -> float:
+	var base := 150.0
+	var bonus := 0.0
+	var state: Node = _game_state()
+	if state != null:
+		for up_id in state.get_planet_upgrades(planet_id):
+			var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
+			if def != null and def.trait_definition != null:
+				bonus += def.trait_definition.range_bonus
+	return maxf(50.0, base + bonus)
+
 func can_build_workers() -> bool:
 	var state: Node = _game_state()
 	if state == null:
@@ -294,12 +316,12 @@ func _resolve_collect(source_faction: StringName, amount: int, source_planet_id:
 		return ARRIVAL_REJECTED
 	return ARRIVAL_COLLECTED
 
-func recall_gathering_workers(faction: StringName, amount: int) -> int:
+func recall_gathering_workers(target_faction: StringName, amount: int) -> int:
 	var state: Node = _game_state()
 	if state == null:
 		return 0
-	var source_id: StringName = state.get_gathering_source(faction, planet_id) as StringName
-	var withdrawn: int = state.withdraw_gathering_workers(faction, planet_id, amount)
+	var source_id: StringName = state.get_gathering_source(target_faction, planet_id) as StringName
+	var withdrawn: int = state.withdraw_gathering_workers(target_faction, planet_id, amount)
 	if withdrawn <= 0:
 		return 0
 	if String(source_id).is_empty():

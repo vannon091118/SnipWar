@@ -59,14 +59,22 @@ func is_gathering_enabled() -> bool:
 	return _gathering_enabled
 
 func tick_now() -> int:
+	return _tick_economy()
+
+func _tick_economy() -> int:
 	var field: Node = get_parent()
 	if field == null:
 		return 0
+	var state: Node = _game_state()
 	var generated_total: int = 0
+	var automation_researched: bool = _has_worker_automation()
 	for child in field.get_children():
 		var planet: Planet = child as Planet
 		if planet != null:
 			generated_total += planet.generate_economy_resources()
+			if automation_researched and state != null and state.has_method("convert_refinery_resources"):
+				if state.has_planet_upgrade(planet.planet_id, &"refinery"):
+					state.convert_refinery_resources(planet.planet_id)
 	return generated_total
 
 func gather_now() -> int:
@@ -85,7 +93,7 @@ func gather_now() -> int:
 
 func _on_tick() -> void:
 	if _enabled:
-		tick_now()
+		_tick_economy()
 
 func _on_gather_tick() -> void:
 	if _gathering_enabled:

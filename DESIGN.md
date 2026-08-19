@@ -6,7 +6,7 @@
 
 ## 1. Aktueller Status
 
-SnipWar ist ein strategischer Overworld-Prototyp mit funktionierendem Karten-, Transit-, Ressourcen-, Forschungs-, Upgrade-, Scout- und einfachem Konfliktkern. Layer 2 (Flottensimulation/Cutscene) und Layer 3 (planetare Eroberung/Tower Defense) sind noch nicht implementiert.
+SnipWar ist ein strategischer Overworld-Prototyp mit funktionierendem Karten-, Transit-, Ressourcen-, Forschungs-, Upgrade-, Scout- und deterministischem Konfliktkern. Die Phasen 0 bis 7 (EffectDefinition, Trait-Erweiterungen, Planetensignaturen, Raffinerie-Konvertierung, Perimeter-Slots & Reichweite, CompositeShipView, FleetSnapshot, FleetBattleSimulator, ConquestSimulator und Replay-Szenen) sind implementiert und in `scripts/preflight.gd` verifiziert.
 
 Der Startpunkt ist `scenes/backgrounds/starfield_background.tscn`. `GameState` und `EventLog` sind Autoloads. `StarfieldBackground._enter_tree()` wählt das aktive Szenario und konfiguriert GameState, PlanetField und MeteorField, bevor `Bootstrap` den finalen Layout-Seed setzt.
 

@@ -132,8 +132,8 @@ func get_technology_menu() -> TechnologyMenu:
 func get_message_feed() -> MessageFeed:
 	return _message_feed
 
-func _on_panel_visibility_changed(is_visible: bool) -> void:
-	if is_visible and is_instance_valid(_technology_menu):
+func _on_panel_visibility_changed(panel_open: bool) -> void:
+	if panel_open and is_instance_valid(_technology_menu):
 		_technology_menu.close()
 	queue_redraw()
 

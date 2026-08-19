@@ -22,6 +22,9 @@ func refresh(state: Node) -> void:
 		_resource_segment("Material", state.get_faction_resource(player_faction, &"material"), &"material"),
 		_resource_segment("Volatil", state.get_faction_resource(player_faction, &"volatile"), &"volatile")
 	]
+	var tw: Tween = create_tween()
+	tw.tween_property(self, "scale", Vector2(1.02, 1.02), 0.08)
+	tw.tween_property(self, "scale", Vector2.ONE, 0.12)
 
 func _resource_segment(label: String, amount: int, resource_id: StringName) -> String:
 	return "[color=%s]%s: %d[/color]" % [_theme_config.resource_color(resource_id).to_html(false), label, amount]

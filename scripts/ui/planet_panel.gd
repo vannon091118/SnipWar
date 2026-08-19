@@ -242,12 +242,18 @@ func show_planet(planet: Node2D, destinations: Array[Node2D], default_destinatio
 
 		var resource_id: StringName = state.resource_of(planet_id) if state.is_known(planet_id, GameState.FACTION_PLAYER) else &""
 		var resource_name: String = String(resource_id).capitalize() if not String(resource_id).is_empty() else "Unbekannt (Scout benötigt)"
+		var extra_info := ""
+		if state.has_planet_upgrade(planet_id, &"refinery"):
+			extra_info = " ⚗️"
 		if _resource_label != null:
-			_resource_label.text = "Ressource: %s" % resource_name
+			_resource_label.text = "Ressource: %s%s" % [resource_name, extra_info]
 			_resource_label.add_theme_color_override("font_color", _theme_config.resource_color(resource_id))
 	if _build_space_label != null:
 		var selected_planet: Planet = planet as Planet
-		_build_space_label.text = "Bauplätze: %d" % (selected_planet.get_build_slot_count() if selected_planet != null else 0)
+		var build_slots: int = selected_planet.get_build_slot_count() if selected_planet != null else 0
+		var perimeter_slots: int = selected_planet.get_perimeter_slots() if selected_planet != null and selected_planet.has_method("get_perimeter_slots") else build_slots
+		var defense_range: float = selected_planet.get_defense_range() if selected_planet != null and selected_planet.has_method("get_defense_range") else 150.0
+		_build_space_label.text = "Bauplätze: %d  ·  Perimeter: %d  ·  Reichweite: %.0f px" % [build_slots, perimeter_slots, defense_range]
 
 	set_destinations(destinations, default_destination)
 
@@ -255,6 +261,13 @@ func show_planet(planet: Node2D, destinations: Array[Node2D], default_destinatio
 	layout_requested.emit()
 
 func _refresh_upgrade_list(planet: Node2D) -> void:
+	if _build_space_label != null and is_instance_valid(planet):
+		var selected_planet: Planet = planet as Planet
+		var build_slots: int = selected_planet.get_build_slot_count() if selected_planet != null else 0
+		var perimeter_slots: int = selected_planet.get_perimeter_slots() if selected_planet != null and selected_planet.has_method("get_perimeter_slots") else build_slots
+		var defense_range: float = selected_planet.get_defense_range() if selected_planet != null and selected_planet.has_method("get_defense_range") else 150.0
+		_build_space_label.text = "Bauplätze: %d  ·  Perimeter-Slots: %d  ·  Reichweite: %.0f px" % [build_slots, perimeter_slots, defense_range]
+
 	if _upgrade_list == null:
 		return
 	for child in _upgrade_list.get_children():
@@ -382,6 +395,10 @@ func _upgrade_trait_text(upgrade: PlanetUpgradeDefinition) -> String:
 		traits.append("Flotten-Tier +%d" % trait_data.cluster_tier_bonus)
 	if trait_data.defense_rating > 0:
 		traits.append("Verteidigung +%d" % trait_data.defense_rating)
+	if trait_data.perimeter_slots_bonus > 0:
+		traits.append("Perimeter-Slots +%d" % trait_data.perimeter_slots_bonus)
+	if trait_data.range_bonus > 0.0:
+		traits.append("Reichweite +%.0f" % trait_data.range_bonus)
 	if trait_data.transfer_speed_multiplier > 1.0:
 		traits.append("Transit x%.1f" % trait_data.transfer_speed_multiplier)
 	if not String(trait_data.maintenance_cost_resource).is_empty() and trait_data.maintenance_cost_amount > 0:

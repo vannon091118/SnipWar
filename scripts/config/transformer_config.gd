@@ -26,6 +26,12 @@ extends Resource
 @export var strength_label_size: Vector2 = Vector2(80.0, 22.0)
 @export_range(0.0, 60.0, 0.5) var strength_label_offset_y: float = 6.0
 
+# Schiffs-Compositing Montagepunkte & Skalierung
+@export var ship_scanner_offset: Vector2 = Vector2(8.0, -6.0)
+@export var ship_module_offsets: Array[Vector2] = [Vector2(-10.0, 6.0), Vector2(10.0, 6.0), Vector2(-14.0, 0.0), Vector2(14.0, 0.0)]
+@export var ship_scanner_scale: Vector2 = Vector2(0.5, 0.5)
+@export var ship_module_scale: Vector2 = Vector2(0.4, 0.4)
+
 func resolve_tint(tint_mode: StringName, faction: StringName) -> Color:
 	match tint_mode:
 		&"faction":
@@ -71,4 +77,8 @@ func validate() -> PackedStringArray:
 		errors.append("transformer strength_label_size must be positive")
 	if strength_label_offset_y < 0.0:
 		errors.append("transformer strength_label_offset_y cannot be negative")
+	if ship_scanner_scale.x <= 0.0 or ship_scanner_scale.y <= 0.0:
+		errors.append("transformer ship_scanner_scale must be positive")
+	if ship_module_scale.x <= 0.0 or ship_module_scale.y <= 0.0:
+		errors.append("transformer ship_module_scale must be positive")
 	return errors

@@ -2,6 +2,17 @@ extends SceneTree
 
 const _FlightTime := preload("res://scripts/flight_time.gd")
 const _Dispatch := preload("res://scripts/dispatch.gd")
+const EffectDefinition := preload("res://scripts/config/effect_definition.gd")
+const FleetSnapshot := preload("res://scripts/config/fleet_snapshot.gd")
+const CompositeShipView := preload("res://scripts/objects/ships/composite_ship_view.gd")
+const BattleEvent := preload("res://scripts/simulation/battle_event.gd")
+const FleetBattleSimulator := preload("res://scripts/simulation/fleet_battle_simulator.gd")
+const ConquestSimulator := preload("res://scripts/simulation/conquest_simulator.gd")
+const FloatingText := preload("res://scripts/ui/floating_text.gd")
+const IngamePlayerControls := preload("res://scripts/ui/ingame_player_controls.gd")
+const SceneDirector := preload("res://scripts/ui/scene_director.gd")
+const BattleScene := preload("res://scripts/battle/battle_scene.gd")
+const ConquestScene := preload("res://scripts/conquest/conquest_scene.gd")
 
 var _observed_planet: Node2D
 var _observed_state := -1
@@ -23,6 +34,8 @@ var _upgrade_catalog: PlanetUpgradeCatalog
 var _original_seed := 0
 
 func _init() -> void:
+	if not _constraint_effects_and_traits():
+		return
 	if not _constraint_flight_and_dispatch():
 		return
 	if not await _constraint_scene_boot():
@@ -45,8 +58,89 @@ func _init() -> void:
 		return
 	if not await _constraint_pause_and_context():
 		return
+	if not _constraint_layers_2_and_3():
+		return
+	if not await _constraint_ingame_player_and_transitions():
+		return
 	print("PASS: SnipWar preflight")
 	quit()
+
+func _constraint_effects_and_traits() -> bool:
+	var invalid_effect := EffectDefinition.new()
+	var invalid_errs := invalid_effect.validate()
+	if not _check(invalid_errs.size() >= 1, "unconfigured EffectDefinition should fail validation"):
+		return false
+	invalid_effect.target_stat = &"production"
+	invalid_effect.operation = &"invalid_op"
+	if not _check(invalid_effect.validate().size() >= 1, "EffectDefinition with invalid operation should fail validation"):
+		return false
+
+	var mult_effect := EffectDefinition.new()
+	mult_effect.target_stat = &"production"
+	mult_effect.operation = EffectDefinition.OP_MULTIPLY
+	mult_effect.value = 1.25
+	mult_effect.description = "+25% Produktion"
+	if not _check(mult_effect.validate().is_empty(), "valid mult EffectDefinition should pass validation"):
+		return false
+	if not _check(is_equal_approx(mult_effect.apply_to(100.0), 125.0), "EffectDefinition multiply apply_to calculation is wrong"):
+		return false
+
+	var add_effect := EffectDefinition.new()
+	add_effect.target_stat = &"hull_hp"
+	add_effect.operation = EffectDefinition.OP_ADD
+	add_effect.value = 50.0
+	add_effect.description = "+50 Hülle"
+	if not _check(add_effect.validate().is_empty(), "valid add EffectDefinition should pass validation"):
+		return false
+	if not _check(is_equal_approx(add_effect.apply_to(100.0), 150.0), "EffectDefinition add apply_to calculation is wrong"):
+		return false
+
+	var trait_def := TraitDefinition.new()
+	trait_def.id = &"trait_test"
+	trait_def.display_name = "Test Trait"
+	trait_def.production_boost = 0.5
+	trait_def.transfer_speed_multiplier = 1.2
+	trait_def.hull_hp_bonus = 20
+	trait_def.dps_bonus = 5.5
+	trait_def.attack_range_bonus = 15.0
+
+	var nested_effect := EffectDefinition.new()
+	nested_effect.target_stat = &"hull_hp"
+	nested_effect.operation = EffectDefinition.OP_ADD
+	nested_effect.value = 10.0
+	trait_def.effects.append(nested_effect)
+
+	if not _check(trait_def.validate().is_empty(), "TraitDefinition with effects should pass validation"):
+		return false
+
+	if not _check(is_equal_approx(trait_def.get_stat_modifier(&"production", 10.0), 10.5), "TraitDefinition production modifier failed"):
+		return false
+	if not _check(is_equal_approx(trait_def.get_stat_modifier(&"transfer_speed", 100.0), 120.0), "TraitDefinition transfer_speed modifier failed"):
+		return false
+	if not _check(is_equal_approx(trait_def.get_stat_modifier(&"hull_hp", 100.0), 130.0), "TraitDefinition hull_hp modifier (bonus + effect) failed"):
+		return false
+	if not _check(is_equal_approx(trait_def.get_stat_modifier(&"dps", 10.0), 15.5), "TraitDefinition dps modifier failed"):
+		return false
+	if not _check(is_equal_approx(trait_def.get_stat_modifier(&"attack_range", 50.0), 65.0), "TraitDefinition attack_range modifier failed"):
+		return false
+
+	var ship_part := ShipPartDefinition.new()
+	ship_part.id = &"part_test"
+	ship_part.slot_type = ShipPartDefinition.SLOT_MODULE
+	ship_part.display_name = "Test Modul"
+	ship_part.cost_amount = 5
+	ship_part.visual_asset = preload("res://assets/objects/meteors/meteor_03_metal.svg")
+	ship_part.trait_definition = trait_def
+
+	if not _check(ship_part.validate().is_empty(), "ShipPartDefinition with valid trait_definition should pass validation"):
+		return false
+
+	var broken_trait := TraitDefinition.new()
+	ship_part.trait_definition = broken_trait
+	if not _check(ship_part.validate().size() >= 1, "ShipPartDefinition with invalid trait_definition should fail validation"):
+		return false
+
+	return true
 
 func _constraint_flight_and_dispatch() -> bool:
 	if not _check(is_equal_approx(_FlightTime.seconds_for(100.0, 1), 8.0), "flight time baseline is wrong"):
@@ -194,6 +288,47 @@ func _constraint_resources_and_seed() -> bool:
 	game_state.call("deal_resources", scale_resource_catalog, resource_pool, 424242)
 	if not _check(game_state.call("validate_resources", resource_pool).is_empty(), "1500-planet resource deal is unbalanced"):
 		return false
+
+	# Test PlanetDefinition signature fields and validation
+	var test_planet_def := PlanetDefinition.new()
+	test_planet_def.planet_id = &"test_planet"
+	test_planet_def.display_name = "Test Planet"
+	test_planet_def.planet_texture = preload("res://assets/objects/planets/planet_01_ember.svg")
+	test_planet_def.detail_profile = preload("res://resources/config/planet_details/default.tres")
+	test_planet_def.signature_resource = &"energy"
+	test_planet_def.signature_probability = 1.0
+	if not _check(test_planet_def.validate().is_empty(), "valid planet definition with signature should pass validation"):
+		return false
+	test_planet_def.signature_probability = 1.5
+	if not _check(not test_planet_def.validate().is_empty(), "invalid signature probability should fail validation"):
+		return false
+	test_planet_def.signature_probability = 1.0
+
+	# Test deal_resources with explicit signature preference
+	var sig_catalog := PlanetCatalog.new()
+	var hw1: PlanetDefinition = test_planet_def.duplicate(true) as PlanetDefinition
+	hw1.planet_id = &"hw1"
+	hw1.display_name = "HW1"
+	hw1.planet_role = &"homeworld"
+	hw1.signature_resource = &"biomass"
+	hw1.signature_probability = 1.0
+	var hw2: PlanetDefinition = test_planet_def.duplicate(true) as PlanetDefinition
+	hw2.planet_id = &"hw2"
+	hw2.display_name = "HW2"
+	hw2.planet_role = &"homeworld"
+	hw2.signature_resource = &"rare"
+	hw2.signature_probability = 1.0
+	var p3: PlanetDefinition = test_planet_def.duplicate(true) as PlanetDefinition
+	p3.planet_id = &"p3"
+	p3.display_name = "P3"
+	p3.planet_role = &"planet"
+	p3.signature_resource = &"energy"
+	p3.signature_probability = 1.0
+	sig_catalog.planets = [hw1, hw2, p3]
+	game_state.call("deal_resources", sig_catalog, resource_pool, 12345)
+	if not _check(game_state.resource_of(&"hw1") == &"biomass" and game_state.resource_of(&"hw2") == &"rare" and game_state.resource_of(&"p3") == &"energy", "signature resources should be respected when probability is 1.0"):
+		return false
+
 	game_state.call("deal_resources", planet_catalog, resource_pool, resource_seed)
 	var positions_before: Dictionary = _planet_positions(field)
 	if not _check(positions_before.size() == planet_catalog.planets.size(), "generated planets do not match the catalog"):
@@ -807,6 +942,20 @@ func _constraint_upgrades_missions_and_ai() -> bool:
 	if generated_resource == &"energy":
 		expected_energy_after_generation += generated
 	if not _check(energy_after_gen == expected_energy_after_generation, "maintenance cost should be deducted during generation"):
+		return false
+
+	# Test refinery conversion logic
+	var pre_conv_mat: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"material")
+	var pre_conv_energy: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy")
+	var pre_conv_rare: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"rare")
+	var conv_result: Dictionary = game_state.convert_refinery_resources(player_homeworld)
+	if not _check(conv_result.get("converted", false) == true, "refinery conversion should succeed with sufficient material and energy"):
+		return false
+	if not _check(game_state.get_faction_resource(GameState.FACTION_PLAYER, &"material") == pre_conv_mat - 2, "refinery conversion should consume 2 material"):
+		return false
+	if not _check(game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy") == pre_conv_energy - 1, "refinery conversion should consume 1 energy"):
+		return false
+	if not _check(game_state.get_faction_resource(GameState.FACTION_PLAYER, &"rare") == pre_conv_rare + 1, "refinery conversion should produce 1 rare"):
 		return false
 
 	# Test defense traits on arrival resolution
@@ -1592,6 +1741,144 @@ func _path_contains_planet(path: Array[Vector2], field: Node, source: Planet, de
 
 func _flight_seconds(text: String) -> float:
 	return float(text.trim_prefix("Flugzeit: ").trim_suffix(" s"))
+
+func _constraint_layers_2_and_3() -> bool:
+	# 1. Perimeter Slots & Defense Range
+	var test_planet: Planet = _find_planet_by_id(_field, _game_state.homeworld_for(GameState.FACTION_PLAYER))
+	if not _check(test_planet != null, "player homeworld missing for perimeter check"):
+		return false
+	if not _check(test_planet.get_perimeter_slots() >= 1, "planet perimeter slots should be at least 1"):
+		return false
+	if not _check(test_planet.get_defense_range() >= 150.0, "planet defense range should be at least 150.0"):
+		return false
+
+	# 2. CompositeShipView
+	var view := CompositeShipView.new()
+	var test_tex: Texture2D = preload("res://assets/objects/workers/cluster_k.svg")
+	view.setup(test_tex, test_tex, [test_tex], &"a")
+	if not _check(view.get_node_or_null("HullSprite") != null, "CompositeShipView missing HullSprite"):
+		return false
+	if not _check(view.get_node_or_null("ScannerSprite") != null, "CompositeShipView missing ScannerSprite"):
+		return false
+	if not _check(view.get_node_or_null("ModulesContainer") != null, "CompositeShipView missing ModulesContainer"):
+		return false
+	view.queue_free()
+
+	# 3. FleetSnapshot & Stats
+	var fleet_a := FleetSnapshot.new()
+	fleet_a.fleet_id = &"fleet_test_a"
+	fleet_a.faction = GameState.FACTION_PLAYER
+	fleet_a.ships = [
+		{"hull": &"hull_fighter", "scanner": &"scanner_drone", "modules": [&"mod_laser"]}
+	]
+	fleet_a.calculate_stats()
+	if not _check(fleet_a.total_hull_hp > 0.0 and fleet_a.total_dps > 0.0, "FleetSnapshot stat calculation failed"):
+		return false
+
+	var fleet_b := FleetSnapshot.new()
+	fleet_b.fleet_id = &"fleet_test_b"
+	fleet_b.faction = GameState.FACTION_CPU
+	fleet_b.ships = [
+		{"hull": &"hull_fighter", "scanner": &"scanner_drone", "modules": []}
+	]
+	fleet_b.calculate_stats()
+
+	# 4. Deterministic Layer 2 Simulation
+	var result_1 := FleetBattleSimulator.simulate_battle(fleet_a, fleet_b, 9999)
+	var result_2 := FleetBattleSimulator.simulate_battle(fleet_a, fleet_b, 9999)
+	if not _check(result_1.get("winner") == result_2.get("winner"), "FleetBattleSimulator must be deterministic"):
+		return false
+	if not _check(result_1.get("events").size() == result_2.get("events").size(), "FleetBattleSimulator event count must match across identical seeds"):
+		return false
+
+	# 5. Deterministic Layer 3 Conquest
+	var conq_1 := ConquestSimulator.simulate_conquest(fleet_a, 5, 3, 2, 2, 150.0, 777)
+	var conq_2 := ConquestSimulator.simulate_conquest(fleet_a, 5, 3, 2, 2, 150.0, 777)
+	if not _check(conq_1.get("captured") == conq_2.get("captured"), "ConquestSimulator capture result must be deterministic"):
+		return false
+	if not _check(conq_1.get("surviving_attackers") == conq_2.get("surviving_attackers"), "ConquestSimulator survivor count must be deterministic"):
+		return false
+
+	return true
+
+func _constraint_ingame_player_and_transitions() -> bool:
+	# 1. FloatingText
+	var dummy_parent := Node2D.new()
+	root.add_child(dummy_parent)
+	var ft: FloatingText = FloatingText.spawn(dummy_parent, "-25", Vector2(100, 100), Color.YELLOW, 0.5)
+	if not _check(ft != null, "FloatingText spawn failed"):
+		return false
+	dummy_parent.queue_free()
+
+	# 2. IngamePlayerControls
+	var controls := IngamePlayerControls.new()
+	root.add_child(controls)
+	controls.setup(20.0)
+	if not _check(controls.total_duration == 20.0, "IngamePlayerControls total_duration mismatch"):
+		return false
+	if not _check(controls.is_playing == true, "IngamePlayerControls should start playing"):
+		return false
+	controls._on_play_pressed()
+	if not _check(controls.is_playing == false, "IngamePlayerControls play toggle failed"):
+		return false
+	controls._on_speed_pressed() # changes from 1.0x to 2.0x
+	if not _check(controls.playback_speed == 2.0, "IngamePlayerControls speed toggle failed"):
+		return false
+	controls.set_progress(5.0)
+	if not _check(controls.current_time == 5.0, "IngamePlayerControls progress set failed"):
+		return false
+	controls.queue_free()
+
+	# 3. SceneDirector
+	var director := SceneDirector.new()
+	root.add_child(director)
+	var midpoint_called := [false]
+	director.transition(0.1, func(): midpoint_called[0] = true)
+	if not _check(director.is_transitioning() == true, "SceneDirector should be transitioning"):
+		return false
+	await director.transition_completed
+	if not _check(midpoint_called[0] == true, "SceneDirector midpoint callback not executed"):
+		return false
+	if not _check(director.is_transitioning() == false, "SceneDirector should finish transition"):
+		return false
+	director.queue_free()
+
+	# 4. BattleScene with Ingame Controls
+	var battle := BattleScene.new()
+	root.add_child(battle)
+	var mock_res := {
+		"winner": GameState.FACTION_PLAYER,
+		"survivors_a": [],
+		"survivors_b": [],
+		"duration": 2.0,
+		"events": Array([
+			BattleEvent.create(0.0, BattleEvent.TYPE_SPAWN, &"a_0", &"", 100.0, Vector2(-100, 0)),
+			BattleEvent.create(0.0, BattleEvent.TYPE_SPAWN, &"b_0", &"", 100.0, Vector2(100, 0)),
+			BattleEvent.create(0.5, BattleEvent.TYPE_FIRE, &"a_0", &"b_0", 20.0, Vector2(-100, 0), Vector2(100, 0)),
+			BattleEvent.create(0.6, BattleEvent.TYPE_HIT, &"a_0", &"b_0", 20.0, Vector2(-100, 0), Vector2(100, 0)),
+			BattleEvent.create(1.0, BattleEvent.TYPE_DESTROYED, &"b_0", &"", 0.0, Vector2(100, 0))
+		], TYPE_OBJECT, "RefCounted", BattleEvent) as Array[BattleEvent]
+	}
+	battle.play_battle(mock_res)
+	if not _check(battle.visible == true, "BattleScene should be visible during playback"):
+		return false
+	battle._finish_battle()
+	if not _check(battle.visible == false, "BattleScene should hide on finish"):
+		return false
+	battle.queue_free()
+
+	# 5. ConquestScene with Ingame Controls
+	var conquest := ConquestScene.new()
+	root.add_child(conquest)
+	conquest.play_conquest({"captured": true, "duration": 1.5})
+	if not _check(conquest.visible == true, "ConquestScene should be visible during playback"):
+		return false
+	conquest._finish_conquest()
+	if not _check(conquest.visible == false, "ConquestScene should hide on finish"):
+		return false
+	conquest.queue_free()
+
+	return true
 
 func _check(condition: bool, message: String) -> bool:
 	if condition:

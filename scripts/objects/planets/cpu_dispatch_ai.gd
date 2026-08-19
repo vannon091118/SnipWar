@@ -73,6 +73,12 @@ func dispatch_once(force: bool = false) -> bool:
 func _on_decision_timer() -> void:
 	if _enabled:
 		dispatch_once()
+		var resolved_config: CpuDispatchConfig = dispatch_config if dispatch_config != null else DEFAULT_CONFIG
+		if _timer != null and resolved_config != null:
+			var current_wait := _timer.wait_time
+			var target_min := resolved_config.min_decision_interval
+			if current_wait > target_min:
+				_timer.wait_time = maxf(target_min, current_wait * (1.0 - resolved_config.pacing_decay_rate))
 
 func _route_destinations(source: Planet) -> Array[Node2D]:
 	var result: Array[Node2D] = []

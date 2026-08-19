@@ -31,6 +31,7 @@ signal worker_factory_built(planet_id: StringName)
 signal ship_part_purchased(planet_id: StringName, part_id: StringName)
 signal ship_assembled(planet_id: StringName, ship_id: StringName)
 signal ship_disassembled(planet_id: StringName, ship_id: StringName)
+signal refinery_converted(planet_id: StringName, faction: StringName, consumed: Dictionary, produced: Dictionary)
 
 var _ownership: Dictionary = {}
 var _starting_workers: Dictionary = {}
@@ -166,7 +167,7 @@ func deal_resources(catalog: PlanetCatalog, pool: ResourcePool = null, deal_seed
 		return
 	var resource_ids: Array[StringName] = []
 	for resource in resource_pool.resources:
-		if resource != null:
+		if resource != null and not String(resource.id).is_empty():
 			resource_ids.append(resource.id)
 	if resource_ids.is_empty():
 		return
@@ -175,29 +176,83 @@ func deal_resources(catalog: PlanetCatalog, pool: ResourcePool = null, deal_seed
 	rng.seed = deal_seed
 	_shuffle(resource_ids, rng)
 
-	var homeworld_ids: Array[StringName] = []
-	var planet_ids: Array[StringName] = []
+	var homeworld_defs: Array[PlanetDefinition] = []
+	var other_defs: Array[PlanetDefinition] = []
 	for definition in catalog.planets:
 		if definition == null:
 			continue
-		planet_ids.append(definition.planet_id)
 		if definition.planet_role == &"homeworld":
-			homeworld_ids.append(definition.planet_id)
-	_shuffle(homeworld_ids, rng)
+			homeworld_defs.append(definition)
+		else:
+			other_defs.append(definition)
+
+	_shuffle(homeworld_defs, rng)
+	_shuffle(other_defs, rng)
+
+	var total_planets: int = homeworld_defs.size() + other_defs.size()
+	if total_planets == 0:
+		return
+
+	var pool_size: int = resource_ids.size()
+	var base_count: int = total_planets / pool_size
+	var extra_count: int = total_planets % pool_size
+	var available_counts: Dictionary = {}
+	for i in range(pool_size):
+		var r_id: StringName = resource_ids[i]
+		available_counts[r_id] = base_count + (1 if i < extra_count else 0)
+
+	# Assign all planets — homeworlds first, then others
+	var all_defs: Array[PlanetDefinition] = homeworld_defs.duplicate()
+	all_defs.append_array(other_defs)
+
+	# Tracks resources already used by a homeworld planet, so faction HWs get distinct resources.
+	# Once all pool resources are used, the constraint is released and balance takes over.
+	var used_homeworld_resources: Dictionary = {}
 
 	var assigned: Dictionary = {}
-	var cursor := 0
-	for planet_id in homeworld_ids:
-		assigned[planet_id] = resource_ids[cursor % resource_ids.size()]
-		cursor += 1
-	var remaining: Array[StringName] = []
-	for planet_id in planet_ids:
-		if not assigned.has(planet_id):
-			remaining.append(planet_id)
-	_shuffle(remaining, rng)
-	for planet_id in remaining:
-		assigned[planet_id] = resource_ids[cursor % resource_ids.size()]
-		cursor += 1
+	for def in all_defs:
+		var chosen_res: StringName = &""
+		var is_homeworld: bool = def.planet_role == &"homeworld"
+
+		# Signature hint — accepted only when quota remains, and (for homeworlds) when not yet used
+		var sig: StringName = def.signature_resource
+		var prob: float = def.signature_probability
+		var hw_blocks_sig: bool = is_homeworld and used_homeworld_resources.has(sig)
+		# Signature: accepted regardless of remaining quota so prob=1.0 is always honoured.
+		# Balance is restored by the greedy fallback on subsequent planets.
+		if not String(sig).is_empty() and resource_ids.has(sig) and not hw_blocks_sig:
+			if rng.randf() < prob:
+				chosen_res = sig
+
+		# Greedy fallback: pick resource with most remaining quota
+		# For homeworlds: skip resources already assigned to a prior homeworld
+		if String(chosen_res).is_empty():
+			var best_count := -1
+			for r_id in resource_ids:
+				if is_homeworld and used_homeworld_resources.has(r_id):
+					continue
+				var cnt: int = int(available_counts.get(r_id, 0))
+				if cnt > best_count:
+					best_count = cnt
+					chosen_res = r_id
+
+		# Second fallback: homeworld "distinct" constraint fully saturated — pick best remaining
+		if String(chosen_res).is_empty():
+			var best_count := -1
+			for r_id in resource_ids:
+				var cnt: int = int(available_counts.get(r_id, 0))
+				if cnt > best_count:
+					best_count = cnt
+					chosen_res = r_id
+
+		if String(chosen_res).is_empty():
+			chosen_res = resource_ids[0]
+
+		assigned[def.planet_id] = chosen_res
+		available_counts[chosen_res] = maxi(0, int(available_counts.get(chosen_res, 0)) - 1)
+		if is_homeworld:
+			used_homeworld_resources[chosen_res] = true
+
 	_planet_resources = assigned
 
 func resource_of(planet_id: StringName) -> StringName:
@@ -313,6 +368,32 @@ func generate_resources_for_planet(planet_id: StringName, catalog: PlanetUpgrade
 	add_faction_resource(faction, resource_id, final_amount)
 	resource_generated.emit(planet_id, resource_id, final_amount)
 	return final_amount
+
+func convert_refinery_resources(planet_id: StringName, _upgrade_catalog: PlanetUpgradeCatalog = null) -> Dictionary:
+	var faction: StringName = faction_of(planet_id)
+	if faction == FACTION_NEUTRAL or not _faction_vaults.has(faction):
+		return {"converted": false}
+	if not has_planet_upgrade(planet_id, &"refinery"):
+		return {"converted": false}
+	var mat_amount: int = get_faction_resource(faction, &"material")
+	var energy_amount: int = get_faction_resource(faction, &"energy")
+	if mat_amount < 2 or energy_amount < 1:
+		return {"converted": false}
+	if not spend_faction_resource(faction, &"material", 2):
+		return {"converted": false}
+	if not spend_faction_resource(faction, &"energy", 1):
+		add_faction_resource(faction, &"material", 2)
+		return {"converted": false}
+	var produced_resource: StringName = &"rare"
+	add_faction_resource(faction, produced_resource, 1)
+	var consumed: Dictionary = {&"material": 2, &"energy": 1}
+	var produced: Dictionary = {produced_resource: 1}
+	refinery_converted.emit(planet_id, faction, consumed, produced)
+	return {
+		"converted": true,
+		"consumed": consumed,
+		"produced": produced,
+	}
 
 func signature_resource_for_planet_type(planet_type: StringName) -> StringName:
 	match planet_type:
@@ -766,3 +847,40 @@ func validate() -> PackedStringArray:
 		if faction != FACTION_PLAYER and faction != FACTION_CPU and faction != FACTION_NEUTRAL:
 			errors.append("planet %s has an invalid faction %s" % [planet_id, faction])
 	return errors
+
+func create_fleet_from_planet(planet_id: StringName, ship_ids: Array, catalog: ShipPartCatalog = null) -> FleetSnapshot:
+	var faction: StringName = faction_of(planet_id)
+	var assemblies: Dictionary = _ship_assemblies.get(planet_id, {})
+	var fleet := FleetSnapshot.new()
+	fleet.fleet_id = StringName("fleet_%s_%d" % [String(planet_id), Time.get_ticks_msec()])
+	fleet.faction = faction
+	fleet.source_planet_id = planet_id
+
+	var valid_ships: Array[Dictionary] = []
+	for ship_id_val in ship_ids:
+		var ship_id: StringName = ship_id_val as StringName
+		if assemblies.has(ship_id):
+			var ship_data: Dictionary = (assemblies[ship_id] as Dictionary).duplicate()
+			ship_data["id"] = ship_id
+			valid_ships.append(ship_data)
+			assemblies.erase(ship_id)
+
+	if assemblies.is_empty():
+		_ship_assemblies.erase(planet_id)
+	else:
+		_ship_assemblies[planet_id] = assemblies
+
+	fleet.ships = valid_ships
+	fleet.calculate_stats(catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG)
+	return fleet
+
+func disband_fleet_to_planet(fleet: FleetSnapshot, planet_id: StringName) -> void:
+	if fleet == null:
+		return
+	var assemblies: Dictionary = _ship_assemblies.get(planet_id, {})
+	for ship_data in fleet.ships:
+		var ship_id: StringName = ship_data.get("id", _next_ship_id()) as StringName
+		var clean_data: Dictionary = ship_data.duplicate()
+		clean_data.erase("id")
+		assemblies[ship_id] = clean_data
+	_ship_assemblies[planet_id] = assemblies

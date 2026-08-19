@@ -4,6 +4,8 @@ extends Resource
 
 @export var enabled: bool = true
 @export_range(0.5, 3600.0, 0.5) var decision_interval: float = 12.0
+@export_range(0.5, 3600.0, 0.5) var min_decision_interval: float = 6.0
+@export_range(0.0, 1.0, 0.01) var pacing_decay_rate: float = 0.02
 @export_range(0, 100000, 1) var reserve_workers: int = 2
 @export_range(1, 100000, 1) var minimum_source_workers: int = 3
 @export_range(0.1, 1.0, 0.05) var dispatch_fraction: float = 0.5
@@ -12,6 +14,8 @@ func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
 	if decision_interval <= 0.0:
 		errors.append("CPU decision_interval must be positive")
+	if min_decision_interval <= 0.0 or min_decision_interval > decision_interval:
+		errors.append("CPU min_decision_interval must be positive and <= decision_interval")
 	if reserve_workers < 0:
 		errors.append("CPU reserve_workers cannot be negative")
 	if minimum_source_workers < 1:

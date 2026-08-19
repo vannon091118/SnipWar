@@ -14,6 +14,7 @@ const SLOT_MODULE := &"module"
 @export var cost_amount: int = 5
 @export_range(1, 3, 1) var tier: int = 1
 @export var visual_asset: Texture2D
+@export var trait_definition: TraitDefinition
 
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
@@ -27,4 +28,6 @@ func validate() -> PackedStringArray:
 		errors.append("ship part %s cost_amount cannot be negative" % id)
 	if visual_asset == null:
 		errors.append("ship part %s visual_asset is missing" % id)
+	if trait_definition != null:
+		errors.append_array(trait_definition.validate())
 	return errors

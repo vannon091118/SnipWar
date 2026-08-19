@@ -51,7 +51,9 @@ func _add_ship_sprite(builder: Node2D, sprite_name: String, texture: Texture2D, 
 	var sprite := Sprite2D.new()
 	sprite.name = sprite_name
 	sprite.texture = texture
-	var texture_width: float = texture.get_width() if texture != null else 1.0
+	var texture_width: float = 1.0
+	if texture != null:
+		texture_width = float(texture.get_width())
 	sprite.scale = Vector2.ONE * (target_width / maxf(texture_width, 1.0))
 	sprite.position = offset
 	builder.add_child(sprite)
@@ -76,7 +78,9 @@ func _rebuild_worker_slots() -> void:
 		)
 		var sprite: Sprite2D = worker.get_node_or_null("Sprite2D") as Sprite2D
 		if sprite != null:
-			var texture_width: float = sprite.texture.get_width() if sprite.texture != null else 1.0
+			var texture_width: float = 1.0
+			if sprite.texture != null:
+				texture_width = float(sprite.texture.get_width())
 			sprite.scale = Vector2.ONE * (resolved_config.worker_visual_size / maxf(texture_width, 1.0))
 		worker.visible = worker_production_visible
 		slots.add_child(worker)
