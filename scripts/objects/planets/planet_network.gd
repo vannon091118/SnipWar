@@ -25,6 +25,8 @@ func _ready() -> void:
 			child.planet_selected.connect(_on_planet_selected)
 			child.worker_count_changed.connect(_on_worker_count_changed)
 			child.workers_spawn_requested.connect(_on_workers_spawn_requested)
+	if not transit_config_identity_valid():
+		push_error("PlanetNetwork and WorkerManager must share the same TransitConfig resource")
 	_create_ui.call_deferred()
 
 func _create_ui() -> void:
@@ -47,10 +49,12 @@ func _draw() -> void:
 	var destination := get_destination(_active_planet)
 	if destination != null:
 		var route_path := get_route_path(_active_planet, destination)
-		var route_alpha := 0.82 + sin(_line_phase * 2.0) * 0.08
-		var route_color := Color(1.0, 0.85, 0.2, route_alpha)
+		var theme: UIThemeConfig = ui_theme_config if ui_theme_config != null else DEFAULT_UI_THEME
+		var route_alpha: float = clampf(theme.route_line_alpha + sin(_line_phase * theme.route_line_pulse_speed) * theme.route_line_pulse_alpha, 0.0, 1.0)
+		var route_color := theme.route_line_color
+		route_color.a = route_alpha
 		for index in range(route_path.size() - 1):
-			draw_line(to_local(route_path[index]), to_local(route_path[index + 1]), route_color, 3.0, true)
+			draw_line(to_local(route_path[index]), to_local(route_path[index + 1]), route_color, theme.route_line_width, true)
 
 func _on_panel_visibility_changed(_visible: bool) -> void:
 	queue_redraw()
@@ -125,6 +129,12 @@ func _on_send_pressed() -> void:
 	var destination := get_destination(_active_planet)
 	if destination != null:
 		_worker_manager.call("_dispatch_clusters", _active_planet, destination, _ui.selected_amount(), get_route_path(_active_planet, destination))
+
+func transit_config_identity_valid() -> bool:
+	if _worker_manager == null or transit_config == null:
+		return false
+	var manager_config: TransitConfig = _worker_manager.get("transit_config") as TransitConfig
+	return manager_config == transit_config
 
 func get_ui() -> PlanetNetworkUI:
 	return _ui

@@ -6,6 +6,7 @@ extends Resource
 @export var scale_range: Vector2 = Vector2.ONE
 @export_range(0.01, 3600.0, 0.01) var spawn_interval: float = 1.0
 @export_range(1, 100000, 1) var spawn_count: int = 1
+@export_range(0, 100000, 1) var starting_workers: int = 0
 @export_range(0.0, 2.0, 0.01) var jitter_factor: float = 1.0
 
 func validate() -> PackedStringArray:
@@ -18,6 +19,8 @@ func validate() -> PackedStringArray:
 		errors.append("planet size profile spawn_interval must be positive")
 	if spawn_count < 1:
 		errors.append("planet size profile spawn_count must be positive")
+	if starting_workers < 0:
+		errors.append("planet size profile starting_workers cannot be negative")
 	if jitter_factor < 0.0:
 		errors.append("planet size profile jitter_factor cannot be negative")
 	return errors

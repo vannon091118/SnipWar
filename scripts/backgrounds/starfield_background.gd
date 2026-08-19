@@ -38,8 +38,12 @@ func _apply_active_scenario() -> void:
 	world_config = map.world_config if map.world_config != null else world_config
 	background_config = scenario.background_config if scenario.background_config != null else background_config
 
+	var state: Node = get_node_or_null("/root/GameState")
+	if state != null:
+		state.reset_from_catalog(map.planet_catalog)
 	var field: SeededLayout = get_node_or_null("PlanetField") as SeededLayout
 	if field != null:
+		field.position = Vector2.ZERO
 		field.world_config = map.world_config
 		field.planet_catalog = map.planet_catalog
 		field.size_profiles = map.size_profiles
@@ -55,8 +59,9 @@ func _apply_active_scenario() -> void:
 		if worker_manager != null:
 			worker_manager.set("transit_config", scenario.transit_config)
 
-	var meteor_field: Node = get_node_or_null("MeteorField")
+	var meteor_field: Node2D = get_node_or_null("MeteorField") as Node2D
 	if meteor_field != null:
+		meteor_field.position = Vector2.ZERO
 		meteor_field.set("world_config", map.world_config)
 		meteor_field.set("meteor_config", scenario.meteor_config)
 

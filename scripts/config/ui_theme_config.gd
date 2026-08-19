@@ -25,6 +25,11 @@ extends Resource
 @export var selected_count_text_color: Color
 @export var secondary_text_color: Color
 @export var accent_text_color: Color
+@export var route_line_color: Color
+@export_range(0.0, 1.0, 0.01) var route_line_alpha: float
+@export_range(0.0, 1.0, 0.01) var route_line_pulse_alpha: float
+@export_range(0.0, 20.0, 0.01) var route_line_pulse_speed: float
+@export_range(0.1, 20.0, 0.1) var route_line_width: float
 @export_range(0, 32, 1) var panel_border_width: int
 @export_range(0, 64, 1) var panel_corner_radius: int
 
@@ -42,4 +47,8 @@ func validate() -> PackedStringArray:
 		errors.append("UI separations cannot be negative")
 	if panel_border_width < 0 or panel_corner_radius < 0:
 		errors.append("UI panel style values cannot be negative")
+	if route_line_alpha < 0.0 or route_line_alpha > 1.0 or route_line_pulse_alpha < 0.0 or route_line_alpha + route_line_pulse_alpha > 1.0:
+		errors.append("UI route line alpha values are invalid")
+	if route_line_pulse_speed < 0.0 or route_line_width <= 0.0:
+		errors.append("UI route line tuning is invalid")
 	return errors

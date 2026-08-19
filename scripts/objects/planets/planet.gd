@@ -11,6 +11,11 @@ signal worker_count_changed(planet: Node2D, count: int)
 
 enum WorkerState { IDLE, SPAWNING }
 
+const ARRIVAL_FRIENDLY := &"friendly"
+const ARRIVAL_REPELLED := &"repelled"
+const ARRIVAL_CAPTURED := &"captured"
+const ARRIVAL_REJECTED := &"rejected"
+
 @export var planet_id: StringName = &"planet"
 @export var display_name: String = ""
 @export var size_profile: PlanetSizeProfile = DEFAULT_SIZE_PROFILE
@@ -20,11 +25,11 @@ var layout_size: String = "variable":
 		_restart_spawn_timer()
 @export var faction: StringName = &"neutral":
 	set(value):
-		if is_inside_tree() and faction != value:
-			remove_from_group(_faction_group(faction))
 		faction = value
-		if is_inside_tree():
-			add_to_group(_faction_group(faction))
+		if is_inside_tree() and not Engine.is_editor_hint():
+			var state: Node = _game_state()
+			if state != null:
+				state.set_faction(planet_id, value)
 
 @export var planet_role: StringName = &"planet":
 	set(value):
@@ -52,10 +57,17 @@ var worker_count := 0
 var _spawn_timer: Timer
 var _detail_seed := 0
 var _planet_ready := false
+var _initial_workers_applied := false
 
 func _ready() -> void:
 	$ClickArea.input_event.connect(_on_click_area_input_event)
 	add_to_group("planets")
+	if not Engine.is_editor_hint():
+		var state: Node = _game_state()
+		if state != null:
+			state.register_planet(planet_id, faction)
+			if not state.faction_changed.is_connected(_on_faction_changed):
+				state.faction_changed.connect(_on_faction_changed)
 	_sync_groups()
 	_apply_visuals()
 	_planet_ready = true
@@ -111,6 +123,31 @@ func _spawn_interval() -> float:
 func _spawn_count() -> int:
 	return _active_size_profile().spawn_count
 
+func set_initial_workers(amount: int) -> void:
+	if _initial_workers_applied:
+		return
+	worker_count = maxi(amount, 0)
+	_initial_workers_applied = true
+	if _planet_ready:
+		worker_count_changed.emit(self, worker_count)
+
+func resolve_arrival(source_faction: StringName, amount: int) -> StringName:
+	var incoming: int = maxi(amount, 0)
+	if incoming <= 0 or source_faction.is_empty() or source_faction == &"neutral":
+		return ARRIVAL_REJECTED
+	var destination_faction: StringName = get_faction()
+	if destination_faction == source_faction:
+		register_workers(incoming)
+		return ARRIVAL_FRIENDLY
+	var defenders: int = worker_count
+	if incoming <= defenders:
+		unregister_workers(incoming)
+		return ARRIVAL_REPELLED
+	unregister_workers(defenders)
+	set_faction(source_faction)
+	register_workers(incoming - defenders)
+	return ARRIVAL_CAPTURED
+
 func register_workers(amount: int) -> void:
 	worker_count += maxi(amount, 0)
 	worker_count_changed.emit(self, worker_count)
@@ -121,8 +158,14 @@ func unregister_workers(amount: int) -> void:
 
 func _sync_groups() -> void:
 	add_to_group(StringName("planet_" + String(planet_id)))
-	add_to_group(_faction_group(faction))
+	add_to_group(_faction_group(get_faction()))
 	add_to_group(_role_group(planet_role))
+
+func _on_faction_changed(changed_planet_id: StringName, _old_faction: StringName, new_faction: StringName) -> void:
+	if changed_planet_id == planet_id:
+		remove_from_group(_faction_group(faction))
+		faction = new_faction
+		add_to_group(_faction_group(faction))
 
 func _apply_visuals() -> void:
 	if not is_instance_valid(_sprite):
@@ -136,8 +179,22 @@ func _faction_group(value: StringName) -> StringName:
 func _role_group(value: StringName) -> StringName:
 	return StringName("planet_role_" + String(value))
 
+func get_faction() -> StringName:
+	var state: Node = _game_state()
+	if state != null:
+		return state.faction_of(planet_id) as StringName
+	return faction
+
 func set_faction(value: StringName) -> void:
 	faction = value
+
+func _game_state() -> Node:
+	if Engine.is_editor_hint() or not is_inside_tree():
+		return null
+	var root_node: Node = get_tree().root
+	if root_node == null:
+		return null
+	return root_node.get_node_or_null("GameState")
 
 func set_planet_role(value: StringName) -> void:
 	planet_role = value

@@ -138,6 +138,17 @@ func _assign_size_classes(items: Array[Planet], rng: RandomNumberGenerator, conf
 	for index in shuffled_items.size():
 		shuffled_items[index].set_size_profile(assigned_profiles[index])
 		shuffled_items[index].set_detail_seed(rng.randi())
+	_seed_initial_workers(shuffled_items)
+
+func _seed_initial_workers(items: Array[Planet]) -> void:
+	if Engine.is_editor_hint() or not is_inside_tree():
+		return
+	var state: Node = get_tree().root.get_node_or_null("GameState")
+	if state == null:
+		return
+	for item in items:
+		state.seed_starting_workers(item.planet_id, item.get_size_profile())
+		item.set_initial_workers(state.starting_workers_of(item.planet_id))
 
 func _shuffle(values: Array, rng: RandomNumberGenerator) -> void:
 	for index in range(values.size() - 1, 0, -1):

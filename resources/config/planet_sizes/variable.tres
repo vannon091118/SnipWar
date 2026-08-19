@@ -8,4 +8,5 @@ id = &"variable"
 scale_range = Vector2(0.18, 0.43)
 spawn_interval = 10.0
 spawn_count = 1
+starting_workers = 2
 jitter_factor = 1.0
