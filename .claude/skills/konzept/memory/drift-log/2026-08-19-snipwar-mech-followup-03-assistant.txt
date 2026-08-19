@@ -1,9 +1,0 @@
-Drift-Auswertung:
-- Korrektur gegenüber der vorherigen Sequenz: Die Flugzeit-/Wegvorschau erscheint sofort nach der Mengenwahl, nicht erst nach dem Senden.
-- Die Beziehung ist festgelegt: mehr ausgewählte Einheiten bedeutet längere Flugzeit.
-- Die Kompressionsfaktoren 1, 5 und 100 sind zunächst vorläufige Testwerte.
-
-Verbleibende Klärungen:
-1. Soll die Verlangsamung linear, stufenweise oder mit abnehmendem Effekt berechnet werden?
-2. Bestätigt „Senden“ nach der Vorschau direkt den Flug oder öffnet es noch eine Ziel-/Bestätigungsauswahl?
-3. Meint „Pper clip“ Paperclip/Clip-Art oder Papercut?

@@ -1,9 +1,0 @@
-Drift-Auswertung:
-- Flugzeit: bleibt ein Balanced-Modell, einfach parametrisiert und bei Bedarf neu skalierbar; keine überkomplexe Formel.
-- Kompression: nicht allein mengenabhängig, sondern ressourcenabhängig — weniger gleichzeitige Aktivität auf der Karte erlaubt mehr sichtbare Einheiten.
-- Stil: Cell-Shaded-Paperclip steht; Beleuchtung und Schattierung sind wichtiger als die Frage Paperclip vs. Papercut. Mechs sind noch nicht implementiert, aktuell existiert nur der Overworld-Layer mit Mechanik-Tests.
-
-Eingearbeitet in konzept-snipwar-mech-2026-08-19.md (Zeitmodell, Darstellung, Baufolge, Offen, Entscheidungen, Nächste Schritte).
-
-Offen:
-- Was genau misst „Ressorcen“/Map-Last für den Kompressionswechsel?

@@ -56,7 +56,7 @@
 - Three fixed cluster capacities are used for now: K=1, M=5, L=100. A quantity such as 7 becomes M+K+K; the smooth flight-time formula remains based on logical unit load, while formation geometry keeps all visible groups ordered.
 - Flight-time formula must stay balanced, simple, and easy to rescale.
 - Visual style is cell-shaded paperclip comic; lighting and shading matter most. Mechs are not implemented — only the overworld layer and mechanics tests exist.
-- Design decisions are captured in `.claude/skills/konzept/memory/konzept-snipwar-mech-*.md`; consult it before implementing dispatch or mechs.
+- Durable design decisions are captured in the root `DESIGN.md`; consult it before changing dispatch, transit, or future mech layers.
 
 ## Repository
 - This project has its own nested Git repository; operate from the project root rather than the enclosing user-home repository.

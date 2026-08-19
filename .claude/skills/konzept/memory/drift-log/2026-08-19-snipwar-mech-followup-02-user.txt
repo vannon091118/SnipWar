@@ -1,1 +1,0 @@
-Jede einheit soll via slider Ausgewählt werden 1-Verfügbar und ein button "senden" soll eine weiteree auswahl triggern die Flugzeit+ weg visualisiert,  jede einheit oll "sichtbar sein" wobei wir tricksen und nur max 100 Truppen anzeigen di skallieren K=1 einheit M=5 L=100 (das sind nur testwerte)

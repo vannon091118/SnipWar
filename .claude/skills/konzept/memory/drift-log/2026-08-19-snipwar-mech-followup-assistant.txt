@@ -1,8 +1,0 @@
-Drift-Auswertung:
-- Die breite 4K-Mech-Spielidee wurde zu einem Hybrid aus strategischer Galaxiekarte und späterer Gefechtsansicht präzisiert.
-- 4K ist ausdrücklich ein späteres Präsentations- und Qualitätsziel, keine Sofortpflicht.
-- Der gewünschte Look wurde als skalierbarer Comic-Stil mit Paper-Clip-/Paper-Elementen benannt; die genaue Bedeutung von „Pper clip“ bleibt zu klären.
-
-Nächste Klärung:
-1. Meint „Pper clip“ Paperclip/Clip-Art, Papercut oder eine andere visuelle Richtung?
-2. Soll Skalierbarkeit vector-first, raster-first oder hybrid organisiert werden?

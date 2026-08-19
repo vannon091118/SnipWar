@@ -1,5 +1,0 @@
-Drift-Auswertung:
-- Kompression wird über ein Frame-/Budget-Signal der Engine gesteuert (Option C): freie Kapazität erlaubt mehr sichtbare Einheiten.
-- Damit ist die bisher offene Messgröße geklärt; offen bleibt nur die konkrete Budget-Metrik und ihre Hysterese.
-
-Eingearbeitet in konzept-snipwar-mech-2026-08-19.md (Darstellung, Offen, Entscheidungen, Nächste Schritte).

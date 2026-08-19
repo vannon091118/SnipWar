@@ -167,32 +167,34 @@ func _init() -> void:
 	var send_button: Button = ui.get_send_button()
 	if not _check(is_instance_valid(send_button) and not send_button.disabled, "send button is missing or disabled"):
 		return
-	amount_slider.value = 2
+	amount_slider.value = 3
 	await process_frame
 	var destination_count_before := int(destination.get("worker_count"))
 	network.call("_on_send_pressed")
 	await process_frame
-	if not _check(int(source.get("worker_count")) == 2, "send did not deduct the source count"):
+	if not _check(int(source.get("worker_count")) == 1, "send did not deduct the source count"):
 		return
 	var transit_clusters: Array[Node] = []
 	for child in manager.get_children():
 		if child.get_script() == cluster_script and child.get("destination_planet") == destination:
 			transit_clusters.append(child)
-	if not _check(transit_clusters.size() == 2, "send did not launch all packed cluster groups"):
+	if not _check(transit_clusters.size() == 3, "send did not launch all packed cluster groups"):
 		return
-	if not _check(transit_clusters[0].get_unit_count() == 1 and transit_clusters[1].get_unit_count() == 1, "cluster group sizes are wrong"):
-		return
+	for transit in transit_clusters:
+		if not _check(transit.get_unit_count() == 1, "cluster group sizes are wrong"):
+			return
 	var route_direction: Vector2 = (destination.global_position - source.global_position).normalized()
 	var route_perpendicular: Vector2 = Vector2(-route_direction.y, route_direction.x)
-	var formation_groups: Array[int] = [1, 1]
+	var formation_groups: Array[int] = [1, 1, 1]
 	var formation_spacing: float = manager.call("_formation_spacing", formation_groups)
-	var expected_offsets: Array[Vector2] = manager.call("_formation_offsets", 2, route_direction, route_perpendicular, formation_spacing)
+	var expected_offsets: Array[Vector2] = manager.call("_formation_offsets", 3, route_direction, route_perpendicular, formation_spacing)
+	var actual_offsets: Array[Vector2] = []
 	for index in transit_clusters.size():
 		var actual_offset: Vector2 = (transit_clusters[index] as Node2D).global_position - source.global_position
+		actual_offsets.append(actual_offset)
 		if not _check(actual_offset.distance_to(expected_offsets[index]) <= 0.05, "transit cluster formation offset is wrong"):
 			return
-	var formation_separation: float = (transit_clusters[0] as Node2D).global_position.distance_to((transit_clusters[1] as Node2D).global_position)
-	if not _check(is_equal_approx(formation_separation, formation_spacing), "formation spacing is not equal"):
+	if not _check(_offsets_have_safe_spacing(actual_offsets, formation_spacing), "formation clusters overlap beyond the budget"):
 		return
 	var transit_distance_before: float = (transit_clusters[0] as Node2D).global_position.distance_to(destination.global_position)
 	await create_timer(0.5).timeout
@@ -202,12 +204,14 @@ func _init() -> void:
 	var destination_offsets: Array[Vector2] = []
 	for transit in transit_clusters:
 		destination_offsets.append((transit as Node2D).global_position - destination.global_position)
-	if not _check(destination_offsets[0].distance_to(destination_offsets[1]) > 0.1, "formation collapsed during transit"):
+	if not _check(_offsets_have_safe_spacing(destination_offsets, formation_spacing), "formation collapsed during transit"):
+		return
+	if not _check(_offsets_match_shape(destination_offsets, expected_offsets, 0.05), "destination formation offset drifted"):
 		return
 	for transit in transit_clusters:
 		manager.call("_arrive_cluster", transit)
 	await process_frame
-	if not _check(int(destination.get("worker_count")) == destination_count_before + 2, "arrival did not add the destination count"):
+	if not _check(int(destination.get("worker_count")) == destination_count_before + 3, "arrival did not add the destination count"):
 		return
 	await process_frame
 	if not _check(manager.get_child_count() == 0, "arrived units should no longer render"):
@@ -264,6 +268,29 @@ func _planet_positions(field: Node) -> Dictionary:
 		if child is Planet:
 			positions[child] = (child as Planet).position
 	return positions
+
+func _offsets_match_shape(actual: Array[Vector2], expected: Array[Vector2], tolerance: float) -> bool:
+	if actual.size() != expected.size() or actual.is_empty():
+		return false
+	var actual_center := Vector2.ZERO
+	var expected_center := Vector2.ZERO
+	for offset in actual:
+		actual_center += offset
+	for offset in expected:
+		expected_center += offset
+	actual_center /= float(actual.size())
+	expected_center /= float(expected.size())
+	for index in actual.size():
+		if (actual[index] - actual_center).distance_to(expected[index] - expected_center) > tolerance:
+			return false
+	return true
+
+func _offsets_have_safe_spacing(offsets: Array[Vector2], minimum: float) -> bool:
+	for first_index in offsets.size():
+		for second_index in range(first_index + 1, offsets.size()):
+			if offsets[first_index].distance_to(offsets[second_index]) < minimum:
+				return false
+	return true
 
 func _find_planet_with_size(field: Node, size_class: StringName) -> Node:
 	for child in field.get_children():

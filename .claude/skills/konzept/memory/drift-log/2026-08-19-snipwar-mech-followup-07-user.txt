@@ -1,3 +1,0 @@
-> ❓ Letzte Klärung: Was genau steuert die „Ressorcen“-abhängige Kompression?
-
-c

@@ -63,15 +63,15 @@ SnipWar setzt auf kontrastreiche Farben, reduzierte Formen und kleine Bewegungen
 - deterministische Galaxiekarte mit zehn Planeten
 - unterschiedliche Weltgrößen und Rollen
 - zwei Fraktionszuordnungen auf der Karte
-- automatische Cluster-Spawns mit Live-Zähler
-- auswählbare Ziele und benachbarte Routen
+- logische Planetenspawns mit Live-Zähler
+- auswählbare Ziele, Flugzeitvorschau und benachbarte Routen
+- sichtbare Transitflotten mit Ankunft und anschließender Asset-Freigabe
 - animierte Meteore und seed-basierte Planetendetails
 - Headless-Preflight für die wichtigsten Systemschnittstellen
 
 **Noch im Hangar:**
 
 - Mech-Sprites, Loadouts und individuelle Fähigkeiten
-- echte Route-Bewegung und Ankunftslogik
 - Ressourcen, Schaden, Eroberung und Siegbedingungen
 - Gefechtsansicht zwischen den Planeten
 - 4K-optimierte Präsentation und Kamera
@@ -89,7 +89,7 @@ Projekt starten:
 Godot öffnen → Projekt importieren → project.godot → F6/F5
 ```
 
-Der aktuelle Entwurf nutzt eine 960×540-Viewport-Basis, die später auf eine hochauflösende Präsentation skaliert werden kann. Für einen automatisierten Smoke-Test auf Windows:
+Der aktuelle Entwurf nutzt eine 960×540-Viewport-Basis, die später auf eine hochauflösende Präsentation skaliert werden kann. Die abgeschlossenen Designentscheidungen und MVP-Verträge stehen in [`DESIGN.md`](DESIGN.md). Für einen automatisierten Smoke-Test auf Windows:
 
 ```text
 C:/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console.exe --headless --path . --quit-after 2

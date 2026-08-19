@@ -1,5 +1,0 @@
-⚡ KONZEPT-MODUS aktiv. Kein Bauen, keine Git-/Projektänderungen.
-
-Konzeptgrundlage: die im Chat formulierte SnipWar-Idee — ein eigenständiges galaktisches Mech-Wargame mit 4K-Präsentationsziel, Banner und unverwechselbarer Kommunikation.
-
-Die offenen Produktentscheidungen werden per Multiple-Choice geklärt, bevor Recherche, Synthese und Konzeptablage erfolgen.
