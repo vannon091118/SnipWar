@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scripts/objects/seeded_layout.gd" id="1_layout"]
 [ext_resource type="PackedScene" path="res://scenes/objects/planets/planet.tscn" id="2_planet"]
@@ -14,17 +14,17 @@
 [ext_resource type="Texture2D" path="res://assets/objects/planets/planet_10_golden.svg" id="12_golden"]
 [ext_resource type="Script" path="res://scripts/objects/planets/planet_network.gd" id="14_network"]
 [ext_resource type="Script" path="res://scripts/objects/workers/worker_manager.gd" id="15_workers"]
+[ext_resource type="Resource" path="res://resources/config/world_default.tres" id="16_world"]
+[ext_resource type="Resource" path="res://resources/config/transit_default.tres" id="17_transit"]
+[ext_resource type="Resource" path="res://resources/config/planet_sizes/variable.tres" id="18_variable"]
+[ext_resource type="Resource" path="res://resources/config/planet_sizes/large.tres" id="19_large"]
+[ext_resource type="Resource" path="res://resources/config/planet_sizes/extra_large.tres" id="20_extra_large"]
 
 [node name="PlanetField" type="Node2D"]
 z_index = 20
 script = ExtResource("1_layout")
-layout_seed = 241119
-target_size = Vector2(960, 540)
-columns = 5
-extra_large_count = 2
-large_count = 1
-jitter = 0.12
-padding = 72.0
+world_config = ExtResource("16_world")
+size_profiles = [ExtResource("18_variable"), ExtResource("19_large"), ExtResource("20_extra_large")]
 
 [node name="Ember" parent="." instance=ExtResource("2_planet")]
 planet_id = &"ember"
@@ -84,7 +84,9 @@ planet_texture = ExtResource("12_golden")
 [node name="PlanetNetwork" type="Node2D" parent="."]
 z_index = 5
 script = ExtResource("14_network")
+transit_config = ExtResource("17_transit")
 
 [node name="WorkerManager" type="Node2D" parent="."]
 z_index = 10
 script = ExtResource("15_workers")
+transit_config = ExtResource("17_transit")

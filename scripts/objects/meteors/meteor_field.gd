@@ -1,18 +1,23 @@
 extends Node2D
 
-const AREA_SIZE := Vector2(960.0, 540.0)
-const EDGE_MARGIN := 48.0
+const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_default.tres")
 const MINIMUM_SIZE_PIXELS := 4.0
 const MAXIMUM_SIZE_PIXELS := 10.0
 const MINIMUM_SPEED := 16.0
 const MAXIMUM_SPEED := 34.0
 
+@export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG
+
 var _rng := RandomNumberGenerator.new()
-var _bounds := Rect2(Vector2.ZERO, AREA_SIZE)
+var _bounds := Rect2()
+var _edge_margin := 48.0
 var _meteors: Array[Sprite2D] = []
 var _velocities: Array[Vector2] = []
 
 func _ready() -> void:
+	var config: WorldConfig = world_config if world_config != null else DEFAULT_WORLD_CONFIG
+	_bounds = config.meteor_bounds()
+	_edge_margin = config.meteor_edge_margin
 	_rng.randomize()
 	for child in get_children():
 		if child is Sprite2D:
@@ -24,14 +29,14 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	for index in _meteors.size():
 		_meteors[index].position += _velocities[index] * delta
-		if not _bounds.grow(EDGE_MARGIN).has_point(_meteors[index].position):
+		if not _bounds.grow(_edge_margin).has_point(_meteors[index].position):
 			_spawn(index)
 
 func _spawn(index: int) -> void:
 	var start_position := _random_edge_position()
 	var target_position := Vector2(
-		_rng.randf_range(0.0, AREA_SIZE.x),
-		_rng.randf_range(0.0, AREA_SIZE.y)
+		_rng.randf_range(_bounds.position.x, _bounds.end.x),
+		_rng.randf_range(_bounds.position.y, _bounds.end.y)
 	)
 	var direction := (target_position - start_position).normalized()
 	if direction == Vector2.ZERO:
@@ -45,10 +50,10 @@ func _spawn(index: int) -> void:
 func _random_edge_position() -> Vector2:
 	match _rng.randi_range(0, 3):
 		0:
-			return Vector2(-EDGE_MARGIN, _rng.randf_range(0.0, AREA_SIZE.y))
+			return Vector2(_bounds.position.x - _edge_margin, _rng.randf_range(_bounds.position.y, _bounds.end.y))
 		1:
-			return Vector2(AREA_SIZE.x + EDGE_MARGIN, _rng.randf_range(0.0, AREA_SIZE.y))
+			return Vector2(_bounds.end.x + _edge_margin, _rng.randf_range(_bounds.position.y, _bounds.end.y))
 		2:
-			return Vector2(_rng.randf_range(0.0, AREA_SIZE.x), -EDGE_MARGIN)
+			return Vector2(_rng.randf_range(_bounds.position.x, _bounds.end.x), _bounds.position.y - _edge_margin)
 		_:
-			return Vector2(_rng.randf_range(0.0, AREA_SIZE.x), AREA_SIZE.y + EDGE_MARGIN)
+			return Vector2(_rng.randf_range(_bounds.position.x, _bounds.end.x), _bounds.end.y + _edge_margin)

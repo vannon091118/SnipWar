@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="TransitConfig" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/transit_config.gd" id="1_transit"]
+[ext_resource type="Script" path="res://scripts/config/cluster_tier_definition.gd" id="5_cluster_tier"]
+[ext_resource type="Resource" path="res://resources/config/cluster_tiers/k.tres" id="2_k"]
+[ext_resource type="Resource" path="res://resources/config/cluster_tiers/m.tres" id="3_m"]
+[ext_resource type="Resource" path="res://resources/config/cluster_tiers/l.tres" id="4_l"]
+
+[resource]
+script = ExtResource("1_transit")
+base_seconds_per_distance = 1.0
+unit_load_factor = 0.12
+overlap_budget = 0.85
+formation_depth_ratio = 0.7
+cluster_tiers = Array[ExtResource("5_cluster_tier")]([ExtResource("2_k"), ExtResource("3_m"), ExtResource("4_l")])

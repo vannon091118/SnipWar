@@ -2,27 +2,7 @@
 class_name Planet
 extends Node2D
 
-# Profiles must provide scale_range, spawn_interval, and spawn_count for every size class.
-const SIZE_PROFILES: Dictionary = {
-	&"variable": {
-		&"scale_range": Vector2(0.18, 0.43),
-		&"spawn_interval": 10.0,
-		&"spawn_count": 1
-	},
-	&"l": {
-		&"scale_range": Vector2(0.37, 0.43),
-		&"spawn_interval": 7.0,
-		&"spawn_count": 2
-	},
-	&"xl": {
-		&"scale_range": Vector2(0.48, 0.525),
-		&"spawn_interval": 5.0,
-		&"spawn_count": 3
-	}
-}
-
-static func size_profile(size_class: StringName) -> Dictionary:
-	return SIZE_PROFILES.get(size_class, SIZE_PROFILES[&"variable"])
+const DEFAULT_SIZE_PROFILE: PlanetSizeProfile = preload("res://resources/config/planet_sizes/variable.tres")
 
 signal planet_selected(planet: Node2D)
 signal workers_spawn_requested(planet: Node2D, amount: int)
@@ -31,12 +11,11 @@ signal worker_count_changed(planet: Node2D, count: int)
 enum WorkerState { IDLE, SPAWNING }
 
 @export var planet_id: StringName = &"planet"
-@export_enum("variable", "l", "xl") var layout_size: String = "variable":
+@export var size_profile: PlanetSizeProfile = DEFAULT_SIZE_PROFILE
+var layout_size: String = "variable":
 	set(value):
 		layout_size = value
-		if is_instance_valid(_spawn_timer):
-			_spawn_timer.wait_time = _spawn_interval()
-			_spawn_timer.start()
+		_restart_spawn_timer()
 @export var faction: StringName = &"neutral":
 	set(value):
 		if is_inside_tree() and faction != value:
@@ -97,11 +76,27 @@ func _on_spawn_timer() -> void:
 	workers_spawn_requested.emit(self, _spawn_count())
 	worker_state = WorkerState.IDLE
 
+func set_size_profile(profile: PlanetSizeProfile) -> void:
+	size_profile = profile if profile != null else DEFAULT_SIZE_PROFILE
+	layout_size = String(size_profile.id)
+	_restart_spawn_timer()
+
+func get_size_profile() -> PlanetSizeProfile:
+	return size_profile if size_profile != null else DEFAULT_SIZE_PROFILE
+
+func _active_size_profile() -> PlanetSizeProfile:
+	return get_size_profile()
+
+func _restart_spawn_timer() -> void:
+	if is_instance_valid(_spawn_timer):
+		_spawn_timer.wait_time = _spawn_interval()
+		_spawn_timer.start()
+
 func _spawn_interval() -> float:
-	return float(size_profile(StringName(layout_size))[&"spawn_interval"])
+	return _active_size_profile().spawn_interval
 
 func _spawn_count() -> int:
-	return int(size_profile(StringName(layout_size))[&"spawn_count"])
+	return _active_size_profile().spawn_count
 
 func register_workers(amount: int) -> void:
 	worker_count += maxi(amount, 0)

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ClusterTierDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/cluster_tier_definition.gd" id="1_tier"]
+[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_k.svg" id="2_texture"]
+
+[resource]
+script = ExtResource("1_tier")
+id = &"k"
+capacity = 1
+display_max_units = 4
+visible_pixels = 12.0
+texture = ExtResource("2_texture")

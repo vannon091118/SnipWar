@@ -44,9 +44,27 @@ func _init() -> void:
 	await process_frame
 
 	var field: Node = background.get_node("PlanetField")
-	var original_seed: int = int(field.get("layout_seed"))
+	var world_config: WorldConfig = field.get("world_config") as WorldConfig
+	if not _check(world_config != null, "world config is missing"):
+		return
+	var viewport_size: Vector2 = get_root().get_viewport().get_visible_rect().size
+	if not _check(viewport_size.distance_to(world_config.design_size) <= 0.01, "world design size differs from the Godot viewport"):
+		return
 	var positions_before: Dictionary = _planet_positions(field)
-	field.set("layout_seed", original_seed + 1)
+	var world_errors := world_config.validate_for_planet_count(positions_before.size())
+	if not _check(world_errors.is_empty(), "world config validation failed"):
+		return
+	var configured_profiles: Array[PlanetSizeProfile] = []
+	for profile_value in field.get("size_profiles"):
+		var profile: PlanetSizeProfile = profile_value as PlanetSizeProfile
+		if profile != null:
+			configured_profiles.append(profile)
+	var profile_errors := world_config.validate_profiles(configured_profiles)
+	if not _check(profile_errors.is_empty(), "planet size profile validation failed"):
+		return
+
+	var original_seed: int = world_config.layout_seed
+	field.call("set_layout_seed", original_seed + 1)
 	await process_frame
 	await process_frame
 	var positions_changed := false
@@ -56,13 +74,19 @@ func _init() -> void:
 			break
 	if not _check(positions_changed, "changing the layout seed did not change planet positions"):
 		return
-	field.set("layout_seed", original_seed)
+	field.call("set_layout_seed", original_seed)
 	await process_frame
 	await process_frame
 
 	var network: Node = field.get_node("PlanetNetwork")
 	var ui: PlanetNetworkUI = network.get_ui()
 	var manager: Node = field.get_node("WorkerManager")
+	var transit_config: TransitConfig = manager.get("transit_config") as TransitConfig
+	if not _check(transit_config != null, "transit config is missing"):
+		return
+	var transit_errors := transit_config.validate()
+	if not _check(transit_errors.is_empty(), "transit config validation failed"):
+		return
 	var source: Node = _find_planet_with_size(field, &"xl")
 	var large_planet: Node = _find_planet_with_size(field, &"l")
 	var variable_planet: Node = _find_planet_with_size(field, &"variable")

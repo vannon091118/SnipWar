@@ -1,9 +1,6 @@
 class_name Dispatch
 
-const CLUSTER_CAPACITIES: Array[int] = [100, 5, 1]
-const K_MAX_UNITS := 4
-const M_MAX_UNITS := 99
-const CLUSTER_TIERS: Array[StringName] = [&"k", &"m", &"l"]
+const DEFAULT_CONFIG: TransitConfig = preload("res://resources/config/transit_default.tres")
 
 static func amount_range(available: int) -> Vector2i:
 	if available <= 0:
@@ -15,18 +12,22 @@ static func launch_amount(available: int, requested: int) -> int:
 		return 0
 	return mini(requested, available)
 
-static func cluster_groups(unit_count: int) -> Array[int]:
+static func cluster_groups(unit_count: int, config: TransitConfig = null) -> Array[int]:
+	var resolved_config: TransitConfig = config if config != null else DEFAULT_CONFIG
 	var remaining := maxi(unit_count, 0)
 	var groups: Array[int] = []
-	for capacity in CLUSTER_CAPACITIES:
-		while remaining >= capacity:
-			groups.append(capacity)
-			remaining -= capacity
+	for tier in resolved_config.tiers_descending_capacity():
+		if tier.capacity <= 0:
+			continue
+		while remaining >= tier.capacity:
+			groups.append(tier.capacity)
+			remaining -= tier.capacity
 	return groups
 
-static func cluster_tier(unit_count: int) -> StringName:
-	if unit_count > M_MAX_UNITS:
-		return &"l"
-	if unit_count > K_MAX_UNITS:
-		return &"m"
-	return &"k"
+static func cluster_tier(unit_count: int, config: TransitConfig = null) -> StringName:
+	var definition := cluster_definition(unit_count, config)
+	return definition.id if definition != null else &""
+
+static func cluster_definition(unit_count: int, config: TransitConfig = null) -> ClusterTierDefinition:
+	var resolved_config: TransitConfig = config if config != null else DEFAULT_CONFIG
+	return resolved_config.tier_for_amount(maxi(1, unit_count))

@@ -5,6 +5,9 @@ const STAR_COUNT := 120
 const FOLD_COUNT := 20
 const GRAIN_COUNT := 220
 const DUST_COUNT := 260
+const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_default.tres")
+
+@export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG
 
 var stars: Array[Dictionary] = []
 var folds: Array[Dictionary] = []
@@ -12,8 +15,9 @@ var grain: Array[Dictionary] = []
 var dust: Array[Dictionary] = []
 
 func _ready() -> void:
+	var config: WorldConfig = world_config if world_config != null else DEFAULT_WORLD_CONFIG
 	var rng := RandomNumberGenerator.new()
-	rng.seed = 241119
+	rng.seed = config.decorative_seed
 
 	for i in STAR_COUNT:
 		stars.append({

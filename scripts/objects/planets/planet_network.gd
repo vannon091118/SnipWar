@@ -2,6 +2,9 @@ extends Node2D
 
 const _FlightTime := preload("res://scripts/flight_time.gd")
 const _Dispatch := preload("res://scripts/dispatch.gd")
+const DEFAULT_CONFIG: TransitConfig = preload("res://resources/config/transit_default.tres")
+
+@export var transit_config: TransitConfig = DEFAULT_CONFIG
 
 @onready var _worker_manager: Node = get_parent().get_node("WorkerManager")
 
@@ -106,7 +109,7 @@ func _update_preview() -> void:
 		_ui.set_preview("Kein Ziel verfügbar")
 		return
 	var distance := _active_planet.global_position.distance_to(destination.global_position)
-	var seconds := _FlightTime.seconds_for(distance, _ui.selected_amount())
+	var seconds := _FlightTime.seconds_for(distance, _ui.selected_amount(), transit_config)
 	_ui.set_preview("Flugzeit: %.1f s" % seconds)
 
 func _refresh_slider_bounds() -> void:
@@ -141,7 +144,8 @@ func get_neighbors(planet: Node2D) -> Array[Node2D]:
 	var slot: int = int(planet.get_meta("layout_slot", -1))
 	if slot < 0:
 		return result
-	var columns: int = int(get_parent().columns)
+	var world_config: WorldConfig = get_parent().get("world_config") as WorldConfig
+	var columns: int = maxi(1, world_config.columns if world_config != null else 1)
 	var row: int = floori(float(slot) / float(columns))
 	var column: int = slot % columns
 	for other in _planets:

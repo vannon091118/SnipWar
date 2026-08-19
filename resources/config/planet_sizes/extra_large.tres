@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlanetSizeProfile" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/planet_size_profile.gd" id="1_profile"]
+
+[resource]
+script = ExtResource("1_profile")
+id = &"xl"
+scale_range = Vector2(0.48, 0.525)
+spawn_interval = 5.0
+spawn_count = 3
+jitter_factor = 0.65
