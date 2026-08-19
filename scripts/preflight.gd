@@ -8,6 +8,7 @@ extends SceneTree
 const _Context := preload("res://scripts/preflight/preflight_context.gd")
 
 const _ConstraintScripts: Array = [
+	preload("res://scripts/preflight/constraint_generation_pipeline.gd"),
 	preload("res://scripts/preflight/constraint_effects_and_traits.gd"),
 	preload("res://scripts/preflight/constraint_flight_and_dispatch.gd"),
 	preload("res://scripts/preflight/constraint_world_generator_scaling.gd"),
