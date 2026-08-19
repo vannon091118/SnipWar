@@ -18,6 +18,14 @@ var _rebuild_queued := false
 var _is_built := false
 
 func _ready() -> void:
+	if get_parent() != null and get_parent().has_signal("layout_completed"):
+		var parent_node: Node = get_parent()
+		if not parent_node.is_connected("layout_completed", Callable(self, "_on_layout_completed")):
+			parent_node.connect("layout_completed", Callable(self, "_on_layout_completed"))
+	request_rebuild()
+
+func _on_layout_completed(_planets: Array = []) -> void:
+	world_config = _resolved_world_config()
 	request_rebuild()
 
 func request_rebuild() -> void:

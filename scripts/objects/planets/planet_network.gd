@@ -22,6 +22,10 @@ var _neighbor_cache: Dictionary = {}
 var _neighbor_cache_valid := false
 
 func _ready() -> void:
+	if get_parent() != null and get_parent().has_signal("layout_completed"):
+		var parent_node: Node = get_parent()
+		if not parent_node.is_connected("layout_completed", Callable(self, "_on_layout_completed")):
+			parent_node.connect("layout_completed", Callable(self, "_on_layout_completed"))
 	for child in get_parent().get_children():
 		if child is Node2D and child.get("layout_size") != null:
 			_planets.append(child)
@@ -31,6 +35,9 @@ func _ready() -> void:
 	if not transit_config_identity_valid():
 		push_error("PlanetNetwork and WorkerManager must share the same TransitConfig resource")
 	_create_ui.call_deferred()
+
+func _on_layout_completed(_planets: Array = []) -> void:
+	invalidate_neighbor_cache()
 
 func _create_ui() -> void:
 	_ui = PLANET_NETWORK_UI_SCENE.instantiate() as PlanetNetworkUI

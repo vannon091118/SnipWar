@@ -17,6 +17,8 @@ const DEFAULT_PLANET_CATALOG: PlanetCatalog = preload("res://resources/config/pl
 		size_profiles = value
 		_queue_layout()
 
+signal layout_completed(planets: Array[Planet])
+
 var _catalog_generated := false
 
 func _enter_tree() -> void:
@@ -76,6 +78,8 @@ func regenerate() -> void:
 		item.set_meta("layout_slot", slot)
 		item.position = item_position
 		item.scale = Vector2.ONE * _scale_for(item, rng)
+
+	layout_completed.emit(layout_items)
 
 	var navigation: NavigationField = get_node_or_null("NavigationField") as NavigationField
 	if navigation != null:
