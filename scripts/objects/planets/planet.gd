@@ -2,6 +2,7 @@
 class_name Planet
 extends Node2D
 
+# Profiles must provide scale_range, spawn_interval, and spawn_count for every size class.
 const SIZE_PROFILES: Dictionary = {
 	&"variable": {
 		&"scale_range": Vector2(0.18, 0.43),
@@ -67,12 +68,16 @@ enum WorkerState { IDLE, SPAWNING }
 var worker_state: WorkerState = WorkerState.IDLE
 var worker_count := 0
 var _spawn_timer: Timer
+var _detail_seed := 0
+var _planet_ready := false
 
 func _ready() -> void:
 	$ClickArea.input_event.connect(_on_click_area_input_event)
 	add_to_group("planets")
 	_sync_groups()
 	_apply_visuals()
+	_planet_ready = true
+	_apply_detail_seed()
 	if not Engine.is_editor_hint():
 		_start_spawn_timer.call_deferred()
 
@@ -130,7 +135,14 @@ func set_planet_role(value: StringName) -> void:
 	planet_role = value
 
 func set_detail_seed(value: int) -> void:
-	_details.set_seed(value)
+	_detail_seed = value
+	if _planet_ready:
+		_apply_detail_seed()
+
+func _apply_detail_seed() -> void:
+	var details: PlanetDetails = _details if is_instance_valid(_details) else get_node_or_null("PlanetDetails") as PlanetDetails
+	if details != null:
+		details.set_seed(_detail_seed)
 
 func set_group_enabled(enabled: bool) -> void:
 	visible = enabled

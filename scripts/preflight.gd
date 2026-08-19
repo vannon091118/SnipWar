@@ -42,6 +42,22 @@ func _init() -> void:
 	await process_frame
 
 	var field: Node = background.get_node("PlanetField")
+	var original_seed: int = int(field.get("layout_seed"))
+	var positions_before: Dictionary = _planet_positions(field)
+	field.set("layout_seed", original_seed + 1)
+	await process_frame
+	await process_frame
+	var positions_changed := false
+	for planet in positions_before:
+		if positions_before[planet].distance_to((planet as Planet).position) > 1.0:
+			positions_changed = true
+			break
+	if not _check(positions_changed, "changing the layout seed did not change planet positions"):
+		return
+	field.set("layout_seed", original_seed)
+	await process_frame
+	await process_frame
+
 	var network: Node = field.get_node("PlanetNetwork")
 	var ui: PlanetNetworkUI = network.get_ui()
 	var manager: Node = field.get_node("WorkerManager")
@@ -122,11 +138,7 @@ func _init() -> void:
 			break
 	if not _check(alternate != preview_destination, "no alternate destination with different distance"):
 		return
-	var alternate_index := -1
-	for index in destination_option.item_count:
-		if destination_option.get_item_text(index) == alternate.name:
-			alternate_index = index
-			break
+	var alternate_index := ui.index_of_destination(alternate.name)
 	if not _check(alternate_index >= 0, "alternate destination is missing from planet tab"):
 		return
 	network.call("_on_destination_selected", alternate_index)
@@ -152,11 +164,7 @@ func _init() -> void:
 	if not _check(network.get_line_phase() != line_phase, "neighbor line animation is inactive"):
 		return
 	var destination: Node2D = neighbors[0]
-	var destination_index := -1
-	for index in destination_option.item_count:
-		if destination_option.get_item_text(index) == destination.name:
-			destination_index = index
-			break
+	var destination_index := ui.index_of_destination(destination.name)
 	if not _check(destination_index >= 0, "destination is missing from planet tab"):
 		return
 	network.call("_on_destination_selected", destination_index)
@@ -186,7 +194,13 @@ func _init() -> void:
 			transit_clusters.append(child)
 	if not _check(transit_clusters.size() == 2, "send did not launch the selected cluster groups"):
 		return
-	if not _check(transit_clusters[0].get_unit_count() == 1 and transit_clusters[1].get_unit_count() == 1 and transit_clusters[0].global_position == transit_clusters[1].global_position, "cluster groups did not launch together"):
+	if not _check(transit_clusters[0].get_unit_count() == 1 and transit_clusters[1].get_unit_count() == 1, "cluster group sizes are wrong"):
+		return
+	var fleet_separation: float = (transit_clusters[0] as Node2D).global_position.distance_to((transit_clusters[1] as Node2D).global_position)
+	if not _check(fleet_separation > 0.1 and fleet_separation < 30.0, "cluster groups did not launch as a side-by-side fleet"):
+		return
+	var fleet_start_distance: float = (transit_clusters[0] as Node2D).global_position.distance_to(source.global_position)
+	if not _check(fleet_start_distance < 15.0, "fleet center is detached from the source planet"):
 		return
 	var transit_distance_before: float = (transit_clusters[0] as Node2D).global_position.distance_to(destination.global_position)
 	await create_timer(0.5).timeout
@@ -243,6 +257,13 @@ func _capture_spawn(planet: Node2D, amount: int) -> void:
 	if planet == _observed_planet:
 		_observed_state = int(planet.worker_state)
 		_observed_amount = amount
+
+func _planet_positions(field: Node) -> Dictionary:
+	var positions: Dictionary = {}
+	for child in field.get_children():
+		if child is Planet:
+			positions[child] = (child as Planet).position
+	return positions
 
 func _find_planet_with_size(field: Node, size_class: StringName) -> Node:
 	for child in field.get_children():

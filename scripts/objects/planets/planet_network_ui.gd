@@ -80,6 +80,12 @@ func toggle_panel() -> void:
 func get_panel() -> PanelContainer:
 	return _panel
 
+func index_of_destination(name: String) -> int:
+	for index in _destination_option.item_count:
+		if _destination_option.get_item_text(index) == name:
+			return index
+	return -1
+
 func get_destination_option() -> OptionButton:
 	return _destination_option
 

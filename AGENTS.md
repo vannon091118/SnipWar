@@ -4,18 +4,21 @@
 - Godot is not on PATH; use `C:/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console.exe`.
 - `--headless --path . --quit-after 2` exercises the real main scene; temporary lifecycle checks run with `--headless --path . --script res://.tmp_*.gd` and must be removed afterward.
 - No GUT framework; `scripts/preflight.gd` is the persistent headless test suite (`--headless --path . --script res://scripts/preflight.gd`).
+- The seed-variation check changes `PlanetField.layout_seed`, waits two frames for deferred regeneration, compares positions, then restores the original seed before the remaining assertions.
 
 ## Architecture constraints
 - `Background` is z=-100 and `PlanetField` uses relative z=20; lowering the field below the background makes the background draw over the planets.
 - The runtime Bootstrap replaces the editor fallback seed 241119 on F5; the seed is configured on `PlanetField`, not the `Background` root.
 - Runtime re-layout assigns `Planet.layout_size` after the initial scene setup; its setter must restart an existing spawn timer so generated size and spawn cadence remain synchronized.
 - `seeded_layout.gd` must only lay out `Planet` children; the Toxic orbit child is intentionally not a planet slot.
+- Seed variation must shuffle slot assignment as well as size/detail identity; fixed XL corners or a fixed L crossing make different seeds look nearly identical.
 - `PlanetDetails` is a child module inside `planet.tscn`; its final seed arrives from `seeded_layout.gd` after child `_ready()`, so it must not finalize its detail set during `_ready()` alone.
 - The detail cap counts logical types via `get_detail_types()`; an `asteroid_belt` is one detail even though it creates five orbit nodes. Toxic's belt must not be reintroduced as a separate field-level orbit.
 - Planet size belongs to the Node2D layout scale; keep `planet.gd`'s `visual_scale` at 1.0 to avoid double scaling.
 - The current minimal meteor design uses four direct Sprite2D children controlled by `meteor_field.gd`; no per-meteor scene/script is required.
 - `planet_details.gd` owns seeded extras; Toxic always showcases a satellite plus an asteroid belt, with an optional third ring, while other planets get up to three deterministic detail types.
 - `WorkerCluster` nodes are the garrison and transit representation; `WorkerManager._dispatch_clusters` packs K=1/M=5/L=100 groups and launches every selected cluster in the same frame. Partial sends split garrison clusters and refresh their tier asset; arrivals re-register the logical unit count with the destination.
+- Dispatched clusters start at perpendicular fleet offsets so same-tier groups fly side-by-side instead of stacking on top of each other; preflight asserts separation in (0, 30 px) and shift under 15 px from the source planet.
 - Spawn tiers are part of the MVP contract: XL = 3 workers/5 s, L = 2/7 s, variable planets = 1/10 s.
 - `flight_time.gd`, `dispatch.gd`, `planet_network.gd`, `planet_network_ui.gd`, `worker_cluster.gd`, `worker_cluster.tscn`, `worker_manager.gd`, and `preflight.gd` change/commit together; preflight uses PlanetNetworkUI getters and cluster internals (`_registered_planet`, `_arrive`).
 - `planet.tscn`, `planet.gd`, `planet_details.gd`, `planet_detail_orbit.gd`, `planet_detail_ring.gd`, `seeded_layout.gd`, and the planet SVG/import assets change together for seeded details.
@@ -26,6 +29,7 @@
 ## Interaction and assets
 - Planet clicks require the planet `Area2D`/shape; cluster graphics remain collision-free. The persistent destination tab UI must be created with `call_deferred()` because adding viewport UI during child setup triggers Godot's "parent node is busy setting up children" error.
 - Cluster visuals use fixed K/M/L generic SVG assets and expose an `Attachments` node for future cannons, drones, or upgrades; do not restore per-unit transit sprites.
+- Dispatched groups fly as a side-by-side fleet rather than a stacked column; the perpendicular offset is computed from the route direction so multiple same-tier clusters stay visible during transit.
 - New SVG planet/detail assets cause Godot to generate tracked `.svg.import` files during the headless scan; commit the import sidecars with their source SVGs.
 
 ## Godot pitfalls

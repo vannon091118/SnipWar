@@ -57,41 +57,12 @@ func regenerate() -> void:
 		target_size.y / float(rows)
 	)
 	var assigned_slots: Dictionary = {}
-	var occupied_slots: Dictionary = {}
-	var xl_items: Array[Planet] = []
-	var l_items: Array[Planet] = []
-	var remaining_items: Array[Planet] = []
-
-	for item in layout_items:
-		var size_class: StringName = _size_class(item)
-		if size_class == &"xl":
-			xl_items.append(item)
-		elif size_class == &"l":
-			l_items.append(item)
-		else:
-			remaining_items.append(item)
-
-	if not xl_items.is_empty():
-		_assign_slot(xl_items[0], 0, assigned_slots, occupied_slots)
-	if xl_items.size() > 1:
-		_assign_slot(xl_items[1], layout_items.size() - 1, assigned_slots, occupied_slots)
-	for index in range(2, xl_items.size()):
-		remaining_items.append(xl_items[index])
-	if not l_items.is_empty():
-		_assign_slot(l_items[0], _crossing_slot(layout_items.size(), occupied_slots), assigned_slots, occupied_slots)
-
-	for item in l_items:
-		if not assigned_slots.has(item):
-			remaining_items.append(item)
-
-	var free_slots: Array[int] = []
+	var slots: Array[int] = []
 	for slot in layout_items.size():
-		if not occupied_slots.has(slot):
-			free_slots.append(slot)
-
-	for item in remaining_items:
-		var slot: int = free_slots.pop_front()
-		_assign_slot(item, slot, assigned_slots, occupied_slots)
+		slots.append(slot)
+	_shuffle(slots, rng)
+	for index in layout_items.size():
+		assigned_slots[layout_items[index]] = slots[index]
 
 	for item in layout_items:
 		var slot: int = assigned_slots[item]
@@ -101,17 +72,11 @@ func regenerate() -> void:
 			(float(column) + 0.5) * cell_size.x,
 			(float(row) + 0.5) * cell_size.y
 		)
-		var offset := Vector2.ZERO
-		var is_outer_column: bool = column == 0 or column == columns - 1
-		if _size_class(item) != &"xl":
-			if is_outer_column:
-				var inward_offset: float = cell_size.x * 0.12
-				offset.x = inward_offset if column == 0 else -inward_offset
-			else:
-				offset = Vector2(
-					rng.randf_range(-cell_size.x * jitter, cell_size.x * jitter),
-					rng.randf_range(-cell_size.y * jitter, cell_size.y * jitter)
-				)
+		var jitter_factor := 0.65 if _size_class(item) == &"xl" else 1.0
+		var offset := Vector2(
+			rng.randf_range(-cell_size.x * jitter * jitter_factor, cell_size.x * jitter * jitter_factor),
+			rng.randf_range(-cell_size.y * jitter * jitter_factor, cell_size.y * jitter * jitter_factor)
+		)
 		var item_position := cell_center + offset
 		item_position.x = clampf(item_position.x, padding, target_size.x - padding)
 		item_position.y = clampf(item_position.y, padding, target_size.y - padding)
@@ -129,27 +94,17 @@ func _assign_size_classes(items: Array[Planet], rng: RandomNumberGenerator) -> v
 		size_classes.append(&"variable")
 
 	var shuffled_items: Array[Planet] = items.duplicate()
-	for index in range(shuffled_items.size() - 1, 0, -1):
-		var swap_index: int = rng.randi_range(0, index)
-		var item: Planet = shuffled_items[index]
-		shuffled_items[index] = shuffled_items[swap_index]
-		shuffled_items[swap_index] = item
+	_shuffle(shuffled_items, rng)
 	for index in shuffled_items.size():
 		shuffled_items[index].set("layout_size", size_classes[index])
 		shuffled_items[index].set_detail_seed(rng.randi())
 
-func _assign_slot(item: Planet, slot: int, assigned_slots: Dictionary, occupied_slots: Dictionary) -> void:
-	assigned_slots[item] = slot
-	occupied_slots[slot] = true
-
-func _crossing_slot(item_count: int, occupied_slots: Dictionary) -> int:
-	var preferred_slot: int = int(columns / 2.0)
-	if preferred_slot < item_count and not occupied_slots.has(preferred_slot):
-		return preferred_slot
-	for slot in item_count:
-		if not occupied_slots.has(slot):
-			return slot
-	return 0
+func _shuffle(values: Array, rng: RandomNumberGenerator) -> void:
+	for index in range(values.size() - 1, 0, -1):
+		var swap_index: int = rng.randi_range(0, index)
+		var value: Variant = values[index]
+		values[index] = values[swap_index]
+		values[swap_index] = value
 
 func _size_class(item: Planet) -> StringName:
 	return StringName(item.layout_size)
