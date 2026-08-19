@@ -14,7 +14,7 @@
 - ToxicOrbit resolves the `planet_toxic` group; avoid restoring a relative NodePath target.
 - Workers spawn stationary as a planet's garrison. `WorkerManager._dispatch_workers` launches them as visible transit assets via per-worker Tweens; each re-registers with the destination on arrival (source drops at launch, destination rises on arrival).
 - Spawn tiers are part of the MVP contract: XL = 3 workers/5 s, L = 2/7 s, variable planets = 1/10 s.
-- `flight_time.gd`, `dispatch.gd`, `planet_network.gd`, `worker.gd`, `worker_manager.gd`, and `preflight.gd` change/commit together; preflight reaches into planet_network internals (`_amount_slider`, `_preview_label`) and worker internals (`_flying`, `_arrive`).
+- `flight_time.gd`, `dispatch.gd`, `planet_network.gd`, `worker.gd`, `worker_manager.gd`, and `preflight.gd` change/commit together; preflight reaches into planet_network internals (`_amount_slider`, `_preview_label`) and worker internals (`_registered_planet`, `_arrive`).
 - Flight duration = distance × factor, so real dispatches take hundreds of seconds; headless tests simulate arrival by calling the arrival path directly (e.g. `worker._arrive()`) and assert movement via "distance to destination decreased", never by awaiting flight end or exact positions.
 
 ## Interaction and assets

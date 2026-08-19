@@ -116,11 +116,7 @@ func _init() -> void:
 			break
 	if not _check(alternate != preview_destination, "no alternate destination with different distance"):
 		return
-	var alternate_index := -1
-	for index in destination_option.item_count:
-		if destination_option.get_item_text(index) == alternate.name:
-			alternate_index = index
-			break
+	var alternate_index := _option_index(destination_option, alternate.name)
 	if not _check(alternate_index >= 0, "alternate destination is missing from planet tab"):
 		return
 	network.call("_on_destination_selected", alternate_index)
@@ -146,11 +142,7 @@ func _init() -> void:
 	if not _check(float(network.get("_line_phase")) != line_phase, "neighbor line animation is inactive"):
 		return
 	var destination: Node2D = neighbors[0]
-	var destination_index := -1
-	for index in destination_option.item_count:
-		if destination_option.get_item_text(index) == destination.name:
-			destination_index = index
-			break
+	var destination_index := _option_index(destination_option, destination.name)
 	if not _check(destination_index >= 0, "destination is missing from planet tab"):
 		return
 	network.call("_on_destination_selected", destination_index)
@@ -176,7 +168,7 @@ func _init() -> void:
 		return
 	var transit_workers: Array[Node] = []
 	for child in manager.get_children():
-		if child.get_script() == worker_script and child.get("_flying"):
+		if child.get_script() == worker_script and child.get("_registered_planet") == null:
 			transit_workers.append(child)
 	if not _check(transit_workers.size() == 2, "send did not launch the selected number of transit workers"):
 		return
@@ -226,6 +218,12 @@ func _find_timer(planet: Node) -> Timer:
 		if child is Timer:
 			return child
 	return null
+
+func _option_index(option: OptionButton, name: String) -> int:
+	for index in option.item_count:
+		if option.get_item_text(index) == name:
+			return index
+	return -1
 
 func _flight_seconds(text: String) -> float:
 	return float(text.trim_prefix("Flugzeit: ").trim_suffix(" s"))

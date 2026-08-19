@@ -25,22 +25,10 @@ func _dispatch_workers(source: Node2D, amount: int) -> void:
 	if destination == null:
 		return
 	var dispatch_count := _Dispatch.launch_amount(int(source.get("worker_count")), amount)
-	if dispatch_count <= 0:
-		return
 	var duration := _FlightTime.seconds_for(source.global_position.distance_to(destination.global_position), dispatch_count)
-	var launched := 0
-	for worker in _workers_of(source):
-		if launched >= dispatch_count:
-			break
-		worker.begin_flight(destination)
-		var tween := worker.create_tween()
-		tween.tween_property(worker, "global_position", destination.global_position, duration).set_trans(Tween.TRANS_LINEAR)
-		tween.finished.connect(Callable(worker, "_arrive"))
-		launched += 1
-
-func _workers_of(source: Node2D) -> Array[Node2D]:
-	var result: Array[Node2D] = []
+	var departing: Array[Node2D] = []
 	for child in get_children():
 		if child is Node2D and child.get("_registered_planet") == source:
-			result.append(child)
-	return result
+			departing.append(child as Node2D)
+	for worker in departing.slice(0, dispatch_count):
+		worker.fly_to(destination, duration)
