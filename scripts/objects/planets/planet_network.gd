@@ -1,5 +1,8 @@
 extends Node2D
 
+const _FlightTime := preload("res://scripts/flight_time.gd")
+const _Dispatch := preload("res://scripts/dispatch.gd")
+
 var _planets: Array[Node2D] = []
 var _routes: Dictionary = {}
 var _active_planet: Node2D
@@ -12,6 +15,8 @@ var _selected_count_label: Label
 var _destination_option: OptionButton
 var _destination_planets: Array[Node2D] = []
 var _count_labels: Dictionary = {}
+var _amount_slider: HSlider
+var _preview_label: Label
 var _line_phase := 0.0
 
 func _ready() -> void:
@@ -114,6 +119,8 @@ func _create_ui() -> void:
 	_destination_option.item_selected.connect(_on_destination_selected)
 	content.add_child(_destination_option)
 
+	_create_dispatch_controls(content)
+
 	var separator := HSeparator.new()
 	content.add_child(separator)
 
@@ -139,6 +146,28 @@ func _create_ui() -> void:
 		_count_labels[planet] = count_label
 		count_list.add_child(count_label)
 
+func _create_dispatch_controls(content: VBoxContainer) -> void:
+	var send_heading := Label.new()
+	send_heading.text = "EINHEITEN SENDEN"
+	send_heading.add_theme_color_override("font_color", Color(0.97, 0.78, 0.35, 1.0))
+	content.add_child(send_heading)
+
+	_amount_slider = HSlider.new()
+	_amount_slider.name = "AmountSlider"
+	_amount_slider.min_value = 1
+	_amount_slider.max_value = 1
+	_amount_slider.step = 1
+	_amount_slider.value = 1
+	_amount_slider.editable = false
+	_amount_slider.value_changed.connect(_on_amount_changed)
+	content.add_child(_amount_slider)
+
+	_preview_label = Label.new()
+	_preview_label.name = "PreviewLabel"
+	_preview_label.text = "Keine Einheiten verfügbar"
+	_preview_label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.70, 1.0))
+	content.add_child(_preview_label)
+
 func _process(delta: float) -> void:
 	if _active_planet != null and is_instance_valid(_panel) and _panel.visible:
 		_line_phase += delta
@@ -152,6 +181,9 @@ func _draw() -> void:
 		var pulse := 0.5 + sin(_line_phase * 2.0 + float(index)) * 0.18
 		var color := Color(0.25, 0.85, 1.0, pulse)
 		draw_line(to_local(_active_planet.global_position), to_local(neighbors[index].global_position), color, 2.0, true)
+	var destination := get_destination(_active_planet)
+	if destination != null:
+		draw_line(to_local(_active_planet.global_position), to_local(destination.global_position), Color(1.0, 0.85, 0.2, 0.9), 3.0, true)
 
 func _toggle_panel() -> void:
 	if not is_instance_valid(_panel):
@@ -168,6 +200,10 @@ func _on_planet_selected(planet: Node2D) -> void:
 	_tab_button.set_pressed_no_signal(true)
 	_selected_planet_label.text = "Planet: %s" % planet.name
 	_update_selected_count()
+	_refresh_slider_bounds()
+	if is_instance_valid(_amount_slider) and _amount_slider.editable:
+		_amount_slider.set_value_no_signal(1)
+		_update_preview()
 	_destination_option.clear()
 	_destination_planets.clear()
 	_destination_option.disabled = false
@@ -189,6 +225,7 @@ func _on_destination_selected(index: int) -> void:
 	if index < 0 or index >= _destination_option.item_count or index >= _destination_planets.size():
 		return
 	_routes[_active_planet] = _destination_planets[index]
+	_update_preview()
 	queue_redraw()
 
 func _on_worker_count_changed(planet: Node2D, _count: int) -> void:
@@ -197,6 +234,7 @@ func _on_worker_count_changed(planet: Node2D, _count: int) -> void:
 		count_label.text = _count_text(planet)
 	if planet == _active_planet:
 		_update_selected_count()
+		_refresh_slider_bounds()
 
 func _update_selected_count() -> void:
 	if _active_planet == null or not is_instance_valid(_selected_count_label):
@@ -205,6 +243,35 @@ func _update_selected_count() -> void:
 
 func _count_text(planet: Node2D) -> String:
 	return "%s: %d" % [planet.name, int(planet.get("worker_count"))]
+
+func _on_amount_changed(_value: float) -> void:
+	_update_preview()
+	queue_redraw()
+
+func _update_preview() -> void:
+	if not is_instance_valid(_preview_label):
+		return
+	if _active_planet == null or not is_instance_valid(_amount_slider) or int(_amount_slider.max_value) <= 0:
+		_preview_label.text = "Keine Einheiten verfügbar"
+		return
+	var destination := get_destination(_active_planet)
+	if destination == null:
+		_preview_label.text = "Kein Ziel verfügbar"
+		return
+	var distance := _active_planet.global_position.distance_to(destination.global_position)
+	var seconds := _FlightTime.seconds_for(distance, int(_amount_slider.value))
+	_preview_label.text = "Flugzeit: %.1f s" % seconds
+
+func _refresh_slider_bounds() -> void:
+	if _active_planet == null or not is_instance_valid(_amount_slider):
+		return
+	var bounds := _Dispatch.amount_range(int(_active_planet.get("worker_count")))
+	_amount_slider.min_value = bounds.x
+	_amount_slider.max_value = bounds.y
+	_amount_slider.editable = bounds.y > 0
+	if _amount_slider.value > bounds.y:
+		_amount_slider.value = bounds.y
+	_update_preview()
 
 func get_destination(source: Node2D) -> Node2D:
 	var selected = _routes.get(source)

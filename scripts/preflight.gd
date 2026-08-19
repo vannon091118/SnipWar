@@ -1,10 +1,30 @@
 extends SceneTree
 
+const _FlightTime := preload("res://scripts/flight_time.gd")
+const _Dispatch := preload("res://scripts/dispatch.gd")
+
 var _observed_planet: Node2D
 var _observed_state := -1
 var _observed_amount := -1
 
 func _init() -> void:
+	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 1), 10.0), "flight time baseline is wrong"):
+		return
+	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 2), 15.0), "flight time linear slowdown is wrong"):
+		return
+	if not _check(is_equal_approx(_FlightTime.seconds_for(20.0, 5), 48.0), "flight time damped slowdown is wrong"):
+		return
+	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 10), 37.0), "flight time monotonic slowdown is wrong"):
+		return
+	if not _check(_Dispatch.amount_range(3) == Vector2i(1, 3), "dispatch range for three units is wrong"):
+		return
+	if not _check(_Dispatch.amount_range(1) == Vector2i(1, 1), "dispatch range for one unit is wrong"):
+		return
+	if not _check(_Dispatch.amount_range(0) == Vector2i.ZERO, "dispatch range for empty planet is wrong"):
+		return
+	if not _check(_Dispatch.amount_range(-1) == Vector2i.ZERO, "dispatch range for negative count is wrong"):
+		return
+
 	var scene: PackedScene = preload("res://scenes/backgrounds/starfield_background.tscn")
 	var background: Node = scene.instantiate()
 	root.add_child(background)
@@ -66,6 +86,21 @@ func _init() -> void:
 	var destination_option: OptionButton = network.get("_destination_option")
 	var neighbors: Array[Node2D] = network.get_neighbors(ocean)
 	if not _check(panel.visible and destination_option.item_count == 9 and count_labels.size() == 10 and not neighbors.is_empty(), "planet tab or neighbors are missing"):
+		return
+	var amount_slider: HSlider = network.get("_amount_slider")
+	var preview_label: Label = network.get("_preview_label")
+	if not _check(is_instance_valid(amount_slider) and is_instance_valid(preview_label), "dispatch slider or preview is missing"):
+		return
+	if not _check(amount_slider.min_value == 1 and amount_slider.max_value == 2 and amount_slider.step == 1, "dispatch slider bounds are wrong"):
+		return
+	var preview_destination: Node2D = network.get_destination(ocean)
+	var real_distance: float = (ocean as Node2D).global_position.distance_to(preview_destination.global_position)
+	if not _check(absf(_flight_seconds(preview_label.text) - real_distance) <= 0.05, "dispatch preview does not use real distance"):
+		return
+	var preview_at_one := preview_label.text
+	amount_slider.value = 2
+	await process_frame
+	if not _check(preview_label.text != preview_at_one and _flight_seconds(preview_label.text) > _flight_seconds(preview_at_one), "dispatch preview does not update live"):
 		return
 	network.call("_toggle_panel")
 	if not _check(not panel.visible, "planet tab did not close"):
@@ -132,6 +167,9 @@ func _find_timer(planet: Node) -> Timer:
 		if child is Timer:
 			return child
 	return null
+
+func _flight_seconds(text: String) -> float:
+	return float(text.trim_prefix("Flugzeit: ").trim_suffix(" s"))
 
 func _check(condition: bool, message: String) -> bool:
 	if condition:
