@@ -13,6 +13,8 @@ func setup(event_log: Node, theme_config: UIThemeConfig = null) -> void:
 	_list = get_node_or_null("FeedRoot/ToastList") as VBoxContainer
 	if _event_log != null and _event_log.has_signal("message_pushed") and not _event_log.message_pushed.is_connected(_on_message_pushed):
 		_event_log.message_pushed.connect(_on_message_pushed)
+	if _event_log != null and _event_log.has_method("set_max_entries"):
+		_event_log.set_max_entries(_theme_config.message_max_log_entries)
 	_replay_visible_history()
 
 func _replay_visible_history() -> void:

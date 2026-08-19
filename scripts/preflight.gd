@@ -37,7 +37,13 @@ func _init() -> void:
 		return
 	if not await _constraint_scout_and_discovery():
 		return
+	if not _constraint_ship_builder():
+		return
 	if not await _constraint_event_log():
+		return
+	if not await _constraint_camera_and_input():
+		return
+	if not await _constraint_pause_and_context():
 		return
 	print("PASS: SnipWar preflight")
 	quit()
@@ -255,6 +261,7 @@ func _constraint_world_planets_and_dispatch() -> bool:
 		return false
 	# Keep the persistent suite deterministic; both modules expose manual test hooks.
 	economy_manager.call("set_enabled", false)
+	economy_manager.call("set_gathering_enabled", false)
 	cpu_ai.call("set_enabled", false)
 	if not _check(navigation != null, "navigation field is missing"):
 		return false
@@ -1122,7 +1129,7 @@ func _constraint_scout_and_discovery() -> bool:
 	var shipyard_hangar: ShipyardHangar = source.get_node_or_null("PlanetDetails/UpgradeStructure_shipyard/Hangar") as ShipyardHangar
 	if not _check(shipyard_hangar != null and shipyard_hangar.build_slot_count == source.get_build_slot_count(), "shipyard hangar did not inherit planet build slots"):
 		return false
-	if not _check(shipyard_hangar.get_node_or_null("FutureShipBuilder") != null and not (shipyard_hangar.get_node("FutureShipBuilder") as Node2D).visible, "future ship builder should remain hidden"):
+	if not _check(shipyard_hangar.get_node_or_null("FutureShipBuilder") != null and not (shipyard_hangar.get_node("FutureShipBuilder") as Node2D).visible, "future ship builder should remain hidden before a ship is assembled"):
 		return false
 	if not _check(not source.is_worker_spawn_enabled(), "worker production must remain off before worker factory construction"):
 		return false
@@ -1143,7 +1150,6 @@ func _constraint_scout_and_discovery() -> bool:
 	if not _check(source.worker_count == worker_count_before_factory_tick + source.get_size_profile().spawn_count or source.worker_count > worker_count_before_factory_tick, "worker factory did not start slow automatic spawning"):
 		return false
 	var collected_resource: StringName = game_state.resource_of(destination.planet_id)
-	var collected_before: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, collected_resource)
 	var collect_workers_before: int = source.worker_count
 	if not _check(manager.call("can_dispatch_mission", source, destination, GameState.MISSION_COLLECT), "collect mission gate rejected source=%s destination=%s source_workers=%d destination_faction=%s scanned=%s" % [source.get_faction(), destination.planet_id, source.worker_count, destination.get_faction(), game_state.has_scanned_planet(GameState.FACTION_PLAYER, destination.planet_id)]):
 		return false
@@ -1159,7 +1165,18 @@ func _constraint_scout_and_discovery() -> bool:
 	await process_frame
 	if not _check(source.worker_count == collect_workers_before - 1, "collect mission did not consume source workers"):
 		return false
-	if not _check(collect_result == Planet.ARRIVAL_COLLECTED and game_state.get_faction_resource(GameState.FACTION_PLAYER, collected_resource) > collected_before, "collect mission did not create the first neutral income (result=%s before=%d after=%d resource=%s scanned=%s faction=%s)" % [collect_result, collected_before, game_state.get_faction_resource(GameState.FACTION_PLAYER, collected_resource), collected_resource, game_state.has_scanned_planet(GameState.FACTION_PLAYER, destination.planet_id), destination.get_faction()]):
+	if not _check(collect_result == Planet.ARRIVAL_COLLECTED and game_state.get_gathering_workers(GameState.FACTION_PLAYER, destination.planet_id) > 0, "collect mission did not begin continuous gathering on the neutral planet (result=%s)" % collect_result):
+		return false
+	var gather_before: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, collected_resource)
+	var gather_generated: int = int(field.get_node_or_null("EconomyManager").call("gather_now"))
+	if not _check(gather_generated > 0 and game_state.get_faction_resource(GameState.FACTION_PLAYER, collected_resource) > gather_before, "gather tick did not create the first continuous neutral income (generated=%d resource=%s)" % [gather_generated, collected_resource]):
+		return false
+	var gatherers_registered: int = game_state.get_gathering_workers(GameState.FACTION_PLAYER, destination.planet_id)
+	var source_before_recall: int = source.worker_count
+	var recalled: int = int(destination.call("recall_gathering_workers", GameState.FACTION_PLAYER, gatherers_registered))
+	if not _check(recalled == gatherers_registered and game_state.get_gathering_workers(GameState.FACTION_PLAYER, destination.planet_id) == 0, "recall did not withdraw all gatherers (recalled=%d expected=%d)" % [recalled, gatherers_registered]):
+		return false
+	if not _check(source.worker_count == source_before_recall + recalled, "recalled gatherers did not return to the source planet (source=%d expected=%d)" % [source.worker_count, source_before_recall + recalled]):
 		return false
 
 	# The technology menu must be reachable from the network host and render the planet branch.
@@ -1181,6 +1198,61 @@ func _constraint_scout_and_discovery() -> bool:
 			if not _check(icon != null and icon.texture != null, "technology card is missing its visual asset"):
 				return false
 	if not _check(rendered_technology_cards >= 2, "known-planet technology cards have no visual entries"):
+		return false
+	return true
+
+func _constraint_ship_builder() -> bool:
+	var field: Node = _field
+	var game_state: Node = _game_state
+	var ship_manager: ShipManager = field.get_node_or_null("ShipManager") as ShipManager
+	if not _check(ship_manager != null, "ShipManager runtime module is missing"):
+		return false
+	var catalog: ShipPartCatalog = ship_manager.get_part_catalog()
+	if not _check(catalog != null and catalog.validate().is_empty(), "ship part catalog validation failed"):
+		return false
+	if not _check(not catalog.for_slot(ShipPartDefinition.SLOT_HULL).is_empty() and not catalog.for_slot(ShipPartDefinition.SLOT_SCANNER).is_empty() and not catalog.for_slot(ShipPartDefinition.SLOT_MODULE).is_empty(), "ship part catalog is missing a hull, scanner, or module branch"):
+		return false
+	var source: Planet = _find_planet_by_id(field, game_state.homeworld_for(GameState.FACTION_PLAYER) as StringName)
+	if not _check(source != null and game_state.has_planet_upgrade(source.planet_id, ShipManager.SHIPYARD_UPGRADE_ID), "player homeworld should carry a shipyard before the ship builder runs"):
+		return false
+	var hull_part: ShipPartDefinition = catalog.for_slot(ShipPartDefinition.SLOT_HULL)[0]
+	var scanner_part: ShipPartDefinition = catalog.for_slot(ShipPartDefinition.SLOT_SCANNER)[0]
+	var module_part: ShipPartDefinition = catalog.for_slot(ShipPartDefinition.SLOT_MODULE)[0]
+
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"material", 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"energy", 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"volatile", 100)
+
+	if not _check(ship_manager.can_buy_part(source, hull_part.id), "hull part should be purchasable"):
+		return false
+	if not _check(ship_manager.buy_part(source, hull_part.id), "hull part purchase should succeed"):
+		return false
+	if not _check(ship_manager.buy_part(source, scanner_part.id), "scanner part purchase should succeed"):
+		return false
+	if not _check(ship_manager.buy_part(source, module_part.id), "module part purchase should succeed"):
+		return false
+	if not _check(game_state.get_ship_part_count(source.planet_id, hull_part.id) == 1 and game_state.get_ship_part_count(source.planet_id, scanner_part.id) == 1 and game_state.get_ship_part_count(source.planet_id, module_part.id) == 1, "purchased parts were not recorded in the inventory"):
+		return false
+
+	if not _check(not game_state.can_assemble_ship(source.planet_id, hull_part.id, scanner_part.id, [module_part.id, module_part.id], catalog), "assembling beyond module ownership should be rejected"):
+		return false
+	var ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [module_part.id])
+	if not _check(not String(ship_id).is_empty() and game_state.has_ship_assembly(source.planet_id, ship_id), "ship assembly did not register (ship_id=%s)" % ship_id):
+		return false
+	if not _check(game_state.get_ship_part_count(source.planet_id, hull_part.id) == 0 and game_state.get_ship_part_count(source.planet_id, scanner_part.id) == 0 and game_state.get_ship_part_count(source.planet_id, module_part.id) == 0, "ship assembly did not consume the parts"):
+		return false
+	var hangar: ShipyardHangar = source.get_node_or_null("PlanetDetails/UpgradeStructure_shipyard/Hangar") as ShipyardHangar
+	var builder_node: Node2D = hangar.get_node_or_null("FutureShipBuilder") as Node2D if hangar != null else null
+	if not _check(builder_node != null and builder_node.visible, "assembled ship did not reveal the FutureShipBuilder display"):
+		return false
+
+	if not _check(ship_manager.disassemble_ship(source, ship_id), "ship disassembly should succeed"):
+		return false
+	if not _check(not game_state.has_ship_assembly(source.planet_id, ship_id), "disassembled ship should be removed"):
+		return false
+	if not _check(game_state.get_ship_part_count(source.planet_id, hull_part.id) == 1 and game_state.get_ship_part_count(source.planet_id, scanner_part.id) == 1 and game_state.get_ship_part_count(source.planet_id, module_part.id) == 1, "disassembly did not refund the parts"):
+		return false
+	if not _check(builder_node != null and not builder_node.visible, "disassembled ship did not hide the FutureShipBuilder display"):
 		return false
 	return true
 
@@ -1234,6 +1306,109 @@ func _constraint_event_log() -> bool:
 	var content := file.get_as_text()
 	file.close()
 	if not _check(content.contains("Testnachricht") and content.contains("Stille Ressourcenmeldung"), "player.log export is missing recorded entries"):
+		return false
+	return true
+
+func _constraint_camera_and_input() -> bool:
+	var background: Node = _background
+	var field: Node = _field
+	var world_config: WorldConfig = _world_config
+	var camera: Camera2D = background.get_node_or_null("MapCamera") as Camera2D
+	if not _check(camera != null, "map camera is missing from the background scene"):
+		return false
+	if not _check(get_root().get_viewport().get_camera_2d() == camera, "map camera is not the active 2D camera"):
+		return false
+	if not _check(camera.zoom == Vector2.ONE and camera.position.distance_to(world_config.design_size * 0.5) <= 0.01, "map camera did not initialize to the map center"):
+		return false
+	# With the viewport matching the design size, the camera is pinned to the map center.
+	camera.position = Vector2.ZERO
+	camera.call("_clamp_position")
+	if not _check(camera.position.distance_to(world_config.design_size * 0.5) <= 0.01, "map camera bounds clamp did not constrain the position"):
+		return false
+	camera.position = world_config.design_size * 0.5
+	var transformer: TransformerConfig = preload("res://resources/config/transformer_default.tres")
+	if not _check(transformer.selection_ring_margin > 0.0 and transformer.selection_ring_width > 0.0 and transformer.selection_ring_color.a > 0.0, "selection ring config is not tuned"):
+		return false
+	var source: Planet = _find_planet_with_size(field, &"xl") as Planet
+	if not _check(source != null, "no planet available for touch selection test"):
+		return false
+	var touch_event := InputEventScreenTouch.new()
+	touch_event.index = 0
+	touch_event.position = source.global_position
+	touch_event.pressed = true
+	source.call("_on_click_area_input_event", null, touch_event, 0)
+	await process_frame
+	if not _check(source.is_selected(), "touch tap did not select the planet"):
+		return false
+	var second_planet: Planet = null
+	for child in field.get_children():
+		if child is Planet and child != source:
+			second_planet = child as Planet
+			break
+	if not _check(second_planet != null, "no second planet available for selection handoff"):
+		return false
+	var second_touch := InputEventScreenTouch.new()
+	second_touch.index = 0
+	second_touch.position = second_planet.global_position
+	second_touch.pressed = true
+	second_planet.call("_on_click_area_input_event", null, second_touch, 0)
+	await process_frame
+	if not _check(not source.is_selected() and second_planet.is_selected(), "selecting another planet did not move the selection ring"):
+		return false
+	return true
+
+func _constraint_pause_and_context() -> bool:
+	var background: Node = _background
+	var network: Node = _network
+	var field: Node = _field
+	var game_state: Node = _game_state
+	var pause_menu: Node = background.get_node_or_null("PauseMenu")
+	if not _check(pause_menu != null, "pause menu is missing from the background scene"):
+		return false
+	if not _check(pause_menu.has_method("pause") and pause_menu.has_method("resume"), "pause menu is missing pause/resume controls"):
+		return false
+	pause_menu.call("pause")
+	await process_frame
+	if not _check(game_state.get_tree().paused, "pause menu did not pause the tree"):
+		pause_menu.call("resume")
+		return false
+	pause_menu.call("resume")
+	await process_frame
+	if not _check(not game_state.get_tree().paused, "pause menu did not resume the tree"):
+		return false
+	var ui: PlanetNetworkUI = network.get_ui()
+	var context_menu: PopupMenu = ui.get_node_or_null("PlanetContextMenu") as PopupMenu
+	if not _check(context_menu != null and context_menu.item_count == 3, "planet context menu is missing its quick actions"):
+		return false
+	var source: Planet = _find_planet_with_size(field, &"xl") as Planet
+	if not _check(source != null, "no planet available for context menu test"):
+		return false
+	var right_click := InputEventMouseButton.new()
+	right_click.button_index = MOUSE_BUTTON_RIGHT
+	right_click.pressed = true
+	source.call("_on_click_area_input_event", null, right_click, 0)
+	await process_frame
+	network.call("_on_context_action", 2)
+	await process_frame
+	if not _check(ui.selected_mission_type() == GameState.MISSION_COLLECT, "context menu did not preselect the collect mission"):
+		return false
+	ui.set_mission_type(GameState.MISSION_MILITARY)
+	if not _check(ui.selected_mission_type() == GameState.MISSION_MILITARY, "set_mission_type did not restore the military mission"):
+		return false
+	# Drag-drop: the camera resolves planets and the network presets source + destination.
+	var camera: Node2D = get_first_node_in_group("map_camera") as Node2D
+	if not _check(camera != null and camera.has_signal("planet_drag_dropped"), "map camera is missing its planet drag signal"):
+		return false
+	var drag_destination: Planet = null
+	for child in field.get_children():
+		if child is Planet and child != source:
+			drag_destination = child as Planet
+			break
+	if not _check(drag_destination != null, "no second planet available for drag-drop test"):
+		return false
+	network.call("_on_planet_drag_dropped", source, drag_destination)
+	await process_frame
+	if not _check(network.get("_active_planet") == source and network.get_destination(source) == drag_destination, "drag-drop did not select the source and set the destination"):
 		return false
 	return true
 

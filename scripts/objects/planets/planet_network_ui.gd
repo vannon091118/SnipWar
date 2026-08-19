@@ -11,6 +11,7 @@ signal send_pressed()
 
 var _theme_config: UIThemeConfig = DEFAULT_THEME
 var _panel_open: bool = false
+var _panel_tween: Tween
 
 @onready var _tab_button: Button = get_node_or_null("PlanetTabUI/PlanetTab")
 @onready var _vault_bar: VaultBar = get_node_or_null("PlanetTabUI/VaultBar")
@@ -125,6 +126,9 @@ func selected_amount() -> int:
 func selected_mission_type() -> StringName:
 	return _panel.selected_mission_type()
 
+func set_mission_type(mission_type: StringName) -> void:
+	_panel.set_mission_type(mission_type)
+
 func has_selectable_amount() -> bool:
 	return _panel.has_selectable_amount()
 
@@ -216,10 +220,23 @@ func _set_panel_open(open: bool) -> void:
 	if _panel != null:
 		_panel.visible = open
 		_panel.mouse_filter = Control.MOUSE_FILTER_STOP if open else Control.MOUSE_FILTER_IGNORE
+		_animate_panel_transition(open)
 	if _tab_button != null:
 		_tab_button.set_pressed_no_signal(open)
 		_tab_button.text = "‹  SCHLIESSEN" if open else "PLANETEN  ›"
 	panel_visibility_changed.emit(open)
+
+func _animate_panel_transition(open: bool) -> void:
+	if not is_instance_valid(_panel):
+		return
+	if _panel_tween != null and _panel_tween.is_valid():
+		_panel_tween.kill()
+	if open:
+		_panel.modulate.a = 0.0
+		_panel_tween = create_tween()
+		_panel_tween.tween_property(_panel, "modulate:a", 1.0, _theme_config.transition_duration)
+	else:
+		_panel.modulate.a = 1.0
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE and _panel_open:

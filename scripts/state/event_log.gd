@@ -6,8 +6,8 @@ const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/c
 const DEFAULT_TECHNOLOGY_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
 const DEFAULT_RESOURCE_POOL: ResourcePool = preload("res://resources/config/resource_pool_default.tres")
 const PLAYER_LOG_PATH: String = "user://player.log"
-const MAX_ENTRIES: int = 200
 
+var _max_entries: int = 200
 var _entries: Array[Dictionary] = []
 
 func _ready() -> void:
@@ -16,9 +16,6 @@ func _ready() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		export_to_player_log()
-
-func _exit_tree() -> void:
-	export_to_player_log()
 
 func _connect_game_state() -> void:
 	var state: Node = get_node_or_null("/root/GameState")
@@ -40,6 +37,10 @@ func _connect_game_state() -> void:
 		state.resource_generated.connect(_on_resource_generated)
 	if state.has_signal("resources_collected") and not state.resources_collected.is_connected(_on_resources_collected):
 		state.resources_collected.connect(_on_resources_collected)
+	if state.has_signal("gathering_started") and not state.gathering_started.is_connected(_on_gathering_started):
+		state.gathering_started.connect(_on_gathering_started)
+	if state.has_signal("gathering_withdrawn") and not state.gathering_withdrawn.is_connected(_on_gathering_withdrawn):
+		state.gathering_withdrawn.connect(_on_gathering_withdrawn)
 	if state.has_signal("worker_factory_built") and not state.worker_factory_built.is_connected(_on_worker_factory_built):
 		state.worker_factory_built.connect(_on_worker_factory_built)
 
@@ -55,6 +56,9 @@ func log_silent(category: StringName, text: String) -> void:
 	if text.is_empty():
 		return
 	_record(category, text, false)
+
+func set_max_entries(limit: int) -> void:
+	_max_entries = maxi(limit, 1)
 
 func get_entries() -> Array[Dictionary]:
 	return _entries.duplicate()
@@ -75,7 +79,7 @@ func _record(category: StringName, text: String, visible: bool) -> void:
 		"stamp": Time.get_datetime_string_from_system(),
 		"visible": visible,
 	})
-	if _entries.size() > MAX_ENTRIES:
+	if _entries.size() > _max_entries:
 		_entries.pop_front()
 
 func _on_faction_changed(planet_id: StringName, _old_faction: StringName, new_faction: StringName) -> void:
@@ -100,7 +104,13 @@ func _on_resource_generated(planet_id: StringName, resource_id: StringName, amou
 	log_silent(&"economy", "%s lieferte %d %s." % [_planet_name(planet_id), amount, _resource_name(resource_id)])
 
 func _on_resources_collected(_faction: StringName, planet_id: StringName, resource_id: StringName, amount: int) -> void:
-	push(&"economy", "Sammeltrupp auf %s barg %d %s." % [_planet_name(planet_id), amount, _resource_name(resource_id)])
+	log_silent(&"economy", "Sammeltrupp auf %s barg %d %s." % [_planet_name(planet_id), amount, _resource_name(resource_id)])
+
+func _on_gathering_started(_faction: StringName, planet_id: StringName, workers: int) -> void:
+	push(&"economy", "Sammeltrupp auf %s begonnen: %d Worker ernten fortan Rohstoffe." % [_planet_name(planet_id), workers])
+
+func _on_gathering_withdrawn(_faction: StringName, planet_id: StringName, workers: int) -> void:
+	push(&"economy", "Sammeltrupp von %s abgezogen: %d Worker kehrten heim." % [_planet_name(planet_id), workers])
 
 func _on_worker_factory_built(planet_id: StringName) -> void:
 	push(&"economy", "%s: Worker-Fertiger in der Werft aktiviert." % _planet_name(planet_id))

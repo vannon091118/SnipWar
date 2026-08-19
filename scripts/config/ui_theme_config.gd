@@ -42,10 +42,12 @@ extends Resource
 @export_range(8, 64, 1) var panel_title_font_size: int = 20
 @export_range(0, 24, 1) var card_padding: int = 10
 @export_range(20.0, 64.0, 1.0) var section_row_height: float = 30.0
+@export_range(0.05, 1.0, 0.05) var transition_duration: float = 0.18
 @export_group("Message Feed")
 @export_range(0.5, 30.0, 0.5) var message_toast_duration: float = 4.0
 @export_range(0.1, 2.0, 0.1) var message_toast_fade_duration: float = 0.5
 @export_range(1, 20, 1) var message_max_visible_toasts: int = 6
+@export_range(10, 10000, 1) var message_max_log_entries: int = 200
 @export_range(20.0, 128.0, 1.0) var technology_icon_size: float = 42.0
 @export var card_background: Color = Color(0.045, 0.07, 0.13, 0.96)
 @export var input_background: Color = Color(0.025, 0.04, 0.08, 0.98)
@@ -121,8 +123,12 @@ func validate() -> PackedStringArray:
 		errors.append("UI font sizes must be positive")
 	if card_padding < 0 or section_row_height <= 0.0:
 		errors.append("UI card spacing values are invalid")
+	if transition_duration <= 0.0:
+		errors.append("UI transition_duration must be positive")
 	if message_toast_duration <= 0.0 or message_toast_fade_duration <= 0.0 or message_max_visible_toasts < 1:
 		errors.append("UI message feed tuning is invalid")
+	if message_max_log_entries < 1:
+		errors.append("UI message_max_log_entries must be positive")
 	if technology_icon_size <= 0.0:
 		errors.append("UI technology_icon_size must be positive")
 	if route_line_alpha < 0.0 or route_line_alpha > 1.0 or route_line_pulse_alpha < 0.0 or route_line_alpha + route_line_pulse_alpha > 1.0:

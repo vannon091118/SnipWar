@@ -16,6 +16,9 @@ extends Resource
 @export_range(4.0, 128.0, 1.0) var sprite_size: float = 24.0
 @export_range(0.0, 60.0, 1.0) var faction_ring_margin: float = 10.0
 @export_range(1.0, 16.0, 0.5) var faction_ring_width: float = 4.0
+@export_range(0.0, 40.0, 1.0) var selection_ring_margin: float = 6.0
+@export_range(0.5, 8.0, 0.5) var selection_ring_width: float = 2.0
+@export var selection_ring_color: Color = Color(1.0, 0.9, 0.4, 0.9)
 @export_range(0.1, 1.0, 0.01) var planet_visual_radius_ratio: float = 0.375
 @export_range(6, 96, 1) var strength_label_font_size: int = 15
 @export_range(0, 16, 1) var strength_label_outline_size: int = 3

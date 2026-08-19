@@ -108,7 +108,7 @@ func refresh_shipyard_hangar() -> void:
 	var planet := get_parent() as Planet
 	if planet == null:
 		return
-	hangar.configure(planet.get_build_slot_count(), planet.is_worker_spawn_enabled(), DEFAULT_SHIP_CONFIG)
+	hangar.configure(planet.get_build_slot_count(), planet.is_worker_spawn_enabled(), _active_ship_config())
 
 func add_upgrade_structure(upgrade: PlanetUpgradeDefinition, tint: Color = Color.WHITE) -> void:
 	if upgrade == null or upgrade.visual_asset == null:
@@ -149,4 +149,18 @@ func add_upgrade_structure(upgrade: PlanetUpgradeDefinition, tint: Color = Color
 		var planet := get_parent() as Planet
 		var slots: int = planet.get_build_slot_count() if planet != null else 1
 		var worker_visible: bool = planet != null and planet.is_worker_spawn_enabled()
-		hangar.configure(slots, worker_visible, DEFAULT_SHIP_CONFIG)
+		hangar.configure(slots, worker_visible, _active_ship_config())
+
+func _active_ship_config() -> ShipConfig:
+	var planet := get_parent() as Planet
+	if planet == null:
+		return DEFAULT_SHIP_CONFIG
+	var field: Node = planet.get_parent()
+	if field == null:
+		return DEFAULT_SHIP_CONFIG
+	var manager: Node = field.get_node_or_null("ShipManager")
+	if manager != null and manager.has_method("get_ship_config"):
+		var resolved: ShipConfig = manager.call("get_ship_config") as ShipConfig
+		if resolved != null:
+			return resolved
+	return DEFAULT_SHIP_CONFIG

@@ -7,6 +7,8 @@
 [ext_resource type="Resource" path="res://resources/config/world_default.tres" id="5_world"]
 [ext_resource type="Resource" path="res://resources/config/background_default.tres" id="6_background"]
 [ext_resource type="Resource" path="res://resources/config/scenario_catalog.tres" id="7_scenarios"]
+[ext_resource type="Script" path="res://scripts/backgrounds/map_camera.gd" id="8_camera"]
+[ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="9_pause"]
 
 [node name="Background" type="Node2D" unique_id=345278981]
 position = Vector2(0, 0)
@@ -26,3 +28,9 @@ script = ExtResource("3_bootstrap")
 [node name="MeteorField" parent="." unique_id=2036049589 instance=ExtResource("4_meteor_field")]
 position = Vector2(0, 0)
 world_config = ExtResource("5_world")
+
+[node name="MapCamera" type="Camera2D" parent="."]
+script = ExtResource("8_camera")
+
+[node name="PauseMenu" type="CanvasLayer" parent="."]
+script = ExtResource("9_pause")

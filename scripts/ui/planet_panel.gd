@@ -437,6 +437,16 @@ func selected_mission_type() -> StringName:
 	var meta: Variant = _mission_option.get_item_metadata(_mission_option.selected)
 	return meta as StringName if meta != null else &"military"
 
+func set_mission_type(mission_type: StringName) -> void:
+	_ensure_node_references()
+	if _mission_option == null:
+		return
+	for index in _mission_option.item_count:
+		if _mission_option.get_item_metadata(index) == mission_type:
+			_mission_option.select(index)
+			_on_mission_selected(index)
+			break
+
 func has_selectable_amount() -> bool:
 	_ensure_node_references()
 	return _amount_slider.editable

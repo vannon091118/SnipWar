@@ -52,7 +52,7 @@ func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_
 		for point in resolved_path:
 			offset_path.append(point + offsets[index])
 		var offset_distance: float = _path_distance(offset_path)
-		cluster.configure_transit(offset_path[0], destination, groups[index], source_faction, transit_config, mission_type, cluster_tier_bonus)
+		cluster.configure_transit(offset_path[0], destination, groups[index], source_faction, transit_config, mission_type, cluster_tier_bonus, source.planet_id)
 		var tween: Tween = cluster.create_tween()
 		for point_index in range(1, offset_path.size()):
 			var segment_distance: float = offset_path[point_index - 1].distance_to(offset_path[point_index])

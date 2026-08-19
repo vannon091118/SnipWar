@@ -4,12 +4,14 @@ extends Node2D
 const SCOUT_SCENE: PackedScene = preload("res://scenes/objects/ships/scout_ship.tscn")
 const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_default.tres")
 const DEFAULT_TECH_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
+const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
 const SHIPYARD_UPGRADE_ID: StringName = &"shipyard"
 const DEFAULT_HULL_TEXTURE: Texture2D = preload("res://assets/objects/workers/cluster_k.svg")
 const DEFAULT_SCANNER_TEXTURE: Texture2D = preload("res://assets/objects/satellites/planet_satellite.svg")
 
 @export var ship_config: ShipConfig = DEFAULT_SHIP_CONFIG
 @export var technology_catalog: TechnologyCatalog = DEFAULT_TECH_CATALOG
+@export var ship_part_catalog: ShipPartCatalog = DEFAULT_SHIP_PART_CATALOG
 
 var _field: Node
 var _navigation: NavigationField
@@ -17,6 +19,18 @@ var _network: Node
 var _enabled := true
 var _scouts: Array[Node2D] = []
 var _active_build_counts: Dictionary = {}
+
+func _ready() -> void:
+	var state: Node = _game_state()
+	if state != null and state.has_signal("catalog_reset") and not state.catalog_reset.is_connected(_on_catalog_reset):
+		state.catalog_reset.connect(_on_catalog_reset)
+
+func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
+	_active_build_counts.clear()
+	for scout in _scouts:
+		if is_instance_valid(scout):
+			scout.queue_free()
+	_scouts.clear()
 
 func configure(field: Node, navigation: Node, config: ShipConfig = null, catalog: TechnologyCatalog = null, network: Node = null) -> void:
 	_field = field
@@ -36,6 +50,9 @@ func get_ship_config() -> ShipConfig:
 
 func get_technology_catalog() -> TechnologyCatalog:
 	return technology_catalog if technology_catalog != null else DEFAULT_TECH_CATALOG
+
+func get_part_catalog() -> ShipPartCatalog:
+	return ship_part_catalog if ship_part_catalog != null else DEFAULT_SHIP_PART_CATALOG
 
 func can_build_scout(source: Planet) -> bool:
 	if not _enabled or source == null:
@@ -123,6 +140,71 @@ func build_workers(source: Planet) -> bool:
 	var config := get_ship_config()
 	var state: Node = _game_state()
 	return state.build_worker_factory(source.planet_id, config.worker_build_cost_resource, config.worker_build_cost_amount)
+
+func can_buy_part(source: Planet, part_id: StringName) -> bool:
+	var state: Node = _game_state()
+	return _enabled and source != null and state != null and state.can_buy_ship_part(source.planet_id, part_id, get_part_catalog())
+
+func buy_part(source: Planet, part_id: StringName) -> bool:
+	var state: Node = _game_state()
+	if not _enabled or source == null or state == null:
+		return false
+	return state.buy_ship_part(source.planet_id, part_id, get_part_catalog())
+
+func can_assemble_ship(source: Planet, hull_id: StringName, scanner_id: StringName, module_ids: Array) -> bool:
+	var state: Node = _game_state()
+	return _enabled and source != null and state != null and state.can_assemble_ship(source.planet_id, hull_id, scanner_id, module_ids, get_part_catalog())
+
+func assemble_ship(source: Planet, hull_id: StringName, scanner_id: StringName, module_ids: Array) -> StringName:
+	var state: Node = _game_state()
+	if not _enabled or source == null or state == null:
+		return &""
+	var ship_id: StringName = state.assemble_ship(source.planet_id, hull_id, scanner_id, module_ids, get_part_catalog()) as StringName
+	if not String(ship_id).is_empty():
+		refresh_ship_display(source)
+	return ship_id
+
+func can_disassemble_ship(source: Planet, ship_id: StringName) -> bool:
+	var state: Node = _game_state()
+	return _enabled and source != null and state != null and state.has_ship_assembly(source.planet_id, ship_id)
+
+func disassemble_ship(source: Planet, ship_id: StringName) -> bool:
+	var state: Node = _game_state()
+	if not _enabled or source == null or state == null:
+		return false
+	var removed: bool = state.disassemble_ship(source.planet_id, ship_id)
+	if removed:
+		refresh_ship_display(source)
+	return removed
+
+func refresh_ship_display(source: Planet) -> void:
+	if source == null:
+		return
+	var hangar: ShipyardHangar = source.get_node_or_null("PlanetDetails/UpgradeStructure_shipyard/Hangar") as ShipyardHangar
+	if hangar == null:
+		return
+	var state: Node = _game_state()
+	if state == null:
+		return
+	var assemblies: Dictionary = state.get_ship_assemblies(source.planet_id)
+	if assemblies.is_empty():
+		hangar.hide_ship()
+		return
+	var ship_id: StringName = (assemblies.keys()[0]) as StringName
+	var assembly: Dictionary = assemblies[ship_id]
+	var cat := get_part_catalog()
+	var hull := cat.resolve(assembly.get("hull", &"") as StringName)
+	var scanner := cat.resolve(assembly.get("scanner", &"") as StringName)
+	var module_textures: Array[Texture2D] = []
+	for module_value in assembly.get("modules", []):
+		var module := cat.resolve(module_value as StringName)
+		if module != null:
+			module_textures.append(module.visual_asset)
+	hangar.show_ship(
+		hull.visual_asset if hull != null else null,
+		scanner.visual_asset if scanner != null else null,
+		module_textures
+	)
 
 func get_active_build_count(source: Planet) -> int:
 	return get_active_build_count_by_id(source.planet_id) if source != null else 0

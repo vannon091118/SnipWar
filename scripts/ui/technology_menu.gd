@@ -10,11 +10,17 @@ signal closed()
 var _theme_config: UIThemeConfig = DEFAULT_THEME
 var _ship_manager: ShipManager
 var _open := false
+var _panel_tween: Tween
 var _category: StringName = TechnologyDefinition.CATEGORY_SHIPS
 var _scout_source: OptionButton
 var _scout_destination: OptionButton
 var _worker_source: OptionButton
 var _worker_button: Button
+var _builder_source: OptionButton
+var _builder_hull: OptionButton
+var _builder_scanner: OptionButton
+var _builder_modules: Array[OptionButton] = []
+var _builder_dynamic: VBoxContainer
 
 @onready var _ui_root: Control = get_node_or_null("TechTabUI")
 @onready var _tab_button: Button = get_node_or_null("TechTabUI/TechTab")
@@ -22,6 +28,9 @@ var _worker_button: Button
 @onready var _title: Label = get_node_or_null("TechTabUI/TechPanel/TechMargin/TechVBox/TechTitle")
 @onready var _category_tabs: HBoxContainer = get_node_or_null("TechTabUI/TechPanel/TechMargin/TechVBox/CategoryTabs")
 @onready var _list: VBoxContainer = get_node_or_null("TechTabUI/TechPanel/TechMargin/TechVBox/TechScroll/TechList")
+
+func _ready() -> void:
+	add_to_group("technology_menu")
 
 func setup(ship_manager: ShipManager, theme_config: UIThemeConfig = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
@@ -118,6 +127,7 @@ func _set_open(open_value: bool) -> void:
 	if _panel != null:
 		_panel.visible = open_value
 		_panel.mouse_filter = Control.MOUSE_FILTER_STOP if open_value else Control.MOUSE_FILTER_IGNORE
+		_animate_panel_transition(open_value)
 	if _tab_button != null:
 		_tab_button.set_pressed_no_signal(open_value)
 		_tab_button.text = "‹  SCHLIESSEN" if open_value else "TECHNOLOGIE ›"
@@ -126,6 +136,18 @@ func _set_open(open_value: bool) -> void:
 		opened.emit()
 	else:
 		closed.emit()
+
+func _animate_panel_transition(open_value: bool) -> void:
+	if not is_instance_valid(_panel):
+		return
+	if _panel_tween != null and _panel_tween.is_valid():
+		_panel_tween.kill()
+	if open_value:
+		_panel.modulate.a = 0.0
+		_panel_tween = create_tween()
+		_panel_tween.tween_property(_panel, "modulate:a", 1.0, _theme_config.transition_duration)
+	else:
+		_panel.modulate.a = 1.0
 
 func _refresh() -> void:
 	if _list == null:
@@ -137,6 +159,11 @@ func _refresh() -> void:
 	_scout_destination = null
 	_worker_source = null
 	_worker_button = null
+	_builder_source = null
+	_builder_hull = null
+	_builder_scanner = null
+	_builder_modules = []
+	_builder_dynamic = null
 	if _ship_manager == null:
 		return
 	if _category == TechnologyDefinition.CATEGORY_SHIPS:
@@ -197,6 +224,7 @@ func _refresh_ships() -> void:
 	_worker_button.pressed.connect(_on_build_workers)
 	_list.add_child(_worker_button)
 	_refresh_worker_button()
+	_refresh_ship_builder(state, planets)
 
 func _refresh_research(category: StringName, note: String) -> void:
 	var state := _game_state()
@@ -397,6 +425,174 @@ func _on_build_workers() -> void:
 	var source: Planet = _selected_option_planet(_worker_source)
 	if source != null and _ship_manager.build_workers(source):
 		_refresh()
+
+func _refresh_ship_builder(state: Node, planets: Array[Planet]) -> void:
+	if _ship_manager == null:
+		return
+	_list.add_child(_make_separator())
+	_list.add_child(_make_label("SCHIFFSWERFT — SHOP", _theme_config.heading_text_color, _theme_config.section_font_size))
+	_list.add_child(_make_label("Teile kaufen, im Hangar montieren und bei Bedarf wieder zerlegen.", _theme_config.muted_text_color, _theme_config.small_font_size))
+	_list.add_child(_make_label("Startplanet (eigene Werft)", _theme_config.secondary_text_color, _theme_config.small_font_size))
+	_builder_source = OptionButton.new()
+	_builder_source.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_populate_scout_sources(_builder_source, planets, state)
+	_builder_source.item_selected.connect(_on_builder_source_changed)
+	_list.add_child(_builder_source)
+	_builder_dynamic = VBoxContainer.new()
+	_builder_dynamic.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_builder_dynamic.add_theme_constant_override("separation", _theme_config.list_separation)
+	_list.add_child(_builder_dynamic)
+	_populate_builder_dynamic(state)
+
+func _populate_builder_dynamic(state: Node) -> void:
+	if _builder_dynamic == null:
+		return
+	for child in _builder_dynamic.get_children():
+		_builder_dynamic.remove_child(child)
+		child.queue_free()
+	_builder_hull = null
+	_builder_scanner = null
+	_builder_modules = []
+	var source: Planet = _selected_option_planet(_builder_source)
+	if source == null:
+		_builder_dynamic.add_child(_make_label("Keine eigene Werft vorhanden — zuerst Orbitale Werft bauen.", _theme_config.muted_text_color, _theme_config.small_font_size))
+		return
+	var catalog: ShipPartCatalog = _ship_manager.get_part_catalog()
+	var inventory: Dictionary = state.get_ship_part_inventory(source.planet_id)
+	_builder_dynamic.add_child(_make_label("TEILE KAUFEN", _theme_config.heading_text_color, _theme_config.section_font_size))
+	for part in catalog.parts:
+		if part == null:
+			continue
+		var owned: int = int(inventory.get(part.id, 0))
+		var row := HBoxContainer.new()
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_theme_constant_override("separation", _theme_config.card_padding)
+		var label := _make_label("%s — %d %s  (Besitz: %d)" % [part.display_name, part.cost_amount, String(part.cost_resource), owned], _theme_config.secondary_text_color, _theme_config.small_font_size)
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(label)
+		var buy := Button.new()
+		buy.text = "KAUFEN"
+		buy.disabled = not _ship_manager.can_buy_part(source, part.id)
+		if buy.disabled:
+			buy.tooltip_text = "Kosten: %d %s" % [part.cost_amount, String(part.cost_resource)]
+		buy.pressed.connect(_on_buy_part.bind(part.id))
+		row.add_child(buy)
+		_builder_dynamic.add_child(row)
+	_builder_dynamic.add_child(_make_separator())
+	_builder_dynamic.add_child(_make_label("MONTAGE", _theme_config.heading_text_color, _theme_config.section_font_size))
+	_builder_dynamic.add_child(_make_label("Hülle", _theme_config.secondary_text_color, _theme_config.small_font_size))
+	_builder_hull = _builder_slot_option(inventory, ShipPartDefinition.SLOT_HULL)
+	_builder_dynamic.add_child(_builder_hull)
+	_builder_dynamic.add_child(_make_label("Scanner", _theme_config.secondary_text_color, _theme_config.small_font_size))
+	_builder_scanner = _builder_slot_option(inventory, ShipPartDefinition.SLOT_SCANNER)
+	_builder_dynamic.add_child(_builder_scanner)
+	for index in catalog.max_module_slots:
+		_builder_dynamic.add_child(_make_label("Modul %d" % (index + 1), _theme_config.secondary_text_color, _theme_config.small_font_size))
+		var module_option: OptionButton = _builder_slot_option(inventory, ShipPartDefinition.SLOT_MODULE, true)
+		_builder_modules.append(module_option)
+		_builder_dynamic.add_child(module_option)
+	var assemble := Button.new()
+	assemble.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	assemble.text = "KOMBINIEREN"
+	assemble.disabled = not _builder_can_assemble()
+	assemble.pressed.connect(_on_assemble_ship)
+	_builder_dynamic.add_child(assemble)
+	_builder_dynamic.add_child(_make_separator())
+	_builder_dynamic.add_child(_make_label("GEBAUTE SCHIFFE", _theme_config.heading_text_color, _theme_config.section_font_size))
+	var assemblies: Dictionary = state.get_ship_assemblies(source.planet_id)
+	if assemblies.is_empty():
+		_builder_dynamic.add_child(_make_label("Noch keine Schiffe montiert.", _theme_config.muted_text_color, _theme_config.small_font_size))
+	else:
+		for ship_value in assemblies:
+			var ship_id: StringName = ship_value as StringName
+			var ship_row := HBoxContainer.new()
+			ship_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			ship_row.add_theme_constant_override("separation", _theme_config.card_padding)
+			var ship_label := _make_label(_assembly_description(catalog, assemblies[ship_id]), _theme_config.secondary_text_color, _theme_config.small_font_size)
+			ship_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			ship_row.add_child(ship_label)
+			var disassemble := Button.new()
+			disassemble.text = "ZERLEGEN"
+			disassemble.pressed.connect(_on_disassemble_ship.bind(ship_id))
+			ship_row.add_child(disassemble)
+			_builder_dynamic.add_child(ship_row)
+
+func _builder_slot_option(inventory: Dictionary, slot_type: StringName, allow_none: bool = false) -> OptionButton:
+	var option := OptionButton.new()
+	option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var catalog: ShipPartCatalog = _ship_manager.get_part_catalog()
+	if allow_none:
+		option.add_item("— (kein Modul)")
+		option.set_item_metadata(0, &"")
+	for part in catalog.for_slot(slot_type):
+		if int(inventory.get(part.id, 0)) > 0:
+			option.add_item(part.display_name)
+			option.set_item_metadata(option.item_count - 1, part.id)
+	option.disabled = option.item_count == 0
+	return option
+
+func _builder_selected_part(option: OptionButton) -> StringName:
+	if option == null or option.selected < 0 or option.selected >= option.item_count:
+		return &""
+	var meta: Variant = option.get_item_metadata(option.selected)
+	return meta as StringName if meta != null else &""
+
+func _builder_can_assemble() -> bool:
+	var source: Planet = _selected_option_planet(_builder_source)
+	if source == null or _builder_hull == null or _builder_scanner == null:
+		return false
+	var hull_id := _builder_selected_part(_builder_hull)
+	var scanner_id := _builder_selected_part(_builder_scanner)
+	if String(hull_id).is_empty() or String(scanner_id).is_empty():
+		return false
+	var module_ids: Array = []
+	for option in _builder_modules:
+		var module_id := _builder_selected_part(option)
+		if not String(module_id).is_empty():
+			module_ids.append(module_id)
+	return _ship_manager.can_assemble_ship(source, hull_id, scanner_id, module_ids)
+
+func _assembly_description(catalog: ShipPartCatalog, assembly: Dictionary) -> String:
+	var hull := catalog.resolve(assembly.get("hull", &"") as StringName)
+	var scanner := catalog.resolve(assembly.get("scanner", &"") as StringName)
+	var hull_name: String = hull.display_name if hull != null else String(assembly.get("hull", ""))
+	var scanner_name: String = scanner.display_name if scanner != null else String(assembly.get("scanner", ""))
+	var module_names: Array[String] = []
+	for module_value in assembly.get("modules", []):
+		var module := catalog.resolve(module_value as StringName)
+		module_names.append(module.display_name if module != null else String(module_value))
+	var text := "%s + %s" % [hull_name, scanner_name]
+	if not module_names.is_empty():
+		text += " + " + ", ".join(module_names)
+	return text
+
+func _on_builder_source_changed(_index: int) -> void:
+	_populate_builder_dynamic(_game_state())
+
+func _on_buy_part(part_id: StringName) -> void:
+	var source: Planet = _selected_option_planet(_builder_source)
+	if source != null and _ship_manager.buy_part(source, part_id):
+		_populate_builder_dynamic(_game_state())
+
+func _on_assemble_ship() -> void:
+	var source: Planet = _selected_option_planet(_builder_source)
+	if source == null or _builder_hull == null or _builder_scanner == null:
+		return
+	var hull_id := _builder_selected_part(_builder_hull)
+	var scanner_id := _builder_selected_part(_builder_scanner)
+	var module_ids: Array = []
+	for option in _builder_modules:
+		var module_id := _builder_selected_part(option)
+		if not String(module_id).is_empty():
+			module_ids.append(module_id)
+	_ship_manager.assemble_ship(source, hull_id, scanner_id, module_ids)
+	_populate_builder_dynamic(_game_state())
+
+func _on_disassemble_ship(ship_id: StringName) -> void:
+	var source: Planet = _selected_option_planet(_builder_source)
+	if source != null:
+		_ship_manager.disassemble_ship(source, ship_id)
+	_populate_builder_dynamic(_game_state())
 
 func _on_start_scout() -> void:
 	if _ship_manager == null or _scout_source == null or _scout_destination == null:

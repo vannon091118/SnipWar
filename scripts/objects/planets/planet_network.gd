@@ -21,11 +21,14 @@ var _destination_planets: Array[Node2D] = []
 var _ui: PlanetNetworkUI
 var _technology_menu: TechnologyMenu
 var _message_feed: MessageFeed
+var _context_menu: PopupMenu
+var _context_active_planet: Node2D
 var _line_phase := 0.0
 var _neighbor_cache: Dictionary = {}
 var _neighbor_cache_valid := false
 
 func _ready() -> void:
+	add_to_group("planet_network")
 	if get_parent() != null and get_parent().has_signal("layout_completed"):
 		var parent_node: Node = get_parent()
 		if not parent_node.is_connected("layout_completed", Callable(self, "_on_layout_completed")):
@@ -34,10 +37,12 @@ func _ready() -> void:
 		if child is Node2D and child.get("layout_size") != null:
 			_planets.append(child)
 			child.planet_selected.connect(_on_planet_selected)
+			child.planet_context_requested.connect(_on_planet_context_requested)
 			child.worker_count_changed.connect(_on_worker_count_changed)
 			child.workers_spawn_requested.connect(_on_workers_spawn_requested)
 	if not transit_config_identity_valid():
 		push_error("PlanetNetwork and WorkerManager must share the same TransitConfig resource")
+	_connect_map_camera.call_deferred()
 	_create_ui.call_deferred()
 
 func _on_layout_completed(_unused_planets: Array = []) -> void:
@@ -52,6 +57,7 @@ func _create_ui() -> void:
 	_ui.mission_selected.connect(_on_mission_selected)
 	_ui.amount_changed.connect(_on_amount_changed)
 	_ui.send_pressed.connect(_on_send_pressed)
+	_create_context_menu()
 	_create_technology_menu.call_deferred()
 	_create_message_feed.call_deferred()
 
@@ -72,6 +78,32 @@ func _draw() -> void:
 		route_color.a = route_alpha
 		for index in range(route_path.size() - 1):
 			draw_line(to_local(route_path[index]), to_local(route_path[index + 1]), route_color, theme.route_line_width, true)
+
+func _create_context_menu() -> void:
+	_context_menu = PopupMenu.new()
+	_context_menu.name = "PlanetContextMenu"
+	_context_menu.add_item("Planet öffnen", 0)
+	_context_menu.add_item("Angreifen", 1)
+	_context_menu.add_item("Sammeln", 2)
+	_context_menu.id_pressed.connect(_on_context_action)
+	_ui.add_child(_context_menu)
+
+func _on_planet_context_requested(planet: Node2D, screen_position: Vector2) -> void:
+	if _context_menu == null or not is_instance_valid(_context_menu):
+		return
+	_context_active_planet = planet
+	_context_menu.popup(Rect2(screen_position, Vector2.ZERO))
+
+func _on_context_action(id: int) -> void:
+	var planet: Node2D = _context_active_planet
+	_context_active_planet = null
+	if planet == null or not is_instance_valid(_ui):
+		return
+	if id == 1:
+		_ui.set_mission_type(GameState.MISSION_MILITARY)
+	elif id == 2:
+		_ui.set_mission_type(GameState.MISSION_COLLECT)
+	_on_planet_selected(planet)
 
 func _create_technology_menu() -> void:
 	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
@@ -108,10 +140,30 @@ func _on_panel_visibility_changed(is_visible: bool) -> void:
 func _on_workers_spawn_requested(source: Node2D, amount: int) -> void:
 	_worker_manager.call("_spawn_clusters", source, amount)
 
+func _connect_map_camera() -> void:
+	var camera: Node = get_tree().get_first_node_in_group("map_camera")
+	if camera != null and camera.has_signal("planet_drag_dropped") and not camera.planet_drag_dropped.is_connected(_on_planet_drag_dropped):
+		camera.planet_drag_dropped.connect(_on_planet_drag_dropped)
+
+func _on_planet_drag_dropped(source: Node2D, destination: Node2D) -> void:
+	if not is_instance_valid(_ui) or source == null or destination == null or source == destination:
+		return
+	_on_planet_selected(source)
+	var destination_index := _ui.index_of_destination(destination.name)
+	if destination_index >= 0:
+		_on_destination_selected(destination_index)
+
 func _on_planet_selected(planet: Node2D) -> void:
 	if not is_instance_valid(_ui):
 		return
+	if is_instance_valid(_active_planet) and _active_planet != planet:
+		var previous: Planet = _active_planet as Planet
+		if previous != null:
+			previous.set_selected(false)
 	_active_planet = planet
+	var selected_planet: Planet = planet as Planet
+	if selected_planet != null:
+		selected_planet.set_selected(true)
 	_destination_planets = get_mission_destinations(planet, _ui.selected_mission_type())
 	var default_destination := get_destination(planet)
 	_ui.show_planet(planet, _destination_planets, default_destination)

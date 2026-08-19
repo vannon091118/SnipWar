@@ -6,7 +6,9 @@ const DEFAULT_CONFIG: EconomyConfig = preload("res://resources/config/economy_de
 @export var economy_config: EconomyConfig = DEFAULT_CONFIG
 
 var _timer: Timer
+var _gather_timer: Timer
 var _enabled: bool = false
+var _gathering_enabled: bool = true
 var _manual_override: bool = false
 
 func _ready() -> void:
@@ -28,6 +30,13 @@ func _ready() -> void:
 	_timer.paused = not _enabled
 	if _enabled:
 		_timer.start()
+	_gather_timer = Timer.new()
+	_gather_timer.name = "GatherTimer"
+	_gather_timer.wait_time = resolved_config.tick_interval
+	_gather_timer.one_shot = false
+	_gather_timer.timeout.connect(_on_gather_tick)
+	add_child(_gather_timer)
+	_gather_timer.start()
 
 func set_enabled(enabled: bool) -> void:
 	_manual_override = true
@@ -41,6 +50,14 @@ func set_enabled(enabled: bool) -> void:
 func is_enabled() -> bool:
 	return _enabled
 
+func set_gathering_enabled(enabled: bool) -> void:
+	_gathering_enabled = enabled
+	if _gather_timer != null:
+		_gather_timer.paused = not enabled
+
+func is_gathering_enabled() -> bool:
+	return _gathering_enabled
+
 func tick_now() -> int:
 	var field: Node = get_parent()
 	if field == null:
@@ -52,9 +69,27 @@ func tick_now() -> int:
 			generated_total += planet.generate_economy_resources()
 	return generated_total
 
+func gather_now() -> int:
+	var state: Node = _game_state()
+	if state == null:
+		return 0
+	var field: Node = get_parent()
+	if field == null:
+		return 0
+	var base_amounts: Dictionary = {}
+	for child in field.get_children():
+		var planet: Planet = child as Planet
+		if planet != null:
+			base_amounts[planet.planet_id] = planet.get_size_profile().resource_base
+	return int(state.gather_income_tick(base_amounts))
+
 func _on_tick() -> void:
 	if _enabled:
 		tick_now()
+
+func _on_gather_tick() -> void:
+	if _gathering_enabled:
+		gather_now()
 
 func _on_technology_researched(_faction: StringName, _technology_id: StringName) -> void:
 	if _manual_override:

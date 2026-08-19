@@ -20,6 +20,42 @@ func set_worker_production_visible(visible: bool) -> void:
 	worker_production_visible = visible
 	_rebuild_worker_slots()
 
+func show_ship(hull_texture: Texture2D, scanner_texture: Texture2D, module_textures: Array[Texture2D]) -> void:
+	var builder: Node2D = get_node_or_null("FutureShipBuilder") as Node2D
+	if builder == null:
+		return
+	_clear_ship_visual(builder)
+	builder.visible = true
+	var config: ShipConfig = _ship_config if _ship_config != null else DEFAULT_SHIP_CONFIG
+	if hull_texture != null:
+		_add_ship_sprite(builder, "HullSprite", hull_texture, Vector2.ZERO, config.worker_visual_size * 2.0)
+	if scanner_texture != null:
+		_add_ship_sprite(builder, "ScannerSprite", scanner_texture, config.scanner_offset * 2.0, config.worker_visual_size)
+	for index in module_textures.size():
+		var lateral := (float(index) - float(module_textures.size() - 1) * 0.5) * config.hangar_slot_spacing
+		_add_ship_sprite(builder, "ModuleSprite_%d" % index, module_textures[index], Vector2(lateral, config.hangar_worker_offset.y), config.worker_visual_size)
+
+func hide_ship() -> void:
+	var builder: Node2D = get_node_or_null("FutureShipBuilder") as Node2D
+	if builder == null:
+		return
+	_clear_ship_visual(builder)
+	builder.visible = false
+
+func _clear_ship_visual(builder: Node2D) -> void:
+	for child in builder.get_children():
+		builder.remove_child(child)
+		child.queue_free()
+
+func _add_ship_sprite(builder: Node2D, sprite_name: String, texture: Texture2D, offset: Vector2, target_width: float) -> void:
+	var sprite := Sprite2D.new()
+	sprite.name = sprite_name
+	sprite.texture = texture
+	var texture_width: float = texture.get_width() if texture != null else 1.0
+	sprite.scale = Vector2.ONE * (target_width / maxf(texture_width, 1.0))
+	sprite.position = offset
+	builder.add_child(sprite)
+
 func _ready() -> void:
 	_rebuild_worker_slots()
 

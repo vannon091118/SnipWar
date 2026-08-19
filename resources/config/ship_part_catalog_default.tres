@@ -1,0 +1,81 @@
+[gd_resource type="Resource" script_class="ShipPartCatalog" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/ship_part_catalog.gd" id="1_catalog"]
+[ext_resource type="Script" path="res://scripts/config/ship_part_definition.gd" id="2_part"]
+[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_k.svg" id="3_hull_k"]
+[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_m.svg" id="4_hull_m"]
+[ext_resource type="Texture2D" path="res://assets/objects/satellites/planet_satellite.svg" id="5_scanner"]
+[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_03_metal.svg" id="6_armor"]
+[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_04_molten.svg" id="7_fuel"]
+[ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_01_rock.svg" id="8_cargo"]
+
+[sub_resource type="Resource" id="Part_hull_t1"]
+script = ExtResource("2_part")
+id = &"hull_t1"
+slot_type = &"hull"
+display_name = "Aufklärungsrumpf T1"
+description = "Leichter Standard-Rumpf für Scout-Schiffe."
+cost_resource = &"material"
+cost_amount = 5
+tier = 1
+visual_asset = ExtResource("3_hull_k")
+
+[sub_resource type="Resource" id="Part_hull_t2"]
+script = ExtResource("2_part")
+id = &"hull_t2"
+slot_type = &"hull"
+display_name = "Mehrzweckrumpf T2"
+description = "Verstärkter Rumpf für größere Aufbauten."
+cost_resource = &"material"
+cost_amount = 10
+tier = 2
+visual_asset = ExtResource("4_hull_m")
+
+[sub_resource type="Resource" id="Part_scanner_t1"]
+script = ExtResource("2_part")
+id = &"scanner_t1"
+slot_type = &"scanner"
+display_name = "Scanner-Drohne T1"
+description = "Kartografiert bei Ankunft einen unbekannten Planeten."
+cost_resource = &"energy"
+cost_amount = 6
+tier = 1
+visual_asset = ExtResource("5_scanner")
+
+[sub_resource type="Resource" id="Part_module_armor"]
+script = ExtResource("2_part")
+id = &"module_armor"
+slot_type = &"module"
+display_name = "Panzermodul"
+description = "Zusätzliche Hüllenpanzerung für das Schiff."
+cost_resource = &"material"
+cost_amount = 4
+tier = 1
+visual_asset = ExtResource("6_armor")
+
+[sub_resource type="Resource" id="Part_module_fuel"]
+script = ExtResource("2_part")
+id = &"module_fuel"
+slot_type = &"module"
+display_name = "Treibstoffmodul"
+description = "Erweiterter Tank für längere Routen."
+cost_resource = &"volatile"
+cost_amount = 4
+tier = 1
+visual_asset = ExtResource("7_fuel")
+
+[sub_resource type="Resource" id="Part_module_cargo"]
+script = ExtResource("2_part")
+id = &"module_cargo"
+slot_type = &"module"
+display_name = "Frachtmodul"
+description = "Zusätzlicher Laderaum für Versorgungsmissionen."
+cost_resource = &"material"
+cost_amount = 4
+tier = 1
+visual_asset = ExtResource("8_cargo")
+
+[resource]
+script = ExtResource("1_catalog")
+max_module_slots = 2
+parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t2"), SubResource("Part_scanner_t1"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo")]

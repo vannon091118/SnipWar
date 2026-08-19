@@ -7,10 +7,10 @@ const DEFAULT_DETAIL_PROFILE: PlanetDetailProfile = preload("res://resources/con
 const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_default.tres")
 
 signal planet_selected(planet: Node2D)
+signal planet_context_requested(planet: Node2D, screen_position: Vector2)
 signal workers_spawn_requested(planet: Node2D, amount: int)
 signal worker_count_changed(planet: Node2D, count: int)
 signal worker_production_changed(planet: Node2D, enabled: bool)
-signal collection_started(planet: Node2D, amount: int)
 
 enum WorkerState { IDLE, SPAWNING }
 
@@ -59,13 +59,13 @@ var layout_size: String = "variable":
 
 var worker_state: WorkerState = WorkerState.IDLE
 var worker_count := 0
-var gathering_worker_count: int = 0
 var _worker_spawn_enabled: bool = false
 var _spawn_timer: Timer
 var _detail_seed := 0
 var _planet_ready := false
 var _initial_workers_applied := false
 var _strength_label: Label
+var _selected: bool = false
 
 const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
 const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/transformer_default.tres")
@@ -97,8 +97,17 @@ func _ready() -> void:
 	queue_redraw()
 
 func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_index: int) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			# Left press is left unhandled so the MapCamera can distinguish a
+			# drag-from-planet (dispatch) from a pan on empty space.
+			planet_selected.emit(self)
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			planet_context_requested.emit(self, event.position)
+			get_viewport().set_input_as_handled()
+	elif event is InputEventScreenTouch and event.pressed:
 		planet_selected.emit(self)
+		get_viewport().set_input_as_handled()
 
 func _ensure_spawn_timer() -> void:
 	if is_instance_valid(_spawn_timer):
@@ -142,7 +151,6 @@ func generate_economy_resources() -> int:
 
 func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 	set_worker_spawn_enabled(false)
-	gathering_worker_count = 0
 	var details: PlanetDetails = _details if is_instance_valid(_details) else get_node_or_null("PlanetDetails") as PlanetDetails
 	if details != null:
 		details.clear_upgrade_structures()
@@ -205,9 +213,6 @@ func _spawn_count() -> int:
 func get_build_slot_count() -> int:
 	return maxi(_active_size_profile().build_slot_count, 1)
 
-func get_gathering_worker_count() -> int:
-	return gathering_worker_count
-
 func can_build_workers() -> bool:
 	var state: Node = _game_state()
 	if state == null:
@@ -247,13 +252,13 @@ func resolve_arrival(source_faction: StringName, amount: int) -> StringName:
 	register_workers(incoming - defenders)
 	return ARRIVAL_CAPTURED
 
-func resolve_mission(source_faction: StringName, amount: int, mission_type: StringName = &"military") -> StringName:
+func resolve_mission(source_faction: StringName, amount: int, mission_type: StringName = &"military", source_planet_id: StringName = &"") -> StringName:
 	if mission_type == GameState.MISSION_COLONY:
 		return _resolve_colony(source_faction, amount)
 	if mission_type == GameState.MISSION_CARGO:
 		return _resolve_cargo(source_faction, amount)
 	if mission_type == GameState.MISSION_COLLECT:
-		return _resolve_collect(source_faction, amount)
+		return _resolve_collect(source_faction, amount, source_planet_id)
 	return resolve_arrival(source_faction, amount)
 
 func _resolve_colony(source_faction: StringName, amount: int) -> StringName:
@@ -275,7 +280,7 @@ func _resolve_cargo(source_faction: StringName, amount: int) -> StringName:
 	register_workers(incoming)
 	return ARRIVAL_FRIENDLY
 
-func _resolve_collect(source_faction: StringName, amount: int) -> StringName:
+func _resolve_collect(source_faction: StringName, amount: int, source_planet_id: StringName = &"") -> StringName:
 	var incoming: int = maxi(amount, 0)
 	if incoming <= 0 or source_faction.is_empty() or source_faction == GameState.FACTION_NEUTRAL:
 		return ARRIVAL_REJECTED
@@ -284,12 +289,30 @@ func _resolve_collect(source_faction: StringName, amount: int) -> StringName:
 	var state: Node = _game_state()
 	if state == null:
 		return ARRIVAL_REJECTED
-	var collected: int = state.collect_resources_for_planet(source_faction, planet_id, incoming, _active_size_profile().resource_base)
-	if collected <= 0:
+	var registered: int = state.register_gathering_workers(source_faction, planet_id, incoming, source_planet_id)
+	if registered <= 0:
 		return ARRIVAL_REJECTED
-	gathering_worker_count += incoming
-	collection_started.emit(self, incoming)
 	return ARRIVAL_COLLECTED
+
+func recall_gathering_workers(faction: StringName, amount: int) -> int:
+	var state: Node = _game_state()
+	if state == null:
+		return 0
+	var source_id: StringName = state.get_gathering_source(faction, planet_id) as StringName
+	var withdrawn: int = state.withdraw_gathering_workers(faction, planet_id, amount)
+	if withdrawn <= 0:
+		return 0
+	if String(source_id).is_empty():
+		return withdrawn
+	var field: Node = get_parent()
+	if field == null:
+		return withdrawn
+	for child in field.get_children():
+		var candidate := child as Planet
+		if candidate != null and candidate.planet_id == source_id:
+			candidate.register_workers(withdrawn)
+			break
+	return withdrawn
 
 func get_transfer_speed_multiplier() -> float:
 	var state: Node = _game_state()
@@ -358,6 +381,15 @@ func _process(_delta: float) -> void:
 		if not is_equal_approx(_strength_label.scale.x, desired_scale):
 			_strength_label.scale = Vector2.ONE * desired_scale
 
+func set_selected(selected: bool) -> void:
+	if _selected == selected:
+		return
+	_selected = selected
+	queue_redraw()
+
+func is_selected() -> bool:
+	return _selected
+
 func _draw() -> void:
 	if Engine.is_editor_hint():
 		return
@@ -366,6 +398,8 @@ func _draw() -> void:
 		return
 	var ring_color: Color = DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", get_faction())
 	draw_arc(Vector2.ZERO, ring_radius, 0.0, TAU, 64, ring_color, DEFAULT_TRANSFORMER_CONFIG.faction_ring_width, true)
+	if _selected:
+		draw_arc(Vector2.ZERO, ring_radius + DEFAULT_TRANSFORMER_CONFIG.selection_ring_margin, 0.0, TAU, 64, DEFAULT_TRANSFORMER_CONFIG.selection_ring_color, DEFAULT_TRANSFORMER_CONFIG.selection_ring_width, true)
 
 func _faction_ring_radius() -> float:
 	if not is_instance_valid(_sprite) or _sprite.texture == null:
