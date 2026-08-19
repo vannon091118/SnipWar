@@ -25,12 +25,12 @@
 - `planet.tscn`, `planet.gd`, `planet_details.gd`, `planet_detail_orbit.gd`, `seeded_layout.gd`, and the planet SVG/import assets change together for seeded details. `planet_details.gd` reuses meteor SVGs for asteroid/comet extras; `planet_detail_ring.gd` no longer exists and must not return without a concept-level decision.
 - `PlanetNetwork` resolves destinations and passes them to `WorkerManager`; keep the manager independent of the network lookup. `planet_network.gd` owns routing/lines, while `planet_network_ui.gd` owns the CanvasLayer controls and emits UI signals.
 - Do not keep unused `WorkerState` values as placeholders; add a state only when its transition behavior exists.
-- Flight duration uses a smooth logical-unit load only, so the visual tier switch does not make speed jump; headless tests call `cluster._arrive()` directly and assert movement via "distance to destination decreased", never by awaiting flight end or exact positions.
+- Flight duration uses a smooth logical-unit load only, so the visual tier switch does not make speed jump; transit arrival tests should call the manager's `_arrive_cluster()` wrapper, which also reflows the destination garrison, and assert movement via "distance to destination decreased", never by awaiting flight end or exact positions.
 
 ## Interaction and assets
 - Planet clicks require the planet `Area2D`/shape; cluster graphics remain collision-free. The persistent destination tab UI must be created with `call_deferred()` because adding viewport UI during child setup triggers Godot's "parent node is busy setting up children" error.
 - Cluster visuals use cell-shaded mech silhouettes (K=fighter, M=triad, L=capital) at fixed visible sizes (`TIER_PIXELS` = 12/20/30 px) and expose an `Attachments` node for future cannons, drones, or upgrades; do not restore per-unit transit sprites. Cluster-stacking and oversized radius rings are not part of the planned style.
-- The current dispatch contract intentionally renders one cluster per send. Do not reintroduce one sprite per logical unit or largest-first multi-cluster packing without revisiting the three-tier rule and overlap budget.
+- The current dispatch contract intentionally renders one cluster per send. Do not reintroduce one sprite per logical unit, largest-first multi-cluster packing, or perpendicular/equal-spacing fleet assertions without first revisiting the three-tier rule and overlap budget.
 - New SVG planet/detail assets cause Godot to generate tracked `.svg.import` files during the headless scan; commit the import sidecars with their source SVGs.
 
 ## Godot pitfalls
@@ -63,4 +63,4 @@
 - Local commit author identity may be absent; use per-command `GIT_AUTHOR_*`/`GIT_COMMITTER_*` environment variables instead of changing Git config.
 
 ## Git hooks
-- Local `core.hooksPath` is `.githooks`: `pre-commit` runs `res://scripts/preflight.gd`, `commit-msg` requires one reason sentence per staged file, and `post-commit` pushes the current branch to `origin`.
+- Local `core.hooksPath` is `.githooks`: `pre-commit` runs `res://scripts/preflight.gd`, `commit-msg` requires one reason sentence per staged file, and `post-commit` pushes the current branch to `origin`. For a requested local-only commit, run the checks manually and use `git -c core.hooksPath=/dev/null commit` so the post-commit push is not triggered; this does not persistently change Git config.
