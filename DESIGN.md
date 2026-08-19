@@ -424,7 +424,7 @@ Flottenkontakt wird zunächst über Transitfortschritt, Ziel und Pfadsegmente er
 ### 16.10 Phase 7 — Integration und Freigabe
 
 - `ScenarioDefinition` erhält zunächst Feature-Flags für `fleet_battles` und `conquest`; `default` bleibt bis zum erfolgreichen Slice auf `false`.
-- Jede Phase ergänzt eine neue `_constraint_*()`-Funktion in `preflight.gd`; keine bestehende Constraint wird mit globalem Reset umgangen.
+- Jede Phase ergänzt eine neue `PreflightConstraintX`-Klasse in `scripts/preflight/` (registriert im `_ConstraintScripts`-Array von `preflight.gd`); keine bestehende Constraint wird mit globalem Reset umgangen.
 - Die Reihenfolge der Constraints bleibt deterministisch; der gemeinsame `GameState` wird nur an expliziten Übergabepunkten verändert.
 - Main-Scene-Smoke-Test, Preflight, `git diff --check` und ein kurzer Runtime-Profiler-Lauf werden vor Aktivierung eines Flags ausgeführt.
 - Bei wachsender Anzahl sichtbarer Minions wird erst gemessen; für niedrige Battle-/Conquest-Kontingente bleiben normale Child-Nodes die lesbarere Lösung. Pooling oder `MultiMeshInstance2D` sind Optimierungen, keine Simulationsabhängigkeiten.
