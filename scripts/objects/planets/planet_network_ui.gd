@@ -9,37 +9,44 @@ signal panel_visibility_changed(visible: bool)
 signal destination_selected(index: int)
 signal mission_selected(mission_type: StringName)
 signal amount_changed(value: float)
-signal send_pressed
+signal send_pressed()
 
 var _theme_config: UIThemeConfig = DEFAULT_THEME
 var _upgrade_catalog: PlanetUpgradeCatalog = DEFAULT_UPGRADE_CATALOG
 var _count_labels: Dictionary = {}
 var _current_active_planet: Node2D
+var _panel_open: bool = false
+var _branch_expanded: Dictionary = {
+	&"economy": true,
+	&"military": false,
+	&"tech": false,
+	&"infrastructure": false
+}
 
 @onready var _ui_root: Control = get_node_or_null("PlanetTabUI")
 @onready var _vault_bar: PanelContainer = get_node_or_null("PlanetTabUI/VaultBar")
 @onready var _vault_label: RichTextLabel = get_node_or_null("PlanetTabUI/VaultBar/VaultMargin/VaultLabel")
 @onready var _tab_button: Button = get_node_or_null("PlanetTabUI/PlanetTab")
 @onready var _panel: PanelContainer = get_node_or_null("PlanetTabUI/PlanetPanel")
-@onready var _heading_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/HeadingLabel")
-@onready var _selected_planet_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/SelectedPlanetLabel")
-@onready var _faction_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/FactionLabel")
-@onready var _resource_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/ResourceLabel")
-@onready var _selected_count_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/SelectedCountLabel")
-@onready var _destination_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/DestinationHeading")
-@onready var _destination_option: OptionButton = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/DestinationSelect")
-@onready var _mission_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/MissionHeading")
-@onready var _mission_option: OptionButton = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/MissionSelect")
-@onready var _send_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/SendHeading")
-@onready var _amount_slider: HSlider = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/AmountSlider")
-@onready var _preview_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/PreviewLabel")
-@onready var _send_button: Button = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/SendButton")
-@onready var _upgrade_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/UpgradeHeading")
-@onready var _upgrade_list: VBoxContainer = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/UpgradeScroll/UpgradeList")
-@onready var _units_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/UnitsHeading")
-@onready var _count_list: VBoxContainer = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/ScrollContainer/CountList")
+@onready var _heading_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/HeadingLabel")
+@onready var _selected_planet_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SelectedPlanetLabel")
+@onready var _faction_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/FactionLabel")
+@onready var _resource_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/ResourceLabel")
+@onready var _selected_count_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SelectedCountLabel")
+@onready var _destination_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/DestinationHeading")
+@onready var _destination_option: OptionButton = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/DestinationSelect")
+@onready var _mission_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/MissionHeading")
+@onready var _mission_option: OptionButton = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/MissionSelect")
+@onready var _send_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SendHeading")
+@onready var _amount_slider: HSlider = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/AmountSlider")
+@onready var _preview_label: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/PreviewLabel")
+@onready var _send_button: Button = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SendButton")
+@onready var _upgrade_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/UpgradeHeading")
+@onready var _upgrade_list: VBoxContainer = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/UpgradeScroll/UpgradeList")
+@onready var _units_heading: Label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/UnitsHeading")
+@onready var _count_list: VBoxContainer = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/ScrollContainer/CountList")
 @onready var _margin: MarginContainer = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer")
-@onready var _content: VBoxContainer = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content")
+@onready var _content: VBoxContainer = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content")
 
 func setup(planets: Array[Node2D], theme_config: UIThemeConfig = null) -> void:
 	layer = 50
@@ -47,6 +54,7 @@ func setup(planets: Array[Node2D], theme_config: UIThemeConfig = null) -> void:
 	_ensure_node_references()
 	_apply_theme()
 	_setup_missions()
+	_set_panel_open(false)
 	_connect_internal_signals()
 	_populate_units_list(planets)
 	_connect_game_state_signals()
@@ -66,43 +74,43 @@ func _ensure_node_references() -> void:
 	if _panel == null:
 		_panel = get_node_or_null("PlanetTabUI/PlanetPanel")
 	if _heading_label == null:
-		_heading_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/HeadingLabel")
+		_heading_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/HeadingLabel")
 	if _selected_planet_label == null:
-		_selected_planet_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/SelectedPlanetLabel")
+		_selected_planet_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SelectedPlanetLabel")
 	if _faction_label == null:
-		_faction_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/FactionLabel")
+		_faction_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/FactionLabel")
 	if _resource_label == null:
-		_resource_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/ResourceLabel")
+		_resource_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/ResourceLabel")
 	if _selected_count_label == null:
-		_selected_count_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/SelectedCountLabel")
+		_selected_count_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SelectedCountLabel")
 	if _destination_heading == null:
-		_destination_heading = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/DestinationHeading")
+		_destination_heading = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/DestinationHeading")
 	if _destination_option == null:
-		_destination_option = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/DestinationSelect")
+		_destination_option = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/DestinationSelect")
 	if _mission_heading == null:
-		_mission_heading = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/MissionHeading")
+		_mission_heading = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/MissionHeading")
 	if _mission_option == null:
-		_mission_option = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/MissionSelect")
+		_mission_option = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/MissionSelect")
 	if _send_heading == null:
-		_send_heading = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/SendHeading")
+		_send_heading = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SendHeading")
 	if _amount_slider == null:
-		_amount_slider = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/AmountSlider")
+		_amount_slider = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/AmountSlider")
 	if _preview_label == null:
-		_preview_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/PreviewLabel")
+		_preview_label = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/PreviewLabel")
 	if _send_button == null:
-		_send_button = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/SendButton")
+		_send_button = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SendButton")
 	if _upgrade_heading == null:
-		_upgrade_heading = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/UpgradeHeading")
+		_upgrade_heading = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/UpgradeHeading")
 	if _upgrade_list == null:
-		_upgrade_list = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/UpgradeScroll/UpgradeList")
+		_upgrade_list = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/UpgradeScroll/UpgradeList")
 	if _units_heading == null:
-		_units_heading = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/UnitsHeading")
+		_units_heading = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/UnitsHeading")
 	if _count_list == null:
-		_count_list = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content/ScrollContainer/CountList")
+		_count_list = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/ScrollContainer/CountList")
 	if _margin == null:
 		_margin = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer")
 	if _content == null:
-		_content = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/Content")
+		_content = get_node_or_null("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content")
 
 func _setup_missions() -> void:
 	if _mission_option == null:
@@ -124,6 +132,8 @@ func _connect_game_state_signals() -> void:
 		state.faction_resources_changed.connect(_on_faction_resources_changed)
 	if not state.planet_upgraded.is_connected(_on_planet_upgraded):
 		state.planet_upgraded.connect(_on_planet_upgraded)
+	if not state.catalog_reset.is_connected(_on_catalog_reset):
+		state.catalog_reset.connect(_on_catalog_reset)
 
 func _on_faction_resources_changed(faction: StringName, _resource_id: StringName, _new_amount: int) -> void:
 	# The vault bar and affordability only concern the player faction; ignore CPU ticks
@@ -131,12 +141,17 @@ func _on_faction_resources_changed(faction: StringName, _resource_id: StringName
 	if faction != GameState.FACTION_PLAYER:
 		return
 	_update_vault_display()
-	if _current_active_planet != null and _panel != null and _panel.visible:
+	if is_instance_valid(_current_active_planet) and _panel != null and _panel.visible:
 		_refresh_upgrade_list(_current_active_planet)
 
 func _on_planet_upgraded(planet_id: StringName, _upgrade_id: StringName) -> void:
 	_update_vault_display()
-	if _current_active_planet != null and _panel != null and _panel.visible and _current_active_planet.get("planet_id") == planet_id:
+	if is_instance_valid(_current_active_planet) and _panel != null and _panel.visible and _current_active_planet.get("planet_id") == planet_id:
+		_refresh_upgrade_list(_current_active_planet)
+
+func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
+	_update_vault_display()
+	if is_instance_valid(_current_active_planet) and _panel != null and _panel.visible:
 		_refresh_upgrade_list(_current_active_planet)
 
 func _update_vault_display() -> void:
@@ -164,58 +179,81 @@ func _resource_segment(label: String, amount: int, resource_id: StringName) -> S
 	return "[color=%s]%s: %d[/color]" % [_theme_config.resource_color(resource_id).to_html(false), label, amount]
 
 func _apply_theme() -> void:
-	if _tab_button != null:
-		_tab_button.add_theme_font_size_override("font_size", _theme_config.tab_font_size)
-		_tab_button.add_theme_color_override("font_color", _theme_config.tab_text_color)
-
 	if _panel != null:
-		var panel_style := StyleBoxFlat.new()
-		panel_style.bg_color = _theme_config.panel_background
-		panel_style.border_color = _theme_config.panel_border
-		panel_style.border_width_left = _theme_config.panel_border_width
-		panel_style.border_width_top = _theme_config.panel_border_width
-		panel_style.border_width_right = _theme_config.panel_border_width
-		panel_style.border_width_bottom = _theme_config.panel_border_width
-		panel_style.corner_radius_top_left = _theme_config.panel_corner_radius
-		panel_style.corner_radius_top_right = _theme_config.panel_corner_radius
-		panel_style.corner_radius_bottom_left = _theme_config.panel_corner_radius
-		panel_style.corner_radius_bottom_right = _theme_config.panel_corner_radius
-		_panel.add_theme_stylebox_override("panel", panel_style)
+		_panel.add_theme_stylebox_override("panel", _style_box(_theme_config.panel_background, _theme_config.panel_border, _theme_config.panel_border_width, _theme_config.panel_corner_radius))
+	if _vault_bar != null:
+		_vault_bar.add_theme_stylebox_override("panel", _style_box(_theme_config.panel_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+	if _tab_button != null:
+		_tab_button.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+		_tab_button.add_theme_color_override("font_color", _theme_config.tab_text_color)
+		_tab_button.add_theme_stylebox_override("normal", _style_box(_theme_config.button_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+		_tab_button.add_theme_stylebox_override("hover", _style_box(_theme_config.button_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+		_tab_button.add_theme_stylebox_override("pressed", _style_box(_theme_config.button_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
 
 	if _margin != null:
 		_margin.add_theme_constant_override("margin_left", _theme_config.content_margin_left)
 		_margin.add_theme_constant_override("margin_top", _theme_config.content_margin_top)
 		_margin.add_theme_constant_override("margin_right", _theme_config.content_margin_right)
 		_margin.add_theme_constant_override("margin_bottom", _theme_config.content_margin_bottom)
-
 	if _content != null:
 		_content.add_theme_constant_override("separation", _theme_config.content_separation)
-
+	if _vault_label != null:
+		_vault_label.add_theme_font_size_override("normal_font_size", _theme_config.small_font_size)
 	if _heading_label != null:
-		_heading_label.add_theme_font_size_override("font_size", _theme_config.heading_font_size)
-		_heading_label.add_theme_color_override("font_color", _theme_config.heading_text_color)
-
+		_heading_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+		_heading_label.add_theme_color_override("font_color", _theme_config.muted_text_color)
 	if _selected_planet_label != null:
+		_selected_planet_label.add_theme_font_size_override("font_size", _theme_config.panel_title_font_size)
 		_selected_planet_label.add_theme_color_override("font_color", _theme_config.selected_planet_text_color)
-
+	if _faction_label != null:
+		_faction_label.add_theme_font_size_override("font_size", _theme_config.body_font_size)
+	if _resource_label != null:
+		_resource_label.add_theme_font_size_override("font_size", _theme_config.body_font_size)
 	if _selected_count_label != null:
-		_selected_count_label.add_theme_font_size_override("font_size", _theme_config.selected_count_font_size)
+		_selected_count_label.add_theme_font_size_override("font_size", _theme_config.body_font_size)
 		_selected_count_label.add_theme_color_override("font_color", _theme_config.selected_count_text_color)
-
-	if _destination_heading != null:
-		_destination_heading.add_theme_color_override("font_color", _theme_config.secondary_text_color)
-
-	if _send_heading != null:
-		_send_heading.add_theme_color_override("font_color", _theme_config.heading_text_color)
-
+	var headings: Array[Label] = [_destination_heading, _mission_heading, _send_heading, _upgrade_heading, _units_heading]
+	for heading in headings:
+		if heading != null:
+			heading.add_theme_font_size_override("font_size", _theme_config.section_font_size)
+			heading.add_theme_color_override("font_color", _theme_config.heading_text_color)
+	var input_controls: Array[Control] = [_destination_option, _mission_option]
+	for input_control in input_controls:
+		if input_control != null:
+			input_control.add_theme_font_size_override("font_size", _theme_config.body_font_size)
+			input_control.add_theme_stylebox_override("normal", _style_box(_theme_config.input_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
+			input_control.add_theme_stylebox_override("hover", _style_box(_theme_config.input_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+			input_control.add_theme_stylebox_override("pressed", _style_box(_theme_config.input_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
 	if _preview_label != null:
+		_preview_label.add_theme_font_size_override("font_size", _theme_config.body_font_size)
 		_preview_label.add_theme_color_override("font_color", _theme_config.selected_count_text_color)
-
-	if _units_heading != null:
-		_units_heading.add_theme_color_override("font_color", _theme_config.heading_text_color)
-
+	if _send_button != null:
+		_send_button.add_theme_font_size_override("font_size", _theme_config.body_font_size)
+		_send_button.add_theme_stylebox_override("normal", _style_box(_theme_config.button_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+		_send_button.add_theme_stylebox_override("hover", _style_box(_theme_config.button_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+		_send_button.add_theme_stylebox_override("disabled", _style_box(_theme_config.button_disabled_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
+	if _upgrade_list != null:
+		_upgrade_list.add_theme_constant_override("separation", _theme_config.list_separation)
 	if _count_list != null:
 		_count_list.add_theme_constant_override("separation", _theme_config.list_separation)
+
+func _style_box(background: Color, border: Color = Color.TRANSPARENT, border_width: int = 0, radius: int = 0) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = background
+	style.border_color = border
+	style.border_width_left = border_width
+	style.border_width_top = border_width
+	style.border_width_right = border_width
+	style.border_width_bottom = border_width
+	style.corner_radius_top_left = radius
+	style.corner_radius_top_right = radius
+	style.corner_radius_bottom_left = radius
+	style.corner_radius_bottom_right = radius
+	style.content_margin_left = float(_theme_config.card_padding)
+	style.content_margin_top = float(_theme_config.card_padding)
+	style.content_margin_right = float(_theme_config.card_padding)
+	style.content_margin_bottom = float(_theme_config.card_padding)
+	return style
 
 func _connect_internal_signals() -> void:
 	if _tab_button != null and not _tab_button.pressed.is_connected(_toggle_panel):
@@ -247,10 +285,9 @@ func _populate_units_list(planets: Array[Node2D]) -> void:
 func show_planet(planet: Node2D, destinations: Array[Node2D], default_destination: Node2D) -> void:
 	_ensure_node_references()
 	_current_active_planet = planet
-	_panel.visible = true
-	_tab_button.set_pressed_no_signal(true)
+	_set_panel_open(true)
 	_apply_responsive_layout()
-	_selected_planet_label.text = "Planet: %s" % planet.name
+	_selected_planet_label.text = planet.name.to_upper()
 
 	var state: Node = get_tree().root.get_node_or_null("GameState")
 	var planet_id: StringName = planet.get("planet_id") if planet.get("planet_id") != null else &""
@@ -278,30 +315,24 @@ func show_planet(planet: Node2D, destinations: Array[Node2D], default_destinatio
 				break
 
 	_refresh_upgrade_list(planet)
+	call_deferred("_apply_responsive_layout")
 
 func _refresh_upgrade_list(planet: Node2D) -> void:
 	if _upgrade_list == null:
 		return
 	for child in _upgrade_list.get_children():
+		_upgrade_list.remove_child(child)
 		child.queue_free()
 
 	var state: Node = get_tree().root.get_node_or_null("GameState")
-	if state == null or _upgrade_catalog == null:
+	if state == null or _upgrade_catalog == null or not is_instance_valid(planet):
 		return
 
 	var planet_id: StringName = planet.get("planet_id") if planet.get("planet_id") != null else &""
 	var unlocked_upgrades: Array[StringName] = state.get_planet_upgrades(planet_id)
 	var is_player_owned: bool = state.owns(planet_id, &"a")
-
-	# Group upgrades by branch
-	var branch_order := [&"economy", &"military", &"tech", &"infrastructure"]
-	var branch_colors := {
-		&"economy": Color(0.3, 0.8, 0.4),
-		&"military": Color(0.9, 0.3, 0.3),
-		&"tech": Color(0.4, 0.6, 0.9),
-		&"infrastructure": Color(0.8, 0.6, 0.2)
-	}
-	var branch_titles := {
+	var branch_order: Array[StringName] = [&"economy", &"military", &"tech", &"infrastructure"]
+	var branch_titles: Dictionary = {
 		&"economy": "WIRTSCHAFT",
 		&"military": "MILITÄR",
 		&"tech": "TECHNOLOGIE",
@@ -312,77 +343,114 @@ func _refresh_upgrade_list(planet: Node2D) -> void:
 		var branch_upgrades: Array[PlanetUpgradeDefinition] = _upgrade_catalog.get_upgrades_for_branch(branch)
 		if branch_upgrades.is_empty():
 			continue
+		var expanded: bool = bool(_branch_expanded.get(branch, false))
+		var branch_button := Button.new()
+		branch_button.text = ("▾  " if expanded else "▸  ") + String(branch_titles.get(branch, String(branch).capitalize()))
+		branch_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		branch_button.flat = true
+		branch_button.focus_mode = Control.FOCUS_NONE
+		branch_button.custom_minimum_size = Vector2(0.0, _theme_config.section_row_height)
+		branch_button.add_theme_font_size_override("font_size", _theme_config.section_font_size)
+		branch_button.add_theme_color_override("font_color", _theme_config.branch_color(branch))
+		branch_button.add_theme_color_override("font_hover_color", _theme_config.branch_color(branch).lightened(0.15))
+		branch_button.pressed.connect(Callable(self, "_on_branch_toggled").bind(branch))
+		_upgrade_list.add_child(branch_button)
 
-		# Branch header
-		var branch_header := HBoxContainer.new()
-		branch_header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var branch_label := Label.new()
-		branch_label.text = "▸ %s" % branch_titles.get(branch, branch.capitalize())
-		branch_label.add_theme_font_size_override("font_size", 14)
-		branch_label.add_theme_color_override("font_color", branch_colors.get(branch, Color.WHITE))
-		branch_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		branch_header.add_child(branch_label)
-		_upgrade_list.add_child(branch_header)
-
-		# Separator line
-		var sep := HSeparator.new()
-		sep.add_theme_color_override("separation_color", branch_colors.get(branch, Color.WHITE))
-		_upgrade_list.add_child(sep)
-
-		# Upgrades in this branch
+		if not expanded:
+			continue
 		for upgrade in branch_upgrades:
 			if upgrade == null:
 				continue
-			var row := HBoxContainer.new()
-			row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-			var is_unlocked := unlocked_upgrades.has(upgrade.id)
+			var is_unlocked: bool = unlocked_upgrades.has(upgrade.id)
 			var can_buy: bool = is_player_owned and state.can_purchase_upgrade(planet_id, upgrade.id, _upgrade_catalog, int(planet.get("worker_count")))
+			_upgrade_list.add_child(_create_upgrade_row(planet_id, upgrade, is_unlocked, can_buy))
 
-			var info_label := Label.new()
-			info_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			var trait_text := ""
-			if upgrade.trait_definition != null:
-				var traits: Array[String] = []
-				if upgrade.trait_definition.production_boost > 0.0:
-					traits.append("Prod: +%d%%" % int(upgrade.trait_definition.production_boost * 100))
-				if upgrade.trait_definition.worker_spawn_bonus > 0:
-					traits.append("Spawn: +%d" % upgrade.trait_definition.worker_spawn_bonus)
-				if upgrade.trait_definition.cluster_tier_bonus > 0:
-					traits.append("Tier: +%d" % upgrade.trait_definition.cluster_tier_bonus)
-				if upgrade.trait_definition.defense_rating > 0:
-					traits.append("Def: +%d" % upgrade.trait_definition.defense_rating)
-				if upgrade.trait_definition.perimeter_slots_bonus > 0:
-					traits.append("Slots: +%d" % upgrade.trait_definition.perimeter_slots_bonus)
-				if upgrade.trait_definition.range_bonus > 0.0:
-					traits.append("Reichw: +%d" % int(upgrade.trait_definition.range_bonus))
-				if upgrade.trait_definition.transfer_speed_multiplier > 1.0:
-					traits.append("Speed: x%.1f" % upgrade.trait_definition.transfer_speed_multiplier)
-				if not String(upgrade.trait_definition.maintenance_cost_resource).is_empty() and upgrade.trait_definition.maintenance_cost_amount > 0:
-					traits.append("Unterhalt: %d %s" % [upgrade.trait_definition.maintenance_cost_amount, upgrade.trait_definition.maintenance_cost_resource])
-				if not traits.is_empty():
-					trait_text = " [%s]" % ", ".join(traits)
+func _on_branch_toggled(branch: StringName) -> void:
+	_branch_expanded[branch] = not bool(_branch_expanded.get(branch, false))
+	if is_instance_valid(_current_active_planet):
+		_refresh_upgrade_list(_current_active_planet)
+		call_deferred("_apply_responsive_layout")
 
-			var cost_text: String = "Gekauft" if is_unlocked else "%d %s" % [upgrade.cost_amount, upgrade.cost_resource]
-			if not is_unlocked and upgrade.cost_workers > 0:
-				cost_text += " + %d Arbeiter" % upgrade.cost_workers
-			info_label.text = "%s: %s%s" % [upgrade.display_name, cost_text, trait_text]
-			info_label.add_theme_color_override("font_color", Color(0.4, 0.9, 0.4) if is_unlocked else Color(0.8, 0.8, 0.8))
-			info_label.tooltip_text = upgrade.description
-			row.add_child(info_label)
+func _create_upgrade_row(planet_id: StringName, upgrade: PlanetUpgradeDefinition, is_unlocked: bool, can_buy: bool) -> PanelContainer:
+	var row := PanelContainer.new()
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_theme_stylebox_override("panel", _style_box(_theme_config.card_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
+	row.tooltip_text = upgrade.description
 
-			if not is_unlocked:
-				var buy_btn := Button.new()
-				buy_btn.text = "Bauen"
-				buy_btn.disabled = not can_buy
-				buy_btn.pressed.connect(Callable(self, "_on_buy_upgrade_pressed").bind(planet_id, upgrade.id))
-				row.add_child(buy_btn)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", _theme_config.card_padding)
+	margin.add_theme_constant_override("margin_top", _theme_config.card_padding)
+	margin.add_theme_constant_override("margin_right", _theme_config.card_padding)
+	margin.add_theme_constant_override("margin_bottom", _theme_config.card_padding)
+	var content := HBoxContainer.new()
+	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.add_theme_constant_override("separation", _theme_config.content_separation)
 
-			_upgrade_list.add_child(row)
+	var info := VBoxContainer.new()
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var name_label := Label.new()
+	name_label.text = upgrade.display_name
+	name_label.add_theme_font_size_override("font_size", _theme_config.body_font_size)
+	name_label.add_theme_color_override("font_color", _theme_config.selected_count_text_color if is_unlocked else _theme_config.accent_text_color)
+	info.add_child(name_label)
+	var detail_label := Label.new()
+	detail_label.text = _upgrade_cost_text(upgrade, is_unlocked)
+	var trait_text := _upgrade_trait_text(upgrade)
+	if not trait_text.is_empty():
+		detail_label.text += "\n" + trait_text
+	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	detail_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+	detail_label.add_theme_color_override("font_color", _theme_config.muted_text_color)
+	info.add_child(detail_label)
+	content.add_child(info)
+
+	if not is_unlocked:
+		var buy_button := Button.new()
+		buy_button.text = "BAUEN"
+		buy_button.disabled = not can_buy
+		buy_button.focus_mode = Control.FOCUS_NONE
+		buy_button.custom_minimum_size = Vector2(62.0, 0.0)
+		buy_button.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+		buy_button.add_theme_stylebox_override("normal", _style_box(_theme_config.button_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
+		buy_button.add_theme_stylebox_override("hover", _style_box(_theme_config.button_hover_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
+		buy_button.add_theme_stylebox_override("disabled", _style_box(_theme_config.button_disabled_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
+		buy_button.pressed.connect(Callable(self, "_on_buy_upgrade_pressed").bind(planet_id, upgrade.id))
+		content.add_child(buy_button)
+
+	margin.add_child(content)
+	row.add_child(margin)
+	return row
+
+func _upgrade_cost_text(upgrade: PlanetUpgradeDefinition, is_unlocked: bool) -> String:
+	if is_unlocked:
+		return "FREIGESCHALTET"
+	var result := "%d %s" % [upgrade.cost_amount, String(upgrade.cost_resource).capitalize()]
+	if upgrade.cost_workers > 0:
+		result += "  ·  %d Arbeiter" % upgrade.cost_workers
+	return result
+
+func _upgrade_trait_text(upgrade: PlanetUpgradeDefinition) -> String:
+	if upgrade.trait_definition == null:
+		return ""
+	var traits: Array[String] = []
+	var trait_data: TraitDefinition = upgrade.trait_definition
+	if trait_data.production_boost > 0.0:
+		traits.append("Produktion +%d%%" % int(trait_data.production_boost * 100.0))
+	if trait_data.worker_spawn_bonus > 0:
+		traits.append("Nachschub +%d" % trait_data.worker_spawn_bonus)
+	if trait_data.cluster_tier_bonus > 0:
+		traits.append("Flotten-Tier +%d" % trait_data.cluster_tier_bonus)
+	if trait_data.defense_rating > 0:
+		traits.append("Verteidigung +%d" % trait_data.defense_rating)
+	if trait_data.transfer_speed_multiplier > 1.0:
+		traits.append("Transit x%.1f" % trait_data.transfer_speed_multiplier)
+	if not String(trait_data.maintenance_cost_resource).is_empty() and trait_data.maintenance_cost_amount > 0:
+		traits.append("Unterhalt %d %s" % [trait_data.maintenance_cost_amount, String(trait_data.maintenance_cost_resource).capitalize()])
+	return " · ".join(traits)
 
 func _on_buy_upgrade_pressed(planet_id: StringName, upgrade_id: StringName) -> void:
 	var state: Node = get_tree().root.get_node_or_null("GameState")
-	if state == null or _current_active_planet == null:
+	if state == null or not is_instance_valid(_current_active_planet):
 		return
 	var upgrade: PlanetUpgradeDefinition = _upgrade_catalog.resolve(upgrade_id)
 	if upgrade == null:
@@ -392,6 +460,8 @@ func _on_buy_upgrade_pressed(planet_id: StringName, upgrade_id: StringName) -> v
 		return
 	if upgrade.cost_workers > 0:
 		_current_active_planet.call("unregister_workers", upgrade.cost_workers)
+	_refresh_upgrade_list(_current_active_planet)
+	call_deferred("_apply_responsive_layout")
 
 func set_selected_count(count: int) -> void:
 	_ensure_node_references()
@@ -436,7 +506,7 @@ func set_preview(text: String) -> void:
 	_preview_label.text = text
 
 func is_panel_visible() -> bool:
-	return is_instance_valid(_panel) and _panel.visible
+	return _panel_open and is_instance_valid(_panel) and _panel.visible
 
 func toggle_panel() -> void:
 	_toggle_panel()
@@ -480,28 +550,59 @@ func _apply_responsive_layout() -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
 		return
-	var panel_width := clampf(
+	var panel_width: float = clampf(
 		viewport_size.x * _theme_config.panel_width_ratio,
 		_theme_config.panel_min_width,
 		_theme_config.panel_max_width
 	)
-	_tab_button.offset_left = -panel_width
-	_tab_button.offset_top = _theme_config.edge_margin
-	_tab_button.offset_right = -_theme_config.edge_margin
-	_tab_button.offset_bottom = _theme_config.edge_margin + _theme_config.tab_height
-	_panel.offset_left = -panel_width
-	_panel.offset_top = _theme_config.edge_margin + _theme_config.tab_height + _theme_config.panel_gap
-	_panel.offset_right = -_theme_config.edge_margin
-	_panel.offset_bottom = -_theme_config.edge_margin
+	var minimum_panel_width: float = _panel.get_combined_minimum_size().x
+	panel_width = maxf(panel_width, minimum_panel_width)
+	var edge: float = _theme_config.edge_margin
+	var panel_left: float = viewport_size.x - panel_width - edge
+
+	# Keep the resource HUD centered in the map area instead of underneath the panel.
+	if _vault_bar != null:
+		var available_vault_width: float = maxf(0.0, panel_left - edge * 2.0)
+		var vault_width: float = minf(_theme_config.resource_bar_max_width, available_vault_width)
+		_vault_bar.visible = vault_width > 0.0
+		if _vault_bar.visible:
+			var vault_left: float = maxf(edge, (panel_left - vault_width) * 0.5)
+			_vault_bar.offset_left = vault_left
+			_vault_bar.offset_top = edge
+			_vault_bar.offset_right = vault_left + vault_width
+			_vault_bar.offset_bottom = edge + _theme_config.resource_bar_height
+
+	# The tab is a compact handle, not a second full-width title bar.
+	_tab_button.offset_left = -_theme_config.tab_width - edge
+	_tab_button.offset_top = edge
+	_tab_button.offset_right = -edge
+	_tab_button.offset_bottom = edge + _theme_config.tab_height
+	_panel.offset_left = -panel_width - edge
+	_panel.offset_top = edge + _theme_config.tab_height + _theme_config.panel_gap
+	_panel.offset_right = -edge
+	_panel.offset_bottom = -edge
 
 func _on_viewport_size_changed() -> void:
 	_apply_responsive_layout()
 
 func _toggle_panel() -> void:
+	_set_panel_open(not _panel_open)
+
+func _set_panel_open(open: bool) -> void:
 	_ensure_node_references()
-	_panel.visible = not _panel.visible
-	_tab_button.set_pressed_no_signal(_panel.visible)
-	panel_visibility_changed.emit(_panel.visible)
+	_panel_open = open
+	if _panel != null:
+		_panel.visible = open
+		_panel.mouse_filter = Control.MOUSE_FILTER_STOP if open else Control.MOUSE_FILTER_IGNORE
+	if _tab_button != null:
+		_tab_button.set_pressed_no_signal(open)
+		_tab_button.text = "‹  SCHLIESSEN" if open else "PLANETEN  ›"
+	panel_visibility_changed.emit(open)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE and _panel_open:
+		_set_panel_open(false)
+		get_viewport().set_input_as_handled()
 
 func _on_destination_selected(index: int) -> void:
 	destination_selected.emit(index)

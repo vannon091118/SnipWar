@@ -72,6 +72,8 @@ func _ready() -> void:
 			state.register_planet(planet_id, faction)
 			if not state.faction_changed.is_connected(_on_faction_changed):
 				state.faction_changed.connect(_on_faction_changed)
+			if not state.catalog_reset.is_connected(_on_catalog_reset):
+				state.catalog_reset.connect(_on_catalog_reset)
 			if not state.planet_upgraded.is_connected(_on_planet_upgraded):
 				state.planet_upgraded.connect(_on_planet_upgraded)
 	_sync_groups()
@@ -99,6 +101,11 @@ func _on_spawn_timer() -> void:
 	if state != null and is_inside_tree() and not Engine.is_editor_hint():
 		state.generate_resources_for_planet(planet_id, DEFAULT_UPGRADE_CATALOG, _active_size_profile().resource_base)
 	worker_state = WorkerState.IDLE
+
+func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
+	var details: PlanetDetails = _details if is_instance_valid(_details) else get_node_or_null("PlanetDetails") as PlanetDetails
+	if details != null:
+		details.clear_upgrade_structures()
 
 func _on_planet_upgraded(changed_planet_id: StringName, upgrade_id: StringName) -> void:
 	if changed_planet_id != planet_id:
@@ -219,6 +226,17 @@ func get_transfer_speed_multiplier() -> float:
 		if def != null and def.trait_definition != null:
 			multiplier *= def.trait_definition.transfer_speed_multiplier
 	return multiplier
+
+func get_cluster_tier_bonus() -> int:
+	var state: Node = _game_state()
+	if state == null:
+		return 0
+	var bonus := 0
+	for up_id in state.get_planet_upgrades(planet_id):
+		var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
+		if def != null and def.trait_definition != null:
+			bonus += def.trait_definition.cluster_tier_bonus
+	return maxi(bonus, 0)
 
 func register_workers(amount: int) -> void:
 	worker_count += maxi(amount, 0)

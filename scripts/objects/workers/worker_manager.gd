@@ -20,6 +20,7 @@ func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_
 	var source_position := source.global_position
 	var destination_position := destination.global_position
 	var source_faction: StringName = source.get_faction()
+	var cluster_tier_bonus: int = source.get_cluster_tier_bonus()
 	var resolved_path: Array[Vector2] = route_path if route_path.size() >= 2 else [source_position, destination_position]
 	var distance := _path_distance(resolved_path)
 	var duration := _FlightTime.seconds_for(distance, dispatch_count, transit_config, source.get_transfer_speed_multiplier())
@@ -27,7 +28,7 @@ func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_
 
 	var direction := (destination_position - source_position).normalized()
 	var perpendicular := Vector2(-direction.y, direction.x)
-	var spacing := _formation_spacing(groups)
+	var spacing := _formation_spacing(groups, cluster_tier_bonus)
 	var offsets := _formation_offsets(groups.size(), direction, perpendicular, spacing)
 	for index in groups.size():
 		var cluster: WorkerCluster = CLUSTER_SCENE.instantiate()
@@ -36,7 +37,7 @@ func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_
 		for point in resolved_path:
 			offset_path.append(point + offsets[index])
 		var offset_distance: float = _path_distance(offset_path)
-		cluster.configure_transit(offset_path[0], destination, groups[index], source_faction, transit_config, mission_type)
+		cluster.configure_transit(offset_path[0], destination, groups[index], source_faction, transit_config, mission_type, cluster_tier_bonus)
 		var tween: Tween = cluster.create_tween()
 		for point_index in range(1, offset_path.size()):
 			var segment_distance: float = offset_path[point_index - 1].distance_to(offset_path[point_index])
@@ -59,13 +60,13 @@ func _formation_offsets(count: int, direction: Vector2, perpendicular: Vector2, 
 		offsets.append(perpendicular * lateral - direction * depth)
 	return offsets
 
-func _formation_spacing(groups: Array[int]) -> float:
-	return _cluster_radius(groups) * 2.0 * transit_config.overlap_budget
+func _formation_spacing(groups: Array[int], tier_bonus: int = 0) -> float:
+	return _cluster_radius(groups, tier_bonus) * 2.0 * transit_config.overlap_budget
 
-func _cluster_radius(groups: Array[int]) -> float:
+func _cluster_radius(groups: Array[int], tier_bonus: int = 0) -> float:
 	var max_width := 0.0
 	for group in groups:
-		max_width = maxf(max_width, WorkerCluster.pixel_width(group, transit_config))
+		max_width = maxf(max_width, WorkerCluster.pixel_width(group, transit_config, tier_bonus))
 	return max_width * 0.5
 
 func _path_distance(path: Array[Vector2]) -> float:

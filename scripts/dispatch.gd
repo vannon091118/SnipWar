@@ -24,10 +24,21 @@ static func cluster_groups(unit_count: int, config: TransitConfig = null) -> Arr
 			remaining -= tier.capacity
 	return groups
 
-static func cluster_tier(unit_count: int, config: TransitConfig = null) -> StringName:
-	var definition := cluster_definition(unit_count, config)
+static func cluster_tier(unit_count: int, config: TransitConfig = null, tier_bonus: int = 0) -> StringName:
+	var definition := cluster_definition(unit_count, config, tier_bonus)
 	return definition.id if definition != null else &""
 
-static func cluster_definition(unit_count: int, config: TransitConfig = null) -> ClusterTierDefinition:
+static func cluster_definition(unit_count: int, config: TransitConfig = null, tier_bonus: int = 0) -> ClusterTierDefinition:
 	var resolved_config: TransitConfig = config if config != null else DEFAULT_CONFIG
-	return resolved_config.tier_for_amount(maxi(1, unit_count))
+	var tiers := resolved_config.tiers_ascending_display_limit()
+	if tiers.is_empty():
+		return null
+	var target := maxi(unit_count, 1)
+	var selected_index := tiers.size() - 1
+	for index in tiers.size():
+		if target <= tiers[index].display_max_units:
+			selected_index = index
+			break
+	var resolved_bonus := maxi(tier_bonus, 0)
+	selected_index = mini(selected_index + resolved_bonus, tiers.size() - 1)
+	return tiers[selected_index]

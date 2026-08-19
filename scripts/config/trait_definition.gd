@@ -21,4 +21,6 @@ func validate() -> PackedStringArray:
 		errors.append("trait id is empty")
 	if display_name.is_empty():
 		errors.append("trait display_name is empty")
+	if cluster_tier_bonus < 0:
+		errors.append("trait cluster_tier_bonus cannot be negative")
 	return errors

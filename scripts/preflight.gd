@@ -23,6 +23,10 @@ func _init() -> void:
 		return
 	if not _check(_Dispatch.cluster_tier(4) == &"k" and _Dispatch.cluster_tier(5) == &"m" and _Dispatch.cluster_tier(99) == &"m" and _Dispatch.cluster_tier(100) == &"l", "cluster tier boundaries are wrong"):
 		return
+	if not _check(_Dispatch.cluster_tier(1, null, 1) == &"m" and _Dispatch.cluster_tier(5, null, 1) == &"l" and _Dispatch.cluster_tier(100, null, 1) == &"l", "cluster tier bonus does not unlock heavier visible tiers"):
+		return
+	if not _check(_Dispatch.cluster_tier(1, null, -1) == &"k", "negative cluster tier bonus should not lower a tier"):
+		return
 	if not _check(_Dispatch.amount_range(3) == Vector2i(1, 3), "dispatch range for three units is wrong"):
 		return
 	if not _check(_Dispatch.amount_range(1) == Vector2i(1, 1), "dispatch range for one unit is wrong"):
@@ -309,6 +313,12 @@ func _init() -> void:
 	var panel_width: float = panel.size.x
 	if not _check(panel_width >= ui_theme_config.panel_min_width - 0.1 and panel_width <= ui_theme_config.panel_max_width + 0.1, "responsive UI panel width is outside the configured range (got %f)" % panel_width):
 		return
+	var vault_bar: PanelContainer = ui.get_node("PlanetTabUI/VaultBar") as PanelContainer
+	var panel_scroll: ScrollContainer = panel.get_node("MarginContainer/PanelScroll") as ScrollContainer
+	if not _check(vault_bar != null and vault_bar.global_position.x + vault_bar.size.x <= panel.global_position.x + 0.1, "resource HUD overlaps the planet panel"):
+		return
+	if not _check(panel_scroll != null and panel_scroll.vertical_scroll_mode == ScrollContainer.SCROLL_MODE_AUTO, "planet panel does not provide a scrollable menu"):
+		return
 	var amount_slider: HSlider = ui.get_amount_slider()
 	var preview_label: Label = ui.get_preview_label()
 	if not _check(is_instance_valid(amount_slider) and is_instance_valid(preview_label), "dispatch slider or preview is missing"):
@@ -363,11 +373,20 @@ func _init() -> void:
 	await process_frame
 	if not _check(preview_label.text != preview_at_one and _flight_seconds(preview_label.text) > _flight_seconds(preview_at_one), "dispatch preview does not update live"):
 		return
-	ui.toggle_panel()
-	if not _check(not panel.visible, "planet tab did not close"):
+	var panel_tab: Button = ui.get_node("PlanetTabUI/PlanetTab") as Button
+	if not _check(panel_tab != null and panel_tab.text == "‹  SCHLIESSEN", "open panel tab state is wrong"):
 		return
 	ui.toggle_panel()
-	if not _check(panel.visible, "planet tab did not reopen"):
+	if not _check(not panel.visible and panel_tab.text == "PLANETEN  ›", "planet tab did not close"):
+		return
+	var escape_event := InputEventKey.new()
+	escape_event.keycode = KEY_ESCAPE
+	escape_event.pressed = true
+	ui.call("_unhandled_input", escape_event)
+	if not _check(not panel.visible, "escape should keep the closed panel closed"):
+		return
+	ui.toggle_panel()
+	if not _check(panel.visible and panel_tab.text == "‹  SCHLIESSEN", "planet tab did not reopen"):
 		return
 	var line_phase: float = network.get_line_phase()
 	await create_timer(0.2).timeout
@@ -568,6 +587,8 @@ func _init() -> void:
 		return
 	if not _check(colony_shipyard.exclusive_with == &"war_shipyard" and war_shipyard.exclusive_with == &"colony_shipyard", "colony_shipyard and war_shipyard should be mutually exclusive"):
 		return
+	if not _check(war_shipyard.trait_definition != null and war_shipyard.trait_definition.cluster_tier_bonus == 1, "war_shipyard should unlock one heavier cluster tier"):
+		return
 
 	# Test tech branch: tech_center -> weapon_lab/armor_lab
 	var tech_center := upgrade_catalog.resolve(&"tech_center")
@@ -578,6 +599,8 @@ func _init() -> void:
 	if not _check(weapon_lab.parent_upgrade_id == &"tech_center" and armor_lab.parent_upgrade_id == &"tech_center", "tech tier 2 should require tech_center"):
 		return
 	if not _check(weapon_lab.exclusive_with == &"armor_lab" and armor_lab.exclusive_with == &"weapon_lab", "weapon_lab and armor_lab should be mutually exclusive"):
+		return
+	if not _check(weapon_lab.trait_definition != null and weapon_lab.trait_definition.cluster_tier_bonus == 1, "weapon_lab should unlock one heavier cluster tier"):
 		return
 
 	# Test infrastructure branch: orbital_station -> colony_hub -> trade_network
@@ -637,17 +660,21 @@ func _init() -> void:
 		return
 
 	# Test trait effects on resource generation
-	# Extractor gives +50% production_boost, refinery gives +100% but -2 energy maintenance
+	# Extractor gives +50% production_boost, refinery gives +100% but -2 energy maintenance.
 	game_state.call("deal_resources", planet_catalog, preload("res://resources/config/resource_pool_default.tres"), world_config.layout_seed)
+	var energy_before_generation: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy")
+	var generated_resource: StringName = game_state.resource_of(player_homeworld)
 	var generated: int = game_state.generate_resources_for_planet(player_homeworld, upgrade_catalog)
-	# Base 1 * (1 + 0.5 + 1.0) = 2.5 -> 2, minus 2 energy maintenance = net energy change
+	# Base 1 * (1 + 0.5 + 1.0) = 2.5 -> 2; the generated resource may itself be energy.
 	if not _check(generated >= 2, "resource generation with traits should apply production boost"):
 		return
 
-	# Verify maintenance cost was deducted (refinery has 2 energy maintenance)
+	# Verify maintenance cost was deducted without assuming the homeworld's dealt resource.
 	var energy_after_gen: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy")
-	# Should have lost 2 energy from maintenance (extractor 15 + refinery maintenance 2)
-	if not _check(energy_after_gen <= initial_energy - 15 - 2, "maintenance cost should be deducted during generation"):
+	var expected_energy_after_generation: int = energy_before_generation - 2
+	if generated_resource == &"energy":
+		expected_energy_after_generation += generated
+	if not _check(energy_after_gen == expected_energy_after_generation, "maintenance cost should be deducted during generation"):
 		return
 
 	# Test defense traits on arrival resolution
@@ -740,6 +767,41 @@ func _init() -> void:
 	if not _check(game_state.can_purchase_upgrade(player_homeworld, &"shipyard", upgrade_catalog, 2), "shipyard must be buyable with 2 workers"):
 		return
 
+	# Test source traits flowing into visible dispatch tiers
+	var upgrade_planet: Planet = null
+	for planet_child in field.get_children():
+		if planet_child is Planet and (planet_child as Planet).planet_id == player_homeworld:
+			upgrade_planet = planet_child as Planet
+			break
+	if not _check(upgrade_planet != null and upgrade_planet.get_cluster_tier_bonus() == 0, "planet cluster tier bonus should start at zero"):
+		return
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"biomass", 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"material", 100)
+	if not _check(game_state.purchase_upgrade(player_homeworld, &"shipyard", upgrade_catalog), "shipyard purchase for tier bonus test should succeed"):
+		return
+	if not _check(game_state.purchase_upgrade(player_homeworld, &"war_shipyard", upgrade_catalog), "war_shipyard purchase for tier bonus test should succeed"):
+		return
+	var source_tier_bonus: int = upgrade_planet.get_cluster_tier_bonus()
+	if not _check(source_tier_bonus == 1, "war_shipyard bonus did not reach the source planet"):
+		return
+	if not _check(_Dispatch.cluster_tier(5, transit_config, source_tier_bonus) == &"l", "source tier bonus did not reach visible dispatch tier"):
+		return
+	var bonus_route: Array[Vector2] = [upgrade_planet.global_position, mission_cpu.global_position]
+	manager.call("_dispatch_clusters", upgrade_planet, mission_cpu, 1, bonus_route, GameState.MISSION_MILITARY)
+	var bonus_cluster: WorkerCluster = null
+	for manager_child in manager.get_children():
+		if manager_child is WorkerCluster:
+			bonus_cluster = manager_child as WorkerCluster
+			break
+	if not _check(bonus_cluster != null and bonus_cluster.cluster_tier_bonus == source_tier_bonus, "worker manager did not pass the source tier bonus"):
+		return
+	var bonus_sprite: Sprite2D = bonus_cluster.get_node_or_null("Sprite2D") as Sprite2D
+	var expected_bonus_tier: ClusterTierDefinition = _Dispatch.cluster_definition(1, transit_config, source_tier_bonus)
+	if not _check(bonus_sprite != null and expected_bonus_tier != null and bonus_sprite.texture == expected_bonus_tier.texture, "worker cluster did not render the bonus tier"):
+		return
+	bonus_cluster.queue_free()
+	await process_frame
+
 	# --- RESOURCE BASE FROM SIZE PROFILE ---
 	var profile_base: int = 1
 	if mission_source != null and mission_source.planet_id == player_homeworld:
@@ -754,6 +816,26 @@ func _init() -> void:
 	var base_generated: int = game_state.generate_resources_for_planet(player_homeworld, upgrade_catalog, profile_base)
 	if not _check(base_generated >= profile_base, "resource generation should honor the size profile resource_base (base %d, got %d)" % [profile_base, base_generated]):
 		return
+
+	# Resetting GameState must also remove visual upgrade structures from existing planets.
+	var reset_visual_planet: Planet = null
+	for planet_child in field.get_children():
+		if planet_child is Planet and (planet_child as Planet).planet_id == player_homeworld:
+			reset_visual_planet = planet_child as Planet
+			break
+	if not _check(reset_visual_planet != null, "planet for upgrade structure reset test is missing"):
+		return
+	var reset_details: PlanetDetails = reset_visual_planet.get_node_or_null("PlanetDetails") as PlanetDetails
+	if not _check(reset_details != null and reset_details.get_node_or_null("UpgradeStructure_extractor") != null, "upgrade structure was not created before reset"):
+		return
+	game_state.reset_from_catalog(planet_catalog)
+	if not _check(reset_details.get_node_or_null("UpgradeStructure_extractor") == null, "GameState reset left a stale upgrade structure"):
+		return
+	if not _check(game_state.purchase_upgrade(player_homeworld, &"extractor", upgrade_catalog), "upgrade could not be repurchased after reset"):
+		return
+	if not _check(reset_details.get_node_or_null("UpgradeStructure_extractor") != null, "upgrade structure was not recreated in the same frame"):
+		return
+	await process_frame
 
 	print("PASS: SnipWar preflight")
 	quit()

@@ -32,6 +32,26 @@ extends Resource
 @export_range(0.1, 20.0, 0.1) var route_line_width: float
 @export_range(0, 32, 1) var panel_border_width: int
 @export_range(0, 64, 1) var panel_corner_radius: int
+@export_range(240.0, 1000.0, 1.0) var resource_bar_max_width: float = 560.0
+@export_range(24.0, 80.0, 1.0) var resource_bar_height: float = 34.0
+@export_range(80.0, 240.0, 1.0) var tab_width: float = 126.0
+@export_range(8, 48, 1) var body_font_size: int = 13
+@export_range(8, 48, 1) var small_font_size: int = 11
+@export_range(8, 48, 1) var section_font_size: int = 12
+@export_range(8, 64, 1) var panel_title_font_size: int = 20
+@export_range(0, 24, 1) var card_padding: int = 10
+@export_range(20.0, 64.0, 1.0) var section_row_height: float = 30.0
+@export var card_background: Color = Color(0.045, 0.07, 0.13, 0.96)
+@export var input_background: Color = Color(0.025, 0.04, 0.08, 0.98)
+@export var input_hover_background: Color = Color(0.08, 0.13, 0.2, 0.98)
+@export var button_background: Color = Color(0.08, 0.28, 0.34, 0.98)
+@export var button_hover_background: Color = Color(0.12, 0.42, 0.48, 0.98)
+@export var button_disabled_background: Color = Color(0.08, 0.1, 0.14, 0.92)
+@export var muted_text_color: Color = Color(0.52, 0.63, 0.72, 1.0)
+@export var branch_economy_color: Color = Color(0.3, 0.85, 0.5, 1.0)
+@export var branch_military_color: Color = Color(1.0, 0.38, 0.34, 1.0)
+@export var branch_tech_color: Color = Color(0.42, 0.65, 1.0, 1.0)
+@export var branch_infrastructure_color: Color = Color(1.0, 0.72, 0.28, 1.0)
 
 # Ressourcen-Signatur-Farben (nie hardcoded im Code — immer via Config)
 @export var resource_color_energy: Color = Color(0.3, 0.9, 1.0)
@@ -49,6 +69,14 @@ func resource_color(resource_id: StringName) -> Color:
 		&"volatile": return resource_color_volatile
 		_:           return accent_text_color
 
+func branch_color(branch: StringName) -> Color:
+	match branch:
+		&"economy": return branch_economy_color
+		&"military": return branch_military_color
+		&"tech": return branch_tech_color
+		&"infrastructure": return branch_infrastructure_color
+		_: return accent_text_color
+
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
 	if panel_width_ratio <= 0.0:
@@ -63,6 +91,12 @@ func validate() -> PackedStringArray:
 		errors.append("UI separations cannot be negative")
 	if panel_border_width < 0 or panel_corner_radius < 0:
 		errors.append("UI panel style values cannot be negative")
+	if resource_bar_max_width <= 0.0 or resource_bar_height <= 0.0 or tab_width <= 0.0:
+		errors.append("UI HUD dimensions must be positive")
+	if body_font_size < 1 or small_font_size < 1 or section_font_size < 1 or panel_title_font_size < 1:
+		errors.append("UI font sizes must be positive")
+	if card_padding < 0 or section_row_height <= 0.0:
+		errors.append("UI card spacing values are invalid")
 	if route_line_alpha < 0.0 or route_line_alpha > 1.0 or route_line_pulse_alpha < 0.0 or route_line_alpha + route_line_pulse_alpha > 1.0:
 		errors.append("UI route line alpha values are invalid")
 	if route_line_pulse_speed < 0.0 or route_line_width <= 0.0:

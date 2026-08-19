@@ -22,13 +22,17 @@ func tiers_ascending_capacity() -> Array[ClusterTierDefinition]:
 	result.reverse()
 	return result
 
-func tier_for_amount(amount: int) -> ClusterTierDefinition:
-	var target := maxi(amount, 1)
-	var tiers: Array[ClusterTierDefinition] = []
+func tiers_ascending_display_limit() -> Array[ClusterTierDefinition]:
+	var result: Array[ClusterTierDefinition] = []
 	for tier in cluster_tiers:
 		if tier != null:
-			tiers.append(tier)
-	tiers.sort_custom(Callable(self, "_sort_ascending_display_limit"))
+			result.append(tier)
+	result.sort_custom(Callable(self, "_sort_ascending_display_limit"))
+	return result
+
+func tier_for_amount(amount: int) -> ClusterTierDefinition:
+	var target := maxi(amount, 1)
+	var tiers := tiers_ascending_display_limit()
 	for tier in tiers:
 		if target <= tier.display_max_units:
 			return tier

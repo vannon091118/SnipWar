@@ -12,6 +12,7 @@ const DEFAULT_RESOURCE_POOL: ResourcePool = preload("res://resources/config/reso
 const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
 
 signal faction_changed(planet_id: StringName, old_faction: StringName, new_faction: StringName)
+signal catalog_reset(catalog: PlanetCatalog)
 signal faction_resources_changed(faction: StringName, resource_id: StringName, new_amount: int)
 signal planet_upgraded(planet_id: StringName, upgrade_id: StringName)
 signal resource_generated(planet_id: StringName, resource_id: StringName, amount: int)
@@ -45,14 +46,14 @@ func reset_from_catalog(catalog: PlanetCatalog) -> void:
 	_planet_resources.clear()
 	_planet_upgrades.clear()
 	_reset_vaults()
-	if catalog == null:
-		return
-	for definition in catalog.planets:
-		if definition == null:
-			continue
-		_ownership[definition.planet_id] = definition.faction
-		if definition.planet_role == &"homeworld" and (definition.faction == FACTION_PLAYER or definition.faction == FACTION_CPU):
-			_homeworlds[definition.faction] = definition.planet_id
+	if catalog != null:
+		for definition in catalog.planets:
+			if definition == null:
+				continue
+			_ownership[definition.planet_id] = definition.faction
+			if definition.planet_role == &"homeworld" and (definition.faction == FACTION_PLAYER or definition.faction == FACTION_CPU):
+				_homeworlds[definition.faction] = definition.planet_id
+	catalog_reset.emit(catalog)
 
 func _reset_vaults() -> void:
 	_faction_vaults = {

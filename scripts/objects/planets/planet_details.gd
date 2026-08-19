@@ -90,6 +90,12 @@ func _shuffle(values: Array[StringName], rng: RandomNumberGenerator) -> void:
 		values[index] = values[swap_index]
 		values[swap_index] = value
 
+func clear_upgrade_structures() -> void:
+	for child in get_children():
+		if child.name.begins_with("UpgradeStructure_"):
+			remove_child(child)
+			child.queue_free()
+
 func add_upgrade_structure(upgrade: PlanetUpgradeDefinition, tint: Color = Color.WHITE) -> void:
 	if upgrade == null or upgrade.visual_asset == null:
 		return
