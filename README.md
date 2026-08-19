@@ -63,7 +63,7 @@ SnipWar setzt auf kontrastreiche Farben, reduzierte Formen und kleine Bewegungen
 - deterministische Galaxiekarte mit zehn Planeten
 - unterschiedliche Weltgrößen und Rollen
 - zwei Fraktionszuordnungen auf der Karte
-- automatische Arbeiter-Spawns mit Live-Zähler
+- automatische Cluster-Spawns mit Live-Zähler
 - auswählbare Ziele und benachbarte Routen
 - animierte Meteore und Toxic-Orbit
 - Headless-Preflight für die wichtigsten Systemschnittstellen

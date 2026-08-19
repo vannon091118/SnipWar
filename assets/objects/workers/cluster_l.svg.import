@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c4gs53cif7y4t"
-path="res://.godot/imported/worker.svg-b1734d355ab8e6d122816e47b3ba2c2d.ctex"
+uid="uid://dqd60ufhmbjn6"
+path="res://.godot/imported/cluster_l.svg-f6d9942e2fedb2d0f77cc68c6c325282.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/objects/workers/worker.svg"
-dest_files=["res://.godot/imported/worker.svg-b1734d355ab8e6d122816e47b3ba2c2d.ctex"]
+source_file="res://assets/objects/workers/cluster_l.svg"
+dest_files=["res://.godot/imported/cluster_l.svg-f6d9942e2fedb2d0f77cc68c6c325282.ctex"]
 
 [params]
 

@@ -10,11 +10,13 @@ var _observed_amount := -1
 func _init() -> void:
 	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 1), 10.0), "flight time baseline is wrong"):
 		return
-	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 2), 15.0), "flight time linear slowdown is wrong"):
+	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 2), 13.0), "flight time unit load is wrong"):
 		return
-	if not _check(is_equal_approx(_FlightTime.seconds_for(20.0, 5), 48.0), "flight time damped slowdown is wrong"):
+	if not _check(is_equal_approx(_FlightTime.seconds_for(20.0, 5), 24.8), "flight time medium cluster load is wrong"):
 		return
-	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 10), 37.0), "flight time monotonic slowdown is wrong"):
+	if not _check(_FlightTime.seconds_for(10.0, 6) > _FlightTime.seconds_for(10.0, 5), "flight time cluster transition is wrong"):
+		return
+	if not _check(_Dispatch.cluster_groups(3) == [1, 1, 1] and _Dispatch.cluster_groups(5) == [5] and _Dispatch.cluster_groups(7) == [5, 1, 1] and _Dispatch.cluster_groups(105) == [100, 5], "cluster packing thresholds are wrong"):
 		return
 	if not _check(_Dispatch.amount_range(3) == Vector2i(1, 3), "dispatch range for three units is wrong"):
 		return
@@ -70,21 +72,21 @@ func _init() -> void:
 	if not _check(source.worker_count == 3 and large_planet.worker_count == 2 and variable_planet.worker_count == 1, "planet worker counts are wrong"):
 		return
 
-	var worker_script: Script = preload("res://scripts/objects/workers/worker.gd")
-	var workers: Array[Node] = []
+	var cluster_script: Script = preload("res://scripts/objects/workers/worker_cluster.gd")
+	var clusters: Array[Node] = []
 	for child in manager.get_children():
-		if child.get_script() == worker_script:
-			workers.append(child)
-	if not _check(workers.size() == 6, "worker spawn totals are wrong"):
+		if child.get_script() == cluster_script:
+			clusters.append(child)
+	if not _check(clusters.size() == 6, "cluster spawn totals are wrong"):
 		return
 	var source_count_label: Label = ui.get_count_label(source)
 	if not _check(source_count_label.text == "%s: 3" % source.name, "planet tab count is not live"):
 		return
-	var worker_position: Vector2 = workers[0].global_position
+	var cluster_position: Vector2 = clusters[0].global_position
 	await create_timer(0.2).timeout
-	if not _check(workers[0].global_position == worker_position, "worker moves autonomously"):
+	if not _check(clusters[0].global_position == cluster_position, "garrison cluster moves autonomously"):
 		return
-	workers[0].queue_free()
+	clusters[0].queue_free()
 	await process_frame
 	if not _check(source.worker_count == 2 and source_count_label.text == "%s: 2" % source.name, "worker removal did not update planet count"):
 		return
@@ -160,13 +162,13 @@ func _init() -> void:
 	network.call("_on_destination_selected", destination_index)
 	if not _check(network.get_destination(source) == destination and panel.visible, "destination route was not stored"):
 		return
-	manager.call("_spawn_workers", source, destination, 1)
+	manager.call("_spawn_clusters", source, 1)
 	await process_frame
-	var newest_worker: Node
+	var newest_cluster: WorkerCluster
 	for child in manager.get_children():
-		if child.get_script() == worker_script:
-			newest_worker = child
-	if not _check(newest_worker.destination_planet == destination, "worker destination was not assigned"):
+		if child.get_script() == cluster_script:
+			newest_cluster = child
+	if not _check(newest_cluster.get_unit_count() == 1 and newest_cluster.is_registered_at(source), "garrison cluster was not assigned"):
 		return
 	var send_button: Button = ui.get_send_button()
 	if not _check(is_instance_valid(send_button) and not send_button.disabled, "send button is missing or disabled"):
@@ -178,18 +180,20 @@ func _init() -> void:
 	await process_frame
 	if not _check(int(source.get("worker_count")) == 1, "send did not deduct the source count"):
 		return
-	var transit_workers: Array[Node] = []
+	var transit_clusters: Array[Node] = []
 	for child in manager.get_children():
-		if child.get_script() == worker_script and child.get("_registered_planet") == null:
-			transit_workers.append(child)
-	if not _check(transit_workers.size() == 2, "send did not launch the selected number of transit workers"):
+		if child.get_script() == cluster_script and child.get("_registered_planet") == null and child.get("destination_planet") == destination:
+			transit_clusters.append(child)
+	if not _check(transit_clusters.size() == 2, "send did not launch the selected cluster groups"):
 		return
-	var transit_distance_before: float = (transit_workers[0] as Node2D).global_position.distance_to(destination.global_position)
+	if not _check(transit_clusters[0].get_unit_count() == 1 and transit_clusters[1].get_unit_count() == 1 and transit_clusters[0].global_position == transit_clusters[1].global_position, "cluster groups did not launch together"):
+		return
+	var transit_distance_before: float = (transit_clusters[0] as Node2D).global_position.distance_to(destination.global_position)
 	await create_timer(0.5).timeout
-	var transit_distance_after: float = (transit_workers[0] as Node2D).global_position.distance_to(destination.global_position)
-	if not _check(transit_distance_after < transit_distance_before, "transit workers do not move toward the destination"):
+	var transit_distance_after: float = (transit_clusters[0] as Node2D).global_position.distance_to(destination.global_position)
+	if not _check(transit_distance_after < transit_distance_before, "transit clusters do not move toward the destination"):
 		return
-	for transit in transit_workers:
+	for transit in transit_clusters:
 		transit.call("_arrive")
 	await process_frame
 	if not _check(int(destination.get("worker_count")) == destination_count_before + 2, "arrival did not add the destination count"):

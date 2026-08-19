@@ -19,9 +19,9 @@ Der erste spielbare Befehl ist kein sofortiger Kampf, sondern ein sichtbarer Tru
 
 - **Mengenwahl:** Ein Slider reicht von `1` bis zur aktuell verfügbaren logischen Menge.
 - **Live-Vorschau:** Sobald sich die Slider-Menge ändert, werden Flugzeit und Weg aktualisiert; größere Verbände fliegen langsamer.
-- **Dispatch:** „Senden“ erzeugt aus der gewählten Zahl sichtbare Einheiten-Assets, die sich zum Ziel bewegen.
+- **Dispatch:** „Senden“ packt die gewählte logische Menge in K/M/L-Cluster-Assets, die gleichzeitig zum Ziel fliegen.
 - **Zustandslogik:** Beim Start wird der Quellzähler um die vollständige Menge reduziert; bei Ankunft steigt der logische Zielzähler um genau diese Menge.
-- **Darstellung:** Maximal 100 sichtbare Truppenmarker; die Kompressionsstufe wird über ein Frame-/Budget-Signal der Engine gesteuert: bei freier Kapazität dürfen mehr Einheiten sichtbar sein. `K=1`, `M=5`, `L=100` bleiben vorläufige Testwerte.
+- **Darstellung:** Drei feste Clusterstufen repräsentieren `K=1`, `M=5` oder `L=100` logische Einheiten; eine Sendung wird largest-first gepackt und alle Cluster starten gemeinsam.
 - **Zeitmodell:** Ausbalanciertes, einfach parametrisiertes Modell — nicht zu komplex —, das sich bei Bedarf neu skalieren lässt; konkrete Koeffizienten bleiben Testwerte.
 - **Baufolge:** Erst Slider und Vorschau, dann Versand und Zählerereignisse, dann sichtbare Transit-Assets, danach Gefechtsansicht und 4K-Veredelung.
 - **Stil:** Cell-Shaded-Paperclip-Look mit starkem Fokus auf Beleuchtung und Schattierung; Mechs sind aktuell noch nicht implementiert — zuerst nur Overworld-Layer und Mechanik-Tests.
@@ -45,7 +45,7 @@ Der erste spielbare Befehl ist kein sofortiger Kampf, sondern ein sichtbarer Tru
 | Flugzeit | Balanced, einfach parametrisiert | Einfach zu kalibrieren und bei Bedarf neu skalierbar; keine überkomplexe Formel. | 2026-08-19 |
 | Zähler | Ein logischer Zähler pro Planet | Sichtbare Marker dürfen komprimieren, ohne Spielzustand zu verlieren. | 2026-08-19 |
 | Sichtbarkeit | Höchstens 100 Assets | Große Mengen bleiben lesbar und performant darstellbar. | 2026-08-19 |
-| Kompression | Frame-/Budget-gesteuert | Freie Engine-Kapazität erlaubt mehr sichtbare Einheiten; Last senkt die sichtbare Dichte. | 2026-08-19 |
+| Kompression | Feste K/M/L-Schwellen | Logische Mengen werden largest-first in generische Cluster-Assets gepackt; alle Gruppen starten gleichzeitig. | 2026-08-19 |
 | Stil | Cell-Shaded-Paperclip | Beleuchtung und Schattierung sind wichtiger als die Wahl zwischen Paperclip und Papercut; Mechs kommen erst später. | 2026-08-19 |
 
 ## 🔍 Recherche
@@ -70,6 +70,6 @@ Der erste spielbare Befehl ist kein sofortiger Kampf, sondern ein sichtbarer Tru
 
 - [ ] Ein kleines Zahlen-Set für Distanz, Menge und erwartete Flugzeit als Design-Tabelle festlegen.
 - [ ] Einen vertikalen Slice „Slider → Live-Vorschau → Senden → Ankunft“ als Konzeptabnahme definieren.
-- [ ] Frame-/Budget-abhängigen Kompressionswechsel anhand sichtbarer Beispiele `1`, `5` und `100` prüfen.
+- [ ] K/M/L-Clusterassets anhand sichtbarer Beispiele `1`, `5` und `100` weiter ausarbeiten.
 - [ ] Cell-Shaded-Paperclip-Regeln für Kontur, Beleuchtung und Schattierung beschreiben.
 - [ ] Erst danach die technische Umsetzung in Godot planen.

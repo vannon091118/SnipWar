@@ -98,12 +98,12 @@ func _spawn_interval() -> float:
 func _spawn_count() -> int:
 	return int(size_profile(StringName(layout_size))[&"spawn_count"])
 
-func register_worker(_worker: Node2D) -> void:
-	worker_count += 1
+func register_workers(amount: int) -> void:
+	worker_count += maxi(amount, 0)
 	worker_count_changed.emit(self, worker_count)
 
-func unregister_worker(_worker: Node2D) -> void:
-	worker_count = maxi(0, worker_count - 1)
+func unregister_workers(amount: int) -> void:
+	worker_count = maxi(0, worker_count - maxi(amount, 0))
 	worker_count_changed.emit(self, worker_count)
 
 func _sync_groups() -> void:

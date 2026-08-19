@@ -15,17 +15,17 @@
 - Planet size belongs to the Node2D layout scale; keep `planet.gd`'s `visual_scale` at 1.0 to avoid double scaling.
 - The current minimal meteor design uses four direct Sprite2D children controlled by `meteor_field.gd`; no per-meteor scene/script is required.
 - `planet_details.gd` owns seeded extras; Toxic always showcases a satellite plus an asteroid belt, with an optional third ring, while other planets get up to three deterministic detail types.
-- Workers spawn stationary as a planet's garrison. `WorkerManager._dispatch_workers` launches them as visible transit assets via per-worker Tweens; each re-registers with the destination on arrival (source drops at launch, destination rises on arrival).
+- `WorkerCluster` nodes are the garrison and transit representation; `WorkerManager._dispatch_clusters` packs K=1/M=5/L=100 groups and launches every selected cluster in the same frame. Partial sends split garrison clusters and refresh their tier asset; arrivals re-register the logical unit count with the destination.
 - Spawn tiers are part of the MVP contract: XL = 3 workers/5 s, L = 2/7 s, variable planets = 1/10 s.
-- `flight_time.gd`, `dispatch.gd`, `planet_network.gd`, `planet_network_ui.gd`, `worker.gd`, `worker_manager.gd`, and `preflight.gd` change/commit together; preflight uses PlanetNetworkUI getters and reaches into worker internals (`_registered_planet`, `_arrive`).
+- `flight_time.gd`, `dispatch.gd`, `planet_network.gd`, `planet_network_ui.gd`, `worker_cluster.gd`, `worker_cluster.tscn`, `worker_manager.gd`, and `preflight.gd` change/commit together; preflight uses PlanetNetworkUI getters and cluster internals (`_registered_planet`, `_arrive`).
 - `planet.tscn`, `planet.gd`, `planet_details.gd`, `planet_detail_orbit.gd`, `planet_detail_ring.gd`, `seeded_layout.gd`, and the planet SVG/import assets change together for seeded details.
 - `PlanetNetwork` resolves destinations and passes them to `WorkerManager`; keep the manager independent of the network lookup. `planet_network.gd` owns routing/lines, while `planet_network_ui.gd` owns the CanvasLayer controls and emits UI signals.
 - Do not keep unused `WorkerState` values as placeholders; add a state only when its transition behavior exists.
-- Flight duration = distance × factor, so real dispatches take hundreds of seconds; headless tests simulate arrival by calling the arrival path directly (e.g. `worker._arrive()`) and assert movement via "distance to destination decreased", never by awaiting flight end or exact positions.
+- Flight duration uses logical-unit load plus packed-cluster count, so real dispatches remain long; headless tests call `cluster._arrive()` directly and assert movement via "distance to destination decreased", never by awaiting flight end or exact positions.
 
 ## Interaction and assets
-- Planet clicks require the planet `Area2D`/shape; worker graphics remain collision-free. The persistent destination tab UI must be created with `call_deferred()` because adding viewport UI during child setup triggers Godot's "parent node is busy setting up children" error.
-- Worker visuals use the same pixel contract as meteors: `worker.gd` derives its Sprite2D scale from the SVG width for a 10 px target; do not replace it with a relative scale.
+- Planet clicks require the planet `Area2D`/shape; cluster graphics remain collision-free. The persistent destination tab UI must be created with `call_deferred()` because adding viewport UI during child setup triggers Godot's "parent node is busy setting up children" error.
+- Cluster visuals use fixed K/M/L generic SVG assets and expose an `Attachments` node for future cannons, drones, or upgrades; do not restore per-unit transit sprites.
 - New SVG planet/detail assets cause Godot to generate tracked `.svg.import` files during the headless scan; commit the import sidecars with their source SVGs.
 
 ## Godot pitfalls
@@ -46,8 +46,8 @@
 
 ## Design direction (SnipWar concept)
 - SnipWar is a hybrid built in vertical slices: strategic galaxy map now, tactical battle view as a later layer.
-- Unit dispatch: slider 1..available → live flight-time/route preview (more units = slower) → send spawns visible transit assets; source counter drops at launch, destination counter rises on arrival.
-- Cap visible units at 100; K=1 / M=5 / L=100 are test compression values driven by an engine frame/budget signal (free capacity → more visible).
+- Unit dispatch: slider 1..available → live flight-time/route preview (more logical units/clusters = slower) → pack into K/M/L cluster assets → launch all groups together; source counter drops at launch, destination counter rises on arrival.
+- Cluster compression uses fixed capacities K=1, M=5, L=100; selected logical units pack largest-first and all resulting cluster assets launch together. The flight formula counts packed groups, so two units are two K clusters and incur two-cluster load before the M threshold.
 - Flight-time formula must stay balanced, simple, and easy to rescale.
 - Visual style is cell-shaded paperclip comic; lighting and shading matter most. Mechs are not implemented — only the overworld layer and mechanics tests exist.
 - Design decisions are captured in `.claude/skills/konzept/memory/konzept-snipwar-mech-*.md`; consult it before implementing dispatch or mechs.

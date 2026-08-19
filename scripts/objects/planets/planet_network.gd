@@ -51,9 +51,7 @@ func _on_panel_visibility_changed(_visible: bool) -> void:
 	queue_redraw()
 
 func _on_workers_spawn_requested(source: Node2D, amount: int) -> void:
-	var destination := get_destination(source)
-	if destination != null:
-		_worker_manager.call("_spawn_workers", source, destination, amount)
+	_worker_manager.call("_spawn_clusters", source, amount)
 
 func _on_planet_selected(planet: Node2D) -> void:
 	if not is_instance_valid(_ui):
@@ -123,7 +121,7 @@ func _on_send_pressed() -> void:
 		return
 	var destination := get_destination(_active_planet)
 	if destination != null:
-		_worker_manager.call("_dispatch_workers", _active_planet, destination, _ui.selected_amount())
+		_worker_manager.call("_dispatch_clusters", _active_planet, destination, _ui.selected_amount())
 
 func get_ui() -> PlanetNetworkUI:
 	return _ui
