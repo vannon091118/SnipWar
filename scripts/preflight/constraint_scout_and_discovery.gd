@@ -38,9 +38,9 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(not game_state.can_research_technology(GameState.FACTION_PLAYER, &"scanner_drone", tech_catalog), "scanner_drone should require scout_hull first"):
 		return false
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"material", 100)
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"energy", 100)
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"biomass", 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_MATERIAL, 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY, 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_BIOMASS, 100)
 	if not ctx.check(game_state.research_technology(GameState.FACTION_PLAYER, &"shipyard_construction", tech_catalog), "shipyard construction research should succeed"):
 		return false
 	game_state.call("advance_research", 999.0)
@@ -65,10 +65,81 @@ func run(ctx: PreflightContext) -> bool:
 	var source: Planet = ctx.find_planet_by_id(field, player_homeworld)
 	if not ctx.check(source != null, "player homeworld planet for technology test is missing"):
 		return false
+
+	# Fog-of-war frontier: the homeworld and its layout neighbors are revealed,
+	# everything beyond is softly hidden by the fog shader. The network itself
+	# stays fixed per seed.
+	if not ctx.check(source.get_fog_state() == Planet.FogState.VISIBLE, "player homeworld should be fully visible"):
+		return false
+	var frontier_ids: Array[StringName] = [source.planet_id]
+	for neighbor in network.get_neighbors(source):
+		var neighbor_planet: Planet = neighbor as Planet
+		if neighbor_planet != null:
+			frontier_ids.append(neighbor_planet.planet_id)
+			if not ctx.check(neighbor_planet.get_fog_state() != Planet.FogState.FOG, "layout neighbor should stay revealed on the frontier"):
+				return false
+	var hidden_beyond := 0
+	for field_child in field.get_children():
+		var candidate: Planet = field_child as Planet
+		if candidate == null or frontier_ids.has(candidate.planet_id):
+			continue
+		if candidate.get_fog_state() == Planet.FogState.FOG:
+			hidden_beyond += 1
+	if not ctx.check(hidden_beyond > 0, "planets beyond the revealed frontier should be hidden by the fog shader"):
+		return false
+
+	# NavigationField must remember which side of each edge is a planet so its
+	# fog-aware renderer can dim/skip edges outside the field of view.
+	var navigation: NavigationField = field.get_node_or_null("NavigationField") as NavigationField
+	if not ctx.check(navigation != null and navigation.get_edges().size() == navigation._edge_endpoints.size(), "navigation edges and per-edge planet endpoints drift apart (refresh of fog filtering cannot rely on them)"):
+		return false
+	var has_endpoint_tracking := false
+	for endpoints in navigation._edge_endpoints:
+		for endpoint in endpoints:
+			if endpoint != null:
+				has_endpoint_tracking = true
+				break
+		if has_endpoint_tracking:
+			break
+	if not ctx.check(has_endpoint_tracking, "navigation field did not record planet endpoints on edges; routes outside the field of view stay visible"):
+		return false
+
+	# Capturing a frontier planet expands the fog reveal: its layout-neighbors
+	# transition from FOG to FRONTIER, which is what hides the connection lines
+	# further out behind the nebula.
+	var frontier_candidate: Planet = null
+	for neighbor in network.get_neighbors(source):
+		var neighbor_planet: Planet = neighbor as Planet
+		if neighbor_planet != null and neighbor_planet.get_faction() == GameState.FACTION_NEUTRAL:
+			frontier_candidate = neighbor_planet
+			break
+	if frontier_candidate != null:
+		var beyond_before: int = 0
+		var beyond_after: int = 0
+		for field_child in field.get_children():
+			var candidate: Planet = field_child as Planet
+			if candidate == null or candidate == frontier_candidate:
+				continue
+			if candidate.get_fog_state() == Planet.FogState.FOG:
+				beyond_before += 1
+		game_state.set_faction(frontier_candidate.planet_id, GameState.FACTION_PLAYER)
+		await ctx.await_frame()
+		for field_child in field.get_children():
+			var candidate: Planet = field_child as Planet
+			if candidate == null or candidate == frontier_candidate:
+				continue
+			if candidate.get_fog_state() == Planet.FogState.FOG:
+				beyond_after += 1
+		if not ctx.check(beyond_after < beyond_before, "capturing a frontier planet did not expand the fog reveal (before=%d after=%d)" % [beyond_before, beyond_after]):
+			return false
+		game_state.set_faction(frontier_candidate.planet_id, GameState.FACTION_NEUTRAL)
+		var known_dict: Dictionary = game_state.get("_known_planets").get(GameState.FACTION_PLAYER, {})
+		known_dict.erase(frontier_candidate.planet_id)
+		await ctx.await_frame()
 	if not ctx.check(not game_state.can_research_planet_technology(GameState.FACTION_PLAYER, source.planet_id, &"planetary_extraction", tech_catalog), "planetary extraction should require planetary survey"):
 		return false
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"rare", 100)
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"material", 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_RARE, 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_MATERIAL, 100)
 	if not ctx.check(game_state.research_planet_technology(GameState.FACTION_PLAYER, source.planet_id, &"planetary_survey", tech_catalog), "planetary survey research should succeed for the own homeworld"):
 		return false
 	if not ctx.check(game_state.has_planet_technology(source.planet_id, &"planetary_survey"), "planetary survey was not stored on the target planet"):
@@ -81,7 +152,7 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(not ship_manager.can_build_scout(source), "scout build should be blocked without a shipyard"):
 		return false
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"biomass", 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_BIOMASS, 100)
 	if not ctx.check(game_state.purchase_upgrade(player_homeworld, &"shipyard", upgrade_catalog), "shipyard purchase for scout test should succeed"):
 		return false
 	if not ctx.check(ship_manager.can_build_scout(source), "scout build should succeed with shipyard + researched techs"):

@@ -18,6 +18,17 @@ func run(ctx: PreflightContext) -> bool:
 	var resource_pool: ResourcePool = preload("res://resources/config/resource_pool_default.tres")
 	if not ctx.check(resource_pool != null and resource_pool.validate().is_empty(), "resource pool validation failed"):
 		return false
+
+	# Resource canonical-ID contract: every vault key, refinery input, upgrade cost
+	# and tech cost flows through GameState.RES_*. A typo like &"energi" instead of
+	# RES_ENERGY must fail loudly here -- not at play-test time.
+	if not ctx.check(game_state.get("RES_ENERGY") == &"energy" and game_state.get("RES_BIOMASS") == &"biomass" and game_state.get("RES_RARE") == &"rare" and game_state.get("RES_MATERIAL") == &"material" and game_state.get("RES_VOLATILE") == &"volatile", "resource canonical IDs drifted from energy/biomass/rare/material/volatile"):
+		return false
+	if not ctx.check((game_state.get("ALL_RESOURCES") as Array).size() == 5, "ALL_RESOURCES must list every canonical ID once"):
+		return false
+	if not ctx.check(game_state.call("is_valid_resource", game_state.get("RES_ENERGY")), "is_valid_resource must accept RES_ENERGY"):
+		return false
+
 	if not ctx.check(game_state.call("validate_resources", resource_pool).is_empty(), "GameState resource deal failed"):
 		return false
 	if not ctx.check(not String(game_state.resource_of(&"ocean")).is_empty() and not String(game_state.resource_of(&"paper")).is_empty() and game_state.resource_of(&"ocean") != game_state.resource_of(&"paper"), "homeworld resources are not distinct"):
@@ -39,7 +50,7 @@ func run(ctx: PreflightContext) -> bool:
 	test_planet_def.display_name = "Test Planet"
 	test_planet_def.planet_texture = preload("res://assets/objects/planets/planet_01_ember.svg")
 	test_planet_def.detail_profile = preload("res://resources/config/planet_details/default.tres")
-	test_planet_def.signature_resource = &"energy"
+	test_planet_def.signature_resource = GameState.RES_ENERGY
 	test_planet_def.signature_probability = 1.0
 	if not ctx.check(test_planet_def.validate().is_empty(), "valid planet definition with signature should pass validation"):
 		return false
@@ -54,23 +65,23 @@ func run(ctx: PreflightContext) -> bool:
 	hw1.planet_id = &"hw1"
 	hw1.display_name = "HW1"
 	hw1.planet_role = &"homeworld"
-	hw1.signature_resource = &"biomass"
+	hw1.signature_resource = GameState.RES_BIOMASS
 	hw1.signature_probability = 1.0
 	var hw2: PlanetDefinition = test_planet_def.duplicate(true) as PlanetDefinition
 	hw2.planet_id = &"hw2"
 	hw2.display_name = "HW2"
 	hw2.planet_role = &"homeworld"
-	hw2.signature_resource = &"rare"
+	hw2.signature_resource = GameState.RES_RARE
 	hw2.signature_probability = 1.0
 	var p3: PlanetDefinition = test_planet_def.duplicate(true) as PlanetDefinition
 	p3.planet_id = &"p3"
 	p3.display_name = "P3"
 	p3.planet_role = &"planet"
-	p3.signature_resource = &"energy"
+	p3.signature_resource = GameState.RES_ENERGY
 	p3.signature_probability = 1.0
 	sig_catalog.planets = [hw1, hw2, p3]
 	game_state.call("deal_resources", sig_catalog, resource_pool, 12345)
-	if not ctx.check(game_state.resource_of(&"hw1") == &"biomass" and game_state.resource_of(&"hw2") == &"rare" and game_state.resource_of(&"p3") == &"energy", "signature resources should be respected when probability is 1.0"):
+	if not ctx.check(game_state.resource_of(&"hw1") == GameState.RES_BIOMASS and game_state.resource_of(&"hw2") == GameState.RES_RARE and game_state.resource_of(&"p3") == GameState.RES_ENERGY, "signature resources should be respected when probability is 1.0"):
 		return false
 
 	game_state.call("deal_resources", planet_catalog, resource_pool, resource_seed)

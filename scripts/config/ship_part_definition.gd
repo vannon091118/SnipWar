@@ -16,7 +16,7 @@ const LEGACY_SLOT_MODULE := &"module"
 @export var slot_type: StringName = SLOT_HULL
 @export var display_name: String = ""
 @export var description: String = ""
-@export var cost_resource: StringName = &"material"
+@export var cost_resource: StringName = GameState.RES_MATERIAL
 @export var cost_amount: int = 5
 @export_range(1, 3, 1) var tier: int = 1
 @export var visual_asset: Texture2D

@@ -16,11 +16,11 @@ func refresh(state: Node) -> void:
 		return
 	var player_faction: StringName = GameState.FACTION_PLAYER
 	_label.text = "%s | %s | %s | %s | %s" % [
-		_resource_segment("Energie", state.get_faction_resource(player_faction, &"energy"), &"energy"),
-		_resource_segment("Biomasse", state.get_faction_resource(player_faction, &"biomass"), &"biomass"),
-		_resource_segment("Exotisch", state.get_faction_resource(player_faction, &"rare"), &"rare"),
-		_resource_segment("Material", state.get_faction_resource(player_faction, &"material"), &"material"),
-		_resource_segment("Volatil", state.get_faction_resource(player_faction, &"volatile"), &"volatile")
+		_resource_segment("Energie", state.get_faction_resource(player_faction, GameState.RES_ENERGY), GameState.RES_ENERGY),
+		_resource_segment("Biomasse", state.get_faction_resource(player_faction, GameState.RES_BIOMASS), GameState.RES_BIOMASS),
+		_resource_segment("Exotisch", state.get_faction_resource(player_faction, GameState.RES_RARE), GameState.RES_RARE),
+		_resource_segment("Material", state.get_faction_resource(player_faction, GameState.RES_MATERIAL), GameState.RES_MATERIAL),
+		_resource_segment("Volatil", state.get_faction_resource(player_faction, GameState.RES_VOLATILE), GameState.RES_VOLATILE)
 	]
 	var tw: Tween = create_tween()
 	tw.tween_property(self, "scale", Vector2(1.02, 1.02), 0.08)

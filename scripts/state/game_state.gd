@@ -10,6 +10,27 @@ const MISSION_COLONY := &"colony"
 const MISSION_COLLECT := &"collect"
 const TECH_WORKER_AUTOMATION := &"worker_automation"
 
+## Canonical resource IDs. These are the single source of truth for vault
+## keys, refinery inputs/outputs, upgrade costs and technology costs.
+## Use GameState.RES_* instead of typed-out "&"energy"/&"biomass"/... literals
+## anywhere else -- a typo like &"energi" would otherwise silently miss.
+const RES_ENERGY: StringName = &"energy"
+const RES_BIOMASS: StringName = &"biomass"
+const RES_RARE: StringName = &"rare"
+const RES_MATERIAL: StringName = &"material"
+const RES_VOLATILE: StringName = &"volatile"
+
+const ALL_RESOURCES: Array[StringName] = [
+	RES_ENERGY,
+	RES_BIOMASS,
+	RES_RARE,
+	RES_MATERIAL,
+	RES_VOLATILE,
+]
+
+static func is_valid_resource(resource_id: StringName) -> bool:
+	return resource_id == RES_ENERGY or resource_id == RES_BIOMASS or resource_id == RES_RARE or resource_id == RES_MATERIAL or resource_id == RES_VOLATILE
+
 const DEFAULT_RESOURCE_POOL: ResourcePool = preload("res://resources/config/resource_pool_default.tres")
 const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
 const DEFAULT_TECHNOLOGY_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
@@ -56,18 +77,18 @@ var _ship_build_jobs: Dictionary = {}
 var _jobs_auto_advance := true
 var _faction_vaults: Dictionary = {
 	FACTION_PLAYER: {
-		&"energy": 50,
-		&"biomass": 50,
-		&"rare": 30,
-		&"material": 30,
-		&"volatile": 30
+		GameState.RES_ENERGY: 50,
+		GameState.RES_BIOMASS: 50,
+		GameState.RES_RARE: 30,
+		GameState.RES_MATERIAL: 30,
+		GameState.RES_VOLATILE: 30
 	},
 	FACTION_CPU: {
-		&"energy": 50,
-		&"biomass": 50,
-		&"rare": 30,
-		&"material": 30,
-		&"volatile": 30
+		GameState.RES_ENERGY: 50,
+		GameState.RES_BIOMASS: 50,
+		GameState.RES_RARE: 30,
+		GameState.RES_MATERIAL: 30,
+		GameState.RES_VOLATILE: 30
 	}
 }
 
@@ -105,18 +126,18 @@ func reset_from_catalog(catalog: PlanetCatalog) -> void:
 func _reset_vaults() -> void:
 	_faction_vaults = {
 		FACTION_PLAYER: {
-			&"energy": 50,
-			&"biomass": 50,
-			&"rare": 30,
-			&"material": 30,
-			&"volatile": 30
+			GameState.RES_ENERGY: 50,
+			GameState.RES_BIOMASS: 50,
+			GameState.RES_RARE: 30,
+			GameState.RES_MATERIAL: 30,
+			GameState.RES_VOLATILE: 30
 		},
 		FACTION_CPU: {
-			&"energy": 50,
-			&"biomass": 50,
-			&"rare": 30,
-			&"material": 30,
-			&"volatile": 30
+			GameState.RES_ENERGY: 50,
+			GameState.RES_BIOMASS: 50,
+			GameState.RES_RARE: 30,
+			GameState.RES_MATERIAL: 30,
+			GameState.RES_VOLATILE: 30
 		}
 	}
 
@@ -382,18 +403,18 @@ func convert_refinery_resources(planet_id: StringName, _upgrade_catalog: PlanetU
 		return {"converted": false}
 	if not has_planet_upgrade(planet_id, &"refinery"):
 		return {"converted": false}
-	var mat_amount: int = get_faction_resource(faction, &"material")
-	var energy_amount: int = get_faction_resource(faction, &"energy")
+	var mat_amount: int = get_faction_resource(faction, GameState.RES_MATERIAL)
+	var energy_amount: int = get_faction_resource(faction, GameState.RES_ENERGY)
 	if mat_amount < 2 or energy_amount < 1:
 		return {"converted": false}
-	if not spend_faction_resource(faction, &"material", 2):
+	if not spend_faction_resource(faction, GameState.RES_MATERIAL, 2):
 		return {"converted": false}
-	if not spend_faction_resource(faction, &"energy", 1):
-		add_faction_resource(faction, &"material", 2)
+	if not spend_faction_resource(faction, GameState.RES_ENERGY, 1):
+		add_faction_resource(faction, GameState.RES_MATERIAL, 2)
 		return {"converted": false}
-	var produced_resource: StringName = &"rare"
+	var produced_resource: StringName = GameState.RES_RARE
 	add_faction_resource(faction, produced_resource, 1)
-	var consumed: Dictionary = {&"material": 2, &"energy": 1}
+	var consumed: Dictionary = {GameState.RES_MATERIAL: 2, GameState.RES_ENERGY: 1}
 	var produced: Dictionary = {produced_resource: 1}
 	refinery_converted.emit(planet_id, faction, consumed, produced)
 	return {
@@ -405,17 +426,17 @@ func convert_refinery_resources(planet_id: StringName, _upgrade_catalog: PlanetU
 func signature_resource_for_planet_type(planet_type: StringName) -> StringName:
 	match planet_type:
 		&"ember", &"volcanic":
-			return &"energy"
+			return GameState.RES_ENERGY
 		&"ocean", &"ice":
-			return &"biomass"
+			return GameState.RES_BIOMASS
 		&"violet", &"golden":
-			return &"rare"
+			return GameState.RES_RARE
 		&"toxic", &"toxic_red":
-			return &"material"
+			return GameState.RES_MATERIAL
 		&"storm", &"paper", &"desert":
-			return &"volatile"
+			return GameState.RES_VOLATILE
 		_:
-			return &"energy"
+			return GameState.RES_ENERGY
 
 func validate_resources(pool: ResourcePool = null) -> PackedStringArray:
 	var errors := PackedStringArray()

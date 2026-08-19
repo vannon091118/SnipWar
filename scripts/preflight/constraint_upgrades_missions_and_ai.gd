@@ -94,8 +94,8 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 
 	# Capture initial resources before purchases
-	var initial_energy: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy")
-	var initial_material: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"material")
+	var initial_energy: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY)
+	var initial_material: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_MATERIAL)
 
 	# Initially can buy extractor (tier 1, no parent)
 	if not ctx.check(game_state.can_purchase_upgrade(player_homeworld, &"extractor", upgrade_catalog), "should be able to buy extractor initially"):
@@ -125,9 +125,9 @@ func run(ctx: PreflightContext) -> bool:
 
 	# Verify resource deduction
 	# Extractor costs 15 energy, refinery costs 25 material
-	if not ctx.check(game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy") == initial_energy - 15, "extractor should cost 15 energy"):
+	if not ctx.check(game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY) == initial_energy - 15, "extractor should cost 15 energy"):
 		return false
-	if not ctx.check(game_state.get_faction_resource(GameState.FACTION_PLAYER, &"material") == initial_material - 25, "refinery should cost 25 material"):
+	if not ctx.check(game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_MATERIAL) == initial_material - 25, "refinery should cost 25 material"):
 		return false
 
 	# Verify upgrades recorded
@@ -138,7 +138,7 @@ func run(ctx: PreflightContext) -> bool:
 	# Test trait effects on resource generation
 	# Extractor gives +50% production_boost, refinery gives +100% but -2 energy maintenance.
 	game_state.call("deal_resources", planet_catalog, preload("res://resources/config/resource_pool_default.tres"), world_config.layout_seed)
-	var energy_before_generation: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy")
+	var energy_before_generation: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY)
 	var generated_resource: StringName = game_state.resource_of(player_homeworld)
 	var generated: int = game_state.generate_resources_for_planet(player_homeworld, upgrade_catalog)
 	# Base 1 * (1 + 0.5 + 1.0) = 2.5 -> 2; the generated resource may itself be energy.
@@ -146,25 +146,25 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 
 	# Verify maintenance cost was deducted without assuming the homeworld's dealt resource.
-	var energy_after_gen: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy")
+	var energy_after_gen: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY)
 	var expected_energy_after_generation: int = energy_before_generation - 2
-	if generated_resource == &"energy":
+	if generated_resource == GameState.RES_ENERGY:
 		expected_energy_after_generation += generated
 	if not ctx.check(energy_after_gen == expected_energy_after_generation, "maintenance cost should be deducted during generation"):
 		return false
 
 	# Test refinery conversion logic
-	var pre_conv_mat: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"material")
-	var pre_conv_energy: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy")
-	var pre_conv_rare: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"rare")
+	var pre_conv_mat: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_MATERIAL)
+	var pre_conv_energy: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY)
+	var pre_conv_rare: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_RARE)
 	var conv_result: Dictionary = game_state.convert_refinery_resources(player_homeworld)
 	if not ctx.check(conv_result.get("converted", false) == true, "refinery conversion should succeed with sufficient material and energy"):
 		return false
-	if not ctx.check(game_state.get_faction_resource(GameState.FACTION_PLAYER, &"material") == pre_conv_mat - 2, "refinery conversion should consume 2 material"):
+	if not ctx.check(game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_MATERIAL) == pre_conv_mat - 2, "refinery conversion should consume 2 material"):
 		return false
-	if not ctx.check(game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy") == pre_conv_energy - 1, "refinery conversion should consume 1 energy"):
+	if not ctx.check(game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY) == pre_conv_energy - 1, "refinery conversion should consume 1 energy"):
 		return false
-	if not ctx.check(game_state.get_faction_resource(GameState.FACTION_PLAYER, &"rare") == pre_conv_rare + 1, "refinery conversion should produce 1 rare"):
+	if not ctx.check(game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_RARE) == pre_conv_rare + 1, "refinery conversion should produce 1 rare"):
 		return false
 
 	# Test defense traits on arrival resolution
@@ -281,7 +281,7 @@ func run(ctx: PreflightContext) -> bool:
 
 	# --- WORKER COSTS ---
 	var upgrade_test_technology_catalog: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"energy", 50)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY, 50)
 	if not game_state.has_technology(GameState.FACTION_PLAYER, &"shipyard_construction"):
 		if not ctx.check(game_state.research_technology(GameState.FACTION_PLAYER, &"shipyard_construction", upgrade_test_technology_catalog), "shipyard construction research should unlock the shipyard build"):
 			return false
@@ -302,8 +302,8 @@ func run(ctx: PreflightContext) -> bool:
 			break
 	if not ctx.check(upgrade_planet != null and upgrade_planet.get_cluster_tier_bonus() == 0, "planet cluster tier bonus should start at zero"):
 		return false
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"biomass", 100)
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"material", 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_BIOMASS, 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_MATERIAL, 100)
 	if not ctx.check(game_state.purchase_upgrade(player_homeworld, &"shipyard", upgrade_catalog), "shipyard purchase for tier bonus test should succeed"):
 		return false
 	if not ctx.check(game_state.purchase_upgrade(player_homeworld, &"war_shipyard", upgrade_catalog), "war_shipyard purchase for tier bonus test should succeed"):

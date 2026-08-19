@@ -13,6 +13,10 @@ var _astar := AStar2D.new()
 var _point_ids: Dictionary = {}
 var _waypoints: Array[NavigationWaypoint] = []
 var _edges: Array[Array] = []
+## Parallel to _edges: endpoint planet refs at each side of the edge (null for
+## waypoint midpoints). _draw() uses this array to dim/skip edges that lie
+## outside the player's fog-of-war frontier without re-resolving nodes.
+var _edge_endpoints: Array[Array] = []
 var _next_point_id := 1
 var _rebuild_queued := false
 var _is_built := false
@@ -45,6 +49,7 @@ func rebuild() -> void:
 	_astar = AStar2D.new()
 	_next_point_id = 1
 	_is_built = false
+	_edge_endpoints.clear()
 
 	var planets: Array[Planet] = []
 	for child in get_parent().get_children():
@@ -107,6 +112,8 @@ func rebuild() -> void:
 			_connect_graph_points(waypoint_id, _point_ids[second])
 			_edges.append([first.global_position, midpoint])
 			_edges.append([midpoint, second.global_position])
+			_edge_endpoints.append([first, null])
+			_edge_endpoints.append([null, second])
 			edge_index += 1
 	_is_built = not _point_ids.is_empty()
 	queue_redraw()
@@ -139,11 +146,44 @@ func _resolved_world_config() -> WorldConfig:
 
 func _draw() -> void:
 	var config: NavigationConfig = navigation_config if navigation_config != null else DEFAULT_NAVIGATION_CONFIG
-	var edge_color := config.edge_color
-	edge_color.a = config.edge_alpha
-	for edge in _edges:
-		if edge.size() == 2:
-			draw_line(to_local(edge[0]), to_local(edge[1]), edge_color, config.edge_width, true)
+	var base_color := config.edge_color
+	var frontier_color := config.edge_color
+	frontier_color.a = config.edge_alpha * 0.55
+	for index in range(_edges.size()):
+		var edge: Array = _edges[index]
+		if edge.size() != 2:
+			continue
+		# Use the cached endpoint refs populated by rebuild(); null means the
+		# endpoint is a waypoint midpoint (always rendered with the dim tier).
+		var endpoints: Array = _edge_endpoints[index] if index < _edge_endpoints.size() else [null, null]
+		var max_fog := _max_fog(endpoints)
+		if max_fog == FOG_HIDDEN:
+			continue
+		var color := base_color if max_fog == FOG_VISIBLE else frontier_color
+		color.a = config.edge_alpha
+		draw_line(to_local(edge[0]), to_local(edge[1]), color, config.edge_width, true)
+
+const FOG_VISIBLE := 0
+const FOG_FRONTIER := 1
+const FOG_HIDDEN := 2
+
+## Returns the most-hidden fog tier across the two endpoints. A waypoint/null
+## side (i.e. midpoint of an edge) is treated as FRONTIER so the dim grid is
+## still visible along revealed planetary edges.
+func _max_fog(endpoints: Array) -> int:
+	var result := FOG_VISIBLE
+	for endpoint in endpoints:
+		if endpoint == null:
+			result = maxi(result, FOG_FRONTIER)
+			continue
+		var planet: Planet = endpoint as Planet
+		if planet != null and is_instance_valid(planet):
+			var state: int = planet.get_fog_state()
+			if state == Planet.FogState.FOG:
+				return FOG_HIDDEN
+			if state == Planet.FogState.FRONTIER:
+				result = maxi(result, FOG_FRONTIER)
+	return result
 
 func _add_graph_point(point_position: Vector2) -> int:
 	var point_id := _next_point_id

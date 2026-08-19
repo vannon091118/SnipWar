@@ -16,6 +16,10 @@ signal planet_unhovered(planet: Node2D)
 
 enum WorkerState { IDLE, SPAWNING }
 
+## Fog-of-war visual state: FOG = softly fogged via shader, FRONTIER = dimmed
+## unknown neighbor, VISIBLE = fully rendered known/owned planet.
+enum FogState { FOG, FRONTIER, VISIBLE }
+
 const ARRIVAL_FRIENDLY := &"friendly"
 const ARRIVAL_REPELLED := &"repelled"
 const ARRIVAL_CAPTURED := &"captured"
@@ -68,9 +72,12 @@ var _planet_ready := false
 var _initial_workers_applied := false
 var _strength_label: Label
 var _selected: bool = false
+var _fog_material_instance: ShaderMaterial
+var _fog_state: FogState = FogState.VISIBLE
 
 const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
 const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/transformer_default.tres")
+const FOG_SHADER: Shader = preload("res://assets/shaders/planet_fog.gdshader")
 
 func _ready() -> void:
 	$ClickArea.input_event.connect(_on_click_area_input_event)
@@ -91,8 +98,6 @@ func _ready() -> void:
 				state.technology_researched.connect(_on_technology_researched)
 			if not state.worker_factory_built.is_connected(_on_worker_factory_built):
 				state.worker_factory_built.connect(_on_worker_factory_built)
-			if not state.planet_discovered.is_connected(_on_planet_discovered):
-				state.planet_discovered.connect(_on_planet_discovered)
 	_sync_groups()
 	_apply_visuals()
 	_planet_ready = true
@@ -100,32 +105,61 @@ func _ready() -> void:
 	if not Engine.is_editor_hint():
 		_ensure_strength_label()
 		_ensure_spawn_timer.call_deferred()
-		_update_fog_of_war()
 	queue_redraw()
 
-func _on_planet_discovered(discovered_faction: StringName, discovered_id: StringName) -> void:
-	if discovered_faction == GameState.FACTION_PLAYER and discovered_id == planet_id:
-		_update_fog_of_war()
+## Applies the fog-of-war visual state computed by PlanetNetwork.
+## FOG planets stay rendered but are softly blended into the nebula via a
+## shader and are non-interactive; the underlying network is fixed per seed.
+func apply_fog(state: FogState) -> void:
+	_fog_state = state
+	match state:
+		FogState.VISIBLE:
+			visible = true
+			modulate = Color.WHITE
+			_apply_fog_shader(false)
+			if _details != null:
+				_details.visible = true
+			if _strength_label != null:
+				_strength_label.visible = true
+			_set_click_pickable(true)
+		FogState.FRONTIER:
+			visible = true
+			modulate = Color(0.2, 0.2, 0.3)
+			_apply_fog_shader(false)
+			if _details != null:
+				_details.visible = false
+			if _strength_label != null:
+				_strength_label.visible = false
+			_set_click_pickable(true)
+		FogState.FOG:
+			visible = true
+			modulate = Color.WHITE
+			_apply_fog_shader(true)
+			if _details != null:
+				_details.visible = false
+			if _strength_label != null:
+				_strength_label.visible = false
+			_set_click_pickable(false)
+	queue_redraw()
 
-func _update_fog_of_war() -> void:
-	var state: Node = _game_state()
-	if state == null:
+func get_fog_state() -> FogState:
+	return _fog_state
+
+func _apply_fog_shader(enabled: bool) -> void:
+	if not is_instance_valid(_sprite):
 		return
-	var is_known: bool = state.is_known(planet_id, GameState.FACTION_PLAYER)
+	_sprite.material = _fog_shader_material() if enabled else null
 
-	if is_known:
-		modulate = Color.WHITE
-		if _details != null:
-			_details.visible = true
-		if _strength_label != null:
-			_strength_label.visible = true
-	else:
-		modulate = Color(0.2, 0.2, 0.3)
-		if _details != null:
-			_details.visible = false
-		if _strength_label != null:
-			_strength_label.visible = false
-	queue_redraw()
+func _fog_shader_material() -> ShaderMaterial:
+	if _fog_material_instance == null:
+		_fog_material_instance = ShaderMaterial.new()
+		_fog_material_instance.shader = FOG_SHADER
+	return _fog_material_instance
+
+func _set_click_pickable(pickable: bool) -> void:
+	var click_area: Area2D = get_node_or_null("ClickArea") as Area2D
+	if click_area != null:
+		click_area.input_pickable = pickable
 
 func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_index: int) -> void:
 	if event is InputEventMouseButton and event.pressed:

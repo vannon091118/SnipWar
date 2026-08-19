@@ -98,9 +98,9 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	build_view.queue_free()
 
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"material", 100)
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"energy", 100)
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"volatile", 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_MATERIAL, 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY, 100)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_VOLATILE, 100)
 
 	if not ctx.check(ship_manager.can_buy_part(source, hull_part.id), "hull part should be purchasable"):
 		return false
@@ -171,7 +171,7 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(hull_t2 != null and not game_state.can_buy_ship_part(source.planet_id, hull_t2.id, catalog), "tier-2 hull should be locked before weapon_systems research"):
 		return false
-	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"volatile", 50)
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_VOLATILE, 50)
 	if not ctx.check(game_state.can_research_technology(GameState.FACTION_PLAYER, &"weapon_systems", tech_catalog), "weapon_systems should be researchable after shipyard construction"):
 		return false
 	if not ctx.check(game_state.research_technology(GameState.FACTION_PLAYER, &"weapon_systems", tech_catalog), "weapon_systems research should start"):

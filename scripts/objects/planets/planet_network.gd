@@ -44,11 +44,14 @@ func _ready() -> void:
 			child.planet_unhovered.connect(_on_planet_unhovered)
 	if not transit_config_identity_valid():
 		push_error("PlanetNetwork and WorkerManager must share the same TransitConfig resource")
+	_connect_fog_signals()
 	_connect_map_camera.call_deferred()
 	_create_ui.call_deferred()
+	_refresh_fog_of_war.call_deferred()
 
 func _on_layout_completed(_unused_planets: Array = []) -> void:
 	invalidate_neighbor_cache()
+	_refresh_fog_of_war()
 
 func _create_ui() -> void:
 	_ui = PLANET_NETWORK_UI_SCENE.instantiate() as PlanetNetworkUI
@@ -72,14 +75,21 @@ func _draw() -> void:
 	if _active_planet == null or not is_instance_valid(_ui) or not _ui.is_panel_visible():
 		return
 	var destination := get_destination(_active_planet)
-	if destination != null:
-		var route_path := get_route_path(_active_planet, destination)
-		var theme: UIThemeConfig = ui_theme_config if ui_theme_config != null else DEFAULT_UI_THEME
-		var route_alpha: float = clampf(theme.route_line_alpha + sin(_line_phase * theme.route_line_pulse_speed) * theme.route_line_pulse_alpha, 0.0, 1.0)
-		var route_color := theme.route_line_color
-		route_color.a = route_alpha
-		for index in range(route_path.size() - 1):
-			draw_line(to_local(route_path[index]), to_local(route_path[index + 1]), route_color, theme.route_line_width, true)
+	if destination == null:
+		return
+	# Don't render the active route when the destination sits inside the fog
+	# frontier: routing into hidden territory is information the player hasn't
+	# earned and contradicts the field-of-view promise.
+	var destination_planet: Planet = destination as Planet
+	if destination_planet != null and destination_planet.get_fog_state() == Planet.FogState.FOG:
+		return
+	var route_path := get_route_path(_active_planet, destination)
+	var theme: UIThemeConfig = ui_theme_config if ui_theme_config != null else DEFAULT_UI_THEME
+	var route_alpha: float = clampf(theme.route_line_alpha + sin(_line_phase * theme.route_line_pulse_speed) * theme.route_line_pulse_alpha, 0.0, 1.0)
+	var route_color := theme.route_line_color
+	route_color.a = route_alpha
+	for index in range(route_path.size() - 1):
+		draw_line(to_local(route_path[index]), to_local(route_path[index + 1]), route_color, theme.route_line_width, true)
 
 func _create_context_menu() -> void:
 	_context_menu = PopupMenu.new()
@@ -341,3 +351,53 @@ func _build_neighbor_cache() -> void:
 			result.append(slot_planets[slot + columns])
 		_neighbor_cache[planet] = result
 	_neighbor_cache_valid = true
+
+func _connect_fog_signals() -> void:
+	var state: Node = _game_state()
+	if state == null:
+		return
+	if not state.faction_changed.is_connected(_on_faction_changed):
+		state.faction_changed.connect(_on_faction_changed)
+	if not state.planet_discovered.is_connected(_on_planet_discovered):
+		state.planet_discovered.connect(_on_planet_discovered)
+	if not state.catalog_reset.is_connected(_on_catalog_reset):
+		state.catalog_reset.connect(_on_catalog_reset)
+
+func _on_faction_changed(_planet_id: StringName, _old_faction: StringName, _new_faction: StringName) -> void:
+	_refresh_fog_of_war()
+
+func _on_planet_discovered(_faction: StringName, _planet_id: StringName) -> void:
+	_refresh_fog_of_war()
+
+func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
+	_refresh_fog_of_war()
+
+## Recomputes the player's fog-of-war frontier: own/known planets are fully
+## visible, their unknown neighbors are dimmed, and everything else is hidden.
+## The underlying network is fixed per seed; this only changes what is revealed.
+func _refresh_fog_of_war() -> void:
+	var state: Node = _game_state()
+	if state == null:
+		return
+	for planet in _planets:
+		var planet_node: Planet = planet as Planet
+		if planet_node == null:
+			continue
+		if state.is_known(planet_node.planet_id, GameState.FACTION_PLAYER):
+			planet_node.apply_fog(Planet.FogState.VISIBLE)
+		elif _is_frontier_for_player(planet):
+			planet_node.apply_fog(Planet.FogState.FRONTIER)
+		else:
+			planet_node.apply_fog(Planet.FogState.FOG)
+	# NavigationField edges are fog-aware; force a redraw so newly hidden edges
+	# drop out of the field of view without waiting for the next frame.
+	if is_instance_valid(_navigation):
+		_navigation.queue_redraw()
+	queue_redraw()
+
+func _is_frontier_for_player(planet: Node2D) -> bool:
+	for neighbor in get_neighbors(planet):
+		var neighbor_planet: Planet = neighbor as Planet
+		if neighbor_planet != null and neighbor_planet.get_faction() == GameState.FACTION_PLAYER:
+			return true
+	return false

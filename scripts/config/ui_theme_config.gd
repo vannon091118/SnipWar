@@ -70,11 +70,11 @@ extends Resource
 
 func resource_color(resource_id: StringName) -> Color:
 	match resource_id:
-		&"energy":   return resource_color_energy
-		&"biomass":  return resource_color_biomass
-		&"rare":     return resource_color_rare
-		&"material": return resource_color_material
-		&"volatile": return resource_color_volatile
+		GameState.RES_ENERGY:   return resource_color_energy
+		GameState.RES_BIOMASS:  return resource_color_biomass
+		GameState.RES_RARE:     return resource_color_rare
+		GameState.RES_MATERIAL: return resource_color_material
+		GameState.RES_VOLATILE: return resource_color_volatile
 		_:           return accent_text_color
 
 func branch_color(branch: StringName) -> Color:
