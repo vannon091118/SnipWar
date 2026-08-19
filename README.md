@@ -46,7 +46,7 @@ Die Mechs kommen nicht aus einem Auswahlbildschirm. Sie werden über die Planete
 3. Eine Route im persistenten Planeten-Tab setzen.
 4. Verstärkung anfordern und den nächsten taktischen Schritt vorbereiten.
 
-Die aktuelle Spawn-Logik unterscheidet die Welten bereits nach Größe: XL-Planeten liefern drei Einheiten im Fünf-Sekunden-Takt, L-Planeten zwei im Sieben-Sekunden-Takt, variable Welten eine im Zehn-Sekunden-Takt. Bewegung, Kampf und die vollständige Mech-Kommandoschicht gehören zur nächsten Ausbaustufe — der Prototyp hält die Einheiten bewusst zunächst als sichtbare, registrierte Präsenz auf ihrer Welt.
+Die aktuelle Spawn-Logik unterscheidet die Welten bereits nach Größe: XL-Planeten liefern drei Einheiten im Fünf-Sekunden-Takt, L-Planeten zwei im Sieben-Sekunden-Takt, variable Welten eine im Zehn-Sekunden-Takt. Bewegung, Kampf und die vollständige Mech-Kommandoschicht gehören zur nächsten Ausbaustufe — auf den Planeten bleibt nur der logische Zähler sichtbar; Cluster erscheinen ausschließlich während des Transits.
 
 ## ░ VISUELLE DIREKTIVE
 

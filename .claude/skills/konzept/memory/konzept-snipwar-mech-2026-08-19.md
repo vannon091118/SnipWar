@@ -19,16 +19,19 @@ Der erste spielbare Befehl ist kein sofortiger Kampf, sondern ein sichtbarer Tru
 
 - **Mengenwahl:** Ein Slider reicht von `1` bis zur aktuell verfügbaren logischen Menge.
 - **Live-Vorschau:** Sobald sich die Slider-Menge ändert, werden Flugzeit und Weg aktualisiert; größere Verbände fliegen langsamer.
-- **Dispatch:** „Senden“ repräsentiert die komplette gewählte logische Menge mit genau einem K/M/L-Cluster-Asset und startet diesen sofort zum Ziel.
+- **Dispatch:** „Senden“ packt die gewählte logische Menge largest-first in K/M/L-Cluster-Assets und startet alle Gruppen gleichzeitig in einer route-deterministischen Formation zum Ziel.
 - **Zustandslogik:** Beim Start wird der Quellzähler um die vollständige Menge reduziert; bei Ankunft steigt der logische Zielzähler um genau diese Menge.
-- **Darstellung:** Drei feste Clusterstufen repräsentieren `K=1–4`, `M=5–99` oder `L=100+` logische Einheiten; jede Sendung erzeugt genau einen Cluster, dessen Asset an der Schwelle wechselt.
+- **Darstellung:** Drei feste Clusterstufen repräsentieren `K=1`, `M=5` oder `L=100` logische Einheiten; eine Sendung wird largest-first gepackt, z. B. `7 → M + K + K`, und alle sichtbaren Gruppen bleiben als V-/Keilformation geordnet.
 - **Zeitmodell:** Ausbalanciertes, einfach parametrisiertes Modell — nicht zu komplex —, das sich bei Bedarf neu skalieren lässt; konkrete Koeffizienten bleiben Testwerte.
 - **Baufolge:** Erst Slider und Vorschau, dann Versand und Zählerereignisse, dann sichtbare Transit-Assets, danach Gefechtsansicht und 4K-Veredelung.
 - **Stil:** Cell-Shaded-Paperclip-Look mit starkem Fokus auf Beleuchtung und Schattierung; Mechs sind aktuell noch nicht implementiert — zuerst nur Overworld-Layer und Mechanik-Tests.
 
+## 🧭 Drift-Tickets
+
+- [ ] [Sichtbarkeitsbudget messen](drift-log/2026-08-19-snipwar-mech-budget-drift.md): Draw-Call-Median mit 250/225-Schwellen und minimaler Hysterese.
+
 ## ❓ Offen
 
-- [ ] Budget-Metrik (Framezeit, Instanzgrenze oder Budgetwert) und ihre Hysterese für den Kompressionswechsel definieren.
 - [ ] Testfälle für die Balanced-Flugzeitformel definieren.
 - [ ] Festlegen, ob das Ziel vor dem Senden gewählt wird oder Teil des Sendeschritts ist.
 - [ ] 4K-Zielauflösung, UI-Dichte und Kamera-Skalierung als spätere Präsentationsspezifikation definieren.
@@ -45,7 +48,7 @@ Der erste spielbare Befehl ist kein sofortiger Kampf, sondern ein sichtbarer Tru
 | Flugzeit | Balanced, einfach parametrisiert | Einfach zu kalibrieren und bei Bedarf neu skalierbar; keine überkomplexe Formel. | 2026-08-19 |
 | Zähler | Ein logischer Zähler pro Planet | Sichtbare Marker dürfen komprimieren, ohne Spielzustand zu verlieren. | 2026-08-19 |
 | Sichtbarkeit | Höchstens 100 Assets | Große Mengen bleiben lesbar und performant darstellbar. | 2026-08-19 |
-| Kompression | Feste K/M/L-Schwellen | Jede logische Sendemenge wird mit genau einem generischen Cluster-Asset dargestellt; K=1–4, M=5–99, L=100+. | 2026-08-19 |
+| Kompression | Feste K/M/L-Schwellen | Logische Mengen werden largest-first in K=1, M=5 und L=100 generische Assets gepackt; alle Gruppen starten gleichzeitig in Formation. | 2026-08-19 |
 | Stil | Cell-Shaded-Paperclip | Beleuchtung und Schattierung sind wichtiger als die Wahl zwischen Paperclip und Papercut; Mechs kommen erst später. | 2026-08-19 |
 
 ## 🔍 Recherche
@@ -62,7 +65,7 @@ Der erste spielbare Befehl ist kein sofortiger Kampf, sondern ein sichtbarer Tru
 | Aspekt | IST | SOLL | Gap |
 |---|---|---|---|
 | Weltstruktur | Planetennetz und Worker-/Zähler-Prototyp laut bisherigem Projektkontext | Hybrid-Befehlskette mit taktischer Transitentscheidung | Slider, Vorschau und Ereignisfluss ergänzen |
-| Einheitenbewegung | Stationäre Präsenz und gespeichertes Ziel als Zwischenstand | Sichtbare Assets reisen, Ankunft löst Zielzähler aus | Transit-Lifecycle definieren |
+| Einheitenbewegung | Logische Planetenzähler und gespeichertes Ziel als Zwischenstand | Sichtbare Assets erscheinen nur im Transit; Ankunft löst Zielzähler aus und entfernt das Asset | Transit-Lifecycle definieren |
 | Darstellung | Kleine 2D-Assets und begrenzte sichtbare Instanzen | SVG-taugliche Comic-Silhouetten mit Kompression bis 100 Marker | Asset-Pipeline und Gruppierungsregeln festlegen |
 | Auflösung | Prototypbasis | Spätere 4K-Präsentation | Kamera-, UI- und Oversampling-Spezifikation fehlt |
 
