@@ -80,9 +80,9 @@ func toggle_panel() -> void:
 func get_panel() -> PanelContainer:
 	return _panel
 
-func index_of_destination(name: String) -> int:
+func index_of_destination(destination_name: String) -> int:
 	for index in _destination_option.item_count:
-		if _destination_option.get_item_text(index) == name:
+		if _destination_option.get_item_text(index) == destination_name:
 			return index
 	return -1
 

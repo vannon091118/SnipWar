@@ -50,5 +50,5 @@ func _apply_visuals() -> void:
 	_sprite.texture = texture
 	_sprite.scale = Vector2.ONE * (TIER_PIXELS[tier] / texture.get_width())
 
-static func pixel_width(unit_count: int) -> float:
-	return TIER_PIXELS[_Dispatch.cluster_tier(maxi(1, unit_count))]
+static func pixel_width(amount: int) -> float:
+	return TIER_PIXELS[_Dispatch.cluster_tier(maxi(1, amount))]
