@@ -176,7 +176,11 @@ func _refresh_ships() -> void:
 	var start_button := Button.new()
 	start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	start_button.text = "SCOUT STARTEN"
-	start_button.disabled = _scout_source.item_count == 0 or _scout_destination.item_count == 0
+	var start_source: Planet = _selected_option_planet(_scout_source)
+	var can_start: bool = start_source != null and _scout_destination.item_count > 0 and _ship_manager.can_build_scout(start_source)
+	start_button.disabled = not can_start
+	if not can_start:
+		start_button.tooltip_text = "Werft, Scout-Rumpf, Scanner-Drohne, Material und ein freier Bauplatz sind erforderlich."
 	start_button.pressed.connect(_on_start_scout)
 	_list.add_child(start_button)
 
@@ -221,7 +225,7 @@ func _refresh_planets() -> void:
 		if not known.has(planet.planet_id):
 			continue
 		shown += 1
-		var planet_name: String = planet.display_name if not planet.display_name.is_empty() else planet.name
+		var planet_name: String = planet.display_name if not planet.display_name.is_empty() else String(planet.name)
 		var faction_id: StringName = state.faction_of(planet.planet_id)
 		var own_planet: bool = faction_id == GameState.FACTION_PLAYER
 		var faction_str: String = "EIGEN [A]" if own_planet else ("CPU [B]" if faction_id == GameState.FACTION_CPU else "NEUTRAL")

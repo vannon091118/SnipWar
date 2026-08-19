@@ -1,0 +1,133 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/planet_panel.gd" id="1_panel"]
+
+[node name="PlanetPanel" type="PanelContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -436.0
+offset_top = 58.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PanelScroll" type="ScrollContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer/PanelScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeadingLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "PLANETENNETZ"
+
+[node name="SelectedPlanetLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "KEIN PLANET AUSGEWÄHLT"
+
+[node name="FactionLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "Besitzer: Unbekannt"
+
+[node name="ResourceLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "Ressource: Keine"
+
+[node name="SelectedCountLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "Einheiten: 0"
+
+[node name="BuildSpaceLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "Bauplätze: 0"
+
+[node name="HeaderSeparator" type="HSeparator" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+
+[node name="DestinationHeading" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "DISPATCH"
+
+[node name="DestinationSelect" type="OptionButton" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Zielplanet auswählen"
+
+[node name="MissionHeading" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "MISSIONSTYP"
+
+[node name="MissionSelect" type="OptionButton" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Militärverband (K/M/L)"
+
+[node name="SendHeading" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "EINHEITEN SENDEN"
+
+[node name="AmountSlider" type="HSlider" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 1.0
+value = 1.0
+step = 1.0
+editable = false
+
+[node name="PreviewLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "Keine Einheiten verfügbar"
+
+[node name="SendButton" type="Button" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "MISSION STARTEN"
+
+[node name="UpgradeSeparator" type="HSeparator" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+
+[node name="UpgradeHeading" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "PLANETEN-AUSBAU"
+
+[node name="UpgradeScroll" type="VBoxContainer" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UpgradeList" type="VBoxContainer" parent="MarginContainer/PanelScroll/Content/UpgradeScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UnitsSeparator" type="HSeparator" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+
+[node name="UnitsHeading" type="Label" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+text = "GARNISONEN"
+
+[node name="ScrollContainer" type="VBoxContainer" parent="MarginContainer/PanelScroll/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CountList" type="VBoxContainer" parent="MarginContainer/PanelScroll/Content/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3

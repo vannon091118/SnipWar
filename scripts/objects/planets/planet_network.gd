@@ -40,7 +40,7 @@ func _ready() -> void:
 		push_error("PlanetNetwork and WorkerManager must share the same TransitConfig resource")
 	_create_ui.call_deferred()
 
-func _on_layout_completed(_planets: Array = []) -> void:
+func _on_layout_completed(_unused_planets: Array = []) -> void:
 	invalidate_neighbor_cache()
 
 func _create_ui() -> void:
@@ -100,8 +100,8 @@ func get_technology_menu() -> TechnologyMenu:
 func get_message_feed() -> MessageFeed:
 	return _message_feed
 
-func _on_panel_visibility_changed(visible: bool) -> void:
-	if visible and is_instance_valid(_technology_menu):
+func _on_panel_visibility_changed(is_visible: bool) -> void:
+	if is_visible and is_instance_valid(_technology_menu):
 		_technology_menu.close()
 	queue_redraw()
 

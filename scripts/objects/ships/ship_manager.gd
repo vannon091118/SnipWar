@@ -6,7 +6,7 @@ const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_def
 const DEFAULT_TECH_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
 const SHIPYARD_UPGRADE_ID: StringName = &"shipyard"
 const DEFAULT_HULL_TEXTURE: Texture2D = preload("res://assets/objects/workers/cluster_k.svg")
-const DEFAULT_SCANNER_TEXTURE: Texture2D = preload("res://assets/objects/planets/planet_satellite.svg")
+const DEFAULT_SCANNER_TEXTURE: Texture2D = preload("res://assets/objects/satellites/planet_satellite.svg")
 
 @export var ship_config: ShipConfig = DEFAULT_SHIP_CONFIG
 @export var technology_catalog: TechnologyCatalog = DEFAULT_TECH_CATALOG

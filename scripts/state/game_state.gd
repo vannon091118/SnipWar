@@ -421,8 +421,8 @@ func is_known(planet_id: StringName, faction: StringName) -> bool:
 func known_planets_of(faction: StringName) -> Array[StringName]:
 	var result: Array[StringName] = []
 	for planet_id in _ownership:
-		var owner: StringName = _ownership[planet_id] as StringName
-		if owner == faction and faction != FACTION_NEUTRAL:
+		var planet_owner: StringName = _ownership[planet_id] as StringName
+		if planet_owner == faction and faction != FACTION_NEUTRAL:
 			result.append(planet_id as StringName)
 	var known: Dictionary = _known_planets.get(faction, {})
 	for planet_id in known:

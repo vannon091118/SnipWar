@@ -8,7 +8,7 @@ const DEFAULT_METEOR_CONFIG: MeteorConfig = preload("res://resources/config/mete
 
 var _rng := RandomNumberGenerator.new()
 var _bounds := Rect2()
-var _edge_margin := 48.0
+var _edge_margin := DEFAULT_WORLD_CONFIG.meteor_edge_margin
 var _meteor_config: MeteorConfig = DEFAULT_METEOR_CONFIG
 var _meteors: Array[Sprite2D] = []
 var _velocities: Array[Vector2] = []
