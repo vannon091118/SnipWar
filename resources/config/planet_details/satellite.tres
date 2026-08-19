@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="PlanetDetailDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/planet_detail_definition.gd" id="1_definition"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_satellite.svg" id="2_texture"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"satellite"
+node_name_prefix = "Satellite"
+orbit_radius_range = Vector2(114, 130)
+angular_speed_range = Vector2(0.18, 0.18)
+phase_range = Vector2(0, 6.283185)
+sprite_size_range = Vector2(13, 13)
+instance_count = 1
+textures = [ExtResource("2_texture")]

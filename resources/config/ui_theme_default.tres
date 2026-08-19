@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="UIThemeConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/ui_theme_config.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+panel_width_ratio = 0.3125
+panel_min_width = 240.0
+panel_max_width = 360.0
+edge_margin = 16.0
+tab_height = 36.0
+panel_gap = 6.0
+content_margin_left = 14
+content_margin_top = 12
+content_margin_right = 14
+content_margin_bottom = 12
+content_separation = 8
+list_separation = 4
+tab_font_size = 16
+heading_font_size = 18
+selected_count_font_size = 16
+panel_background = Color(0.025, 0.045, 0.1, 0.94)
+panel_border = Color(0.25, 0.82, 0.98, 0.88)
+tab_text_color = Color(0.85, 0.95, 1, 1)
+heading_text_color = Color(0.97, 0.78, 0.35, 1)
+selected_planet_text_color = Color(0.82, 0.91, 0.98, 1)
+selected_count_text_color = Color(0.45, 1, 0.7, 1)
+secondary_text_color = Color(0.68, 0.82, 0.92, 1)
+accent_text_color = Color(0.8, 0.87, 0.94, 1)
+panel_border_width = 2
+panel_corner_radius = 8

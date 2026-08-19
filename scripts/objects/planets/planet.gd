@@ -3,6 +3,7 @@ class_name Planet
 extends Node2D
 
 const DEFAULT_SIZE_PROFILE: PlanetSizeProfile = preload("res://resources/config/planet_sizes/variable.tres")
+const DEFAULT_DETAIL_PROFILE: PlanetDetailProfile = preload("res://resources/config/planet_details/default.tres")
 
 signal planet_selected(planet: Node2D)
 signal workers_spawn_requested(planet: Node2D, amount: int)
@@ -11,6 +12,7 @@ signal worker_count_changed(planet: Node2D, count: int)
 enum WorkerState { IDLE, SPAWNING }
 
 @export var planet_id: StringName = &"planet"
+@export var display_name: String = ""
 @export var size_profile: PlanetSizeProfile = DEFAULT_SIZE_PROFILE
 var layout_size: String = "variable":
 	set(value):
@@ -31,6 +33,7 @@ var layout_size: String = "variable":
 		planet_role = value
 		if is_inside_tree():
 			add_to_group(_role_group(planet_role))
+@export var detail_profile: PlanetDetailProfile = DEFAULT_DETAIL_PROFILE
 @export var planet_texture: Texture2D:
 	set(value):
 		planet_texture = value
@@ -75,6 +78,16 @@ func _on_spawn_timer() -> void:
 	worker_state = WorkerState.SPAWNING
 	workers_spawn_requested.emit(self, _spawn_count())
 	worker_state = WorkerState.IDLE
+
+func apply_definition(definition: PlanetDefinition) -> void:
+	if definition == null:
+		return
+	planet_id = definition.planet_id
+	display_name = definition.display_name
+	planet_role = definition.planet_role
+	faction = definition.faction
+	detail_profile = definition.detail_profile if definition.detail_profile != null else DEFAULT_DETAIL_PROFILE
+	planet_texture = definition.planet_texture
 
 func set_size_profile(profile: PlanetSizeProfile) -> void:
 	size_profile = profile if profile != null else DEFAULT_SIZE_PROFILE

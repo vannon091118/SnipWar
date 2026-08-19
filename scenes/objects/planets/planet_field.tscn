@@ -1,17 +1,6 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/objects/seeded_layout.gd" id="1_layout"]
-[ext_resource type="PackedScene" path="res://scenes/objects/planets/planet.tscn" id="2_planet"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_01_ember.svg" id="3_ember"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean.svg" id="4_ocean"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_03_ice.svg" id="5_ice"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_04_violet.svg" id="6_violet"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_05_desert.svg" id="7_desert"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_06_toxic_red.svg" id="8_toxic"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_07_storm.svg" id="9_storm"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_08_volcanic.svg" id="10_volcanic"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_09_paper.svg" id="11_paper"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_10_golden.svg" id="12_golden"]
 [ext_resource type="Script" path="res://scripts/objects/planets/planet_network.gd" id="14_network"]
 [ext_resource type="Script" path="res://scripts/objects/workers/worker_manager.gd" id="15_workers"]
 [ext_resource type="Resource" path="res://resources/config/world_default.tres" id="16_world"]
@@ -19,72 +8,21 @@
 [ext_resource type="Resource" path="res://resources/config/planet_sizes/variable.tres" id="18_variable"]
 [ext_resource type="Resource" path="res://resources/config/planet_sizes/large.tres" id="19_large"]
 [ext_resource type="Resource" path="res://resources/config/planet_sizes/extra_large.tres" id="20_extra_large"]
+[ext_resource type="Resource" path="res://resources/config/planet_catalog.tres" id="21_catalog"]
+[ext_resource type="Resource" path="res://resources/config/ui_theme_default.tres" id="22_ui_theme"]
 
 [node name="PlanetField" type="Node2D"]
 z_index = 20
 script = ExtResource("1_layout")
 world_config = ExtResource("16_world")
+planet_catalog = ExtResource("21_catalog")
 size_profiles = [ExtResource("18_variable"), ExtResource("19_large"), ExtResource("20_extra_large")]
-
-[node name="Ember" parent="." instance=ExtResource("2_planet")]
-planet_id = &"ember"
-planet_role = &"resource"
-planet_texture = ExtResource("3_ember")
-
-[node name="Ocean" parent="." instance=ExtResource("2_planet")]
-planet_id = &"ocean"
-planet_role = &"homeworld"
-planet_texture = ExtResource("4_ocean")
-
-[node name="Ice" parent="." instance=ExtResource("2_planet")]
-planet_id = &"ice"
-planet_role = &"resource"
-planet_texture = ExtResource("5_ice")
-
-[node name="Violet" parent="." instance=ExtResource("2_planet")]
-planet_id = &"violet"
-planet_role = &"gas_giant"
-planet_texture = ExtResource("6_violet")
-
-[node name="Desert" parent="." instance=ExtResource("2_planet")]
-planet_id = &"desert"
-planet_role = &"resource"
-planet_texture = ExtResource("7_desert")
-
-[node name="Toxic" parent="." instance=ExtResource("2_planet")]
-planet_id = &"toxic"
-planet_role = &"danger"
-faction = &"a"
-planet_texture = ExtResource("8_toxic")
-
-[node name="Storm" parent="." instance=ExtResource("2_planet")]
-planet_id = &"storm"
-planet_role = &"gas_giant"
-faction = &"a"
-planet_texture = ExtResource("9_storm")
-
-[node name="Volcanic" parent="." instance=ExtResource("2_planet")]
-planet_id = &"volcanic"
-planet_role = &"danger"
-faction = &"b"
-planet_texture = ExtResource("10_volcanic")
-
-[node name="Paper" parent="." instance=ExtResource("2_planet")]
-planet_id = &"paper"
-planet_role = &"homeworld"
-faction = &"b"
-planet_texture = ExtResource("11_paper")
-
-[node name="Golden" parent="." instance=ExtResource("2_planet")]
-planet_id = &"golden"
-planet_role = &"rare_resource"
-planet_texture = ExtResource("12_golden")
-
 
 [node name="PlanetNetwork" type="Node2D" parent="."]
 z_index = 5
 script = ExtResource("14_network")
 transit_config = ExtResource("17_transit")
+ui_theme_config = ExtResource("22_ui_theme")
 
 [node name="WorkerManager" type="Node2D" parent="."]
 z_index = 10

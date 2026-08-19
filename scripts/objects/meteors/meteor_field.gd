@@ -1,21 +1,21 @@
 extends Node2D
 
 const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_default.tres")
-const MINIMUM_SIZE_PIXELS := 4.0
-const MAXIMUM_SIZE_PIXELS := 10.0
-const MINIMUM_SPEED := 16.0
-const MAXIMUM_SPEED := 34.0
+const DEFAULT_METEOR_CONFIG: MeteorConfig = preload("res://resources/config/meteor_default.tres")
 
 @export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG
+@export var meteor_config: MeteorConfig = DEFAULT_METEOR_CONFIG
 
 var _rng := RandomNumberGenerator.new()
 var _bounds := Rect2()
 var _edge_margin := 48.0
+var _meteor_config: MeteorConfig = DEFAULT_METEOR_CONFIG
 var _meteors: Array[Sprite2D] = []
 var _velocities: Array[Vector2] = []
 
 func _ready() -> void:
 	var config: WorldConfig = world_config if world_config != null else DEFAULT_WORLD_CONFIG
+	_meteor_config = meteor_config if meteor_config != null else DEFAULT_METEOR_CONFIG
 	_bounds = config.meteor_bounds()
 	_edge_margin = config.meteor_edge_margin
 	_rng.randomize()
@@ -43,9 +43,9 @@ func _spawn(index: int) -> void:
 		direction = Vector2.RIGHT
 	_meteors[index].position = start_position
 	var texture_width: float = _meteors[index].texture.get_width()
-	var size_pixels: float = _rng.randf_range(MINIMUM_SIZE_PIXELS, MAXIMUM_SIZE_PIXELS)
+	var size_pixels: float = _rng.randf_range(_meteor_config.minimum_size_pixels, _meteor_config.maximum_size_pixels)
 	_meteors[index].scale = Vector2.ONE * (size_pixels / texture_width)
-	_velocities[index] = direction * _rng.randf_range(MINIMUM_SPEED, MAXIMUM_SPEED)
+	_velocities[index] = direction * _rng.randf_range(_meteor_config.minimum_speed, _meteor_config.maximum_speed)
 
 func _random_edge_position() -> Vector2:
 	match _rng.randi_range(0, 3):

@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BackgroundConfig" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/background_config.gd" id="1_background"]
+[ext_resource type="Script" path="res://scripts/config/background_nebula_definition.gd" id="2_nebula"]
+[ext_resource type="Resource" path="res://resources/config/background_nebula/left.tres" id="3_left"]
+[ext_resource type="Resource" path="res://resources/config/background_nebula/right.tres" id="4_right"]
+[ext_resource type="Resource" path="res://resources/config/background_nebula/top.tres" id="5_top"]
+
+[resource]
+script = ExtResource("1_background")
+star_count = 120
+fold_count = 20
+grain_count = 220
+dust_count = 260
+star_radius_range = Vector2(0.4, 1.5)
+star_alpha_range = Vector2(0.22, 0.78)
+star_bright_chance = 0.09
+star_layer_range = Vector2i(0, 2)
+fold_length_range = Vector2(0.35, 0.95)
+fold_bend_range = Vector2(0.015, 0.08)
+fold_strength_range = Vector2(0.35, 0.9)
+grain_length_range = Vector2(0.002, 0.012)
+grain_alpha_range = Vector2(0.012, 0.045)
+dust_radius_range = Vector2(0.25, 0.7)
+dust_alpha_range = Vector2(0.025, 0.14)
+fold_point_count = 12
+nebula_layer_count = 5
+nebula_radius_base = 0.38
+nebula_radius_step = 0.14
+nebula_alpha_base = 0.018
+nebula_alpha_step = 0.006
+far_star_alpha_multiplier = 0.55
+near_star_radius_multiplier = 1.2
+bright_star_vertical_ratio = 2.5
+bright_star_horizontal_ratio = 0.8
+background_color = Color(0.027451, 0.043137, 0.086275, 1)
+fold_shadow_color = Color(0.015, 0.02, 0.07, 1)
+fold_highlight_color = Color(0.52, 0.6, 0.82, 1)
+grain_color = Color(0.72, 0.78, 0.94, 1)
+dust_color = Color(0.46, 0.55, 0.72, 1)
+star_color = Color(0.76, 0.86, 1, 1)
+fold_shadow_alpha = 0.1
+fold_highlight_alpha = 0.08
+fold_shadow_width = 5.0
+fold_highlight_width = 1.2
+grain_width = 1.0
+nebula_clouds = Array[ExtResource("2_nebula")]([ExtResource("3_left"), ExtResource("4_right"), ExtResource("5_top")])

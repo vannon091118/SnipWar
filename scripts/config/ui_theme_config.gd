@@ -1,0 +1,45 @@
+@tool
+class_name UIThemeConfig
+extends Resource
+
+@export_range(0.1, 0.6, 0.01) var panel_width_ratio: float
+@export_range(120.0, 1000.0, 1.0) var panel_min_width: float
+@export_range(120.0, 1000.0, 1.0) var panel_max_width: float
+@export_range(0.0, 100.0, 1.0) var edge_margin: float
+@export_range(0.0, 100.0, 1.0) var tab_height: float
+@export_range(0.0, 100.0, 1.0) var panel_gap: float
+@export_range(0.0, 100.0, 1.0) var content_margin_left: int
+@export_range(0.0, 100.0, 1.0) var content_margin_top: int
+@export_range(0.0, 100.0, 1.0) var content_margin_right: int
+@export_range(0.0, 100.0, 1.0) var content_margin_bottom: int
+@export_range(0.0, 100.0, 1.0) var content_separation: int
+@export_range(0.0, 100.0, 1.0) var list_separation: int
+@export_range(1, 96, 1) var tab_font_size: int
+@export_range(1, 96, 1) var heading_font_size: int
+@export_range(1, 96, 1) var selected_count_font_size: int
+@export var panel_background: Color
+@export var panel_border: Color
+@export var tab_text_color: Color
+@export var heading_text_color: Color
+@export var selected_planet_text_color: Color
+@export var selected_count_text_color: Color
+@export var secondary_text_color: Color
+@export var accent_text_color: Color
+@export_range(0, 32, 1) var panel_border_width: int
+@export_range(0, 64, 1) var panel_corner_radius: int
+
+func validate() -> PackedStringArray:
+	var errors := PackedStringArray()
+	if panel_width_ratio <= 0.0:
+		errors.append("UI panel_width_ratio must be positive")
+	if panel_min_width <= 0.0 or panel_max_width < panel_min_width:
+		errors.append("UI panel width range is invalid")
+	if edge_margin < 0.0 or tab_height < 0.0 or panel_gap < 0.0:
+		errors.append("UI spacing values cannot be negative")
+	if content_margin_left < 0 or content_margin_top < 0 or content_margin_right < 0 or content_margin_bottom < 0:
+		errors.append("UI content margins cannot be negative")
+	if content_separation < 0 or list_separation < 0:
+		errors.append("UI separations cannot be negative")
+	if panel_border_width < 0 or panel_corner_radius < 0:
+		errors.append("UI panel style values cannot be negative")
+	return errors

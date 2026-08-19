@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PlanetCatalog" load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/planet_catalog.gd" id="1_catalog"]
+[ext_resource type="Script" path="res://scripts/config/planet_definition.gd" id="2_definition"]
+[ext_resource type="Resource" path="res://resources/config/planets/ember.tres" id="3_ember"]
+[ext_resource type="Resource" path="res://resources/config/planets/ocean.tres" id="4_ocean"]
+[ext_resource type="Resource" path="res://resources/config/planets/ice.tres" id="5_ice"]
+[ext_resource type="Resource" path="res://resources/config/planets/violet.tres" id="6_violet"]
+[ext_resource type="Resource" path="res://resources/config/planets/desert.tres" id="7_desert"]
+[ext_resource type="Resource" path="res://resources/config/planets/toxic.tres" id="8_toxic"]
+[ext_resource type="Resource" path="res://resources/config/planets/storm.tres" id="9_storm"]
+[ext_resource type="Resource" path="res://resources/config/planets/volcanic.tres" id="10_volcanic"]
+[ext_resource type="Resource" path="res://resources/config/planets/paper.tres" id="11_paper"]
+[ext_resource type="Resource" path="res://resources/config/planets/golden.tres" id="12_golden"]
+
+[resource]
+script = ExtResource("1_catalog")
+planets = Array[ExtResource("2_definition")]([ExtResource("3_ember"), ExtResource("4_ocean"), ExtResource("5_ice"), ExtResource("6_violet"), ExtResource("7_desert"), ExtResource("8_toxic"), ExtResource("9_storm"), ExtResource("10_volcanic"), ExtResource("11_paper"), ExtResource("12_golden")])

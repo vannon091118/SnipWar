@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PlanetDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/planet_definition.gd" id="1_definition"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean.svg" id="2_texture"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/default.tres" id="3_details"]
+
+[resource]
+script = ExtResource("1_definition")
+planet_id = &"ocean"
+display_name = "Ocean"
+planet_role = &"homeworld"
+faction = &"neutral"
+planet_texture = ExtResource("2_texture")
+detail_profile = ExtResource("3_details")

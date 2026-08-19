@@ -1,13 +1,11 @@
 @tool
 extends Node2D
 
-const STAR_COUNT := 120
-const FOLD_COUNT := 20
-const GRAIN_COUNT := 220
-const DUST_COUNT := 260
 const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_default.tres")
+const DEFAULT_BACKGROUND_CONFIG: BackgroundConfig = preload("res://resources/config/background_default.tres")
 
 @export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG
+@export var background_config: BackgroundConfig = DEFAULT_BACKGROUND_CONFIG
 
 var stars: Array[Dictionary] = []
 var folds: Array[Dictionary] = []
@@ -15,44 +13,45 @@ var grain: Array[Dictionary] = []
 var dust: Array[Dictionary] = []
 
 func _ready() -> void:
-	var config: WorldConfig = world_config if world_config != null else DEFAULT_WORLD_CONFIG
+	var world: WorldConfig = world_config if world_config != null else DEFAULT_WORLD_CONFIG
+	var config: BackgroundConfig = background_config if background_config != null else DEFAULT_BACKGROUND_CONFIG
 	var rng := RandomNumberGenerator.new()
-	rng.seed = config.decorative_seed
+	rng.seed = world.decorative_seed
 
-	for i in STAR_COUNT:
+	for i in config.star_count:
 		stars.append({
 			"position": Vector2(rng.randf(), rng.randf()),
-			"radius": rng.randf_range(0.4, 1.5),
-			"alpha": rng.randf_range(0.22, 0.78),
-			"bright": rng.randf() < 0.09,
-			"layer": rng.randi_range(0, 2)
+			"radius": rng.randf_range(config.star_radius_range.x, config.star_radius_range.y),
+			"alpha": rng.randf_range(config.star_alpha_range.x, config.star_alpha_range.y),
+			"bright": rng.randf() < config.star_bright_chance,
+			"layer": rng.randi_range(config.star_layer_range.x, config.star_layer_range.y)
 		})
 
-	for i in FOLD_COUNT:
+	for i in config.fold_count:
 		folds.append({
 			"position": Vector2(rng.randf(), rng.randf()),
 			"angle": rng.randf_range(0.0, TAU),
-			"length": rng.randf_range(0.35, 0.95),
-			"bend": rng.randf_range(0.015, 0.08),
+			"length": rng.randf_range(config.fold_length_range.x, config.fold_length_range.y),
+			"bend": rng.randf_range(config.fold_bend_range.x, config.fold_bend_range.y),
 			"phase": rng.randf_range(0.0, TAU),
-			"strength": rng.randf_range(0.35, 0.9)
+			"strength": rng.randf_range(config.fold_strength_range.x, config.fold_strength_range.y)
 		})
 
-	for i in GRAIN_COUNT:
+	for i in config.grain_count:
 		var grain_start := Vector2(rng.randf(), rng.randf())
 		var grain_direction := Vector2.from_angle(rng.randf_range(0.0, TAU))
-		var grain_length := rng.randf_range(0.002, 0.012)
+		var grain_length := rng.randf_range(config.grain_length_range.x, config.grain_length_range.y)
 		grain.append({
 			"from": grain_start,
 			"to": grain_start + grain_direction * grain_length,
-			"alpha": rng.randf_range(0.012, 0.045)
+			"alpha": rng.randf_range(config.grain_alpha_range.x, config.grain_alpha_range.y)
 		})
 
-	for i in DUST_COUNT:
+	for i in config.dust_count:
 		dust.append({
 			"position": Vector2(rng.randf(), rng.randf()),
-			"radius": rng.randf_range(0.25, 0.7),
-			"alpha": rng.randf_range(0.025, 0.14)
+			"radius": rng.randf_range(config.dust_radius_range.x, config.dust_radius_range.y),
+			"alpha": rng.randf_range(config.dust_alpha_range.x, config.dust_alpha_range.y)
 		})
 
 	get_viewport().size_changed.connect(queue_redraw)
@@ -63,33 +62,28 @@ func _draw() -> void:
 	if size.x <= 0.0 or size.y <= 0.0:
 		return
 
-	draw_rect(Rect2(Vector2.ZERO, size), Color("070b16"))
-	_draw_nebula(size)
-	_draw_folds(size)
-	_draw_grain(size)
-	_draw_dust(size)
-	_draw_stars(size)
+	var config: BackgroundConfig = background_config if background_config != null else DEFAULT_BACKGROUND_CONFIG
+	draw_rect(Rect2(Vector2.ZERO, size), config.background_color)
+	_draw_nebula(size, config)
+	_draw_folds(size, config)
+	_draw_grain(size, config)
+	_draw_dust(size, config)
+	_draw_stars(size, config)
 
-func _draw_nebula(size: Vector2) -> void:
+func _draw_nebula(size: Vector2, config: BackgroundConfig) -> void:
 	var short_side: float = minf(size.x, size.y)
-	var clouds: Array[Dictionary] = [
-		{ "position": Vector2(0.18, 0.27), "radius": 0.43, "color": Color(0.16, 0.15, 0.38) },
-		{ "position": Vector2(0.78, 0.70), "radius": 0.50, "color": Color(0.08, 0.24, 0.34) },
-		{ "position": Vector2(0.54, 0.12), "radius": 0.28, "color": Color(0.26, 0.12, 0.30) }
-	]
+	for cloud in config.nebula_clouds:
+		if cloud == null:
+			continue
+		var center := cloud.normalized_position * size
+		var radius: float = cloud.radius_ratio * short_side
+		for layer in range(config.nebula_layer_count, 0, -1):
+			var layer_radius: float = radius * (config.nebula_radius_base + float(layer) * config.nebula_radius_step)
+			var alpha: float = config.nebula_alpha_base + float(config.nebula_layer_count + 1 - layer) * config.nebula_alpha_step
+			draw_circle(center, layer_radius, Color(cloud.color.r, cloud.color.g, cloud.color.b, alpha))
 
-	for cloud in clouds:
-		var center: Vector2 = cloud["position"] * size
-		var radius: float = cloud["radius"] * short_side
-		var base: Color = cloud["color"]
-		for layer in range(5, 0, -1):
-			var layer_radius: float = radius * (0.38 + float(layer) * 0.14)
-			var alpha: float = 0.018 + (6.0 - float(layer)) * 0.006
-			draw_circle(center, layer_radius, Color(base.r, base.g, base.b, alpha))
-
-func _draw_folds(size: Vector2) -> void:
+func _draw_folds(size: Vector2, config: BackgroundConfig) -> void:
 	var fold_scale: float = minf(size.x, size.y)
-
 	for fold in folds:
 		var center: Vector2 = fold["position"] * size
 		var direction: Vector2 = Vector2.from_angle(float(fold["angle"]))
@@ -98,49 +92,53 @@ func _draw_folds(size: Vector2) -> void:
 		var bend: float = fold["bend"] * fold_scale
 		var phase: float = fold["phase"]
 		var strength: float = fold["strength"]
-		var points: PackedVector2Array = PackedVector2Array()
-
-		for point_index in 12:
-			var t: float = float(point_index) / 11.0
+		var points := PackedVector2Array()
+		for point_index in config.fold_point_count:
+			var t: float = float(point_index) / float(config.fold_point_count - 1)
 			var along: float = (t - 0.5) * length
 			var sideways: float = sin(t * PI * 2.5 + phase) * bend
 			points.append(center + direction * along + perpendicular * sideways)
 
-		draw_polyline(points, Color(0.015, 0.02, 0.07, 0.10 * strength), 5.0, true)
-		draw_polyline(points, Color(0.52, 0.60, 0.82, 0.08 * strength), 1.2, true)
+		var shadow_color := config.fold_shadow_color
+		shadow_color.a = config.fold_shadow_alpha * strength
+		var highlight_color := config.fold_highlight_color
+		highlight_color.a = config.fold_highlight_alpha * strength
+		draw_polyline(points, shadow_color, config.fold_shadow_width, true)
+		draw_polyline(points, highlight_color, config.fold_highlight_width, true)
 
-func _draw_grain(size: Vector2) -> void:
+func _draw_grain(size: Vector2, config: BackgroundConfig) -> void:
 	for mark in grain:
 		var from: Vector2 = mark["from"] * size
 		var to: Vector2 = mark["to"] * size
-		var alpha: float = mark["alpha"]
-		draw_line(from, to, Color(0.72, 0.78, 0.94, alpha), 1.0, true)
+		var color := config.grain_color
+		color.a = mark["alpha"]
+		draw_line(from, to, color, config.grain_width, true)
 
-func _draw_dust(size: Vector2) -> void:
+func _draw_dust(size: Vector2, config: BackgroundConfig) -> void:
 	for speck in dust:
 		var speck_position: Vector2 = speck["position"] * size
-		var radius: float = speck["radius"]
-		var alpha: float = speck["alpha"]
-		draw_circle(speck_position, radius, Color(0.46, 0.55, 0.72, alpha))
+		var color := config.dust_color
+		color.a = speck["alpha"]
+		draw_circle(speck_position, speck["radius"], color)
 
-func _draw_stars(size: Vector2) -> void:
+func _draw_stars(size: Vector2, config: BackgroundConfig) -> void:
 	for star in stars:
 		var star_position: Vector2 = star["position"] * size
 		var radius: float = star["radius"]
-		var alpha: float = star["alpha"]
-		var color: Color = Color(0.76, 0.86, 1.0, alpha)
+		var color := config.star_color
+		color.a = star["alpha"]
 
-		if star["layer"] == 0:
-			color.a *= 0.55
-		elif star["layer"] == 2:
-			radius *= 1.2
+		if star["layer"] == config.star_layer_range.x:
+			color.a *= config.far_star_alpha_multiplier
+		elif star["layer"] == config.star_layer_range.y:
+			radius *= config.near_star_radius_multiplier
 
 		if star["bright"]:
 			var diamond: PackedVector2Array = PackedVector2Array([
-				star_position + Vector2(0.0, -radius * 2.5),
-				star_position + Vector2(radius * 0.8, 0.0),
-				star_position + Vector2(0.0, radius * 2.5),
-				star_position + Vector2(-radius * 0.8, 0.0)
+				star_position + Vector2(0.0, -radius * config.bright_star_vertical_ratio),
+				star_position + Vector2(radius * config.bright_star_horizontal_ratio, 0.0),
+				star_position + Vector2(0.0, radius * config.bright_star_vertical_ratio),
+				star_position + Vector2(-radius * config.bright_star_horizontal_ratio, 0.0)
 			])
 			draw_colored_polygon(diamond, color)
 		else:

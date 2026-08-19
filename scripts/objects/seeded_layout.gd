@@ -2,17 +2,25 @@
 class_name SeededLayout
 extends Node2D
 
+const PLANET_SCENE: PackedScene = preload("res://scenes/objects/planets/planet.tscn")
 const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_default.tres")
+const DEFAULT_PLANET_CATALOG: PlanetCatalog = preload("res://resources/config/planet_catalog.tres")
 
 @export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG:
 	set(value):
 		world_config = value if value != null else DEFAULT_WORLD_CONFIG
 		_queue_layout()
 
+@export var planet_catalog: PlanetCatalog = DEFAULT_PLANET_CATALOG
 @export var size_profiles: Array[PlanetSizeProfile] = []:
 	set(value):
 		size_profiles = value
 		_queue_layout()
+
+var _catalog_generated := false
+
+func _enter_tree() -> void:
+	_generate_catalog_planets()
 
 func _ready() -> void:
 	regenerate()
@@ -68,6 +76,33 @@ func regenerate() -> void:
 		item.set_meta("layout_slot", slot)
 		item.position = item_position
 		item.scale = Vector2.ONE * _scale_for(item, rng)
+
+func _generate_catalog_planets() -> void:
+	if _catalog_generated:
+		return
+	for child in get_children():
+		if child is Planet:
+			_catalog_generated = true
+			return
+
+	var catalog: PlanetCatalog = planet_catalog if planet_catalog != null else DEFAULT_PLANET_CATALOG
+	var insertion_index := _planet_insertion_index()
+	for definition in catalog.planets:
+		if definition == null:
+			continue
+		var planet: Planet = PLANET_SCENE.instantiate()
+		planet.name = definition.display_name if not definition.display_name.is_empty() else String(definition.planet_id)
+		planet.apply_definition(definition)
+		add_child(planet)
+		move_child(planet, insertion_index)
+		insertion_index += 1
+	_catalog_generated = true
+
+func _planet_insertion_index() -> int:
+	var network := get_node_or_null("PlanetNetwork")
+	if network == null:
+		return 0
+	return get_children().find(network)
 
 func _assign_size_classes(items: Array[Planet], rng: RandomNumberGenerator, config: WorldConfig) -> void:
 	var profiles_by_id: Dictionary = {}

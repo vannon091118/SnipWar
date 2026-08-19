@@ -2,14 +2,7 @@
 class_name PlanetDetails
 extends Node2D
 
-const MAX_DETAILS := 3
-const DETAIL_TYPES: Array[StringName] = [&"satellite", &"asteroid_belt", &"comet"]
-const SATELLITE_TEXTURE: Texture2D = preload("res://assets/objects/planets/planet_satellite.svg")
-const ASTEROID_TEXTURES: Array[Texture2D] = [
-	preload("res://assets/objects/meteors/meteor_01_rock.svg"),
-	preload("res://assets/objects/meteors/meteor_03_metal.svg"),
-	preload("res://assets/objects/meteors/meteor_05_toxic.svg")
-]
+const DEFAULT_PROFILE: PlanetDetailProfile = preload("res://resources/config/planet_details/default.tres")
 
 @export var detail_seed := 0:
 	set(value):
@@ -37,57 +30,54 @@ func regenerate() -> void:
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = detail_seed
-	_selected_details = _select_details(planet, rng)
-	for detail_type in _selected_details:
-		match detail_type:
-			&"satellite":
-				_add_satellite(rng)
-			&"asteroid_belt":
-				_add_asteroid_belt(rng)
-			&"comet":
-				_add_comet(rng)
+	var profile: PlanetDetailProfile = planet.detail_profile if planet.detail_profile != null else DEFAULT_PROFILE
+	_selected_details = _select_details(profile, rng)
+	for detail_id in _selected_details:
+		var definition := profile.definition_for(detail_id)
+		if definition != null:
+			_add_definition(definition, rng)
 
 func get_detail_types() -> Array[StringName]:
 	return _selected_details.duplicate()
 
-func _select_details(planet: Planet, rng: RandomNumberGenerator) -> Array[StringName]:
-	if planet.planet_id == &"toxic":
-		var toxic_details: Array[StringName] = [&"satellite", &"asteroid_belt"]
-		if rng.randi_range(0, 1) == 1:
-			toxic_details.append(&"comet")
-		return toxic_details
+func _select_details(profile: PlanetDetailProfile, rng: RandomNumberGenerator) -> Array[StringName]:
+	if profile == null or profile.max_details <= 0:
+		return []
+	var selected: Array[StringName] = []
+	for detail_id in profile.guaranteed_detail_ids:
+		if selected.size() >= profile.max_details:
+			break
+		if not selected.has(detail_id) and profile.definition_for(detail_id) != null:
+			selected.append(detail_id)
 
-	var candidates: Array[StringName] = DETAIL_TYPES.duplicate()
-	_shuffle(candidates, rng)
-	var detail_count := rng.randi_range(0, MAX_DETAILS)
-	return candidates.slice(0, detail_count)
+	var optional: Array[StringName] = profile.optional_detail_ids.duplicate()
+	_shuffle(optional, rng)
+	var available_slots := profile.max_details - selected.size()
+	var optional_max := mini(profile.optional_count_range.y, available_slots)
+	var optional_min := mini(profile.optional_count_range.x, optional_max)
+	var optional_count := rng.randi_range(optional_min, optional_max) if optional_max > 0 else 0
+	for index in optional_count:
+		var detail_id: StringName = optional[index]
+		if not selected.has(detail_id) and profile.definition_for(detail_id) != null:
+			selected.append(detail_id)
+	return selected
 
-func _add_satellite(rng: RandomNumberGenerator) -> void:
-	var orbit := PlanetDetailOrbit.new()
-	orbit.name = "Satellite"
-	orbit.configure(122.0 + rng.randf_range(-8.0, 8.0), 0.18, rng.randf_range(0.0, TAU))
-	orbit.set_sprite(SATELLITE_TEXTURE, 13.0)
-	add_child(orbit)
-
-func _add_asteroid_belt(rng: RandomNumberGenerator) -> void:
-	for index in 5:
+func _add_definition(definition: PlanetDetailDefinition, rng: RandomNumberGenerator) -> void:
+	for index in definition.instance_count:
+		if definition.textures.is_empty():
+			return
+		var texture: Texture2D = definition.textures[rng.randi_range(0, definition.textures.size() - 1)]
+		if texture == null:
+			continue
 		var orbit := PlanetDetailOrbit.new()
-		orbit.name = "AsteroidOrbit_%d" % index
+		orbit.name = definition.node_name_prefix + ("_%d" % index if definition.instance_count > 1 else "")
 		orbit.configure(
-			105.0 + rng.randf_range(-12.0, 12.0),
-			rng.randf_range(-0.38, 0.38),
-			rng.randf_range(0.0, TAU)
+			rng.randf_range(definition.orbit_radius_range.x, definition.orbit_radius_range.y),
+			rng.randf_range(definition.angular_speed_range.x, definition.angular_speed_range.y),
+			rng.randf_range(definition.phase_range.x, definition.phase_range.y)
 		)
-		var texture: Texture2D = ASTEROID_TEXTURES[rng.randi_range(0, ASTEROID_TEXTURES.size() - 1)]
-		orbit.set_sprite(texture, rng.randf_range(4.0, 7.0))
+		orbit.set_sprite(texture, rng.randf_range(definition.sprite_size_range.x, definition.sprite_size_range.y))
 		add_child(orbit)
-
-func _add_comet(rng: RandomNumberGenerator) -> void:
-	var orbit := PlanetDetailOrbit.new()
-	orbit.name = "Comet"
-	orbit.configure(136.0 + rng.randf_range(-10.0, 10.0), rng.randf_range(0.08, 0.14), rng.randf_range(0.0, TAU))
-	orbit.set_sprite(ASTEROID_TEXTURES[2], 8.0)
-	add_child(orbit)
 
 func _shuffle(values: Array[StringName], rng: RandomNumberGenerator) -> void:
 	for index in range(values.size() - 1, 0, -1):

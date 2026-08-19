@@ -1,5 +1,9 @@
+@tool
 class_name WorldConfig
 extends Resource
+
+const ROUTE_MODE_ALL_PLANETS := "all_planets"
+const ROUTE_MODE_NEIGHBORS_ONLY := "neighbors_only"
 
 @export var design_size: Vector2
 @export var layout_seed: int
@@ -13,6 +17,7 @@ extends Resource
 @export var extra_large_profile_id: StringName
 @export var large_profile_id: StringName
 @export var default_profile_id: StringName
+@export_enum("all_planets", "neighbors_only") var route_mode: String = ROUTE_MODE_ALL_PLANETS
 
 func meteor_bounds() -> Rect2:
 	return Rect2(Vector2.ZERO, design_size)
@@ -37,6 +42,8 @@ func validate_for_planet_count(planet_count: int) -> PackedStringArray:
 		errors.append("world padding leaves no usable layout area")
 	if meteor_edge_margin < 0.0:
 		errors.append("meteor edge margin cannot be negative")
+	if route_mode != ROUTE_MODE_ALL_PLANETS and route_mode != ROUTE_MODE_NEIGHBORS_ONLY:
+		errors.append("world route_mode is invalid")
 	return errors
 
 func validate_profiles(profiles: Array[PlanetSizeProfile]) -> PackedStringArray:

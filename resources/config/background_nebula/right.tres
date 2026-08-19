@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="BackgroundNebulaDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/background_nebula_definition.gd" id="1_cloud"]
+
+[resource]
+script = ExtResource("1_cloud")
+normalized_position = Vector2(0.78, 0.7)
+radius_ratio = 0.5
+color = Color(0.08, 0.24, 0.34, 1)

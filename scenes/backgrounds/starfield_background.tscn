@@ -5,11 +5,13 @@
 [ext_resource type="Script" uid="uid://b5kvkwu5mpr8r" path="res://scripts/bootstrap/bootstrap.gd" id="3_bootstrap"]
 [ext_resource type="PackedScene" path="res://scenes/objects/meteors/meteor_field.tscn" id="4_meteor_field"]
 [ext_resource type="Resource" path="res://resources/config/world_default.tres" id="5_world"]
+[ext_resource type="Resource" path="res://resources/config/background_default.tres" id="6_background"]
 
 [node name="Background" type="Node2D" unique_id=345278981]
 z_index = -100
 script = ExtResource("1_background")
 world_config = ExtResource("5_world")
+background_config = ExtResource("6_background")
 
 [node name="PlanetField" parent="." unique_id=332234759 instance=ExtResource("2_planet_field")]
 position = Vector2(43, -81)

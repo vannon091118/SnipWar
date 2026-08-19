@@ -3,8 +3,10 @@ extends Node2D
 const _FlightTime := preload("res://scripts/flight_time.gd")
 const _Dispatch := preload("res://scripts/dispatch.gd")
 const DEFAULT_CONFIG: TransitConfig = preload("res://resources/config/transit_default.tres")
+const DEFAULT_UI_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
 
 @export var transit_config: TransitConfig = DEFAULT_CONFIG
+@export var ui_theme_config: UIThemeConfig = DEFAULT_UI_THEME
 
 @onready var _worker_manager: Node = get_parent().get_node("WorkerManager")
 
@@ -27,7 +29,7 @@ func _ready() -> void:
 func _create_ui() -> void:
 	_ui = PlanetNetworkUI.new()
 	add_child(_ui)
-	_ui.setup(_planets)
+	_ui.setup(_planets, ui_theme_config)
 	_ui.panel_visibility_changed.connect(_on_panel_visibility_changed)
 	_ui.destination_selected.connect(_on_destination_selected)
 	_ui.amount_changed.connect(_on_amount_changed)
@@ -60,11 +62,8 @@ func _on_planet_selected(planet: Node2D) -> void:
 	if not is_instance_valid(_ui):
 		return
 	_active_planet = planet
-	_destination_planets.clear()
+	_destination_planets = get_route_destinations(planet)
 	var default_destination := get_destination(planet)
-	for destination in _planets:
-		if destination != planet:
-			_destination_planets.append(destination)
 	_ui.show_planet(planet, _destination_planets, default_destination)
 	_update_selected_count()
 	_refresh_slider_bounds()
@@ -134,10 +133,21 @@ func get_line_phase() -> float:
 
 func get_destination(source: Node2D) -> Node2D:
 	var selected = _routes.get(source)
-	if selected != null and is_instance_valid(selected):
+	var allowed_destinations := get_route_destinations(source)
+	if selected != null and is_instance_valid(selected) and allowed_destinations.has(selected):
 		return selected as Node2D
 	var neighbors := get_neighbors(source)
 	return neighbors[0] if not neighbors.is_empty() else null
+
+func get_route_destinations(source: Node2D) -> Array[Node2D]:
+	var world_config: WorldConfig = get_parent().get("world_config") as WorldConfig
+	if world_config != null and world_config.route_mode == WorldConfig.ROUTE_MODE_NEIGHBORS_ONLY:
+		return get_neighbors(source)
+	var result: Array[Node2D] = []
+	for destination in _planets:
+		if destination != source:
+			result.append(destination)
+	return result
 
 func get_neighbors(planet: Node2D) -> Array[Node2D]:
 	var result: Array[Node2D] = []

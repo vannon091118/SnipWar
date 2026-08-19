@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="PlanetDetailProfile" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/planet_detail_profile.gd" id="1_profile"]
+[ext_resource type="Script" path="res://scripts/config/planet_detail_definition.gd" id="2_definition"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/satellite.tres" id="3_satellite"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/asteroid_belt.tres" id="4_belt"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/comet.tres" id="5_comet"]
+
+[resource]
+script = ExtResource("1_profile")
+id = &"toxic"
+max_details = 3
+optional_count_range = Vector2i(0, 1)
+definitions = Array[ExtResource("2_definition")]([ExtResource("3_satellite"), ExtResource("4_belt"), ExtResource("5_comet")])
+guaranteed_detail_ids = [&"satellite", &"asteroid_belt"]
+optional_detail_ids = [&"comet"]

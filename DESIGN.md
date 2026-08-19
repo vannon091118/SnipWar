@@ -7,6 +7,7 @@ SnipWar ist momentan ein spielbarer Overworld-Vertical-Slice: zehn deterministis
 ## Abgeschlossene Entscheidungen
 
 - **Zielauswahl:** Das Ziel wird vor dem Senden im Planeten-Tab gewählt. Der Sendeknopf startet danach direkt den Transit; es gibt keinen zweiten Bestätigungsschritt.
+- **Routenregel:** Das MVP verwendet `all_planets`: Jeder andere Planet darf direkt gewählt werden; Nachbarlinien bleiben räumliche Orientierung. `neighbors_only` ist als konfigurierbare Regel für spätere Szenarien vorgesehen.
 - **Flugzeit:** Die Vorschau reagiert sofort auf die Slider-Menge. Das MVP verwendet das glatte, reskalierbare Modell:
 
   ```text
@@ -18,7 +19,7 @@ SnipWar ist momentan ein spielbarer Overworld-Vertical-Slice: zehn deterministis
 - **Überlappung:** Die Formation verwendet den größten sichtbaren Cluster der Sendung und einen Sicherheitsfaktor von `0.85` des Durchmessers. Preflight prüft reale Offsets und Paarabstände mit drei Transit-Clustern.
 - **Planetendetails:** Seed-basiert, maximal drei logische Details. Toxic garantiert Satellit und Asteroidengürtel und kann einen Kometen erhalten. Der ungeplante cyanfarbene Orbitalring ist entfernt.
 - **Stil:** Cell-shaded Paperclip-Comic mit klaren Silhouetten, Beleuchtung und Schattierung. K/M/L sind generische, erweiterbare SVG-Assets mit `Attachments` für spätere Objekte.
-- **Präsentation:** Der aktuelle technische Raum ist `960×540` mit Canvas-Item-Stretch und einem `1280×720`-Fenster-Override. 4K bleibt eine spätere Präsentationsstufe, keine MVP-Anforderung.
+- **Präsentation:** Der aktuelle technische Raum ist `960×540` mit Canvas-Item-Stretch und einem `1280×720`-Fenster-Override. Das UI nutzt ein konfiguriertes responsives Panel; Hintergrund- und Meteor-Tuning liegen in eigenen Resources. 4K bleibt eine spätere Präsentationsstufe, keine MVP-Anforderung.
 
 ## Validierter Vertical Slice
 

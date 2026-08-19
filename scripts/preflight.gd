@@ -50,7 +50,21 @@ func _init() -> void:
 	var viewport_size: Vector2 = get_root().get_viewport().get_visible_rect().size
 	if not _check(viewport_size.distance_to(world_config.design_size) <= 0.01, "world design size differs from the Godot viewport"):
 		return
+	var background_config: BackgroundConfig = background.get("background_config") as BackgroundConfig
+	if not _check(background_config != null and background_config.validate().is_empty(), "background config validation failed"):
+		return
+	var meteor_config: MeteorConfig = background.get_node("MeteorField").get("meteor_config") as MeteorConfig
+	if not _check(meteor_config != null and meteor_config.validate().is_empty(), "meteor config validation failed"):
+		return
+	var planet_catalog: PlanetCatalog = field.get("planet_catalog") as PlanetCatalog
+	if not _check(planet_catalog != null, "planet catalog is missing"):
+		return
+	var catalog_errors := planet_catalog.validate()
+	if not _check(catalog_errors.is_empty(), "planet catalog validation failed"):
+		return
 	var positions_before: Dictionary = _planet_positions(field)
+	if not _check(positions_before.size() == planet_catalog.planets.size(), "generated planets do not match the catalog"):
+		return
 	var world_errors := world_config.validate_for_planet_count(positions_before.size())
 	if not _check(world_errors.is_empty(), "world config validation failed"):
 		return
@@ -81,6 +95,9 @@ func _init() -> void:
 	var network: Node = field.get_node("PlanetNetwork")
 	var ui: PlanetNetworkUI = network.get_ui()
 	var manager: Node = field.get_node("WorkerManager")
+	var ui_theme_config: UIThemeConfig = network.get("ui_theme_config") as UIThemeConfig
+	if not _check(ui_theme_config != null and ui_theme_config.validate().is_empty(), "UI theme config validation failed"):
+		return
 	var transit_config: TransitConfig = manager.get("transit_config") as TransitConfig
 	if not _check(transit_config != null, "transit config is missing"):
 		return
@@ -98,7 +115,9 @@ func _init() -> void:
 	var large_timer: Timer = _find_timer(large_planet)
 	var variable_timer: Timer = _find_timer(variable_planet)
 
-	if not _check(get_nodes_in_group("planets").size() == 10, "planet group count is wrong"):
+	if not _check(planet_catalog.planets.size() == 10, "default planet catalog size is wrong"):
+		return
+	if not _check(get_nodes_in_group("planets").size() == planet_catalog.planets.size(), "planet group count is wrong"):
 		return
 	if not _check(source_timer.wait_time == 5.0 and large_timer.wait_time == 7.0 and variable_timer.wait_time == 10.0, "spawn intervals are wrong"):
 		return
@@ -129,7 +148,18 @@ func _init() -> void:
 	var panel: PanelContainer = ui.get_panel()
 	var destination_option: OptionButton = ui.get_destination_option()
 	var neighbors: Array[Node2D] = network.get_neighbors(source)
-	if not _check(panel.visible and destination_option.item_count == 9 and not neighbors.is_empty(), "planet tab or neighbors are missing"):
+	var route_destinations: Array[Node2D] = network.get_route_destinations(source)
+	if not _check(world_config.route_mode == WorldConfig.ROUTE_MODE_ALL_PLANETS, "default route mode is not all_planets"):
+		return
+	var original_route_mode := world_config.route_mode
+	world_config.route_mode = WorldConfig.ROUTE_MODE_NEIGHBORS_ONLY
+	if not _check(network.get_route_destinations(source).size() == neighbors.size(), "neighbors_only route mode is not enforced"):
+		return
+	world_config.route_mode = original_route_mode
+	if not _check(panel.visible and destination_option.item_count == route_destinations.size() and route_destinations.size() == 9 and not neighbors.is_empty(), "planet tab or neighbors are missing"):
+		return
+	var panel_width: float = panel.size.x
+	if not _check(panel_width >= ui_theme_config.panel_min_width - 0.1 and panel_width <= ui_theme_config.panel_max_width + 0.1, "responsive UI panel width is outside the configured range"):
 		return
 	var amount_slider: HSlider = ui.get_amount_slider()
 	var preview_label: Label = ui.get_preview_label()
@@ -278,8 +308,71 @@ func _init() -> void:
 			if not _check(details.get_detail_types().size() <= 3, "%s has too many planet details" % child.name):
 				return
 
+	if not await _run_layout_scale_case(field, planet_catalog, Vector2(960.0, 540.0), 6, 3, original_seed + 101):
+		_check(false, "960x540 scaled layout case failed")
+		return
+	if not await _run_layout_scale_case(field, planet_catalog, Vector2(1920.0, 1080.0), 14, 7, original_seed + 202):
+		_check(false, "1920x1080 scaled layout case failed")
+		return
+
 	print("PASS: SnipWar preflight")
 	quit()
+
+func _run_layout_scale_case(source_field: Node, base_catalog: PlanetCatalog, design_size: Vector2, planet_count: int, columns: int, seed: int) -> bool:
+	var scene: PackedScene = preload("res://scenes/objects/planets/planet_field.tscn")
+	var custom_field: Node = scene.instantiate()
+	var custom_config: WorldConfig = (source_field.get("world_config") as WorldConfig).duplicate(true) as WorldConfig
+	custom_config.design_size = design_size
+	custom_config.columns = columns
+	custom_config.layout_seed = seed
+	custom_config.extra_large_count = mini(custom_config.extra_large_count, planet_count)
+	custom_config.large_count = mini(custom_config.large_count, maxi(0, planet_count - custom_config.extra_large_count))
+	custom_field.set("world_config", custom_config)
+	custom_field.set("planet_catalog", _catalog_for_count(base_catalog, planet_count))
+	custom_field.set("size_profiles", source_field.get("size_profiles"))
+	root.add_child(custom_field)
+	await process_frame
+	await process_frame
+
+	var planets: Array[Planet] = []
+	var slots: Dictionary = {}
+	for child in custom_field.get_children():
+		if child is Planet:
+			planets.append(child)
+			var slot: int = int(child.get_meta("layout_slot", -1))
+			if slot < 0 or slot >= planet_count or slots.has(slot):
+				custom_field.queue_free()
+				await process_frame
+				return false
+			slots[slot] = true
+			if child.position.x < custom_config.padding or child.position.x > design_size.x - custom_config.padding:
+				custom_field.queue_free()
+				await process_frame
+				return false
+			if child.position.y < custom_config.padding or child.position.y > design_size.y - custom_config.padding:
+				custom_field.queue_free()
+				await process_frame
+				return false
+	var network: Node = custom_field.get_node("PlanetNetwork")
+	var route_count: int = network.get_route_destinations(planets[0]).size() if not planets.is_empty() else 0
+	var expected_route_count: int = planet_count - 1
+	var passed: bool = planets.size() == planet_count and slots.size() == planet_count and route_count == expected_route_count
+	custom_field.queue_free()
+	await process_frame
+	return passed
+
+func _catalog_for_count(base_catalog: PlanetCatalog, planet_count: int) -> PlanetCatalog:
+	var catalog := PlanetCatalog.new()
+	var definitions: Array[PlanetDefinition] = []
+	for index in planet_count:
+		var source: PlanetDefinition = base_catalog.planets[index % base_catalog.planets.size()]
+		var definition: PlanetDefinition = source.duplicate(true) as PlanetDefinition
+		if index >= base_catalog.planets.size():
+			definition.planet_id = StringName("%s_%d" % [definition.planet_id, index])
+			definition.display_name = "%s %d" % [definition.display_name, index]
+		definitions.append(definition)
+	catalog.planets = definitions
+	return catalog
 
 func _capture_spawn(planet: Node2D, amount: int) -> void:
 	if planet == _observed_planet:
