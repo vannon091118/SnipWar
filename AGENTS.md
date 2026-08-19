@@ -48,6 +48,7 @@
 
 ## Documentation and presentation
 - README product copy should use original wording, distinguish the 4K presentation target from the current prototype, and state unfinished gameplay explicitly.
+- `VISION.md` is a non-binding, feasibility-checked outlook; `DESIGN.md` remains the concrete MVP contract. Keep future concept language conditional until a separate implementation decision exists.
 - GitHub slugs for decorated/non-ASCII headings are unreliable; use explicit `<a id="...">` anchors for README badge links.
 
 ## Design direction (SnipWar concept)
@@ -63,4 +64,5 @@
 - Local commit author identity may be absent; use per-command `GIT_AUTHOR_*`/`GIT_COMMITTER_*` environment variables instead of changing Git config.
 
 ## Git hooks
-- Local `core.hooksPath` is `.githooks`: `pre-commit` runs `res://scripts/preflight.gd`, `commit-msg` requires one reason sentence per staged file, and `post-commit` pushes the current branch to `origin`. For a requested local-only commit, run the checks manually and use `git -c core.hooksPath=/dev/null commit` so the post-commit push is not triggered; this does not persistently change Git config.
+- Local `core.hooksPath` is `.githooks` and must remain active: `pre-commit` runs `res://scripts/preflight.gd`, while `commit-msg` rejects any commit that lacks one explanatory sentence for every staged file. Do not bypass the hooks; the repository's `post-commit` policy is separate from the explanation gate.
+- For an explicitly local-only commit, run `./.githooks/pre-commit` and `./.githooks/commit-msg` manually, then use one-shot `git -c core.hooksPath=/dev/null commit`; this skips only the automatic push after both gates have run and leaves the local hook configuration unchanged.
