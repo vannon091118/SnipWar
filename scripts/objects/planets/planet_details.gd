@@ -4,6 +4,7 @@ extends Node2D
 
 const DEFAULT_PROFILE: PlanetDetailProfile = preload("res://resources/config/planet_details/default.tres")
 const DEFAULT_FIDELITY: PlanetDetailFidelity = preload("res://resources/config/planet_details/fidelity_full.tres")
+const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/transformer_default.tres")
 
 @export var detail_seed := 0:
 	set(value):
@@ -88,3 +89,36 @@ func _shuffle(values: Array[StringName], rng: RandomNumberGenerator) -> void:
 		var value: StringName = values[index]
 		values[index] = values[swap_index]
 		values[swap_index] = value
+
+func add_upgrade_structure(upgrade: PlanetUpgradeDefinition, tint: Color = Color.WHITE) -> void:
+	if upgrade == null or upgrade.visual_asset == null:
+		return
+	var structure_name := "UpgradeStructure_" + String(upgrade.id)
+	if has_node(structure_name):
+		return
+	var orbit := PlanetDetailOrbit.new()
+	orbit.name = structure_name
+
+	# Orbit parameters come from the TransformerConfig (never hardcoded here).
+	var transformer_config: TransformerConfig = DEFAULT_TRANSFORMER_CONFIG
+	var structure_count := 0
+	for child in get_children():
+		if child.name.begins_with("UpgradeStructure_"):
+			structure_count += 1
+	var orbit_radius := transformer_config.orbit_radius_for_child_count(structure_count)
+	var angular_speed := transformer_config.orbit_angular_speed
+	var phase := transformer_config.orbit_phase_for_child_count(structure_count)
+
+	orbit.configure(
+		orbit_radius,
+		angular_speed,
+		phase,
+		DEFAULT_FIDELITY
+	)
+	orbit.set_sprite(upgrade.visual_asset, transformer_config.sprite_size)
+
+	var sprite := orbit.get_node_or_null("Sprite2D") as Sprite2D
+	if sprite != null:
+		sprite.modulate = tint
+
+	add_child(orbit)

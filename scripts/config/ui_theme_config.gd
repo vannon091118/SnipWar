@@ -33,6 +33,22 @@ extends Resource
 @export_range(0, 32, 1) var panel_border_width: int
 @export_range(0, 64, 1) var panel_corner_radius: int
 
+# Ressourcen-Signatur-Farben (nie hardcoded im Code — immer via Config)
+@export var resource_color_energy: Color = Color(0.3, 0.9, 1.0)
+@export var resource_color_biomass: Color = Color(0.3, 0.9, 0.4)
+@export var resource_color_rare: Color = Color(0.7, 0.4, 1.0)
+@export var resource_color_material: Color = Color(0.7, 0.75, 0.8)
+@export var resource_color_volatile: Color = Color(1.0, 0.6, 0.2)
+
+func resource_color(resource_id: StringName) -> Color:
+	match resource_id:
+		&"energy":   return resource_color_energy
+		&"biomass":  return resource_color_biomass
+		&"rare":     return resource_color_rare
+		&"material": return resource_color_material
+		&"volatile": return resource_color_volatile
+		_:           return accent_text_color
+
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
 	if panel_width_ratio <= 0.0:

@@ -15,6 +15,7 @@ const ARRIVAL_FRIENDLY := &"friendly"
 const ARRIVAL_REPELLED := &"repelled"
 const ARRIVAL_CAPTURED := &"captured"
 const ARRIVAL_REJECTED := &"rejected"
+const ARRIVAL_SETTLED := &"settled"
 
 @export var planet_id: StringName = &"planet"
 @export var display_name: String = ""
@@ -59,6 +60,9 @@ var _detail_seed := 0
 var _planet_ready := false
 var _initial_workers_applied := false
 
+const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
+const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/transformer_default.tres")
+
 func _ready() -> void:
 	$ClickArea.input_event.connect(_on_click_area_input_event)
 	add_to_group("planets")
@@ -68,6 +72,8 @@ func _ready() -> void:
 			state.register_planet(planet_id, faction)
 			if not state.faction_changed.is_connected(_on_faction_changed):
 				state.faction_changed.connect(_on_faction_changed)
+			if not state.planet_upgraded.is_connected(_on_planet_upgraded):
+				state.planet_upgraded.connect(_on_planet_upgraded)
 	_sync_groups()
 	_apply_visuals()
 	_planet_ready = true
@@ -89,7 +95,22 @@ func _start_spawn_timer() -> void:
 func _on_spawn_timer() -> void:
 	worker_state = WorkerState.SPAWNING
 	workers_spawn_requested.emit(self, _spawn_count())
+	var state: Node = _game_state()
+	if state != null and is_inside_tree() and not Engine.is_editor_hint():
+		state.generate_resources_for_planet(planet_id, DEFAULT_UPGRADE_CATALOG, _active_size_profile().resource_base)
 	worker_state = WorkerState.IDLE
+
+func _on_planet_upgraded(changed_planet_id: StringName, upgrade_id: StringName) -> void:
+	if changed_planet_id != planet_id:
+		return
+	var catalog := DEFAULT_UPGRADE_CATALOG
+	var upgrade := catalog.resolve(upgrade_id)
+	if upgrade == null:
+		return
+	var details: PlanetDetails = _details if is_instance_valid(_details) else get_node_or_null("PlanetDetails") as PlanetDetails
+	if details != null:
+		var tint: Color = DEFAULT_TRANSFORMER_CONFIG.resolve_tint(upgrade.transformer_tint_mode, get_faction())
+		details.add_upgrade_structure(upgrade, tint)
 
 func apply_definition(definition: PlanetDefinition) -> void:
 	if definition == null:
@@ -121,7 +142,14 @@ func _spawn_interval() -> float:
 	return _active_size_profile().spawn_interval
 
 func _spawn_count() -> int:
-	return _active_size_profile().spawn_count
+	var count := _active_size_profile().spawn_count
+	var state: Node = _game_state()
+	if state != null:
+		for up_id in state.get_planet_upgrades(planet_id):
+			var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
+			if def != null and def.trait_definition != null:
+				count += def.trait_definition.worker_spawn_bonus
+	return count
 
 func set_initial_workers(amount: int) -> void:
 	if _initial_workers_applied:
@@ -139,14 +167,58 @@ func resolve_arrival(source_faction: StringName, amount: int) -> StringName:
 	if destination_faction == source_faction:
 		register_workers(incoming)
 		return ARRIVAL_FRIENDLY
-	var defenders: int = worker_count
+	var bonus_defense := 0
+	var state: Node = _game_state()
+	if state != null:
+		for up_id in state.get_planet_upgrades(planet_id):
+			var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
+			if def != null and def.trait_definition != null:
+				bonus_defense += def.trait_definition.defense_rating
+	var defenders: int = worker_count + bonus_defense
 	if incoming <= defenders:
-		unregister_workers(incoming)
+		unregister_workers(mini(incoming, worker_count))
 		return ARRIVAL_REPELLED
-	unregister_workers(defenders)
+	unregister_workers(worker_count)
 	set_faction(source_faction)
 	register_workers(incoming - defenders)
 	return ARRIVAL_CAPTURED
+
+func resolve_mission(source_faction: StringName, amount: int, mission_type: StringName = &"military") -> StringName:
+	if mission_type == GameState.MISSION_COLONY:
+		return _resolve_colony(source_faction, amount)
+	if mission_type == GameState.MISSION_CARGO:
+		return _resolve_cargo(source_faction, amount)
+	return resolve_arrival(source_faction, amount)
+
+func _resolve_colony(source_faction: StringName, amount: int) -> StringName:
+	var incoming: int = maxi(amount, 0)
+	if incoming <= 0 or source_faction.is_empty() or source_faction == GameState.FACTION_NEUTRAL:
+		return ARRIVAL_REJECTED
+	if get_faction() != GameState.FACTION_NEUTRAL:
+		return ARRIVAL_REJECTED
+	set_faction(source_faction)
+	register_workers(incoming)
+	return ARRIVAL_SETTLED
+
+func _resolve_cargo(source_faction: StringName, amount: int) -> StringName:
+	var incoming: int = maxi(amount, 0)
+	if incoming <= 0 or source_faction.is_empty() or source_faction == GameState.FACTION_NEUTRAL:
+		return ARRIVAL_REJECTED
+	if get_faction() != source_faction:
+		return ARRIVAL_REJECTED
+	register_workers(incoming)
+	return ARRIVAL_FRIENDLY
+
+func get_transfer_speed_multiplier() -> float:
+	var state: Node = _game_state()
+	if state == null:
+		return 1.0
+	var multiplier := 1.0
+	for up_id in state.get_planet_upgrades(planet_id):
+		var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
+		if def != null and def.trait_definition != null:
+			multiplier *= def.trait_definition.transfer_speed_multiplier
+	return multiplier
 
 func register_workers(amount: int) -> void:
 	worker_count += maxi(amount, 0)

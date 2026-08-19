@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="TransformerConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/transformer_config.gd" id="1_transformer"]
+
+[resource]
+script = ExtResource("1_transformer")
+faction_player_tint = Color(0.3, 0.7, 1.0, 1.0)
+faction_cpu_tint = Color(1.0, 0.4, 0.4, 1.0)
+faction_neutral_tint = Color(0.8, 0.8, 0.8, 1.0)
+resource_tint = Color(0.95, 0.8, 0.3, 1.0)
+base_orbit_radius = 130.0
+orbit_radius_step = 15.0
+orbit_angular_speed = 0.4
+orbit_phase_step = 1.2
+sprite_size = 24.0

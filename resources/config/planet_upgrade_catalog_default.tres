@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="PlanetUpgradeCatalog" load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/planet_upgrade_catalog.gd" id="1_catalog_script"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/extractor.tres" id="2_extractor"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/refinery.tres" id="3_refinery"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/trade_post.tres" id="4_trade_post"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/shipyard.tres" id="5_shipyard"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/war_shipyard.tres" id="6_war_shipyard"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/colony_shipyard.tres" id="7_colony_shipyard"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/defense_grid.tres" id="8_defense_grid"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/tech_center.tres" id="9_tech_center"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/weapon_lab.tres" id="10_weapon_lab"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/armor_lab.tres" id="11_armor_lab"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/orbital_station.tres" id="12_orbital_station"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/colony_hub.tres" id="13_colony_hub"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/trade_network.tres" id="14_trade_network"]
+
+[resource]
+script = ExtResource("1_catalog_script")
+upgrades = [ExtResource("2_extractor"), ExtResource("3_refinery"), ExtResource("4_trade_post"), ExtResource("5_shipyard"), ExtResource("6_war_shipyard"), ExtResource("7_colony_shipyard"), ExtResource("8_defense_grid"), ExtResource("9_tech_center"), ExtResource("10_weapon_lab"), ExtResource("11_armor_lab"), ExtResource("12_orbital_station"), ExtResource("13_colony_hub"), ExtResource("14_trade_network")]

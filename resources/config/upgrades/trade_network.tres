@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="PlanetUpgradeDefinition" format=3 uid="uid://cfd0skdplwkwh"]
+
+[ext_resource type="Script" uid="uid://c46aw7c040kwr" path="res://scripts/config/planet_upgrade_definition.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://dfbxa4ac73vfm" path="res://scripts/config/trait_definition.gd" id="2_trait_script"]
+[ext_resource type="Texture2D" uid="uid://bpcp6tfdju4d0" path="res://assets/objects/meteors/meteor_02_ice.svg" id="3_asset"]
+
+[sub_resource type="Resource" id="Trait_trade_network"]
+script = ExtResource("2_trait_script")
+id = &"trait_trade_network"
+display_name = "Handelsnetz"
+description = "+20% Rohstofffoerderung, +50% Transit-Geschwindigkeit"
+production_boost = 0.2
+transfer_speed_multiplier = 1.5
+maintenance_cost_resource = &"volatile"
+maintenance_cost_amount = 2
+
+[resource]
+script = ExtResource("1_def")
+id = &"trade_network"
+display_name = "Interstellares Handelsnetz"
+description = "Vernetzt den Planeten mit dem galaktischen Handelssystem. Massiv erhoehte Ressourcenfoerderung und Transit-Effizienz."
+branch = &"infrastructure"
+tier = 3
+parent_upgrade_id = &"colony_hub"
+cost_resource = &"volatile"
+cost_amount = 40
+cost_workers = 3
+trait_definition = SubResource("Trait_trade_network")
+visual_asset = ExtResource("3_asset")
+transformer_tint_mode = &"resource"

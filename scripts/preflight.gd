@@ -305,8 +305,9 @@ func _init() -> void:
 	world_config.route_mode = original_route_mode
 	if not _check(panel.visible and destination_option.item_count == route_destinations.size() and route_destinations.size() == 9 and not neighbors.is_empty(), "planet tab or neighbors are missing"):
 		return
+	await process_frame
 	var panel_width: float = panel.size.x
-	if not _check(panel_width >= ui_theme_config.panel_min_width - 0.1 and panel_width <= ui_theme_config.panel_max_width + 0.1, "responsive UI panel width is outside the configured range"):
+	if not _check(panel_width >= ui_theme_config.panel_min_width - 0.1 and panel_width <= ui_theme_config.panel_max_width + 0.1, "responsive UI panel width is outside the configured range (got %f)" % panel_width):
 		return
 	var amount_slider: HSlider = ui.get_amount_slider()
 	var preview_label: Label = ui.get_preview_label()
@@ -520,6 +521,238 @@ func _init() -> void:
 		return
 	if not await _run_scenario_case(scene, scenario_catalog, &"wide"):
 		_check(false, "wide scenario selection case failed")
+		return
+
+	# --- UPGRADE SYSTEM TESTS ---
+	var upgrade_catalog: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
+	if not _check(upgrade_catalog != null and upgrade_catalog.validate().is_empty(), "upgrade catalog validation failed"):
+		return
+	if not _check(upgrade_catalog.upgrades.size() == 13, "upgrade catalog should have 13 upgrades"):
+		return
+
+	# Verify 4 branches exist
+	var branches: Dictionary = {}
+	for up in upgrade_catalog.upgrades:
+		if up != null:
+			branches[up.branch] = true
+	if not _check(branches.has(&"economy") and branches.has(&"military") and branches.has(&"tech") and branches.has(&"infrastructure"), "all 4 upgrade branches must exist"):
+		return
+
+	# Verify tier structure
+	var economy_upgrades := upgrade_catalog.get_upgrades_for_branch(&"economy")
+	var military_upgrades := upgrade_catalog.get_upgrades_for_branch(&"military")
+	var tech_upgrades := upgrade_catalog.get_upgrades_for_branch(&"tech")
+	var infra_upgrades := upgrade_catalog.get_upgrades_for_branch(&"infrastructure")
+
+	if not _check(economy_upgrades.size() >= 3 and military_upgrades.size() >= 4 and tech_upgrades.size() >= 3 and infra_upgrades.size() >= 3, "each branch should have multiple tiers"):
+		return
+
+	# Test upgrade prerequisite chain: extractor -> refinery/trade_post
+	var extractor := upgrade_catalog.resolve(&"extractor")
+	var refinery := upgrade_catalog.resolve(&"refinery")
+	var trade_post := upgrade_catalog.resolve(&"trade_post")
+	if not _check(extractor != null and refinery != null and trade_post != null, "core economy upgrades missing"):
+		return
+	if not _check(refinery.parent_upgrade_id == &"extractor" and trade_post.parent_upgrade_id == &"extractor", "economy tier 2 should require extractor"):
+		return
+	if not _check(refinery.exclusive_with == &"trade_post" and trade_post.exclusive_with == &"refinery", "refinery and trade_post should be mutually exclusive"):
+		return
+
+	# Test military branch: shipyard -> colony_shipyard/war_shipyard
+	var shipyard := upgrade_catalog.resolve(&"shipyard")
+	var colony_shipyard := upgrade_catalog.resolve(&"colony_shipyard")
+	var war_shipyard := upgrade_catalog.resolve(&"war_shipyard")
+	if not _check(shipyard != null and colony_shipyard != null and war_shipyard != null, "military upgrades missing"):
+		return
+	if not _check(colony_shipyard.parent_upgrade_id == &"shipyard" and war_shipyard.parent_upgrade_id == &"shipyard", "military tier 2 should require shipyard"):
+		return
+	if not _check(colony_shipyard.exclusive_with == &"war_shipyard" and war_shipyard.exclusive_with == &"colony_shipyard", "colony_shipyard and war_shipyard should be mutually exclusive"):
+		return
+
+	# Test tech branch: tech_center -> weapon_lab/armor_lab
+	var tech_center := upgrade_catalog.resolve(&"tech_center")
+	var weapon_lab := upgrade_catalog.resolve(&"weapon_lab")
+	var armor_lab := upgrade_catalog.resolve(&"armor_lab")
+	if not _check(tech_center != null and weapon_lab != null and armor_lab != null, "tech upgrades missing"):
+		return
+	if not _check(weapon_lab.parent_upgrade_id == &"tech_center" and armor_lab.parent_upgrade_id == &"tech_center", "tech tier 2 should require tech_center"):
+		return
+	if not _check(weapon_lab.exclusive_with == &"armor_lab" and armor_lab.exclusive_with == &"weapon_lab", "weapon_lab and armor_lab should be mutually exclusive"):
+		return
+
+	# Test infrastructure branch: orbital_station -> colony_hub -> trade_network
+	var orbital_station := upgrade_catalog.resolve(&"orbital_station")
+	var colony_hub := upgrade_catalog.resolve(&"colony_hub")
+	var trade_network := upgrade_catalog.resolve(&"trade_network")
+	if not _check(orbital_station != null and colony_hub != null and trade_network != null, "infrastructure upgrades missing"):
+		return
+	if not _check(colony_hub.parent_upgrade_id == &"orbital_station" and trade_network.parent_upgrade_id == &"colony_hub", "infrastructure chain broken"):
+		return
+
+	# Test can_purchase_upgrade logic
+	var player_homeworld: StringName = game_state.homeworld_for(GameState.FACTION_PLAYER)
+	if not _check(not String(player_homeworld).is_empty(), "player homeworld missing"):
+		return
+
+	# Capture initial resources before purchases
+	var initial_energy: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy")
+	var initial_material: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"material")
+
+	# Initially can buy extractor (tier 1, no parent)
+	if not _check(game_state.can_purchase_upgrade(player_homeworld, &"extractor", upgrade_catalog), "should be able to buy extractor initially"):
+		return
+
+	# Cannot buy refinery without extractor
+	if not _check(not game_state.can_purchase_upgrade(player_homeworld, &"refinery", upgrade_catalog), "should not buy refinery without extractor"):
+		return
+
+	# Buy extractor
+	if not _check(game_state.purchase_upgrade(player_homeworld, &"extractor", upgrade_catalog), "purchase extractor should succeed"):
+		return
+
+	# Now can buy refinery or trade_post
+	if not _check(game_state.can_purchase_upgrade(player_homeworld, &"refinery", upgrade_catalog), "should be able to buy refinery after extractor"):
+		return
+	if not _check(game_state.can_purchase_upgrade(player_homeworld, &"trade_post", upgrade_catalog), "should be able to buy trade_post after extractor"):
+		return
+
+	# Buy refinery
+	if not _check(game_state.purchase_upgrade(player_homeworld, &"refinery", upgrade_catalog), "purchase refinery should succeed"):
+		return
+
+	# After buying refinery, cannot buy trade_post (exclusive)
+	if not _check(not game_state.can_purchase_upgrade(player_homeworld, &"trade_post", upgrade_catalog), "should not buy trade_post after refinery (exclusive)"):
+		return
+
+	# Verify resource deduction
+	# Extractor costs 15 energy, refinery costs 25 material
+	if not _check(game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy") == initial_energy - 15, "extractor should cost 15 energy"):
+		return
+	if not _check(game_state.get_faction_resource(GameState.FACTION_PLAYER, &"material") == initial_material - 25, "refinery should cost 25 material"):
+		return
+
+	# Verify upgrades recorded
+	var hw_upgrades: Array[StringName] = game_state.get_planet_upgrades(player_homeworld)
+	if not _check(hw_upgrades.size() == 2 and hw_upgrades.has(&"extractor") and hw_upgrades.has(&"refinery"), "upgrades should be recorded on planet"):
+		return
+
+	# Test trait effects on resource generation
+	# Extractor gives +50% production_boost, refinery gives +100% but -2 energy maintenance
+	game_state.call("deal_resources", planet_catalog, preload("res://resources/config/resource_pool_default.tres"), world_config.layout_seed)
+	var generated: int = game_state.generate_resources_for_planet(player_homeworld, upgrade_catalog)
+	# Base 1 * (1 + 0.5 + 1.0) = 2.5 -> 2, minus 2 energy maintenance = net energy change
+	if not _check(generated >= 2, "resource generation with traits should apply production boost"):
+		return
+
+	# Verify maintenance cost was deducted (refinery has 2 energy maintenance)
+	var energy_after_gen: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, &"energy")
+	# Should have lost 2 energy from maintenance (extractor 15 + refinery maintenance 2)
+	if not _check(energy_after_gen <= initial_energy - 15 - 2, "maintenance cost should be deducted during generation"):
+		return
+
+	# Test defense traits on arrival resolution
+	var defense_grid := upgrade_catalog.resolve(&"defense_grid")
+	if not _check(defense_grid != null and defense_grid.trait_definition != null and defense_grid.trait_definition.defense_rating == 5, "defense_grid should have defense_rating 5"):
+		return
+	var armor_lab_upg := upgrade_catalog.resolve(&"armor_lab")
+	if not _check(armor_lab_upg != null and armor_lab_upg.trait_definition != null and armor_lab_upg.trait_definition.defense_rating == 6, "armor_lab should have defense_rating 6"):
+		return
+
+	# Test mission type constants
+	if not _check(GameState.MISSION_MILITARY == &"military" and GameState.MISSION_CARGO == &"cargo" and GameState.MISSION_COLONY == &"colony", "mission type constants defined"):
+		return
+
+	# Test UI mission selector has all three types
+	var mission_option: OptionButton = ui.get_destination_option()
+	# We can't easily test the mission selector without a planet selected, but we verified constants exist
+
+	# Test transformer tint modes
+	if not _check(extractor.transformer_tint_mode == &"resource", "extractor should use resource tint"):
+		return
+	if not _check(refinery.transformer_tint_mode == &"resource", "refinery should use resource tint"):
+		return
+	if not _check(trade_post.transformer_tint_mode == &"faction", "trade_post should use faction tint"):
+		return
+	if not _check(defense_grid.transformer_tint_mode == &"faction", "defense_grid should use faction tint"):
+		return
+	if not _check(tech_center.transformer_tint_mode == &"faction", "tech_center should use faction tint"):
+		return
+	if not _check(orbital_station.transformer_tint_mode == &"faction", "orbital_station should use faction tint"):
+		return
+
+	# Test visual assets exist for upgrades
+	for up in upgrade_catalog.upgrades:
+		if up != null and up.visual_asset == null:
+			_check(false, "upgrade %s missing visual_asset" % up.id)
+			return
+
+	# --- MISSION SEMANTICS ---
+	var mission_source: Planet = null
+	var mission_cpu: Planet = null
+	var mission_neutral: Planet = null
+	for planet_child in field.get_children():
+		if planet_child is Planet:
+			match (planet_child as Planet).planet_id:
+				&"ocean":
+					mission_source = planet_child as Planet
+				&"paper":
+					mission_cpu = planet_child as Planet
+				&"toxic":
+					mission_neutral = planet_child as Planet
+	if not _check(mission_source != null and mission_cpu != null and mission_neutral != null, "mission test planets missing"):
+		return
+
+	# Colony settles a neutral planet peacefully
+	game_state.set_faction(mission_neutral.planet_id, GameState.FACTION_NEUTRAL)
+	mission_neutral.unregister_workers(mission_neutral.worker_count)
+	var colony_result: StringName = mission_neutral.resolve_mission(GameState.FACTION_PLAYER, 2, GameState.MISSION_COLONY)
+	if not _check(colony_result == Planet.ARRIVAL_SETTLED and mission_neutral.get_faction() == GameState.FACTION_PLAYER and mission_neutral.worker_count == 2, "colony mission did not settle a neutral planet"):
+		return
+
+	# Colony on an already owned planet is rejected
+	var colony_owned_result: StringName = mission_neutral.resolve_mission(GameState.FACTION_CPU, 1, GameState.MISSION_COLONY)
+	if not _check(colony_owned_result == Planet.ARRIVAL_REJECTED and mission_neutral.get_faction() == GameState.FACTION_PLAYER, "colony mission must be rejected on an owned planet"):
+		return
+
+	# Cargo reinforces an own planet (resource transfer)
+	game_state.set_faction(mission_source.planet_id, GameState.FACTION_PLAYER)
+	var cargo_before: int = mission_source.worker_count
+	var cargo_result: StringName = mission_source.resolve_mission(GameState.FACTION_PLAYER, 3, GameState.MISSION_CARGO)
+	if not _check(cargo_result == Planet.ARRIVAL_FRIENDLY and mission_source.worker_count == cargo_before + 3, "cargo mission did not reinforce an own planet"):
+		return
+
+	# Cargo against an enemy planet is rejected
+	var cargo_enemy_result: StringName = mission_cpu.resolve_mission(GameState.FACTION_PLAYER, 3, GameState.MISSION_CARGO)
+	if not _check(cargo_enemy_result == Planet.ARRIVAL_REJECTED and mission_cpu.get_faction() == GameState.FACTION_CPU, "cargo mission must be rejected against an enemy planet"):
+		return
+
+	# Military missions keep attack semantics via resolve_arrival
+	var military_result: StringName = mission_neutral.resolve_mission(GameState.FACTION_CPU, 4, GameState.MISSION_MILITARY)
+	if not _check(military_result == Planet.ARRIVAL_CAPTURED and mission_neutral.get_faction() == GameState.FACTION_CPU, "military mission should capture an undefended planet"):
+		return
+
+	# --- WORKER COSTS ---
+	var shipyard_upgrade: PlanetUpgradeDefinition = upgrade_catalog.resolve(&"shipyard")
+	if not _check(shipyard_upgrade != null and shipyard_upgrade.cost_workers == 2, "shipyard should cost 2 workers"):
+		return
+	if not _check(not game_state.can_purchase_upgrade(player_homeworld, &"shipyard", upgrade_catalog, 1), "shipyard must not be buyable with only 1 worker"):
+		return
+	if not _check(game_state.can_purchase_upgrade(player_homeworld, &"shipyard", upgrade_catalog, 2), "shipyard must be buyable with 2 workers"):
+		return
+
+	# --- RESOURCE BASE FROM SIZE PROFILE ---
+	var profile_base: int = 1
+	if mission_source != null and mission_source.planet_id == player_homeworld:
+		profile_base = mission_source.get_size_profile().resource_base
+	else:
+		for planet_child in field.get_children():
+			if planet_child is Planet and (planet_child as Planet).planet_id == player_homeworld:
+				profile_base = (planet_child as Planet).get_size_profile().resource_base
+				break
+	if not _check(profile_base >= 1, "player homeworld size profile resource_base is invalid"):
+		return
+	var base_generated: int = game_state.generate_resources_for_planet(player_homeworld, upgrade_catalog, profile_base)
+	if not _check(base_generated >= profile_base, "resource generation should honor the size profile resource_base (base %d, got %d)" % [profile_base, base_generated]):
 		return
 
 	print("PASS: SnipWar preflight")

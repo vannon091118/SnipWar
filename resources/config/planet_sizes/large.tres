@@ -10,3 +10,4 @@ spawn_interval = 7.0
 spawn_count = 2
 starting_workers = 4
 jitter_factor = 1.0
+resource_base = 2

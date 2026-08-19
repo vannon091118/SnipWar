@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="PlanetUpgradeDefinition" format=3 uid="uid://cnlkhp7dlrun"]
+
+[ext_resource type="Script" uid="uid://c46aw7c040kwr" path="res://scripts/config/planet_upgrade_definition.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://dfbxa4ac73vfm" path="res://scripts/config/trait_definition.gd" id="2_trait_script"]
+[ext_resource type="Texture2D" uid="uid://dot6iqjheyygo" path="res://assets/objects/planets/planet_satellite.svg" id="3_asset"]
+
+[sub_resource type="Resource" id="Trait_tech_center"]
+script = ExtResource("2_trait_script")
+id = &"trait_tech_center"
+display_name = "Forschungsbasis"
+description = "Schaltet den Technologiebaum und Mech-Transformatoren frei"
+production_boost = 0.1
+range_bonus = 30.0
+
+[resource]
+script = ExtResource("1_def")
+id = &"tech_center"
+display_name = "Technologiezentrum"
+description = "Das wissenschaftliche Herzstück zur Freischaltung von Mech- und Modul-Transformatoren."
+branch = &"tech"
+cost_resource = &"rare"
+cost_amount = 20
+cost_workers = 2
+trait_definition = SubResource("Trait_tech_center")
+visual_asset = ExtResource("3_asset")

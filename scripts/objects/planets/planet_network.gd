@@ -123,7 +123,8 @@ func _update_preview() -> void:
 		return
 	var route_path := get_route_path(_active_planet, destination)
 	var distance := _path_distance(route_path)
-	var seconds := _FlightTime.seconds_for(distance, _ui.selected_amount(), transit_config)
+	var speed_multiplier: float = (_active_planet as Planet).get_transfer_speed_multiplier()
+	var seconds := _FlightTime.seconds_for(distance, _ui.selected_amount(), transit_config, speed_multiplier)
 	_ui.set_preview("Flugzeit: %.1f s" % seconds)
 
 func _refresh_slider_bounds() -> void:
@@ -138,7 +139,7 @@ func _on_send_pressed() -> void:
 		return
 	var destination := get_destination(_active_planet)
 	if destination != null:
-		_worker_manager.call("_dispatch_clusters", _active_planet, destination, _ui.selected_amount(), get_route_path(_active_planet, destination))
+		_worker_manager.call("_dispatch_clusters", _active_planet, destination, _ui.selected_amount(), get_route_path(_active_planet, destination), _ui.selected_mission_type())
 
 func transit_config_identity_valid() -> bool:
 	if _worker_manager == null or transit_config == null:

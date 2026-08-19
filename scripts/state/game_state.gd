@@ -3,20 +3,48 @@ extends Node
 const FACTION_PLAYER := &"a"
 const FACTION_CPU := &"b"
 const FACTION_NEUTRAL := &"neutral"
+
+const MISSION_MILITARY := &"military"
+const MISSION_CARGO := &"cargo"
+const MISSION_COLONY := &"colony"
+
 const DEFAULT_RESOURCE_POOL: ResourcePool = preload("res://resources/config/resource_pool_default.tres")
+const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
 
 signal faction_changed(planet_id: StringName, old_faction: StringName, new_faction: StringName)
+signal faction_resources_changed(faction: StringName, resource_id: StringName, new_amount: int)
+signal planet_upgraded(planet_id: StringName, upgrade_id: StringName)
+signal resource_generated(planet_id: StringName, resource_id: StringName, amount: int)
 
 var _ownership: Dictionary = {}
 var _starting_workers: Dictionary = {}
 var _homeworlds: Dictionary = {}
 var _planet_resources: Dictionary = {}
+var _planet_upgrades: Dictionary = {}
+var _faction_vaults: Dictionary = {
+	FACTION_PLAYER: {
+		&"energy": 50,
+		&"biomass": 50,
+		&"rare": 30,
+		&"material": 30,
+		&"volatile": 30
+	},
+	FACTION_CPU: {
+		&"energy": 50,
+		&"biomass": 50,
+		&"rare": 30,
+		&"material": 30,
+		&"volatile": 30
+	}
+}
 
 func reset_from_catalog(catalog: PlanetCatalog) -> void:
 	_ownership.clear()
 	_starting_workers.clear()
 	_homeworlds.clear()
 	_planet_resources.clear()
+	_planet_upgrades.clear()
+	_reset_vaults()
 	if catalog == null:
 		return
 	for definition in catalog.planets:
@@ -26,11 +54,31 @@ func reset_from_catalog(catalog: PlanetCatalog) -> void:
 		if definition.planet_role == &"homeworld" and (definition.faction == FACTION_PLAYER or definition.faction == FACTION_CPU):
 			_homeworlds[definition.faction] = definition.planet_id
 
+func _reset_vaults() -> void:
+	_faction_vaults = {
+		FACTION_PLAYER: {
+			&"energy": 50,
+			&"biomass": 50,
+			&"rare": 30,
+			&"material": 30,
+			&"volatile": 30
+		},
+		FACTION_CPU: {
+			&"energy": 50,
+			&"biomass": 50,
+			&"rare": 30,
+			&"material": 30,
+			&"volatile": 30
+		}
+	}
+
 func register_planet(planet_id: StringName, initial_faction: StringName) -> void:
 	if String(planet_id).is_empty():
 		return
 	if not _ownership.has(planet_id):
 		_ownership[planet_id] = initial_faction
+	if not _planet_upgrades.has(planet_id):
+		_planet_upgrades[planet_id] = []
 
 func seed_starting_workers(planet_id: StringName, profile: PlanetSizeProfile) -> void:
 	if String(planet_id).is_empty() or _starting_workers.has(planet_id):
@@ -117,6 +165,122 @@ func resource_of(planet_id: StringName) -> StringName:
 
 func resource_snapshot() -> Dictionary:
 	return _planet_resources.duplicate()
+
+func get_faction_resource(faction: StringName, resource_id: StringName) -> int:
+	if not _faction_vaults.has(faction):
+		return 0
+	var vault: Dictionary = _faction_vaults[faction]
+	return int(vault.get(resource_id, 0))
+
+func add_faction_resource(faction: StringName, resource_id: StringName, amount: int) -> void:
+	if amount <= 0 or not _faction_vaults.has(faction):
+		return
+	var vault: Dictionary = _faction_vaults[faction]
+	var current: int = int(vault.get(resource_id, 0))
+	var new_amount := current + amount
+	vault[resource_id] = new_amount
+	faction_resources_changed.emit(faction, resource_id, new_amount)
+
+func spend_faction_resource(faction: StringName, resource_id: StringName, amount: int) -> bool:
+	if amount < 0 or not _faction_vaults.has(faction):
+		return false
+	if amount == 0:
+		return true
+	var vault: Dictionary = _faction_vaults[faction]
+	var current: int = int(vault.get(resource_id, 0))
+	if current < amount:
+		return false
+	var new_amount := current - amount
+	vault[resource_id] = new_amount
+	faction_resources_changed.emit(faction, resource_id, new_amount)
+	return true
+
+func get_faction_vault_snapshot(faction: StringName) -> Dictionary:
+	if not _faction_vaults.has(faction):
+		return {}
+	return (_faction_vaults[faction] as Dictionary).duplicate()
+
+func get_planet_upgrades(planet_id: StringName) -> Array[StringName]:
+	var list: Array = _planet_upgrades.get(planet_id, [])
+	var result: Array[StringName] = []
+	for item in list:
+		result.append(item as StringName)
+	return result
+
+func has_planet_upgrade(planet_id: StringName, upgrade_id: StringName) -> bool:
+	var upgrades: Array = _planet_upgrades.get(planet_id, [])
+	return upgrades.has(upgrade_id)
+
+func can_purchase_upgrade(planet_id: StringName, upgrade_id: StringName, catalog: PlanetUpgradeCatalog = null, available_workers: int = -1) -> bool:
+	var cat: PlanetUpgradeCatalog = catalog if catalog != null else DEFAULT_UPGRADE_CATALOG
+	if cat == null:
+		return false
+	var upgrade := cat.resolve(upgrade_id)
+	if upgrade == null:
+		return false
+	var faction := faction_of(planet_id)
+	if faction == FACTION_NEUTRAL or not _faction_vaults.has(faction):
+		return false
+	var current_upgrades := get_planet_upgrades(planet_id)
+	if not cat.can_unlock(current_upgrades, upgrade_id):
+		return false
+	if get_faction_resource(faction, upgrade.cost_resource) < upgrade.cost_amount:
+		return false
+	if available_workers >= 0 and available_workers < upgrade.cost_workers:
+		return false
+	return true
+
+func purchase_upgrade(planet_id: StringName, upgrade_id: StringName, catalog: PlanetUpgradeCatalog = null, available_workers: int = -1) -> bool:
+	if not can_purchase_upgrade(planet_id, upgrade_id, catalog, available_workers):
+		return false
+	var cat: PlanetUpgradeCatalog = catalog if catalog != null else DEFAULT_UPGRADE_CATALOG
+	var upgrade := cat.resolve(upgrade_id)
+	var faction := faction_of(planet_id)
+	if not spend_faction_resource(faction, upgrade.cost_resource, upgrade.cost_amount):
+		return false
+	if not _planet_upgrades.has(planet_id):
+		_planet_upgrades[planet_id] = []
+	(_planet_upgrades[planet_id] as Array).append(upgrade_id)
+	planet_upgraded.emit(planet_id, upgrade_id)
+	return true
+
+func generate_resources_for_planet(planet_id: StringName, catalog: PlanetUpgradeCatalog = null, base_amount: int = 1) -> int:
+	var faction := faction_of(planet_id)
+	if faction == FACTION_NEUTRAL or not _faction_vaults.has(faction):
+		return 0
+	var resource_id := resource_of(planet_id)
+	if String(resource_id).is_empty():
+		return 0
+	var resolved_base := maxi(base_amount, 1)
+	var upgrades := get_planet_upgrades(planet_id)
+	var cat: PlanetUpgradeCatalog = catalog if catalog != null else DEFAULT_UPGRADE_CATALOG
+	var multiplier := 1.0
+	if cat != null:
+		for up_id in upgrades:
+			var def := cat.resolve(up_id)
+			if def != null and def.trait_definition != null:
+				multiplier += def.trait_definition.production_boost
+				if not String(def.trait_definition.maintenance_cost_resource).is_empty() and def.trait_definition.maintenance_cost_amount > 0:
+					spend_faction_resource(faction, def.trait_definition.maintenance_cost_resource, def.trait_definition.maintenance_cost_amount)
+	var final_amount: int = maxi(1, int(float(resolved_base) * multiplier))
+	add_faction_resource(faction, resource_id, final_amount)
+	resource_generated.emit(planet_id, resource_id, final_amount)
+	return final_amount
+
+func signature_resource_for_planet_type(planet_type: StringName) -> StringName:
+	match planet_type:
+		&"ember", &"volcanic":
+			return &"energy"
+		&"ocean", &"ice":
+			return &"biomass"
+		&"violet", &"golden":
+			return &"rare"
+		&"toxic", &"toxic_red":
+			return &"material"
+		&"storm", &"paper", &"desert":
+			return &"volatile"
+		_:
+			return &"energy"
 
 func validate_resources(pool: ResourcePool = null) -> PackedStringArray:
 	var errors := PackedStringArray()

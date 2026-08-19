@@ -8,6 +8,7 @@ extends Resource
 @export_range(1, 100000, 1) var spawn_count: int = 1
 @export_range(0, 100000, 1) var starting_workers: int = 0
 @export_range(0.0, 2.0, 0.01) var jitter_factor: float = 1.0
+@export_range(1, 10, 1) var resource_base: int = 1
 
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
@@ -23,4 +24,6 @@ func validate() -> PackedStringArray:
 		errors.append("planet size profile starting_workers cannot be negative")
 	if jitter_factor < 0.0:
 		errors.append("planet size profile jitter_factor cannot be negative")
+	if resource_base < 1:
+		errors.append("planet size profile resource_base must be >= 1")
 	return errors

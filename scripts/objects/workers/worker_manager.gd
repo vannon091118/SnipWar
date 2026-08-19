@@ -10,7 +10,7 @@ const _FlightTime := preload("res://scripts/flight_time.gd")
 func _spawn_clusters(source: Planet, amount: int) -> void:
 	source.register_workers(maxi(amount, 0))
 
-func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_path: Array[Vector2] = []) -> void:
+func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_path: Array[Vector2] = [], mission_type: StringName = &"military") -> void:
 	var dispatch_count := _Dispatch.launch_amount(source.worker_count, amount)
 	if dispatch_count <= 0:
 		return
@@ -22,7 +22,7 @@ func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_
 	var source_faction: StringName = source.get_faction()
 	var resolved_path: Array[Vector2] = route_path if route_path.size() >= 2 else [source_position, destination_position]
 	var distance := _path_distance(resolved_path)
-	var duration := _FlightTime.seconds_for(distance, dispatch_count, transit_config)
+	var duration := _FlightTime.seconds_for(distance, dispatch_count, transit_config, source.get_transfer_speed_multiplier())
 	source.unregister_workers(dispatch_count)
 
 	var direction := (destination_position - source_position).normalized()
@@ -36,7 +36,7 @@ func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_
 		for point in resolved_path:
 			offset_path.append(point + offsets[index])
 		var offset_distance: float = _path_distance(offset_path)
-		cluster.configure_transit(offset_path[0], destination, groups[index], source_faction, transit_config)
+		cluster.configure_transit(offset_path[0], destination, groups[index], source_faction, transit_config, mission_type)
 		var tween: Tween = cluster.create_tween()
 		for point_index in range(1, offset_path.size()):
 			var segment_distance: float = offset_path[point_index - 1].distance_to(offset_path[point_index])

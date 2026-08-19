@@ -6,7 +6,7 @@
 script = ExtResource("1_theme")
 panel_width_ratio = 0.3125
 panel_min_width = 240.0
-panel_max_width = 360.0
+panel_max_width = 400.0
 edge_margin = 16.0
 tab_height = 36.0
 panel_gap = 6.0
@@ -34,3 +34,8 @@ route_line_pulse_speed = 2.0
 route_line_width = 3.0
 panel_border_width = 2
 panel_corner_radius = 8
+resource_color_energy = Color(0.3, 0.9, 1.0, 1.0)
+resource_color_biomass = Color(0.3, 0.9, 0.4, 1.0)
+resource_color_rare = Color(0.7, 0.4, 1.0, 1.0)
+resource_color_material = Color(0.7, 0.75, 0.8, 1.0)
+resource_color_volatile = Color(1.0, 0.6, 0.2, 1.0)

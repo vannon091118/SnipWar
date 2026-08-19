@@ -15,12 +15,37 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="VaultBar" type="PanelContainer" parent="PlanetTabUI"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 16.0
+offset_right = 300.0
+offset_bottom = 50.0
+grow_horizontal = 2
+
+[node name="VaultMargin" type="MarginContainer" parent="PlanetTabUI/VaultBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 4
+
+[node name="VaultLabel" type="RichTextLabel" parent="PlanetTabUI/VaultBar/VaultMargin"]
+layout_mode = 2
+bbcode_enabled = true
+scroll_active = false
+text = "Energie: 50 | Biomasse: 50 | Exotisch: 30 | Material: 30 | Volatil: 30"
+horizontal_alignment = 1
+
 [node name="PlanetTab" type="Button" parent="PlanetTabUI"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -280.0
+offset_left = -320.0
 offset_top = 16.0
 offset_right = -16.0
 offset_bottom = 52.0
@@ -35,7 +60,7 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -280.0
+offset_left = -320.0
 offset_top = 60.0
 offset_right = -16.0
 offset_bottom = -16.0
@@ -56,6 +81,14 @@ text = "PLANETENMENÜ"
 layout_mode = 2
 text = "Kein Planet ausgewählt"
 
+[node name="FactionLabel" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+text = "Besitzer: Unbekannt"
+
+[node name="ResourceLabel" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+text = "Ressource: Keine"
+
 [node name="SelectedCountLabel" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
 layout_mode = 2
 text = "Einheiten: 0"
@@ -69,6 +102,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Planet auswählen"
+
+[node name="MissionHeading" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+text = "Missions-Typ"
+
+[node name="MissionSelect" type="OptionButton" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Militärverband (K/M/L)"
 
 [node name="SendHeading" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
 layout_mode = 2
@@ -90,6 +132,22 @@ layout_mode = 2
 disabled = true
 text = "SENDEN"
 
+[node name="HSeparatorUpgrade" type="HSeparator" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+
+[node name="UpgradeHeading" type="Label" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+layout_mode = 2
+text = "PLANETEN-AUSBAU (4 ZWEIGE)"
+
+[node name="UpgradeScroll" type="ScrollContainer" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UpgradeList" type="VBoxContainer" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content/UpgradeScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="HSeparator" type="HSeparator" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
 layout_mode = 2
 
@@ -98,6 +156,7 @@ layout_mode = 2
 text = "EINHEITEN PRO PLANET"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="PlanetTabUI/PlanetPanel/MarginContainer/Content"]
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

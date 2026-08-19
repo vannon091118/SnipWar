@@ -16,17 +16,19 @@ var unit_count := 1
 var source_faction: StringName = &"neutral"
 var destination_planet: Planet
 var transit_config: TransitConfig = DEFAULT_CONFIG
+var mission_type: StringName = &"military"
 var arrival_result: StringName = ARRIVAL_REJECTED
 
 func _ready() -> void:
 	_apply_visuals()
 
-func configure_transit(source_position: Vector2, destination: Planet, amount: int, faction: StringName, config: TransitConfig = null) -> void:
+func configure_transit(source_position: Vector2, destination: Planet, amount: int, faction: StringName, config: TransitConfig = null, mission: StringName = &"military") -> void:
 	global_position = source_position
 	destination_planet = destination
 	unit_count = amount
 	source_faction = faction
 	transit_config = config if config != null else DEFAULT_CONFIG
+	mission_type = mission
 	arrival_result = ARRIVAL_REJECTED
 	_apply_visuals()
 
@@ -39,7 +41,7 @@ func attach_object(object: Node2D, offset := Vector2.ZERO) -> void:
 
 func _arrive() -> StringName:
 	if is_instance_valid(destination_planet):
-		arrival_result = destination_planet.resolve_arrival(source_faction, unit_count)
+		arrival_result = destination_planet.resolve_mission(source_faction, unit_count, mission_type)
 	else:
 		arrival_result = ARRIVAL_REJECTED
 	destination_planet = null
