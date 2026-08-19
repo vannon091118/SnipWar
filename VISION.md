@@ -1,94 +1,135 @@
 # SnipWar — Vision
 
-Dieses Dokument beschreibt eine mögliche Richtung für SnipWar. Es ist kein Feature-Vertrag und keine abschließende technische Spezifikation. Begriffe wie „könnte“, „denkbar“ und „perspektivisch“ lassen Raum für Balancing, Prototyping und spätere Kurskorrekturen.
+Dieses Dokument beschreibt die gewünschte Richtung von SnipWar. Es ist kein aktueller Feature-Vertrag. Der Abschnitt **Verifizierter Ausgangspunkt** beschreibt ausschließlich Systeme, die im Code vorhanden sind; die folgenden Layer sind Zielbild und müssen vor ihrer Umsetzung als eigene Contracts präzisiert werden.
 
-## Ausgangslage
+## Verifizierter Ausgangspunkt
 
-Der aktuelle Vertical Slice bildet bereits eine strategische Overworld-Grundlage:
+Der aktuelle Build besitzt bereits einen strategischen Overworld-Kern:
 
-- zehn Planeten mit SVG-Assets und seed-basierter Verteilung
-- Größenklassen, die Positionierung und Einheitenproduktion beeinflussen
-- logische Planetenzähler statt dauerhaft sichtbarer Einheiten
-- Zielauswahl, Flugzeitvorschau und sichtbarer Transit
-- K/M/L-Cluster in einer geordneten Formation
-- seed-basierte Planetendetails mit einer kleinen Zahl an Extras
+- zehn Planet-Definitionen mit zwei Homeworlds und acht neutralen Welten
+- seed-deterministische Layouts, Größenprofile, Details, Waypoints und Ressourcenverteilung
+- Größenprofile mit unterschiedlichen Spawnintervallen, Startgarnisonen, Bauplätzen und Produktionsbasen
+- `GameState` als autoritative Quelle für Besitz, Ressourcen, Forschung, Discovery, Scan-Intel, Upgrades und Ship-Builder-Zustand
+- sichtbare Planetennachbarschaft, AStar2D-Routen und gemeinsame Flugzeitvorschau/Transitpfade
+- missionsabhängiger Transit für Military, Colony, Cargo und Collect
+- einfacher Resolve bei militärischer Ankunft: Verstärkung, Abwehr oder Besitzwechsel
+- Economy- und Gather-Timer, CPU-Dispatch-AI, Scouts und EventLog
+- vier Planet-Upgrade-Zweige, planetare und globale Technologien sowie ein UI-Ship-Builder
 
-Damit ist ein schrittweiser Ausbau technisch plausibel. Die späteren Wirtschafts-, Upgrade- und Gefechtssysteme sind jedoch noch keine Bestandteile des aktuellen MVP.
+Der aktuelle Ship Builder erzeugt noch keine einsatzfähige Kampf- oder Expeditionsflotte. Er verwaltet Assemblies als Inventar- und Anzeigezustand. Der Scout ist der einzige aktiv gebaute und fliegende Schiffstyp.
 
-## Ein möglicher Spielkreislauf
+## Der gewünschte Spielkreislauf
 
-Unterschiedliche Planeteneigenschaften könnten unterschiedliche Ressourcenströme erzeugen. Daraus könnte Expansionsdruck entstehen: Neue Welten, Handelswege oder Konflikte würden die wirtschaftliche Ausgangslage verändern. Begegnungen zwischen Flotten könnten in eine kurze Übergangsdarstellung und anschließend in eine Gefechtssituation führen. Deren Ergebnis könnte Besitz, Garnison und Ressourcenfluss wieder auf der Galaxiekarte beeinflussen.
+Die langfristige Richtung ist ein 4X-artiger Kreislauf:
 
-Dieser Kreislauf beschreibt die gewünschte Verbindung der Ebenen, ohne eine bestimmte Reihenfolge, Balance oder Kampfregel vorwegzunehmen.
+```text
+Wirtschaft → Expansion → Kontakt → Flottenkonflikt → Eroberung → veränderter Ressourcenfluss
+```
+
+Dieser Kreislauf ist noch nicht vollständig im Code geschlossen. Ressourcen, Forschung, Besitz und einfache Missionen sind vorhanden; Flottenkampf, planetare Eroberung und Siegbedingungen fehlen.
 
 ## Layer 1 — Strategische Overworld
 
-### Planetare Identität und Ressourcen
+Layer 1 soll die dauerhaft spielbare Entscheidungsebene bleiben.
 
-Ressourcen sind bewusst nicht an einzelne Planetentypen gebunden. Ein globaler `ResourcePool` aus unsichtbaren `GameResource`-Objekten wird stattdessen zu Spielbeginn seed-deterministisch über den aktiven Katalog verteilt, damit jede Karte ausgewogen startet. Planetentypen können später eigene thematische Schwerpunkte bekommen, ohne dass dadurch eine feste Planet-→Ressource-Zuordnung entsteht. Die vorhandenen `planet_role`- und Fraktionsdaten könnten später um echte Ressourcen-, Besitz- und Produktionsdaten ergänzt werden.
+### Ressourcen und Planetentypen
 
-### Aufbau und Spezialisierung
+Der Code verteilt aktuell fünf Ressourcen aus einem globalen `ResourcePool` seed-deterministisch über den aktiven Katalog. Die beiden Homeworlds erhalten unterschiedliche Ressourcen; die übrige Verteilung ist ausgeglichen. Eine vorhandene Hilfsmethode ordnet Planetentypen thematischen Ressourcen zu, wird für die tatsächliche Verteilung und Produktion aber nicht verwendet.
 
-Ein Planet könnte sich über mehrere Richtungen entwickeln, ohne dass dafür ein einfacher Levelzähler nötig wäre. Als mögliche Bereiche bieten sich an:
+Die Vision kann diese Typen später zu echten Signaturen machen:
 
-- Wirtschaft: Extraktion, Verarbeitung oder Handel
-- Militär und Industrie: Werften, schwerere Verbände oder Verteidigung
-- Technologie: Waffen- und Rüstungsforschung
-- Infrastruktur: Orbitalstationen, Reichweite oder Kapazität
+- Ember/Volcanic: Energie oder Treibstoff
+- Ocean/Ice: Biomasse oder Kühlmittel
+- Violet/Golden: seltene/exotische Materie
+- Toxic: hochwertiges Material mit Risiko
+- Storm/Paper/Desert: volatile Nebenressourcen
 
-Ob Zweige einander ausschließen, kombinierbar sind oder sich über Kosten begrenzen, kann sich aus dem späteren Spielgefühl ergeben. Sichtbare Gebäude oder Orbitobjekte könnten den Ausbau lesbar machen und zugleich das bestehende Asset-Baukastenprinzip erweitern.
+Bis diese Zuordnung in der Laufzeitproduktion konsumiert wird, bleibt sie Designabsicht und darf nicht als bestehende Spielregel dokumentiert werden.
 
-### Flottenrollen und Besitz
+### Planetare Spezialisierung
 
-Die bestehende Dispatch-Logik könnte perspektivisch neben Kampfverbänden auch Frachter oder Kolonieschiffe tragen. Frachter würden eher Ressourcen bewegen, Kolonieschiffe könnten unbesetzte Welten erschließen, und Kampfcluster würden die bisherige Transitdarstellung weiterführen.
+Der aktuelle Upgrade-Katalog enthält 13 Definitionen in vier Branches: Economy, Military, Tech und Infrastructure. Parent- und Exklusivitätsregeln, Kosten, Traits und sichtbare Upgrade-Strukturen sind implementiert.
 
-Dafür würde sich ein eigener Spielzustand für Besitz, neutrale Ziele und unterschiedliche Transportgüter anbieten. Die heutigen Fraktions- und Rollenmarkierungen sind dafür ein Anschluss, aber noch keine Besitz- oder Eroberungsmechanik.
+Die geplante Richtung ist:
 
-## Objekt-, Transformator- und Trait-Idee
+- Economy: Extraktor, Raffinerie oder Handel
+- Military/Industry: Werft, Kriegswerft oder Kolonie-Werft
+- Tech: Technologiezentrum, Waffenlabor oder Rüstungslabor
+- Infrastructure: Orbitalstation und spätere Reichweiten-/Garnisonsfunktionen
 
-Ein gemeinsamer Baukasten könnte spätere Planeten- und Mech-Varianten überschaubar halten:
+Noch offen in der Implementierung sind echte Verbraucher für Ressourcenveredelung, Perimeter-Slots, Reichweite, Türme und Transformer-Freischaltungen. Die entsprechenden Trait-Felder existieren teilweise bereits, sind aber keine fertigen Systeme.
 
-- Ein **Objekt** beschreibt die wiederverwendbare Grundform, etwa einen Rumpf, eine Werft oder eine Waffenhalterung.
-- Ein **Transformator** könnte Aussehen oder Funktionsrichtung verändern, etwa Farbe, Projektiltyp oder Antrieb.
-- Eine **Trait-Tabelle** könnte die Auswirkungen einer Kombination beschreiben, einschließlich möglicher Vorteile und Nachteile.
+### Objekt, Transformer und Traits
 
-Das vorhandene `Attachments`-Node der Transit-Cluster ist lediglich ein visueller Erweiterungspunkt. Es bildet diesen Baukasten noch nicht ab. Eine konkrete erste Kombination wäre wahrscheinlich aussagekräftiger als eine allgemeine Abstraktion, bevor sich die tatsächlichen Varianten wiederholen.
+Das gewünschte gemeinsame Baukastenprinzip lautet:
 
-## Layer 2 — Übergang zwischen Karte und Gefecht
+- **Objekt:** wiederverwendbare Grundform, etwa Planetstruktur, Schiffsrumpf oder Mech-Komponente
+- **Transformer:** verändert Darstellung und verfügbare Funktionsrichtung
+- **Trait/Effect:** beschreibt Werte, Boni, Kosten und gekoppelte Nachteile unabhängig vom Asset
 
-Bei einem Flottenkontakt könnte eine kurze, automatisch ablaufende Szene die Umgebung des Treffpunkts zeigen. Die Planetenpositionen, SVG-Assets und Hintergrundelemente der Overworld könnten dabei als Grundlage für eine räumliche Inszenierung dienen.
+Der aktuelle Code hat dafür nur Teilstücke:
 
-Die Szene könnte Stärkeverhältnisse oder erwartete Verluste andeuten und anschließend an das Gefecht übergeben. Eine eigene Entscheidungsebene wäre dafür nicht zwingend nötig; ihr Umfang könnte bewusst klein bleiben, solange die strategische Karte im Vordergrund steht.
+- `TraitDefinition` wird von Planet-Upgrades verwendet.
+- `TransformerConfig` behandelt aktuell hauptsächlich Faction-Tints, Orbitmathematik und Präsentationswerte.
+- `PlanetDetails` erzeugt sichtbare Upgrade-Strukturen aus vorhandenen Assets.
+- `ShipPartDefinition` und `ShipPartCatalog` bilden einen separaten, einfachen Ship-Builder mit Hull-, Scanner- und Modul-Slots.
+- Ein allgemeiner Objekt×Transformer-Child-Pool für Planeten, Schiffe und Mechs existiert noch nicht.
 
-## Layer 3 — Gefecht und Rückkopplung
+Eine zukünftige Abstraktion sollte deshalb ein gemeinsames typisiertes Effect-Modell teilen, aber Planet-, Ship- und Mech-Definitions nicht künstlich zu einer einzigen Resource-Klasse verschmelzen.
 
-Eine mögliche asymmetrische Rollenverteilung wäre:
+## Layer 2 — Simulierte Flottenbegegnung
 
-- Bei einem Angriff auf den eigenen Planeten übernimmt der Spieler eher die aktive Verteidigung, beispielsweise in einer Tower-Defense-artigen Ansicht.
-- Bei einem eigenen Angriff könnte die gegnerische Verteidigung aus Besitz, Ausbau und Garnisonswerten automatisch aufgelöst werden.
+Layer 2 soll eine kurze, voll animierte Raumschlacht zwischen gebauten Flotten zeigen. Sie ist keine neue freie Echtzeit-Strategieschicht, sondern eine begrenzte Simulation mit visueller Rückmeldung.
 
-Das wäre eine mögliche Dramaturgie, keine festgelegte Kampfregel. Für eine Umsetzung könnten zunächst Kampfwerte, Verluste, Besitzwechsel und ein Übergangszustand zwischen Transit und Gefecht als eigene Prototypen erprobt werden.
+Geplanter Datenfluss:
 
-Die Overworld könnte weiterhin nur logische Zähler anzeigen. Eine spätere Gefechtsszene könnte daraus vorübergehend sichtbare Verteidiger erzeugen, ohne die aktuelle Regel für ruhende Einheiten auf der Galaxiekarte aufzugeben.
+```text
+FleetSnapshot A + FleetSnapshot B + BattleContext + Seed
+→ deterministische Simulation
+→ BattleResult + BattleEvent[]
+→ Cutscene-Replay
+→ atomarer Rückfluss an GameState
+```
+
+Die Schiffe sollen dabei durch eine begrenzte taktische KI gesteuert werden: Zielwahl, Formation, Fokusfeuer, Rückzug und Nutzung ihrer Loadout-Traits. Visuals dürfen die Simulation nicht heimlich durch freie Physik oder eigene Ergebnisse überschreiben.
+
+Das Earlygame soll bewusst langsam sein. Produktionsraten, Baukosten, CPU-Entscheidungsintervalle und spätere Skalierung gehören in Resources und Kurven, nicht in Sonderfälle der Simulation.
+
+## Layer 3 — Planetare Eroberung
+
+Layer 3 ist die eigentliche Planetenentscheidung. Ein Angriff soll den wirtschaftlichen Wert von Verteidigung und Flottenbau sichtbar machen.
+
+### Angreifer
+
+Gebaute Schiffs-Loadouts werden über einen Adapter in Angreifer-Minions überführt:
+
+```text
+ShipLoadout → AssaultMinionDefinition
+```
+
+Rumpf, Antrieb, Waffen und Transformer bleiben erkennbar und liefern sowohl logische Werte als auch visuelle Identität. Die Bodenregeln dürfen die Ship-Definitions nicht kopieren; sie müssen deren Werte domänenspezifisch abbilden.
+
+### Verteidiger
+
+Der angegriffene Planet soll seine vorbereitete Layer-1-Infrastruktur nutzen:
+
+- Garnison aus den vorhandenen Worker-/Cluster-Werten
+- Verteidigungsanlage als Quelle für Türme oder Abwehrpunkte
+- Technologiezentrum als Quelle für defensive/offensive Freischaltungen
+- Orbitalstation als Quelle für Kapazität, Reichweite oder zusätzliche Verteidigungsoptionen
+
+Die Zielrichtung ist asymmetrisch: Eigene angegriffene Planeten können aktiv verteidigt werden; eigene Angriffe können gegen deterministische gegnerische Verteidigung automatisch aufgelöst und als Spektakel gezeigt werden. Diese Szenen und Regeln existieren derzeit noch nicht.
 
 ## Stil und Präsentation
 
-Der Paperclip-/Papercraft-Comicgedanke lässt sich mit den vorhandenen SVG-Assets, klaren Silhouetten, Zellschattierung und begrenzten Farbsignaturen weiterführen. Der Stil darf spielerisch wirken, während Routen, Mengen und Bedrohungen lesbar bleiben.
+Der Paperclip-/Papercraft-Comicgedanke bleibt eine visuelle Leitlinie: klare Silhouetten, Zellschattierung, begrenzte Farbsignaturen, lesbare Routen und kleine Bewegungen. Die vorhandenen SVGs werden bevorzugt als wiederverwendbare Objekte eingesetzt; Variationen sollen langfristig durch Child-Komposition und Transformer entstehen, nicht durch eine unkontrollierte Zahl fertig gebackener Kombinationsassets.
 
-4K eignet sich als spätere Präsentations- und Qualitätsstufe. Die aktuelle 960×540-Viewport-Basis und die skalierbaren Assets liefern dafür eine brauchbare technische Ausgangslage, ohne die nächsten Prototypen an eine sofortige 4K-Produktion zu binden.
+4K bleibt eine Präsentations- und Qualitätsstufe. Die aktuelle 960×540-Viewport-Basis wird nicht als Beleg für eine bereits fertige 4K-Produktion verstanden.
 
-## Technische Anschlussfähigkeit
+## Reihenfolge
 
-Ein risikoarmer Ausbau könnte sich an den vorhandenen Schichten orientieren:
-
-1. Die Overworld und den Transit als Ausgangspunkt weiterverwenden.
-2. Ressourcen, Besitz und Ausbauten zunächst als klar getrennte Planetendaten erproben.
-3. Einen kleinen sichtbaren Upgrade-Fall mit einem konkreten Asset testen.
-4. Mit wachsender Erfahrung gemeinsame Transformatoren, Traits und zusätzliche Schiffstypen verallgemeinern.
-5. Übergangsszene und Gefecht als eigene Laufzeitbereiche ergänzen, sobald ihre Zustände und Rückkopplungen klar genug wirken.
-
-So bleibt die Vision groß genug für ein 4X-Mech-Spiel, ohne den aktuellen Vertical Slice mit noch nicht benötigten Systemen zu überladen.
-
-## Bewusst offen
-
-Die Vision lässt unter anderem Ressourcenwerte, Besitzregeln, Upgrade-Kombinationen, Kampfsteuerung, Umfang der Übergangsszene und die genaue Bedeutung von „Paperclip“ als Stilbegriff offen. Diese Punkte können durch Prototypen und Spieltests konkretisiert werden, statt sie vorab als unveränderliche Architektur festzuschreiben.
+1. Layer 1 mit echten Ressourcen-, Upgrade- und Verteidigungsverbrauchern stabilisieren.
+2. Ship-Builder-Assemblies zu autoritativen Loadout-Snapshots erweitern.
+3. Deterministische Layer-2-Simulation und Replay-Ereignisse bauen.
+4. Ship-to-Minion-Adapter und Layer-3-Verteidigung prototypen.
+5. Erst danach komplexere Asset-Transformer, zusätzliche Schiffsklassen und Mech-Varianten verallgemeinern.
