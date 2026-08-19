@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 GameState="*res://scripts/state/game_state.gd"
 EventLog="*res://scripts/state/event_log.gd"
+TouchFeedbackLayer="*res://scripts/ui/touch_feedback_layer.gd"
 
 [display]
 

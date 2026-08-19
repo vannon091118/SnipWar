@@ -16,5 +16,7 @@ func _ready() -> void:
 	if field != null:
 		field.set_layout_seed(final_seed)
 	var state: Node = get_tree().root.get_node_or_null("GameState")
-	if state != null and scenario != null and scenario.map_definition != null:
-		state.call("deal_resources", scenario.map_definition.planet_catalog, scenario.map_definition.resource_pool, final_seed)
+	var active_catalog: Variant = background.get("active_catalog")
+	var deal_catalog: PlanetCatalog = active_catalog as PlanetCatalog if active_catalog != null else (scenario.map_definition.planet_catalog if scenario != null and scenario.map_definition != null else null)
+	if state != null and deal_catalog != null and scenario != null and scenario.map_definition != null:
+		state.call("deal_resources", deal_catalog, scenario.map_definition.resource_pool, final_seed)

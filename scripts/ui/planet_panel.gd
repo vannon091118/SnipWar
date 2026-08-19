@@ -217,22 +217,34 @@ func set_destinations(destinations: Array[Node2D], default_destination: Node2D) 
 	_ensure_node_references()
 	_destination_option.clear()
 	_destination_option.disabled = destinations.is_empty()
+	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var idx := 0
 	for destination in destinations:
-		_destination_option.add_item(destination.name)
+		var d_name: String = destination.name
+		if state != null and destination.get("planet_id") != null:
+			if not state.is_known(destination.get("planet_id"), GameState.FACTION_PLAYER):
+				d_name = "??? (Unbekannt)"
+		_destination_option.add_item(d_name)
+		_destination_option.set_item_metadata(idx, destination.name)
+		idx += 1
+
 	if default_destination != null:
-		for index in _destination_option.item_count:
-			if _destination_option.get_item_text(index) == default_destination.name:
-				_destination_option.select(index)
-				break
+		var target_idx := destinations.find(default_destination)
+		if target_idx >= 0:
+			_destination_option.select(target_idx)
+
 	set_preview("Kein Ziel verfügbar" if destinations.is_empty() else _preview_label.text)
 
 func show_planet(planet: Node2D, destinations: Array[Node2D], default_destination: Node2D) -> void:
 	_ensure_node_references()
 	_current_active_planet = planet
-	_selected_planet_label.text = planet.name.to_upper()
 
 	var state: Node = get_tree().root.get_node_or_null("GameState")
 	var planet_id: StringName = planet.get("planet_id") if planet.get("planet_id") != null else &""
+	var is_known: bool = state != null and state.is_known(planet_id, GameState.FACTION_PLAYER)
+
+	_selected_planet_label.text = planet.name.to_upper() if is_known else "??? (UNBEKANNT)"
+
 	if state != null:
 		var faction_id: StringName = state.faction_of(planet_id)
 		var faction_str: String = "Spieler [A]" if faction_id == &"a" else ("CPU [B]" if faction_id == &"b" else "Neutral")
@@ -475,7 +487,8 @@ func set_preview(text: String) -> void:
 func index_of_destination(destination_name: String) -> int:
 	_ensure_node_references()
 	for index in _destination_option.item_count:
-		if _destination_option.get_item_text(index) == destination_name:
+		var meta: Variant = _destination_option.get_item_metadata(index)
+		if (meta != null and str(meta) == destination_name) or _destination_option.get_item_text(index) == destination_name:
 			return index
 	return -1
 

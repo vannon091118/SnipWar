@@ -87,6 +87,8 @@ func _ready() -> void:
 				state.technology_researched.connect(_on_technology_researched)
 			if not state.worker_factory_built.is_connected(_on_worker_factory_built):
 				state.worker_factory_built.connect(_on_worker_factory_built)
+			if not state.planet_discovered.is_connected(_on_planet_discovered):
+				state.planet_discovered.connect(_on_planet_discovered)
 	_sync_groups()
 	_apply_visuals()
 	_planet_ready = true
@@ -94,6 +96,31 @@ func _ready() -> void:
 	if not Engine.is_editor_hint():
 		_ensure_strength_label()
 		_ensure_spawn_timer.call_deferred()
+		_update_fog_of_war()
+	queue_redraw()
+
+func _on_planet_discovered(discovered_faction: StringName, discovered_id: StringName) -> void:
+	if discovered_faction == GameState.FACTION_PLAYER and discovered_id == planet_id:
+		_update_fog_of_war()
+
+func _update_fog_of_war() -> void:
+	var state: Node = _game_state()
+	if state == null:
+		return
+	var is_known: bool = state.is_known(planet_id, GameState.FACTION_PLAYER)
+
+	if is_known:
+		modulate = Color.WHITE
+		if _details != null:
+			_details.visible = true
+		if _strength_label != null:
+			_strength_label.visible = true
+	else:
+		modulate = Color(0.2, 0.2, 0.3)
+		if _details != null:
+			_details.visible = false
+		if _strength_label != null:
+			_strength_label.visible = false
 	queue_redraw()
 
 func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_index: int) -> void:
@@ -415,6 +442,11 @@ func is_selected() -> bool:
 func _draw() -> void:
 	if Engine.is_editor_hint():
 		return
+
+	var state: Node = _game_state()
+	if state != null and not state.is_known(planet_id, GameState.FACTION_PLAYER):
+		return
+
 	var ring_radius: float = _faction_ring_radius()
 	if ring_radius <= 0.0:
 		return

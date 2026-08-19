@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ShipPartCatalog" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ShipPartCatalog" load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/ship_part_catalog.gd" id="1_catalog"]
 [ext_resource type="Script" path="res://scripts/config/ship_part_definition.gd" id="2_part"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_03_metal.svg" id="6_armor"]
 [ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_04_molten.svg" id="7_fuel"]
 [ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_01_rock.svg" id="8_cargo"]
+[ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_l.svg" id="9_weapon"]
 
 [sub_resource type="Resource" id="Part_hull_t1"]
 script = ExtResource("2_part")
@@ -19,6 +20,8 @@ cost_resource = &"material"
 cost_amount = 5
 tier = 1
 visual_asset = ExtResource("3_hull_k")
+required_tech_id = &"shipyard_construction"
+build_time = 3.0
 
 [sub_resource type="Resource" id="Part_hull_t2"]
 script = ExtResource("2_part")
@@ -30,6 +33,8 @@ cost_resource = &"material"
 cost_amount = 10
 tier = 2
 visual_asset = ExtResource("4_hull_m")
+required_tech_id = &"weapon_systems"
+build_time = 5.0
 
 [sub_resource type="Resource" id="Part_scanner_t1"]
 script = ExtResource("2_part")
@@ -41,6 +46,21 @@ cost_resource = &"energy"
 cost_amount = 6
 tier = 1
 visual_asset = ExtResource("5_scanner")
+required_tech_id = &"scanner_drone"
+build_time = 2.0
+
+[sub_resource type="Resource" id="Part_weapon_t1"]
+script = ExtResource("2_part")
+id = &"weapon_t1"
+slot_type = &"weapon"
+display_name = "Impulsgeschütz T1"
+description = "Erste Bordbewaffnung; macht aus einem Montageauftrag ein militärisches Schiff."
+cost_resource = &"volatile"
+cost_amount = 8
+tier = 1
+visual_asset = ExtResource("9_weapon")
+required_tech_id = &"weapon_systems"
+build_time = 4.0
 
 [sub_resource type="Resource" id="Part_module_armor"]
 script = ExtResource("2_part")
@@ -52,6 +72,7 @@ cost_resource = &"material"
 cost_amount = 4
 tier = 1
 visual_asset = ExtResource("6_armor")
+build_time = 2.0
 
 [sub_resource type="Resource" id="Part_module_fuel"]
 script = ExtResource("2_part")
@@ -63,6 +84,7 @@ cost_resource = &"volatile"
 cost_amount = 4
 tier = 1
 visual_asset = ExtResource("7_fuel")
+build_time = 2.0
 
 [sub_resource type="Resource" id="Part_module_cargo"]
 script = ExtResource("2_part")
@@ -74,8 +96,9 @@ cost_resource = &"material"
 cost_amount = 4
 tier = 1
 visual_asset = ExtResource("8_cargo")
+build_time = 2.0
 
 [resource]
 script = ExtResource("1_catalog")
 max_module_slots = 2
-parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t2"), SubResource("Part_scanner_t1"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo")]
+parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t2"), SubResource("Part_scanner_t1"), SubResource("Part_weapon_t1"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo")]

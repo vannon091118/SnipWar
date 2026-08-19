@@ -309,7 +309,7 @@ func get_neighbors(planet: Node2D) -> Array[Node2D]:
 func _build_neighbor_cache() -> void:
 	_neighbor_cache.clear()
 	var world_config: WorldConfig = get_parent().get("world_config") as WorldConfig
-	var columns: int = maxi(1, world_config.columns if world_config != null else 1)
+	var columns: int = world_config.resolved_columns(_planets.size()) if world_config != null else 1
 	var slot_planets: Dictionary = {}
 	for candidate in _planets:
 		var candidate_slot: int = int(candidate.get_meta("layout_slot", -1))

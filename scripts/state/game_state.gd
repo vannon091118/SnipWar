@@ -32,6 +32,8 @@ signal ship_part_purchased(planet_id: StringName, part_id: StringName)
 signal ship_assembled(planet_id: StringName, ship_id: StringName)
 signal ship_disassembled(planet_id: StringName, ship_id: StringName)
 signal refinery_converted(planet_id: StringName, faction: StringName, consumed: Dictionary, produced: Dictionary)
+signal research_started(faction: StringName, technology_id: StringName, remaining: float)
+signal ship_build_started(planet_id: StringName, ship_id: StringName, remaining: float)
 
 var _ownership: Dictionary = {}
 var _starting_workers: Dictionary = {}
@@ -49,6 +51,9 @@ var _gathering_sources: Dictionary = {}
 var _ship_part_inventory: Dictionary = {}
 var _ship_assemblies: Dictionary = {}
 var _next_ship_index: int = 0
+var _research_jobs: Dictionary = {}
+var _ship_build_jobs: Dictionary = {}
+var _jobs_auto_advance := true
 var _faction_vaults: Dictionary = {
 	FACTION_PLAYER: {
 		&"energy": 50,
@@ -83,6 +88,8 @@ func reset_from_catalog(catalog: PlanetCatalog) -> void:
 	_ship_part_inventory.clear()
 	_ship_assemblies.clear()
 	_next_ship_index = 0
+	_research_jobs.clear()
+	_ship_build_jobs.clear()
 	_reset_vaults()
 	if catalog != null:
 		for definition in catalog.planets:
@@ -640,6 +647,8 @@ func can_buy_ship_part(planet_id: StringName, part_id: StringName, catalog: Ship
 	var faction: StringName = faction_of(planet_id)
 	if faction == FACTION_NEUTRAL:
 		return false
+	if not String(part.required_tech_id).is_empty() and not has_technology(faction, part.required_tech_id):
+		return false
 	return get_faction_resource(faction, part.cost_resource) >= part.cost_amount
 
 func buy_ship_part(planet_id: StringName, part_id: StringName, catalog: ShipPartCatalog = null) -> bool:
@@ -654,9 +663,12 @@ func buy_ship_part(planet_id: StringName, part_id: StringName, catalog: ShipPart
 	ship_part_purchased.emit(planet_id, part_id)
 	return true
 
-func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, catalog: ShipPartCatalog = null) -> bool:
+func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, catalog: ShipPartCatalog = null, weapon_id: StringName = &"") -> bool:
 	var cat: ShipPartCatalog = catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG
 	if cat == null:
+		return false
+	var faction: StringName = faction_of(planet_id)
+	if faction == FACTION_NEUTRAL:
 		return false
 	var hull := cat.resolve(hull_id)
 	var scanner := cat.resolve(scanner_id)
@@ -666,13 +678,28 @@ func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: S
 		return false
 	if module_ids.size() > cat.max_module_slots:
 		return false
+	if not _part_tech_unlocked(faction, hull):
+		return false
+	if not _part_tech_unlocked(faction, scanner):
+		return false
 	var required: Dictionary = {hull_id: 1, scanner_id: 1}
+	if not String(weapon_id).is_empty():
+		var weapon := cat.resolve(weapon_id)
+		if weapon == null or weapon.slot_type != ShipPartDefinition.SLOT_WEAPON:
+			return false
+		if weapon_id == hull_id or weapon_id == scanner_id:
+			return false
+		if not _part_tech_unlocked(faction, weapon):
+			return false
+		required[weapon_id] = 1
 	for module_value in module_ids:
 		var module_id: StringName = module_value as StringName
 		var module := cat.resolve(module_id)
 		if module == null or module.slot_type != ShipPartDefinition.SLOT_MODULE:
 			return false
-		if module_id == hull_id or module_id == scanner_id:
+		if module_id == hull_id or module_id == scanner_id or module_id == weapon_id:
+			return false
+		if not _part_tech_unlocked(faction, module):
 			return false
 		required[module_id] = int(required.get(module_id, 0)) + 1
 	for part_id in required:
@@ -680,17 +707,39 @@ func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: S
 			return false
 	return true
 
-func assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, catalog: ShipPartCatalog = null) -> StringName:
-	if not can_assemble_ship(planet_id, hull_id, scanner_id, module_ids, catalog):
+func _part_tech_unlocked(faction: StringName, part: ShipPartDefinition) -> bool:
+	if part == null or String(part.required_tech_id).is_empty():
+		return true
+	return has_technology(faction, part.required_tech_id)
+
+func assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, catalog: ShipPartCatalog = null, weapon_id: StringName = &"") -> StringName:
+	if not can_assemble_ship(planet_id, hull_id, scanner_id, module_ids, catalog, weapon_id):
 		return &""
+	var cat: ShipPartCatalog = catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG
 	_remove_ship_part(planet_id, hull_id, 1)
 	_remove_ship_part(planet_id, scanner_id, 1)
 	for module_value in module_ids:
 		_remove_ship_part(planet_id, module_value as StringName, 1)
+	if not String(weapon_id).is_empty():
+		_remove_ship_part(planet_id, weapon_id, 1)
 	var ship_id := _next_ship_id()
+	var total_time := _ship_build_time(cat, hull_id, scanner_id, weapon_id, module_ids)
+	if total_time > 0.0:
+		var jobs: Dictionary = _ship_build_jobs.get(planet_id, {})
+		jobs[ship_id] = {
+			"hull": hull_id,
+			"scanner": scanner_id,
+			"weapon": weapon_id,
+			"modules": module_ids.duplicate(),
+			"remaining": total_time
+		}
+		_ship_build_jobs[planet_id] = jobs
+		ship_build_started.emit(planet_id, ship_id, total_time)
+		return ship_id
 	var assembly: Dictionary = {
 		"hull": hull_id,
 		"scanner": scanner_id,
+		"weapon": weapon_id,
 		"modules": module_ids.duplicate(),
 	}
 	var assemblies: Dictionary = _ship_assemblies.get(planet_id, {})
@@ -698,6 +747,61 @@ func assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: Strin
 	_ship_assemblies[planet_id] = assemblies
 	ship_assembled.emit(planet_id, ship_id)
 	return ship_id
+
+func _ship_build_time(cat: ShipPartCatalog, hull_id: StringName, scanner_id: StringName, weapon_id: StringName, module_ids: Array) -> float:
+	var total := 0.0
+	for part_value in [hull_id, scanner_id, weapon_id]:
+		var part := cat.resolve(part_value as StringName)
+		if part != null:
+			total += part.build_time
+	for module_value in module_ids:
+		var module := cat.resolve(module_value as StringName)
+		if module != null:
+			total += module.build_time
+	return total
+
+func ship_build_in_progress(planet_id: StringName, ship_id: StringName = &"") -> bool:
+	var jobs: Dictionary = _ship_build_jobs.get(planet_id, {})
+	if String(ship_id).is_empty():
+		return not jobs.is_empty()
+	return jobs.has(ship_id)
+
+func ship_build_remaining(planet_id: StringName, ship_id: StringName) -> float:
+	return float(_ship_build_jobs.get(planet_id, {}).get(ship_id, {}).get("remaining", 0.0))
+
+func get_ship_build_jobs(planet_id: StringName) -> Dictionary:
+	return (_ship_build_jobs.get(planet_id, {}) as Dictionary).duplicate()
+
+func advance_builds(seconds: float) -> void:
+	if seconds <= 0.0 or _ship_build_jobs.is_empty():
+		return
+	for planet_value in _ship_build_jobs.keys():
+		var planet_id: StringName = planet_value as StringName
+		var jobs: Dictionary = _ship_build_jobs[planet_id]
+		var completed: Array[StringName] = []
+		for ship_value in jobs.keys():
+			var ship_id: StringName = ship_value as StringName
+			var job: Dictionary = jobs[ship_id]
+			job["remaining"] = float(job["remaining"]) - seconds
+			if float(job["remaining"]) <= 0.0:
+				completed.append(ship_id)
+		for ship_id in completed:
+			var job: Dictionary = jobs[ship_id]
+			jobs.erase(ship_id)
+			var assembly: Dictionary = {
+				"hull": job.get("hull", &""),
+				"scanner": job.get("scanner", &""),
+				"weapon": job.get("weapon", &""),
+				"modules": (job.get("modules", []) as Array).duplicate(),
+			}
+			var assemblies: Dictionary = _ship_assemblies.get(planet_id, {})
+			assemblies[ship_id] = assembly
+			_ship_assemblies[planet_id] = assemblies
+			ship_assembled.emit(planet_id, ship_id)
+		if jobs.is_empty():
+			_ship_build_jobs.erase(planet_id)
+		else:
+			_ship_build_jobs[planet_id] = jobs
 
 func get_ship_assemblies(planet_id: StringName) -> Dictionary:
 	return (_ship_assemblies.get(planet_id, {}) as Dictionary).duplicate()
@@ -716,6 +820,8 @@ func disassemble_ship(planet_id: StringName, ship_id: StringName) -> bool:
 	var assembly: Dictionary = assemblies[ship_id]
 	_add_ship_part(planet_id, assembly.get("hull", &"") as StringName, 1)
 	_add_ship_part(planet_id, assembly.get("scanner", &"") as StringName, 1)
+	if not String(assembly.get("weapon", &"")).is_empty():
+		_add_ship_part(planet_id, assembly.get("weapon", &"") as StringName, 1)
 	for module_value in assembly.get("modules", []):
 		_add_ship_part(planet_id, module_value as StringName, 1)
 	assemblies.erase(ship_id)
@@ -769,6 +875,8 @@ func can_research_technology(faction: StringName, technology_id: StringName, cat
 		return false
 	if has_technology(faction, technology_id):
 		return false
+	if research_in_progress(faction, technology_id):
+		return false
 	if technology.requires_discovery and not has_scanned_planet(faction):
 		return false
 	if not cat.can_research(get_technologies(faction), technology_id):
@@ -784,11 +892,57 @@ func research_technology(faction: StringName, technology_id: StringName, catalog
 	var technology := cat.resolve(technology_id)
 	if not spend_faction_resource(faction, technology.cost_resource, technology.cost_amount):
 		return false
+	if technology.research_time > 0.0:
+		var jobs: Dictionary = _research_jobs.get(faction, {})
+		jobs[technology_id] = technology.research_time
+		_research_jobs[faction] = jobs
+		research_started.emit(faction, technology_id, technology.research_time)
+		return true
 	if not _researched_techs.has(faction):
 		_researched_techs[faction] = {}
 	(_researched_techs[faction] as Dictionary)[technology_id] = true
 	technology_researched.emit(faction, technology_id)
 	return true
+
+func set_jobs_auto_advance(enabled: bool) -> void:
+	_jobs_auto_advance = enabled
+
+func _process(delta: float) -> void:
+	if _jobs_auto_advance:
+		advance_research(delta)
+		advance_builds(delta)
+
+func research_in_progress(faction: StringName, technology_id: StringName) -> bool:
+	return (_research_jobs.get(faction, {}) as Dictionary).has(technology_id)
+
+func research_remaining(faction: StringName, technology_id: StringName) -> float:
+	return float(_research_jobs.get(faction, {}).get(technology_id, 0.0))
+
+func get_research_jobs(faction: StringName) -> Dictionary:
+	return (_research_jobs.get(faction, {}) as Dictionary).duplicate()
+
+func advance_research(seconds: float) -> void:
+	if seconds <= 0.0 or _research_jobs.is_empty():
+		return
+	for faction_value in _research_jobs.keys():
+		var faction: StringName = faction_value as StringName
+		var jobs: Dictionary = _research_jobs[faction]
+		var completed: Array[StringName] = []
+		for technology_value in jobs.keys():
+			var technology_id: StringName = technology_value as StringName
+			jobs[technology_id] = float(jobs[technology_id]) - seconds
+			if float(jobs[technology_id]) <= 0.0:
+				completed.append(technology_id)
+		for technology_id in completed:
+			jobs.erase(technology_id)
+			if not _researched_techs.has(faction):
+				_researched_techs[faction] = {}
+			(_researched_techs[faction] as Dictionary)[technology_id] = true
+			technology_researched.emit(faction, technology_id)
+		if jobs.is_empty():
+			_research_jobs.erase(faction)
+		else:
+			_research_jobs[faction] = jobs
 
 func get_planet_technologies(planet_id: StringName) -> Array[StringName]:
 	var researched: Array = _planet_technologies.get(planet_id, [])

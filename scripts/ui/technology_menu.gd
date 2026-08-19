@@ -19,6 +19,7 @@ var _worker_button: Button
 var _builder_source: OptionButton
 var _builder_hull: OptionButton
 var _builder_scanner: OptionButton
+var _builder_weapon: OptionButton
 var _builder_modules: Array[OptionButton] = []
 var _builder_dynamic: VBoxContainer
 
@@ -162,6 +163,7 @@ func _refresh() -> void:
 	_builder_source = null
 	_builder_hull = null
 	_builder_scanner = null
+	_builder_weapon = null
 	_builder_modules = []
 	_builder_dynamic = null
 	if _ship_manager == null:
@@ -278,15 +280,18 @@ func _refresh_planets() -> void:
 
 func _research_row(technology: TechnologyDefinition, state: Node) -> Control:
 	var researched: bool = state.has_technology(GameState.FACTION_PLAYER, technology.id)
+	var in_progress: bool = state.research_in_progress(GameState.FACTION_PLAYER, technology.id)
 	var can_research: bool = state.can_research_technology(GameState.FACTION_PLAYER, technology.id, _ship_manager.get_technology_catalog())
 	var status_text: String
 	if researched:
 		status_text = "FREIGESCHALTET"
+	elif in_progress:
+		status_text = "IN FORSCHUNG (%.0f s verbleibend)" % state.research_remaining(GameState.FACTION_PLAYER, technology.id)
 	elif can_research:
 		status_text = "Kosten: %d %s" % [technology.cost_amount, String(technology.cost_resource)]
 	else:
 		status_text = "Gesperrt (Kosten/Voraussetzung fehlt)"
-	return _technology_card(technology, status_text, researched or not can_research, _on_research.bind(technology.id))
+	return _technology_card(technology, status_text, researched or in_progress or not can_research, _on_research.bind(technology.id))
 
 func _planet_research_row(technology: TechnologyDefinition, state: Node, planet_id: StringName, own_planet: bool) -> Control:
 	var researched: bool = state.has_planet_technology(planet_id, technology.id)
@@ -486,6 +491,9 @@ func _populate_builder_dynamic(state: Node) -> void:
 	_builder_dynamic.add_child(_make_label("Scanner", _theme_config.secondary_text_color, _theme_config.small_font_size))
 	_builder_scanner = _builder_slot_option(inventory, ShipPartDefinition.SLOT_SCANNER)
 	_builder_dynamic.add_child(_builder_scanner)
+	_builder_dynamic.add_child(_make_label("Waffe (optional — macht das Schiff militärisch)", _theme_config.secondary_text_color, _theme_config.small_font_size))
+	_builder_weapon = _builder_slot_option(inventory, ShipPartDefinition.SLOT_WEAPON, true)
+	_builder_dynamic.add_child(_builder_weapon)
 	for index in catalog.max_module_slots:
 		_builder_dynamic.add_child(_make_label("Modul %d" % (index + 1), _theme_config.secondary_text_color, _theme_config.small_font_size))
 		var module_option: OptionButton = _builder_slot_option(inventory, ShipPartDefinition.SLOT_MODULE, true)
@@ -499,6 +507,13 @@ func _populate_builder_dynamic(state: Node) -> void:
 	_builder_dynamic.add_child(assemble)
 	_builder_dynamic.add_child(_make_separator())
 	_builder_dynamic.add_child(_make_label("GEBAUTE SCHIFFE", _theme_config.heading_text_color, _theme_config.section_font_size))
+	var build_jobs: Dictionary = state.get_ship_build_jobs(source.planet_id)
+	if not build_jobs.is_empty():
+		_builder_dynamic.add_child(_make_label("IM BAU:", _theme_config.accent_text_color, _theme_config.small_font_size))
+		for job_ship_value in build_jobs:
+			var job_ship_id: StringName = job_ship_value as StringName
+			var remaining: float = state.ship_build_remaining(source.planet_id, job_ship_id)
+			_builder_dynamic.add_child(_make_label("Montage läuft (%.0f s verbleibend)" % remaining, _theme_config.muted_text_color, _theme_config.small_font_size))
 	var assemblies: Dictionary = state.get_ship_assemblies(source.planet_id)
 	if assemblies.is_empty():
 		_builder_dynamic.add_child(_make_label("Noch keine Schiffe montiert.", _theme_config.muted_text_color, _theme_config.small_font_size))
@@ -545,19 +560,23 @@ func _builder_can_assemble() -> bool:
 	var scanner_id := _builder_selected_part(_builder_scanner)
 	if String(hull_id).is_empty() or String(scanner_id).is_empty():
 		return false
+	var weapon_id := _builder_selected_part(_builder_weapon)
 	var module_ids: Array = []
 	for option in _builder_modules:
 		var module_id := _builder_selected_part(option)
 		if not String(module_id).is_empty():
 			module_ids.append(module_id)
-	return _ship_manager.can_assemble_ship(source, hull_id, scanner_id, module_ids)
+	return _ship_manager.can_assemble_ship(source, hull_id, scanner_id, module_ids, weapon_id)
 
 func _assembly_description(catalog: ShipPartCatalog, assembly: Dictionary) -> String:
 	var hull := catalog.resolve(assembly.get("hull", &"") as StringName)
 	var scanner := catalog.resolve(assembly.get("scanner", &"") as StringName)
+	var weapon := catalog.resolve(assembly.get("weapon", &"") as StringName)
 	var hull_name: String = hull.display_name if hull != null else String(assembly.get("hull", ""))
 	var scanner_name: String = scanner.display_name if scanner != null else String(assembly.get("scanner", ""))
 	var module_names: Array[String] = []
+	if weapon != null:
+		module_names.append(weapon.display_name)
 	for module_value in assembly.get("modules", []):
 		var module := catalog.resolve(module_value as StringName)
 		module_names.append(module.display_name if module != null else String(module_value))
@@ -580,12 +599,13 @@ func _on_assemble_ship() -> void:
 		return
 	var hull_id := _builder_selected_part(_builder_hull)
 	var scanner_id := _builder_selected_part(_builder_scanner)
+	var weapon_id := _builder_selected_part(_builder_weapon)
 	var module_ids: Array = []
 	for option in _builder_modules:
 		var module_id := _builder_selected_part(option)
 		if not String(module_id).is_empty():
 			module_ids.append(module_id)
-	_ship_manager.assemble_ship(source, hull_id, scanner_id, module_ids)
+	_ship_manager.assemble_ship(source, hull_id, scanner_id, module_ids, weapon_id)
 	_populate_builder_dynamic(_game_state())
 
 func _on_disassemble_ship(ship_id: StringName) -> void:

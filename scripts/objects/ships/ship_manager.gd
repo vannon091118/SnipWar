@@ -22,8 +22,12 @@ var _active_build_counts: Dictionary = {}
 
 func _ready() -> void:
 	var state: Node = _game_state()
-	if state != null and state.has_signal("catalog_reset") and not state.catalog_reset.is_connected(_on_catalog_reset):
+	if state == null:
+		return
+	if state.has_signal("catalog_reset") and not state.catalog_reset.is_connected(_on_catalog_reset):
 		state.catalog_reset.connect(_on_catalog_reset)
+	if state.has_signal("ship_assembled") and not state.ship_assembled.is_connected(_on_ship_assembled):
+		state.ship_assembled.connect(_on_ship_assembled)
 
 func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 	_active_build_counts.clear()
@@ -31,6 +35,12 @@ func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 		if is_instance_valid(scout):
 			scout.queue_free()
 	_scouts.clear()
+
+func _on_ship_assembled(planet_id: StringName, _ship_id: StringName) -> void:
+	for planet in get_planets():
+		if planet.planet_id == planet_id:
+			refresh_ship_display(planet)
+			return
 
 func configure(field: Node, navigation: Node, config: ShipConfig = null, catalog: TechnologyCatalog = null, network: Node = null) -> void:
 	_field = field
@@ -151,15 +161,15 @@ func buy_part(source: Planet, part_id: StringName) -> bool:
 		return false
 	return state.buy_ship_part(source.planet_id, part_id, get_part_catalog())
 
-func can_assemble_ship(source: Planet, hull_id: StringName, scanner_id: StringName, module_ids: Array) -> bool:
+func can_assemble_ship(source: Planet, hull_id: StringName, scanner_id: StringName, module_ids: Array, weapon_id: StringName = &"") -> bool:
 	var state: Node = _game_state()
-	return _enabled and source != null and state != null and state.can_assemble_ship(source.planet_id, hull_id, scanner_id, module_ids, get_part_catalog())
+	return _enabled and source != null and state != null and state.can_assemble_ship(source.planet_id, hull_id, scanner_id, module_ids, get_part_catalog(), weapon_id)
 
-func assemble_ship(source: Planet, hull_id: StringName, scanner_id: StringName, module_ids: Array) -> StringName:
+func assemble_ship(source: Planet, hull_id: StringName, scanner_id: StringName, module_ids: Array, weapon_id: StringName = &"") -> StringName:
 	var state: Node = _game_state()
 	if not _enabled or source == null or state == null:
 		return &""
-	var ship_id: StringName = state.assemble_ship(source.planet_id, hull_id, scanner_id, module_ids, get_part_catalog()) as StringName
+	var ship_id: StringName = state.assemble_ship(source.planet_id, hull_id, scanner_id, module_ids, get_part_catalog(), weapon_id) as StringName
 	if not String(ship_id).is_empty():
 		refresh_ship_display(source)
 	return ship_id
@@ -187,15 +197,22 @@ func refresh_ship_display(source: Planet) -> void:
 	if state == null:
 		return
 	var assemblies: Dictionary = state.get_ship_assemblies(source.planet_id)
+	var assembly: Dictionary = {}
 	if assemblies.is_empty():
-		hangar.hide_ship()
-		return
-	var ship_id: StringName = (assemblies.keys()[0]) as StringName
-	var assembly: Dictionary = assemblies[ship_id]
+		var build_jobs: Dictionary = state.get_ship_build_jobs(source.planet_id)
+		if build_jobs.is_empty():
+			hangar.hide_ship()
+			return
+		assembly = build_jobs[build_jobs.keys()[0]]
+	else:
+		assembly = assemblies[assemblies.keys()[0]]
 	var cat := get_part_catalog()
 	var hull := cat.resolve(assembly.get("hull", &"") as StringName)
 	var scanner := cat.resolve(assembly.get("scanner", &"") as StringName)
+	var weapon := cat.resolve(assembly.get("weapon", &"") as StringName)
 	var module_textures: Array[Texture2D] = []
+	if weapon != null:
+		module_textures.append(weapon.visual_asset)
 	for module_value in assembly.get("modules", []):
 		var module := cat.resolve(module_value as StringName)
 		if module != null:

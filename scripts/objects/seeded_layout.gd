@@ -58,11 +58,12 @@ func regenerate() -> void:
 	rng.seed = config.layout_seed
 	_assign_size_classes(layout_items, rng, config)
 
-	var column_count := maxi(1, config.columns)
-	var rows: int = ceili(float(layout_items.size()) / float(column_count))
+	var cell_positions: Array[Vector2] = WorldGenerator.grid_cell_positions(config, layout_items.size())
+	var column_count := config.resolved_columns(layout_items.size())
+	var row_count := ceili(float(layout_items.size()) / float(column_count))
 	var cell_size := Vector2(
 		config.design_size.x / float(column_count),
-		config.design_size.y / float(rows)
+		config.design_size.y / float(row_count)
 	)
 	var assigned_slots: Dictionary = {}
 	var slots: Array[int] = []
@@ -74,12 +75,7 @@ func regenerate() -> void:
 
 	for item in layout_items:
 		var slot: int = assigned_slots[item]
-		var column: int = slot % column_count
-		var row: int = floori(float(slot) / float(column_count))
-		var cell_center := Vector2(
-			(float(column) + 0.5) * cell_size.x,
-			(float(row) + 0.5) * cell_size.y
-		)
+		var cell_center: Vector2 = cell_positions[slot]
 		var profile: PlanetSizeProfile = item.get_size_profile()
 		var offset := Vector2(
 			rng.randf_range(-cell_size.x * config.jitter * profile.jitter_factor, cell_size.x * config.jitter * profile.jitter_factor),
@@ -169,10 +165,11 @@ func _assign_size_classes(items: Array[Planet], rng: RandomNumberGenerator, conf
 	if extra_large_profile == null:
 		extra_large_profile = default_profile
 
+	var size_counts := config.resolved_size_class_counts(items.size())
 	var assigned_profiles: Array[PlanetSizeProfile] = []
-	for _index in mini(config.extra_large_count, items.size()):
+	for _index in size_counts.x:
 		assigned_profiles.append(extra_large_profile)
-	for _index in mini(config.large_count, maxi(0, items.size() - assigned_profiles.size())):
+	for _index in size_counts.y:
 		assigned_profiles.append(large_profile)
 	while assigned_profiles.size() < items.size():
 		assigned_profiles.append(default_profile)

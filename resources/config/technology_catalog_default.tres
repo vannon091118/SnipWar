@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="TechnologyCatalog" format=3]
+[gd_resource type="Resource" script_class="TechnologyCatalog" load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/technology_catalog.gd" id="1_catalog"]
 [ext_resource type="Script" path="res://scripts/config/technology_definition.gd" id="2_definition"]
@@ -21,6 +21,7 @@ visual_asset = ExtResource("8_shipyard")
 effect_id = &"shipyard_construction"
 mechanic_description = "Mechanik: Der Ausbau Orbitale Werft wird im Planetennetz freigeschaltet."
 production_multiplier = 1.0
+research_time = 2.0
 
 [sub_resource type="Resource" id="Tech_scout_hull"]
 script = ExtResource("2_definition")
@@ -35,6 +36,7 @@ visual_asset = ExtResource("3_scout_hull")
 effect_id = &"scout_hull"
 mechanic_description = "Mechanik: ShipManager erlaubt danach den Bau eines Tier-1-Scout-Schiffs."
 production_multiplier = 1.0
+research_time = 3.0
 
 [sub_resource type="Resource" id="Tech_scanner_drone"]
 script = ExtResource("2_definition")
@@ -49,6 +51,22 @@ visual_asset = ExtResource("4_scanner")
 effect_id = &"scanner_drone"
 mechanic_description = "Mechanik: ScoutShip ruft bei Ankunft GameState.discover_planet() auf."
 production_multiplier = 1.0
+research_time = 2.0
+
+[sub_resource type="Resource" id="Tech_weapon_systems"]
+script = ExtResource("2_definition")
+id = &"weapon_systems"
+category = &"ships"
+display_name = "Waffensysteme T1"
+description = "Schaltet Bordwaffen frei; aus einem Montageauftrag wird ein militärisches Schiff."
+cost_resource = &"volatile"
+cost_amount = 12
+prerequisite_tech_id = &"shipyard_construction"
+visual_asset = ExtResource("5_mech")
+effect_id = &"weapon_systems"
+mechanic_description = "Mechanik: Waffenbauteile und der Tier-2-Mehrzweckrumpf werden in der Schiffswerft kaufbar."
+production_multiplier = 1.0
+research_time = 4.0
 
 [sub_resource type="Resource" id="Tech_worker_automation"]
 script = ExtResource("2_definition")
@@ -64,6 +82,7 @@ visual_asset = ExtResource("3_scout_hull")
 effect_id = &"worker_automation"
 mechanic_description = "Mechanik: Die erste Worker-Fabrik wird baubar und startet langsamen automatischen Nachschub."
 production_multiplier = 1.0
+research_time = 3.0
 
 [sub_resource type="Resource" id="Tech_mech_frame"]
 script = ExtResource("2_definition")
@@ -77,6 +96,7 @@ visual_asset = ExtResource("5_mech")
 effect_id = &"mech_frame_layer3"
 mechanic_description = "Mechanik: Layer-3-Chassis wird registriert; der taktische Mech-Kampf bleibt bis Layer 3 inert."
 production_multiplier = 1.0
+research_time = 5.0
 
 [sub_resource type="Resource" id="Tech_planetary_survey"]
 script = ExtResource("2_definition")
@@ -107,4 +127,4 @@ production_multiplier = 1.5
 
 [resource]
 script = ExtResource("1_catalog")
-technologies = [SubResource("Tech_shipyard_construction"), SubResource("Tech_scout_hull"), SubResource("Tech_scanner_drone"), SubResource("Tech_worker_automation"), SubResource("Tech_mech_frame"), SubResource("Tech_planetary_survey"), SubResource("Tech_planetary_extraction")]
+technologies = [SubResource("Tech_shipyard_construction"), SubResource("Tech_scout_hull"), SubResource("Tech_scanner_drone"), SubResource("Tech_weapon_systems"), SubResource("Tech_worker_automation"), SubResource("Tech_mech_frame"), SubResource("Tech_planetary_survey"), SubResource("Tech_planetary_extraction")]

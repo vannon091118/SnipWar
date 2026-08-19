@@ -47,6 +47,8 @@ PlanetDetails sind seed-basiert und zählen logische Detailtypen. Das Standardpr
 
 Navigation erzeugt genau einen Moon-/Comet-Waypoint pro Layout-Nachbarschaftskante. `NavigationField.find_route()` liefert den gemeinsamen Pfad für Preview und Transit. Das Standardrouting erlaubt jedes Ziel, routet aber trotzdem über dieses Graphnetz; `wide` beschränkt die Zielliste auf Nachbarn.
 
+Das Layout skaliert über `WorldGenerator` und `WorldConfig`: `target_planet_count` (0 = Kataloggröße) erweitert die Welt deterministisch, indem zusätzliche Planeten aus den Basis-Templates gewürfelt werden (die ersten Katalogplaneten behalten ihre Identität für Homeworld-/Faction-Seeding); `columns = 0` leitet die Spaltenzahl aus dem Seitenverhältnis ab; `extra_large_ratio`/`large_ratio` skalieren Größenklassen prozentual. `resolved_columns()` und `resolved_size_class_counts()` sind die gemeinsame Quelle für `SeededLayout`, `NavigationField` und `PlanetNetwork`. Der Hintergrund rendert in Weltkoordinaten (`design_size`), nicht in Viewport-Koordinaten, damit eine über den Viewport hinauswachsende Welt (FOV/LoD) konsistent bleibt.
+
 ## 4. GameState als autoritative Quelle
 
 `GameState` besitzt:
@@ -140,15 +142,21 @@ Ein Scout benötigt:
 
 ## 8. Ship Builder: aktueller Umfang
 
-`ShipPartCatalog` enthält die Slottypen Hull, Scanner und Module sowie zwei maximale Modulplätze. Der Default-Katalog enthält zwei Hüllen, einen Scanner und drei Module.
+`ShipPartCatalog` enthält die Slottypen Hull, Scanner, Waffe und Module sowie zwei maximale Modulplätze. Der Default-Katalog enthält zwei Hüllen (T1/T2), einen Scanner, ein Impulsgeschütz und drei Module.
 
 Kaufen, Montieren und Zerlegen sind in `GameState`, `ShipManager` und `TechnologyMenu` implementiert. Eine Assembly besteht aktuell aus:
 
 ```text
-hull + scanner + module_ids
+hull + scanner + optional weapon + module_ids
 ```
 
-Assemblies sind Inventar-/Display-Zustand. Sie werden nicht als Dispatch-Fleet, Kampfeinheit oder Scout verwendet. Der einzige aktiv fliegende Schiffstyp ist `ScoutShip`.
+Ein Schiff mit Waffe gilt als militärisch — der erste bewaffnete Bauauftrag ist das erste Militärschiff (Worker-Fertiger und Scout bleiben separate Pfade).
+
+**Tech-Gating:** Jedes Bauteil trägt `required_tech_id`; der Kauf ist gesperrt, bis die Fraktion die Technologie erforscht hat. `hull_t1` braucht `shipyard_construction`, `scanner_t1` braucht `scanner_drone`, `hull_t2`/`weapon_t1` brauchen `weapon_systems`. Das verhindert, dass sinnlose Optionen ohne Progression nutzbar sind.
+
+**Timer statt Sofort-Freischaltung:** `TechnologyDefinition.research_time` und `ShipPartDefinition.build_time` machen Forschung und Montage zu zeitgesteuerten Aufträgen in `GameState` (`_research_jobs`, `_ship_build_jobs`). Kosten werden beim Start gezahlt; `advance_research()`/`advance_builds()` treiben die Jobs im Live-Spiel über `_process` voran (Preflight friert sie über `set_jobs_auto_advance(false)` ein und tickt deterministisch). `technology_researched`/`ship_assembled` feuern erst bei Abschluss.
+
+Assemblies sind weiterhin Inventar-/Display-Zustand. Sie werden nicht als Dispatch-Fleet oder Kampfeinheit verwendet. Der einzige aktiv fliegende Schiffstyp ist `ScoutShip`. Das Ersetzen der Worker-Missionstypen/K/M/L-Clustertiers durch fliegende Builder-Schiffe ist ein eigener Migrationsschritt und noch offen.
 
 ## 9. Missionen, Transit und Conflict Resolve
 

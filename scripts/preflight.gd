@@ -38,6 +38,8 @@ func _init() -> void:
 		return
 	if not _constraint_flight_and_dispatch():
 		return
+	if not _constraint_world_generator_scaling():
+		return
 	if not await _constraint_scene_boot():
 		return
 	if not await _constraint_resources_and_seed():
@@ -177,6 +179,79 @@ func _constraint_flight_and_dispatch() -> bool:
 		return false
 	return true
 
+func _constraint_world_generator_scaling() -> bool:
+	var base_catalog: PlanetCatalog = preload("res://resources/config/planet_catalog.tres")
+	var base_config: WorldConfig = preload("res://resources/config/world_default.tres")
+
+	if not _check(WorldGenerator.target_planet_count(base_config, base_catalog) == base_catalog.planets.size(), "target_planet_count should fall back to the catalog size"):
+		return false
+	var explicit_config := base_config.duplicate(true) as WorldConfig
+	explicit_config.target_planet_count = 24
+	if not _check(WorldGenerator.target_planet_count(explicit_config, base_catalog) == 24, "target_planet_count should honor an explicit override"):
+		return false
+
+	var expanded := WorldGenerator.expand_catalog(base_catalog, 24)
+	if not _check(expanded.planets.size() == 24, "expanded catalog size is wrong"):
+		return false
+	var expanded_ids: Dictionary = {}
+	var expanded_names: Dictionary = {}
+	for index in expanded.planets.size():
+		var definition: PlanetDefinition = expanded.planets[index]
+		if definition == null:
+			if not _check(false, "expanded catalog contains a null definition"):
+				return false
+			continue
+		expanded_ids[definition.planet_id] = true
+		expanded_names[definition.display_name] = true
+		if index < base_catalog.planets.size() and not _check(definition.planet_id == base_catalog.planets[index].planet_id, "base planet identity changed during expansion"):
+			return false
+	if not _check(expanded_ids.size() == 24 and expanded_names.size() == 24, "expanded planet ids/names are not unique"):
+		return false
+	for index in range(base_catalog.planets.size(), expanded.planets.size()):
+		var rolled: PlanetDefinition = expanded.planets[index]
+		if not _check(rolled.planet_role == &"planet" and rolled.faction == &"neutral", "rolled planet %s must be a neutral world, not a homeworld clone" % rolled.planet_id):
+			return false
+	var expanded_again := WorldGenerator.expand_catalog(base_catalog, 24)
+	if not _check(expanded.planets[23].planet_id == expanded_again.planets[23].planet_id and expanded.planets[23].display_name == expanded_again.planets[23].display_name, "catalog expansion is not deterministic"):
+		return false
+
+	var grid_config := base_config.duplicate(true) as WorldConfig
+	grid_config.design_size = Vector2(1920.0, 1080.0)
+	grid_config.columns = 0
+	var auto_columns := grid_config.resolved_columns(20)
+	if not _check(auto_columns >= 1 and auto_columns <= 20, "auto column resolution is out of range"):
+		return false
+	var cell_positions := WorldGenerator.grid_cell_positions(grid_config, 20)
+	if not _check(cell_positions.size() == 20, "grid cell position count is wrong"):
+		return false
+	for position in cell_positions:
+		if not _check(position.x >= 0.0 and position.x <= 1920.0 and position.y >= 0.0 and position.y <= 1080.0, "grid cell position is outside world bounds"):
+			return false
+	grid_config.columns = 5
+	if not _check(grid_config.resolved_columns(20) == 5, "explicit columns should override auto resolution"):
+		return false
+
+	var absolute_config := base_config.duplicate(true) as WorldConfig
+	absolute_config.extra_large_count = 2
+	absolute_config.large_count = 1
+	if not _check(absolute_config.resolved_size_class_counts(10) == Vector2i(2, 1), "absolute size class counts are wrong"):
+		return false
+	if not _check(absolute_config.resolved_size_class_counts(2) == Vector2i(2, 0), "absolute size class counts should clamp to the planet count"):
+		return false
+	var ratio_config := base_config.duplicate(true) as WorldConfig
+	ratio_config.extra_large_ratio = 0.2
+	ratio_config.large_ratio = 0.1
+	if not _check(ratio_config.resolved_size_class_counts(100) == Vector2i(20, 10), "ratio size class counts are wrong"):
+		return false
+	if not _check(ratio_config.validate_for_planet_count(100).is_empty(), "ratio-scaled world config should validate"):
+		return false
+	ratio_config.extra_large_ratio = 0.9
+	ratio_config.large_ratio = 0.5
+	if not _check(not ratio_config.validate_for_planet_count(100).is_empty(), "size class ratios exceeding one should fail validation"):
+		return false
+
+	return true
+
 func _constraint_scene_boot() -> bool:
 	var scene: PackedScene = preload("res://scenes/backgrounds/starfield_background.tscn")
 	_background = scene.instantiate()
@@ -258,6 +333,7 @@ func _constraint_scene_boot() -> bool:
 	_network = field.get_node("PlanetNetwork")
 	_manager = field.get_node("WorkerManager")
 	_game_state = game_state
+	game_state.call("set_jobs_auto_advance", false)
 	_world_config = world_config
 	_planet_catalog = planet_catalog
 	_scenario_catalog = scenario_catalog
@@ -794,6 +870,9 @@ func _constraint_world_details_and_scale() -> bool:
 	if not await _run_layout_scale_case(field, planet_catalog, Vector2(9600.0, 5400.0), 1500, 50, original_seed + 303):
 		_check(false, "1500-planet scaled layout case failed")
 		return false
+	if not await _run_layout_scale_case(field, planet_catalog, Vector2(1600.0, 900.0), 120, 0, original_seed + 404):
+		_check(false, "auto-column scaled layout case failed")
+		return false
 	if not await _run_scenario_case(scene, scenario_catalog, &"wide"):
 		_check(false, "wide scenario selection case failed")
 		return false
@@ -1076,6 +1155,7 @@ func _constraint_upgrades_missions_and_ai() -> bool:
 	if not game_state.has_technology(GameState.FACTION_PLAYER, &"shipyard_construction"):
 		if not _check(game_state.research_technology(GameState.FACTION_PLAYER, &"shipyard_construction", upgrade_test_technology_catalog), "shipyard construction research should unlock the shipyard build"):
 			return false
+		game_state.call("advance_research", 999.0)
 	var shipyard_upgrade: PlanetUpgradeDefinition = upgrade_catalog.resolve(&"shipyard")
 	if not _check(shipyard_upgrade != null and shipyard_upgrade.cost_workers == 2, "shipyard should cost 2 workers"):
 		return false
@@ -1189,14 +1269,17 @@ func _constraint_scout_and_discovery() -> bool:
 	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"biomass", 100)
 	if not _check(game_state.research_technology(GameState.FACTION_PLAYER, &"shipyard_construction", tech_catalog), "shipyard construction research should succeed"):
 		return false
+	game_state.call("advance_research", 999.0)
 	if not _check(game_state.can_research_technology(GameState.FACTION_PLAYER, &"scout_hull", tech_catalog), "scout_hull should be researchable after shipyard construction"):
 		return false
 	if not _check(game_state.research_technology(GameState.FACTION_PLAYER, &"scout_hull", tech_catalog), "scout_hull research should succeed"):
 		return false
+	game_state.call("advance_research", 999.0)
 	if not _check(not game_state.can_research_technology(GameState.FACTION_PLAYER, &"scout_hull", tech_catalog), "scout_hull should not be researchable twice"):
 		return false
 	if not _check(game_state.research_technology(GameState.FACTION_PLAYER, &"scanner_drone", tech_catalog), "scanner_drone research should succeed after scout_hull"):
 		return false
+	game_state.call("advance_research", 999.0)
 	if not _check(game_state.has_technology(GameState.FACTION_PLAYER, &"scout_hull") and game_state.has_technology(GameState.FACTION_PLAYER, &"scanner_drone"), "researched technologies were not recorded"):
 		return false
 	for technology in tech_catalog.resolve_all():
@@ -1284,6 +1367,7 @@ func _constraint_scout_and_discovery() -> bool:
 		return false
 	if not _check(game_state.research_technology(GameState.FACTION_PLAYER, GameState.TECH_WORKER_AUTOMATION, tech_catalog), "worker automation research should unlock after the first scan"):
 		return false
+	game_state.call("advance_research", 999.0)
 	if not _check(ship_manager.can_build_workers(source), "worker factory should be buildable after scan and research"):
 		return false
 	if not _check(ship_manager.build_workers(source), "worker factory construction should succeed"):
@@ -1359,7 +1443,7 @@ func _constraint_ship_builder() -> bool:
 	var catalog: ShipPartCatalog = ship_manager.get_part_catalog()
 	if not _check(catalog != null and catalog.validate().is_empty(), "ship part catalog validation failed"):
 		return false
-	if not _check(not catalog.for_slot(ShipPartDefinition.SLOT_HULL).is_empty() and not catalog.for_slot(ShipPartDefinition.SLOT_SCANNER).is_empty() and not catalog.for_slot(ShipPartDefinition.SLOT_MODULE).is_empty(), "ship part catalog is missing a hull, scanner, or module branch"):
+	if not _check(not catalog.for_slot(ShipPartDefinition.SLOT_HULL).is_empty() and not catalog.for_slot(ShipPartDefinition.SLOT_SCANNER).is_empty() and not catalog.for_slot(ShipPartDefinition.SLOT_MODULE).is_empty() and not catalog.for_slot(ShipPartDefinition.SLOT_WEAPON).is_empty(), "ship part catalog is missing a hull, scanner, module, or weapon branch"):
 		return false
 	var source: Planet = _find_planet_by_id(field, game_state.homeworld_for(GameState.FACTION_PLAYER) as StringName)
 	if not _check(source != null and game_state.has_planet_upgrade(source.planet_id, ShipManager.SHIPYARD_UPGRADE_ID), "player homeworld should carry a shipyard before the ship builder runs"):
@@ -1386,7 +1470,14 @@ func _constraint_ship_builder() -> bool:
 	if not _check(not game_state.can_assemble_ship(source.planet_id, hull_part.id, scanner_part.id, [module_part.id, module_part.id], catalog), "assembling beyond module ownership should be rejected"):
 		return false
 	var ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [module_part.id])
-	if not _check(not String(ship_id).is_empty() and game_state.has_ship_assembly(source.planet_id, ship_id), "ship assembly did not register (ship_id=%s)" % ship_id):
+	if not _check(not String(ship_id).is_empty(), "ship assembly did not start (ship_id=%s)" % ship_id):
+		return false
+	if not _check(game_state.call("ship_build_in_progress", source.planet_id, ship_id), "timed ship build was not queued"):
+		return false
+	if not _check(not game_state.has_ship_assembly(source.planet_id, ship_id), "ship build should not register before the timer completes"):
+		return false
+	game_state.call("advance_builds", 999.0)
+	if not _check(game_state.has_ship_assembly(source.planet_id, ship_id), "ship assembly did not register after the build timer (ship_id=%s)" % ship_id):
 		return false
 	if not _check(game_state.get_ship_part_count(source.planet_id, hull_part.id) == 0 and game_state.get_ship_part_count(source.planet_id, scanner_part.id) == 0 and game_state.get_ship_part_count(source.planet_id, module_part.id) == 0, "ship assembly did not consume the parts"):
 		return false
@@ -1402,6 +1493,42 @@ func _constraint_ship_builder() -> bool:
 	if not _check(game_state.get_ship_part_count(source.planet_id, hull_part.id) == 1 and game_state.get_ship_part_count(source.planet_id, scanner_part.id) == 1 and game_state.get_ship_part_count(source.planet_id, module_part.id) == 1, "disassembly did not refund the parts"):
 		return false
 	if not _check(builder_node != null and not builder_node.visible, "disassembled ship did not hide the FutureShipBuilder display"):
+		return false
+
+	# --- WEAPON SLOT + TECH GATING + TIMED RESEARCH ---
+	var tech_catalog: TechnologyCatalog = ship_manager.get_technology_catalog()
+	var weapon_part: ShipPartDefinition = catalog.for_slot(ShipPartDefinition.SLOT_WEAPON)[0]
+	if not _check(weapon_part.required_tech_id == &"weapon_systems", "weapon part should require the weapon_systems tech"):
+		return false
+	if not _check(not game_state.can_buy_ship_part(source.planet_id, weapon_part.id, catalog), "weapon part should be locked before weapon_systems research"):
+		return false
+	var hull_t2: ShipPartDefinition = catalog.resolve(&"hull_t2")
+	if not _check(hull_t2 != null and not game_state.can_buy_ship_part(source.planet_id, hull_t2.id, catalog), "tier-2 hull should be locked before weapon_systems research"):
+		return false
+	game_state.add_faction_resource(GameState.FACTION_PLAYER, &"volatile", 50)
+	if not _check(game_state.can_research_technology(GameState.FACTION_PLAYER, &"weapon_systems", tech_catalog), "weapon_systems should be researchable after shipyard construction"):
+		return false
+	if not _check(game_state.research_technology(GameState.FACTION_PLAYER, &"weapon_systems", tech_catalog), "weapon_systems research should start"):
+		return false
+	if not _check(game_state.call("research_in_progress", GameState.FACTION_PLAYER, &"weapon_systems"), "weapon_systems should run as a timed job"):
+		return false
+	if not _check(not game_state.has_technology(GameState.FACTION_PLAYER, &"weapon_systems"), "weapon_systems should not complete instantly"):
+		return false
+	game_state.call("advance_research", 999.0)
+	if not _check(game_state.has_technology(GameState.FACTION_PLAYER, &"weapon_systems"), "weapon_systems did not complete after the research timer"):
+		return false
+	if not _check(game_state.can_buy_ship_part(source.planet_id, weapon_part.id, catalog), "weapon part should be purchasable after weapon_systems research"):
+		return false
+	if not _check(ship_manager.buy_part(source, weapon_part.id), "weapon part purchase should succeed"):
+		return false
+	var military_ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [], weapon_part.id)
+	if not _check(not String(military_ship_id).is_empty() and game_state.call("ship_build_in_progress", source.planet_id, military_ship_id), "armed ship build did not start"):
+		return false
+	game_state.call("advance_builds", 999.0)
+	var military_assembly: Dictionary = game_state.get_ship_assembly(source.planet_id, military_ship_id)
+	if not _check(military_assembly.get("weapon", &"") == weapon_part.id, "armed ship did not record its weapon"):
+		return false
+	if not _check(ship_manager.disassemble_ship(source, military_ship_id) and game_state.get_ship_part_count(source.planet_id, weapon_part.id) >= 1, "armed ship disassembly did not refund the weapon"):
 		return false
 	return true
 
@@ -1652,17 +1779,7 @@ func _run_scenario_case(scene: PackedScene, catalog: ScenarioCatalog, scenario_i
 	return passed
 
 func _catalog_for_count(base_catalog: PlanetCatalog, planet_count: int) -> PlanetCatalog:
-	var catalog := PlanetCatalog.new()
-	var definitions: Array[PlanetDefinition] = []
-	for index in planet_count:
-		var source: PlanetDefinition = base_catalog.planets[index % base_catalog.planets.size()]
-		var definition: PlanetDefinition = source.duplicate(true) as PlanetDefinition
-		if index >= base_catalog.planets.size():
-			definition.planet_id = StringName("%s_%d" % [definition.planet_id, index])
-			definition.display_name = "%s %d" % [definition.display_name, index]
-		definitions.append(definition)
-	catalog.planets = definitions
-	return catalog
+	return WorldGenerator.expand_catalog(base_catalog, planet_count)
 
 func _capture_spawn(planet: Node2D, amount: int) -> void:
 	if planet == _observed_planet:

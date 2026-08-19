@@ -56,7 +56,7 @@ func rebuild() -> void:
 
 	var config: WorldConfig = _resolved_world_config()
 	var waypoint_config: NavigationConfig = navigation_config if navigation_config != null else DEFAULT_NAVIGATION_CONFIG
-	var columns := maxi(config.columns, 1)
+	var columns := config.resolved_columns(planets.size())
 	var rng := RandomNumberGenerator.new()
 	rng.seed = abs(config.layout_seed) + 9137
 

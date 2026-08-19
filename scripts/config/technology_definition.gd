@@ -19,6 +19,8 @@ const CATEGORY_PLANET := &"planet"
 @export var effect_id: StringName = &""
 @export_multiline var mechanic_description: String = ""
 @export_range(0.1, 10.0, 0.05) var production_multiplier: float = 1.0
+# 0 = instant (legacy); > 0 = research runs as a timed job.
+@export_range(0.0, 3600.0, 0.1) var research_time: float = 0.0
 
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
@@ -38,4 +40,6 @@ func validate() -> PackedStringArray:
 		errors.append("technology %s mechanic_description is empty" % id)
 	if production_multiplier <= 0.0:
 		errors.append("technology %s production_multiplier must be positive" % id)
+	if research_time < 0.0:
+		errors.append("technology %s research_time cannot be negative" % id)
 	return errors

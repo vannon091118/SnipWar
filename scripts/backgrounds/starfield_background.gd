@@ -11,6 +11,10 @@ const DEFAULT_SCENARIO_CATALOG: ScenarioCatalog = preload("res://resources/confi
 @export var active_scenario_id: StringName = &""
 
 var active_scenario: ScenarioDefinition
+# The catalog the world actually runs on — the map catalog, expanded when the
+# world config requests more planets (target_planet_count). GameState, the
+# PlanetField and the resource deal must all share this single catalog.
+var active_catalog: PlanetCatalog
 
 var stars: Array[Dictionary] = []
 var folds: Array[Dictionary] = []
@@ -37,6 +41,9 @@ func _apply_active_scenario() -> void:
 		map.world_config.route_mode = scenario.resolved_route_mode()
 	world_config = map.world_config if map.world_config != null else world_config
 	background_config = scenario.background_config if scenario.background_config != null else background_config
+	active_catalog = map.planet_catalog
+	if map.world_config != null and map.world_config.target_planet_count > 0:
+		active_catalog = WorldGenerator.expand_catalog(map.planet_catalog, map.world_config.target_planet_count)
 
 	_configure_game_state(map)
 	_configure_planet_field(map, scenario)
@@ -44,8 +51,8 @@ func _apply_active_scenario() -> void:
 
 func _configure_game_state(map: MapDefinition) -> void:
 	var state: Node = get_node_or_null("/root/GameState")
-	if state != null and map != null:
-		state.reset_from_catalog(map.planet_catalog)
+	if state != null and map != null and active_catalog != null:
+		state.reset_from_catalog(active_catalog)
 
 func _configure_planet_field(map: MapDefinition, scenario: ScenarioDefinition) -> void:
 	var field: SeededLayout = get_node_or_null("PlanetField") as SeededLayout
@@ -53,7 +60,7 @@ func _configure_planet_field(map: MapDefinition, scenario: ScenarioDefinition) -
 		return
 	field.position = Vector2.ZERO
 	field.world_config = map.world_config
-	field.planet_catalog = map.planet_catalog
+	field.planet_catalog = active_catalog if active_catalog != null else map.planet_catalog
 	field.size_profiles = map.size_profiles
 	var navigation: NavigationField = field.get_node_or_null("NavigationField") as NavigationField
 	if navigation != null:
@@ -146,9 +153,15 @@ func _on_viewport_size_changed() -> void:
 	_rebuild_render_batches()
 	queue_redraw()
 
+func _world_size() -> Vector2:
+	var world: WorldConfig = world_config if world_config != null else DEFAULT_WORLD_CONFIG
+	if world.design_size.x > 0.0 and world.design_size.y > 0.0:
+		return world.design_size
+	return get_viewport_rect().size
+
 func _rebuild_render_batches() -> void:
 	_clear_render_batches()
-	var size := get_viewport_rect().size
+	var size := _world_size()
 	if size.x <= 0.0 or size.y <= 0.0:
 		return
 
@@ -251,7 +264,7 @@ func _create_shape_texture(shape: StringName, texture_size: int) -> Texture2D:
 	return ImageTexture.create_from_image(image)
 
 func _draw() -> void:
-	var size := get_viewport_rect().size
+	var size := _world_size()
 	if size.x <= 0.0 or size.y <= 0.0:
 		return
 
