@@ -426,13 +426,13 @@ func resolve_arrival(source_faction: StringName, amount: int) -> StringName:
 
 ## Spawns the "+N" landing label above this planet for an arrival that landed
 ## workers or ships. No-op for non-positive amounts and outside the tree.
-func show_arrival_feedback(amount: int, faction: StringName) -> void:
+func show_arrival_feedback(amount: int, arriving_faction: StringName) -> void:
 	if amount <= 0 or not is_inside_tree():
 		return
 	var parent: Node = get_parent()
 	if parent == null:
 		return
-	var tint: Color = DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", faction)
+	var tint: Color = DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", arriving_faction)
 	FloatingText.spawn(parent, "+%d" % amount, position, tint)
 
 # Number of surviving attackers registered as workers on a captured planet when

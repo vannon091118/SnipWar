@@ -21,14 +21,14 @@ func _ready() -> void:
 func _build_visuals() -> void:
 	if _label != null and is_instance_valid(_label):
 		return
-	var theme: UIThemeConfig = DEFAULT_THEME
-	var style := theme.make_style_box(theme.button_hover_background, theme.panel_border, 1, theme.panel_corner_radius)
+	var theme_cfg: UIThemeConfig = DEFAULT_THEME
+	var style := theme_cfg.make_style_box(theme_cfg.button_hover_background, theme_cfg.panel_border, 1, theme_cfg.panel_corner_radius)
 	add_theme_stylebox_override("panel", style)
 	_label = Label.new()
 	_label.name = "SelectionTooltipLabel"
 	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_label.add_theme_font_size_override("font_size", theme.selected_count_font_size)
-	_label.add_theme_color_override("font_color", theme.route_line_color)
+	_label.add_theme_font_size_override("font_size", theme_cfg.selected_count_font_size)
+	_label.add_theme_color_override("font_color", theme_cfg.route_line_color)
 	_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_label.custom_minimum_size = Vector2(220, 0)
 	add_child(_label)
@@ -42,9 +42,9 @@ func show_text(reason_text: String, anchor_position: Vector2) -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size if get_viewport() else Vector2(960, 540)
 	var anchor := anchor_position + Vector2(16.0, 16.0)
 	if anchor.x + 240.0 > viewport_size.x:
-		anchor.x = maxi(0.0, viewport_size.x - 240.0)
+		anchor.x = maxf(0.0, viewport_size.x - 240.0)
 	if anchor.y + 96.0 > viewport_size.y:
-		anchor.y = maxi(0.0, viewport_size.y - 96.0)
+		anchor.y = maxf(0.0, viewport_size.y - 96.0)
 	position = anchor
 	visible = true
 	modulate.a = 1.0

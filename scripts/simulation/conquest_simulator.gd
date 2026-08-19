@@ -2,7 +2,7 @@
 class_name ConquestSimulator
 extends RefCounted
 
-static func simulate_conquest(attack_fleet: FleetSnapshot, attacker_workers: int, defending_workers: int, defense_rating: int, perimeter_slots: int, defense_range: float, conquest_seed: int = 42) -> Dictionary:
+static func simulate_conquest(attack_fleet: FleetSnapshot, attacker_workers: int, defending_workers: int, defense_rating: int, perimeter_slots: int, _defense_range: float, conquest_seed: int = 42) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = conquest_seed
 

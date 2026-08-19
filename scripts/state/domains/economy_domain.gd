@@ -56,7 +56,7 @@ func get_faction_vault_snapshot(faction: StringName) -> Dictionary:
 	return (faction_vaults[faction] as Dictionary).duplicate()
 
 func add_faction_resource(faction: StringName, resource_id: StringName, amount: int) -> int:
-	if amount <= 0 or String(faction).is_empty() or not GameState.is_valid_resource(resource_id):
+	if amount <= 0 or String(faction).is_empty() or not _is_valid_resource_id(resource_id):
 		return get_faction_resource(faction, resource_id)
 	if not faction_vaults.has(faction):
 		faction_vaults[faction] = {}
@@ -85,7 +85,7 @@ func spend_faction_resource(faction: StringName, resource_id: StringName, amount
 	return true
 
 func set_planet_resource(planet_id: StringName, resource_id: StringName) -> void:
-	if String(planet_id).is_empty() or not GameState.is_valid_resource(resource_id):
+	if String(planet_id).is_empty() or not _is_valid_resource_id(resource_id):
 		return
 	planet_resources[planet_id] = resource_id
 
@@ -224,7 +224,7 @@ func gather_income_tick(base_amounts: Dictionary) -> int:
 			if count <= 0:
 				continue
 			var res_id: StringName = resource_of(planet_id)
-			if not GameState.is_valid_resource(res_id):
+			if not _is_valid_resource_id(res_id):
 				continue
 			var base_amt: int = base_amounts.get(planet_id, 1)
 			var earned := count * base_amt
@@ -248,7 +248,7 @@ func generate_resources_for_planet(
 	if faction == GameState.FACTION_NEUTRAL or not faction_vaults.has(faction):
 		return 0
 	var resource_id: StringName = resource_of(planet_id)
-	if String(resource_id).is_empty() or not GameState.is_valid_resource(resource_id):
+	if String(resource_id).is_empty() or not _is_valid_resource_id(resource_id):
 		return 0
 	var multiplier := 1.0
 	for up_id in get_planet_upgrades(planet_id):
@@ -288,3 +288,8 @@ func convert_refinery_resources(planet_id: StringName, faction_domain: FactionDo
 	var produced := {produced_resource: 1}
 	refinery_converted.emit(planet_id, faction, consumed, produced)
 	return {"converted": true, "consumed": consumed, "produced": produced}
+
+# Local copy of GameState.is_valid_resource — calling the static via the autoload
+# instance triggers a STATIC_CALLED_ON_INSTANCE warning under Godot's parser.
+func _is_valid_resource_id(resource_id: StringName) -> bool:
+	return resource_id == GameState.RES_ENERGY or resource_id == GameState.RES_BIOMASS or resource_id == GameState.RES_RARE or resource_id == GameState.RES_MATERIAL or resource_id == GameState.RES_VOLATILE

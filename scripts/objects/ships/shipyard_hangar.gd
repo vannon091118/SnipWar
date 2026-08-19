@@ -17,8 +17,8 @@ func configure(slot_count: int, worker_visible: bool, config: ShipConfig = null)
 	_ship_config = config if config != null else DEFAULT_SHIP_CONFIG
 	_rebuild_worker_slots()
 
-func set_worker_production_visible(visible: bool) -> void:
-	worker_production_visible = visible
+func set_worker_production_visible(should_show: bool) -> void:
+	worker_production_visible = should_show
 	_rebuild_worker_slots()
 
 func show_ship_parts(
