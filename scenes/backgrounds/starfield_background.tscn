@@ -6,19 +6,20 @@
 [ext_resource type="PackedScene" path="res://scenes/objects/meteors/meteor_field.tscn" id="4_meteor_field"]
 [ext_resource type="Resource" path="res://resources/config/world_default.tres" id="5_world"]
 [ext_resource type="Resource" path="res://resources/config/background_default.tres" id="6_background"]
+[ext_resource type="Resource" path="res://resources/config/scenario_catalog.tres" id="7_scenarios"]
 
 [node name="Background" type="Node2D" unique_id=345278981]
 z_index = -100
 script = ExtResource("1_background")
 world_config = ExtResource("5_world")
 background_config = ExtResource("6_background")
+scenario_catalog = ExtResource("7_scenarios")
+active_scenario_id = &"default"
 
 [node name="PlanetField" parent="." unique_id=332234759 instance=ExtResource("2_planet_field")]
-position = Vector2(43, -81)
 
 [node name="Bootstrap" type="Node" parent="." unique_id=276504563]
 script = ExtResource("3_bootstrap")
 
 [node name="MeteorField" parent="." unique_id=2036049589 instance=ExtResource("4_meteor_field")]
-position = Vector2(40, 38)
 world_config = ExtResource("5_world")

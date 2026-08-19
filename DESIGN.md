@@ -20,6 +20,7 @@ SnipWar ist momentan ein spielbarer Overworld-Vertical-Slice: zehn deterministis
 - **Planetendetails:** Seed-basiert, maximal drei logische Details. Toxic garantiert Satellit und Asteroidengürtel und kann einen Kometen erhalten. Der ungeplante cyanfarbene Orbitalring ist entfernt.
 - **Stil:** Cell-shaded Paperclip-Comic mit klaren Silhouetten, Beleuchtung und Schattierung. K/M/L sind generische, erweiterbare SVG-Assets mit `Attachments` für spätere Objekte.
 - **Präsentation:** Der aktuelle technische Raum ist `960×540` mit Canvas-Item-Stretch und einem `1280×720`-Fenster-Override. Das UI nutzt ein konfiguriertes responsives Panel; Hintergrund- und Meteor-Tuning liegen in eigenen Resources. 4K bleibt eine spätere Präsentationsstufe, keine MVP-Anforderung.
+- **Szenario-/Kartenschicht:** `MapDefinition` bündelt WorldConfig, PlanetCatalog, Größenprofile und Navigation; `ScenarioDefinition` ergänzt Transit- und Präsentations-Configs. `ScenarioCatalog` wählt vor dem Eintritt des PlanetField einen aktiven Datensatz. Der MVP enthält `default` mit Laufzeit-Seed und `wide`/`Frontier Ring` mit festem Seed und `neighbors_only`; ein Katalogwechsel im laufenden PlanetField ist noch nicht vorgesehen.
 
 ## Validierter Vertical Slice
 

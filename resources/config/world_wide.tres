@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="WorldConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/world_config.gd" id="1_world_config"]
+
+[resource]
+script = ExtResource("1_world_config")
+design_size = Vector2(1920, 1080)
+layout_seed = 462026
+decorative_seed = 462026
+columns = 7
+extra_large_count = 2
+large_count = 1
+jitter = 0.12
+padding = 132.0
+meteor_edge_margin = 72.0
+extra_large_profile_id = &"xl"
+large_profile_id = &"l"
+default_profile_id = &"variable"
+route_mode = "neighbors_only"

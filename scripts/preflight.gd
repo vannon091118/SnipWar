@@ -44,11 +44,25 @@ func _init() -> void:
 	await process_frame
 
 	var field: Node = background.get_node("PlanetField")
+	var planet_field_node: Node2D = field as Node2D
+	var meteor_field_node: Node2D = background.get_node("MeteorField") as Node2D
+	if not _check(planet_field_node.position.distance_to(Vector2.ZERO) <= 0.01, "PlanetField has an unexpected scene offset"):
+		return
+	if not _check(meteor_field_node.position.distance_to(Vector2.ZERO) <= 0.01, "MeteorField has an unexpected scene offset"):
+		return
 	var world_config: WorldConfig = field.get("world_config") as WorldConfig
 	if not _check(world_config != null, "world config is missing"):
 		return
 	var viewport_size: Vector2 = get_root().get_viewport().get_visible_rect().size
 	if not _check(viewport_size.distance_to(world_config.design_size) <= 0.01, "world design size differs from the Godot viewport"):
+		return
+	var scenario_catalog: ScenarioCatalog = background.get("scenario_catalog") as ScenarioCatalog
+	if not _check(scenario_catalog != null and scenario_catalog.validate().is_empty(), "scenario catalog validation failed"):
+		return
+	var active_scenario: ScenarioDefinition = background.get("active_scenario") as ScenarioDefinition
+	if not _check(active_scenario != null and active_scenario.id == &"default", "default scenario was not selected"):
+		return
+	if not _check(active_scenario.map_definition != null and active_scenario.map_definition.world_config == world_config, "active scenario map was not applied"):
 		return
 	var background_config: BackgroundConfig = background.get("background_config") as BackgroundConfig
 	if not _check(background_config != null and background_config.validate().is_empty(), "background config validation failed"):
@@ -76,6 +90,11 @@ func _init() -> void:
 	var positions_before: Dictionary = _planet_positions(field)
 	if not _check(positions_before.size() == planet_catalog.planets.size(), "generated planets do not match the catalog"):
 		return
+	for planet_node in field.get_children():
+		if planet_node is Planet:
+			var global_planet_position: Vector2 = (planet_node as Planet).global_position
+			if not _check(global_planet_position.x >= -0.01 and global_planet_position.x <= world_config.design_size.x + 0.01 and global_planet_position.y >= -0.01 and global_planet_position.y <= world_config.design_size.y + 0.01, "planet global position is outside world bounds"):
+				return
 	var world_errors := world_config.validate_for_planet_count(positions_before.size())
 	if not _check(world_errors.is_empty(), "world config validation failed"):
 		return
@@ -365,6 +384,9 @@ func _init() -> void:
 	if not await _run_layout_scale_case(field, planet_catalog, Vector2(1920.0, 1080.0), 14, 7, original_seed + 202):
 		_check(false, "1920x1080 scaled layout case failed")
 		return
+	if not await _run_scenario_case(scene, scenario_catalog, &"wide"):
+		_check(false, "wide scenario selection case failed")
+		return
 
 	print("PASS: SnipWar preflight")
 	quit()
@@ -421,6 +443,37 @@ func _run_layout_scale_case(source_field: Node, base_catalog: PlanetCatalog, des
 	var navigation_valid: bool = navigation != null and navigation.get_waypoint_count() == expected_waypoint_count and (planets.size() < 2 or route_path.size() >= 3)
 	var passed: bool = planets.size() == planet_count and slots.size() == planet_count and route_count == expected_route_count and navigation_valid
 	custom_field.queue_free()
+	await process_frame
+	return passed
+
+func _run_scenario_case(scene: PackedScene, catalog: ScenarioCatalog, scenario_id: StringName) -> bool:
+	var scenario_background: Node = scene.instantiate()
+	scenario_background.set("scenario_catalog", catalog)
+	scenario_background.set("active_scenario_id", scenario_id)
+	root.add_child(scenario_background)
+	await process_frame
+	await process_frame
+
+	var active_scenario: ScenarioDefinition = scenario_background.get("active_scenario") as ScenarioDefinition
+	var map: MapDefinition = null
+	if active_scenario != null:
+		map = active_scenario.map_definition
+	var field: Node = scenario_background.get_node("PlanetField")
+	var scenario_world: WorldConfig = field.get("world_config") as WorldConfig
+	var scenario_navigation: NavigationField = field.get_node("NavigationField") as NavigationField
+	var scenario_network: Node = field.get_node("PlanetNetwork")
+	var planets: Array[Planet] = []
+	for child in field.get_children():
+		if child is Planet:
+			planets.append(child)
+	var route_count: int = 0
+	var neighbor_count: int = 0
+	if not planets.is_empty():
+		route_count = scenario_network.get_route_destinations(planets[0]).size()
+		neighbor_count = scenario_network.get_neighbors(planets[0]).size()
+	var fixed_seed_applied: bool = map != null and scenario_world != null and scenario_world.layout_seed == map.world_config.layout_seed
+	var passed: bool = active_scenario != null and active_scenario.id == scenario_id and not active_scenario.randomize_layout_seed and map != null and scenario_world != null and scenario_world.design_size.distance_to(Vector2(1920.0, 1080.0)) <= 0.01 and scenario_world.route_mode == WorldConfig.ROUTE_MODE_NEIGHBORS_ONLY and field.get("planet_catalog") == map.planet_catalog and scenario_navigation.get("navigation_config") == map.navigation_config and planets.size() == map.planet_catalog.planets.size() and route_count == neighbor_count and fixed_seed_applied
+	scenario_background.queue_free()
 	await process_frame
 	return passed
 

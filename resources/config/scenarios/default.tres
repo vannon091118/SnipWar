@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ScenarioDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/scenario_definition.gd" id="1_scenario"]
+[ext_resource type="Resource" path="res://resources/config/maps/default.tres" id="2_map"]
+[ext_resource type="Resource" path="res://resources/config/transit_default.tres" id="3_transit"]
+[ext_resource type="Resource" path="res://resources/config/ui_theme_default.tres" id="4_ui"]
+[ext_resource type="Resource" path="res://resources/config/background_default.tres" id="5_background"]
+[ext_resource type="Resource" path="res://resources/config/meteor_default.tres" id="6_meteor"]
+
+[resource]
+script = ExtResource("1_scenario")
+id = &"default"
+display_name = "Default Sector"
+description = "Der stabile MVP-Sektor mit freier Zielauswahl und zufälligem Laufzeit-Seed."
+map_definition = ExtResource("2_map")
+transit_config = ExtResource("3_transit")
+ui_theme_config = ExtResource("4_ui")
+background_config = ExtResource("5_background")
+meteor_config = ExtResource("6_meteor")
+randomize_layout_seed = true

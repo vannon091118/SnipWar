@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ScenarioCatalog" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/scenario_catalog.gd" id="1_catalog"]
+[ext_resource type="Resource" path="res://resources/config/scenarios/default.tres" id="2_default"]
+[ext_resource type="Resource" path="res://resources/config/scenarios/wide.tres" id="3_wide"]
+
+[resource]
+script = ExtResource("1_catalog")
+default_scenario_id = &"default"
+scenarios = Array[ExtResource("2_default")]([ExtResource("2_default"), ExtResource("3_wide")])

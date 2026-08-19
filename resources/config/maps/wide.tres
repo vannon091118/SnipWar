@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="MapDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/map_definition.gd" id="1_map"]
+[ext_resource type="Resource" path="res://resources/config/world_wide.tres" id="2_world"]
+[ext_resource type="Resource" path="res://resources/config/planet_catalog.tres" id="3_catalog"]
+[ext_resource type="Resource" path="res://resources/config/planet_sizes/variable.tres" id="4_variable"]
+[ext_resource type="Resource" path="res://resources/config/planet_sizes/large.tres" id="5_large"]
+[ext_resource type="Resource" path="res://resources/config/planet_sizes/extra_large.tres" id="6_extra_large"]
+[ext_resource type="Resource" path="res://resources/config/navigation_default.tres" id="7_navigation"]
+
+[resource]
+script = ExtResource("1_map")
+id = &"wide"
+display_name = "Frontier Ring"
+world_config = ExtResource("2_world")
+planet_catalog = ExtResource("3_catalog")
+size_profiles = Array[ExtResource("4_variable")]([ExtResource("4_variable"), ExtResource("5_large"), ExtResource("6_extra_large")])
+navigation_config = ExtResource("7_navigation")

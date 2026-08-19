@@ -3,9 +3,14 @@ extends Node2D
 
 const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_default.tres")
 const DEFAULT_BACKGROUND_CONFIG: BackgroundConfig = preload("res://resources/config/background_default.tres")
+const DEFAULT_SCENARIO_CATALOG: ScenarioCatalog = preload("res://resources/config/scenario_catalog.tres")
 
 @export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG
 @export var background_config: BackgroundConfig = DEFAULT_BACKGROUND_CONFIG
+@export var scenario_catalog: ScenarioCatalog = DEFAULT_SCENARIO_CATALOG
+@export var active_scenario_id: StringName = &""
+
+var active_scenario: ScenarioDefinition
 
 var stars: Array[Dictionary] = []
 var folds: Array[Dictionary] = []
@@ -16,6 +21,45 @@ var _batch_nodes: Array[MultiMeshInstance2D] = []
 var _circle_texture: Texture2D
 var _diamond_texture: Texture2D
 var _shape_texture_size := 0
+
+func _enter_tree() -> void:
+	_apply_active_scenario()
+
+func _apply_active_scenario() -> void:
+	var catalog: ScenarioCatalog = scenario_catalog if scenario_catalog != null else DEFAULT_SCENARIO_CATALOG
+	var scenario: ScenarioDefinition = catalog.resolve(active_scenario_id)
+	if scenario == null or scenario.map_definition == null:
+		return
+	active_scenario = scenario
+	active_scenario_id = scenario.id
+	var map: MapDefinition = scenario.map_definition
+	world_config = map.world_config if map.world_config != null else world_config
+	background_config = scenario.background_config if scenario.background_config != null else background_config
+
+	var field: SeededLayout = get_node_or_null("PlanetField") as SeededLayout
+	if field != null:
+		field.world_config = map.world_config
+		field.planet_catalog = map.planet_catalog
+		field.size_profiles = map.size_profiles
+		var navigation: NavigationField = field.get_node_or_null("NavigationField") as NavigationField
+		if navigation != null:
+			navigation.world_config = map.world_config
+			navigation.navigation_config = map.navigation_config
+		var network: Node = field.get_node_or_null("PlanetNetwork")
+		if network != null:
+			network.set("transit_config", scenario.transit_config)
+			network.set("ui_theme_config", scenario.ui_theme_config)
+		var worker_manager: Node = field.get_node_or_null("WorkerManager")
+		if worker_manager != null:
+			worker_manager.set("transit_config", scenario.transit_config)
+
+	var meteor_field: Node = get_node_or_null("MeteorField")
+	if meteor_field != null:
+		meteor_field.set("world_config", map.world_config)
+		meteor_field.set("meteor_config", scenario.meteor_config)
+
+func get_active_scenario() -> ScenarioDefinition:
+	return active_scenario
 
 func _ready() -> void:
 	_generate_elements()
@@ -145,6 +189,9 @@ func _add_batch(name: StringName, texture: Texture2D, transforms: Array[Transfor
 	var multimesh := MultiMesh.new()
 	multimesh.transform_format = MultiMesh.TRANSFORM_2D
 	multimesh.use_colors = true
+	var quad_mesh := QuadMesh.new()
+	quad_mesh.size = Vector2(2.0, 2.0)
+	multimesh.mesh = quad_mesh
 	multimesh.instance_count = transforms.size()
 	for index in transforms.size():
 		multimesh.set_instance_transform_2d(index, transforms[index])
