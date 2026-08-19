@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="PlanetDetailFidelity" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/planet_detail_fidelity.gd" id="1_fidelity"]
+
+[resource]
+script = ExtResource("1_fidelity")
+orbit_motion_mode = "throttled"
+orbit_update_interval = 0.033333

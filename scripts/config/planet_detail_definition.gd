@@ -8,6 +8,7 @@ extends Resource
 @export var angular_speed_range: Vector2
 @export var phase_range: Vector2
 @export var sprite_size_range: Vector2
+@export var fidelity: PlanetDetailFidelity
 @export_range(1, 100, 1) var instance_count: int = 1
 @export var textures: Array[Texture2D] = []
 
@@ -23,6 +24,11 @@ func validate() -> PackedStringArray:
 		errors.append("planet detail angular_speed_range is invalid")
 	if phase_range.y < phase_range.x:
 		errors.append("planet detail phase_range is invalid")
+	if fidelity == null:
+		errors.append("planet detail fidelity is missing")
+	else:
+		for fidelity_error in fidelity.validate():
+			errors.append("planet detail fidelity: " + fidelity_error)
 	if sprite_size_range.x <= 0.0 or sprite_size_range.y < sprite_size_range.x:
 		errors.append("planet detail sprite_size_range is invalid")
 	if instance_count < 1:

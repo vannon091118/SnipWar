@@ -8,6 +8,7 @@ extends Resource
 @export var planet_catalog: PlanetCatalog
 @export var size_profiles: Array[PlanetSizeProfile] = []
 @export var navigation_config: NavigationConfig
+@export var resource_pool: ResourcePool
 
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
@@ -33,4 +34,7 @@ func validate() -> PackedStringArray:
 	if navigation_config != null:
 		for navigation_error in navigation_config.validate():
 			errors.append("map navigation: " + navigation_error)
+	if resource_pool != null:
+		for resource_error in resource_pool.validate():
+			errors.append("map resources: " + resource_error)
 	return errors

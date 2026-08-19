@@ -81,6 +81,10 @@ func regenerate() -> void:
 	if navigation != null:
 		navigation.world_config = config
 		navigation.request_rebuild()
+	if not Engine.is_editor_hint():
+		var network: Node = get_node_or_null("PlanetNetwork")
+		if network != null and network.has_method("invalidate_neighbor_cache"):
+			network.call("invalidate_neighbor_cache")
 
 func _generate_catalog_planets() -> void:
 	if _catalog_generated:

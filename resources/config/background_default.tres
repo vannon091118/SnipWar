@@ -45,4 +45,6 @@ fold_highlight_alpha = 0.08
 fold_shadow_width = 5.0
 fold_highlight_width = 1.2
 grain_width = 1.0
+fold_alpha_bucket_count = 2
+grain_alpha_bucket_count = 2
 nebula_clouds = Array[ExtResource("2_nebula")]([ExtResource("3_left"), ExtResource("4_right"), ExtResource("5_top")])

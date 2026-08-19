@@ -17,6 +17,8 @@ var _active_planet: Node2D
 var _destination_planets: Array[Node2D] = []
 var _ui: PlanetNetworkUI
 var _line_phase := 0.0
+var _neighbor_cache: Dictionary = {}
+var _neighbor_cache_valid := false
 
 func _ready() -> void:
 	for child in get_parent().get_children():
@@ -171,23 +173,40 @@ func get_route_destinations(source: Node2D) -> Array[Node2D]:
 			result.append(destination)
 	return result
 
+func invalidate_neighbor_cache() -> void:
+	_neighbor_cache.clear()
+	_neighbor_cache_valid = false
+
 func get_neighbors(planet: Node2D) -> Array[Node2D]:
-	var result: Array[Node2D] = []
-	var slot: int = int(planet.get_meta("layout_slot", -1))
-	if slot < 0:
-		return result
+	if not _neighbor_cache_valid:
+		_build_neighbor_cache()
+	var cached: Variant = _neighbor_cache.get(planet)
+	if cached == null:
+		return []
+	return cached as Array[Node2D]
+
+func _build_neighbor_cache() -> void:
+	_neighbor_cache.clear()
 	var world_config: WorldConfig = get_parent().get("world_config") as WorldConfig
 	var columns: int = maxi(1, world_config.columns if world_config != null else 1)
-	var row: int = floori(float(slot) / float(columns))
-	var column: int = slot % columns
-	for other in _planets:
-		if other == planet:
+	var slot_planets: Dictionary = {}
+	for candidate in _planets:
+		var candidate_slot: int = int(candidate.get_meta("layout_slot", -1))
+		if candidate_slot >= 0:
+			slot_planets[candidate_slot] = candidate
+	for planet in _planets:
+		var slot: int = int(planet.get_meta("layout_slot", -1))
+		if slot < 0:
 			continue
-		var other_slot: int = int(other.get_meta("layout_slot", -1))
-		if other_slot < 0:
-			continue
-		var other_row: int = floori(float(other_slot) / float(columns))
-		var other_column: int = other_slot % columns
-		if absi(row - other_row) + absi(column - other_column) == 1:
-			result.append(other)
-	return result
+		var column: int = slot % columns
+		var result: Array[Node2D] = []
+		if column > 0 and slot_planets.has(slot - 1):
+			result.append(slot_planets[slot - 1])
+		if column < columns - 1 and slot_planets.has(slot + 1):
+			result.append(slot_planets[slot + 1])
+		if slot_planets.has(slot - columns):
+			result.append(slot_planets[slot - columns])
+		if slot_planets.has(slot + columns):
+			result.append(slot_planets[slot + columns])
+		_neighbor_cache[planet] = result
+	_neighbor_cache_valid = true

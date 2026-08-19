@@ -86,10 +86,16 @@ func _init() -> void:
 	var background_batch_count: int = int(background_render_stats.get("batch_count", 0))
 	var background_batched_elements: int = int(background_render_stats.get("batched_elements", 0))
 	var background_source_elements: int = int(background_render_stats.get("source_elements", 0))
+	var background_fold_alpha_draw_calls: int = int(background_render_stats.get("fold_alpha_draw_calls", 0))
+	var background_grain_alpha_draw_calls: int = int(background_render_stats.get("grain_alpha_draw_calls", 0))
 	var background_draw_calls: int = int(background_render_stats.get("estimated_draw_calls", 0))
 	if not _check(background_batch_count >= 2 and background_batch_count <= 3, "background render batches are missing"):
 		return
 	if not _check(background_batched_elements == background_config.star_count + background_config.dust_count, "background batched element count is wrong"):
+		return
+	if not _check(background_config.fold_alpha_bucket_count >= 2 and background_config.grain_alpha_bucket_count >= 2, "background alpha fidelity is still averaged"):
+		return
+	if not _check(background_fold_alpha_draw_calls >= 2 and background_fold_alpha_draw_calls <= background_config.fold_alpha_bucket_count and background_grain_alpha_draw_calls >= 2 and background_grain_alpha_draw_calls <= background_config.grain_alpha_bucket_count, "background alpha fidelity buckets are incomplete"):
 		return
 	if not _check(background_source_elements > background_draw_calls * 4 and background_draw_calls <= 24, "background draw-call budget is not compressed"):
 		return
@@ -110,6 +116,24 @@ func _init() -> void:
 		return
 	if not _check(game_state.faction_of(&"toxic") == GameState.FACTION_NEUTRAL and game_state.faction_of(&"volcanic") == GameState.FACTION_NEUTRAL and game_state.faction_of(&"ember") == GameState.FACTION_NEUTRAL, "GameState faction lookup is wrong"):
 		return
+	var resource_pool: ResourcePool = preload("res://resources/config/resource_pool_default.tres")
+	if not _check(resource_pool != null and resource_pool.validate().is_empty(), "resource pool validation failed"):
+		return
+	if not _check(game_state.call("validate_resources", resource_pool).is_empty(), "GameState resource deal failed"):
+		return
+	if not _check(not String(game_state.resource_of(&"ocean")).is_empty() and not String(game_state.resource_of(&"paper")).is_empty() and game_state.resource_of(&"ocean") != game_state.resource_of(&"paper"), "homeworld resources are not distinct"):
+		return
+	var resource_seed: int = world_config.layout_seed
+	var resource_snapshot_before: Dictionary = game_state.call("resource_snapshot")
+	game_state.call("deal_resources", planet_catalog, resource_pool, resource_seed)
+	var resource_snapshot_after: Dictionary = game_state.call("resource_snapshot")
+	if not _check(resource_snapshot_before == resource_snapshot_after, "resource deal is not seed-deterministic"):
+		return
+	var scale_resource_catalog: PlanetCatalog = _catalog_for_count(planet_catalog, 1500)
+	game_state.call("deal_resources", scale_resource_catalog, resource_pool, 424242)
+	if not _check(game_state.call("validate_resources", resource_pool).is_empty(), "1500-planet resource deal is unbalanced"):
+		return
+	game_state.call("deal_resources", planet_catalog, resource_pool, resource_seed)
 	var positions_before: Dictionary = _planet_positions(field)
 	if not _check(positions_before.size() == planet_catalog.planets.size(), "generated planets do not match the catalog"):
 		return
@@ -205,8 +229,15 @@ func _init() -> void:
 	var transit_errors := transit_config.validate()
 	if not _check(transit_errors.is_empty(), "transit config validation failed"):
 		return
+	var default_detail_profile: PlanetDetailProfile = preload("res://resources/config/planet_details/default.tres")
+	var toxic_detail_profile: PlanetDetailProfile = preload("res://resources/config/planet_details/toxic.tres")
+	if not _check(default_detail_profile.validate().is_empty() and toxic_detail_profile.validate().is_empty(), "planet detail profiles are invalid"):
+		return
 	var satellite_definition: PlanetDetailDefinition = preload("res://resources/config/planet_details/satellite.tres")
-	if not _check(satellite_definition.validate().is_empty() and is_equal_approx(satellite_definition.angular_speed_range.x, 0.18) and is_equal_approx(satellite_definition.angular_speed_range.y, 0.18), "satellite angular speed config is invalid"):
+	var asteroid_definition: PlanetDetailDefinition = preload("res://resources/config/planet_details/asteroid_belt.tres")
+	if not _check(satellite_definition.validate().is_empty() and satellite_definition.fidelity != null and satellite_definition.fidelity.orbit_motion_mode == PlanetDetailFidelity.MOTION_FULL and satellite_definition.angular_speed_range.y > satellite_definition.angular_speed_range.x, "satellite detail fidelity config is invalid"):
+		return
+	if not _check(asteroid_definition.validate().is_empty() and asteroid_definition.fidelity != null and asteroid_definition.fidelity.orbit_motion_mode == PlanetDetailFidelity.MOTION_THROTTLED and asteroid_definition.fidelity.orbit_update_interval > 0.0, "asteroid detail fidelity config is invalid"):
 		return
 	var source: Planet = _find_planet_with_size(field, &"xl") as Planet
 	var large_planet: Node = _find_planet_with_size(field, &"l")
@@ -464,9 +495,13 @@ func _init() -> void:
 	if not _check(seeded_types == toxic_details.get_detail_types() and stable_types.size() <= 3, "planet details are not seed-stable"):
 		return
 	var orbit: PlanetDetailOrbit = toxic_details.get_node("AsteroidOrbit_0") as PlanetDetailOrbit
-	var orbit_angle := orbit.rotation
+	var satellite_orbit: PlanetDetailOrbit = toxic_details.get_node_or_null("Satellite") as PlanetDetailOrbit
+	if not _check(satellite_orbit != null and satellite_orbit.orbit_motion_mode == PlanetDetailFidelity.MOTION_FULL and orbit.orbit_motion_mode == PlanetDetailFidelity.MOTION_THROTTLED and orbit.orbit_update_interval > 0.0, "Toxic detail motion fidelity was not applied"):
+		return
+	var orbit_angle: float = orbit.rotation
+	var satellite_angle: float = satellite_orbit.rotation
 	await create_timer(0.2).timeout
-	if not _check(absf(orbit.rotation - orbit_angle) > 0.001, "Toxic detail orbit is inactive"):
+	if not _check(absf(orbit.rotation - orbit_angle) > 0.001 and absf(satellite_orbit.rotation - satellite_angle) > 0.001, "Toxic detail orbit is inactive"):
 		return
 	for child in field.get_children():
 		if child is Planet:
@@ -479,6 +514,9 @@ func _init() -> void:
 		return
 	if not await _run_layout_scale_case(field, planet_catalog, Vector2(1920.0, 1080.0), 14, 7, original_seed + 202):
 		_check(false, "1920x1080 scaled layout case failed")
+		return
+	if not await _run_layout_scale_case(field, planet_catalog, Vector2(9600.0, 5400.0), 1500, 50, original_seed + 303):
+		_check(false, "1500-planet scaled layout case failed")
 		return
 	if not await _run_scenario_case(scene, scenario_catalog, &"wide"):
 		_check(false, "wide scenario selection case failed")

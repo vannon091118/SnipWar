@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GameResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/game_resource.gd" id="1_resource"]
+
+[resource]
+script = ExtResource("1_resource")
+id = &"biomass"
+display_name = "Biomasse"
+color = Color(0.35, 0.8, 0.45, 1)

@@ -3,6 +3,7 @@ class_name PlanetDetails
 extends Node2D
 
 const DEFAULT_PROFILE: PlanetDetailProfile = preload("res://resources/config/planet_details/default.tres")
+const DEFAULT_FIDELITY: PlanetDetailFidelity = preload("res://resources/config/planet_details/fidelity_full.tres")
 
 @export var detail_seed := 0:
 	set(value):
@@ -71,10 +72,12 @@ func _add_definition(definition: PlanetDetailDefinition, rng: RandomNumberGenera
 			continue
 		var orbit := PlanetDetailOrbit.new()
 		orbit.name = definition.node_name_prefix + ("_%d" % index if definition.instance_count > 1 else "")
+		var fidelity: PlanetDetailFidelity = definition.fidelity if definition.fidelity != null else DEFAULT_FIDELITY
 		orbit.configure(
 			rng.randf_range(definition.orbit_radius_range.x, definition.orbit_radius_range.y),
 			rng.randf_range(definition.angular_speed_range.x, definition.angular_speed_range.y),
-			rng.randf_range(definition.phase_range.x, definition.phase_range.y)
+			rng.randf_range(definition.phase_range.x, definition.phase_range.y),
+			fidelity
 		)
 		orbit.set_sprite(texture, rng.randf_range(definition.sprite_size_range.x, definition.sprite_size_range.y))
 		add_child(orbit)

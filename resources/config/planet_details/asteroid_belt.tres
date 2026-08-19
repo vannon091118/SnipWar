@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="PlanetDetailDefinition" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="PlanetDetailDefinition" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/planet_detail_definition.gd" id="1_definition"]
 [ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_01_rock.svg" id="2_rock"]
 [ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_03_metal.svg" id="3_metal"]
 [ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_05_toxic.svg" id="4_toxic"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/fidelity_throttled.tres" id="5_fidelity"]
 
 [resource]
 script = ExtResource("1_definition")
@@ -12,6 +13,7 @@ node_name_prefix = "AsteroidOrbit"
 orbit_radius_range = Vector2(93, 117)
 angular_speed_range = Vector2(-0.38, 0.38)
 phase_range = Vector2(0, 6.283185)
+fidelity = ExtResource("5_fidelity")
 sprite_size_range = Vector2(4, 7)
 instance_count = 5
 textures = [ExtResource("2_rock"), ExtResource("3_metal"), ExtResource("4_toxic")]

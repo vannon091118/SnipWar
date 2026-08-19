@@ -185,6 +185,12 @@ func get_faction() -> StringName:
 		return state.faction_of(planet_id) as StringName
 	return faction
 
+func get_resource_id() -> StringName:
+	var state: Node = _game_state()
+	if state != null:
+		return state.resource_of(planet_id) as StringName
+	return &""
+
 func set_faction(value: StringName) -> void:
 	faction = value
 

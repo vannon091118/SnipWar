@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="WorldConfig" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="WorldConfig" format=3 uid="uid://dllykrwwp8ya6"]
 
-[ext_resource type="Script" path="res://scripts/config/world_config.gd" id="1_world_config"]
+[ext_resource type="Script" uid="uid://bijhkbtk6d4fo" path="res://scripts/config/world_config.gd" id="1_world_config"]
 
 [resource]
 script = ExtResource("1_world_config")
@@ -16,4 +16,3 @@ meteor_edge_margin = 48.0
 extra_large_profile_id = &"xl"
 large_profile_id = &"l"
 default_profile_id = &"variable"
-route_mode = "all_planets"

@@ -48,18 +48,39 @@ func rebuild() -> void:
 
 	var config: WorldConfig = _resolved_world_config()
 	var waypoint_config: NavigationConfig = navigation_config if navigation_config != null else DEFAULT_NAVIGATION_CONFIG
+	var columns := maxi(config.columns, 1)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = abs(config.layout_seed) + 9137
+
+	var slot_planets: Dictionary = {}
 	for planet in planets:
 		_point_ids[planet] = _add_graph_point(planet.global_position)
+		var slot: int = int(planet.get_meta("layout_slot", -1))
+		if slot >= 0:
+			slot_planets[slot] = planet
 
+	var processed_edges: Dictionary = {}
 	var edge_index := 0
-	for first_index in planets.size():
-		for second_index in range(first_index + 1, planets.size()):
-			var first: Planet = planets[first_index]
-			var second: Planet = planets[second_index]
-			if not _are_layout_neighbors(first, second, config.columns):
+	for first in planets:
+		var first_slot: int = int(first.get_meta("layout_slot", -1))
+		if first_slot < 0:
+			continue
+		var first_column := first_slot % columns
+		var candidate_slots: Array[int] = []
+		if first_column > 0:
+			candidate_slots.append(first_slot - 1)
+		if first_column < columns - 1:
+			candidate_slots.append(first_slot + 1)
+		candidate_slots.append(first_slot - columns)
+		candidate_slots.append(first_slot + columns)
+		for neighbor_slot in candidate_slots:
+			if not slot_planets.has(neighbor_slot):
 				continue
+			var edge_key := "%d-%d" % [mini(first_slot, neighbor_slot), maxi(first_slot, neighbor_slot)]
+			if processed_edges.has(edge_key):
+				continue
+			processed_edges[edge_key] = true
+			var second: Planet = slot_planets[neighbor_slot]
 			var midpoint := (first.global_position + second.global_position) * 0.5
 			var direction := (second.global_position - first.global_position).normalized()
 			var perpendicular := Vector2(-direction.y, direction.x)
@@ -116,24 +137,12 @@ func _draw() -> void:
 		if edge.size() == 2:
 			draw_line(to_local(edge[0]), to_local(edge[1]), edge_color, config.edge_width, true)
 
-func _add_graph_point(position: Vector2) -> int:
+func _add_graph_point(point_position: Vector2) -> int:
 	var point_id := _next_point_id
 	_next_point_id += 1
-	_astar.add_point(point_id, position)
+	_astar.add_point(point_id, point_position)
 	return point_id
 
 func _connect_graph_points(first_id: int, second_id: int) -> void:
 	if not _astar.are_points_connected(first_id, second_id):
 		_astar.connect_points(first_id, second_id, true)
-
-func _are_layout_neighbors(first: Planet, second: Planet, columns: int) -> bool:
-	var first_slot: int = int(first.get_meta("layout_slot", -1))
-	var second_slot: int = int(second.get_meta("layout_slot", -1))
-	if first_slot < 0 or second_slot < 0:
-		return false
-	var safe_columns := maxi(columns, 1)
-	var first_row := floori(float(first_slot) / float(safe_columns))
-	var first_column := first_slot % safe_columns
-	var second_row := floori(float(second_slot) / float(safe_columns))
-	var second_column := second_slot % safe_columns
-	return absi(first_row - second_row) + absi(first_column - second_column) == 1

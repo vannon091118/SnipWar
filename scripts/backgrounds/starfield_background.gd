@@ -190,7 +190,7 @@ func _clear_render_batches() -> void:
 			batch.free()
 	_batch_nodes.clear()
 
-func _add_batch(name: StringName, texture: Texture2D, transforms: Array[Transform2D], colors: Array[Color]) -> void:
+func _add_batch(batch_name: StringName, texture: Texture2D, transforms: Array[Transform2D], colors: Array[Color]) -> void:
 	if transforms.is_empty() or texture == null:
 		return
 	var multimesh := MultiMesh.new()
@@ -205,18 +205,18 @@ func _add_batch(name: StringName, texture: Texture2D, transforms: Array[Transfor
 		multimesh.set_instance_color(index, colors[index])
 
 	var batch := MultiMeshInstance2D.new()
-	batch.name = String(name)
+	batch.name = String(batch_name)
 	batch.multimesh = multimesh
 	batch.texture = texture
 	add_child(batch)
 	_batch_nodes.append(batch)
 
-func _transform_for(position: Vector2, scale: Vector2) -> Transform2D:
-	var transform := Transform2D()
-	transform.origin = position
-	transform.x *= scale.x
-	transform.y *= scale.y
-	return transform
+func _transform_for(point_position: Vector2, point_scale: Vector2) -> Transform2D:
+	var result_transform := Transform2D()
+	result_transform.origin = point_position
+	result_transform.x *= point_scale.x
+	result_transform.y *= point_scale.y
+	return result_transform
 
 func _create_shape_texture(shape: StringName, texture_size: int) -> Texture2D:
 	var image := Image.create(texture_size, texture_size, false, Image.FORMAT_RGBA8)
@@ -257,10 +257,16 @@ func _draw_nebula(size: Vector2, config: BackgroundConfig) -> void:
 			draw_circle(center, layer_radius, Color(cloud.color.r, cloud.color.g, cloud.color.b, alpha))
 
 func _draw_folds(size: Vector2, config: BackgroundConfig) -> void:
+	if folds.is_empty():
+		return
 	var fold_scale: float = minf(size.x, size.y)
-	var shadow_segments := PackedVector2Array()
-	var highlight_segments := PackedVector2Array()
-	var strength_sum: float = 0.0
+	var bucket_count: int = maxi(1, config.fold_alpha_bucket_count)
+	var shadow_segments: Array = []
+	var highlight_segments: Array = []
+	for _bucket in bucket_count:
+		shadow_segments.append(PackedVector2Array())
+		highlight_segments.append(PackedVector2Array())
+
 	for fold in folds:
 		var center: Vector2 = fold["position"] * size
 		var direction: Vector2 = Vector2.from_angle(float(fold["angle"]))
@@ -268,7 +274,8 @@ func _draw_folds(size: Vector2, config: BackgroundConfig) -> void:
 		var length: float = float(fold["length"]) * fold_scale
 		var bend: float = float(fold["bend"]) * fold_scale
 		var phase: float = float(fold["phase"])
-		strength_sum += float(fold["strength"])
+		var strength: float = float(fold["strength"])
+		var bucket_index: int = _alpha_bucket_index(strength, config.fold_strength_range, bucket_count)
 		var points := PackedVector2Array()
 		for point_index in config.fold_point_count:
 			var t: float = float(point_index) / float(config.fold_point_count - 1)
@@ -276,35 +283,75 @@ func _draw_folds(size: Vector2, config: BackgroundConfig) -> void:
 			var sideways: float = sin(t * PI * 2.5 + phase) * bend
 			points.append(center + direction * along + perpendicular * sideways)
 			if point_index > 0:
-				shadow_segments.append(points[point_index - 1])
-				shadow_segments.append(points[point_index])
-				highlight_segments.append(points[point_index - 1])
-				highlight_segments.append(points[point_index])
+				var shadow_points: PackedVector2Array = shadow_segments[bucket_index]
+				shadow_points.append(points[point_index - 1])
+				shadow_points.append(points[point_index])
+				shadow_segments[bucket_index] = shadow_points
+				var highlight_points: PackedVector2Array = highlight_segments[bucket_index]
+				highlight_points.append(points[point_index - 1])
+				highlight_points.append(points[point_index])
+				highlight_segments[bucket_index] = highlight_points
 
-	if folds.is_empty():
-		return
-	var average_strength: float = strength_sum / float(folds.size())
-	var shadow_color := config.fold_shadow_color
-	shadow_color.a = config.fold_shadow_alpha * average_strength
-	var highlight_color := config.fold_highlight_color
-	highlight_color.a = config.fold_highlight_alpha * average_strength
-	if shadow_segments.size() >= 2:
-		draw_multiline(shadow_segments, shadow_color, config.fold_shadow_width, true)
-	if highlight_segments.size() >= 2:
-		draw_multiline(highlight_segments, highlight_color, config.fold_highlight_width, true)
+	for bucket_index in bucket_count:
+		var bucket_strength: float = _alpha_bucket_value(bucket_index, bucket_count, config.fold_strength_range)
+		var shadow_lines: PackedVector2Array = shadow_segments[bucket_index]
+		if shadow_lines.size() >= 2:
+			var shadow_color := config.fold_shadow_color
+			shadow_color.a = config.fold_shadow_alpha * bucket_strength
+			draw_multiline(shadow_lines, shadow_color, config.fold_shadow_width, true)
+		var highlight_lines: PackedVector2Array = highlight_segments[bucket_index]
+		if highlight_lines.size() >= 2:
+			var highlight_color := config.fold_highlight_color
+			highlight_color.a = config.fold_highlight_alpha * bucket_strength
+			draw_multiline(highlight_lines, highlight_color, config.fold_highlight_width, true)
 
 func _draw_grain(size: Vector2, config: BackgroundConfig) -> void:
 	if grain.is_empty():
 		return
-	var segments := PackedVector2Array()
-	var alpha_sum: float = 0.0
+	var bucket_count: int = maxi(1, config.grain_alpha_bucket_count)
+	var segments: Array = []
+	for _bucket in bucket_count:
+		segments.append(PackedVector2Array())
 	for mark in grain:
-		segments.append(mark["from"] * size)
-		segments.append(mark["to"] * size)
-		alpha_sum += float(mark["alpha"])
-	var color := config.grain_color
-	color.a = alpha_sum / float(grain.size())
-	draw_multiline(segments, color, config.grain_width, true)
+		var bucket_index: int = _alpha_bucket_index(float(mark["alpha"]), config.grain_alpha_range, bucket_count)
+		var lines: PackedVector2Array = segments[bucket_index]
+		lines.append(mark["from"] * size)
+		lines.append(mark["to"] * size)
+		segments[bucket_index] = lines
+
+	for bucket_index in bucket_count:
+		var grain_lines: PackedVector2Array = segments[bucket_index]
+		if grain_lines.size() < 2:
+			continue
+		var color := config.grain_color
+		color.a = _alpha_bucket_value(bucket_index, bucket_count, config.grain_alpha_range)
+		draw_multiline(grain_lines, color, config.grain_width, true)
+
+func _alpha_bucket_index(value: float, value_range: Vector2, bucket_count: int) -> int:
+	if bucket_count <= 1 or is_equal_approx(value_range.x, value_range.y):
+		return 0
+	var normalized: float = clampf(inverse_lerp(value_range.x, value_range.y, value), 0.0, 1.0)
+	return clampi(int(floor(normalized * float(bucket_count))), 0, bucket_count - 1)
+
+func _alpha_bucket_value(bucket_index: int, bucket_count: int, value_range: Vector2) -> float:
+	if bucket_count <= 1:
+		return (value_range.x + value_range.y) * 0.5
+	var normalized: float = (float(bucket_index) + 0.5) / float(bucket_count)
+	return lerpf(value_range.x, value_range.y, normalized)
+
+func _non_empty_fold_alpha_buckets(config: BackgroundConfig) -> int:
+	var buckets: Dictionary = {}
+	var bucket_count: int = maxi(1, config.fold_alpha_bucket_count)
+	for fold in folds:
+		buckets[_alpha_bucket_index(float(fold["strength"]), config.fold_strength_range, bucket_count)] = true
+	return buckets.size()
+
+func _non_empty_grain_alpha_buckets(config: BackgroundConfig) -> int:
+	var buckets: Dictionary = {}
+	var bucket_count: int = maxi(1, config.grain_alpha_bucket_count)
+	for mark in grain:
+		buckets[_alpha_bucket_index(float(mark["alpha"]), config.grain_alpha_range, bucket_count)] = true
+	return buckets.size()
 
 func get_render_batch_stats() -> Dictionary:
 	var batched_elements: int = 0
@@ -312,16 +359,17 @@ func get_render_batch_stats() -> Dictionary:
 		if is_instance_valid(batch) and batch.multimesh != null:
 			batched_elements += batch.multimesh.instance_count
 	var config: BackgroundConfig = background_config if background_config != null else DEFAULT_BACKGROUND_CONFIG
+	var fold_draw_calls: int = _non_empty_fold_alpha_buckets(config)
+	var grain_draw_calls: int = _non_empty_grain_alpha_buckets(config)
 	var estimated_draw_calls: int = 1
 	estimated_draw_calls += config.nebula_clouds.size() * config.nebula_layer_count
-	if not folds.is_empty():
-		estimated_draw_calls += 2
-	if not grain.is_empty():
-		estimated_draw_calls += 1
+	estimated_draw_calls += fold_draw_calls + grain_draw_calls
 	estimated_draw_calls += _batch_nodes.size()
 	return {
 		"batch_count": _batch_nodes.size(),
 		"batched_elements": batched_elements,
 		"source_elements": stars.size() + folds.size() + grain.size() + dust.size(),
+		"fold_alpha_draw_calls": fold_draw_calls,
+		"grain_alpha_draw_calls": grain_draw_calls,
 		"estimated_draw_calls": estimated_draw_calls
 	}

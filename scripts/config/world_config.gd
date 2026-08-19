@@ -8,7 +8,7 @@ const ROUTE_MODE_NEIGHBORS_ONLY := "neighbors_only"
 @export var design_size: Vector2
 @export var layout_seed: int
 @export var decorative_seed: int
-@export_range(1, 20, 1) var columns: int
+@export_range(1, 128, 1) var columns: int
 @export_range(0, 20, 1) var extra_large_count: int
 @export_range(0, 20, 1) var large_count: int
 @export_range(0.0, 0.4, 0.01) var jitter: float

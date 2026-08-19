@@ -25,15 +25,7 @@ Dieser Kreislauf beschreibt die gewünschte Verbindung der Ebenen, ohne eine bes
 
 ### Planetare Identität und Ressourcen
 
-Die vorhandenen Planetentypen bieten eine gute Grundlage für unterschiedliche Ressourcenprofile. Als thematische Richtung wären beispielsweise folgende Zuordnungen denkbar:
-
-- Ember und Volcanic: Energie oder Treibstoff
-- Ocean und Ice: Biomasse oder Kühlung
-- Violet und Golden: seltene oder exotische Materialien
-- Toxic: wertvolle Materialien mit einem möglichen Risiko
-- Storm, Paper und Desert: wechselhafte Nebenressourcen
-
-Diese Gruppen sind Gestaltungshypothesen, keine festgelegten Ertrags- oder Balancingwerte. Die vorhandenen `planet_role`- und Fraktionsdaten könnten später um echte Ressourcen-, Besitz- und Produktionsdaten ergänzt werden.
+Ressourcen sind bewusst nicht an einzelne Planetentypen gebunden. Ein globaler `ResourcePool` aus unsichtbaren `GameResource`-Objekten wird stattdessen zu Spielbeginn seed-deterministisch über den aktiven Katalog verteilt, damit jede Karte ausgewogen startet. Planetentypen können später eigene thematische Schwerpunkte bekommen, ohne dass dadurch eine feste Planet-→Ressource-Zuordnung entsteht. Die vorhandenen `planet_role`- und Fraktionsdaten könnten später um echte Ressourcen-, Besitz- und Produktionsdaten ergänzt werden.
 
 ### Aufbau und Spezialisierung
 

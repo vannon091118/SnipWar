@@ -39,6 +39,8 @@ extends Resource
 @export var fold_shadow_width: float
 @export var fold_highlight_width: float
 @export var grain_width: float
+@export_range(1, 8, 1) var fold_alpha_bucket_count: int = 2
+@export_range(1, 8, 1) var grain_alpha_bucket_count: int = 2
 @export var nebula_clouds: Array[BackgroundNebulaDefinition] = []
 
 func validate() -> PackedStringArray:
@@ -62,6 +64,8 @@ func validate() -> PackedStringArray:
 		errors.append("background bright-star ratios are invalid")
 	if fold_shadow_alpha < 0.0 or fold_highlight_alpha < 0.0 or fold_shadow_width <= 0.0 or fold_highlight_width <= 0.0 or grain_width <= 0.0:
 		errors.append("background line styling is invalid")
+	if fold_alpha_bucket_count < 1 or fold_alpha_bucket_count > 8 or grain_alpha_bucket_count < 1 or grain_alpha_bucket_count > 8:
+		errors.append("background alpha bucket counts are invalid")
 	if nebula_clouds.is_empty():
 		errors.append("background must define at least one nebula cloud")
 	for cloud in nebula_clouds:
