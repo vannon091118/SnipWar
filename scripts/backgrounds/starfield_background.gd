@@ -38,29 +38,38 @@ func _apply_active_scenario() -> void:
 	world_config = map.world_config if map.world_config != null else world_config
 	background_config = scenario.background_config if scenario.background_config != null else background_config
 
-	var state: Node = get_node_or_null("/root/GameState")
-	if state != null:
-		state.reset_from_catalog(map.planet_catalog)
-	var field: SeededLayout = get_node_or_null("PlanetField") as SeededLayout
-	if field != null:
-		field.position = Vector2.ZERO
-		field.world_config = map.world_config
-		field.planet_catalog = map.planet_catalog
-		field.size_profiles = map.size_profiles
-		var navigation: NavigationField = field.get_node_or_null("NavigationField") as NavigationField
-		if navigation != null:
-			navigation.world_config = map.world_config
-			navigation.navigation_config = map.navigation_config
-		var network: Node = field.get_node_or_null("PlanetNetwork")
-		if network != null:
-			network.set("transit_config", scenario.transit_config)
-			network.set("ui_theme_config", scenario.ui_theme_config)
-		var worker_manager: Node = field.get_node_or_null("WorkerManager")
-		if worker_manager != null:
-			worker_manager.set("transit_config", scenario.transit_config)
+	_configure_game_state(map)
+	_configure_planet_field(map, scenario)
+	_configure_meteor_field(map, scenario)
 
+func _configure_game_state(map: MapDefinition) -> void:
+	var state: Node = get_node_or_null("/root/GameState")
+	if state != null and map != null:
+		state.reset_from_catalog(map.planet_catalog)
+
+func _configure_planet_field(map: MapDefinition, scenario: ScenarioDefinition) -> void:
+	var field: SeededLayout = get_node_or_null("PlanetField") as SeededLayout
+	if field == null or map == null or scenario == null:
+		return
+	field.position = Vector2.ZERO
+	field.world_config = map.world_config
+	field.planet_catalog = map.planet_catalog
+	field.size_profiles = map.size_profiles
+	var navigation: NavigationField = field.get_node_or_null("NavigationField") as NavigationField
+	if navigation != null:
+		navigation.world_config = map.world_config
+		navigation.navigation_config = map.navigation_config
+	var network: Node = field.get_node_or_null("PlanetNetwork")
+	if network != null:
+		network.set("transit_config", scenario.transit_config)
+		network.set("ui_theme_config", scenario.ui_theme_config)
+	var worker_manager: Node = field.get_node_or_null("WorkerManager")
+	if worker_manager != null:
+		worker_manager.set("transit_config", scenario.transit_config)
+
+func _configure_meteor_field(map: MapDefinition, scenario: ScenarioDefinition) -> void:
 	var meteor_field: Node2D = get_node_or_null("MeteorField") as Node2D
-	if meteor_field != null:
+	if meteor_field != null and map != null and scenario != null:
 		meteor_field.position = Vector2.ZERO
 		meteor_field.set("world_config", map.world_config)
 		meteor_field.set("meteor_config", scenario.meteor_config)
