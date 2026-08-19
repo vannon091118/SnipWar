@@ -3,7 +3,7 @@ class_name PlanetDetails
 extends Node2D
 
 const MAX_DETAILS := 3
-const DETAIL_TYPES: Array[StringName] = [&"satellite", &"asteroid_belt", &"ring"]
+const DETAIL_TYPES: Array[StringName] = [&"satellite", &"asteroid_belt", &"comet"]
 const SATELLITE_TEXTURE: Texture2D = preload("res://assets/objects/planets/planet_satellite.svg")
 const ASTEROID_TEXTURES: Array[Texture2D] = [
 	preload("res://assets/objects/meteors/meteor_01_rock.svg"),
@@ -44,8 +44,8 @@ func regenerate() -> void:
 				_add_satellite(rng)
 			&"asteroid_belt":
 				_add_asteroid_belt(rng)
-			&"ring":
-				_add_ring(planet)
+			&"comet":
+				_add_comet(rng)
 
 func get_detail_types() -> Array[StringName]:
 	return _selected_details.duplicate()
@@ -54,7 +54,7 @@ func _select_details(planet: Planet, rng: RandomNumberGenerator) -> Array[String
 	if planet.planet_id == &"toxic":
 		var toxic_details: Array[StringName] = [&"satellite", &"asteroid_belt"]
 		if rng.randi_range(0, 1) == 1:
-			toxic_details.append(&"ring")
+			toxic_details.append(&"comet")
 		return toxic_details
 
 	var candidates: Array[StringName] = DETAIL_TYPES.duplicate()
@@ -82,13 +82,12 @@ func _add_asteroid_belt(rng: RandomNumberGenerator) -> void:
 		orbit.set_sprite(texture, rng.randf_range(4.0, 7.0))
 		add_child(orbit)
 
-func _add_ring(planet: Planet) -> void:
-	var ring := PlanetDetailRing.new()
-	ring.name = "OrbitalRing"
-	ring.z_index = -1
-	var color := Color(0.92, 0.34, 0.38, 0.72) if planet.planet_id == &"toxic" else Color(0.48, 0.82, 1.0, 0.58)
-	ring.configure(104.0, color)
-	add_child(ring)
+func _add_comet(rng: RandomNumberGenerator) -> void:
+	var orbit := PlanetDetailOrbit.new()
+	orbit.name = "Comet"
+	orbit.configure(136.0 + rng.randf_range(-10.0, 10.0), rng.randf_range(0.08, 0.14), rng.randf_range(0.0, TAU))
+	orbit.set_sprite(ASTEROID_TEXTURES[2], 8.0)
+	add_child(orbit)
 
 func _shuffle(values: Array[StringName], rng: RandomNumberGenerator) -> void:
 	for index in range(values.size() - 1, 0, -1):

@@ -10,13 +10,15 @@ var _observed_amount := -1
 func _init() -> void:
 	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 1), 10.0), "flight time baseline is wrong"):
 		return
-	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 2), 13.0), "flight time unit load is wrong"):
+	if not _check(is_equal_approx(_FlightTime.seconds_for(10.0, 2), 11.2), "flight time unit load is wrong"):
 		return
-	if not _check(is_equal_approx(_FlightTime.seconds_for(20.0, 5), 24.8), "flight time medium cluster load is wrong"):
+	if not _check(is_equal_approx(_FlightTime.seconds_for(20.0, 5), 24.8), "flight time medium load is wrong"):
 		return
-	if not _check(_FlightTime.seconds_for(10.0, 6) > _FlightTime.seconds_for(10.0, 5), "flight time cluster transition is wrong"):
+	if not _check(_FlightTime.seconds_for(10.0, 6) > _FlightTime.seconds_for(10.0, 5), "flight time unit scaling is wrong"):
 		return
-	if not _check(_Dispatch.cluster_groups(3) == [1, 1, 1] and _Dispatch.cluster_groups(5) == [5] and _Dispatch.cluster_groups(7) == [5, 1, 1] and _Dispatch.cluster_groups(105) == [100, 5], "cluster packing thresholds are wrong"):
+	if not _check(_Dispatch.cluster_groups(1) == [1] and _Dispatch.cluster_groups(4) == [4] and _Dispatch.cluster_groups(5) == [5] and _Dispatch.cluster_groups(99) == [99] and _Dispatch.cluster_groups(100) == [100], "single-cluster thresholds are wrong"):
+		return
+	if not _check(_Dispatch.cluster_tier(4) == &"k" and _Dispatch.cluster_tier(5) == &"m" and _Dispatch.cluster_tier(99) == &"m" and _Dispatch.cluster_tier(100) == &"l", "cluster tier boundaries are wrong"):
 		return
 	if not _check(_Dispatch.amount_range(3) == Vector2i(1, 3), "dispatch range for three units is wrong"):
 		return
@@ -93,7 +95,7 @@ func _init() -> void:
 	for child in manager.get_children():
 		if child.get_script() == cluster_script:
 			clusters.append(child)
-	if not _check(clusters.size() == 6, "cluster spawn totals are wrong"):
+	if not _check(clusters.size() == 3, "each spawn event should create one cluster"):
 		return
 	var source_count_label: Label = ui.get_count_label(source)
 	if not _check(source_count_label.text == "%s: 3" % source.name, "planet tab count is not live"):
@@ -102,9 +104,9 @@ func _init() -> void:
 	await create_timer(0.2).timeout
 	if not _check(clusters[0].global_position == cluster_position, "garrison cluster moves autonomously"):
 		return
-	clusters[0].queue_free()
+	clusters[2].queue_free()
 	await process_frame
-	if not _check(source.worker_count == 2 and source_count_label.text == "%s: 2" % source.name, "worker removal did not update planet count"):
+	if not _check(source.worker_count == 3 and variable_planet.worker_count == 0, "worker removal did not update planet count"):
 		return
 
 	var event := InputEventMouseButton.new()
@@ -121,7 +123,7 @@ func _init() -> void:
 	var preview_label: Label = ui.get_preview_label()
 	if not _check(is_instance_valid(amount_slider) and is_instance_valid(preview_label), "dispatch slider or preview is missing"):
 		return
-	if not _check(amount_slider.min_value == 1 and amount_slider.max_value == 2 and amount_slider.step == 1, "dispatch slider bounds are wrong"):
+	if not _check(amount_slider.min_value == 1 and amount_slider.max_value == 3 and amount_slider.step == 1, "dispatch slider bounds are wrong"):
 		return
 	var preview_destination: Node2D = network.get_destination(source)
 	var real_distance: float = (source as Node2D).global_position.distance_to(preview_destination.global_position)
@@ -178,6 +180,9 @@ func _init() -> void:
 			newest_cluster = child
 	if not _check(newest_cluster.get_unit_count() == 1 and newest_cluster.is_registered_at(source), "garrison cluster was not assigned"):
 		return
+	var source_garrison := _registered_clusters(manager, source)
+	if not _check(source_garrison.size() == 2 and _garrison_separation(source_garrison, 0.1), "garrison clusters overlap"):
+		return
 	var send_button: Button = ui.get_send_button()
 	if not _check(is_instance_valid(send_button) and not send_button.disabled, "send button is missing or disabled"):
 		return
@@ -186,29 +191,22 @@ func _init() -> void:
 	var destination_count_before := int(destination.get("worker_count"))
 	network.call("_on_send_pressed")
 	await process_frame
-	if not _check(int(source.get("worker_count")) == 1, "send did not deduct the source count"):
+	if not _check(int(source.get("worker_count")) == 2, "send did not deduct the source count"):
 		return
 	var transit_clusters: Array[Node] = []
 	for child in manager.get_children():
 		if child.get_script() == cluster_script and child.get("_registered_planet") == null and child.get("destination_planet") == destination:
 			transit_clusters.append(child)
-	if not _check(transit_clusters.size() == 2, "send did not launch the selected cluster groups"):
+	if not _check(transit_clusters.size() == 1, "send should launch one cluster for the complete amount"):
 		return
-	if not _check(transit_clusters[0].get_unit_count() == 1 and transit_clusters[1].get_unit_count() == 1, "cluster group sizes are wrong"):
-		return
-	var fleet_separation: float = (transit_clusters[0] as Node2D).global_position.distance_to((transit_clusters[1] as Node2D).global_position)
-	if not _check(fleet_separation > 0.1 and fleet_separation < 30.0, "cluster groups did not launch as a side-by-side fleet"):
-		return
-	var fleet_start_distance: float = (transit_clusters[0] as Node2D).global_position.distance_to(source.global_position)
-	if not _check(fleet_start_distance < 15.0, "fleet center is detached from the source planet"):
+	if not _check(transit_clusters[0].get_unit_count() == 2 and _Dispatch.cluster_tier(transit_clusters[0].get_unit_count()) == &"k", "single cluster amount or tier is wrong"):
 		return
 	var transit_distance_before: float = (transit_clusters[0] as Node2D).global_position.distance_to(destination.global_position)
 	await create_timer(0.5).timeout
 	var transit_distance_after: float = (transit_clusters[0] as Node2D).global_position.distance_to(destination.global_position)
-	if not _check(transit_distance_after < transit_distance_before, "transit clusters do not move toward the destination"):
+	if not _check(transit_distance_after < transit_distance_before, "transit cluster does not move toward the destination"):
 		return
-	for transit in transit_clusters:
-		transit.call("_arrive")
+	manager.call("_arrive_cluster", transit_clusters[0])
 	await process_frame
 	if not _check(int(destination.get("worker_count")) == destination_count_before + 2, "arrival did not add the destination count"):
 		return
@@ -264,6 +262,23 @@ func _planet_positions(field: Node) -> Dictionary:
 		if child is Planet:
 			positions[child] = (child as Planet).position
 	return positions
+
+func _registered_clusters(manager: Node, planet: Node2D) -> Array[Node]:
+	var result: Array[Node] = []
+	for child in manager.get_children():
+		var cluster := child as WorkerCluster
+		if cluster != null and cluster.is_registered_at(planet):
+			result.append(cluster)
+	return result
+
+func _garrison_separation(clusters: Array[Node], minimum: float) -> bool:
+	for first_index in clusters.size():
+		for second_index in range(first_index + 1, clusters.size()):
+			var first := clusters[first_index] as Node2D
+			var second := clusters[second_index] as Node2D
+			if first.global_position.distance_to(second.global_position) <= minimum:
+				return false
+	return true
 
 func _find_planet_with_size(field: Node, size_class: StringName) -> Node:
 	for child in field.get_children():

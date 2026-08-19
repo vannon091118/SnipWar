@@ -9,9 +9,9 @@ const TIER_TEXTURES: Dictionary = {
 	&"l": preload("res://assets/objects/workers/cluster_l.svg")
 }
 const TIER_PIXELS: Dictionary = {
-	&"k": 10.0,
-	&"m": 16.0,
-	&"l": 24.0
+	&"k": 12.0,
+	&"m": 20.0,
+	&"l": 30.0
 }
 
 @onready var _sprite: Sprite2D = $Sprite2D
@@ -25,7 +25,10 @@ func _ready() -> void:
 	_apply_visuals()
 
 func configure_garrison(source: Planet, amount: int) -> void:
-	global_position = source.global_position
+	configure_garrison_at(source.global_position, source, amount)
+
+func configure_garrison_at(anchor: Vector2, source: Planet, amount: int) -> void:
+	global_position = anchor
 	_registered_planet = source
 	unit_count = amount
 	_apply_visuals()
@@ -78,4 +81,7 @@ func _apply_visuals() -> void:
 	var tier := _Dispatch.cluster_tier(unit_count)
 	var texture: Texture2D = TIER_TEXTURES[tier]
 	_sprite.texture = texture
-	_sprite.scale = Vector2.ONE * (float(TIER_PIXELS[tier]) / texture.get_width())
+	_sprite.scale = Vector2.ONE * (TIER_PIXELS[tier] / texture.get_width())
+
+static func pixel_width(unit_count: int) -> float:
+	return TIER_PIXELS[_Dispatch.cluster_tier(maxi(1, unit_count))]

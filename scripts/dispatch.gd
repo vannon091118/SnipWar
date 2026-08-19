@@ -1,6 +1,8 @@
 class_name Dispatch
 
-const CLUSTER_CAPACITIES: Array[int] = [100, 5, 1]
+const K_MAX_UNITS := 4
+const M_MAX_UNITS := 99
+const CLUSTER_TIERS: Array[StringName] = [&"k", &"m", &"l"]
 
 static func amount_range(available: int) -> Vector2i:
 	if available <= 0:
@@ -13,17 +15,15 @@ static func launch_amount(available: int, requested: int) -> int:
 	return mini(requested, available)
 
 static func cluster_groups(unit_count: int) -> Array[int]:
-	var remaining := maxi(unit_count, 0)
 	var groups: Array[int] = []
-	for capacity in CLUSTER_CAPACITIES:
-		while remaining >= capacity:
-			groups.append(capacity)
-			remaining -= capacity
+	var amount := maxi(unit_count, 0)
+	if amount > 0:
+		groups.append(amount)
 	return groups
 
 static func cluster_tier(unit_count: int) -> StringName:
-	if unit_count >= 100:
+	if unit_count > M_MAX_UNITS:
 		return &"l"
-	if unit_count >= 5:
+	if unit_count > K_MAX_UNITS:
 		return &"m"
 	return &"k"

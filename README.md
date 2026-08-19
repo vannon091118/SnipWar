@@ -34,7 +34,7 @@ Zehn Planeten bilden ein unruhiges Netz aus Ressourcen, Heimatwelten und Gefahre
 - Der deterministische Generator verteilt zwei XL-Welten und einen L-Sektor als große Fixpunkte.
 - Die Größenverteilung hängt am Seed; dadurch ändern sich Position und Spawn-Rhythmus gemeinsam, ohne die Rollen der Planeten zu verlieren.
 - **Toxic**, **Volcanic** und **Storm** markieren Zonen, in denen die Karte nicht neutral bleibt.
-- Meteore ziehen durch den Vordergrund; PlanetDetails ergänzt seed-basiert bis zu drei Extras, bei Toxic unter anderem einen Satelliten und mehrere Asteroiden in der Umlaufbahn.
+- Meteore ziehen durch den Vordergrund; PlanetDetails ergänzt seed-basiert bis zu drei Extras, bei Toxic garantiert einen Satelliten und mehrere Asteroiden in der Umlaufbahn sowie optional einen Kometen.
 - Ein Netzwerk aus Nachbarfeldern macht erreichbare Ziele sichtbar, statt sie in Menüs zu verstecken.
 
 ## ░ DIE KRIEGSMASCHINE
@@ -65,7 +65,7 @@ SnipWar setzt auf kontrastreiche Farben, reduzierte Formen und kleine Bewegungen
 - zwei Fraktionszuordnungen auf der Karte
 - automatische Cluster-Spawns mit Live-Zähler
 - auswählbare Ziele und benachbarte Routen
-- animierte Meteore und Toxic-Orbit
+- animierte Meteore und seed-basierte Planetendetails
 - Headless-Preflight für die wichtigsten Systemschnittstellen
 
 **Noch im Hangar:**
