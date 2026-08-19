@@ -153,7 +153,7 @@ cost_amount = 5
 tier = 1
 visual_asset = ExtResource("4_hull_k")
 required_tech_id = &"shipyard_construction"
-build_time = 60.0
+build_time = 63.0
 
 [sub_resource type="Resource" id="Part_hull_t2"]
 script = ExtResource("2_part")
@@ -166,7 +166,20 @@ cost_amount = 10
 tier = 2
 visual_asset = ExtResource("5_hull_m")
 required_tech_id = &"weapon_systems"
-build_time = 120.0
+build_time = 123.0
+
+[sub_resource type="Resource" id="Part_hull_t3"]
+script = ExtResource("2_part")
+id = &"hull_t3"
+slot_type = &"hull"
+display_name = "Expansionsrumpf T3"
+description = "Schwerer Rumpf für die erste interplanetare Kolonisierung."
+cost_resource = &"material"
+cost_amount = 20
+tier = 3
+visual_asset = ExtResource("10_weapon")
+required_tech_id = &"weapon_systems"
+build_time = 183.0
 
 [sub_resource type="Resource" id="Part_scanner_t1"]
 script = ExtResource("2_part")
@@ -179,6 +192,7 @@ cost_amount = 6
 tier = 1
 visual_asset = ExtResource("6_scanner")
 required_tech_id = &"scanner_drone"
+build_time = 4.0
 
 [sub_resource type="Resource" id="Part_drive_t1"]
 script = ExtResource("2_part")
@@ -193,6 +207,7 @@ visual_asset = ExtResource("11_drive")
 trait_definition = SubResource("Trait_drive_t1")
 variant_pool = [SubResource("Variant_drive_fast"), SubResource("Variant_drive_stable")]
 required_tech_id = &"shipyard_construction"
+build_time = 6.0
 
 [sub_resource type="Resource" id="Part_weapon_t1"]
 script = ExtResource("2_part")
@@ -222,6 +237,74 @@ visual_asset = ExtResource("12_shield")
 trait_definition = SubResource("Trait_shield_t1")
 variant_pool = [SubResource("Variant_shield_lattice"), SubResource("Variant_shield_reactive")]
 required_tech_id = &"shipyard_construction"
+build_time = 6.0
+
+[sub_resource type="Resource" id="Trait_drive_t2"]
+script = ExtResource("3_trait")
+id = &"trait_drive_t2"
+display_name = "Gravitationsantrieb T2"
+description = "Höhere Reisegeschwindigkeit für lange Routen."
+transfer_speed_multiplier = 1.28
+
+[sub_resource type="Resource" id="Trait_weapon_t2"]
+script = ExtResource("3_trait")
+id = &"trait_weapon_t2"
+display_name = "Plasmawerfer T2"
+description = "Mehr Schaden für militärische Schiffe."
+dps_bonus = 16.0
+attack_range_bonus = 28.0
+
+[sub_resource type="Resource" id="Trait_shield_t2"]
+script = ExtResource("3_trait")
+id = &"trait_shield_t2"
+display_name = "Phasenschild T2"
+description = "Stark erhöhte Hüllenintegrität."
+hull_hp_bonus = 55
+
+[sub_resource type="Resource" id="Part_drive_t2"]
+script = ExtResource("2_part")
+id = &"drive_t2"
+slot_type = &"drive"
+display_name = "Gravitationsantrieb T2"
+description = "Schneller Antrieb mit höherer Montagezeit."
+cost_resource = &"volatile"
+cost_amount = 14
+tier = 2
+visual_asset = ExtResource("8_fuel")
+trait_definition = SubResource("Trait_drive_t2")
+variant_pool = [SubResource("Variant_drive_fast"), SubResource("Variant_drive_stable")]
+required_tech_id = &"weapon_systems"
+build_time = 10.0
+
+[sub_resource type="Resource" id="Part_weapon_t2"]
+script = ExtResource("2_part")
+id = &"weapon_t2"
+slot_type = &"weapon"
+display_name = "Plasmawerfer T2"
+description = "Schwere Bordwaffe mit hohem Schaden."
+cost_resource = &"volatile"
+cost_amount = 18
+tier = 2
+visual_asset = ExtResource("10_weapon")
+trait_definition = SubResource("Trait_weapon_t2")
+variant_pool = [SubResource("Variant_weapon_precision"), SubResource("Variant_weapon_burst")]
+required_tech_id = &"weapon_systems"
+build_time = 24.0
+
+[sub_resource type="Resource" id="Part_shield_t2"]
+script = ExtResource("2_part")
+id = &"shield_t2"
+slot_type = &"shield"
+display_name = "Phasenschild T2"
+description = "Schwere Schildmatrix für Kolonie- und Militärschiffe."
+cost_resource = &"energy"
+cost_amount = 18
+tier = 2
+visual_asset = ExtResource("15_ice")
+trait_definition = SubResource("Trait_shield_t2")
+variant_pool = [SubResource("Variant_shield_lattice"), SubResource("Variant_shield_reactive")]
+required_tech_id = &"weapon_systems"
+build_time = 12.0
 
 [sub_resource type="Resource" id="Part_module_armor"]
 script = ExtResource("2_part")
@@ -263,4 +346,4 @@ build_time = 10.0
 script = ExtResource("1_catalog")
 max_module_slots = 2
 blueprints = [SubResource("Blueprint_standard")]
-parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t2"), SubResource("Part_scanner_t1"), SubResource("Part_drive_t1"), SubResource("Part_weapon_t1"), SubResource("Part_shield_t1"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo")]
+parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t2"), SubResource("Part_hull_t3"), SubResource("Part_scanner_t1"), SubResource("Part_drive_t1"), SubResource("Part_drive_t2"), SubResource("Part_weapon_t1"), SubResource("Part_weapon_t2"), SubResource("Part_shield_t1"), SubResource("Part_shield_t2"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo")]

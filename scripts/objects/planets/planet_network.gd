@@ -7,6 +7,8 @@ const DEFAULT_UI_THEME: UIThemeConfig = preload("res://resources/config/ui_theme
 const PLANET_NETWORK_UI_SCENE: PackedScene = preload("res://scenes/ui/planet_network_ui.tscn")
 const TECHNOLOGY_MENU_SCENE: PackedScene = preload("res://scenes/ui/technology_menu.tscn")
 const MESSAGE_FEED_SCENE: PackedScene = preload("res://scenes/ui/message_feed.tscn")
+const SELECTION_SERVICE_SCRIPT: Script = preload("res://scripts/objects/selection_service.gd")
+const SELECTION_ACTION_TOOLTIP_SCRIPT: Script = preload("res://scripts/ui/selection_tooltip.gd")
 
 @export var transit_config: TransitConfig = DEFAULT_CONFIG
 @export var ui_theme_config: UIThemeConfig = DEFAULT_UI_THEME
@@ -26,6 +28,21 @@ var _context_active_planet: Node2D
 var _line_phase := 0.0
 var _neighbor_cache: Dictionary = {}
 var _neighbor_cache_valid := false
+var _selection_service: SelectionService
+var _action_tooltip: SelectionActionTooltip
+
+# Context-menu item IDs and stable names used by tests/replay scripts.
+const ACTION_OPEN: int = 0
+const ACTION_FOCUS: int = 1
+const ACTION_SEPARATOR_1: int = 2
+const ACTION_ATTACK: int = 3
+const ACTION_COLLECT: int = 4
+const ACTION_COLONIZE: int = 5
+const ACTION_SEPARATOR_2: int = 6
+const ACTION_CLEAR_SELECTION: int = 7
+const ACTION_COUNT: int = 8
+
+var _context_disabled_reasons: Dictionary = {}
 
 func _ready() -> void:
 	add_to_group("planet_network")
@@ -33,10 +50,16 @@ func _ready() -> void:
 		var parent_node: Node = get_parent()
 		if not parent_node.is_connected("layout_completed", Callable(self, "_on_layout_completed")):
 			parent_node.connect("layout_completed", Callable(self, "_on_layout_completed"))
+	_create_selection_service()
 	for child in get_parent().get_children():
 		if child is Node2D and child.get("layout_size") != null:
 			_planets.append(child)
-			child.planet_selected.connect(_on_planet_selected)
+			# SelectionService is the sole click-selection consumer. The legacy
+			# planet_selected signal stays available for external callers, but
+			# connecting both signals here would apply a modifier-click twice and
+			# collapse the primary/secondary state back to a single planet.
+			if not child.planet_selection_requested.is_connected(_on_planet_selection_requested):
+				child.planet_selection_requested.connect(_on_planet_selection_requested)
 			child.planet_context_requested.connect(_on_planet_context_requested)
 			child.worker_count_changed.connect(_on_worker_count_changed)
 			child.workers_spawn_requested.connect(_on_workers_spawn_requested)
@@ -53,6 +76,17 @@ func _on_layout_completed(_unused_planets: Array = []) -> void:
 	invalidate_neighbor_cache()
 	_refresh_fog_of_war()
 
+func _create_selection_service() -> void:
+	_selection_service = SELECTION_SERVICE_SCRIPT.new() as SelectionService
+	_selection_service.name = "SelectionService"
+	add_child(_selection_service)
+	if not _selection_service.primary_changed.is_connected(_on_selection_primary_changed):
+		_selection_service.primary_changed.connect(_on_selection_primary_changed)
+	if not _selection_service.selection_changed.is_connected(_on_selection_group_changed):
+		_selection_service.selection_changed.connect(_on_selection_group_changed)
+	if not _selection_service.selection_count_changed.is_connected(_on_selection_count_changed):
+		_selection_service.selection_count_changed.connect(_on_selection_count_changed)
+
 func _create_ui() -> void:
 	_ui = PLANET_NETWORK_UI_SCENE.instantiate() as PlanetNetworkUI
 	add_child(_ui)
@@ -62,9 +96,15 @@ func _create_ui() -> void:
 	_ui.mission_selected.connect(_on_mission_selected)
 	_ui.amount_changed.connect(_on_amount_changed)
 	_ui.send_pressed.connect(_on_send_pressed)
+	if not _ui.clear_selection_requested.is_connected(_on_clear_selection_requested):
+		_ui.clear_selection_requested.connect(_on_clear_selection_requested)
 	_create_context_menu()
 	_create_technology_menu.call_deferred()
 	_create_message_feed.call_deferred()
+
+func _on_clear_selection_requested() -> void:
+	if _selection_service != null:
+		_selection_service.clear()
 
 func _process(delta: float) -> void:
 	if _active_planet != null and is_instance_valid(_ui) and _ui.is_panel_visible():
@@ -94,17 +134,80 @@ func _draw() -> void:
 func _create_context_menu() -> void:
 	_context_menu = PopupMenu.new()
 	_context_menu.name = "PlanetContextMenu"
-	_context_menu.add_item("Planet öffnen", 0)
-	_context_menu.add_item("Angreifen", 1)
-	_context_menu.add_item("Sammeln", 2)
 	_context_menu.id_pressed.connect(_on_context_action)
+	_context_menu.id_focused.connect(_on_context_item_focused)
 	_ui.add_child(_context_menu)
+	_create_action_tooltip()
+
+func _create_action_tooltip() -> void:
+	if _ui == null:
+		return
+	_action_tooltip = SELECTION_ACTION_TOOLTIP_SCRIPT.new() as SelectionActionTooltip
+	_action_tooltip.name = "SelectionActionTooltip"
+	_ui.add_child(_action_tooltip)
 
 func _on_planet_context_requested(planet: Node2D, screen_position: Vector2) -> void:
 	if _context_menu == null or not is_instance_valid(_context_menu):
 		return
+	# Right-click keeps the SelectionService primary (which acts as the
+	# mission source) intact and treats the right-clicked planet as the
+	# menu target. Promoting the primary on right-click would otherwise
+	# collapse source==target and disable every mission action.
 	_context_active_planet = planet
+	_build_context_menu_for(planet)
 	_context_menu.popup(Rect2(screen_position, Vector2.ZERO))
+
+func _build_context_menu_for(planet: Node2D) -> void:
+	if _context_menu == null or not is_instance_valid(_context_menu):
+		return
+	_context_active_planet = planet
+	_context_menu.clear()
+	_context_disabled_reasons.clear()
+	_context_menu.add_item("Planet öffnen", ACTION_OPEN)
+	_context_menu.add_item("Auf Karte zentrieren", ACTION_FOCUS)
+	_context_menu.add_separator()
+	_context_menu.add_item("Angreifen", ACTION_ATTACK)
+	_context_menu.add_item("Sammeln", ACTION_COLLECT)
+	_context_menu.add_item("Kolonisieren", ACTION_COLONIZE)
+	_context_menu.add_separator()
+	_context_menu.add_item("Alles abwählen", ACTION_CLEAR_SELECTION)
+	var selection_size: int = _selection_service.get_selection_count() if _selection_service != null else 1
+	_context_menu.set_item_disabled(ACTION_CLEAR_SELECTION, selection_size <= 1)
+	if selection_size <= 1:
+		_context_disabled_reasons[ACTION_CLEAR_SELECTION] = "Nur ein Planet ausgewählt."
+
+	# Per-action gates. Each entry either enables its item or, when blocked,
+	# stores a player-facing reason for the tooltip popover.
+	var target_planet: Node2D = _context_active_planet
+	var primary_planet: Node2D = _selection_service.get_primary() if _selection_service != null else null
+	var state: Node = _game_state()
+	var target_faction: StringName = GameState.FACTION_NEUTRAL
+	var player_owns_primary: bool = false
+	if primary_planet != null and state != null:
+		player_owns_primary = state.faction_of(primary_planet.planet_id) == GameState.FACTION_PLAYER
+	if target_planet != null and state != null:
+		target_faction = state.faction_of(target_planet.planet_id)
+	var target_known_scanned: bool = state != null and target_planet != null and state.has_scanned_planet(GameState.FACTION_PLAYER, target_planet.planet_id)
+	var hostile_target: bool = target_faction != GameState.FACTION_PLAYER and target_faction != GameState.FACTION_NEUTRAL and player_owns_primary and primary_planet != null and primary_planet != target_planet
+	var neutral_target: bool = target_faction == GameState.FACTION_NEUTRAL and primary_planet != null and primary_planet != target_planet
+	# Angreifen: hostile neighbours only, primary owns.
+	if hostile_target and _is_neighbor(primary_planet, target_planet):
+		_context_menu.set_item_disabled(ACTION_ATTACK, false)
+	else:
+		_context_menu.set_item_disabled(ACTION_ATTACK, true)
+		_context_disabled_reasons[ACTION_ATTACK] = _attack_disable_reason(player_owns_primary, target_faction, primary_planet, target_planet)
+	# Sammeln: scanned neutral neighbour, primary owns.
+	if neutral_target and target_known_scanned and _is_neighbor(primary_planet, target_planet):
+		_context_menu.set_item_disabled(ACTION_COLLECT, false)
+	else:
+		_context_menu.set_item_disabled(ACTION_COLLECT, true)
+		_context_disabled_reasons[ACTION_COLLECT] = _collect_disable_reason(player_owns_primary, target_faction, target_known_scanned, primary_planet, target_planet)
+	# Kolonisieren: scanned neutral neighbour, primary owns AND has colony-capable loadout (a scout-class shipyard OR colony ship in inventory is checked by the ship layer).
+	if neutral_target and target_known_scanned and _is_neighbor(primary_planet, target_planet):
+		_context_menu.set_item_disabled(ACTION_COLONIZE, false)
+	else:
+		_context_menu.set_item_disabled(ACTION_COLONIZE, true)
+		_context_disabled_reasons[ACTION_COLONIZE] = _colonize_disable_reason(player_owns_primary, target_faction, target_known_scanned, primary_planet, target_planet)
 
 func _on_planet_hovered(planet: Node2D) -> void:
 	if is_instance_valid(_ui):
@@ -114,16 +217,118 @@ func _on_planet_unhovered(_planet: Node2D) -> void:
 	if is_instance_valid(_ui):
 		_ui.hide_planet_tooltip()
 
+func _on_context_item_focused(id: int) -> void:
+	if _context_menu == null or not is_instance_valid(_context_menu):
+		return
+	var item_index: int = _context_menu.get_item_index(id)
+	if item_index < 0 or _context_menu.is_item_disabled(item_index) == false:
+		return
+	var anchor_position: Vector2 = Vector2(_context_menu.position) + Vector2(8.0, float(item_index + 1) * 24.0)
+	_show_action_tooltip(id, anchor_position)
+
 func _on_context_action(id: int) -> void:
 	var planet: Node2D = _context_active_planet
 	_context_active_planet = null
+	if _context_menu != null and is_instance_valid(_context_menu):
+		var item_index: int = _context_menu.get_item_index(id)
+		if item_index >= 0 and _context_menu.is_item_disabled(item_index):
+			_show_action_tooltip(id, _context_menu.position)
+			return
 	if planet == null or not is_instance_valid(_ui):
 		return
-	if id == 1:
-		_ui.set_mission_type(GameState.MISSION_MILITARY)
-	elif id == 2:
-		_ui.set_mission_type(GameState.MISSION_COLLECT)
-	_on_planet_selected(planet)
+	if id == ACTION_OPEN:
+		if _selection_service != null:
+			_selection_service.handle_request(planet, {})
+		else:
+			_on_planet_selected(planet)
+	elif id == ACTION_FOCUS:
+		_center_camera_on(planet)
+	elif id == ACTION_ATTACK:
+		_open_mission_for_target(planet, GameState.MISSION_MILITARY)
+	elif id == ACTION_COLLECT:
+		_open_mission_for_target(planet, GameState.MISSION_COLLECT)
+	elif id == ACTION_COLONIZE:
+		_open_mission_for_target(planet, GameState.MISSION_COLONY)
+	elif id == ACTION_CLEAR_SELECTION:
+		if _selection_service != null:
+			_selection_service.clear()
+
+func _open_mission_for_target(target: Node2D, mission_type: StringName) -> void:
+	if target == null or not is_instance_valid(target) or not is_instance_valid(_ui):
+		return
+	var source: Node2D = _selection_service.get_primary() if _selection_service != null else _active_planet
+	if source == null or not is_instance_valid(source):
+		return
+	_ui.set_mission_type(mission_type)
+	_on_planet_selected(source)
+	var target_index: int = _destination_planets.find(target)
+	if target_index >= 0:
+		_on_destination_selected(target_index)
+
+func _show_action_tooltip(item_id: int, anchor_position: Vector2) -> void:
+	if _action_tooltip == null or not is_instance_valid(_action_tooltip):
+		return
+	var reason: String = String(_context_disabled_reasons.get(item_id, "Diese Aktion ist aktuell nicht verfügbar."))
+	_action_tooltip.show_text(reason, anchor_position)
+
+func _attack_disable_reason(player_owns_primary: bool, target_faction: StringName, primary_planet: Node2D, target_planet: Node2D) -> String:
+	if primary_planet == null:
+		return "Kein eigener Planet ausgewählt."
+	if not player_owns_primary:
+		return "Angreifen erfordert einen eigenen Planeten als Quelle."
+	if target_faction == GameState.FACTION_PLAYER:
+		return "Eigener Planet — kein Angriff nötig."
+	if target_planet == null or primary_planet == target_planet:
+		return "Wähle einen feindlichen Nachbarplaneten."
+	if target_faction == GameState.FACTION_NEUTRAL:
+		return "Neutrale Welten können erst nach Scout-Aufklärung angegriffen werden."
+	if not _is_neighbor(primary_planet, target_planet):
+		return "Zielplanet liegt außerhalb der Nachbarschaftskanten."
+	return "Angriff aktuell nicht verfügbar."
+
+func _collect_disable_reason(player_owns_primary: bool, target_faction: StringName, scanned: bool, primary_planet: Node2D, target_planet: Node2D) -> String:
+	if primary_planet == null:
+		return "Kein eigener Planet ausgewählt."
+	if not player_owns_primary:
+		return "Sammeln erfordert einen eigenen Planeten als Quelle."
+	if target_planet == null or primary_planet == target_planet:
+		return "Wähle einen neutralen Nachbarplaneten zum Sammeln."
+	if target_faction != GameState.FACTION_NEUTRAL:
+		return "Sammeln ist nur an neutralen, gescannten Welten möglich."
+	if not scanned:
+		return "Zielplanet wurde noch nicht gescannt (Scout benötigt)."
+	if not _is_neighbor(primary_planet, target_planet):
+		return "Zielplanet liegt außerhalb der Nachbarschaftskanten."
+	return "Sammeln aktuell nicht verfügbar."
+
+func _colonize_disable_reason(player_owns_primary: bool, target_faction: StringName, scanned: bool, primary_planet: Node2D, target_planet: Node2D) -> String:
+	if primary_planet == null:
+		return "Kein eigener Planet ausgewählt."
+	if not player_owns_primary:
+		return "Kolonisieren erfordert einen eigenen Planeten als Quelle."
+	if target_planet == null or primary_planet == target_planet:
+		return "Wähle einen neutralen Nachbarplaneten."
+	if target_faction != GameState.FACTION_NEUTRAL:
+		return "Nur neutrale Welten sind Kolonieziele."
+	if not scanned:
+		return "Zielplanet wurde noch nicht gescannt (Scout benötigt)."
+	if not _is_neighbor(primary_planet, target_planet):
+		return "Zielplanet liegt außerhalb der Nachbarschaftskanten."
+	return "Kolonisieren aktuell nicht verfügbar."
+
+func _is_neighbor(source: Node2D, target: Node2D) -> bool:
+	if source == null or target == null:
+		return false
+	for neighbor in get_neighbors(source):
+		if neighbor == target:
+			return true
+	return false
+
+func _center_camera_on(planet: Node2D) -> void:
+	var camera: Camera2D = get_tree().get_first_node_in_group("map_camera") as Camera2D
+	if camera == null or planet == null:
+		return
+	camera.set("position", planet.global_position)
 
 func _create_technology_menu() -> void:
 	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
@@ -168,7 +373,10 @@ func _connect_map_camera() -> void:
 func _on_planet_drag_dropped(source: Node2D, destination: Node2D) -> void:
 	if not is_instance_valid(_ui) or source == null or destination == null or source == destination:
 		return
-	_on_planet_selected(source)
+	if _selection_service != null:
+		_selection_service.handle_request(source, {})
+	else:
+		_on_planet_selected(source)
 	var destination_index := _ui.index_of_destination(destination.name)
 	if destination_index >= 0:
 		_on_destination_selected(destination_index)
@@ -193,6 +401,43 @@ func _on_planet_selected(planet: Node2D) -> void:
 		_ui.reset_amount()
 		_update_preview()
 	queue_redraw()
+
+func _on_planet_selection_requested(planet: Node2D, modifiers: Dictionary) -> void:
+	if _selection_service == null:
+		return
+	_selection_service.handle_request(planet, modifiers)
+
+func _on_selection_primary_changed(_planet: Node2D) -> void:
+	var primary: Node2D = _selection_service.get_primary() if _selection_service != null else null
+	if primary == null:
+		_clear_active_planet()
+		return
+	_on_planet_selected(primary)
+
+func _on_selection_group_changed(_selection: Array[Node2D]) -> void:
+	if _ui == null or not is_instance_valid(_ui):
+		return
+	_ui.refresh_selection_overview(_selection) if _ui.has_method("refresh_selection_overview") else null
+	queue_redraw()
+
+func _on_selection_count_changed(count: int) -> void:
+	if _ui == null or not is_instance_valid(_ui):
+		return
+	if _ui.has_method("set_selection_count"):
+		_ui.set_selection_count(count)
+
+func _clear_active_planet() -> void:
+	if is_instance_valid(_active_planet):
+		var previous: Planet = _active_planet as Planet
+		if previous != null:
+			previous.set_selected(false)
+	_active_planet = null
+	if is_instance_valid(_ui):
+		_ui.close_panel()
+	queue_redraw()
+
+func get_selection_service() -> SelectionService:
+	return _selection_service
 
 func _on_destination_selected(index: int) -> void:
 	if _active_planet == null:
@@ -227,6 +472,12 @@ func _update_selected_count() -> void:
 func _on_amount_changed(_value: float) -> void:
 	_update_preview()
 	queue_redraw()
+
+func get_ship_flight_preview(source: Planet, destination: Planet, ship_id: StringName) -> float:
+	var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
+	if conflict_manager == null or not conflict_manager.has_method("preview_duration"):
+		return 0.0
+	return float(conflict_manager.call("preview_duration", source, destination, ship_id))
 
 func _update_preview() -> void:
 	if not is_instance_valid(_ui):
@@ -328,28 +579,25 @@ func get_neighbors(planet: Node2D) -> Array[Node2D]:
 
 func _build_neighbor_cache() -> void:
 	_neighbor_cache.clear()
-	var world_config: WorldConfig = get_parent().get("world_config") as WorldConfig
-	var columns: int = world_config.resolved_columns(_planets.size()) if world_config != null else 1
-	var slot_planets: Dictionary = {}
-	for candidate in _planets:
-		var candidate_slot: int = int(candidate.get_meta("layout_slot", -1))
-		if candidate_slot >= 0:
-			slot_planets[candidate_slot] = candidate
+	# NavigationField is the single source of truth for adjacency — it exposes
+	# the union of slot-grid edges AND K-nearest long-range edges. Rebuilding
+	# the slot grid here would silently disagree with the routing graph the
+	# moment NavigationField's growth contract kicks in.
+	if not is_instance_valid(_navigation):
+		_neighbor_cache_valid = true
+		return
 	for planet in _planets:
-		var slot: int = int(planet.get_meta("layout_slot", -1))
-		if slot < 0:
-			continue
-		var column: int = slot % columns
-		var result: Array[Node2D] = []
-		if column > 0 and slot_planets.has(slot - 1):
-			result.append(slot_planets[slot - 1])
-		if column < columns - 1 and slot_planets.has(slot + 1):
-			result.append(slot_planets[slot + 1])
-		if slot_planets.has(slot - columns):
-			result.append(slot_planets[slot - columns])
-		if slot_planets.has(slot + columns):
-			result.append(slot_planets[slot + columns])
-		_neighbor_cache[planet] = result
+		var neighbors: Array[Node2D] = _navigation.get_neighbors_for_planet(planet)
+		# Stable sort by neighbour index/id so the Set/seen-order in scripts
+		# that iterate the cache stays deterministic across rebuilds.
+		neighbors.sort_custom(func(a, b):
+			var ai := int((a as Node).get_index())
+			var bi := int((b as Node).get_index())
+			if ai == bi:
+				return String(a.name) < String(b.name)
+			return ai < bi
+		)
+		_neighbor_cache[planet] = neighbors
 	_neighbor_cache_valid = true
 
 func _connect_fog_signals() -> void:

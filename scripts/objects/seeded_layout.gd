@@ -6,6 +6,8 @@ const PLANET_SCENE: PackedScene = preload("res://scenes/objects/planets/planet.t
 const PLANET_ECONOMY_MANAGER_SCRIPT: Script = preload("res://scripts/objects/planets/economy_manager.gd")
 const CPU_DISPATCH_AI_SCRIPT: Script = preload("res://scripts/objects/planets/cpu_dispatch_ai.gd")
 const SHIP_MANAGER_SCRIPT: Script = preload("res://scripts/objects/ships/ship_manager.gd")
+const CONFLICT_MANAGER_SCRIPT: Script = preload("res://scripts/objects/conflict_manager.gd")
+const DEFAULT_TRANSIT_CONFIG: TransitConfig = preload("res://resources/config/transit_default.tres")
 const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_default.tres")
 const DEFAULT_PLANET_CATALOG: PlanetCatalog = preload("res://resources/config/planet_catalog.tres")
 const DEFAULT_ECONOMY_CONFIG: EconomyConfig = preload("res://resources/config/economy_default.tres")
@@ -120,6 +122,11 @@ func _create_runtime_modules() -> void:
 	ship_manager.name = "ShipManager"
 	ship_manager.call("configure", self, get_node_or_null("NavigationField"), ship_config if ship_config != null else DEFAULT_SHIP_CONFIG, technology_catalog if technology_catalog != null else DEFAULT_TECHNOLOGY_CATALOG, network)
 	add_child(ship_manager)
+
+	var conflict_manager: Node = CONFLICT_MANAGER_SCRIPT.new()
+	conflict_manager.name = "ConflictManager"
+	conflict_manager.call("configure", self, get_node_or_null("NavigationField"), ship_manager, DEFAULT_TRANSIT_CONFIG)
+	add_child(conflict_manager)
 	_runtime_modules_created = true
 
 func _generate_catalog_planets() -> void:

@@ -11,6 +11,17 @@ const ROUTE_MODE_NEIGHBORS_ONLY := "neighbors_only"
 # 0 = derive the column count from design_size aspect ratio and planet count.
 @export_range(0, 128, 1) var columns: int
 @export_range(0, 100000, 1) var target_planet_count: int = 0
+## Multiplicative world-area growth. 1.0 keeps the authored size/planet count
+## (sqrt-scaled design_size + linearly-scaled target_planet_count are applied to
+## a runtime duplicate before the live tree reads them; the authored .tres is
+## never mutated).
+@export_range(1.0, 8.0, 0.05) var growth_factor: float = 1.0
+## Fraction of `(planet_count - 1)` other planets that should be linked as
+## K-nearest long-range edges on top of the slot grid (NavigationField enforces
+## it).
+@export_range(0.0, 0.5, 0.005) var graph_neighbor_ratio: float = 0.0
+## Absolute cap on K-nearest edges, regardless of ratio. 0 means "no cap".
+@export_range(0, 4096, 1) var max_extra_edges: int = 0
 # Absolute size-class floors; used when the matching ratio below is zero.
 @export_range(0, 20, 1) var extra_large_count: int
 @export_range(0, 20, 1) var large_count: int
@@ -37,6 +48,29 @@ func resolved_columns(planet_count: int) -> int:
 	var aspect := design_size.x / design_size.y
 	return maxi(1, int(round(sqrt(float(planet_count) * aspect))))
 
+func resolved_design_size(base_size: Vector2 = Vector2.ZERO) -> Vector2:
+	if base_size == Vector2.ZERO:
+		base_size = design_size
+	if growth_factor <= 1.0001:
+		return base_size
+	var scale := sqrt(growth_factor)
+	return Vector2(base_size.x * scale, base_size.y * scale)
+
+## Linear growth target. base_count is what the active catalog holds when no
+## expansion was requested (typically the original authored PlanetCatalog plane).
+func resolved_target_planet_count(base_count: int) -> int:
+	if base_count <= 0:
+		return target_planet_count
+	if growth_factor <= 1.0001:
+		return target_planet_count if target_planet_count > 0 else base_count
+	return maxi(1, int(round(float(base_count) * growth_factor)))
+
+func resolved_graph_neighbor_ratio() -> float:
+	return clampf(graph_neighbor_ratio, 0.0, 0.5)
+
+func resolved_max_extra_edges() -> int:
+	return max(0, max_extra_edges)
+
 func resolved_size_class_counts(planet_count: int) -> Vector2i:
 	var resolved_extra_large: int
 	var resolved_large: int
@@ -62,6 +96,12 @@ func validate_for_planet_count(planet_count: int) -> PackedStringArray:
 		errors.append("world size class counts cannot be negative")
 	if extra_large_ratio < 0.0 or extra_large_ratio > 1.0 or large_ratio < 0.0 or large_ratio > 1.0:
 		errors.append("world size class ratios must stay between zero and one")
+	if growth_factor < 1.0:
+		errors.append("world growth_factor must be at least 1.0")
+	if graph_neighbor_ratio < 0.0 or graph_neighbor_ratio > 0.5:
+		errors.append("world graph_neighbor_ratio must stay between 0 and 0.5")
+	if max_extra_edges < 0:
+		errors.append("world max_extra_edges cannot be negative")
 	if extra_large_ratio + large_ratio > 1.0:
 		errors.append("world size class ratios cannot exceed one")
 	if extra_large_ratio == 0.0 and large_ratio == 0.0 and extra_large_count + large_count > planet_count:

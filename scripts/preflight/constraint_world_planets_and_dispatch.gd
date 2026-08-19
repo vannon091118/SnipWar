@@ -272,7 +272,7 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(panel.visible and panel_tab.text == "‹  SCHLIESSEN", "planet tab did not reopen"):
 		return false
 	var line_phase: float = network.get_line_phase()
-	await ctx.wait(0.2)
+	await ctx.await_frame()
 	if not ctx.check(network.get_line_phase() != line_phase, "neighbor line animation is inactive"):
 		return false
 	var destination: Planet = neighbors[0] as Planet
@@ -327,7 +327,7 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(ctx.offsets_have_safe_spacing(actual_offsets, formation_spacing), "formation clusters overlap beyond the budget"):
 		return false
 	var transit_distance_before: float = (transit_clusters[0] as Node2D).global_position.distance_to(destination.global_position)
-	await ctx.wait(0.5)
+	await ctx.await_frame()
 	var transit_distance_after: float = (transit_clusters[0] as Node2D).global_position.distance_to(destination.global_position)
 	if not ctx.check(transit_distance_after < transit_distance_before, "transit cluster does not move toward the destination"):
 		return false

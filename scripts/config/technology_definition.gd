@@ -14,6 +14,9 @@ const CATEGORY_PLANET := &"planet"
 @export var cost_amount: int = 10
 @export var prerequisite_tech_id: StringName = &""
 @export var requires_discovery: bool = false
+## Mutually exclusive tech: if this ID is already researched, this tech is blocked
+## and vice versa — forces a branch decision.
+@export var mutually_exclusive_with: StringName = &""
 @export var visual_asset: Texture2D
 @export_group("Mechanical Effect")
 @export var effect_id: StringName = &""
@@ -43,3 +46,10 @@ func validate() -> PackedStringArray:
 	if research_time < 0.0:
 		errors.append("technology %s research_time cannot be negative" % id)
 	return errors
+
+## Returns true when the given set of already-researched tech IDs conflicts
+## with this technology's mutual-exclusion constraint.
+func is_blocked_by_exclusion(researched_ids: Array) -> bool:
+	if String(mutually_exclusive_with).is_empty():
+		return false
+	return researched_ids.has(mutually_exclusive_with)

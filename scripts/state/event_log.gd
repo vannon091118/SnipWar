@@ -43,6 +43,14 @@ func _connect_game_state() -> void:
 		state.gathering_withdrawn.connect(_on_gathering_withdrawn)
 	if state.has_signal("worker_factory_built") and not state.worker_factory_built.is_connected(_on_worker_factory_built):
 		state.worker_factory_built.connect(_on_worker_factory_built)
+	if state.has_signal("ship_assembled") and not state.ship_assembled.is_connected(_on_ship_assembled):
+		state.ship_assembled.connect(_on_ship_assembled)
+	if state.has_signal("ship_launched") and not state.ship_launched.is_connected(_on_ship_launched):
+		state.ship_launched.connect(_on_ship_launched)
+	if state.has_signal("ship_lost") and not state.ship_lost.is_connected(_on_ship_lost):
+		state.ship_lost.connect(_on_ship_lost)
+	if state.has_signal("milestone_reached") and not state.milestone_reached.is_connected(_on_milestone_reached):
+		state.milestone_reached.connect(_on_milestone_reached)
 
 # Push = toast + log. Use for discrete, meaningful events.
 func push(category: StringName, text: String) -> void:
@@ -114,6 +122,21 @@ func _on_gathering_withdrawn(_faction: StringName, planet_id: StringName, worker
 
 func _on_worker_factory_built(planet_id: StringName) -> void:
 	push(&"economy", "%s: Worker-Fertiger in der Werft aktiviert." % _planet_name(planet_id))
+
+func _on_ship_assembled(planet_id: StringName, ship_id: StringName) -> void:
+	push(&"tech", "%s: Schiff %s ist fertig montiert." % [_planet_name(planet_id), String(ship_id)])
+
+func _on_ship_launched(planet_id: StringName, ship_id: StringName, role: StringName) -> void:
+	push(&"military", "%s: %s %s gestartet." % [_planet_name(planet_id), String(role).capitalize(), String(ship_id)])
+
+func _on_ship_lost(planet_id: StringName, ship_id: StringName) -> void:
+	push(&"military", "%s: Schiff %s wurde verloren." % [_planet_name(planet_id), String(ship_id)])
+
+func _on_milestone_reached(_faction: StringName, milestone_id: StringName) -> void:
+	if milestone_id == &"first_colony":
+		push(&"discovery", "Meilenstein erreicht: Erste Kolonie gegründet!")
+	else:
+		push(&"discovery", "Meilenstein erreicht: %s." % String(milestone_id))
 
 func _planet_name(planet_id: StringName) -> String:
 	var text := String(planet_id)

@@ -9,6 +9,7 @@ const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_def
 @export var worker_production_visible: bool = false
 
 var _ship_config: ShipConfig = DEFAULT_SHIP_CONFIG
+var _readback_label: Label
 
 func configure(slot_count: int, worker_visible: bool, config: ShipConfig = null) -> void:
 	build_slot_count = maxi(slot_count, 1)
@@ -38,6 +39,10 @@ func show_ship_parts(
 	view.visible = true
 	view.scale = _view_scale(hull.visual_asset if hull != null else null)
 	view.setup_from_parts(hull, scanner, drive, weapon, shield, modules, faction, null, variants)
+	_ensure_readback_label()
+	_readback_label.visible = true
+	_readback_label.text = "SHIP READBACK"
+	_readback_label.tooltip_text = "Montierter Loadout-Readback"
 
 func hide_ship() -> void:
 	var builder: Node2D = get_node_or_null("FutureShipBuilder") as Node2D
@@ -48,6 +53,8 @@ func hide_ship() -> void:
 		view.clear()
 		view.visible = false
 	_clear_ship_visual(builder, view)
+	if _readback_label != null and is_instance_valid(_readback_label):
+		_readback_label.visible = false
 	builder.visible = false
 
 func _prepare_composite_view(builder: Node2D) -> CompositeShipView:
@@ -65,6 +72,25 @@ func _clear_ship_visual(builder: Node2D, keep: Node = null) -> void:
 			continue
 		builder.remove_child(child)
 		child.queue_free()
+
+func set_build_readback(title: String, tooltip: String, remaining: float = 0.0) -> void:
+	_ensure_readback_label()
+	_readback_label.visible = true
+	_readback_label.text = title if remaining <= 0.0 else "%s (%.0f s)" % [title, remaining]
+	_readback_label.tooltip_text = tooltip
+
+func _ensure_readback_label() -> void:
+	if _readback_label != null and is_instance_valid(_readback_label):
+		return
+	_readback_label = Label.new()
+	_readback_label.name = "BuildReadback"
+	_readback_label.position = Vector2(-64.0, -54.0)
+	_readback_label.size = Vector2(128.0, 24.0)
+	_readback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_readback_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_readback_label.add_theme_font_size_override("font_size", 9)
+	_readback_label.add_theme_color_override("font_color", Color(0.75, 0.9, 1.0, 0.95))
+	add_child(_readback_label)
 
 func _view_scale(hull_texture: Texture2D) -> Vector2:
 	var config: ShipConfig = _ship_config if _ship_config != null else DEFAULT_SHIP_CONFIG

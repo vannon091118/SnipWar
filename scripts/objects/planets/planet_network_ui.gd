@@ -14,6 +14,7 @@ var _panel_open: bool = false
 var _panel_tween: Tween
 var _tooltip_panel: PanelContainer
 var _tooltip_label: Label
+var _current_selection: Array[Node2D] = [] as Array[Node2D]
 
 @onready var _tab_button: Button = get_node_or_null("PlanetTabUI/PlanetTab")
 @onready var _vault_bar: VaultBar = get_node_or_null("PlanetTabUI/VaultBar")
@@ -45,11 +46,7 @@ func _ensure_node_references() -> void:
 
 func _apply_theme() -> void:
 	if _tab_button != null:
-		_tab_button.add_theme_font_size_override("font_size", _theme_config.tab_font_size)
-		_tab_button.add_theme_color_override("font_color", _theme_config.tab_text_color)
-		_tab_button.add_theme_stylebox_override("normal", _style_box(_theme_config.button_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
-		_tab_button.add_theme_stylebox_override("hover", _style_box(_theme_config.button_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
-		_tab_button.add_theme_stylebox_override("pressed", _style_box(_theme_config.button_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+		UIBaseUtils.apply_button_theme(_tab_button, _theme_config)
 
 func _style_box(background: Color, border: Color = Color.TRANSPARENT, border_width: int = 0, radius: int = 0) -> StyleBoxFlat:
 	return _theme_config.make_style_box(background, border, border_width, radius)
@@ -71,6 +68,10 @@ func _connect_panel_signals() -> void:
 		_panel.send_pressed.connect(_on_send_pressed)
 	if not _panel.layout_requested.is_connected(_on_panel_layout_requested):
 		_panel.layout_requested.connect(_on_panel_layout_requested)
+	if not _panel.clear_selection_pressed.is_connected(_on_clear_selection_pressed):
+		_panel.clear_selection_pressed.connect(_on_clear_selection_pressed)
+
+signal clear_selection_requested()
 
 func _connect_game_state_signals() -> void:
 	var state: Node = get_tree().root.get_node_or_null("GameState")
@@ -105,6 +106,27 @@ func _refresh_vault() -> void:
 func show_planet(planet: Node2D, destinations: Array[Node2D], default_destination: Node2D) -> void:
 	_set_panel_open(true)
 	_panel.show_planet(planet, destinations, default_destination)
+	_refresh_selection_aggregated_panel(_current_selection)
+	_apply_responsive_layout()
+
+func set_selection_count(count: int) -> void:
+	if _panel != null and _panel.has_method("set_selection_count"):
+		_panel.set_selection_count(count)
+	_refresh_selection_aggregated_panel(_current_selection)
+
+func refresh_selection_overview(selection: Array[Node2D]) -> void:
+	_current_selection = selection.duplicate() as Array[Node2D]
+	if _panel != null and _panel.has_method("set_selection_overview"):
+		_panel.set_selection_overview(selection)
+	_refresh_selection_aggregated_panel(_current_selection)
+
+func _refresh_selection_aggregated_panel(selection: Array[Node2D]) -> void:
+	if _panel == null:
+		return
+	if _panel.has_method("set_selection_count"):
+		_panel.set_selection_count(selection.size())
+	if _panel.has_method("set_selection_overview"):
+		_panel.set_selection_overview(selection)
 	_apply_responsive_layout()
 
 func set_destinations(destinations: Array[Node2D], default_destination: Node2D) -> void:
@@ -209,6 +231,9 @@ func _apply_responsive_layout() -> void:
 
 func _on_panel_layout_requested() -> void:
 	call_deferred("_apply_responsive_layout")
+
+func _on_clear_selection_pressed() -> void:
+	clear_selection_requested.emit()
 
 func _on_viewport_size_changed() -> void:
 	_apply_responsive_layout()

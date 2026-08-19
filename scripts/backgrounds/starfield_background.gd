@@ -37,34 +37,33 @@ func _apply_active_scenario() -> void:
 	active_scenario = scenario
 	active_scenario_id = scenario.id
 	var map: MapDefinition = scenario.map_definition
-	if map.world_config != null:
-		map.world_config.route_mode = scenario.resolved_route_mode()
+	var runtime_world: WorldConfig = WorldGenerator.resolve_runtime_world(map.world_config, map.planet_catalog)
+	if runtime_world != null:
+		runtime_world.route_mode = scenario.resolved_route_mode()
 	world_config = map.world_config if map.world_config != null else world_config
 	background_config = scenario.background_config if scenario.background_config != null else background_config
 	active_catalog = map.planet_catalog
-	if map.world_config != null and map.world_config.target_planet_count > 0:
-		active_catalog = WorldGenerator.expand_catalog(map.planet_catalog, map.world_config.target_planet_count)
+	if runtime_world != null and runtime_world.target_planet_count > 0:
+		active_catalog = WorldGenerator.expand_catalog(map.planet_catalog, runtime_world.target_planet_count)
 
 	_configure_game_state(map)
-	_configure_planet_field(map, scenario)
-	_configure_meteor_field(map, scenario)
+	_configure_planet_field(map, scenario, runtime_world)
+	_configure_meteor_field(map, scenario, runtime_world)
 
-func _configure_game_state(map: MapDefinition) -> void:
-	var state: Node = get_node_or_null("/root/GameState")
-	if state != null and map != null and active_catalog != null:
-		state.reset_from_catalog(active_catalog)
-
-func _configure_planet_field(map: MapDefinition, scenario: ScenarioDefinition) -> void:
+# Drops the runtime duplicate onto the planet field/navigation so that the
+# authored .tres is never written into. The duplicate carries the growth
+# contract (sqrt-scaled design_size, scaled target_planet_count, auto-columns).
+func _configure_planet_field(map: MapDefinition, scenario: ScenarioDefinition, runtime_world: WorldConfig) -> void:
 	var field: SeededLayout = get_node_or_null("PlanetField") as SeededLayout
 	if field == null or map == null or scenario == null:
 		return
 	field.position = Vector2.ZERO
-	field.world_config = map.world_config
+	field.world_config = runtime_world if runtime_world != null else map.world_config
 	field.planet_catalog = active_catalog if active_catalog != null else map.planet_catalog
 	field.size_profiles = map.size_profiles
 	var navigation: NavigationField = field.get_node_or_null("NavigationField") as NavigationField
 	if navigation != null:
-		navigation.world_config = map.world_config
+		navigation.world_config = runtime_world if runtime_world != null else map.world_config
 		navigation.navigation_config = map.navigation_config
 	var network: Node = field.get_node_or_null("PlanetNetwork")
 	if network != null:
@@ -74,11 +73,16 @@ func _configure_planet_field(map: MapDefinition, scenario: ScenarioDefinition) -
 	if worker_manager != null:
 		worker_manager.set("transit_config", scenario.transit_config)
 
-func _configure_meteor_field(map: MapDefinition, scenario: ScenarioDefinition) -> void:
+func _configure_game_state(map: MapDefinition) -> void:
+	var state: Node = get_node_or_null("/root/GameState")
+	if state != null and map != null and active_catalog != null:
+		state.reset_from_catalog(active_catalog)
+
+func _configure_meteor_field(map: MapDefinition, scenario: ScenarioDefinition, runtime_world: WorldConfig = null) -> void:
 	var meteor_field: Node2D = get_node_or_null("MeteorField") as Node2D
 	if meteor_field != null and map != null and scenario != null:
 		meteor_field.position = Vector2.ZERO
-		meteor_field.set("world_config", map.world_config)
+		meteor_field.set("world_config", runtime_world if runtime_world != null else map.world_config)
 		meteor_field.set("meteor_config", scenario.meteor_config)
 
 func get_active_scenario() -> ScenarioDefinition:

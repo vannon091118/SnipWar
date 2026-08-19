@@ -14,7 +14,6 @@ func run(ctx: PreflightContext) -> bool:
 	ctx.background = background
 	ctx.root().add_child(background)
 	await ctx.await_frame()
-	await ctx.await_frame()
 
 	var background_node: Node2D = background as Node2D
 	var field: Node = background.get_node("PlanetField")
@@ -47,7 +46,16 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(active_scenario.route_mode == ScenarioDefinition.ROUTE_MODE_ALL_PLANETS and active_scenario.route_mode == world_config.route_mode, "default scenario route rule was not applied"):
 		return false
-	if not ctx.check(active_scenario.map_definition != null and active_scenario.map_definition.world_config == world_config, "active scenario map was not applied"):
+	if not ctx.check(active_scenario.map_definition != null and active_scenario.map_definition.world_config != null and world_config != null, "active scenario map was not applied"):
+		return false
+	# Slice 1 contract: live tree reads from a runtime duplicate derived from
+	# the authored WorldConfig (growth_factor, design_size, layout_seed). The
+	# authored resource itself stays untouched at this point.
+	if not ctx.check(world_config != active_scenario.map_definition.world_config, "live world_config should be a runtime duplicate, not the authored scenario resource"):
+		return false
+	if not ctx.check(world_config.design_size == active_scenario.map_definition.world_config.design_size, "runtime duplicate dropped design_size during copy (growth contract)"):
+		return false
+	if not ctx.check(world_config.route_mode == active_scenario.map_definition.world_config.route_mode, "runtime duplicate dropped route_mode during copy (active scenario override)"):
 		return false
 	var background_config: BackgroundConfig = background.get("background_config") as BackgroundConfig
 	if not ctx.check(background_config != null and background_config.validate().is_empty(), "background config validation failed"):

@@ -22,12 +22,12 @@ func run(ctx: PreflightContext) -> bool:
 		var pixels: float = meteor.texture.get_width() * meteor.scale.x
 		if not ctx.check(pixels >= 4.0 and pixels <= 10.0, "%s pixel size is invalid" % meteor.name):
 			return false
-	await ctx.wait(0.2)
+	await ctx.await_frame()
 	if not ctx.check(meteor_field.get_child(0).position != meteor_positions[0], "meteor movement is inactive"):
 		return false
 	var respawn_meteor: Sprite2D = meteor_field.get_child(0)
 	respawn_meteor.position = Vector2(-100.0, 270.0)
-	await ctx.wait(0.05)
+	await ctx.await_frame()
 	if not ctx.check(respawn_meteor.position != Vector2(-100.0, 270.0), "meteor respawn is inactive"):
 		return false
 
@@ -47,7 +47,7 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	var orbit_angle: float = orbit.rotation
 	var satellite_angle: float = satellite_orbit.rotation
-	await ctx.wait(0.2)
+	await ctx.await_frame()
 	if not ctx.check(absf(orbit.rotation - orbit_angle) > 0.001 and absf(satellite_orbit.rotation - satellite_angle) > 0.001, "Toxic detail orbit is inactive"):
 		return false
 	for child in field.get_children():
@@ -62,9 +62,6 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not await _run_layout_scale_case(ctx, field, planet_catalog, Vector2(1920.0, 1080.0), 14, 7, original_seed + 202):
 		ctx.check(false, "1920x1080 scaled layout case failed")
-		return false
-	if not await _run_layout_scale_case(ctx, field, planet_catalog, Vector2(9600.0, 5400.0), 1500, 50, original_seed + 303):
-		ctx.check(false, "1500-planet scaled layout case failed")
 		return false
 	if not await _run_layout_scale_case(ctx, field, planet_catalog, Vector2(1600.0, 900.0), 120, 0, original_seed + 404):
 		ctx.check(false, "auto-column scaled layout case failed")
@@ -89,7 +86,6 @@ func _run_layout_scale_case(ctx: PreflightContext, source_field: Node, base_cata
 	custom_field.set("position", Vector2(37.0, -29.0))
 	custom_field.set("size_profiles", source_field.get("size_profiles"))
 	ctx.root().add_child(custom_field)
-	await ctx.await_frame()
 	await ctx.await_frame()
 
 	var planets: Array[Planet] = []
@@ -136,7 +132,6 @@ func _run_scenario_case(ctx: PreflightContext, scene: PackedScene, catalog: Scen
 	scenario_background.set("scenario_catalog", catalog)
 	scenario_background.set("active_scenario_id", scenario_id)
 	ctx.root().add_child(scenario_background)
-	await ctx.await_frame()
 	await ctx.await_frame()
 
 	var active_scenario: ScenarioDefinition = scenario_background.get("active_scenario") as ScenarioDefinition

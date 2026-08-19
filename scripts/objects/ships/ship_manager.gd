@@ -6,6 +6,7 @@ const SHIP_BASE_SCENE: PackedScene = preload("res://scenes/objects/ships/ship_ba
 const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_default.tres")
 const DEFAULT_TECH_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
 const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
+const FLIGHT_TIME_SCRIPT: Script = preload("res://scripts/flight_time.gd")
 const SHIPYARD_UPGRADE_ID: StringName = &"shipyard"
 const DEFAULT_HULL_TEXTURE: Texture2D = preload("res://assets/objects/workers/cluster_k.svg")
 const DEFAULT_SCANNER_TEXTURE: Texture2D = preload("res://assets/objects/satellites/planet_satellite.svg")
@@ -74,6 +75,10 @@ func can_build_scout(source: Planet) -> bool:
 	var faction: StringName = source.get_faction()
 	if faction == GameState.FACTION_NEUTRAL:
 		return false
+	if get_active_build_count(source) >= source.get_build_slot_count():
+		return false
+	if state.get_starter_scouts(faction) > 0:
+		return true
 	if not state.has_planet_upgrade(source.planet_id, SHIPYARD_UPGRADE_ID):
 		return false
 	var config := get_ship_config()
@@ -81,11 +86,7 @@ func can_build_scout(source: Planet) -> bool:
 		return false
 	if not state.has_technology(faction, config.scout_scanner_tech_id):
 		return false
-	if state.get_faction_resource(faction, config.scout_build_cost_resource) < config.scout_build_cost_amount:
-		return false
-	if get_active_build_count(source) >= source.get_build_slot_count():
-		return false
-	return true
+	return state.get_faction_resource(faction, config.scout_build_cost_resource) >= config.scout_build_cost_amount
 
 func build_scout(source: Planet, destination: Planet) -> ScoutShip:
 	if not can_build_scout(source) or destination == null or destination == source:
@@ -95,7 +96,11 @@ func build_scout(source: Planet, destination: Planet) -> ScoutShip:
 	if state == null or not get_scan_destinations(source).has(destination):
 		return null
 	var config := get_ship_config()
-	if not state.spend_faction_resource(faction, config.scout_build_cost_resource, config.scout_build_cost_amount):
+	var starter: bool = state.get_starter_scouts(faction) > 0
+	if starter:
+		if not state.consume_starter_scout(faction):
+			return null
+	elif not state.spend_faction_resource(faction, config.scout_build_cost_resource, config.scout_build_cost_amount):
 		return null
 	var route_path := _route(source, destination)
 	var duration := _flight_duration(route_path)
@@ -109,24 +114,13 @@ func build_scout(source: Planet, destination: Planet) -> ScoutShip:
 	scout.start_flight()
 	return scout
 
-func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName) -> ShipBase:
+func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName, role: StringName = &"") -> ShipBase:
 	if not _enabled or source == null or destination == null or destination == source:
 		return null
-	var state: Node = _game_state()
-	if state == null or not state.has_ship_assembly(source.planet_id, ship_id):
+	var conflict_manager: Node = _field.get_node_or_null("ConflictManager") if _field != null else null
+	if conflict_manager == null or not conflict_manager.has_method("dispatch_ship"):
 		return null
-	var fleet: FleetSnapshot = state.create_fleet_from_planet(source.planet_id, [ship_id], get_part_catalog())
-	if fleet == null or fleet.ships.is_empty():
-		return null
-	var route_path := _route(source, destination)
-	var duration := _fleet_flight_duration(route_path, fleet)
-	var ship: ShipBase = SHIP_BASE_SCENE.instantiate()
-	ship.name = "Ship_%s_%s" % [source.name, destination.name]
-	add_child(ship)
-	ship.configure(fleet, destination, route_path, duration, get_part_catalog())
-	ship.arrived.connect(_on_ship_base_arrived)
-	ship.start_flight()
-	return ship
+	return conflict_manager.call("dispatch_ship", source, destination, ship_id, role) as ShipBase
 
 func _on_ship_base_arrived(ship: Node2D) -> void:
 	var ship_base: ShipBase = ship as ShipBase
@@ -151,6 +145,24 @@ func _on_scout_arrived(scout: Node2D) -> void:
 	if is_instance_valid(scout):
 		scout.queue_free()
 
+func get_ship_destinations(source: Planet, role: StringName = &"military") -> Array[Planet]:
+	var result: Array[Planet] = []
+	if source == null or _network == null or not is_instance_valid(_network):
+		return result
+	var state: Node = _game_state()
+	if state == null or not _network.has_method("get_route_destinations"):
+		return result
+	for candidate in _network.get_route_destinations(source):
+		var planet: Planet = candidate as Planet
+		if planet == null or planet == source:
+			continue
+		if role == &"colony":
+			if planet.get_faction() == GameState.FACTION_NEUTRAL and state.has_scanned_planet(source.get_faction(), planet.planet_id):
+				result.append(planet)
+		elif planet.get_faction() != source.get_faction():
+			result.append(planet)
+	return result
+
 func get_scan_destinations(source: Planet) -> Array[Planet]:
 	var result: Array[Planet] = []
 	if source == null:
@@ -163,7 +175,7 @@ func get_scan_destinations(source: Planet) -> Array[Planet]:
 		candidates = _network.get_neighbors(source)
 	for candidate in candidates:
 		var planet: Planet = candidate as Planet
-		if planet != null and not state.is_known(planet.planet_id, source.get_faction()):
+		if planet != null and planet.get_faction() == GameState.FACTION_NEUTRAL and not state.is_known(planet.planet_id, source.get_faction()):
 			result.append(planet)
 	return result
 
@@ -191,15 +203,22 @@ func buy_part(source: Planet, part_id: StringName) -> bool:
 		return false
 	return state.buy_ship_part(source.planet_id, part_id, get_part_catalog())
 
-func can_assemble_ship(source: Planet, hull_id: StringName, scanner_id: StringName, module_ids: Array, weapon_id: StringName = &"", drive_id: StringName = &"", shield_id: StringName = &"") -> bool:
-	var state: Node = _game_state()
-	return _enabled and source != null and state != null and state.can_assemble_ship(source.planet_id, hull_id, scanner_id, module_ids, get_part_catalog(), weapon_id, drive_id, shield_id)
-
-func assemble_ship(source: Planet, hull_id: StringName, scanner_id: StringName, module_ids: Array, weapon_id: StringName = &"", drive_id: StringName = &"", shield_id: StringName = &"", blueprint_id: StringName = &"", instance_seed: int = -1) -> StringName:
+func can_assemble_ship(source: Planet, hull_id: StringName, scanner_id: StringName, module_ids: Array, weapon_id: StringName, drive_id: StringName, shield_id: StringName) -> bool:
 	var state: Node = _game_state()
 	if not _enabled or source == null or state == null:
+		return false
+	if not state.has_planet_upgrade(source.planet_id, SHIPYARD_UPGRADE_ID):
+		return false
+	var occupied_slots: int = state.get_ship_build_jobs(source.planet_id).size() + state.get_ship_assemblies(source.planet_id).size()
+	if occupied_slots >= source.get_build_slot_count():
+		return false
+	return state.can_assemble_ship(source.planet_id, hull_id, scanner_id, module_ids, get_part_catalog(), weapon_id, drive_id, shield_id)
+
+func assemble_ship(source: Planet, hull_id: StringName, scanner_id: StringName, module_ids: Array, weapon_id: StringName, drive_id: StringName, shield_id: StringName, blueprint_id: StringName = &"", instance_seed: int = -1, ship_role: StringName = &"") -> StringName:
+	var state: Node = _game_state()
+	if not can_assemble_ship(source, hull_id, scanner_id, module_ids, weapon_id, drive_id, shield_id):
 		return &""
-	var ship_id: StringName = state.assemble_ship(source.planet_id, hull_id, scanner_id, module_ids, get_part_catalog(), weapon_id, drive_id, shield_id, blueprint_id, instance_seed) as StringName
+	var ship_id: StringName = state.assemble_ship(source.planet_id, hull_id, scanner_id, module_ids, get_part_catalog(), weapon_id, drive_id, shield_id, blueprint_id, instance_seed, ship_role) as StringName
 	if not String(ship_id).is_empty():
 		refresh_ship_display(source)
 	return ship_id
@@ -263,6 +282,26 @@ func refresh_ship_display(source: Planet) -> void:
 		utility_variants.append(utility_variant)
 	view_variants[&"utility"] = utility_variants
 	hangar.show_ship_parts(hull, scanner, drive, weapon, shield, module_parts, source.get_faction(), view_variants)
+	var role: String = String(assembly.get("role", "colony")).to_upper()
+	var remaining: float = float(assembly.get("remaining", 0.0))
+	var summary: String = "%s · %s" % [role, hull.display_name if hull != null else "SHIP"]
+	hangar.set_build_readback(summary, _ship_readback_tooltip(cat, assembly), remaining)
+
+func _ship_readback_tooltip(catalog: ShipPartCatalog, assembly: Dictionary) -> String:
+	var fleet := FleetSnapshot.new()
+	fleet.faction = GameState.FACTION_PLAYER
+	fleet.ships = [assembly.duplicate(true)]
+	fleet.calculate_stats(catalog)
+	var lines: Array[String] = ["Rolle: %s" % String(assembly.get("role", "colony")).to_upper()]
+	for slot_name in [&"hull", &"drive", &"weapon", &"shield", &"scanner"]:
+		var part: ShipPartDefinition = catalog.resolve(assembly.get(slot_name, &"") as StringName)
+		if part == null:
+			continue
+		var variant_ids: Dictionary = assembly.get("variants", {}) as Dictionary
+		var variant: ShipComponentVariant = catalog.resolve_variant(part, variant_ids.get(slot_name, &"") as StringName)
+		lines.append("%s: %s%s" % [String(slot_name).capitalize(), part.display_name, " / " + variant.display_name if variant != null else ""])
+	lines.append("Stats: HP %.0f · DPS %.1f · Range %.0f · Speed x%.2f" % [fleet.total_hull_hp, fleet.total_dps, fleet.effective_range, fleet.transfer_speed_multiplier()])
+	return "\\n".join(lines)
 
 func get_active_build_count(source: Planet) -> int:
 	return get_active_build_count_by_id(source.planet_id) if source != null else 0
@@ -300,11 +339,9 @@ func _flight_duration(route_path: Array[Vector2]) -> float:
 	return distance / maxf(config.scout_speed, 1.0)
 
 func _fleet_flight_duration(route_path: Array[Vector2], fleet: FleetSnapshot) -> float:
-	var distance := 0.0
-	for index in range(route_path.size() - 1):
-		distance += route_path[index].distance_to(route_path[index + 1])
-	var speed: float = fleet.speed if fleet != null and fleet.speed > 0.0 else get_ship_config().scout_speed
-	return distance / maxf(speed, 1.0)
+	var distance: float = PathUtils.distance(route_path)
+	var multiplier: float = fleet.transfer_speed_multiplier() if fleet != null else 1.0
+	return FLIGHT_TIME_SCRIPT.seconds_for_ship(distance, fleet.ships.size() if fleet != null else 1, preload("res://resources/config/transit_default.tres"), multiplier)
 
 func _hull_texture() -> Texture2D:
 	return _tech_asset(get_ship_config().scout_hull_tech_id, DEFAULT_HULL_TEXTURE)

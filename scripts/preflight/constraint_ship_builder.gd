@@ -39,12 +39,16 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	# --- PACING: hull carries the tier base; weapon and modules extend it ---
 	var hull_t2: ShipPartDefinition = catalog.resolve(&"hull_t2")
+	var hull_t3: ShipPartDefinition = catalog.resolve(&"hull_t3")
 	if not ctx.check(
-		hull_part.build_time == 60.0
-		and hull_t2 != null and hull_t2.build_time == 120.0
+		hull_part.build_time == 63.0
+		and hull_t2 != null and hull_t2.build_time == 123.0
+		and hull_t3 != null and hull_t3.build_time == 183.0
 		and weapon_part.build_time == 15.0
+		and drive_part.build_time == 6.0
+		and shield_part.build_time == 6.0
 		and module_part.build_time == 10.0,
-		"build time should scale with hull tier (60/120s) plus weapon and modules"):
+		"build time should scale with hull tier (63/123/183s) plus ship components"):
 		return false
 	if not ctx.check(not catalog.for_slot(ShipPartDefinition.SLOT_UTILITY).is_empty(), "ship part catalog is missing the utility slot"):
 		return false
@@ -125,12 +129,19 @@ func run(ctx: PreflightContext) -> bool:
 
 	if not ctx.check(not game_state.can_assemble_ship(source.planet_id, hull_part.id, scanner_part.id, [module_part.id, module_part.id], catalog, &"", drive_part.id, shield_part.id), "assembling beyond module ownership should be rejected"):
 		return false
+	if not ctx.check(not game_state.can_assemble_ship(source.planet_id, hull_part.id, scanner_part.id, [], catalog, &"", &"", shield_part.id), "assembly without a drive must be rejected"):
+		return false
+	if not ctx.check(not game_state.can_assemble_ship(source.planet_id, hull_part.id, scanner_part.id, [], catalog, &"", drive_part.id, &""), "assembly without a shield must be rejected"):
+		return false
 	var ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [module_part.id], &"", drive_part.id, shield_part.id)
 	if not ctx.check(not String(ship_id).is_empty(), "ship assembly did not start (ship_id=%s)" % ship_id):
 		return false
 	if not ctx.check(game_state.call("ship_build_in_progress", source.planet_id, ship_id), "timed ship build was not queued"):
 		return false
 	if not ctx.check(not game_state.has_ship_assembly(source.planet_id, ship_id), "ship build should not register before the timer completes"):
+		return false
+	var build_remaining: float = game_state.ship_build_remaining(source.planet_id, ship_id)
+	if not ctx.check(build_remaining > 63.0, "complete T1 loadout should take its hull base plus component assembly time"):
 		return false
 	game_state.call("advance_builds", 999.0)
 	if not ctx.check(game_state.has_ship_assembly(source.planet_id, ship_id), "ship assembly did not register after the build timer (ship_id=%s)" % ship_id):
@@ -206,6 +217,9 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 
 	# --- FLYING SHIPBASE: dispatch consumes the assembly and spawns a flyable instance ---
+	var conflict_manager: Node = field.get_node_or_null("ConflictManager")
+	if not ctx.check(conflict_manager != null and conflict_manager.has_method("preview_duration"), "ConflictManager runtime module is missing"):
+		return false
 	var flight_ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [], weapon_part.id, drive_part.id, shield_part.id)
 	if not ctx.check(not String(flight_ship_id).is_empty(), "flight ship assembly did not start"):
 		return false
@@ -220,6 +234,11 @@ func run(ctx: PreflightContext) -> bool:
 			break
 	if not ctx.check(flight_destination != null, "no disposable neutral planet available for ship flight test"):
 		return false
+	var preview_duration: float = float(conflict_manager.call("preview_duration", source, flight_destination, flight_ship_id))
+	var source_assembly_before_preview: Dictionary = game_state.get_ship_assembly(source.planet_id, flight_ship_id)
+	var preview_fleet: FleetSnapshot = game_state.preview_fleet_from_planet(source.planet_id, [flight_ship_id], catalog)
+	if not ctx.check(preview_fleet != null and preview_fleet.ships.size() == 1 and game_state.has_ship_assembly(source.planet_id, flight_ship_id) and not source_assembly_before_preview.is_empty(), "fleet preview must not consume the source assembly"):
+		return false
 	var ship_base: ShipBase = ship_manager.dispatch_ship(source, flight_destination, flight_ship_id)
 	if not ctx.check(ship_base != null, "dispatch_ship did not spawn a flyable ShipBase"):
 		return false
@@ -229,6 +248,8 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(ship_base.destination == flight_destination, "flyable ShipBase lost its destination"):
 		return false
+	if not ctx.check(absf(preview_duration - ship_base.flight_duration()) <= 0.01, "drive trait flight preview and actual ShipBase duration diverged"):
+		return false
 	var ship_visual: CompositeShipView = ship_base.get_node_or_null("ShipVisual") as CompositeShipView
 	if not ctx.check(ship_visual != null and ship_visual.get_node_or_null("WeaponOverlay").visible and ship_visual.get_node_or_null("EngineOverlay").visible and ship_visual.get_node_or_null("ShieldOverlay").visible, "flyable ShipBase did not composite its drive/weapon/shield overlays"):
 		return false
@@ -237,5 +258,31 @@ func run(ctx: PreflightContext) -> bool:
 	ship_base.call("_arrive")
 	await ctx.await_frame()
 	if not ctx.check(not is_instance_valid(ship_base), "arrived ShipBase was not freed after resolving arrival"):
+		return false
+
+	# The first successful builder ship is a colony ship and creates a milestone.
+	var colony_destination: Planet = null
+	for neighbor_value in ctx.network.get_neighbors(source):
+		var neighbor_planet: Planet = neighbor_value as Planet
+		if neighbor_planet != null and neighbor_planet.get_faction() == GameState.FACTION_NEUTRAL and game_state.has_scanned_planet(GameState.FACTION_PLAYER, neighbor_planet.planet_id):
+			colony_destination = neighbor_planet
+			break
+	if not ctx.check(colony_destination != null, "no scanned neutral neighbor available for the first colony milestone"):
+		return false
+	for colony_part in [hull_part, scanner_part, drive_part, shield_part]:
+		if not ctx.check(ship_manager.buy_part(source, colony_part.id), "colony ship part purchase failed for %s" % colony_part.id):
+			return false
+	var colony_ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [], &"", drive_part.id, shield_part.id, &"", -1, &"colony")
+	if not ctx.check(not String(colony_ship_id).is_empty(), "colony ship build did not start"):
+		return false
+	game_state.call("advance_builds", 999.0)
+	var colony_ship: ShipBase = ship_manager.dispatch_ship(source, colony_destination, colony_ship_id, &"colony")
+	if not ctx.check(colony_ship != null and conflict_manager.call("active_ship_count") == 1, "colony ship was not routed through ConflictManager"):
+		return false
+	colony_ship.call("_arrive")
+	await ctx.await_frame()
+	if not ctx.check(colony_destination.get_faction() == GameState.FACTION_PLAYER and game_state.has_milestone(GameState.FACTION_PLAYER, &"first_colony"), "successful colony ship did not settle the planet or create first_colony milestone"):
+		return false
+	if not ctx.check(not game_state.mark_milestone(GameState.FACTION_PLAYER, &"first_colony"), "first_colony milestone must be idempotent"):
 		return false
 	return true

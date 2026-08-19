@@ -17,6 +17,10 @@ var _edges: Array[Array] = []
 ## waypoint midpoints). _draw() uses this array to dim/skip edges that lie
 ## outside the player's fog-of-war frontier without re-resolving nodes.
 var _edge_endpoints: Array[Array] = []
+## Per-planet neighbor map covering both grid edges and K-nearest long-range
+## edges. Single source of truth for PlanetNetwork.get_neighbors() — the slot
+## grid is no longer authoritative on its own.
+var _planet_neighbors: Dictionary = {}
 var _next_point_id := 1
 var _rebuild_queued := false
 var _is_built := false
@@ -50,6 +54,7 @@ func rebuild() -> void:
 	_next_point_id = 1
 	_is_built = false
 	_edge_endpoints.clear()
+	_planet_neighbors.clear()
 
 	var planets: Array[Planet] = []
 	for child in get_parent().get_children():
@@ -71,9 +76,11 @@ func rebuild() -> void:
 		var slot: int = int(planet.get_meta("layout_slot", -1))
 		if slot >= 0:
 			slot_planets[slot] = planet
+		_planet_neighbors[planet] = [] as Array[Node2D]
 
 	var processed_edges: Dictionary = {}
 	var edge_index := 0
+	var grid_edge_pairs: Array = []
 	for first in planets:
 		var first_slot: int = int(first.get_meta("layout_slot", -1))
 		if first_slot < 0:
@@ -114,9 +121,49 @@ func rebuild() -> void:
 			_edges.append([midpoint, second.global_position])
 			_edge_endpoints.append([first, null])
 			_edge_endpoints.append([null, second])
+			_record_neighbor_pair(first, second)
+			grid_edge_pairs.append([first, second])
 			edge_index += 1
+
+	# Layer 2: deterministic K-nearest long-range edges. Bounded by
+	# NavigationConfig (which can inherit the WorldConfig ratio/cap). Grid
+	# edges are excluded so the K-nearest layer is purely additive.
+	var knn_ratio: float = waypoint_config.resolved_graph_neighbor_ratio(config)
+	var knn_cap: int = waypoint_config.resolved_max_extra_edges(config)
+	var knn_edges: Array = WorldGenerator.build_knn_edges(planets, knn_ratio, knn_cap, grid_edge_pairs)
+	for entry in knn_edges:
+		var first: Planet = entry[0] as Planet
+		var second: Planet = entry[1] as Planet
+		if first == null or second == null:
+			continue
+		_connect_graph_points(_point_ids[first], _point_ids[second])
+		_edges.append([first.global_position, second.global_position])
+		_edge_endpoints.append([first, second])
+
 	_is_built = not _point_ids.is_empty()
 	queue_redraw()
+
+func get_neighbors_for_planet(planet: Node2D) -> Array[Node2D]:
+	if not _is_built:
+		rebuild()
+	var cached: Variant = _planet_neighbors.get(planet)
+	if cached == null:
+		return []
+	return (cached as Array).duplicate() as Array[Node2D]
+
+func _record_neighbor_pair(first: Node2D, second: Node2D) -> void:
+	if not _planet_neighbors.has(first):
+		_planet_neighbors[first] = [] as Array[Node2D]
+	if not _planet_neighbors.has(second):
+		_planet_neighbors[second] = [] as Array[Node2D]
+	var first_list: Array = _planet_neighbors[first]
+	var second_list: Array = _planet_neighbors[second]
+	if not first_list.has(second):
+		first_list.append(second)
+		_planet_neighbors[first] = first_list
+	if not second_list.has(first):
+		second_list.append(first)
+		_planet_neighbors[second] = second_list
 
 func find_route(source: Node2D, destination: Node2D) -> Array[Vector2]:
 	if not _is_built:

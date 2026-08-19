@@ -1,8 +1,29 @@
+<div align="center">
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║   TECHNISCHES FELDHANDBUCH // EISEN-GRENZE                   ║
+║   KLASSIFIZIERUNG: INTERN (aber wir versionieren es eh)      ║
+║   DOKTRIN: Code schlägt Dokument. Immer.                     ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+</div>
+
 # SnipWar Design Contract
 
-**Stand:** 19. August 2026
-**Quelle:** Laufzeitcode, Resources, Szenen und `scripts/preflight.gd`.
+> *„Wenn dieses Dokument und der Code voneinander abweichen, gilt der Code.*  
+> *Wer dem Dokument blind vertraut, hat noch nicht genug Commits gesehen.“*
+
+**Stand:** August 2026  
+**Quelle:** Laufzeitcode, Resources, Szenen und `scripts/preflight.gd`.  
 **Regel:** Wenn dieses Dokument und der Code voneinander abweichen, gilt der Code. Eine geplante Regel darf hier erst als implementiert erscheinen, wenn sie einen Laufzeitverbraucher und Preflight-Abdeckung besitzt.
+
+---
+
+*📖 Lore und Weltbeschreibung: [`LORE.md`](LORE.md) — 📡 Frontlage: [`README.md`](README.md)*
+
+---
 
 ## 1. Aktueller Status
 
@@ -45,27 +66,33 @@ Worker-Spawning ist am Start deaktiviert. Die Timer existieren, bleiben aber ges
 
 PlanetDetails sind seed-basiert und zählen logische Detailtypen. Das Standardprofil und das Toxic-Profil validieren sich separat; Toxic garantiert Satellit und Asteroidengürtel und kann einen Kometen enthalten. Bewegungsprofile sind pro Detail `full`, `throttled` oder `static`.
 
-Navigation erzeugt genau einen Moon-/Comet-Waypoint pro Layout-Nachbarschaftskante. `NavigationField.find_route()` liefert den gemeinsamen Pfad für Preview und Transit. Das Standardrouting erlaubt jedes Ziel, routet aber trotzdem über dieses Graphnetz; `wide` beschränkt die Zielliste auf Nachbarn.
+Navigation erzeugt genau einen Moon-/Comet-Waypoint pro Layout-Nachbarschaftskante und überlagert diese Kanten mit einem prozentualen K-Nearest-Langstrecken-Layer (`WorldConfig.graph_neighbor_ratio`: `ceil((n-1) × ratio)` nächste Nachbarn je Planet, symmetrisch dedupliziert, durch `max_extra_edges` gedeckelt). Die KNN-Kanten verbinden Planeten direkt ohne Waypoint-Mittelpunkt; AStar2D wählt automatisch den kürzeren Weg. `NavigationField` ist die einzige Quelle der Wahrheit: `get_neighbors_for_planet()` liefert die vereinigte Nachbarschaft an `PlanetNetwork.get_neighbors()` und damit an Preview, Worker-Transit, Scout und ShipBase. `find_route()` liefert den gemeinsamen Pfad für Preview und Transit. Das Standardrouting erlaubt jedes Ziel, routet aber trotzdem über dieses Graphnetz; `wide` beschränkt die Zielliste auf Nachbarn.
 
-Das Layout skaliert über `WorldGenerator` und `WorldConfig`: `target_planet_count` (0 = Kataloggröße) erweitert die Welt deterministisch, indem zusätzliche Planeten aus den Basis-Templates gewürfelt werden (die ersten Katalogplaneten behalten ihre Identität für Homeworld-/Faction-Seeding); `columns = 0` leitet die Spaltenzahl aus dem Seitenverhältnis ab; `extra_large_ratio`/`large_ratio` skalieren Größenklassen prozentual. `resolved_columns()` und `resolved_size_class_counts()` sind die gemeinsame Quelle für `SeededLayout`, `NavigationField` und `PlanetNetwork`. Der Hintergrund rendert in Weltkoordinaten (`design_size`), nicht in Viewport-Koordinaten, damit eine über den Viewport hinauswachsende Welt (FOV/LoD) konsistent bleibt.
+Das Layout skaliert über `WorldGenerator` und `WorldConfig`: `target_planet_count` (0 = Kataloggröße) erweitert die Welt deterministisch, indem zusätzliche Planeten aus den Basis-Templates gewürfelt werden (die ersten Katalogplaneten behalten ihre Identität für Homeworld-/Faction-Seeding); `columns = 0` leitet die Spaltenzahl aus dem Seitenverhältnis ab; `extra_large_ratio`/`large_ratio` skalieren Größenklassen prozentual. `WorldConfig.growth_factor` ist ein multiplikativer Flächenfaktor (1.0 = Standard): `WorldGenerator.resolve_runtime_world` dupliziert die authored WorldConfig vor dem Scene-Boot und wendet `sqrt(growth_factor)` auf `design_size` und `growth_factor` linear auf `target_planet_count` an, sodass die strategische Dichte stabil bleibt. Die Mutation landet nur auf der Runtime-Kopie; die `.tres`-Datei wird nie überschrieben. `resolved_columns()`, `resolved_size_class_counts()`, `resolved_design_size()` und `resolved_target_planet_count()` sind die gemeinsame Quelle für `SeededLayout`, `NavigationField`, `PlanetNetwork` und `MeteorField`. Der Hintergrund rendert in Weltkoordinaten (`design_size`), nicht in Viewport-Koordinaten, damit eine über den Viewport hinauswachsende Welt (FOV/LoD) konsistent bleibt.
 
-## 4. GameState als autoritative Quelle
+## 4. GameState als autoritative Quelle (Domain-Facade)
 
-`GameState` besitzt:
+`GameState` fungiert als zentrale Fassade (`Facade-Pattern`) und delegiert spezialisierte Domänenaufgaben an 4 interne Sub-Manager (`scripts/state/domains/`):
 
-- Ownership/Factions und Homeworlds
-- Worker-Startwerte
-- Planetressourcen-Zuordnung
-- Planet-Upgrades
-- globale und planetare Forschung
-- Discovery- und Scan-Intel
-- Worker-Factories und Gathering-Zustand
-- Faction-Vaults
-- Ship-Part-Inventare und Ship-Assemblies
+1. **`FactionDomain`**: Ownership/Factions, Homeworlds, Start-Worker, Discovery- und Scan-Intel, Milestones & Starter-Scouts.
+2. **`EconomyDomain`**: Faction-Vaults, Ressourcen-Deals (`deal_resources`), Planet-Upgrades, Worker-Factories, persistente Gatherer & Wartung.
+3. **`TechDomain`**: Globale und planetare Technologien, Forschungs-Voraussetzungen und zeitgesteuerte Research-Jobs.
+4. **`ShipDomain`**: Schiffsteile-Inventare, modulare Schiffsmontage (`assemble_ship`), Zerlegung, Bau-Jobs und Flotten-Snapshots (`FleetSnapshot`).
+
+Alle öffentlichen APIs, Signale und Preflight-Schnittstellen von `GameState` bleiben als 100% abwärtskompatible Delegaten erhalten.
 
 Planeten spiegeln Faction-Änderungen über `faction_changed`. Ein Capture darf nicht durch direkte Planet-zu-Planet-Ownership-Logik erfolgen.
 
-`reset_from_catalog()` leert Upgrades, Vaults, Forschung, Intel, Gathering und Ship-Builder-Zustand. PlanetDetails entfernt daraufhin Upgrade-Strukturen.
+`reset_from_catalog()` setzt alle 4 Domänen zurück. `PlanetDetails` entfernt daraufhin Upgrade-Strukturen.
+
+### UI- & Komponenten-Architektur
+- **`TechnologyMenu`**: Wurde in 4 spezialisierte Sub-Views unterteilt (`scripts/ui/tech_menu/`):
+  - `TechResearchView`: Globale Technologie-Karten & Countdowns.
+  - `TechScoutView`: Scout-Flug & Worker-Fertiger-Bau.
+  - `TechShipBuilderView`: Schiffsteile-Shop, Hangar-Montage & Job-Countdowns.
+  - `TechPlanetView`: Bekannte Planeten, Intel-Analyse & planetare Forschung.
+- **`UIBaseUtils`** (`scripts/ui/ui_base_utils.gd`): Zentraler Helper für `style_box`, `make_label`, `make_separator` und `apply_button_theme`.
+- **`PlanetView`** (`scripts/objects/planets/planet_view.gd`): Kapselt reine CanvasItem-Zeichenroutinen (`_draw`, Faction-Ringe, StrengthLabel-Positionierung) getrennt von der Gameplay-Logik in `Planet.gd`.
 
 ## 5. Ressourcen und Wirtschaft
 
@@ -129,43 +156,36 @@ Der Default-TechnologyCatalog enthält:
 
 Globale Forschung liegt pro Fraktion vor. Planetare Forschung liegt pro Planet vor und darf nur auf einem eigenen bekannten Planeten stattfinden. Planetare Forschung beeinflusst aktuell die Produktionsmultiplikation.
 
-Ein Scout benötigt:
+Der neue Spieler erhält genau einen kostenlosen Start-Scout. Dieser benötigt zunächst keine Werft- oder Scout-Forschung, aber weiterhin einen eigenen Planeten, einen freien Bauplatz und einen unbekannten neutralen Layout-Nachbarn als Ziel. Nach Verbrauch des Start-Scouts benötigen weitere Scouts Upgrade `shipyard`, `scout_hull`, `scanner_drone`, Baukosten und einen freien Bauplatz.
 
-- eigenen Planeten
-- Upgrade `shipyard`
-- `scout_hull` und `scanner_drone`
-- Baukosten
-- freien Bauplatz
-- unbekannten Layout-Nachbarn als Ziel
-
-`ScoutShip` fliegt `NavigationField.find_route()`, scannt bei Ankunft Ressourcen-ID, Größen-ID und Bauplätze und wird anschließend freigegeben.
+CPU-Homeworlds, bekannte Planeten und Nicht-Nachbarn sind keine Scout-Ziele. `ScoutShip` fliegt `NavigationField.find_route()`, scannt bei Ankunft Ressourcen-ID, Größen-ID und Bauplätze und wird anschließend freigegeben; der Scan bleibt bei Ankunft sofortig.
 
 ## 8. Ship Builder: aktueller Umfang
 
-`ShipPartCatalog` enthält die Slottypen Hull, Antrieb, Waffe, Schild, Scanner und Module sowie zwei maximale Modulplätze. Der Default-Katalog enthält zwei Hüllen (T1/T2), einen Antrieb, ein Impulsgeschütz, einen Schild, einen Scanner und drei Module; Antrieb, Waffe und Schild tragen Varianten-Pools (gewichtete, seed-deterministische Auswahl mit sichtbaren Overlays).
+`ShipPartCatalog` enthält die Slottypen Hull, Antrieb, Waffe, Schild, Scanner und Module sowie zwei maximale Modulplätze. Der Default-Katalog enthält drei Hüllen (T1/T2/T3), mehrere Antriebe, Impulsgeschütze und Schilde, einen Scanner und drei Module; Antrieb, Waffe und Schild tragen Varianten-Pools (gewichtete, seed-deterministische Auswahl mit sichtbaren Overlays).
 
-Kaufen, Montieren und Zerlegen sind in `GameState`, `ShipManager` und `TechnologyMenu` implementiert. Eine Assembly besteht aktuell aus:
+Kaufen, Montieren und Zerlegen sind in `GameState`, `ShipManager` und `TechnologyMenu` implementiert. Jede Assembly verlangt einen vollständigen Loadout:
 
 ```text
 hull + drive + shield + scanner + optional weapon + module_ids
 ```
 
-Ein Schiff mit Waffe gilt als militärisch — der erste bewaffnete Bauauftrag ist das erste Militärschiff (Worker-Fertiger und Scout bleiben separate Pfade).
+Drive und Shield sind Pflichtfelder in allen Assembly-APIs. Ein unbewaffneter Loadout wird als Kolonieschiff geführt, ein Loadout mit Waffe als Militärschiff. Worker-Fertiger und Scout bleiben separate Pfade.
 
-**Tech-Gating:** Jedes Bauteil trägt `required_tech_id`; der Kauf ist gesperrt, bis die Fraktion die Technologie erforscht hat. `hull_t1` braucht `shipyard_construction`, `scanner_t1` braucht `scanner_drone`, `hull_t2`/`weapon_t1` brauchen `weapon_systems`. Das verhindert, dass sinnlose Optionen ohne Progression nutzbar sind.
+**Tech-Gating:** Jedes Bauteil trägt `required_tech_id`; der Kauf ist gesperrt, bis die Fraktion die Technologie erforscht hat. Der Default-Katalog enthält T1/T2/T3-Rümpfe sowie mehrere auswählbare Drive-, Weapon- und Shield-Komponenten. Jede dieser Komponenten besitzt zusätzlich einen gewichteten, seed-deterministischen Variant-Pool mit sichtbarem Overlay und Trait-Readback.
 
 **Timer statt Sofort-Freischaltung:** `TechnologyDefinition.research_time` und `ShipPartDefinition.build_time` machen Forschung und Montage zu zeitgesteuerten Aufträgen in `GameState` (`_research_jobs`, `_ship_build_jobs`). Kosten werden beim Start gezahlt; `advance_research()`/`advance_builds()` treiben die Jobs im Live-Spiel über `_process` voran (Preflight friert sie über `set_jobs_auto_advance(false)` ein und tickt deterministisch). `technology_researched`/`ship_assembled` feuern erst bei Abschluss.
 
-**Pacing:** Die Montagezeit skaliert mit Schiff und Modul: Der Rumpf trägt die Tier-Basiszeit (T1 = 60 s, T2 = 120 s), jedes Utility-Modul addiert +10 s und eine Waffe +15 s. Antrieb, Schild und Scanner sind Rumpf-Komponenten ohne eigene Montagezeit.
+**Pacing:** Der Rumpf trägt die Tier-Basiszeit T1 = 63 s, T2 = 123 s, T3 = 183 s. Drive, Shield, Scanner, Weapon und Utilities addieren komponentenabhängige Montagezeit, die mit der Rumpfstufe skaliert. Der Hangar zeigt Slot, Variant, Trait, abgeleitete Stats und die verbleibende Montagezeit als Live-Readback mit Tooltip.
 
-Assemblies sind weiterhin Inventar-/Display-Zustand. Sie werden nicht als Dispatch-Fleet oder Kampfeinheit verwendet. Der einzige aktiv fliegende Schiffstyp ist `ScoutShip`. Das Ersetzen der Worker-Missionstypen/K/M/L-Clustertiers durch fliegende Builder-Schiffe ist ein eigener Migrationsschritt und noch offen.
+Montierte Assemblies werden über `ConflictManager` als echte `ShipBase`-Transits gestartet. Kolonieschiffe besiedeln ausschließlich gescannte neutrale Ziele; die erste erfolgreiche Kolonisierung setzt den idempotenten Meilenstein `first_colony`. Militärische Assemblies werden am Ziel über FleetBattle-/Conquest-Simulatoren aufgelöst. Worker-Cluster bleiben für Worker-Missionen wie Collect und Cargo erhalten.
 
 ## 9. Missionen, Transit und Conflict Resolve
 
 `WorkerManager` unterstützt:
 
-- `military`: nutzt den einfachen militärischen Arrival-Resolve
-- `colony`: besiedelt ausschließlich neutrale Planeten friedlich
+- `military`: Worker-Missionen nutzen den bestehenden Arrival-Resolve; militärische ShipBase-Assemblies nutzen FleetBattle-/Conquest-Auflösung
+- `colony`: ShipBase-Kolonieschiffe besiedeln ausschließlich gescannte neutrale Planeten und markieren `first_colony`; Worker-Kolonietransit bleibt als Legacy-Pfad gültig
 - `cargo`: verstärkt ausschließlich eigene Planeten
 - `collect`: registriert Gatherer ausschließlich auf bekannten neutralen Scan-Zielen
 
@@ -231,8 +251,8 @@ Folgende Aussagen sind derzeit Zukunftsplanung und dürfen nicht als implementie
 
 - Isaac-artiger Ship-Item-Pool mit multiplikativen Loadout-Interaktionen
 - allgemeiner Objekt-/Transformer-/Trait-Child-Pool für alle Domänen
-- echte Ship-Fleet-Snapshots und mehrere einsatzfähige Schiffsklassen
-- Layer-2-Flottensimulation, Schiff-KI und animierte Raumkampf-Cutscene
+- mehrere parallel steuerbare Schiffsklassen und vollständige Fleet-Missionsauswahl
+- aktive Layer-2-Flotten-KI und animierte Raumkampf-Cutscene
 - Tower-Defense, Türme, aktive Garnisonsverteilung und Layer-3-Eroberung
 - Ship-as-Minion-Adapter und Mech-Kampflogik
 - Planetentypen als echte Ressourcen-Signaturen
@@ -264,6 +284,8 @@ Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgefü
 | Fundament | Seed-Layout, Größenprofile, Startgarnisonen und Bauplätze | Implementiert | `seeded_layout.gd`, `planet_size_profile.gd` |
 | Präsentation | PlanetDetails, Toxic-Garantien, Fidelity-Profile, Meteore, Starfield-Batches | Implementiert | `planet_details.gd`, `starfield_background.gd`, `preflight.gd` |
 | Navigation | Nachbarschaftsgraph, Waypoints, Routen, `all_planets`/`neighbors_only` | Implementiert | `navigation_field.gd`, `planet_network.gd` |
+| Navigation | K-Nearest-Langstrecken-Layer, Edge-Budget, KNN als AStar-Zusatzkanten | Implementiert | `world_generator.gd`, `navigation_field.gd` |
+| Weltwachstum | `growth_factor`-Flächenfaktor, sqrt-Skalierung X/Y, Runtime-Duplikat schützt `.tres` | Implementiert | `world_config.gd`, `world_generator.gd`, `starfield_background.gd` |
 | Besitz | GameState-Ownership, Faction-Signale, Homeworld- und Capture-Zustand | Implementiert | `game_state.gd`, `planet.gd` |
 | Ressourcen | Fünf Ressourcen, seed-deterministischer Deal, Homeworld-Differenz, Vaults | Implementiert | `game_state.gd`, `resource_pool_default.tres` |
 | Wirtschaft | Passive Produktion, Maintenance, Gather-Timer und persistente Sammeltrupps | Implementiert | `economy_manager.gd`, `game_state.gd`, `planet.gd` |
@@ -274,18 +296,18 @@ Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgefü
 | Traits | Produktion, Spawnrate, Defense-Rating, Transfer-Speed, sichtbarer Tier-Bonus | Implementiert | `trait_definition.gd`, `planet.gd`, Transitpfad |
 | Traits | Perimeter-Slots, Reichweite, allgemeiner Objekt×Transformer-Child-Pool | Teilweise | Datenfelder und einzelne Asset-Strukturen existieren; vollständige Verbraucher fehlen |
 | Forschung | Globale/planetare Technologien, Prerequisites und Discovery-Gates | Implementiert | `technology_catalog.gd`, `game_state.gd` |
-| Scouts | Werft-/Tech-/Kosten-/Nachbar-Gates, Flug, Scan-Intel und Freigabe | Implementiert | `ship_manager.gd`, `scout_ship.gd` |
-| Ship Builder | Teile kaufen, montieren, zerlegen und im Hangar visualisieren | Teilweise | Assemblies sind Inventar-/Display-Zustand, keine einsatzfähigen Schiffe |
-| Schiffe | Assemblies als aktive Flotten, Loadout-Traits und mehrere Schiffsklassen | Geplant | Nur `ScoutShip` fliegt aktuell |
+| Scouts | Ein kostenloser Start-Scout, danach Werft-/Tech-/Kosten-/Nachbar-Gates, Flug, Scan-Intel und Freigabe | Implementiert | `ship_manager.gd`, `scout_ship.gd`, `game_state.gd` |
+| Ship Builder | Teile kaufen, vollständige Drive-/Shield-Loadouts montieren, zerlegen, Varianten und Readback | Implementiert | `game_state.gd`, `ship_manager.gd`, `technology_menu.gd`, `shipyard_hangar.gd` |
+| Schiffe | Assemblies als aktive ShipBase-Transits mit Loadout-Traits und Rollen | Implementiert | `conflict_manager.gd`, `ship_base.gd`, `fleet_snapshot.gd` |
 | Transit | Slider, Flugzeit, K/M/L-Packung, Formation, Ankunfts-Resolve | Implementiert | `worker_manager.gd`, `worker_cluster.gd`, `flight_time.gd` |
 | Missionen | Military, Colony, Cargo und Collect mit missionsabhängigen Gates | Implementiert | `planet.gd`, `worker_manager.gd`, `planet_network.gd` |
 | CPU | Timer-basierter Colony-/Cargo-/Military-Dispatcher | Implementiert | `cpu_dispatch_ai.gd`, `cpu_dispatch_default.tres` |
 | Konflikt | Deterministischer Worker- plus Defense-Rating-Resolve | Implementiert | `Planet.resolve_arrival()` |
-| Layer 2 | KI-gesteuerte Flottensimulation mit BattleResult/Event-Stream | Geplant | Keine Battle- oder Fleet-Simulation vorhanden |
-| Layer 2 | Animierte Raumschlacht als Replay/Cutscene | Geplant | Keine Battle-Szene vorhanden |
+| Layer 2 | Deterministische Flottensimulation mit BattleResult/Event-Stream | Teilweise | Simulator und Replay-Daten existieren; aktive Ingame-KI/Cutscene bleibt später |
+| Layer 2 | Animierte Raumschlacht als Replay/Cutscene | Teilweise | BattleScene/Replays existieren; Live-Loop-Integration bleibt später |
 | Layer 3 | Planetare Tower-Defense und aktive Verteidigung | Geplant | Keine Turm-, Wave- oder Conquest-Szene vorhanden |
 | Layer 3 | Ship-as-Minion-Adapter mit visueller/logischer Adaption | Geplant | Keine Assault-Minions vorhanden |
-| Kampagne | Siegbedingungen, Kampagnenzustand und persistente Konfliktziele | Geplant | Kein Laufzeitmodell vorhanden |
+| Kampagne | `first_colony`-Meilenstein und persistenter Fortschrittsmarker | Teilweise | `game_state.gd`, `event_log.gd`; Dominanz-/Siegbedingungen bleiben später |
 | UI/Tools | Planet-Panel, VaultBar, TechnologyMenu, MessageFeed, PauseMenu, EventLog | Implementiert | `scripts/ui/*`, `planet_network.gd`, `event_log.gd` |
 
 ## 16. Umsetzungplan gegen das bestehende Fundament
@@ -375,14 +397,14 @@ Der erste vertikale Slice ist eine vorhandene Planetstruktur, danach ein Ship-Hu
 
 ### 16.7 Phase 4 — aktive Ship-Assemblies
 
-Die aktuelle Dictionary-Assembly wird in einen typisierten persistenten Zustand überführt, ohne `GameState` zum Scene-Manager zu machen.
+Der erste aktive Ship-Assembly-Slice ist implementiert: Dictionary-Zustand bleibt als kompatibler persistenter SSOT in `GameState`, während `ConflictManager` die autoritative Launch-/Transit-Orchestrierung übernimmt. Eine spätere typisierte Assembly-Resource kann diesen Zustand ersetzen, ohne `GameState` zum Scene-Manager zu machen.
 
-1. `ShipAssembly`/`ShipLoadoutSnapshot` enthält ID, Besitzer, Ursprungsplanet, Objekt-/Transformer-IDs, resolved Effects, Status (`hangar`, `transit`, `battle`, `destroyed`) und Mission-Rolle.
-2. `ShipPartDefinition` erhält slot-kompatible Effects und Rollenprofile. Die vorhandenen Hull-, Scanner- und Modul-Slots bleiben gültig; Waffen-/Antriebsrollen kommen als neue Module, nicht als Sonderfälle in `ShipManager`.
-3. `GameState` erhält atomare Methoden `reserve_ship`, `launch_ship`, `return_ship`, `destroy_ship` und `get_ship_snapshot`. Direkte Dictionary-Manipulation bleibt intern.
-4. `ShipManager` bleibt für Kauf, Assembly und Hangar zuständig. Ein neues `ConflictManager` übernimmt Fleet-Auswahl und Start.
-5. `FleetTransit` visualisiert eine Liste von Loadout-Snapshots. `WorkerCluster` bleibt der Worker-Transit und wird nicht mit Schiffsstatus überladen.
-6. Der erste aktive Slice unterstützt eine kleine Kampf-Flotte aus bereits montierten Assemblies. Der Scout-Scan bleibt separat und behält seine Tech-Gates.
+1. Der aktuelle Assembly-Dictionary-Zustand enthält ID, Rolle, Ursprungsplanet, Loadout, Variant-IDs und Build-/Hangarstatus; eine typisierte Resource ist ein späterer Härtungsschritt.
+2. `ShipPartDefinition` liefert slot-kompatible Traits, Varianten und visuelle Overlays. Hull, Scanner, Drive, Shield, Weapon und Utility bleiben getrennte Slots.
+3. `GameState` hält Assembly-/Build-SSOT; `ConflictManager` reserviert durch atomaren Fleet-Aufbau, startet und löst ShipBase-Transits auf.
+4. `ShipManager` bleibt für Kauf, Assembly, Scout und Hangar zuständig. `ConflictManager` übernimmt Fleet-Auswahl und Start.
+5. ShipBase visualisiert den Loadout-Snapshot. `WorkerCluster` bleibt der Worker-Transit und wird nicht mit Schiffsstatus überladen.
+6. Der erste aktive Slice unterstützt Kolonie- und Militär-Assemblies; der Scout-Scan bleibt separat und behält seine Tech-Gates.
 
 **Preflight:** keine Doppelstarts, Assembly bleibt nach Visual-Free erhalten, Launch sperrt das Inventar, Rückkehr gibt den korrekten Status frei, Verlust entfernt nur die betroffene Assembly und Catalog-Reset räumt aktive Transitvisuals auf.
 

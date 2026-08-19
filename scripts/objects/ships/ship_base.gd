@@ -7,15 +7,19 @@ signal arrived(ship: Node2D)
 
 var fleet: FleetSnapshot
 var destination: Planet
+var source_planet_id: StringName = &""
+var mission_role: StringName = &""
 
 var _route_path: Array[Vector2] = []
 var _duration := 0.0
 var _arrived := false
 var _view: CompositeShipView
 
-func configure(incoming_fleet: FleetSnapshot, destination_planet: Planet, route_path: Array[Vector2], duration: float, catalog: ShipPartCatalog = null) -> void:
+func configure(incoming_fleet: FleetSnapshot, destination_planet: Planet, route_path: Array[Vector2], duration: float, catalog: ShipPartCatalog = null, role: StringName = &"", source_id: StringName = &"") -> void:
 	fleet = incoming_fleet
 	destination = destination_planet
+	mission_role = role if not String(role).is_empty() else (fleet.mission_role if fleet != null else &"")
+	source_planet_id = source_id
 	_route_path = route_path.duplicate() if route_path.size() >= 2 else []
 	_duration = maxf(duration, 0.001)
 	_rebuild_visual(catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG)
@@ -32,6 +36,9 @@ func start_flight() -> void:
 		var segment_duration: float = _duration * segment_length / total_length if total_length > 0.0 else 0.0
 		tween.tween_property(self, "global_position", _route_path[index], segment_duration).set_trans(Tween.TRANS_LINEAR)
 	tween.finished.connect(Callable(self, "_arrive"))
+
+func flight_duration() -> float:
+	return _duration
 
 func has_arrived() -> bool:
 	return _arrived

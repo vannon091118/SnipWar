@@ -147,18 +147,20 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(game_state.can_research_planet_technology(GameState.FACTION_PLAYER, source.planet_id, &"planetary_extraction", tech_catalog), "planetary extraction should unlock after survey"):
 		return false
 
-	# Scout build gate: shipyard + researched hull/scanner + build cost.
+	# Scout build gate: one free starter scout, then shipyard + researched hull/scanner + build cost.
 	if not ctx.check(source != null, "player homeworld planet for scout test is missing"):
 		return false
-	if not ctx.check(not ship_manager.can_build_scout(source), "scout build should be blocked without a shipyard"):
+	if not ctx.check(game_state.get_starter_scouts(GameState.FACTION_PLAYER) == 1, "a fresh faction should receive exactly one starter scout"):
+		return false
+	if not ctx.check(ship_manager.can_build_scout(source), "the starter scout should not require a shipyard"):
 		return false
 	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_BIOMASS, 100)
 	if not ctx.check(game_state.purchase_upgrade(player_homeworld, &"shipyard", upgrade_catalog), "shipyard purchase for scout test should succeed"):
 		return false
-	if not ctx.check(ship_manager.can_build_scout(source), "scout build should succeed with shipyard + researched techs"):
+	if not ctx.check(ship_manager.can_build_scout(source), "scout build should succeed with starter scout or shipyard + researched techs"):
 		return false
 
-	# Build a scout toward an unknown planet and verify arrival discovers it.
+	# Build the one starter scout toward an unknown neutral planet and verify arrival discovers it.
 	var scan_destinations: Array[Planet] = ship_manager.get_scan_destinations(source)
 	var destination: Planet = null
 	for scan_candidate in scan_destinations:
@@ -201,7 +203,23 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(not game_state.discover_planet(GameState.FACTION_PLAYER, destination.planet_id), "discovering an already-known planet should be a no-op"):
 		return false
+	if not ctx.check(game_state.get_starter_scouts(GameState.FACTION_PLAYER) == 0, "the starter scout token was not consumed"):
+		return false
 	if not ctx.check(ship_manager.build_scout(source, destination) == null, "scout build should reject an already-known destination"):
+		return false
+	var second_destination: Planet = null
+	for second_candidate in ship_manager.get_scan_destinations(source):
+		if second_candidate != destination:
+			second_destination = second_candidate
+			break
+	if not ctx.check(second_destination != null, "the player needs a second unknown neutral neighbor for continued scout progression"):
+		return false
+	var second_scout: ScoutShip = ship_manager.build_scout(source, second_destination)
+	if not ctx.check(second_scout != null and game_state.get_starter_scouts(GameState.FACTION_PLAYER) == 0, "a researched second scout could not be built after the starter scout"):
+		return false
+	second_scout.call("_arrive")
+	await ctx.await_frame()
+	if not ctx.check(game_state.has_scanned_planet(GameState.FACTION_PLAYER, second_destination.planet_id), "the second scout did not reveal a second neutral neighbor"):
 		return false
 	var shipyard_hangar: ShipyardHangar = source.get_node_or_null("PlanetDetails/UpgradeStructure_shipyard/Hangar") as ShipyardHangar
 	if not ctx.check(shipyard_hangar != null and shipyard_hangar.build_slot_count == source.get_build_slot_count(), "shipyard hangar did not inherit planet build slots"):

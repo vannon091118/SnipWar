@@ -28,6 +28,12 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"requires_scene": false,
 	},
 	{
+		"id": "navigation_growth",
+		"script": preload("res://scripts/preflight/constraint_navigation_growth.gd"),
+		"desc": "World growth factor & K-nearest graph",
+		"requires_scene": false,
+	},
+	{
 		"id": "scene_boot",
 		"script": preload("res://scripts/preflight/constraint_scene_boot.gd"),
 		"desc": "Scene boot, starfield, viewport & world wiring",
@@ -55,6 +61,12 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"id": "upgrades_missions_and_ai",
 		"script": preload("res://scripts/preflight/constraint_upgrades_missions_and_ai.gd"),
 		"desc": "Upgrades, missions, CPU AI & economy",
+		"requires_scene": true,
+	},
+	{
+		"id": "selection_and_context",
+		"script": preload("res://scripts/preflight/constraint_selection_and_context.gd"),
+		"desc": "Selection service, aggregated overview & context menu",
 		"requires_scene": true,
 	},
 	{

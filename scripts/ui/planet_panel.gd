@@ -11,6 +11,7 @@ signal mission_selected(mission_type: StringName)
 signal amount_changed(value: float)
 signal send_pressed()
 signal layout_requested()
+signal clear_selection_pressed()
 
 var _theme_config: UIThemeConfig = DEFAULT_THEME
 var _upgrade_catalog: PlanetUpgradeCatalog = DEFAULT_UPGRADE_CATALOG
@@ -43,6 +44,11 @@ var _branch_expanded: Dictionary = {
 @onready var _count_list: VBoxContainer = get_node_or_null("MarginContainer/PanelScroll/Content/ScrollContainer/CountList")
 @onready var _margin: MarginContainer = get_node_or_null("MarginContainer")
 @onready var _content: VBoxContainer = get_node_or_null("MarginContainer/PanelScroll/Content")
+
+var _selection_count_label: Label = null
+var _selection_overview_box: VBoxContainer = null
+var _selection_clear_button: Button = null
+var _selection_total_label: Label = null
 
 func setup(theme_config: UIThemeConfig = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
@@ -186,7 +192,7 @@ func _apply_theme() -> void:
 		_count_list.add_theme_constant_override("separation", _theme_config.list_separation)
 
 func _style_box(background: Color, border: Color = Color.TRANSPARENT, border_width: int = 0, radius: int = 0) -> StyleBoxFlat:
-	return _theme_config.make_style_box(background, border, border_width, radius)
+	return UIBaseUtils.style_box(_theme_config, background, border, border_width, radius)
 
 func _connect_internal_signals() -> void:
 	if _destination_option != null and not _destination_option.item_selected.is_connected(_on_destination_selected):
@@ -435,6 +441,93 @@ func _on_buy_upgrade_pressed(planet_id: StringName, upgrade_id: StringName) -> v
 func set_selected_count(count: int) -> void:
 	_ensure_node_references()
 	_selected_count_label.text = "Einheiten: %d" % count
+
+func _ensure_selection_overview_controls() -> void:
+	if _content == null:
+		return
+	if _selection_count_label == null:
+		_selection_count_label = Label.new()
+		_selection_count_label.name = "SelectionCountLabel"
+		var heading_size: int = _theme_config.heading_font_size if _theme_config != null else 16
+		_selection_count_label.add_theme_font_size_override("font_size", heading_size)
+		_selection_count_label.add_theme_color_override("font_color", DEFAULT_TRANSFORMER_CONFIG.selection_ring_color if DEFAULT_TRANSFORMER_CONFIG != null else Color(0.6, 0.85, 1.0))
+		_selection_count_label.visible = false
+		_content.add_child(_selection_count_label)
+		_content.move_child(_selection_count_label, 0)
+	if _selection_overview_box == null:
+		_selection_overview_box = VBoxContainer.new()
+		_selection_overview_box.name = "SelectionOverview"
+		_selection_overview_box.visible = false
+		_content.add_child(_selection_overview_box)
+		_content.move_child(_selection_overview_box, 1)
+	if _selection_total_label == null:
+		_selection_total_label = Label.new()
+		_selection_total_label.name = "SelectionTotalLabel"
+		_selection_total_label.add_theme_font_size_override("font_size", _theme_config.selected_count_font_size if _theme_config != null else 12)
+		_selection_overview_box.add_child(_selection_total_label)
+	if _selection_clear_button == null:
+		_selection_clear_button = Button.new()
+		_selection_clear_button.name = "SelectionClearButton"
+		_selection_clear_button.text = "AUSWAHL AUFHEBEN"
+		_selection_clear_button.add_theme_font_size_override("font_size", _theme_config.tab_font_size if _theme_config != null else 14)
+		if not _selection_clear_button.pressed.is_connected(_on_selection_clear_pressed):
+			_selection_clear_button.pressed.connect(_on_selection_clear_pressed)
+		_selection_overview_box.add_child(_selection_clear_button)
+
+func _on_selection_clear_pressed() -> void:
+	clear_selection_pressed.emit()
+
+func set_selection_overview(selection: Array) -> void:
+	_ensure_node_references()
+	_ensure_selection_overview_controls()
+	if _selection_overview_box == null:
+		return
+	var show_overview: bool = selection.size() > 1
+	_selection_count_label.visible = show_overview
+	_selection_overview_box.visible = show_overview
+	if not show_overview:
+		return
+	_selection_count_label.text = "%d Planeten ausgewählt" % selection.size()
+	_rebuild_selection_overview(selection)
+
+func _rebuild_selection_overview(selection: Array) -> void:
+	# Remove generated rows before queue_free so repeated modifier clicks do not
+	# leave deferred children in the container or corrupt insertion indices.
+	for child in _selection_overview_box.get_children():
+		if child == _selection_total_label or child == _selection_clear_button:
+			continue
+		_selection_overview_box.remove_child(child)
+		child.queue_free()
+	# Spawn a row per selected planet with name + faction + worker count.
+	var total_workers: int = 0
+	var player_hits: int = 0
+	var cpu_hits: int = 0
+	var neutral_hits: int = 0
+	var state: Node = get_tree().root.get_node_or_null("GameState")
+	for planet in selection:
+		if planet == null or not is_instance_valid(planet):
+			continue
+		var planet_id: StringName = planet.get("planet_id") if planet.get("planet_id") != null else &""
+		var faction_id: StringName = state.faction_of(planet_id) if state != null else GameState.FACTION_NEUTRAL
+		var worker_value: Variant = planet.get("worker_count")
+		var workers: int = int(worker_value) if worker_value is int or worker_value is float else 0
+		total_workers += workers
+		match String(faction_id):
+			String(GameState.FACTION_PLAYER): player_hits += 1
+			String(GameState.FACTION_CPU): cpu_hits += 1
+			_: neutral_hits += 1
+		var row_label: Label = Label.new()
+		var faction_short: String = "[A]" if faction_id == GameState.FACTION_PLAYER else ("[B]" if faction_id == GameState.FACTION_CPU else "[·]")
+		row_label.text = " %s %s · %d Einheiten" % [faction_short, String(planet.name), workers]
+		row_label.add_theme_color_override("font_color", DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", faction_id))
+		_selection_overview_box.add_child(row_label)
+		if _selection_total_label != null:
+			_selection_overview_box.move_child(row_label, _selection_total_label.get_index())
+	if _selection_total_label != null:
+		var composition: String = "[A] %d · [B] %d · [·] %d" % [player_hits, cpu_hits, neutral_hits]
+		_selection_total_label.text = "Gesamt: %d Einheiten · %s" % [total_workers, composition]
+	layout_requested.emit()
+
 
 func update_count(planet: Node2D) -> void:
 	if not _count_labels.has(planet):

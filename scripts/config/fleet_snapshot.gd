@@ -8,6 +8,7 @@ const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/conf
 @export var faction: StringName = &"a"
 @export var source_planet_id: StringName = &""
 @export var destination_planet_id: StringName = &""
+@export var mission_role: StringName = &""
 @export var ships: Array[Dictionary] = []
 
 @export_group("Aggregated Stats")
@@ -94,6 +95,9 @@ func calculate_stats(catalog: ShipPartCatalog = null) -> void:
 
 	effective_range = max_range
 	speed = min_speed if ships.size() > 0 else 80.0
+
+func transfer_speed_multiplier() -> float:
+	return speed / 80.0 if ships.size() > 0 else 1.0
 
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
