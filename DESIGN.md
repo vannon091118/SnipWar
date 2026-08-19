@@ -26,20 +26,5 @@ SnipWar ist momentan ein spielbarer Overworld-Vertical-Slice: zehn deterministis
 
 ## Bewusst aus dem MVP herausgenommen
 
-- **Render-Budget-Kompression:** Ein Draw-Call-Median mit `250/225`-Hysterese wurde als mögliche spätere Messregel beschrieben, ist aber keine aktive Laufzeitlogik. Die aktuelle feste K/M/L-Packung und die Transit-Sichtbarkeit sind einfacher und ausreichend; eine spätere Implementierung muss auf dem Zielgerät kalibriert werden.
-- **4K-Kamera, Gefechtsansicht, Mech-Klassen, Loadouts, Ressourcenrisiko und Siegbedingungen** bleiben spätere Ausbaustufen.
-
-## Nächste Ausbaustufen
-
-1. Gefechtsansicht und Mech-Gameplay.
-2. Ressourcen, Schaden, Eroberung und Siegbedingungen.
-3. Objekt-Upgrades für Cluster (`Attachments`).
-4. Zielgeräte-Kalibrierung für die optionale Render-Budget-Kompression.
-5. 4K-UI-, VFX- und Kamera-Pass.
-
-## Prüfungen
-
-```text
-C:/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console.exe --headless --path . --script res://scripts/preflight.gd
-C:/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console.exe --headless --path . --quit-after 2
-```
+- **Render-Budget-Kompression:** Ein Draw-Call-Median mit `250/225`-Hysterese ist als mögliche spätere Messregel beschrieben, aber keine aktive Laufzeitlogik. Die feste K/M/L-Packung und die Transit-Sichtbarkeit sind für das MVP ausreichend; eine spätere Implementierung muss auf dem Zielgerät kalibriert werden.
+- **4K-Kamera und Gefechtsansicht** sowie Mech-Klassen, Loadouts, Ressourcenrisiko und Siegbedingungen bleiben spätere Ausbaustufen.
