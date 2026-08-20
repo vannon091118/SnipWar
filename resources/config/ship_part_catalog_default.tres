@@ -15,6 +15,10 @@
 [ext_resource type="Script" path="res://scripts/config/ship_component_variant.gd" id="13_variant"]
 [ext_resource type="Script" path="res://scripts/config/ship_blueprint.gd" id="14_blueprint"]
 [ext_resource type="Texture2D" path="res://assets/objects/meteors/meteor_02_ice.svg" id="15_ice"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/scanner_t2.svg" id="16_scanner_t2"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/drive_advanced.svg" id="17_drive_advanced"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/armor_heavy.svg" id="18_armor_heavy"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/sensor_array.svg" id="19_sensor_array"]
 
 [sub_resource type="Resource" id="Trait_drive_t1"]
 script = ExtResource("3_trait")
@@ -342,8 +346,84 @@ tier = 1
 visual_asset = ExtResource("9_cargo")
 build_time = 10.0
 
+[sub_resource type="Resource" id="Part_scanner_t2"]
+script = ExtResource("2_part")
+id = &"scanner_t2"
+slot_type = &"scanner"
+display_name = "Scanner-Drohne T2"
+description = "Hochauflösender Scanner für detailliertere Scan-Intel."
+cost_resource = &"energy"
+cost_amount = 12
+tier = 2
+visual_asset = ExtResource("16_scanner_t2")
+required_tech_id = &"deep_scan"
+build_time = 8.0
+
+[sub_resource type="Resource" id="Trait_module_reactor"]
+script = ExtResource("3_trait")
+id = &"trait_module_reactor"
+display_name = "Reaktorkern"
+description = "+10% Transfergeschwindigkeit"
+transfer_speed_multiplier = 1.1
+
+[sub_resource type="Resource" id="Part_module_reactor"]
+script = ExtResource("2_part")
+id = &"module_reactor"
+slot_type = &"utility"
+display_name = "Reaktormodul"
+description = "Ein kompakter Reaktorkern für schnellere Schiffstransfers."
+cost_resource = &"volatile"
+cost_amount = 8
+tier = 1
+visual_asset = ExtResource("17_drive_advanced")
+trait_definition = SubResource("Trait_module_reactor")
+required_tech_id = &"advanced_propulsion"
+build_time = 10.0
+
+[sub_resource type="Resource" id="Trait_module_reinforced"]
+script = ExtResource("3_trait")
+id = &"trait_module_reinforced"
+display_name = "Verstärkte Panzerung"
+description = "+15 Hüllenpunkte"
+hull_hp_bonus = 15
+
+[sub_resource type="Resource" id="Part_module_reinforced"]
+script = ExtResource("2_part")
+id = &"module_reinforced"
+slot_type = &"utility"
+display_name = "Verstärktes Modul"
+description = "Zusätzliche Platten erhöhen die Hüllenintegrität."
+cost_resource = &"material"
+cost_amount = 8
+tier = 1
+visual_asset = ExtResource("18_armor_heavy")
+trait_definition = SubResource("Trait_module_reinforced")
+required_tech_id = &"heavy_armor_plating"
+build_time = 10.0
+
+[sub_resource type="Resource" id="Trait_module_sensor_array"]
+script = ExtResource("3_trait")
+id = &"trait_module_sensor_array"
+display_name = "Sensor-Array"
+description = "+40 px Reichweite"
+range_bonus = 40.0
+
+[sub_resource type="Resource" id="Part_module_sensor_array"]
+script = ExtResource("2_part")
+id = &"module_sensor_array"
+slot_type = &"utility"
+display_name = "Sensor-Array-Modul"
+description = "Ein Gitter aus Antennen für größere Sensorreichweite."
+cost_resource = &"rare"
+cost_amount = 8
+tier = 1
+visual_asset = ExtResource("19_sensor_array")
+trait_definition = SubResource("Trait_module_sensor_array")
+required_tech_id = &"long_range_sensors"
+build_time = 10.0
+
 [resource]
 script = ExtResource("1_catalog")
 max_module_slots = 2
 blueprints = [SubResource("Blueprint_standard")]
-parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t2"), SubResource("Part_hull_t3"), SubResource("Part_scanner_t1"), SubResource("Part_drive_t1"), SubResource("Part_drive_t2"), SubResource("Part_weapon_t1"), SubResource("Part_weapon_t2"), SubResource("Part_shield_t1"), SubResource("Part_shield_t2"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo")]
+parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t2"), SubResource("Part_hull_t3"), SubResource("Part_scanner_t1"), SubResource("Part_scanner_t2"), SubResource("Part_drive_t1"), SubResource("Part_drive_t2"), SubResource("Part_weapon_t1"), SubResource("Part_weapon_t2"), SubResource("Part_shield_t1"), SubResource("Part_shield_t2"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo"), SubResource("Part_module_reactor"), SubResource("Part_module_reinforced"), SubResource("Part_module_sensor_array")]

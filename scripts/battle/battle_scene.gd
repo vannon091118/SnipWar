@@ -4,10 +4,12 @@ extends CanvasLayer
 
 signal battle_completed(result: Dictionary)
 
+const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
+
 var playback_speed: float = 1.0
 var _events: Array[BattleEvent] = []
 var _current_result: Dictionary = {}
-var _ships: Dictionary = {} # id -> Sprite2D
+var _ships: Dictionary = {} # id -> CompositeShipView
 var _ship_initial_data: Dictionary = {}
 var _elapsed: float = 0.0
 var _event_index: int = 0
@@ -88,7 +90,8 @@ func _cache_spawn_data() -> void:
 		if ev.event_type == BattleEvent.TYPE_SPAWN:
 			_ship_initial_data[ev.source_id] = {
 				"pos": ev.source_pos,
-				"hp": ev.value
+				"hp": ev.value,
+				"ship_data": ev.ship_data.duplicate(true)
 			}
 
 func _process(delta: float) -> void:
@@ -112,7 +115,7 @@ func _process(delta: float) -> void:
 func _process_event(event: BattleEvent) -> void:
 	match event.event_type:
 		BattleEvent.TYPE_SPAWN:
-			_spawn_ship_visual(event.source_id, event.source_pos)
+			_spawn_ship_visual(event.source_id, event.source_pos, event.ship_data)
 		BattleEvent.TYPE_FIRE:
 			_animate_fire(event.source_id, event.source_pos, event.target_pos)
 		BattleEvent.TYPE_HIT:
@@ -120,28 +123,81 @@ func _process_event(event: BattleEvent) -> void:
 		BattleEvent.TYPE_DESTROYED:
 			_animate_destruction(event.source_id, event.source_pos)
 
-func _spawn_ship_visual(ship_id: StringName, pos: Vector2) -> void:
+func _spawn_ship_visual(ship_id: StringName, pos: Vector2, ship_data: Dictionary = {}) -> void:
 	if _ships.has(ship_id):
 		return
-	var sprite := Sprite2D.new()
-	sprite.name = String(ship_id)
-	sprite.texture = preload("res://assets/objects/workers/cluster_k.svg")
-	sprite.position = pos
-	sprite.scale = Vector2.ONE * 0.4
-	var is_cpu := String(ship_id).begins_with("b")
-	sprite.modulate = Color(1.0, 0.4, 0.4) if is_cpu else Color(0.3, 0.7, 1.0)
-	_arena.add_child(sprite)
-	_ships[ship_id] = sprite
+
+	var view := CompositeShipView.new()
+	view.name = String(ship_id)
+	view.position = pos
+	view.scale = Vector2.ONE * 0.4
+
+	# Legacy hand-authored events may not carry a loadout yet. Resolve that
+	# compatibility case through the catalog too, so the replay has one visual
+	# path and never falls back to a hardcoded worker/cluster texture.
+	var visual_data: Dictionary = ship_data.duplicate(true)
+	var catalog: ShipPartCatalog = DEFAULT_SHIP_PART_CATALOG
+	var hull_id: StringName = visual_data.get("hull", &"") as StringName
+	if String(hull_id).is_empty() or catalog.resolve(hull_id) == null:
+		hull_id = &"hull_t1"
+		visual_data["hull"] = hull_id
+
+	var hull: ShipPartDefinition = catalog.resolve(hull_id)
+	var scanner: ShipPartDefinition = catalog.resolve(visual_data.get("scanner", &"") as StringName)
+	var drive: ShipPartDefinition = catalog.resolve(visual_data.get("drive", &"") as StringName)
+	var weapon: ShipPartDefinition = catalog.resolve(visual_data.get("weapon", &"") as StringName)
+	var shield: ShipPartDefinition = catalog.resolve(visual_data.get("shield", &"") as StringName)
+	var modules: Array[ShipPartDefinition] = []
+	var module_ids: Array = visual_data.get("modules", []) as Array
+	for module_id in module_ids:
+		var module_part: ShipPartDefinition = catalog.resolve(module_id as StringName)
+		if module_part != null:
+			modules.append(module_part)
+
+	var is_cpu: bool = String(ship_id).begins_with("b")
+	var faction: StringName = &"b" if is_cpu else &"a"
+	view.setup_from_parts(
+		hull,
+		scanner,
+		drive,
+		weapon,
+		shield,
+		modules,
+		faction,
+		null,
+		_resolve_view_variants(catalog, visual_data)
+	)
+	_arena.add_child(view)
+	_ships[ship_id] = view
 
 	# Idle Floating Tween
-	var tw := sprite.create_tween().set_loops()
-	tw.tween_property(sprite, "position:y", pos.y + 4.0, 1.2).set_trans(Tween.TRANS_SINE)
-	tw.tween_property(sprite, "position:y", pos.y - 4.0, 1.2).set_trans(Tween.TRANS_SINE)
+	var tw := view.create_tween().set_loops()
+	tw.tween_property(view, "position:y", pos.y + 4.0, 1.2).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(view, "position:y", pos.y - 4.0, 1.2).set_trans(Tween.TRANS_SINE)
+
+func _resolve_view_variants(catalog: ShipPartCatalog, ship_data: Dictionary) -> Dictionary:
+	var result: Dictionary = {}
+	var stored_variants: Dictionary = ship_data.get("variants", {}) as Dictionary
+	for slot_name in [&"hull", &"drive", &"weapon", &"shield", &"scanner"]:
+		var part: ShipPartDefinition = catalog.resolve(ship_data.get(slot_name, &"") as StringName)
+		var variant: ShipComponentVariant = catalog.resolve_variant(part, stored_variants.get(slot_name, &"") as StringName)
+		if variant != null:
+			result[slot_name] = variant
+
+	var module_ids: Array = ship_data.get("modules", []) as Array
+	var stored_utility: Array = stored_variants.get(&"utility", []) as Array
+	var module_variants: Array[ShipComponentVariant] = []
+	for index in range(module_ids.size()):
+		var module_part: ShipPartDefinition = catalog.resolve(module_ids[index] as StringName)
+		var variant_id: StringName = stored_utility[index] as StringName if index < stored_utility.size() else &""
+		module_variants.append(catalog.resolve_variant(module_part, variant_id))
+	result[&"utility"] = module_variants
+	return result
 
 func _animate_fire(src_id: StringName, src_pos: Vector2, tgt_pos: Vector2) -> void:
 	# Recoil animation on shooter
 	if _ships.has(src_id):
-		var ship: Sprite2D = _ships[src_id]
+		var ship: Node2D = _ships[src_id] as Node2D
 		var recoil_dir := (src_pos - tgt_pos).normalized() * 5.0
 		var r_tw := create_tween()
 		r_tw.tween_property(ship, "position", ship.position + recoil_dir, 0.08)
@@ -163,7 +219,7 @@ func _animate_fire(src_id: StringName, src_pos: Vector2, tgt_pos: Vector2) -> vo
 func _animate_hit(target_id: StringName, tgt_pos: Vector2, damage: float) -> void:
 	# Hit flash on target
 	if _ships.has(target_id):
-		var ship: Sprite2D = _ships[target_id]
+		var ship: Node2D = _ships[target_id] as Node2D
 		var orig_color := ship.modulate
 		ship.modulate = Color(2.0, 2.0, 2.0)
 		var f_tw := create_tween()
@@ -228,7 +284,7 @@ func _on_seek_requested(time: float) -> void:
 		var ev := _events[i]
 		if ev.timestamp <= time:
 			if ev.event_type == BattleEvent.TYPE_SPAWN:
-				_spawn_ship_visual(ev.source_id, ev.source_pos)
+				_spawn_ship_visual(ev.source_id, ev.source_pos, ev.ship_data)
 			elif ev.event_type == BattleEvent.TYPE_DESTROYED and _ships.has(ev.source_id):
 				var node: Node2D = _ships[ev.source_id]
 				_ships.erase(ev.source_id)

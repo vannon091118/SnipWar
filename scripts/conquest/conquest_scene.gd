@@ -4,11 +4,16 @@ extends CanvasLayer
 
 signal conquest_completed(result: Dictionary)
 
+const DEFAULT_PLANET_CATALOG: PlanetCatalog = preload("res://resources/config/planet_catalog.tres")
+
 var playback_speed: float = 1.0
 var _result: Dictionary = {}
 var _elapsed: float = 0.0
 var _duration: float = 8.0
 var _is_playing: bool = false
+var _visual_rng := RandomNumberGenerator.new()
+var _visual_seed: int = 42
+var _next_laser_time: float = 0.25
 
 var _viewport_container: Control
 var _arena: Node2D
@@ -70,6 +75,10 @@ func play_conquest(result: Dictionary) -> void:
 	_ensure_ui()
 	_result = result
 	_duration = float(result.get("duration", 8.0))
+	var seed_value: Variant = result.get("conquest_seed")
+	_visual_seed = int(seed_value) if seed_value is int else 42
+	_visual_rng.seed = _visual_seed
+	_next_laser_time = 0.25
 	_elapsed = 0.0
 	_is_playing = true
 	visible = true
@@ -87,30 +96,43 @@ func _setup_battlefield() -> void:
 	_attackers.clear()
 	_towers.clear()
 
-	# Center Planet
+	var tower_count: int = maxi(_result_int("tower_count", _result_int("perimeter_slots", 3)), 0)
+	var attacker_count: int = maxi(_result_int("surviving_attackers", 5), 0)
+	var surviving_garrison: int = maxi(_result_int("surviving_garrison", 1), 0)
+	if _garrison_bar != null:
+		_garrison_bar.max_value = maxf(float(surviving_garrison), 1.0)
+		_garrison_bar.value = float(surviving_garrison)
+
+	# Center Planet. The live Planet adds its visual identity to the replay
+	# payload; the catalog fallback keeps older hand-authored replays visible.
 	_planet_sprite = Sprite2D.new()
 	_planet_sprite.name = "PlanetCore"
-	_planet_sprite.texture = preload("res://assets/objects/planets/planet_09_paper.svg")
+	_planet_sprite.texture = _resolve_planet_texture()
 	_planet_sprite.scale = Vector2.ONE * 0.5
 	_arena.add_child(_planet_sprite)
 
-	# Orbiting Defense Towers
-	for i in range(3):
+	# Orbiting Defense Towers. The simulator reports the effective tower count
+	# (perimeter slots constrained by defense rating), while perimeter_slots is
+	# retained as a compatibility fallback for older replay payloads.
+	var orbit_radius: float = maxf(60.0, _result_float("defense_range", 150.0) * 0.5 + 5.0)
+	for i in range(tower_count):
 		var tower := Sprite2D.new()
 		tower.name = "Tower_%d" % i
 		tower.texture = preload("res://assets/objects/satellites/planet_satellite.svg")
-		var ang := float(i) * TAU / 3.0
-		tower.position = Vector2(cos(ang), sin(ang)) * 80.0
+		var ang := float(i) * TAU / float(tower_count) if tower_count > 0 else 0.0
+		tower.position = Vector2(cos(ang), sin(ang)) * orbit_radius
 		tower.scale = Vector2.ONE * 0.35
 		_arena.add_child(tower)
 		_towers.append(tower)
 
-	# Assault Minions on perimeter
-	for i in range(5):
+	# Assault Minions on perimeter. A result with no surviving attackers has no
+	# attacker sprites; this keeps the replay honest for a fully repelled wave.
+	var vertical_center: float = float(attacker_count - 1) * 17.5
+	for i in range(attacker_count):
 		var minion := Sprite2D.new()
 		minion.name = "Minion_%d" % i
 		minion.texture = preload("res://assets/objects/workers/cluster_k.svg")
-		minion.position = Vector2(-220.0, float(i * 35 - 70))
+		minion.position = Vector2(-220.0, float(i) * 35.0 - vertical_center)
 		minion.scale = Vector2.ONE * 0.3
 		minion.modulate = Color(0.3, 0.7, 1.0)
 		_arena.add_child(minion)
@@ -119,6 +141,34 @@ func _setup_battlefield() -> void:
 		# Advance tween
 		var tw := minion.create_tween()
 		tw.tween_property(minion, "position:x", -90.0, _duration * 0.8)
+
+func _result_int(key: String, fallback: int) -> int:
+	var value: Variant = _result.get(key)
+	if value is int or value is float:
+		return int(value)
+	return fallback
+
+func _result_float(key: String, fallback: float) -> float:
+	var value: Variant = _result.get(key)
+	if value is int or value is float:
+		return float(value)
+	return fallback
+
+func _resolve_planet_texture() -> Texture2D:
+	var direct_texture: Variant = _result.get("planet_texture")
+	if direct_texture is Texture2D:
+		return direct_texture as Texture2D
+
+	var planet_id: StringName = _result.get("planet_id") as StringName
+	if not String(planet_id).is_empty():
+		var definition: PlanetDefinition = DEFAULT_PLANET_CATALOG.definition_for(planet_id)
+		if definition != null and definition.planet_texture != null:
+			return definition.planet_texture
+
+	for definition in DEFAULT_PLANET_CATALOG.planets:
+		if definition != null and definition.planet_texture != null:
+			return definition.planet_texture
+	return null
 
 func _process(delta: float) -> void:
 	if not _is_playing:
@@ -130,13 +180,15 @@ func _process(delta: float) -> void:
 	# Update garrison progress
 	var frac: float = clampf(1.0 - (_elapsed / _duration), 0.0, 1.0)
 	if _garrison_bar != null:
-		_garrison_bar.value = frac * 100.0
+		_garrison_bar.value = frac * _garrison_bar.max_value
 
-	# Periodical Tower & Minion Fire
-	if Engine.get_process_frames() % 25 == 0 and _attackers.size() > 0 and _towers.size() > 0:
-		var shooter: Node2D = _towers[randi() % _towers.size()]
-		var target: Node2D = _attackers[randi() % _attackers.size()]
+	# Periodical Tower & Minion Fire. The schedule and choices are seeded from
+	# the simulator result, rather than depending on global frame timing/RNG.
+	while _elapsed >= _next_laser_time and _attackers.size() > 0 and _towers.size() > 0:
+		var shooter: Node2D = _towers[_visual_rng.randi_range(0, _towers.size() - 1)]
+		var target: Node2D = _attackers[_visual_rng.randi_range(0, _attackers.size() - 1)]
 		_fire_laser(shooter.position, target.position, Color(1.0, 0.4, 0.2))
+		_next_laser_time += 0.5
 
 	if _elapsed >= _duration:
 		_finish_conquest()

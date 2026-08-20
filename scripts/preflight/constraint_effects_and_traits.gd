@@ -41,6 +41,7 @@ func run(ctx: PreflightContext) -> bool:
 	trait_def.id = &"trait_test"
 	trait_def.display_name = "Test Trait"
 	trait_def.production_boost = 0.5
+	trait_def.gather_income_multiplier = 1.3
 	trait_def.transfer_speed_multiplier = 1.2
 	trait_def.hull_hp_bonus = 20
 	trait_def.dps_bonus = 5.5
@@ -56,6 +57,8 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 
 	if not ctx.check(is_equal_approx(trait_def.get_stat_modifier(&"production", 10.0), 10.5), "TraitDefinition production modifier failed"):
+		return false
+	if not ctx.check(is_equal_approx(trait_def.get_stat_modifier(&"gather_income", 10.0), 13.0), "TraitDefinition gather-income modifier failed"):
 		return false
 	if not ctx.check(is_equal_approx(trait_def.get_stat_modifier(&"transfer_speed", 100.0), 120.0), "TraitDefinition transfer_speed modifier failed"):
 		return false

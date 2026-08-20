@@ -7,6 +7,7 @@ signal ship_part_purchased(planet_id: StringName, part_id: StringName)
 signal ship_assembled(planet_id: StringName, ship_id: StringName)
 signal ship_disassembled(planet_id: StringName, ship_id: StringName)
 signal ship_launched(planet_id: StringName, ship_id: StringName, role: StringName)
+@warning_ignore("unused_signal")
 signal ship_lost(planet_id: StringName, ship_id: StringName)
 signal ship_build_started(planet_id: StringName, ship_id: StringName, remaining: float)
 
@@ -88,6 +89,11 @@ func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: S
 	var hull: ShipPartDefinition = catalog.resolve(hull_id)
 	if hull == null or hull.slot_type != ShipPartDefinition.SLOT_HULL:
 		return false
+	# The live builder always assembles a complete flyable loadout. Keep the
+	# legacy façade order, but reject partial drive/shield assemblies here so a
+	# build cannot consume parts into a non-flyable ship.
+	if String(drive_id).is_empty() or String(shield_id).is_empty():
+		return false
 	var inv := get_ship_part_inventory(planet_id)
 	var needed: Dictionary = {}
 	_tally(needed, hull_id)
@@ -127,7 +133,19 @@ func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: S
 			return false
 	return true
 
-func assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, weapon_id: StringName, drive_id: StringName, shield_id: StringName, catalog: ShipPartCatalog, custom_seed: int = -1) -> StringName:
+func assemble_ship(
+	planet_id: StringName,
+	hull_id: StringName,
+	scanner_id: StringName,
+	module_ids: Array,
+	weapon_id: StringName,
+	drive_id: StringName,
+	shield_id: StringName,
+	catalog: ShipPartCatalog,
+	custom_seed: int = -1,
+	blueprint_id: StringName = &"",
+	ship_role: StringName = &""
+) -> StringName:
 	if not can_assemble_ship(planet_id, hull_id, scanner_id, module_ids, weapon_id, drive_id, shield_id, catalog):
 		return &""
 	spend_ship_part(planet_id, hull_id, 1)
@@ -147,7 +165,9 @@ func assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: Strin
 	next_ship_index += 1
 	var ship_id := StringName("ship_%d" % next_ship_index)
 	var instance_seed: int = custom_seed if custom_seed >= 0 else next_ship_index * 1337 + 42
-	var blueprint: ShipBlueprint = catalog.default_blueprint()
+	var blueprint: ShipBlueprint = catalog.resolve_blueprint(blueprint_id)
+	if blueprint == null:
+		return &""
 	var variants: Dictionary = {
 		&"hull": _select_variant_id(catalog, hull_id, blueprint, instance_seed, &"hull"),
 		&"drive": _select_variant_id(catalog, drive_id, blueprint, instance_seed, &"drive"),
@@ -183,7 +203,8 @@ func assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: Strin
 		"shield": shield_id,
 		"scanner": scanner_id,
 		"modules": module_ids.duplicate(),
-		"role": &"military" if not String(weapon_id).is_empty() else &"colony",
+		"role": ship_role if not String(ship_role).is_empty() else (&"military" if not String(weapon_id).is_empty() else &"colony"),
+		"blueprint": blueprint.id,
 		"instance_seed": instance_seed,
 		"variants": variants,
 	}
@@ -235,7 +256,9 @@ func get_ship_build_jobs(planet_id: StringName) -> Dictionary:
 		result[ship_id] = (jobs[ship_id].get("assembly", {}) as Dictionary).duplicate(true)
 	return result
 
-func ship_build_in_progress(planet_id: StringName, ship_id: StringName) -> bool:
+func ship_build_in_progress(planet_id: StringName, ship_id: StringName = &"") -> bool:
+	if String(ship_id).is_empty():
+		return ship_build_jobs.has(planet_id) and not (ship_build_jobs[planet_id] as Dictionary).is_empty()
 	if not ship_build_jobs.has(planet_id):
 		return false
 	return (ship_build_jobs[planet_id] as Dictionary).has(ship_id)

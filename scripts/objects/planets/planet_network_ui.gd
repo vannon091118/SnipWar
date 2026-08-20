@@ -2,6 +2,7 @@ class_name PlanetNetworkUI
 extends CanvasLayer
 
 const DEFAULT_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
+const DEFAULT_ECONOMY_CONFIG: EconomyConfig = preload("res://resources/config/economy_default.tres")
 
 signal panel_visibility_changed(visible: bool)
 signal destination_selected(index: int)
@@ -15,6 +16,8 @@ var _panel_tween: Tween
 var _tooltip_panel: PanelContainer
 var _tooltip_label: Label
 var _current_selection: Array[Node2D] = [] as Array[Node2D]
+var _pending_income: Dictionary = {}
+var _income_flush_scheduled: bool = false
 
 @onready var _tab_button: Button = get_node_or_null("PlanetTabUI/PlanetTab")
 @onready var _vault_bar: VaultBar = get_node_or_null("PlanetTabUI/VaultBar")
@@ -79,6 +82,10 @@ func _connect_game_state_signals() -> void:
 		return
 	if not state.faction_resources_changed.is_connected(_on_faction_resources_changed):
 		state.faction_resources_changed.connect(_on_faction_resources_changed)
+	if not state.resource_generated.is_connected(_on_resource_generated):
+		state.resource_generated.connect(_on_resource_generated)
+	if state.has_signal("resources_collected") and not state.resources_collected.is_connected(_on_resources_collected):
+		state.resources_collected.connect(_on_resources_collected)
 	if not state.planet_upgraded.is_connected(_on_planet_upgraded):
 		state.planet_upgraded.connect(_on_planet_upgraded)
 	if not state.catalog_reset.is_connected(_on_catalog_reset):
@@ -89,10 +96,40 @@ func _on_faction_resources_changed(faction: StringName, _resource_id: StringName
 		return
 	_refresh_vault()
 
+func _on_resource_generated(planet_id: StringName, resource_id: StringName, amount: int) -> void:
+	var state: Node = get_tree().root.get_node_or_null("GameState")
+	if state == null or state.faction_of(planet_id) != GameState.FACTION_PLAYER:
+		return
+	_queue_income(resource_id, amount)
+
+func _on_resources_collected(faction: StringName, _planet_id: StringName, resource_id: StringName, amount: int) -> void:
+	if faction == GameState.FACTION_PLAYER:
+		_queue_income(resource_id, amount)
+
+func _queue_income(resource_id: StringName, amount: int) -> void:
+	if amount <= 0:
+		return
+	_pending_income[resource_id] = int(_pending_income.get(resource_id, 0)) + amount
+	if not _income_flush_scheduled:
+		_income_flush_scheduled = true
+		call_deferred("_flush_income")
+
+func _flush_income() -> void:
+	_income_flush_scheduled = false
+	var pending: Dictionary = _pending_income.duplicate()
+	_pending_income.clear()
+	if _vault_bar == null:
+		return
+	for resource_id in pending:
+		_vault_bar.record_income(resource_id as StringName, int(pending[resource_id]), DEFAULT_ECONOMY_CONFIG.tick_interval)
+
 func _on_planet_upgraded(_planet_id: StringName, _upgrade_id: StringName) -> void:
 	_refresh_vault()
 
 func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
+	_pending_income.clear()
+	_income_flush_scheduled = false
+	_vault_bar.clear_income_rates()
 	_refresh_vault()
 
 func _refresh_vault() -> void:

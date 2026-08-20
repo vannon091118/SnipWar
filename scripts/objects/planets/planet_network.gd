@@ -417,7 +417,8 @@ func _on_selection_primary_changed(_planet: Node2D) -> void:
 func _on_selection_group_changed(_selection: Array[Node2D]) -> void:
 	if _ui == null or not is_instance_valid(_ui):
 		return
-	_ui.refresh_selection_overview(_selection) if _ui.has_method("refresh_selection_overview") else null
+	if _ui.has_method("refresh_selection_overview"):
+		_ui.refresh_selection_overview(_selection)
 	queue_redraw()
 
 func _on_selection_count_changed(count: int) -> void:

@@ -197,8 +197,16 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(panel_width >= ui_theme_config.panel_min_width - 0.1 and panel_width <= ui_theme_config.panel_max_width + 0.1, "responsive UI panel width is outside the configured range (got %f)" % panel_width):
 		return false
 	var vault_bar: PanelContainer = ui.get_node("PlanetTabUI/VaultBar") as PanelContainer
+	var rate_label: RichTextLabel = vault_bar.get_node_or_null("VaultMargin/VaultContent/IncomeRateLabel") as RichTextLabel if vault_bar != null else null
 	var panel_scroll: ScrollContainer = panel.get_node("MarginContainer/PanelScroll") as ScrollContainer
 	if not ctx.check(vault_bar != null and vault_bar.global_position.x + vault_bar.size.x <= panel.global_position.x + 0.1, "resource HUD overlaps the planet panel"):
+		return false
+	if not ctx.check(rate_label != null and rate_label.text.contains("Einkommen"), "vault bar income-rate label is missing"):
+		return false
+	var rate_state: Node = ctx.get_root().get_node_or_null("GameState")
+	rate_state.resource_generated.emit(economy_planet.planet_id, GameState.RES_ENERGY, 3)
+	await ctx.await_frame()
+	if not ctx.check(rate_label.text.contains("+0.3/s") and rate_label.text.contains("Energie"), "vault bar did not display the latest economy income rate", {"actual_text": rate_label.text}):
 		return false
 	if not ctx.check(panel_scroll != null and panel_scroll.vertical_scroll_mode == ScrollContainer.SCROLL_MODE_AUTO, "planet panel does not provide a scrollable menu"):
 		return false

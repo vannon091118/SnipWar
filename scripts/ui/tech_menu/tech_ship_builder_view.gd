@@ -16,6 +16,7 @@ var builder_scanner: OptionButton
 var builder_modules: Array[OptionButton] = []
 var builder_dynamic: VBoxContainer
 var builder_job_labels: Dictionary = {}
+var builder_job_progress: Dictionary = {}
 
 func setup(ship_manager: ShipManager, theme_config: UIThemeConfig) -> void:
 	_ship_manager = ship_manager
@@ -31,6 +32,7 @@ func clear_state() -> void:
 	builder_modules.clear()
 	builder_dynamic = null
 	builder_job_labels.clear()
+	builder_job_progress.clear()
 
 func build_ship_builder_section(
 	container: VBoxContainer,
@@ -72,6 +74,7 @@ func populate_builder_dynamic(state: Node, on_refresh_callback: Callable) -> voi
 	builder_scanner = null
 	builder_modules.clear()
 	builder_job_labels.clear()
+	builder_job_progress.clear()
 
 	var source: Planet = selected_option_planet(builder_source)
 	if source == null:
@@ -155,6 +158,19 @@ func populate_builder_dynamic(state: Node, on_refresh_callback: Callable) -> voi
 			job_label.set_meta("ship_id", job_ship_id)
 			builder_job_labels[job_ship_id] = job_label
 			builder_dynamic.add_child(job_label)
+			var total_time: float = _assembly_build_time(catalog, build_jobs[job_ship_id])
+			var progress := ProgressBar.new()
+			progress.name = "ShipBuildProgress"
+			progress.custom_minimum_size = Vector2(0.0, 6.0)
+			progress.min_value = 0.0
+			progress.max_value = maxf(total_time, 1.0)
+			progress.value = clampf(total_time - remaining, 0.0, progress.max_value)
+			progress.show_percentage = false
+			progress.set_meta("ship_id", job_ship_id)
+			progress.set_meta("total_time", total_time)
+			progress.tooltip_text = "Montagefortschritt"
+			builder_job_progress[job_ship_id] = progress
+			builder_dynamic.add_child(progress)
 
 	var assemblies: Dictionary = state.get_ship_assemblies(source.planet_id)
 	if assemblies.is_empty():
@@ -209,8 +225,12 @@ func update_countdowns(state: Node, on_refresh_callback: Callable) -> void:
 		var job_label: Label = builder_job_labels[ship_id] as Label
 		var job: Dictionary = build_jobs[ship_id] as Dictionary
 		var remaining: float = state.ship_build_remaining(source.planet_id, ship_id)
-		job_label.text = "Montage läuft — %s (%.0f s verbleibend)" % [_assembly_role(job), remaining]
+		job_label.text = "Montage läuft — %s (%.0f s · %d%%)" % [_assembly_role(job), remaining, _build_progress_percent(builder_job_progress.get(ship_id) as ProgressBar, remaining)]
 		job_label.tooltip_text = _assembly_tooltip(_ship_manager.get_part_catalog(), job, remaining)
+		var progress: ProgressBar = builder_job_progress.get(ship_id) as ProgressBar
+		if progress != null and is_instance_valid(progress):
+			var total_time: float = float(progress.get_meta("total_time", progress.max_value))
+			progress.value = clampf(total_time - remaining, 0.0, progress.max_value)
 
 func selected_option_planet(option: OptionButton) -> Planet:
 	if option == null or option.selected < 0 or option.selected >= option.item_count:
@@ -310,6 +330,28 @@ func _assembly_role(assembly: Dictionary) -> String:
 	if role == "colony":
 		return "KOLONIE"
 	return role.to_upper()
+
+func _assembly_build_time(catalog: ShipPartCatalog, assembly: Dictionary) -> float:
+	if catalog == null:
+		return 0.0
+	var total_time := 0.0
+	for slot_name in [&"hull", &"drive", &"weapon", &"shield", &"scanner"]:
+		var part: ShipPartDefinition = catalog.resolve(assembly.get(slot_name, &"") as StringName)
+		if part != null:
+			total_time += part.build_time
+	for module_value in assembly.get("modules", []):
+		var module: ShipPartDefinition = catalog.resolve(module_value as StringName)
+		if module != null:
+			total_time += module.build_time
+	return total_time
+
+func _build_progress_percent(progress: ProgressBar, remaining: float) -> int:
+	if progress == null or not is_instance_valid(progress):
+		return 0
+	var total_time: float = float(progress.get_meta("total_time", progress.max_value))
+	if total_time <= 0.0:
+		return 100
+	return int(round(clampf((total_time - remaining) / total_time, 0.0, 1.0) * 100.0))
 
 func _assembly_tooltip(catalog: ShipPartCatalog, assembly: Dictionary, remaining: float) -> String:
 	var lines: Array[String] = []

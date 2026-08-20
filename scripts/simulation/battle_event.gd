@@ -15,8 +15,20 @@ var target_id: StringName = &""
 var value: float = 0.0
 var source_pos: Vector2 = Vector2.ZERO
 var target_pos: Vector2 = Vector2.ZERO
+## Immutable loadout snapshot for TYPE_SPAWN replay events. Other event types leave
+## this empty, keeping the event contract compact while preserving full visuals.
+var ship_data: Dictionary = {}
 
-static func create(time: float, type: StringName, src: StringName, tgt: StringName, val: float = 0.0, src_p: Vector2 = Vector2.ZERO, tgt_p: Vector2 = Vector2.ZERO) -> BattleEvent:
+static func create(
+	time: float,
+	type: StringName,
+	src: StringName,
+	tgt: StringName,
+	val: float = 0.0,
+	src_p: Vector2 = Vector2.ZERO,
+	tgt_p: Vector2 = Vector2.ZERO,
+	spawn_ship_data: Dictionary = {}
+) -> BattleEvent:
 	var event := BattleEvent.new()
 	event.timestamp = time
 	event.event_type = type
@@ -25,4 +37,5 @@ static func create(time: float, type: StringName, src: StringName, tgt: StringNa
 	event.value = val
 	event.source_pos = src_p
 	event.target_pos = tgt_p
+	event.ship_data = spawn_ship_data.duplicate(true)
 	return event

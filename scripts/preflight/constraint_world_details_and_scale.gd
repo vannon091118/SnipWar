@@ -47,8 +47,18 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	var orbit_angle: float = orbit.rotation
 	var satellite_angle: float = satellite_orbit.rotation
-	await ctx.await_frame()
-	if not ctx.check(absf(orbit.rotation - orbit_angle) > 0.001 and absf(satellite_orbit.rotation - satellite_angle) > 0.001, "Toxic detail orbit is inactive"):
+	var orbit_moved := false
+	var satellite_moved := false
+	# Throttled fidelity intentionally updates on its configured cadence, which
+	# can span several fast headless frames. Wait on the observable condition,
+	# not on one arbitrary frame.
+	for _frame in 8:
+		await ctx.await_frame()
+		orbit_moved = orbit_moved or absf(orbit.rotation - orbit_angle) > 0.001
+		satellite_moved = satellite_moved or absf(satellite_orbit.rotation - satellite_angle) > 0.001
+		if orbit_moved and satellite_moved:
+			break
+	if not ctx.check(orbit_moved and satellite_moved, "Toxic detail orbit is inactive"):
 		return false
 	for child in field.get_children():
 		if child is Planet:

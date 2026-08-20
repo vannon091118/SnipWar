@@ -3,6 +3,10 @@ extends Node
 const SHIP_BASE_SCENE: PackedScene = preload("res://scenes/objects/ships/ship_base.tscn")
 const DEFAULT_TRANSIT_CONFIG: TransitConfig = preload("res://resources/config/transit_default.tres")
 const FLIGHT_TIME_SCRIPT: Script = preload("res://scripts/flight_time.gd")
+const BATTLE_SCENE_SCRIPT: Script = preload("res://scripts/battle/battle_scene.gd")
+const CONQUEST_SCENE_SCRIPT: Script = preload("res://scripts/conquest/conquest_scene.gd")
+
+signal replay_started(simulation_type: StringName, result: Dictionary)
 
 var transit_config: TransitConfig = DEFAULT_TRANSIT_CONFIG
 var _field: Node
@@ -10,11 +14,60 @@ var _navigation: NavigationField
 var _ship_manager: Node
 var _enabled: bool = true
 var _active_ships: Array[ShipBase] = []
+var _battle_replay: BattleScene
+var _conquest_replay: ConquestScene
 
 func _ready() -> void:
 	var state: Node = _game_state()
 	if state != null and state.has_signal("catalog_reset") and not state.catalog_reset.is_connected(_on_catalog_reset):
 		state.catalog_reset.connect(_on_catalog_reset)
+	_connect_planet_conflicts()
+
+func _connect_planet_conflicts() -> void:
+	if _field == null or not is_instance_valid(_field):
+		return
+	var callback := Callable(self, "_on_planet_conflict_simulated")
+	for child in _field.get_children():
+		var planet: Planet = child as Planet
+		if planet != null and not planet.conflict_simulated.is_connected(callback):
+			planet.conflict_simulated.connect(callback)
+
+func _on_planet_conflict_simulated(simulation_type: StringName, result: Dictionary) -> void:
+	_start_replay(simulation_type, result)
+
+func _start_replay(simulation_type: StringName, result: Dictionary) -> void:
+	if simulation_type == &"battle":
+		_free_replay(_battle_replay)
+		var replay: BattleScene = BATTLE_SCENE_SCRIPT.new() as BattleScene
+		replay.name = "BattleReplay"
+		add_child(replay)
+		replay.battle_completed.connect(Callable(self, "_on_battle_replay_completed").bind(replay))
+		_battle_replay = replay
+		replay.play_battle(result)
+		replay_started.emit(simulation_type, result)
+	elif simulation_type == &"conquest":
+		_free_replay(_conquest_replay)
+		var conquest: ConquestScene = CONQUEST_SCENE_SCRIPT.new() as ConquestScene
+		conquest.name = "ConquestReplay"
+		add_child(conquest)
+		conquest.conquest_completed.connect(Callable(self, "_on_conquest_replay_completed").bind(conquest))
+		_conquest_replay = conquest
+		conquest.play_conquest(result)
+		replay_started.emit(simulation_type, result)
+
+func _on_battle_replay_completed(_result: Dictionary, replay: BattleScene) -> void:
+	if replay == _battle_replay:
+		_battle_replay = null
+	_free_replay(replay)
+
+func _on_conquest_replay_completed(_result: Dictionary, replay: ConquestScene) -> void:
+	if replay == _conquest_replay:
+		_conquest_replay = null
+	_free_replay(replay)
+
+func _free_replay(replay: Node) -> void:
+	if replay != null and is_instance_valid(replay):
+		replay.queue_free()
 
 func configure(field: Node, navigation: Node, ship_manager: Node, config: TransitConfig = null) -> void:
 	_field = field
@@ -118,6 +171,11 @@ func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 		if is_instance_valid(ship):
 			ship.queue_free()
 	_active_ships.clear()
+	_free_replay(_battle_replay)
+	_free_replay(_conquest_replay)
+	_battle_replay = null
+	_conquest_replay = null
+	_connect_planet_conflicts()
 
 func _route(source: Planet, destination: Planet) -> Array[Vector2]:
 	if _navigation != null and is_instance_valid(_navigation):

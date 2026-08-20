@@ -6,6 +6,7 @@ extends Resource
 @export var display_name: String = ""
 @export var description: String = ""
 @export var production_boost: float = 0.0
+@export var gather_income_multiplier: float = 1.0
 @export var worker_spawn_bonus: int = 0
 @export var cluster_tier_bonus: int = 0
 @export var defense_rating: int = 0
@@ -29,6 +30,8 @@ func validate() -> PackedStringArray:
 		errors.append("trait display_name is empty")
 	if cluster_tier_bonus < 0:
 		errors.append("trait cluster_tier_bonus cannot be negative")
+	if gather_income_multiplier <= 0.0:
+		errors.append("trait gather_income_multiplier must be positive")
 	for effect in effects:
 		if effect == null:
 			errors.append("trait %s contains null effect" % id)
@@ -41,6 +44,8 @@ func get_stat_modifier(stat_name: StringName, base_val: float) -> float:
 	match stat_name:
 		&"production", &"production_boost":
 			result += production_boost
+		&"gather_income", &"gather_income_multiplier":
+			result *= gather_income_multiplier
 		&"spawn_rate", &"worker_spawn_bonus":
 			result += float(worker_spawn_bonus)
 		&"defense", &"defense_rating":

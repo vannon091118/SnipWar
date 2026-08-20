@@ -2,7 +2,7 @@
 class_name ConquestSimulator
 extends RefCounted
 
-static func simulate_conquest(attack_fleet: FleetSnapshot, attacker_workers: int, defending_workers: int, defense_rating: int, perimeter_slots: int, _defense_range: float, conquest_seed: int = 42) -> Dictionary:
+static func simulate_conquest(attack_fleet: FleetSnapshot, attacker_workers: int, defending_workers: int, defense_rating: int, perimeter_slots: int, defense_range: float, conquest_seed: int = 42) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = conquest_seed
 
@@ -40,5 +40,12 @@ static func simulate_conquest(attack_fleet: FleetSnapshot, attacker_workers: int
 		"captured": captured,
 		"surviving_attackers": surviving_attackers if captured else 0,
 		"surviving_garrison": surviving_garrison if not captured else 0,
-		"duration": time
+		"duration": time,
+		"attacker_workers": attacker_workers,
+		"defending_workers": defending_workers,
+		"defense_rating": defense_rating,
+		"perimeter_slots": perimeter_slots,
+		"tower_count": tower_count,
+		"defense_range": defense_range,
+		"conquest_seed": conquest_seed,
 	}

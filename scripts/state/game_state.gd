@@ -64,6 +64,45 @@ var economy_domain := EconomyDomain.new()
 var tech_domain := TechDomain.new()
 var ship_domain := ShipDomain.new()
 
+# Compatibility views retained while the state implementation is split into
+# domains. Older UI/preflight callers inspect these dictionaries through Node.get().
+@warning_ignore("unused_private_class_variable")
+var _ownership: Dictionary:
+	get:
+		return faction_domain.ownership
+@warning_ignore("unused_private_class_variable")
+var _starting_workers: Dictionary:
+	get:
+		return faction_domain.starting_workers
+@warning_ignore("unused_private_class_variable")
+var _homeworlds: Dictionary:
+	get:
+		return faction_domain.homeworlds
+@warning_ignore("unused_private_class_variable")
+var _known_planets: Dictionary:
+	get:
+		return faction_domain.known_planets
+@warning_ignore("unused_private_class_variable")
+var _faction_vaults: Dictionary:
+	get:
+		return economy_domain.faction_vaults
+@warning_ignore("unused_private_class_variable")
+var _planet_resources: Dictionary:
+	get:
+		return economy_domain.planet_resources
+@warning_ignore("unused_private_class_variable")
+var _planet_upgrades: Dictionary:
+	get:
+		return economy_domain.planet_upgrades
+@warning_ignore("unused_private_class_variable")
+var _gathering_workers: Dictionary:
+	get:
+		return economy_domain.gathering_workers
+@warning_ignore("unused_private_class_variable")
+var _ship_part_inventory: Dictionary:
+	get:
+		return ship_domain.ship_part_inventory
+
 var _jobs_auto_advance: bool = true
 
 func _init() -> void:
@@ -157,7 +196,7 @@ func starting_workers_of(planet_id: StringName) -> int:
 func discover_planet(faction: StringName, planet_id: StringName) -> bool:
 	return faction_domain.discover_planet(faction, planet_id)
 
-func scan_planet(faction: StringName, planet_id: StringName, resource_id: StringName, size_id: StringName, build_slots: int) -> bool:
+func scan_planet(faction: StringName, planet_id: StringName, resource_id: StringName = &"", size_id: StringName = &"", build_slots: int = 0) -> bool:
 	return faction_domain.scan_planet(faction, planet_id, resource_id, size_id, build_slots)
 
 func is_known(planet_id: StringName, faction: StringName) -> bool:
@@ -216,6 +255,12 @@ func resource_of(planet_id: StringName) -> StringName:
 func deal_resources(catalog: PlanetCatalog, pool: ResourcePool = null, seed_value: int = 0) -> void:
 	economy_domain.deal_resources(catalog, pool, seed_value)
 
+func resource_snapshot() -> Dictionary:
+	return economy_domain.resource_snapshot()
+
+func validate_resources(pool: ResourcePool = null) -> PackedStringArray:
+	return economy_domain.validate_resources(pool, faction_domain.homeworlds)
+
 func generate_resources_for_planet(planet_id: StringName, catalog: PlanetUpgradeCatalog = null, base_amount: int = 1) -> int:
 	return economy_domain.generate_resources_for_planet(planet_id, faction_domain, tech_domain, catalog, base_amount)
 
@@ -228,11 +273,20 @@ func has_planet_upgrade(planet_id: StringName, upgrade_id: StringName) -> bool:
 func get_planet_upgrades(planet_id: StringName) -> Array[StringName]:
 	return economy_domain.get_planet_upgrades(planet_id)
 
-func can_purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_workers: int, catalog: PlanetUpgradeCatalog = null) -> bool:
-	return economy_domain.can_purchase_upgrade(faction, planet_id, upgrade_id, available_workers, catalog)
+func can_purchase_upgrade(planet_id: StringName, upgrade_id: StringName, catalog: PlanetUpgradeCatalog = null, available_workers: int = -1) -> bool:
+	var faction: StringName = faction_of(planet_id)
+	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else DEFAULT_UPGRADE_CATALOG
+	var upgrade: PlanetUpgradeDefinition = effective_catalog.resolve(upgrade_id) if effective_catalog != null else null
+	if upgrade == null or (not String(upgrade.required_technology_id).is_empty() and not has_technology(faction, upgrade.required_technology_id)):
+		return false
+	return economy_domain.can_purchase_upgrade(faction, planet_id, upgrade_id, available_workers, effective_catalog)
 
-func purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_workers: int, catalog: PlanetUpgradeCatalog = null) -> bool:
-	return economy_domain.purchase_upgrade(faction, planet_id, upgrade_id, available_workers, catalog)
+func purchase_upgrade(planet_id: StringName, upgrade_id: StringName, catalog: PlanetUpgradeCatalog = null, available_workers: int = -1) -> bool:
+	var faction: StringName = faction_of(planet_id)
+	if not can_purchase_upgrade(planet_id, upgrade_id, catalog, available_workers):
+		return false
+	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else DEFAULT_UPGRADE_CATALOG
+	return economy_domain.purchase_upgrade(faction, planet_id, upgrade_id, available_workers, effective_catalog)
 
 func add_planet_upgrade(planet_id: StringName, upgrade_id: StringName) -> void:
 	economy_domain.add_planet_upgrade(planet_id, upgrade_id)
@@ -240,23 +294,53 @@ func add_planet_upgrade(planet_id: StringName, upgrade_id: StringName) -> void:
 func has_worker_factory(planet_id: StringName) -> bool:
 	return economy_domain.has_worker_factory(planet_id)
 
-func can_build_worker_factory(faction: StringName, planet_id: StringName, has_shipyard: bool, first_scan_done: bool, has_automation_tech: bool, available_slots: int) -> bool:
-	return economy_domain.can_build_worker_factory(faction, planet_id, has_shipyard, first_scan_done, has_automation_tech, available_slots)
+func can_build_worker_factory(planet_id: StringName, cost_resource: StringName, cost_amount: int) -> bool:
+	var faction: StringName = faction_of(planet_id)
+	return economy_domain.can_build_worker_factory(
+		faction,
+		planet_id,
+		has_planet_upgrade(planet_id, &"shipyard"),
+		has_scanned_planet(faction),
+		has_technology(faction, TECH_WORKER_AUTOMATION),
+		-1,
+		cost_resource,
+		cost_amount
+	)
 
-func build_worker_factory(faction: StringName, planet_id: StringName, has_shipyard: bool, first_scan_done: bool, has_automation_tech: bool, available_slots: int) -> bool:
-	return economy_domain.build_worker_factory(faction, planet_id, has_shipyard, first_scan_done, has_automation_tech, available_slots)
+func build_worker_factory(planet_id: StringName, cost_resource: StringName, cost_amount: int) -> bool:
+	var faction: StringName = faction_of(planet_id)
+	return economy_domain.build_worker_factory(
+		faction,
+		planet_id,
+		has_planet_upgrade(planet_id, &"shipyard"),
+		has_scanned_planet(faction),
+		has_technology(faction, TECH_WORKER_AUTOMATION),
+		-1,
+		cost_resource,
+		cost_amount
+	)
 
-func register_gathering_workers(faction: StringName, planet_id: StringName, source_planet_id: StringName, count: int) -> void:
-	economy_domain.register_gathering_workers(faction, planet_id, source_planet_id, count)
+func register_gathering_workers(faction: StringName, planet_id: StringName, worker_amount: int, source_planet_id: StringName = &"") -> int:
+	if faction == FACTION_NEUTRAL or faction.is_empty() or faction_of(planet_id) != FACTION_NEUTRAL or not has_scanned_planet(faction, planet_id):
+		return 0
+	economy_domain.register_gathering_workers(faction, planet_id, source_planet_id, worker_amount)
+	return economy_domain.gathering_workers_on(faction, planet_id)
 
-func withdraw_gathering_workers(faction: StringName, planet_id: StringName) -> Dictionary:
-	return economy_domain.withdraw_gathering_workers(faction, planet_id)
+func get_gathering_workers(faction: StringName, planet_id: StringName) -> int:
+	return economy_domain.gathering_workers_on(faction, planet_id)
+
+func get_gathering_source(faction: StringName, planet_id: StringName) -> StringName:
+	return economy_domain.get_gathering_source(faction, planet_id)
+
+func withdraw_gathering_workers(faction: StringName, planet_id: StringName, amount: int) -> int:
+	var result: Dictionary = economy_domain.withdraw_gathering_workers(faction, planet_id, amount)
+	return int(result.get("count", 0))
 
 func gathering_workers_on(faction: StringName, planet_id: StringName) -> int:
 	return economy_domain.gathering_workers_on(faction, planet_id)
 
-func gather_income_tick(base_amounts: Dictionary) -> int:
-	return economy_domain.gather_income_tick(base_amounts)
+func gather_income_tick(base_amounts: Dictionary, catalog: PlanetUpgradeCatalog = null) -> int:
+	return economy_domain.gather_income_tick(base_amounts, catalog)
 
 # --- TECHNOLOGY DELEGATES ---
 func has_technology(faction: StringName, technology_id: StringName) -> bool:
@@ -297,18 +381,23 @@ func research_planet_technology(faction: StringName, planet_id: StringName, tech
 func get_ship_part_inventory(planet_id: StringName) -> Dictionary:
 	return ship_domain.get_ship_part_inventory(planet_id)
 
+func get_ship_part_count(planet_id: StringName, part_id: StringName) -> int:
+	return int(ship_domain.get_ship_part_inventory(planet_id).get(part_id, 0))
+
 func add_ship_part(planet_id: StringName, part_id: StringName, count: int = 1) -> void:
 	ship_domain.add_ship_part(planet_id, part_id, count)
 
 func spend_ship_part(planet_id: StringName, part_id: StringName, count: int = 1) -> bool:
 	return ship_domain.spend_ship_part(planet_id, part_id, count)
 
-func can_buy_ship_part(faction: StringName, planet_id: StringName, part_id: StringName, catalog: ShipPartCatalog = null) -> bool:
+func can_buy_ship_part(planet_id: StringName, part_id: StringName, catalog: ShipPartCatalog = null) -> bool:
 	var cat: ShipPartCatalog = catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG
+	var faction: StringName = faction_of(planet_id)
 	return ship_domain.can_buy_ship_part(faction, planet_id, part_id, cat, economy_domain, tech_domain)
 
-func buy_ship_part(faction: StringName, planet_id: StringName, part_id: StringName, catalog: ShipPartCatalog = null) -> bool:
+func buy_ship_part(planet_id: StringName, part_id: StringName, catalog: ShipPartCatalog = null) -> bool:
 	var cat: ShipPartCatalog = catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG
+	var faction: StringName = faction_of(planet_id)
 	return ship_domain.buy_ship_part(faction, planet_id, part_id, cat, economy_domain, tech_domain)
 
 func get_ship_assemblies(planet_id: StringName) -> Dictionary:
@@ -320,13 +409,25 @@ func has_ship_assembly(planet_id: StringName, ship_id: StringName) -> bool:
 func get_ship_assembly(planet_id: StringName, ship_id: StringName) -> Dictionary:
 	return ship_domain.get_ship_assembly(planet_id, ship_id)
 
-func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, weapon_id: StringName = &"", drive_id: StringName = &"", shield_id: StringName = &"", catalog: ShipPartCatalog = null) -> bool:
+func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, catalog: ShipPartCatalog = null, weapon_id: StringName = &"", drive_id: StringName = &"", shield_id: StringName = &"") -> bool:
 	var cat: ShipPartCatalog = catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG
 	return ship_domain.can_assemble_ship(planet_id, hull_id, scanner_id, module_ids, weapon_id, drive_id, shield_id, cat)
 
-func assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, weapon_id: StringName = &"", drive_id: StringName = &"", shield_id: StringName = &"", catalog: ShipPartCatalog = null, custom_seed: int = -1) -> StringName:
+func assemble_ship(
+	planet_id: StringName,
+	hull_id: StringName,
+	scanner_id: StringName,
+	module_ids: Array,
+	catalog: ShipPartCatalog = null,
+	weapon_id: StringName = &"",
+	drive_id: StringName = &"",
+	shield_id: StringName = &"",
+	blueprint_id: StringName = &"",
+	custom_seed: int = -1,
+	ship_role: StringName = &""
+) -> StringName:
 	var cat: ShipPartCatalog = catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG
-	return ship_domain.assemble_ship(planet_id, hull_id, scanner_id, module_ids, weapon_id, drive_id, shield_id, cat, custom_seed)
+	return ship_domain.assemble_ship(planet_id, hull_id, scanner_id, module_ids, weapon_id, drive_id, shield_id, cat, custom_seed, blueprint_id, ship_role)
 
 func disassemble_ship(planet_id: StringName, ship_id: StringName) -> bool:
 	return ship_domain.disassemble_ship(planet_id, ship_id)
@@ -337,7 +438,7 @@ func launch_ship(planet_id: StringName, ship_id: StringName) -> Dictionary:
 func get_ship_build_jobs(planet_id: StringName) -> Dictionary:
 	return ship_domain.get_ship_build_jobs(planet_id)
 
-func ship_build_in_progress(planet_id: StringName, ship_id: StringName) -> bool:
+func ship_build_in_progress(planet_id: StringName, ship_id: StringName = &"") -> bool:
 	return ship_domain.ship_build_in_progress(planet_id, ship_id)
 
 func ship_build_remaining(planet_id: StringName, ship_id: StringName) -> float:

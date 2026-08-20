@@ -61,19 +61,9 @@ func _dispatch_clusters(source: Planet, destination: Planet, amount: int, route_
 		tween.finished.connect(Callable(self, "_arrive_cluster").bind(cluster))
 
 func _arrive_cluster(cluster: WorkerCluster) -> StringName:
-	# When a cluster carries a FleetSnapshot (assembled ships), route the arrival
-	# through Planet.resolve_ship_arrival – the deterministic FleetBattle / Conquest
-	# simulator path – instead of the worker-count MVP rule.
-	var snapshot: Variant = cluster.get(&"fleet_snapshot")
-	if snapshot is FleetSnapshot:
-		var fleet: FleetSnapshot = snapshot
-		if not fleet.ships.is_empty():
-			var dest_planet: Planet = cluster.destination_planet as Planet
-			if dest_planet != null:
-				var result: Dictionary = dest_planet.resolve_ship_arrival(fleet)
-				dest_planet.show_arrival_feedback(int(result.get("surviving_attackers", 0)), fleet.faction)
-				cluster.queue_free()
-				return result.get(&"result", &"rejected") as StringName
+	# Worker clusters stay count-only. Assembled ships enter the conflict layer
+	# through ShipManager/ConflictManager with an explicitly reserved snapshot;
+	# never infer a fleet from a worker transit at arrival time.
 	return cluster._arrive()
 
 

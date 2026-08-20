@@ -40,12 +40,11 @@ func reset(catalog: PlanetCatalog) -> void:
 func remember_planet(faction: StringName, planet_id: StringName) -> void:
 	if String(faction).is_empty() or faction == GameState.FACTION_NEUTRAL or String(planet_id).is_empty():
 		return
-	var known_list: Array[StringName] = []
-	if known_planets.has(faction):
-		known_list = known_planets[faction]
-	if not known_list.has(planet_id):
-		known_list.append(planet_id)
-		known_planets[faction] = known_list
+	# Keep the legacy dictionary shape so compatibility callers can remove a
+	# frontier entry directly while the domain split remains the SSOT.
+	var known_list: Dictionary = known_planets.get(faction, {}) as Dictionary
+	known_list[planet_id] = true
+	known_planets[faction] = known_list
 
 func set_faction(planet_id: StringName, faction: StringName) -> void:
 	if String(planet_id).is_empty():
@@ -100,12 +99,10 @@ func all_owned_planets(faction: StringName) -> Array[StringName]:
 func discover_planet(faction: StringName, planet_id: StringName) -> bool:
 	if String(faction).is_empty() or String(planet_id).is_empty():
 		return false
-	var known_list: Array[StringName] = []
-	if known_planets.has(faction):
-		known_list = known_planets[faction]
+	var known_list: Dictionary = known_planets.get(faction, {}) as Dictionary
 	if known_list.has(planet_id):
 		return false
-	known_list.append(planet_id)
+	known_list[planet_id] = true
 	known_planets[faction] = known_list
 	planet_discovered.emit(faction, planet_id)
 	return true
@@ -138,7 +135,7 @@ func is_known(planet_id: StringName, faction: StringName) -> bool:
 		return true
 	if not known_planets.has(faction):
 		return false
-	var list: Array = known_planets[faction]
+	var list: Dictionary = known_planets[faction] as Dictionary
 	return list.has(planet_id)
 
 func has_scanned_planet(faction: StringName, planet_id: StringName = &"") -> bool:

@@ -95,16 +95,136 @@ func resource_of(planet_id: StringName) -> StringName:
 func deal_resources(catalog: PlanetCatalog, pool: ResourcePool = null, seed_value: int = 0) -> void:
 	planet_resources.clear()
 	var effective_pool: ResourcePool = pool if pool != null else GameState.DEFAULT_RESOURCE_POOL
-	if catalog == null or effective_pool == null:
+	if catalog == null or effective_pool == null or effective_pool.resources.is_empty():
 		return
-	var catalog_size := catalog.planets.size()
-	if catalog_size == 0:
+
+	var resource_ids: Array[StringName] = []
+	for resource in effective_pool.resources:
+		if resource != null and not String(resource.id).is_empty():
+			resource_ids.append(resource.id)
+	if resource_ids.is_empty():
 		return
-	var dealt: Array[GameResource] = effective_pool.deal_for_catalog(catalog_size, seed_value)
-	for i in range(mini(catalog_size, dealt.size())):
-		var def: PlanetDefinition = catalog.planets[i]
-		if def != null and dealt[i] != null:
-			set_planet_resource(def.planet_id, dealt[i].id)
+
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value
+	_shuffle(resource_ids, rng)
+
+	var homeworld_defs: Array[PlanetDefinition] = []
+	var other_defs: Array[PlanetDefinition] = []
+	for definition in catalog.planets:
+		if definition == null:
+			continue
+		if definition.planet_role == &"homeworld":
+			homeworld_defs.append(definition)
+		else:
+			other_defs.append(definition)
+	_shuffle(homeworld_defs, rng)
+	_shuffle(other_defs, rng)
+
+	var all_defs: Array[PlanetDefinition] = []
+	all_defs.append_array(homeworld_defs)
+	all_defs.append_array(other_defs)
+	if all_defs.is_empty():
+		return
+
+	# Reserve a balanced quota for the round-robin fallback. Signature hints may
+	# intentionally consume a quota early; the greedy fallback restores balance
+	# for the remaining planets.
+	var pool_size: int = resource_ids.size()
+	var base_count: int = int(float(all_defs.size()) / float(pool_size))
+	var extra_count: int = all_defs.size() % pool_size
+	var available_counts: Dictionary = {}
+	for index in pool_size:
+		var resource_id: StringName = resource_ids[index]
+		available_counts[resource_id] = base_count + (1 if index < extra_count else 0)
+
+	var used_homeworld_resources: Dictionary = {}
+	for definition in all_defs:
+		var chosen_resource: StringName = &""
+		var is_homeworld: bool = definition.planet_role == &"homeworld"
+		var signature: StringName = definition.signature_resource
+		var signature_blocked: bool = is_homeworld and used_homeworld_resources.has(signature)
+		if not String(signature).is_empty() and resource_ids.has(signature) and not signature_blocked and rng.randf() < definition.signature_probability:
+			# A probability-one signature is a hard preference, even if its
+			# nominal quota is already exhausted.
+			chosen_resource = signature
+
+		if String(chosen_resource).is_empty():
+			var best_count := -1
+			for resource_id in resource_ids:
+				if is_homeworld and used_homeworld_resources.has(resource_id):
+					continue
+				var remaining: int = int(available_counts.get(resource_id, 0))
+				if remaining > best_count:
+					best_count = remaining
+					chosen_resource = resource_id
+
+		# If there are more homeworlds than resource identities, release the
+		# distinct-homeworld constraint and continue with the best quota.
+		if String(chosen_resource).is_empty():
+			var best_count := -1
+			for resource_id in resource_ids:
+				var remaining: int = int(available_counts.get(resource_id, 0))
+				if remaining > best_count:
+					best_count = remaining
+					chosen_resource = resource_id
+
+		if String(chosen_resource).is_empty():
+			chosen_resource = resource_ids[0]
+		set_planet_resource(definition.planet_id, chosen_resource)
+		available_counts[chosen_resource] = maxi(0, int(available_counts.get(chosen_resource, 0)) - 1)
+		if is_homeworld:
+			used_homeworld_resources[chosen_resource] = true
+
+func resource_snapshot() -> Dictionary:
+	return planet_resources.duplicate()
+
+func validate_resources(pool: ResourcePool = null, homeworlds: Dictionary = {}) -> PackedStringArray:
+	var errors := PackedStringArray()
+	var effective_pool: ResourcePool = pool if pool != null else GameState.DEFAULT_RESOURCE_POOL
+	if planet_resources.is_empty():
+		errors.append("resources have not been dealt")
+		return errors
+	if effective_pool == null or effective_pool.resources.is_empty():
+		errors.append("resource pool is empty")
+		return errors
+
+	var counts: Dictionary = {}
+	for planet_id in planet_resources:
+		var resource_id: StringName = resource_of(planet_id as StringName)
+		if String(resource_id).is_empty():
+			errors.append("planet %s has no resource" % planet_id)
+			continue
+		counts[resource_id] = int(counts.get(resource_id, 0)) + 1
+
+	var homeworld_resources: Dictionary = {}
+	for planet_id_value in homeworlds.values():
+		var planet_id: StringName = planet_id_value as StringName
+		var resource_id: StringName = resource_of(planet_id)
+		if String(resource_id).is_empty():
+			continue
+		if homeworld_resources.has(resource_id):
+			errors.append("homeworlds share resource %s" % resource_id)
+		homeworld_resources[resource_id] = true
+
+	if counts.size() < effective_pool.resources.size():
+		errors.append("not every pool resource is represented")
+	if counts.size() > 1:
+		var min_count := 1 << 30
+		var max_count := 0
+		for count in counts.values():
+			min_count = mini(min_count, int(count))
+			max_count = maxi(max_count, int(count))
+		if max_count - min_count > 1:
+			errors.append("resource distribution is unbalanced")
+	return errors
+
+func _shuffle(values: Array, rng: RandomNumberGenerator) -> void:
+	for index in range(values.size() - 1, 0, -1):
+		var swap_index: int = rng.randi_range(0, index)
+		var value: Variant = values[index]
+		values[index] = values[swap_index]
+		values[swap_index] = value
 
 func has_planet_upgrade(planet_id: StringName, upgrade_id: StringName) -> bool:
 	if not planet_upgrades.has(planet_id):
@@ -120,26 +240,22 @@ func get_planet_upgrades(planet_id: StringName) -> Array[StringName]:
 		typed_list.append(item as StringName)
 	return typed_list
 
-func can_purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_workers: int, catalog: PlanetUpgradeCatalog = null) -> bool:
+func can_purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_workers: int = -1, catalog: PlanetUpgradeCatalog = null) -> bool:
 	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
-	if effective_catalog == null:
+	if effective_catalog == null or faction == GameState.FACTION_NEUTRAL or not faction_vaults.has(faction):
 		return false
 	var upgrade: PlanetUpgradeDefinition = effective_catalog.resolve(upgrade_id)
-	if upgrade == null:
-		return false
-	if has_planet_upgrade(planet_id, upgrade_id):
+	if upgrade == null or has_planet_upgrade(planet_id, upgrade_id):
 		return false
 	if not String(upgrade.parent_upgrade_id).is_empty() and not has_planet_upgrade(planet_id, upgrade.parent_upgrade_id):
 		return false
 	if not String(upgrade.exclusive_with).is_empty() and has_planet_upgrade(planet_id, upgrade.exclusive_with):
 		return false
-	if available_workers < upgrade.cost_workers:
+	if available_workers >= 0 and available_workers < upgrade.cost_workers:
 		return false
-	if not can_spend_faction_resource(faction, upgrade.cost_resource, upgrade.cost_amount):
-		return false
-	return true
+	return can_spend_faction_resource(faction, upgrade.cost_resource, upgrade.cost_amount)
 
-func purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_workers: int, catalog: PlanetUpgradeCatalog = null) -> bool:
+func purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_workers: int = -1, catalog: PlanetUpgradeCatalog = null) -> bool:
 	if not can_purchase_upgrade(faction, planet_id, upgrade_id, available_workers, catalog):
 		return false
 	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
@@ -163,22 +279,37 @@ func add_planet_upgrade(planet_id: StringName, upgrade_id: StringName) -> void:
 func has_worker_factory(planet_id: StringName) -> bool:
 	return worker_factories.get(planet_id, false) as bool
 
-func can_build_worker_factory(faction: StringName, planet_id: StringName, has_shipyard: bool, first_scan_done: bool, has_automation_tech: bool, available_slots: int) -> bool:
-	if has_worker_factory(planet_id):
+func can_build_worker_factory(
+	faction: StringName,
+	planet_id: StringName,
+	has_shipyard: bool,
+	first_scan_done: bool,
+	has_automation_tech: bool,
+	available_slots: int = -1,
+	cost_resource: StringName = GameState.RES_MATERIAL,
+	cost_amount: int = 5
+) -> bool:
+	if faction == GameState.FACTION_NEUTRAL or not faction_vaults.has(faction) or has_worker_factory(planet_id):
 		return false
 	if not has_shipyard or not first_scan_done or not has_automation_tech:
 		return false
-	if available_slots <= 0:
+	if available_slots >= 0 and available_slots <= 0:
 		return false
-	return can_spend_faction_resource(faction, GameState.RES_BIOMASS, 10) and can_spend_faction_resource(faction, GameState.RES_MATERIAL, 10)
+	return can_spend_faction_resource(faction, cost_resource, cost_amount)
 
-func build_worker_factory(faction: StringName, planet_id: StringName, has_shipyard: bool, first_scan_done: bool, has_automation_tech: bool, available_slots: int) -> bool:
-	if not can_build_worker_factory(faction, planet_id, has_shipyard, first_scan_done, has_automation_tech, available_slots):
+func build_worker_factory(
+	faction: StringName,
+	planet_id: StringName,
+	has_shipyard: bool,
+	first_scan_done: bool,
+	has_automation_tech: bool,
+	available_slots: int = -1,
+	cost_resource: StringName = GameState.RES_MATERIAL,
+	cost_amount: int = 5
+) -> bool:
+	if not can_build_worker_factory(faction, planet_id, has_shipyard, first_scan_done, has_automation_tech, available_slots, cost_resource, cost_amount):
 		return false
-	if not spend_faction_resource(faction, GameState.RES_BIOMASS, 10):
-		return false
-	if not spend_faction_resource(faction, GameState.RES_MATERIAL, 10):
-		add_faction_resource(faction, GameState.RES_BIOMASS, 10)
+	if not spend_faction_resource(faction, cost_resource, cost_amount):
 		return false
 	worker_factories[planet_id] = true
 	worker_factory_built.emit(planet_id)
@@ -196,14 +327,26 @@ func register_gathering_workers(faction: StringName, planet_id: StringName, sour
 	gathering_sources[faction][planet_id] = source_planet_id
 	gathering_started.emit(faction, planet_id, count)
 
-func withdraw_gathering_workers(faction: StringName, planet_id: StringName) -> Dictionary:
+func get_gathering_source(faction: StringName, planet_id: StringName) -> StringName:
+	if not gathering_sources.has(faction):
+		return &""
+	return gathering_sources[faction].get(planet_id, &"") as StringName
+
+func withdraw_gathering_workers(faction: StringName, planet_id: StringName, amount: int = -1) -> Dictionary:
 	if not gathering_workers.has(faction) or not gathering_workers[faction].has(planet_id):
 		return {"count": 0, "source_planet_id": &""}
-	var count: int = gathering_workers[faction].get(planet_id, 0)
-	var source_planet_id: StringName = gathering_sources.get(faction, {}).get(planet_id, &"") as StringName
-	gathering_workers[faction].erase(planet_id)
-	if gathering_sources.has(faction):
-		gathering_sources[faction].erase(planet_id)
+	var current: int = gathering_workers[faction].get(planet_id, 0)
+	var count: int = current if amount < 0 else mini(current, maxi(amount, 0))
+	var source_planet_id: StringName = get_gathering_source(faction, planet_id)
+	if count <= 0:
+		return {"count": 0, "source_planet_id": source_planet_id}
+	var remaining := current - count
+	if remaining <= 0:
+		gathering_workers[faction].erase(planet_id)
+		if gathering_sources.has(faction):
+			gathering_sources[faction].erase(planet_id)
+	else:
+		gathering_workers[faction][planet_id] = remaining
 	if count > 0:
 		gathering_withdrawn.emit(faction, planet_id, count)
 	return {"count": count, "source_planet_id": source_planet_id}
@@ -213,7 +356,8 @@ func gathering_workers_on(faction: StringName, planet_id: StringName) -> int:
 		return 0
 	return int(gathering_workers[faction].get(planet_id, 0))
 
-func gather_income_tick(base_amounts: Dictionary) -> int:
+func gather_income_tick(base_amounts: Dictionary, catalog: PlanetUpgradeCatalog = null) -> int:
+	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
 	var total_earned := 0
 	for faction in gathering_workers:
 		var faction_name := faction as StringName
@@ -226,8 +370,14 @@ func gather_income_tick(base_amounts: Dictionary) -> int:
 			var res_id: StringName = resource_of(planet_id)
 			if not _is_valid_resource_id(res_id):
 				continue
-			var base_amt: int = base_amounts.get(planet_id, 1)
-			var earned := count * base_amt
+			var base_amt: int = maxi(int(base_amounts.get(planet_id, 1)), 1)
+			var gather_multiplier := 1.0
+			if effective_catalog != null:
+				for upgrade_id in get_planet_upgrades(planet_id):
+					var upgrade: PlanetUpgradeDefinition = effective_catalog.resolve(upgrade_id)
+					if upgrade != null and upgrade.trait_definition != null:
+						gather_multiplier *= upgrade.trait_definition.gather_income_multiplier
+			var earned: int = maxi(1, int(round(float(count * base_amt) * gather_multiplier)))
 			add_faction_resource(faction_name, res_id, earned)
 			total_earned += earned
 			resources_collected.emit(faction_name, planet_id, res_id, earned)

@@ -35,6 +35,8 @@ func run(ctx: PreflightContext) -> bool:
 	touch_event.position = source.global_position
 	touch_event.pressed = true
 	source.call("_on_click_area_input_event", null, touch_event, 0)
+	touch_event.pressed = false
+	source.call("_on_click_area_input_event", null, touch_event, 0)
 	await ctx.await_frame()
 	if not ctx.check(source.is_selected(), "touch tap did not select the planet"):
 		return false
@@ -49,6 +51,8 @@ func run(ctx: PreflightContext) -> bool:
 	second_touch.index = 0
 	second_touch.position = second_planet.global_position
 	second_touch.pressed = true
+	second_planet.call("_on_click_area_input_event", null, second_touch, 0)
+	second_touch.pressed = false
 	second_planet.call("_on_click_area_input_event", null, second_touch, 0)
 	await ctx.await_frame()
 	if not ctx.check(not source.is_selected() and second_planet.is_selected(), "selecting another planet did not move the selection ring"):

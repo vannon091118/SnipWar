@@ -44,7 +44,16 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 			"alive": true
 		}
 		units_a.append(unit)
-		events.append(BattleEvent.create(0.0, BattleEvent.TYPE_SPAWN, unit["id"], &"", unit["hp"], unit["pos"]))
+		events.append(BattleEvent.create(
+			0.0,
+			BattleEvent.TYPE_SPAWN,
+			unit["id"],
+			&"",
+			unit["hp"],
+			unit["pos"],
+			Vector2.ZERO,
+			unit["ship_data"] as Dictionary
+		))
 
 	var units_b: Array[Dictionary] = []
 	for i in range(fleet_b.ships.size()):
@@ -61,7 +70,16 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 			"alive": true
 		}
 		units_b.append(unit)
-		events.append(BattleEvent.create(0.0, BattleEvent.TYPE_SPAWN, unit["id"], &"", unit["hp"], unit["pos"]))
+		events.append(BattleEvent.create(
+			0.0,
+			BattleEvent.TYPE_SPAWN,
+			unit["id"],
+			&"",
+			unit["hp"],
+			unit["pos"],
+			Vector2.ZERO,
+			unit["ship_data"] as Dictionary
+		))
 
 	var time := 0.0
 	var tick := 0.5

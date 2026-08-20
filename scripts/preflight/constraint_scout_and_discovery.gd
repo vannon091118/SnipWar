@@ -27,8 +27,35 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(tech_catalog.for_category(TechnologyDefinition.CATEGORY_SHIPS).size() >= 2 and not tech_catalog.for_category(TechnologyDefinition.CATEGORY_MECH).is_empty() and tech_catalog.for_category(TechnologyDefinition.CATEGORY_PLANET).size() >= 2, "technology catalog is missing a ships, mech, or planet branch"):
 		return false
+	if not ctx.check(tech_catalog.resolve_all().size() == 14, "default technology catalog should contain the original tree plus six branch technologies"):
+		return false
 
-	# Discovery state: a faction starts knowing only its own planets.
+	# Three branch points must expose reciprocal exclusions and remain researchable
+	# only after their shared parent is complete.
+	var advanced_propulsion: TechnologyDefinition = tech_catalog.resolve(&"advanced_propulsion")
+	var heavy_armor_plating: TechnologyDefinition = tech_catalog.resolve(&"heavy_armor_plating")
+	var deep_scan: TechnologyDefinition = tech_catalog.resolve(&"deep_scan")
+	var long_range_sensors: TechnologyDefinition = tech_catalog.resolve(&"long_range_sensors")
+	var automated_refinery: TechnologyDefinition = tech_catalog.resolve(&"automated_refinery")
+	var bulk_processing: TechnologyDefinition = tech_catalog.resolve(&"bulk_processing")
+	if not ctx.check(advanced_propulsion != null and heavy_armor_plating != null and deep_scan != null and long_range_sensors != null and automated_refinery != null and bulk_processing != null, "one or more branching technologies are missing"):
+		return false
+	if not ctx.check(advanced_propulsion.prerequisite_tech_id == &"weapon_systems" and heavy_armor_plating.prerequisite_tech_id == &"weapon_systems" and advanced_propulsion.mutually_exclusive_with == heavy_armor_plating.id and heavy_armor_plating.mutually_exclusive_with == advanced_propulsion.id, "weapon branch prerequisites or exclusions are incorrect"):
+		return false
+	if not ctx.check(deep_scan.prerequisite_tech_id == &"scanner_drone" and long_range_sensors.prerequisite_tech_id == &"scanner_drone" and deep_scan.mutually_exclusive_with == long_range_sensors.id and long_range_sensors.mutually_exclusive_with == deep_scan.id, "scanner branch prerequisites or exclusions are incorrect"):
+		return false
+	if not ctx.check(automated_refinery.prerequisite_tech_id == &"worker_automation" and bulk_processing.prerequisite_tech_id == &"worker_automation" and automated_refinery.mutually_exclusive_with == bulk_processing.id and bulk_processing.mutually_exclusive_with == automated_refinery.id, "economy branch prerequisites or exclusions are incorrect"):
+		return false
+	if not ctx.check(advanced_propulsion.category == TechnologyDefinition.CATEGORY_SHIPS and advanced_propulsion.cost_resource == GameState.RES_VOLATILE and advanced_propulsion.cost_amount == 20 and heavy_armor_plating.category == TechnologyDefinition.CATEGORY_SHIPS and heavy_armor_plating.cost_resource == GameState.RES_MATERIAL and heavy_armor_plating.cost_amount == 20, "weapon branch research costs are incorrect"):
+		return false
+	if not ctx.check(deep_scan.category == TechnologyDefinition.CATEGORY_SHIPS and deep_scan.cost_resource == GameState.RES_ENERGY and deep_scan.cost_amount == 15 and long_range_sensors.category == TechnologyDefinition.CATEGORY_SHIPS and long_range_sensors.cost_resource == GameState.RES_RARE and long_range_sensors.cost_amount == 15, "scanner branch research costs are incorrect"):
+		return false
+	if not ctx.check(automated_refinery.category == TechnologyDefinition.CATEGORY_PLANET and automated_refinery.cost_resource == GameState.RES_RARE and automated_refinery.cost_amount == 25 and bulk_processing.category == TechnologyDefinition.CATEGORY_PLANET and bulk_processing.cost_resource == GameState.RES_BIOMASS and bulk_processing.cost_amount == 25, "economy branch research costs are incorrect"):
+		return false
+	if not ctx.check(tech_catalog.can_research([&"weapon_systems"], advanced_propulsion.id) and not tech_catalog.can_research([&"weapon_systems", heavy_armor_plating.id], advanced_propulsion.id) and tech_catalog.can_research([&"scanner_drone"], deep_scan.id) and not tech_catalog.can_research([&"scanner_drone", long_range_sensors.id], deep_scan.id) and tech_catalog.can_research([&"worker_automation"], automated_refinery.id) and not tech_catalog.can_research([&"worker_automation", bulk_processing.id], automated_refinery.id), "technology branch exclusion gates are not enforced by the catalog"):
+		return false
+
+	# Discovery state: a faction starts knowing only their own planets.
 	var player_known_before: Array[StringName] = game_state.known_planets_of(GameState.FACTION_PLAYER)
 	if not ctx.check(player_known_before.size() == 1 and player_known_before.has(game_state.homeworld_for(GameState.FACTION_PLAYER)), "player should initially know only their own planet"):
 		return false
@@ -43,6 +70,24 @@ func run(ctx: PreflightContext) -> bool:
 	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_BIOMASS, 100)
 	if not ctx.check(game_state.research_technology(GameState.FACTION_PLAYER, &"shipyard_construction", tech_catalog), "shipyard construction research should succeed"):
 		return false
+	var research_menu: TechnologyMenu = network.get_technology_menu()
+	if not ctx.check(research_menu != null, "technology menu is missing for research progress feedback"):
+		return false
+	research_menu.set("_category", TechnologyDefinition.CATEGORY_SHIPS)
+	research_menu.call("_set_open", true)
+	research_menu.call("_refresh")
+	await ctx.await_frame()
+	var research_list: VBoxContainer = research_menu.get_node_or_null("TechTabUI/TechPanel/TechMargin/TechVBox/TechScroll/TechList") as VBoxContainer
+	var research_progress_visible := false
+	if research_list != null:
+		for progress_node in research_list.find_children("ResearchProgress", "ProgressBar", true, false):
+			var research_progress: ProgressBar = progress_node as ProgressBar
+			if research_progress != null and research_progress.visible and research_progress.max_value > 0.0 and research_progress.value < research_progress.max_value:
+				research_progress_visible = true
+				break
+	if not ctx.check(research_progress_visible, "active research did not render a visible progress bar"):
+		return false
+	research_menu.close()
 	game_state.call("advance_research", 999.0)
 	if not ctx.check(game_state.can_research_technology(GameState.FACTION_PLAYER, &"scout_hull", tech_catalog), "scout_hull should be researchable after shipyard construction"):
 		return false

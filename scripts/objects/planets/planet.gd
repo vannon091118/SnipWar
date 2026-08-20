@@ -19,6 +19,10 @@ signal worker_count_changed(planet: Node2D, count: int)
 signal worker_production_changed(planet: Node2D, enabled: bool)
 signal planet_hovered(planet: Node2D)
 signal planet_unhovered(planet: Node2D)
+## Emitted after a deterministic fleet/planet simulation produces a replayable
+## result. ConflictManager consumes this handoff; Planet remains the authority
+## that commits ownership and worker state.
+signal conflict_simulated(simulation_type: StringName, result: Dictionary)
 
 enum WorkerState { IDLE, SPAWNING }
 
@@ -104,6 +108,8 @@ func _ready() -> void:
 				state.technology_researched.connect(_on_technology_researched)
 			if not state.worker_factory_built.is_connected(_on_worker_factory_built):
 				state.worker_factory_built.connect(_on_worker_factory_built)
+			if not state.resource_generated.is_connected(_on_resource_generated):
+				state.resource_generated.connect(_on_resource_generated)
 	_sync_groups()
 	_apply_visuals()
 	_planet_ready = true
@@ -478,6 +484,7 @@ func resolve_ship_arrival(arriving_fleet: FleetSnapshot, defender_fleet: FleetSn
 
 func _resolve_ship_vs_fleet(arriving_fleet: FleetSnapshot, defender_fleet: FleetSnapshot, battle_seed: int, attacking_faction: StringName, out: Dictionary) -> Dictionary:
 	var battle: Dictionary = FleetBattleSimulator.simulate_battle(arriving_fleet, defender_fleet, battle_seed)
+	conflict_simulated.emit(&"battle", battle.duplicate(true))
 	var winner: StringName = battle.get("winner", &"neutral") as StringName
 	var survivors: Array = battle.get("survivors_a", [])
 	var defender_survivors: Array = battle.get("survivors_b", [])
@@ -517,6 +524,7 @@ func _resolve_ship_vs_planet(arriving_fleet: FleetSnapshot, conquest_seed: int, 
 	var conquest: Dictionary = ConquestSimulator.simulate_conquest(
 		arriving_fleet, 0, defender_workers, defense_rating,
 		get_perimeter_slots(), get_defense_range(), conquest_seed)
+	conflict_simulated.emit(&"conquest", _conquest_replay_result(conquest))
 	if bool(conquest.get("captured", false)):
 		unregister_workers(worker_count)
 		set_faction(attacking_faction)
@@ -529,6 +537,17 @@ func _resolve_ship_vs_planet(arriving_fleet: FleetSnapshot, conquest_seed: int, 
 		out["result"] = ARRIVAL_REPELLED
 	out["duration"] = float(conquest.get("duration", 0.0))
 	return out
+
+
+func _conquest_replay_result(conquest: Dictionary) -> Dictionary:
+	var replay_result: Dictionary = conquest.duplicate(true)
+	# The simulator owns combat numbers; Planet owns the attacked planet's
+	# presentation identity. Keep both in the replay payload so ConquestScene
+	# never has to guess from a hardcoded planet asset.
+	replay_result["planet_id"] = planet_id
+	replay_result["planet_name"] = display_name
+	replay_result["planet_texture"] = planet_texture
+	return replay_result
 
 
 func _aggregate_defense_rating() -> int:
@@ -551,31 +570,40 @@ func resolve_mission(source_faction: StringName, amount: int, mission_type: Stri
 		return _resolve_collect(source_faction, amount, source_planet_id)
 	return resolve_military_arrival(source_faction, amount, source_planet_id)
 
-## Resolves a military arrival by drafting the source planet's assembled ships into
-## a FleetSnapshot (create_fleet_from_planet) and running the deterministic
-## FleetBattleSimulator (fleet-vs-fleet) or ConquestSimulator (fleet-vs-ground)
-## through resolve_ship_arrival(). When the source carries no assembled ships the
-## legacy worker-count rule in resolve_arrival() handles pure-worker transit.
-func resolve_military_arrival(source_faction: StringName, amount: int, source_planet_id: StringName = &"") -> StringName:
-	var state: Node = _game_state()
-	var attacking_fleet: FleetSnapshot = _build_fleet_from_assemblies(state, source_planet_id, true)
-	if attacking_fleet != null and not attacking_fleet.ships.is_empty():
-		var defender_fleet: FleetSnapshot = _build_fleet_from_assemblies(state, planet_id, false)
-		var result: Dictionary = resolve_ship_arrival(attacking_fleet, defender_fleet)
-		return result.get(&"result", ARRIVAL_REJECTED) as StringName
-	return resolve_arrival(source_faction, amount)
+## Resolves a worker military arrival through the deterministic conquest
+## adapter. Assemblies are not inferred from a worker transit: an assembled
+## ship enters the simulator only through ConflictManager/ShipBase, where its
+## FleetSnapshot was explicitly reserved at launch.
+func resolve_military_arrival(source_faction: StringName, amount: int, _source_planet_id: StringName = &"", conquest_seed: int = 42) -> StringName:
+	var incoming: int = maxi(amount, 0)
+	if incoming <= 0 or source_faction.is_empty() or source_faction == GameState.FACTION_NEUTRAL:
+		return ARRIVAL_REJECTED
+	if get_faction() == source_faction:
+		return resolve_arrival(source_faction, incoming)
 
+	var conquest: Dictionary = ConquestSimulator.simulate_conquest(
+		null,
+		incoming,
+		worker_count,
+		_aggregate_defense_rating(),
+		get_perimeter_slots(),
+		get_defense_range(),
+		conquest_seed
+	)
+	conflict_simulated.emit(&"conquest", _conquest_replay_result(conquest))
+	if bool(conquest.get("captured", false)):
+		unregister_workers(worker_count)
+		set_faction(source_faction)
+		var survivors: int = int(conquest.get("surviving_attackers", 0))
+		if survivors > 0:
+			register_workers(survivors)
+		return ARRIVAL_CAPTURED
 
-func _build_fleet_from_assemblies(state: Node, target_planet_id: StringName, consume: bool) -> FleetSnapshot:
-	if state == null or String(target_planet_id).is_empty():
-		return null
-	var assemblies: Dictionary = state.get_ship_assemblies(target_planet_id)
-	if assemblies.is_empty():
-		return null
-	var ship_ids: Array = assemblies.keys()
-	if consume:
-		return state.create_fleet_from_planet(target_planet_id, ship_ids) as FleetSnapshot
-	return state.preview_fleet_from_planet(target_planet_id, ship_ids) as FleetSnapshot
+	# The simulator decides the outcome; preserve the existing worker-loss
+	# contract for a repelled worker wave rather than turning tower HP into
+	# persistent worker counts.
+	unregister_workers(mini(incoming, worker_count))
+	return ARRIVAL_REPELLED
 
 func _resolve_colony(source_faction: StringName, amount: int) -> StringName:
 	var incoming: int = maxi(amount, 0)
@@ -675,6 +703,17 @@ func _on_worker_factory_built(changed_planet_id: StringName) -> void:
 	if changed_planet_id != planet_id:
 		return
 	set_worker_spawn_enabled(true)
+
+func _on_resource_generated(changed_planet_id: StringName, resource_id: StringName, amount: int) -> void:
+	if changed_planet_id != planet_id or amount <= 0 or get_faction() != GameState.FACTION_PLAYER:
+		return
+	var parent: Node = get_parent()
+	if parent == null or not is_inside_tree():
+		return
+	var resource_definition: GameResource = GameState.DEFAULT_RESOURCE_POOL.resource_for(resource_id)
+	var resource_name: String = resource_definition.display_name if resource_definition != null and not resource_definition.display_name.is_empty() else String(resource_id)
+	var tint: Color = DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"resource", resource_id)
+	FloatingText.spawn(parent, "+%d %s" % [amount, resource_name], position, tint, 1.2)
 
 func _on_faction_changed(changed_planet_id: StringName, _old_faction: StringName, new_faction: StringName) -> void:
 	if changed_planet_id == planet_id:

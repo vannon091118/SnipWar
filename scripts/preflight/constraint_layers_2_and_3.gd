@@ -30,6 +30,16 @@ func run(ctx: PreflightContext) -> bool:
 	view.queue_free()
 
 	# 3. FleetSnapshot & Stats
+	var conflict_manager: Node = ctx.field.get_node_or_null("ConflictManager")
+	if not ctx.check(conflict_manager != null and conflict_manager.has_signal("replay_started"), "ConflictManager must expose the live replay handoff"):
+		return false
+	var replay_kinds: Array[StringName] = []
+	var replay_payloads: Dictionary = {}
+	var replay_capture: Callable = func(simulation_type, result):
+		replay_kinds.append(simulation_type as StringName)
+		replay_payloads[simulation_type] = result as Dictionary
+	conflict_manager.connect("replay_started", replay_capture)
+
 	var fleet_a := FleetSnapshot.new()
 	fleet_a.fleet_id = &"fleet_test_a"
 	fleet_a.faction = GameState.FACTION_PLAYER
@@ -78,6 +88,10 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(conq_1.get("captured") == conq_2.get("captured"), "ConquestSimulator capture result must be deterministic"):
 		return false
 	if not ctx.check(conq_1.get("surviving_attackers") == conq_2.get("surviving_attackers"), "ConquestSimulator survivor count must be deterministic"):
+		return false
+	if not ctx.check(
+		conq_1.get("perimeter_slots") == 2 and conq_1.get("tower_count") == 2 and conq_1.get("defense_range") == 150.0 and conq_1.get("conquest_seed") == 777,
+		"ConquestResult must preserve the replay inputs"):
 		return false
 
 	# 6. Planet.resolve_ship_arrival integrates the L2/L3 simulators into
@@ -141,6 +155,10 @@ func run(ctx: PreflightContext) -> bool:
 			battle_outcome == String(Planet.ARRIVAL_CAPTURED) or battle_outcome == String(Planet.ARRIVAL_REPELLED),
 			"fleet-vs-fleet arrival must resolve through simulator (got %s)" % battle_outcome):
 			return false
+		if not ctx.check(replay_kinds.has(&"battle"), "live fleet battle did not hand its result to the replay layer"):
+			return false
+		if not ctx.check(conflict_manager.get_node_or_null("BattleReplay") is BattleScene, "fleet battle did not create a BattleScene replay"):
+			return false
 
 	# 6c. No defender fleet -> ConquestSimulator route. Use a neutral planet
 	#    (not the player homeworld captured by 6b) so the destination faction
@@ -165,6 +183,15 @@ func run(ctx: PreflightContext) -> bool:
 			conquest_outcome == String(Planet.ARRIVAL_CAPTURED) or conquest_outcome == String(Planet.ARRIVAL_REPELLED),
 			"fleet-vs-ground arrival must resolve through ConquestSimulator (got %s)" % conquest_outcome):
 			return false
+		if not ctx.check(replay_kinds.has(&"conquest"), "live conquest did not hand its result to the replay layer"):
+			return false
+		var conquest_replay: Dictionary = replay_payloads.get(&"conquest", {}) as Dictionary
+		if not ctx.check(conquest_replay.get("planet_id") == conquest_target.planet_id, "conquest replay must identify the attacked planet"):
+			return false
+		if not ctx.check(conquest_replay.get("planet_texture") == conquest_target.planet_texture, "conquest replay must carry the attacked planet visual"):
+			return false
+		if not ctx.check(conflict_manager.get_node_or_null("ConquestReplay") is ConquestScene, "fleet conquest did not create a ConquestScene replay"):
+			return false
 
 	# 6d. Empty/defensive inputs -> REJECTED untouched
 	var rejection_planet_id: StringName = (ctx.game_state as Node).call("homeworld_for", GameState.FACTION_NEUTRAL) as StringName
@@ -186,9 +213,8 @@ func run(ctx: PreflightContext) -> bool:
 		if not ctx.check(String(neutral_result.get("result", "")) == String(Planet.ARRIVAL_REJECTED), "neutral-faction fleet must be REJECTED"):
 			return false
 
-	# 7. resolve_military_arrival drafts the source planet's assembled ships into a
-	#    FleetSnapshot and routes through the simulators; with no assemblies it
-	#    falls back to the legacy worker-count rule.
+	# 7. Worker military arrivals use the ConquestSimulator adapter. Assemblies
+	#    remain in the source inventory because no ship was explicitly launched.
 	var neutral_home_id: StringName = (ctx.game_state as Node).call("homeworld_for", GameState.FACTION_NEUTRAL) as StringName
 	var draft_source_id: StringName = (ctx.game_state as Node).call("homeworld_for", GameState.FACTION_CPU) as StringName
 	var draft_source: Planet = ctx.find_planet_by_id(ctx.field, draft_source_id)
@@ -207,7 +233,7 @@ func run(ctx: PreflightContext) -> bool:
 		}]
 		seeded.calculate_stats()
 		(ctx.game_state as Node).call("disband_fleet_to_planet", seeded, draft_source_id)
-		if not ctx.check(int((ctx.game_state as Node).get_ship_assemblies(draft_source_id).size()) == 1, "seeded assembly did not land on the draft source"):
+		if not ctx.check(int((ctx.game_state as Node).get_ship_assemblies(draft_source_id).size()) == 1, "seeded assembly did not land on the source"):
 			return false
 		var draft_target: Planet = null
 		for child in ctx.field.get_children():
@@ -215,15 +241,18 @@ func run(ctx: PreflightContext) -> bool:
 				draft_target = child as Planet
 				break
 		if draft_target != null:
-			var draft_result: StringName = draft_target.resolve_military_arrival(draft_source.get_faction(), 0, draft_source_id)
+			var conquest_replays_before: int = replay_kinds.count(&"conquest")
+			var draft_result: StringName = draft_target.resolve_military_arrival(draft_source.get_faction(), 4, draft_source_id)
 			if not ctx.check(
 				String(draft_result) == String(Planet.ARRIVAL_CAPTURED) or String(draft_result) == String(Planet.ARRIVAL_REPELLED),
-				"military arrival with a drafted fleet must resolve through the simulator (got %s)" % draft_result):
+				"worker military arrival must resolve through ConquestSimulator (got %s)" % draft_result):
 				return false
-			if not ctx.check((ctx.game_state as Node).get_ship_assemblies(draft_source_id).is_empty(), "military arrival did not consume the drafted source assembly"):
+			if not ctx.check((ctx.game_state as Node).get_ship_assemblies(draft_source_id).size() == 1, "worker military arrival consumed an unlaunched source assembly"):
+				return false
+			if not ctx.check(replay_kinds.count(&"conquest") > conquest_replays_before, "worker military arrival did not start a conquest replay"):
 				return false
 
-	# 7b. No source assemblies -> worker-count fallback (undefended capture).
+	# 7b. An assembly-less worker military arrival uses the same conquest adapter.
 	var fallback_target: Planet = null
 	for child in ctx.field.get_children():
 		if child is Planet and (child as Planet).get_faction() == GameState.FACTION_NEUTRAL and (child as Planet).planet_id != neutral_home_id:
@@ -232,7 +261,7 @@ func run(ctx: PreflightContext) -> bool:
 	if fallback_target != null:
 		fallback_target.unregister_workers(fallback_target.worker_count)
 		var fallback_result: StringName = fallback_target.resolve_military_arrival(GameState.FACTION_CPU, 4, &"")
-		if not ctx.check(String(fallback_result) == String(Planet.ARRIVAL_CAPTURED), "assembly-less military arrival should fall back to worker-count capture (got %s)" % fallback_result):
+		if not ctx.check(String(fallback_result) == String(Planet.ARRIVAL_CAPTURED), "assembly-less worker military arrival should capture through conquest (got %s)" % fallback_result):
 			return false
 
 	return true

@@ -10,6 +10,12 @@ const _Context := preload("res://scripts/preflight/preflight_context.gd")
 
 const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 	{
+		"id": "game_state_compatibility",
+		"script": preload("res://scripts/preflight/constraint_game_state_compatibility.gd"),
+		"desc": "GameState facade methods, signatures & callsites",
+		"requires_scene": false,
+	},
+	{
 		"id": "effects_and_traits",
 		"script": preload("res://scripts/preflight/constraint_effects_and_traits.gd"),
 		"desc": "Combat effect math & traits",

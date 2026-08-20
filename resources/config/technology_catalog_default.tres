@@ -8,6 +8,12 @@
 [ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean.svg" id="6_planet_survey"]
 [ext_resource type="Texture2D" path="res://assets/objects/planets/planet_04_violet.svg" id="7_planet_extraction"]
 [ext_resource type="Texture2D" path="res://assets/objects/workers/cluster_m.svg" id="8_shipyard"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/drive_advanced.svg" id="9_advanced_drive"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/armor_heavy.svg" id="10_heavy_armor"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/scanner_t2.svg" id="11_scanner_t2"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/sensor_array.svg" id="12_sensor_array"]
+[ext_resource type="Texture2D" path="res://assets/objects/structures/automated_mine.svg" id="13_automated_mine"]
+[ext_resource type="Texture2D" path="res://assets/objects/structures/trade_hub.svg" id="14_trade_hub"]
 
 [sub_resource type="Resource" id="Tech_shipyard_construction"]
 script = ExtResource("2_definition")
@@ -125,6 +131,96 @@ effect_id = &"planet_production_extraction"
 mechanic_description = "Mechanik: Die Ressourcenproduktion dieses Planeten steigt zusätzlich auf 150 %."
 production_multiplier = 1.5
 
+[sub_resource type="Resource" id="Tech_advanced_propulsion"]
+script = ExtResource("2_definition")
+id = &"advanced_propulsion"
+category = &"ships"
+display_name = "Fortschrittlicher Antrieb"
+description = "Optimiert die Schiffsfahrt und schaltet das Reaktormodul frei."
+cost_resource = &"volatile"
+cost_amount = 20
+prerequisite_tech_id = &"weapon_systems"
+mutually_exclusive_with = &"heavy_armor_plating"
+visual_asset = ExtResource("9_advanced_drive")
+effect_id = &"advanced_propulsion"
+mechanic_description = "Mechanik: +15 % Schiffsfahrt; das Reaktor-Modul wird in der Werft verfügbar."
+research_time = 5.0
+
+[sub_resource type="Resource" id="Tech_heavy_armor_plating"]
+script = ExtResource("2_definition")
+id = &"heavy_armor_plating"
+category = &"ships"
+display_name = "Schwere Panzerplatten"
+description = "Verstärkt die Schiffshülle und schaltet das verstärkte Utility-Modul frei."
+cost_resource = &"material"
+cost_amount = 20
+prerequisite_tech_id = &"weapon_systems"
+mutually_exclusive_with = &"advanced_propulsion"
+visual_asset = ExtResource("10_heavy_armor")
+effect_id = &"heavy_armor_plating"
+mechanic_description = "Mechanik: +30 Hüllenbonus; das verstärkte Panzerungsmodul wird in der Werft verfügbar."
+research_time = 5.0
+
+[sub_resource type="Resource" id="Tech_deep_scan"]
+script = ExtResource("2_definition")
+id = &"deep_scan"
+category = &"ships"
+display_name = "Tiefenscan"
+description = "Verbessert die Scan-Intel und schaltet den Scanner T2 frei."
+cost_resource = &"energy"
+cost_amount = 15
+prerequisite_tech_id = &"scanner_drone"
+mutually_exclusive_with = &"long_range_sensors"
+visual_asset = ExtResource("11_scanner_t2")
+effect_id = &"deep_scan"
+mechanic_description = "Mechanik: Scanner T2 liefert detailliertere Planeten-Intel."
+research_time = 4.0
+
+[sub_resource type="Resource" id="Tech_long_range_sensors"]
+script = ExtResource("2_definition")
+id = &"long_range_sensors"
+category = &"ships"
+display_name = "Langstreckensensoren"
+description = "Erweitert die Sensorreichweite und schaltet das Sensor-Array-Modul frei."
+cost_resource = &"rare"
+cost_amount = 15
+prerequisite_tech_id = &"scanner_drone"
+mutually_exclusive_with = &"deep_scan"
+visual_asset = ExtResource("12_sensor_array")
+effect_id = &"long_range_sensors"
+mechanic_description = "Mechanik: Sensor-Array-Modul erhöht die Reichweite um 40 px."
+research_time = 4.0
+
+[sub_resource type="Resource" id="Tech_automated_refinery"]
+script = ExtResource("2_definition")
+id = &"automated_refinery"
+category = &"planet"
+display_name = "Automatisierte Raffinerie"
+description = "Schaltet das automatisierte Bergwerk für die eigene Wirtschaft frei."
+cost_resource = &"rare"
+cost_amount = 25
+prerequisite_tech_id = &"worker_automation"
+mutually_exclusive_with = &"bulk_processing"
+visual_asset = ExtResource("13_automated_mine")
+effect_id = &"automated_refinery"
+mechanic_description = "Mechanik: Das Upgrade Automatisiertes Bergwerk wird baubar."
+research_time = 5.0
+
+[sub_resource type="Resource" id="Tech_bulk_processing"]
+script = ExtResource("2_definition")
+id = &"bulk_processing"
+category = &"planet"
+display_name = "Massenverarbeitung"
+description = "Schaltet das Handelszentrum für kontinuierliche Sammelerträge frei."
+cost_resource = &"biomass"
+cost_amount = 25
+prerequisite_tech_id = &"worker_automation"
+mutually_exclusive_with = &"automated_refinery"
+visual_asset = ExtResource("14_trade_hub")
+effect_id = &"bulk_processing"
+mechanic_description = "Mechanik: Das Upgrade Handelszentrum wird baubar."
+research_time = 5.0
+
 [resource]
 script = ExtResource("1_catalog")
-technologies = [SubResource("Tech_shipyard_construction"), SubResource("Tech_scout_hull"), SubResource("Tech_scanner_drone"), SubResource("Tech_weapon_systems"), SubResource("Tech_worker_automation"), SubResource("Tech_mech_frame"), SubResource("Tech_planetary_survey"), SubResource("Tech_planetary_extraction")]
+technologies = [SubResource("Tech_shipyard_construction"), SubResource("Tech_scout_hull"), SubResource("Tech_scanner_drone"), SubResource("Tech_weapon_systems"), SubResource("Tech_worker_automation"), SubResource("Tech_mech_frame"), SubResource("Tech_planetary_survey"), SubResource("Tech_planetary_extraction"), SubResource("Tech_advanced_propulsion"), SubResource("Tech_heavy_armor_plating"), SubResource("Tech_deep_scan"), SubResource("Tech_long_range_sensors"), SubResource("Tech_automated_refinery"), SubResource("Tech_bulk_processing")]

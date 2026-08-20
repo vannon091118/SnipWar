@@ -26,6 +26,20 @@ func run(ctx: PreflightContext) -> bool:
 		and not catalog.for_slot(ShipPartDefinition.SLOT_MODULE).is_empty(),
 		"ship part catalog is missing a hull, drive, weapon, shield, scanner, or module branch"):
 		return false
+	var scanner_t2: ShipPartDefinition = catalog.resolve(&"scanner_t2")
+	var reactor_module: ShipPartDefinition = catalog.resolve(&"module_reactor")
+	var reinforced_module: ShipPartDefinition = catalog.resolve(&"module_reinforced")
+	var sensor_array_module: ShipPartDefinition = catalog.resolve(&"module_sensor_array")
+	if not ctx.check(scanner_t2 != null and reactor_module != null and reinforced_module != null and sensor_array_module != null, "one or more branching ship parts are missing"):
+		return false
+	if not ctx.check(scanner_t2.slot_type == ShipPartDefinition.SLOT_SCANNER and scanner_t2.tier == 2 and scanner_t2.required_tech_id == &"deep_scan" and scanner_t2.cost_resource == GameState.RES_ENERGY and scanner_t2.cost_amount == 12, "scanner_t2 definition does not match the deep-scan branch contract"):
+		return false
+	if not ctx.check(reactor_module.required_tech_id == &"advanced_propulsion" and reactor_module.cost_resource == GameState.RES_VOLATILE and reactor_module.cost_amount == 8 and reactor_module.trait_definition != null and is_equal_approx(reactor_module.trait_definition.transfer_speed_multiplier, 1.1), "module_reactor definition does not match the advanced-propulsion branch contract"):
+		return false
+	if not ctx.check(reinforced_module.required_tech_id == &"heavy_armor_plating" and reinforced_module.cost_resource == GameState.RES_MATERIAL and reinforced_module.cost_amount == 8 and reinforced_module.trait_definition != null and reinforced_module.trait_definition.hull_hp_bonus == 15, "module_reinforced definition does not match the heavy-armor branch contract"):
+		return false
+	if not ctx.check(sensor_array_module.required_tech_id == &"long_range_sensors" and sensor_array_module.cost_resource == GameState.RES_RARE and sensor_array_module.cost_amount == 8 and sensor_array_module.trait_definition != null and is_equal_approx(sensor_array_module.trait_definition.range_bonus, 40.0), "module_sensor_array definition does not match the long-range branch contract"):
+		return false
 	var source: Planet = ctx.find_planet_by_id(field, game_state.homeworld_for(GameState.FACTION_PLAYER) as StringName)
 	if not ctx.check(source != null and game_state.has_planet_upgrade(source.planet_id, ShipManager.SHIPYARD_UPGRADE_ID), "player homeworld should carry a shipyard before the ship builder runs"):
 		return false
@@ -138,6 +152,25 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(game_state.call("ship_build_in_progress", source.planet_id, ship_id), "timed ship build was not queued"):
 		return false
+	var build_network: Node = field.get_node_or_null("PlanetNetwork")
+	var build_menu: TechnologyMenu = build_network.get_technology_menu() as TechnologyMenu if build_network != null and build_network.has_method("get_technology_menu") else null
+	if not ctx.check(build_menu != null, "technology menu is missing for ship-build progress feedback"):
+		return false
+	build_menu.set("_category", TechnologyDefinition.CATEGORY_SHIPS)
+	build_menu.call("_set_open", true)
+	build_menu.call("_refresh")
+	await ctx.await_frame()
+	var build_list: VBoxContainer = build_menu.get_node_or_null("TechTabUI/TechPanel/TechMargin/TechVBox/TechScroll/TechList") as VBoxContainer
+	var build_progress_visible := false
+	if build_list != null:
+		for progress_node in build_list.find_children("ShipBuildProgress", "ProgressBar", true, false):
+			var build_progress: ProgressBar = progress_node as ProgressBar
+			if build_progress != null and build_progress.visible and build_progress.max_value > 0.0 and build_progress.value < build_progress.max_value:
+				build_progress_visible = true
+				break
+	if not ctx.check(build_progress_visible, "active ship build did not render a visible progress bar"):
+		return false
+	build_menu.close()
 	if not ctx.check(not game_state.has_ship_assembly(source.planet_id, ship_id), "ship build should not register before the timer completes"):
 		return false
 	var build_remaining: float = game_state.ship_build_remaining(source.planet_id, ship_id)
@@ -182,6 +215,8 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(hull_t2 != null and not game_state.can_buy_ship_part(source.planet_id, hull_t2.id, catalog), "tier-2 hull should be locked before weapon_systems research"):
 		return false
+	if not ctx.check(not game_state.can_buy_ship_part(source.planet_id, scanner_t2.id, catalog) and not game_state.can_buy_ship_part(source.planet_id, reactor_module.id, catalog) and not game_state.can_buy_ship_part(source.planet_id, reinforced_module.id, catalog) and not game_state.can_buy_ship_part(source.planet_id, sensor_array_module.id, catalog), "new branch ship parts should remain gated before their exclusive technologies are researched"):
+		return false
 	game_state.add_faction_resource(GameState.FACTION_PLAYER, GameState.RES_VOLATILE, 50)
 	if not ctx.check(game_state.can_research_technology(GameState.FACTION_PLAYER, &"weapon_systems", tech_catalog), "weapon_systems should be researchable after shipyard construction"):
 		return false
@@ -220,6 +255,11 @@ func run(ctx: PreflightContext) -> bool:
 	var conflict_manager: Node = field.get_node_or_null("ConflictManager")
 	if not ctx.check(conflict_manager != null and conflict_manager.has_method("preview_duration"), "ConflictManager runtime module is missing"):
 		return false
+	if not ctx.check(conflict_manager.has_signal("replay_started"), "ConflictManager replay handoff is missing from the ShipBase path"):
+		return false
+	var ship_replay_kinds: Array[StringName] = []
+	var ship_replay_capture: Callable = func(simulation_type, _result): ship_replay_kinds.append(simulation_type as StringName)
+	conflict_manager.connect("replay_started", ship_replay_capture)
 	var flight_ship_id: StringName = ship_manager.assemble_ship(source, hull_part.id, scanner_part.id, [], weapon_part.id, drive_part.id, shield_part.id)
 	if not ctx.check(not String(flight_ship_id).is_empty(), "flight ship assembly did not start"):
 		return false
@@ -256,6 +296,10 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(not ship_base.has_arrived(), "ShipBase reported arrival before its flight finished"):
 		return false
 	ship_base.call("_arrive")
+	if not ctx.check(ship_replay_kinds.has(&"conquest"), "live ShipBase military arrival did not start the conquest replay"):
+		return false
+	if not ctx.check(conflict_manager.get_node_or_null("ConquestReplay") is ConquestScene, "live ShipBase military arrival did not create a ConquestScene"):
+		return false
 	await ctx.await_frame()
 	if not ctx.check(not is_instance_valid(ship_base), "arrived ShipBase was not freed after resolving arrival"):
 		return false

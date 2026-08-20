@@ -86,6 +86,7 @@ func combined_trait(part: ShipPartDefinition, variant: ShipComponentVariant = nu
 	merged.display_name = variant.display_name if not variant.display_name.is_empty() else merged.display_name
 	merged.description = modifier.description if not modifier.description.is_empty() else merged.description
 	merged.production_boost += modifier.production_boost
+	merged.gather_income_multiplier *= modifier.gather_income_multiplier
 	merged.worker_spawn_bonus += modifier.worker_spawn_bonus
 	merged.cluster_tier_bonus += modifier.cluster_tier_bonus
 	merged.defense_rating += modifier.defense_rating

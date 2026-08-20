@@ -22,7 +22,22 @@ func run(ctx: PreflightContext) -> bool:
 	# --- UPGRADE SYSTEM TESTS ---
 	if not ctx.check(upgrade_catalog != null and upgrade_catalog.validate().is_empty(), "upgrade catalog validation failed"):
 		return false
-	if not ctx.check(upgrade_catalog.upgrades.size() == 13, "upgrade catalog should have 13 upgrades"):
+	if not ctx.check(upgrade_catalog.upgrades.size() == 16, "upgrade catalog should have 16 upgrades"):
+		return false
+	var automated_mine: PlanetUpgradeDefinition = upgrade_catalog.resolve(&"automated_mine")
+	var trade_hub: PlanetUpgradeDefinition = upgrade_catalog.resolve(&"trade_hub")
+	var comms_array: PlanetUpgradeDefinition = upgrade_catalog.resolve(&"comms_array")
+	if not ctx.check(automated_mine != null and trade_hub != null and comms_array != null, "one or more new planet upgrades are missing"):
+		return false
+	if not ctx.check(automated_mine.branch == &"economy" and automated_mine.parent_upgrade_id.is_empty() and automated_mine.required_technology_id == &"automated_refinery" and automated_mine.cost_resource == GameState.RES_MATERIAL and automated_mine.cost_amount == 20, "automated_mine definition does not match its economy branch contract"):
+		return false
+	if not ctx.check(automated_mine.trait_definition != null and is_equal_approx(automated_mine.trait_definition.production_boost, 0.4) and automated_mine.trait_definition.maintenance_cost_resource == GameState.RES_ENERGY and automated_mine.trait_definition.maintenance_cost_amount == 1, "automated_mine traits are incorrect"):
+		return false
+	if not ctx.check(trade_hub.branch == &"economy" and trade_hub.parent_upgrade_id.is_empty() and trade_hub.exclusive_with == &"automated_mine" and trade_hub.required_technology_id == &"bulk_processing" and trade_hub.cost_resource == GameState.RES_BIOMASS and trade_hub.cost_amount == 20, "trade_hub definition does not match its economy branch contract"):
+		return false
+	if not ctx.check(trade_hub.trait_definition != null and is_equal_approx(trade_hub.trait_definition.gather_income_multiplier, 1.3) and trade_hub.trait_definition.maintenance_cost_resource == GameState.RES_ENERGY and trade_hub.trait_definition.maintenance_cost_amount == 1, "trade_hub traits are incorrect"):
+		return false
+	if not ctx.check(comms_array.branch == &"infrastructure" and comms_array.parent_upgrade_id == &"orbital_station" and comms_array.cost_resource == GameState.RES_RARE and comms_array.cost_amount == 25 and comms_array.trait_definition != null and is_equal_approx(comms_array.trait_definition.range_bonus, 100.0) and comms_array.trait_definition.perimeter_slots_bonus == 1, "comms_array definition does not match its infrastructure branch contract"):
 		return false
 
 	# Verify 4 branches exist
@@ -88,6 +103,17 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(colony_hub.parent_upgrade_id == &"orbital_station" and trade_network.parent_upgrade_id == &"colony_hub", "infrastructure chain broken"):
 		return false
 
+	# The gather-income trait is consumed by the persistent gathering path, not
+	# just displayed on the upgrade card.
+	var gather_probe: EconomyDomain = EconomyDomain.new()
+	gather_probe.reset()
+	gather_probe.set_planet_resource(&"gather_probe", GameState.RES_MATERIAL)
+	gather_probe.planet_upgrades[&"gather_probe"] = [&"trade_hub"]
+	gather_probe.gathering_workers[GameState.FACTION_PLAYER] = {&"gather_probe": 10}
+	var gather_amount: int = gather_probe.gather_income_tick({&"gather_probe": 1}, upgrade_catalog)
+	if not ctx.check(gather_amount == 13, "trade_hub gather-income trait should turn 10 base workers into 13 gathered resources"):
+		return false
+
 	# Test can_purchase_upgrade logic
 	var player_homeworld: StringName = game_state.homeworld_for(GameState.FACTION_PLAYER)
 	if not ctx.check(not String(player_homeworld).is_empty(), "player homeworld missing"):
@@ -140,7 +166,21 @@ func run(ctx: PreflightContext) -> bool:
 	game_state.call("deal_resources", planet_catalog, preload("res://resources/config/resource_pool_default.tres"), world_config.layout_seed)
 	var energy_before_generation: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY)
 	var generated_resource: StringName = game_state.resource_of(player_homeworld)
+	var floating_before := 0
+	for field_child in field.get_children():
+		if field_child is FloatingText:
+			floating_before += 1
 	var generated: int = game_state.generate_resources_for_planet(player_homeworld, upgrade_catalog)
+	var floating_after := 0
+	for field_child in field.get_children():
+		if field_child is FloatingText:
+			floating_after += 1
+	if not ctx.check(floating_after > floating_before, "economy resource generation did not create floating feedback"):
+		return false
+	for field_child in field.get_children():
+		if field_child is FloatingText:
+			field.remove_child(field_child)
+			field_child.queue_free()
 	# Base 1 * (1 + 0.5 + 1.0) = 2.5 -> 2; the generated resource may itself be energy.
 	if not ctx.check(generated >= 2, "resource generation with traits should apply production boost"):
 		return false
