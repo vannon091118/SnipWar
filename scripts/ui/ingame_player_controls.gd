@@ -100,9 +100,9 @@ func set_progress(time: float) -> void:
 
 func _update_time_display() -> void:
 	if _time_label != null:
-		var cur_m := int(current_time) / 60
+		var cur_m := int(current_time / 60.0)
 		var cur_s := int(current_time) % 60
-		var tot_m := int(total_duration) / 60
+		var tot_m := int(total_duration / 60.0)
 		var tot_s := int(total_duration) % 60
 		_time_label.text = "%02d:%02d / %02d:%02d" % [cur_m, cur_s, tot_m, tot_s]
 

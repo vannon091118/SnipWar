@@ -6,8 +6,9 @@ extends RefCounted
 ## profiling, and execution-mode flags (verbose, fail_fast).
 
 var tree: SceneTree
+var fixture: PreflightFixture
 
-# Node/Resource references (filled by the scene-boot constraint).
+# Node/Resource references (filled by the isolated preflight fixture).
 var background: Node
 var field: Node
 var network: Node
@@ -41,6 +42,7 @@ var start_timestamp_msec: int = 0
 
 func _init(p_tree: SceneTree) -> void:
 	tree = p_tree
+	fixture = PreflightFixture.new(p_tree)
 	start_timestamp_msec = Time.get_ticks_msec()
 
 
@@ -194,6 +196,8 @@ func dump_debug_state() -> Dictionary:
 		state_dump["game_state_vaults"] = game_state.get("_faction_vaults")
 	if field != null and is_instance_valid(field):
 		state_dump["planet_count"] = planet_positions(field).size()
+	if fixture != null:
+		state_dump["fixture_boot_count"] = fixture.boot_count
 	return state_dump
 
 

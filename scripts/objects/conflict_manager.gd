@@ -6,7 +6,7 @@ const FLIGHT_TIME_SCRIPT: Script = preload("res://scripts/flight_time.gd")
 const BATTLE_SCENE_SCRIPT: Script = preload("res://scripts/battle/battle_scene.gd")
 const CONQUEST_SCENE_SCRIPT: Script = preload("res://scripts/conquest/conquest_scene.gd")
 
-signal replay_started(simulation_type: StringName, result: Dictionary)
+signal replay_started(simulation_type: StringName, replay: CombatReplay)
 
 var transit_config: TransitConfig = DEFAULT_TRANSIT_CONFIG
 var _field: Node
@@ -32,35 +32,35 @@ func _connect_planet_conflicts() -> void:
 		if planet != null and not planet.conflict_simulated.is_connected(callback):
 			planet.conflict_simulated.connect(callback)
 
-func _on_planet_conflict_simulated(simulation_type: StringName, result: Dictionary) -> void:
-	_start_replay(simulation_type, result)
+func _on_planet_conflict_simulated(simulation_type: StringName, combat_replay: CombatReplay) -> void:
+	_start_replay(simulation_type, combat_replay)
 
-func _start_replay(simulation_type: StringName, result: Dictionary) -> void:
+func _start_replay(simulation_type: StringName, combat_replay: CombatReplay) -> void:
 	if simulation_type == &"battle":
 		_free_replay(_battle_replay)
-		var replay: BattleScene = BATTLE_SCENE_SCRIPT.new() as BattleScene
-		replay.name = "BattleReplay"
-		add_child(replay)
-		replay.battle_completed.connect(Callable(self, "_on_battle_replay_completed").bind(replay))
-		_battle_replay = replay
-		replay.play_battle(result)
-		replay_started.emit(simulation_type, result)
+		var battle_replay: BattleScene = BATTLE_SCENE_SCRIPT.new() as BattleScene
+		battle_replay.name = "BattleReplay"
+		add_child(battle_replay)
+		battle_replay.battle_completed.connect(Callable(self, "_on_battle_replay_completed").bind(battle_replay))
+		_battle_replay = battle_replay
+		battle_replay.play_battle(combat_replay)
+		replay_started.emit(simulation_type, combat_replay)
 	elif simulation_type == &"conquest":
 		_free_replay(_conquest_replay)
-		var conquest: ConquestScene = CONQUEST_SCENE_SCRIPT.new() as ConquestScene
-		conquest.name = "ConquestReplay"
-		add_child(conquest)
-		conquest.conquest_completed.connect(Callable(self, "_on_conquest_replay_completed").bind(conquest))
-		_conquest_replay = conquest
-		conquest.play_conquest(result)
-		replay_started.emit(simulation_type, result)
+		var conquest_replay: ConquestScene = CONQUEST_SCENE_SCRIPT.new() as ConquestScene
+		conquest_replay.name = "ConquestReplay"
+		add_child(conquest_replay)
+		conquest_replay.conquest_completed.connect(Callable(self, "_on_conquest_replay_completed").bind(conquest_replay))
+		_conquest_replay = conquest_replay
+		conquest_replay.play_conquest(combat_replay)
+		replay_started.emit(simulation_type, combat_replay)
 
-func _on_battle_replay_completed(_result: Dictionary, replay: BattleScene) -> void:
+func _on_battle_replay_completed(_replay: CombatReplay, replay: BattleScene) -> void:
 	if replay == _battle_replay:
 		_battle_replay = null
 	_free_replay(replay)
 
-func _on_conquest_replay_completed(_result: Dictionary, replay: ConquestScene) -> void:
+func _on_conquest_replay_completed(_replay: CombatReplay, replay: ConquestScene) -> void:
 	if replay == _conquest_replay:
 		_conquest_replay = null
 	_free_replay(replay)

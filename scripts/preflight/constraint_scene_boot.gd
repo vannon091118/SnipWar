@@ -9,12 +9,11 @@ func constraint_name() -> String:
 
 
 func run(ctx: PreflightContext) -> bool:
-	var scene: PackedScene = preload("res://scenes/backgrounds/starfield_background.tscn")
-	var background: Node = scene.instantiate()
-	ctx.background = background
-	ctx.root().add_child(background)
-	await ctx.await_frame()
-
+	if not ctx.check(ctx.fixture != null, "isolated preflight fixture is missing"):
+		return false
+	if not await ctx.fixture.boot_default(ctx):
+		return false
+	var background: Node = ctx.background
 	var background_node: Node2D = background as Node2D
 	var field: Node = background.get_node("PlanetField")
 	var planet_field_node: Node2D = field as Node2D

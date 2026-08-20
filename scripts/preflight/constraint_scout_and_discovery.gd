@@ -121,7 +121,16 @@ func run(ctx: PreflightContext) -> bool:
 		var neighbor_planet: Planet = neighbor as Planet
 		if neighbor_planet != null:
 			frontier_ids.append(neighbor_planet.planet_id)
-			if not ctx.check(neighbor_planet.get_fog_state() != Planet.FogState.FOG, "layout neighbor should stay revealed on the frontier"):
+			var neighbor_ids: Array[StringName] = []
+			for second_neighbor_value in network.get_neighbors(neighbor_planet):
+				var second_neighbor: Planet = second_neighbor_value as Planet
+				if second_neighbor != null:
+					neighbor_ids.append(second_neighbor.planet_id)
+			if not ctx.check(
+				neighbor_planet.get_fog_state() != Planet.FogState.FOG,
+				"layout neighbor should stay revealed on the frontier",
+				{"planet": neighbor_planet.planet_id, "fog_state": neighbor_planet.get_fog_state(), "faction": neighbor_planet.get_faction(), "source_faction": source.get_faction(), "neighbor_ids": neighbor_ids}
+			):
 				return false
 	var hidden_beyond := 0
 	for field_child in field.get_children():

@@ -4,29 +4,24 @@ extends RefCounted
 
 const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
 
-static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, battle_seed: int = 1337, catalog: ShipPartCatalog = null) -> Dictionary:
+static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, battle_seed: int = 1337, catalog: ShipPartCatalog = null) -> CombatReplay:
 	var cat: ShipPartCatalog = catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG
 	var events: Array[BattleEvent] = []
 	var rng := RandomNumberGenerator.new()
 	rng.seed = battle_seed
 
 	if fleet_a == null or fleet_a.ships.is_empty():
-		return {
-			"winner": fleet_b.faction if fleet_b != null else &"neutral",
-			"survivors_a": [],
-			"survivors_b": fleet_b.ships.duplicate() if fleet_b != null else [],
-			"events": events,
-			"duration": 0.0
-		}
+		var empty_attacker_replay := CombatReplay.new_battle(battle_seed)
+		empty_attacker_replay.winner = fleet_b.faction if fleet_b != null else &"neutral"
+		if fleet_b != null:
+			empty_attacker_replay.survivors_b = fleet_b.ships.duplicate(true)
+		return empty_attacker_replay
 
 	if fleet_b == null or fleet_b.ships.is_empty():
-		return {
-			"winner": fleet_a.faction,
-			"survivors_a": fleet_a.ships.duplicate(),
-			"survivors_b": [],
-			"events": events,
-			"duration": 0.0
-		}
+		var empty_defender_replay := CombatReplay.new_battle(battle_seed)
+		empty_defender_replay.winner = fleet_a.faction
+		empty_defender_replay.survivors_a = fleet_a.ships.duplicate(true)
+		return empty_defender_replay
 
 	# Initialisiere Kampf-Einheiten
 	var units_a: Array[Dictionary] = []
@@ -135,38 +130,22 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 
 	var survivors_a_data: Array[Dictionary] = []
 	for u in surviving_a:
-		survivors_a_data.append(u["ship_data"])
+		survivors_a_data.append((u["ship_data"] as Dictionary).duplicate(true))
 
 	var survivors_b_data: Array[Dictionary] = []
 	for u in surviving_b:
-		survivors_b_data.append(u["ship_data"])
+		survivors_b_data.append((u["ship_data"] as Dictionary).duplicate(true))
 
-	return {
-		"winner": winner,
-		"survivors_a": survivors_a_data,
-		"survivors_b": survivors_b_data,
-		"events": events,
-		"duration": time
-	}
+	var replay := CombatReplay.new_battle(battle_seed)
+	replay.winner = winner
+	replay.survivors_a = survivors_a_data
+	replay.survivors_b = survivors_b_data
+	replay.events = events
+	replay.duration = time
+	return replay
 
 static func _calculate_ship_combat_stats(ship: Dictionary, cat: ShipPartCatalog) -> Dictionary:
-	var hp := 50.0
-	var dps := 10.0
-	if cat != null:
-		var hull := cat.resolve(ship.get("hull", &"") as StringName)
-		if hull != null:
-			hp += float(hull.tier * 30)
-			if hull.trait_definition != null:
-				hp += float(hull.trait_definition.hull_hp_bonus)
-				dps += hull.trait_definition.dps_bonus
-		for mod_val in ship.get("modules", []):
-			var mod := cat.resolve(mod_val as StringName)
-			if mod != null:
-				dps += float(mod.tier * 5)
-				if mod.trait_definition != null:
-					dps += mod.trait_definition.dps_bonus
-					hp += float(mod.trait_definition.hull_hp_bonus)
-	return {"hp": hp, "dps": dps}
+	return FleetSnapshot.calculate_ship_stats(ship, cat)
 
 static func _get_living(units: Array[Dictionary]) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []

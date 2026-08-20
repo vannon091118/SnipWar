@@ -74,18 +74,16 @@ func run(ctx: PreflightContext) -> bool:
 		"modules": []
 	}]
 	visual_defender.calculate_stats()
-	var visual_result: Dictionary = FleetBattleSimulator.simulate_battle(visual_fleet, visual_defender, 4242)
+	var visual_result: CombatReplay = FleetBattleSimulator.simulate_battle(visual_fleet, visual_defender, 4242)
 	var visual_spawn: BattleEvent = null
-	for event_value in visual_result.get("events", []):
+	for event_value in visual_result.events:
 		var candidate: BattleEvent = event_value as BattleEvent
 		if candidate != null and candidate.event_type == BattleEvent.TYPE_SPAWN and candidate.source_id == &"a_0":
 			visual_spawn = candidate
 			break
 	var visual_ship_data: Dictionary = {}
 	if visual_spawn != null:
-		var raw_ship_data: Variant = visual_spawn.get("ship_data")
-		if raw_ship_data is Dictionary:
-			visual_ship_data = raw_ship_data as Dictionary
+		visual_ship_data = visual_spawn.ship_data.duplicate(true)
 	if not ctx.check(visual_ship_data.get("hull", &"") == &"hull_t2", "battle spawn event must preserve its FleetSnapshot ship data"):
 		return false
 
@@ -112,19 +110,17 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	var conquest := ConquestScene.new()
 	ctx.root().add_child(conquest)
-	var conquest_payload: Dictionary = {
-		"captured": true,
-		"duration": 1.5,
-		"planet_id": conquest_target.planet_id,
-		"planet_name": conquest_target.display_name,
-		"planet_texture": conquest_target.planet_texture,
-		"perimeter_slots": 4,
-		"tower_count": 4,
-		"surviving_attackers": 3,
-		"surviving_garrison": 2,
-		"defense_range": 180.0,
-		"conquest_seed": 2025,
-	}
+	var conquest_payload := CombatReplay.new_conquest(2025)
+	conquest_payload.captured = true
+	conquest_payload.duration = 1.5
+	conquest_payload.planet_id = conquest_target.planet_id
+	conquest_payload.planet_name = conquest_target.display_name
+	conquest_payload.planet_texture_path = conquest_target.planet_texture.resource_path
+	conquest_payload.perimeter_slots = 4
+	conquest_payload.tower_count = 4
+	conquest_payload.surviving_attackers = 3
+	conquest_payload.surviving_garrison = 2
+	conquest_payload.defense_range = 180.0
 	conquest.play_conquest(conquest_payload)
 	if not ctx.check(conquest.visible == true, "ConquestScene should be visible during playback"):
 		return false

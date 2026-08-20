@@ -27,6 +27,12 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(event_log.get_entries().size() == before + 2, "EventLog.log did not record an entry"):
 		return false
 	var silent_entry: Dictionary = event_log.get_entries().back()
+	# EventLog is an autoload and intentionally outlives each scene fixture.
+	# Seed the three domain messages locally so this constraint does not depend
+	# on scout/economy constraints having run before it.
+	event_log.push(&"discovery", "Scanbericht Fixture: Energie, Größe L, 2 Bauplätze.")
+	event_log.push(&"economy", "Sammeltrupp Fixture begonnen: 1 Worker erntet fortan Rohstoffe.")
+	event_log.push(&"economy", "Fixture: Worker-Fertiger in der Werft aktiviert.")
 	if not ctx.check(not bool(silent_entry.get("visible", true)), "silent EventLog entry should not create a toast"):
 		return false
 	var history: Array[Dictionary] = event_log.get_entries()

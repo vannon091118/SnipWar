@@ -2,12 +2,12 @@
 class_name ConquestScene
 extends CanvasLayer
 
-signal conquest_completed(result: Dictionary)
+signal conquest_completed(replay: CombatReplay)
 
 const DEFAULT_PLANET_CATALOG: PlanetCatalog = preload("res://resources/config/planet_catalog.tres")
 
 var playback_speed: float = 1.0
-var _result: Dictionary = {}
+var _result: CombatReplay
 var _elapsed: float = 0.0
 var _duration: float = 8.0
 var _is_playing: bool = false
@@ -71,12 +71,13 @@ func _build_ui() -> void:
 	_player_controls.skip_pressed.connect(_on_finish_pressed)
 	_viewport_container.add_child(_player_controls)
 
-func play_conquest(result: Dictionary) -> void:
+func play_conquest(replay: CombatReplay) -> void:
 	_ensure_ui()
-	_result = result
-	_duration = float(result.get("duration", 8.0))
-	var seed_value: Variant = result.get("conquest_seed")
-	_visual_seed = int(seed_value) if seed_value is int else 42
+	if replay == null or not replay.is_conquest():
+		return
+	_result = replay
+	_duration = replay.duration if replay.duration > 0.0 else 8.0
+	_visual_seed = replay.conquest_seed
 	_visual_rng.seed = _visual_seed
 	_next_laser_time = 0.25
 	_elapsed = 0.0
@@ -85,6 +86,9 @@ func play_conquest(result: Dictionary) -> void:
 
 	_player_controls.setup(_duration)
 	_setup_battlefield()
+
+func play_conquest_legacy(payload: Dictionary) -> void:
+	play_conquest(CombatReplay.from_dictionary(payload, CombatReplay.TYPE_CONQUEST))
 
 func _ensure_ui() -> void:
 	if _viewport_container == null:
@@ -143,23 +147,36 @@ func _setup_battlefield() -> void:
 		tw.tween_property(minion, "position:x", -90.0, _duration * 0.8)
 
 func _result_int(key: String, fallback: int) -> int:
-	var value: Variant = _result.get(key)
-	if value is int or value is float:
-		return int(value)
+	if _result == null:
+		return fallback
+	match key:
+		"tower_count":
+			return _result.tower_count
+		"perimeter_slots":
+			return _result.perimeter_slots
+		"surviving_attackers":
+			return _result.surviving_attackers
+		"surviving_garrison":
+			return _result.surviving_garrison
 	return fallback
 
 func _result_float(key: String, fallback: float) -> float:
-	var value: Variant = _result.get(key)
-	if value is int or value is float:
-		return float(value)
+	if _result == null:
+		return fallback
+	match key:
+		"defense_range":
+			return _result.defense_range
 	return fallback
 
 func _resolve_planet_texture() -> Texture2D:
-	var direct_texture: Variant = _result.get("planet_texture")
-	if direct_texture is Texture2D:
-		return direct_texture as Texture2D
+	if _result != null and _result.legacy_planet_texture != null:
+		return _result.legacy_planet_texture
+	if _result != null and not _result.planet_texture_path.is_empty():
+		var resolved_texture: Texture2D = ResourceLoader.load(_result.planet_texture_path) as Texture2D
+		if resolved_texture != null:
+			return resolved_texture
 
-	var planet_id: StringName = _result.get("planet_id") as StringName
+	var planet_id: StringName = _result.planet_id if _result != null else &""
 	if not String(planet_id).is_empty():
 		var definition: PlanetDefinition = DEFAULT_PLANET_CATALOG.definition_for(planet_id)
 		if definition != null and definition.planet_texture != null:

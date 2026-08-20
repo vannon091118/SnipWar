@@ -40,6 +40,9 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(sensor_array_module.required_tech_id == &"long_range_sensors" and sensor_array_module.cost_resource == GameState.RES_RARE and sensor_array_module.cost_amount == 8 and sensor_array_module.trait_definition != null and is_equal_approx(sensor_array_module.trait_definition.range_bonus, 40.0), "module_sensor_array definition does not match the long-range branch contract"):
 		return false
+	if not ctx.check(ctx.fixture.prepare_ship_builder(), "ship-builder fixture could not prepare the shipyard prerequisite"):
+		return false
+	await ctx.await_frame()
 	var source: Planet = ctx.find_planet_by_id(field, game_state.homeworld_for(GameState.FACTION_PLAYER) as StringName)
 	if not ctx.check(source != null and game_state.has_planet_upgrade(source.planet_id, ShipManager.SHIPYARD_UPGRADE_ID), "player homeworld should carry a shipyard before the ship builder runs"):
 		return false

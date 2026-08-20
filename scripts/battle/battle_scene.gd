@@ -2,13 +2,13 @@
 class_name BattleScene
 extends CanvasLayer
 
-signal battle_completed(result: Dictionary)
+signal battle_completed(replay: CombatReplay)
 
 const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
 
 var playback_speed: float = 1.0
 var _events: Array[BattleEvent] = []
-var _current_result: Dictionary = {}
+var _current_result: CombatReplay
 var _ships: Dictionary = {} # id -> CompositeShipView
 var _ship_initial_data: Dictionary = {}
 var _elapsed: float = 0.0
@@ -61,11 +61,13 @@ func _build_ui() -> void:
 	_player_controls.skip_pressed.connect(_on_skip_pressed)
 	_viewport_container.add_child(_player_controls)
 
-func play_battle(result: Dictionary) -> void:
+func play_battle(replay: CombatReplay) -> void:
 	_ensure_ui()
-	_current_result = result
-	_events = result.get("events", [])
-	_total_duration = float(result.get("duration", 5.0))
+	if replay == null or not replay.is_battle():
+		return
+	_current_result = replay
+	_events = replay.events
+	_total_duration = replay.duration
 	_event_index = 0
 	_elapsed = 0.0
 	_is_playing = true
@@ -74,6 +76,9 @@ func play_battle(result: Dictionary) -> void:
 	_player_controls.setup(_total_duration)
 	_clear_arena()
 	_cache_spawn_data()
+
+func play_battle_legacy(payload: Dictionary) -> void:
+	play_battle(CombatReplay.from_dictionary(payload, CombatReplay.TYPE_BATTLE))
 
 func _ensure_ui() -> void:
 	if _viewport_container == null:
@@ -281,7 +286,7 @@ func _on_seek_requested(time: float) -> void:
 	_event_index = 0
 	# Re-execute events up to scrubbed time
 	for i in range(_events.size()):
-		var ev := _events[i]
+		var ev: BattleEvent = _events[i]
 		if ev.timestamp <= time:
 			if ev.event_type == BattleEvent.TYPE_SPAWN:
 				_spawn_ship_visual(ev.source_id, ev.source_pos, ev.ship_data)

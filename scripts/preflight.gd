@@ -1,10 +1,10 @@
 extends SceneTree
 
 ## Persistent SnipWar test suite (no GUT). This file is the orchestrator:
-## it boots a shared PreflightContext, parses CLI debugging flags, profiles execution,
+## it boots a PreflightContext, parses CLI debugging flags, profiles execution,
 ## and runs constraint modules with detailed diagnostics and debug failure reports.
-## Constraint order matters — modules share one GameState autoload with no
-## reset between them (see AGENTS.md). Individual checks live in scripts/preflight/.
+## Scene-dependent constraints receive a fresh PreflightFixture; individual checks
+## live in scripts/preflight/ and must not rely on another constraint's mutations.
 
 const _Context := preload("res://scripts/preflight/preflight_context.gd")
 
@@ -139,6 +139,8 @@ func _init() -> void:
 
 	var filter_query: String = args.get("filter", "")
 	var pipeline: Array[Dictionary] = _build_execution_pipeline(filter_query)
+	if args.get("reverse", false):
+		pipeline = _reverse_execution_pipeline(pipeline)
 
 	if pipeline.is_empty():
 		print("[preflight] Warning: No constraints matched filter: '%s'" % filter_query)
@@ -171,7 +173,13 @@ func _init() -> void:
 		else:
 			print("\n--- [preflight] %s (%s) ---" % [c_name, entry.get("desc", "")])
 
-		var ok: bool = await constraint.run(ctx)
+		var ok: bool = false
+		if entry.get("requires_scene", false):
+			var fixture_ready: bool = await ctx.fixture.boot_default(ctx)
+			if fixture_ready:
+				ok = await constraint.run(ctx)
+		else:
+			ok = await constraint.run(ctx)
 		var elapsed_ms: float = (Time.get_ticks_usec() - start_usec) / 1000.0
 		var checks_delta: int = ctx.checks_run - start_checks
 		var failures_delta: int = ctx.failure_count - start_failures
@@ -199,11 +207,26 @@ func _init() -> void:
 	var total_suite_ms: float = (Time.get_ticks_usec() - suite_start_usec) / 1000.0
 
 	_print_summary(ctx, pipeline.size(), constraints_passed, constraints_failed, total_suite_ms)
+	await ctx.fixture.cleanup()
 
 	if ctx.failure_count > 0 or constraints_failed > 0:
 		quit(1)
 	else:
 		quit(0)
+
+
+func _reverse_execution_pipeline(pipeline: Array[Dictionary]) -> Array[Dictionary]:
+	var scene_boot: Dictionary = {}
+	var reversed: Array[Dictionary] = []
+	for entry in pipeline:
+		if entry["id"] == "scene_boot":
+			scene_boot = entry
+		else:
+			reversed.append(entry)
+	reversed.reverse()
+	if not scene_boot.is_empty():
+		reversed.insert(0, scene_boot)
+	return reversed
 
 
 func _build_execution_pipeline(filter_query: String) -> Array[Dictionary]:
@@ -251,6 +274,7 @@ func _parse_cli_arguments() -> Dictionary:
 		"filter": "",
 		"list": false,
 		"help": false,
+		"reverse": false,
 	}
 
 	var all_args: PackedStringArray = OS.get_cmdline_args()
@@ -265,6 +289,8 @@ func _parse_cli_arguments() -> Dictionary:
 			parsed["list"] = true
 		elif arg == "--help" or arg == "-h":
 			parsed["help"] = true
+		elif arg == "--reverse" or arg == "--order=reverse":
+			parsed["reverse"] = true
 		elif arg.begins_with("--filter="):
 			parsed["filter"] = arg.trim_prefix("--filter=")
 		elif arg.begins_with("-f="):
@@ -286,6 +312,10 @@ Options:
   --fail-fast, -x          Abort immediately on the first assertion failure.
   --filter=<name>, -f=...  Run only constraints matching the given name/pattern.
                            (Auto-boots scene if constraint requires scene state).
+  --reverse, --order=reverse
+                           Run the selected constraints in reverse order while
+                           keeping scene_boot first; scene constraints still get
+                           isolated fixtures.
   --list, -l               List all available modular constraints.
   --help, -h               Show this help message.
 """)

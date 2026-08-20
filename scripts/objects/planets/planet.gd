@@ -22,7 +22,7 @@ signal planet_unhovered(planet: Node2D)
 ## Emitted after a deterministic fleet/planet simulation produces a replayable
 ## result. ConflictManager consumes this handoff; Planet remains the authority
 ## that commits ownership and worker state.
-signal conflict_simulated(simulation_type: StringName, result: Dictionary)
+signal conflict_simulated(simulation_type: StringName, replay: CombatReplay)
 
 enum WorkerState { IDLE, SPAWNING }
 
@@ -483,11 +483,11 @@ func resolve_ship_arrival(arriving_fleet: FleetSnapshot, defender_fleet: FleetSn
 
 
 func _resolve_ship_vs_fleet(arriving_fleet: FleetSnapshot, defender_fleet: FleetSnapshot, battle_seed: int, attacking_faction: StringName, out: Dictionary) -> Dictionary:
-	var battle: Dictionary = FleetBattleSimulator.simulate_battle(arriving_fleet, defender_fleet, battle_seed)
-	conflict_simulated.emit(&"battle", battle.duplicate(true))
-	var winner: StringName = battle.get("winner", &"neutral") as StringName
-	var survivors: Array = battle.get("survivors_a", [])
-	var defender_survivors: Array = battle.get("survivors_b", [])
+	var battle: CombatReplay = FleetBattleSimulator.simulate_battle(arriving_fleet, defender_fleet, battle_seed)
+	conflict_simulated.emit(&"battle", battle.copy())
+	var winner: StringName = battle.winner
+	var survivors: Array[Dictionary] = battle.survivors_a
+	var defender_survivors: Array[Dictionary] = battle.survivors_b
 	var state: Node = _game_state()
 	if state != null:
 		state.reconcile_defender_fleet(planet_id, defender_fleet, [] if winner == attacking_faction else defender_survivors)
@@ -501,7 +501,7 @@ func _resolve_ship_vs_fleet(arriving_fleet: FleetSnapshot, defender_fleet: Fleet
 		out["surviving_attackers"] = gain
 	else:
 		out["result"] = ARRIVAL_REPELLED
-	out["duration"] = float(battle.get("duration", 0.0))
+	out["duration"] = battle.duration
 	return out
 
 
@@ -521,32 +521,32 @@ func _resolve_colony_ship_arrival(arriving_fleet: FleetSnapshot, attacking_facti
 func _resolve_ship_vs_planet(arriving_fleet: FleetSnapshot, conquest_seed: int, attacking_faction: StringName, out: Dictionary) -> Dictionary:
 	var defender_workers: int = worker_count
 	var defense_rating := _aggregate_defense_rating()
-	var conquest: Dictionary = ConquestSimulator.simulate_conquest(
+	var conquest: CombatReplay = ConquestSimulator.simulate_conquest(
 		arriving_fleet, 0, defender_workers, defense_rating,
 		get_perimeter_slots(), get_defense_range(), conquest_seed)
 	conflict_simulated.emit(&"conquest", _conquest_replay_result(conquest))
-	if bool(conquest.get("captured", false)):
+	if conquest.captured:
 		unregister_workers(worker_count)
 		set_faction(attacking_faction)
-		var gain: int = int(conquest.get("surviving_attackers", 0))
+		var gain: int = conquest.surviving_attackers
 		if gain > 0:
 			register_workers(gain)
 		out["result"] = ARRIVAL_CAPTURED
 		out["surviving_attackers"] = gain
 	else:
 		out["result"] = ARRIVAL_REPELLED
-	out["duration"] = float(conquest.get("duration", 0.0))
+	out["duration"] = conquest.duration
 	return out
 
 
-func _conquest_replay_result(conquest: Dictionary) -> Dictionary:
-	var replay_result: Dictionary = conquest.duplicate(true)
+func _conquest_replay_result(conquest: CombatReplay) -> CombatReplay:
 	# The simulator owns combat numbers; Planet owns the attacked planet's
-	# presentation identity. Keep both in the replay payload so ConquestScene
-	# never has to guess from a hardcoded planet asset.
-	replay_result["planet_id"] = planet_id
-	replay_result["planet_name"] = display_name
-	replay_result["planet_texture"] = planet_texture
+	# presentation identity. The replay stores the stable planet id so
+	# ConquestScene can resolve the visual from the active catalog.
+	var replay_result: CombatReplay = conquest.copy()
+	replay_result.planet_id = planet_id
+	replay_result.planet_name = display_name
+	replay_result.planet_texture_path = planet_texture.resource_path if planet_texture != null else ""
 	return replay_result
 
 
@@ -581,7 +581,7 @@ func resolve_military_arrival(source_faction: StringName, amount: int, _source_p
 	if get_faction() == source_faction:
 		return resolve_arrival(source_faction, incoming)
 
-	var conquest: Dictionary = ConquestSimulator.simulate_conquest(
+	var conquest: CombatReplay = ConquestSimulator.simulate_conquest(
 		null,
 		incoming,
 		worker_count,
@@ -591,10 +591,10 @@ func resolve_military_arrival(source_faction: StringName, amount: int, _source_p
 		conquest_seed
 	)
 	conflict_simulated.emit(&"conquest", _conquest_replay_result(conquest))
-	if bool(conquest.get("captured", false)):
+	if conquest.captured:
 		unregister_workers(worker_count)
 		set_faction(source_faction)
-		var survivors: int = int(conquest.get("surviving_attackers", 0))
+		var survivors: int = conquest.surviving_attackers
 		if survivors > 0:
 			register_workers(survivors)
 		return ARRIVAL_CAPTURED

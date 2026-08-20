@@ -35,9 +35,9 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	var replay_kinds: Array[StringName] = []
 	var replay_payloads: Dictionary = {}
-	var replay_capture: Callable = func(simulation_type, result):
+	var replay_capture: Callable = func(simulation_type, replay):
 		replay_kinds.append(simulation_type as StringName)
-		replay_payloads[simulation_type] = result as Dictionary
+		replay_payloads[simulation_type] = replay as CombatReplay
 	conflict_manager.connect("replay_started", replay_capture)
 
 	var fleet_a := FleetSnapshot.new()
@@ -74,24 +74,122 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(trait_fleet.total_dps > 10.0 and trait_fleet.total_hull_hp > 50.0 and trait_fleet.speed > 0.0, "drive, weapon, and shield traits were not consumed by FleetSnapshot"):
 		return false
 
+	# 3c. Battle spawn HP and damage must agree with FleetSnapshot when all
+	# combat slots and persisted variants are present. This catches the former
+	# split where the battle simulator recomputed only hull/module stats.
+	var consistency_catalog: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
+	var consistency_fleet := FleetSnapshot.new()
+	consistency_fleet.fleet_id = &"fleet_consistency_a"
+	consistency_fleet.faction = GameState.FACTION_PLAYER
+	var consistency_ship: Dictionary = {
+		"hull": &"hull_t2",
+		"drive": &"drive_t1",
+		"weapon": &"weapon_t1",
+		"shield": &"shield_t1",
+		"scanner": &"scanner_t2",
+		"modules": [&"module_reinforced"],
+		"variants": {
+			&"drive": &"drive_fast",
+			&"weapon": &"weapon_precision",
+			&"shield": &"shield_reactive",
+			&"utility": [],
+		},
+	}
+	consistency_fleet.ships = [consistency_ship]
+	consistency_fleet.calculate_stats(consistency_catalog)
+	var variant_fleet := FleetSnapshot.new()
+	variant_fleet.fleet_id = &"fleet_consistency_variant"
+	variant_fleet.faction = GameState.FACTION_PLAYER
+	var variant_ship: Dictionary = consistency_ship.duplicate(true)
+	var variant_ids: Dictionary = variant_ship.get("variants", {}) as Dictionary
+	variant_ids[&"weapon"] = &"weapon_burst"
+	variant_ids[&"shield"] = &"shield_lattice"
+	variant_ship["variants"] = variant_ids
+	variant_fleet.ships = [variant_ship]
+	variant_fleet.calculate_stats(consistency_catalog)
+	var consistency_defender := FleetSnapshot.new()
+	consistency_defender.fleet_id = &"fleet_consistency_b"
+	consistency_defender.faction = GameState.FACTION_CPU
+	consistency_defender.ships = [{
+		"hull": &"hull_t1",
+		"drive": &"drive_t1",
+		"weapon": &"weapon_t1",
+		"shield": &"shield_t1",
+		"scanner": &"scanner_t1",
+		"modules": [],
+	}]
+	consistency_defender.calculate_stats(consistency_catalog)
+	var consistency_battle: CombatReplay = FleetBattleSimulator.simulate_battle(consistency_fleet, consistency_defender, 1818, consistency_catalog)
+	var variant_battle: CombatReplay = FleetBattleSimulator.simulate_battle(variant_fleet, consistency_defender, 1818, consistency_catalog)
+	var consistency_spawn: BattleEvent = null
+	var consistency_fire: BattleEvent = null
+	var variant_fire: BattleEvent = null
+	for event_value in consistency_battle.events:
+		var event: BattleEvent = event_value as BattleEvent
+		if event == null:
+			continue
+		if event.event_type == BattleEvent.TYPE_SPAWN and event.source_id == &"a_0":
+			consistency_spawn = event
+		elif event.event_type == BattleEvent.TYPE_FIRE and event.source_id == &"a_0" and consistency_fire == null:
+			consistency_fire = event
+	for event_value in variant_battle.events:
+		var event: BattleEvent = event_value as BattleEvent
+		if event != null and event.event_type == BattleEvent.TYPE_FIRE and event.source_id == &"a_0":
+			variant_fire = event
+			break
+	if not ctx.check(consistency_spawn != null and is_equal_approx(consistency_spawn.value, consistency_fleet.total_hull_hp), "battle spawn HP must match FleetSnapshot hull HP including shield/module variants"):
+		return false
+	var persisted_variants: Dictionary = consistency_spawn.ship_data.get("variants", {}) as Dictionary if consistency_spawn != null else {}
+	if not ctx.check(persisted_variants.get(&"weapon", &"") == &"weapon_precision" and persisted_variants.get(&"shield", &"") == &"shield_reactive", "battle spawn event lost persisted combat variants"):
+		return false
+	var expected_damage_delta: float = absf(consistency_fleet.total_dps - variant_fleet.total_dps)
+	var actual_damage_delta: float = absf(consistency_fire.value - variant_fire.value) if consistency_fire != null and variant_fire != null else 0.0
+	if not ctx.check(expected_damage_delta > 0.01, "combat variant probe must change FleetSnapshot DPS"):
+		return false
+	if not ctx.check(actual_damage_delta > 0.01, "battle damage must change with the same weapon/shield variant change"):
+		return false
+	var consistency_conquest: CombatReplay = ConquestSimulator.simulate_conquest(consistency_fleet, 0, 3, 2, 2, 150.0, 1818)
+	var variant_conquest: CombatReplay = ConquestSimulator.simulate_conquest(variant_fleet, 0, 3, 2, 2, 150.0, 1818)
+	if not ctx.check(is_equal_approx(consistency_conquest.attacker_initial_hp, consistency_fleet.total_hull_hp), "conquest attacker HP must match FleetSnapshot hull HP"):
+		return false
+	if not ctx.check(is_equal_approx(consistency_conquest.attacker_initial_dps, consistency_fleet.total_dps), "conquest attacker DPS must match FleetSnapshot DPS"):
+		return false
+	var expected_conquest_dps_delta: float = absf(consistency_fleet.total_dps - variant_fleet.total_dps)
+	var actual_conquest_dps_delta: float = absf(consistency_conquest.attacker_initial_dps - variant_conquest.attacker_initial_dps)
+	if not ctx.check(expected_conquest_dps_delta > 0.01 and actual_conquest_dps_delta > 0.01, "conquest attacker stats must change with the same weapon/shield variant change"):
+		return false
+
 	# 4. Deterministic Layer 2 Simulation
 	var result_1 := FleetBattleSimulator.simulate_battle(fleet_a, fleet_b, 9999)
 	var result_2 := FleetBattleSimulator.simulate_battle(fleet_a, fleet_b, 9999)
-	if not ctx.check(result_1.get("winner") == result_2.get("winner"), "FleetBattleSimulator must be deterministic"):
+	if not ctx.check(result_1.winner == result_2.winner, "FleetBattleSimulator must be deterministic"):
 		return false
-	if not ctx.check(result_1.get("events").size() == result_2.get("events").size(), "FleetBattleSimulator event count must match across identical seeds"):
+	if not ctx.check(result_1.events.size() == result_2.events.size(), "FleetBattleSimulator event count must match across identical seeds"):
 		return false
 
 	# 5. Deterministic Layer 3 Conquest
 	var conq_1 := ConquestSimulator.simulate_conquest(fleet_a, 5, 3, 2, 2, 150.0, 777)
 	var conq_2 := ConquestSimulator.simulate_conquest(fleet_a, 5, 3, 2, 2, 150.0, 777)
-	if not ctx.check(conq_1.get("captured") == conq_2.get("captured"), "ConquestSimulator capture result must be deterministic"):
+	if not ctx.check(conq_1.captured == conq_2.captured, "ConquestSimulator capture result must be deterministic"):
 		return false
-	if not ctx.check(conq_1.get("surviving_attackers") == conq_2.get("surviving_attackers"), "ConquestSimulator survivor count must be deterministic"):
+	if not ctx.check(conq_1.surviving_attackers == conq_2.surviving_attackers, "ConquestSimulator survivor count must be deterministic"):
 		return false
 	if not ctx.check(
-		conq_1.get("perimeter_slots") == 2 and conq_1.get("tower_count") == 2 and conq_1.get("defense_range") == 150.0 and conq_1.get("conquest_seed") == 777,
-		"ConquestResult must preserve the replay inputs"):
+		conq_1.perimeter_slots == 2 and conq_1.tower_count == 2 and conq_1.defense_range == 150.0 and conq_1.conquest_seed == 777,
+		"CombatReplay must preserve the conquest inputs"):
+		return false
+	if not ctx.check(consistency_battle is CombatReplay and consistency_battle.is_battle() and consistency_battle.validate().is_empty(), "battle simulator must return a valid typed CombatReplay"):
+		return false
+	if not ctx.check(consistency_conquest is CombatReplay and consistency_conquest.is_conquest() and consistency_conquest.validate().is_empty(), "conquest simulator must return a valid typed CombatReplay"):
+		return false
+	var round_trip: CombatReplay = CombatReplay.from_dictionary(consistency_battle.to_dictionary())
+	if not ctx.check(round_trip != null and round_trip.events.size() == consistency_battle.events.size() and round_trip.events[0].ship_data.get("hull", &"") == &"hull_t2", "CombatReplay dictionary round-trip must preserve typed battle events"):
+		return false
+	var replay_path := "user://preflight_combat_replay.tres"
+	var save_error: Error = ResourceSaver.save(consistency_battle, replay_path)
+	var loaded_replay: CombatReplay = ResourceLoader.load(replay_path) as CombatReplay
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(replay_path))
+	if not ctx.check(save_error == OK and loaded_replay != null and loaded_replay.events.size() == consistency_battle.events.size() and loaded_replay.events[0].ship_data.get("hull", &"") == &"hull_t2", "CombatReplay must round-trip through ResourceSaver/ResourceLoader"):
 		return false
 
 	# 6. Planet.resolve_ship_arrival integrates the L2/L3 simulators into
@@ -185,12 +283,21 @@ func run(ctx: PreflightContext) -> bool:
 			return false
 		if not ctx.check(replay_kinds.has(&"conquest"), "live conquest did not hand its result to the replay layer"):
 			return false
-		var conquest_replay: Dictionary = replay_payloads.get(&"conquest", {}) as Dictionary
-		if not ctx.check(conquest_replay.get("planet_id") == conquest_target.planet_id, "conquest replay must identify the attacked planet"):
+		var conquest_replay: CombatReplay = replay_payloads.get(&"conquest") as CombatReplay
+		if not ctx.check(conquest_replay != null and conquest_replay.planet_id == conquest_target.planet_id, "conquest replay must identify the attacked planet"):
 			return false
-		if not ctx.check(conquest_replay.get("planet_texture") == conquest_target.planet_texture, "conquest replay must carry the attacked planet visual"):
+		if not ctx.check(conquest_replay.planet_texture_path == conquest_target.planet_texture.resource_path, "conquest replay must preserve the stable planet texture path"):
 			return false
-		if not ctx.check(conflict_manager.get_node_or_null("ConquestReplay") is ConquestScene, "fleet conquest did not create a ConquestScene replay"):
+		# ConflictManager may have queued the previous replay for deletion; a
+		# name lookup can then return that stale node while the new replay is
+		# already active. Assert against the manager's current typed reference.
+		var live_conquest: ConquestScene = conflict_manager.get("_conquest_replay") as ConquestScene
+		var rendered_texture: Texture2D = live_conquest._planet_sprite.texture if live_conquest != null and live_conquest._planet_sprite != null else null
+		var rendered_path: String = rendered_texture.resource_path if rendered_texture != null else ""
+		var target_path: String = conquest_target.planet_texture.resource_path if conquest_target.planet_texture != null else ""
+		if not ctx.check(live_conquest != null and rendered_texture != null and rendered_path == target_path, "conquest replay must resolve the attacked planet visual from its stable identity"):
+			return false
+		if not ctx.check(live_conquest != null and is_instance_valid(live_conquest), "fleet conquest did not create a ConquestScene replay"):
 			return false
 
 	# 6d. Empty/defensive inputs -> REJECTED untouched
