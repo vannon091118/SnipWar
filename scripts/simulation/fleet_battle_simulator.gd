@@ -150,6 +150,58 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 	replay.duration = time
 	return replay
 
+## Runs the existing deterministic fleet combat while attaching real
+## NavigationField routes and route-derived event positions for the visible L2
+## cutscene. The combat result remains the same seed-stable simulator output.
+static func simulate_route_battle(
+	fleet_a: FleetSnapshot,
+	fleet_b: FleetSnapshot,
+	route_a: Array[Vector2],
+	route_b: Array[Vector2],
+	engagement: Dictionary,
+	battle_seed: int = 1337,
+	catalog: ShipPartCatalog = null
+) -> CombatReplay:
+	var replay := simulate_battle(fleet_a, fleet_b, battle_seed, catalog)
+	replay.route_a = route_a.duplicate()
+	replay.route_b = route_b.duplicate()
+	if engagement != null:
+		replay.engagement_point = engagement.get("point", Vector2.ZERO)
+		replay.engagement_type = engagement.get("type", &"")
+		replay.engagement_time_a = float(engagement.get("time_a", 0.0))
+		replay.engagement_time_b = float(engagement.get("time_b", 0.0))
+	for event in replay.events:
+		if event == null:
+			continue
+		if String(event.source_id).begins_with("a_"):
+			event.source_pos = _route_position(route_a, event.timestamp, replay.duration)
+		else:
+			event.source_pos = _route_position(route_b, event.timestamp, replay.duration)
+		if not String(event.target_id).is_empty():
+			if String(event.target_id).begins_with("a_"):
+				event.target_pos = _route_position(route_a, event.timestamp, replay.duration)
+			else:
+				event.target_pos = _route_position(route_b, event.timestamp, replay.duration)
+	return replay
+
+static func _route_position(route: Array[Vector2], time: float, duration: float) -> Vector2:
+	if route.is_empty():
+		return Vector2.ZERO
+	if route.size() == 1 or duration <= 0.0:
+		return route[0]
+	var total_length := PathUtils.distance(route)
+	if total_length <= 0.0:
+		return route[0]
+	var target_distance := clampf(time / duration, 0.0, 1.0) * total_length
+	var travelled := 0.0
+	for index in range(route.size() - 1):
+		var segment_length := route[index].distance_to(route[index + 1])
+		if travelled + segment_length >= target_distance:
+			var factor := (target_distance - travelled) / maxf(segment_length, 0.001)
+			return route[index].lerp(route[index + 1], factor)
+		travelled += segment_length
+	return route.back()
+
 static func _calculate_ship_combat_stats(ship: ShipAssembly, cat: ShipPartCatalog) -> Dictionary:
 	return FleetSnapshot.calculate_ship_stats(ship, cat)
 

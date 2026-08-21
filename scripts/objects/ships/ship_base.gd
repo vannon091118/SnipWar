@@ -9,11 +9,13 @@ var fleet: FleetSnapshot
 var destination: Planet
 var source_planet_id: StringName = &""
 var mission_role: StringName = &""
+var transit_id: StringName = &""
 
 var _route_path: Array[Vector2] = []
 var _duration := 0.0
 var _arrived := false
 var _view: CompositeShipView
+var _flight_tween: Tween
 
 func configure(incoming_fleet: FleetSnapshot, destination_planet: Planet, route_path: Array[Vector2], duration: float, catalog: ShipPartCatalog = null, role: StringName = &"", source_id: StringName = &"") -> void:
 	fleet = incoming_fleet
@@ -25,17 +27,54 @@ func configure(incoming_fleet: FleetSnapshot, destination_planet: Planet, route_
 	_rebuild_visual(catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG)
 
 func start_flight() -> void:
+	start_flight_from_elapsed(0.0)
+
+func start_flight_from_elapsed(elapsed: float) -> void:
 	if _route_path.is_empty() or destination == null or not is_instance_valid(destination):
 		_arrive()
 		return
-	global_position = _route_path[0]
+	if _flight_tween != null and _flight_tween.is_valid():
+		_flight_tween.kill()
+	var progress := clampf(elapsed / maxf(_duration, 0.001), 0.0, 1.0)
+	if progress >= 1.0:
+		_arrive()
+		return
 	var total_length := PathUtils.distance(_route_path)
+	var target_distance := progress * total_length
+	var segment_index := 0
+	var segment_offset := 0.0
+	var travelled := 0.0
+	for index in range(_route_path.size() - 1):
+		var segment_length: float = _route_path[index].distance_to(_route_path[index + 1])
+		if travelled + segment_length >= target_distance:
+			segment_index = index
+			segment_offset = target_distance - travelled
+			break
+		travelled += segment_length
+	global_position = _route_path[segment_index].lerp(
+		_route_path[segment_index + 1],
+		segment_offset / maxf(_route_path[segment_index].distance_to(_route_path[segment_index + 1]), 0.001)
+	)
 	var tween := create_tween()
-	for index in range(1, _route_path.size()):
-		var segment_length: float = _route_path[index - 1].distance_to(_route_path[index])
-		var segment_duration: float = _duration * segment_length / total_length if total_length > 0.0 else 0.0
-		tween.tween_property(self, "global_position", _route_path[index], segment_duration).set_trans(Tween.TRANS_LINEAR)
+	_flight_tween = tween
+	var remaining_duration := _duration * (1.0 - progress)
+	var remaining_distance := maxf(total_length - target_distance, 0.0)
+	if remaining_distance <= 0.0:
+		_arrive()
+		return
+	var first_segment_remaining := _route_path[segment_index].distance_to(_route_path[segment_index + 1]) - segment_offset
+	tween.tween_property(self, "global_position", _route_path[segment_index + 1], remaining_duration * first_segment_remaining / remaining_distance).set_trans(Tween.TRANS_LINEAR)
+	for index in range(segment_index + 1, _route_path.size() - 1):
+		var segment_length: float = _route_path[index].distance_to(_route_path[index + 1])
+		tween.tween_property(self, "global_position", _route_path[index + 1], remaining_duration * segment_length / remaining_distance).set_trans(Tween.TRANS_LINEAR)
 	tween.finished.connect(Callable(self, "_arrive"))
+
+func stop_flight() -> void:
+	if _flight_tween != null and _flight_tween.is_valid():
+		_flight_tween.kill()
+
+func route_path() -> Array[Vector2]:
+	return _route_path.duplicate()
 
 func flight_duration() -> float:
 	return _duration
@@ -44,6 +83,8 @@ func has_arrived() -> bool:
 	return _arrived
 
 func _arrive() -> void:
+	if _flight_tween != null and _flight_tween.is_valid():
+		_flight_tween.kill()
 	if _arrived:
 		return
 	_arrived = true

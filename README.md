@@ -10,7 +10,7 @@
 <br/>
 <samp>
 <b>SNIPWAR — EISEN-GRENZE</b><br/>
-STRATEGISCHE OVERWORLD · 10 WELTEN · 18 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
+STRATEGISCHE OVERWORLD · 10 WELTEN · 19 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
 </samp>
 <br/><br/>
 </td>
@@ -19,7 +19,7 @@ STRATEGISCHE OVERWORLD · 10 WELTEN · 18 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORB
 
 [![Engine: Godot 4.7](https://img.shields.io/badge/Engine-Godot%204.7-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/)
 [![Status: Frontier-Kern](https://img.shields.io/badge/Status-Frontier--Kern%20aktiv-f0b429?style=for-the-badge)](#-lagezentrum--frontbericht)
-[![Preflight](https://img.shields.io/badge/Preflight-18%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
+[![Preflight](https://img.shields.io/badge/Preflight-19%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
 [![Sprache: GDScript](https://img.shields.io/badge/GDScript-4.7-blue?style=for-the-badge)](#-architektur--vom-katalog-zum-spielstand)
 [![Treibstoff](https://img.shields.io/badge/Fuel-Koffein%20%26%20Größenwahn-6f4e37?style=for-the-badge)](#)
 
@@ -65,6 +65,10 @@ Aktuell sind wir bei Schritt eins: Hoffen, dass die Worker nicht auf halbem Weg 
 
 ## ⚙️ TERMINAL-INITIALISIERUNG // FÜR DEN TECHNIKER
 
+<img src="assets/ui/banner_terminal.svg" alt="Terminal Initialisierung" width="100%"/>
+
+<br/>
+
 *Frontbasis Ocean an alle eintretenden Operatoren: Bevor ihr euch in die Weltkarte stürzt, braucht ihr das Haupt-Terminal. Das hier ist die Anleitung. Sie ist kurz, weil Zeit knapp ist.*
 
 ### Voraussetzungen
@@ -89,7 +93,7 @@ cd snip-war
 # Smoke-Test: Bootet die Hauptszene, wartet 2 Sekunden, beendet sich
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Vollständige Preflight-Suite (18 Constraints)
+# Vollständige Preflight-Suite (19 Constraints)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
@@ -101,6 +105,10 @@ Die Hauptszene liegt unter `scenes/backgrounds/starfield_background.tscn`. Von d
 ---
 
 ## 🪐 DIE ZEHN WELTEN — Feldkarte & Sektorstatus
+
+<img src="assets/ui/readme_banner_overworld.jpg" alt="Die zehn Welten der Eisen-Grenze" width="100%"/>
+
+<br/>
 
 ```mermaid
 graph LR
@@ -162,13 +170,17 @@ graph LR
 
 Worker-Spawn-Timer existieren auf jedem Planeten, bleiben aber **inaktiv** bis `worker_automation` erforscht und eine Worker-Fabrik errichtet wurde. Kein Autostart.
 
-Desert und Storm sind die einzigen L-Klasse Welten im Niemandsland — doppelter Ressourcenertrag, doppelte Attraktivität als Konfliktziel.
+Im Default-Sektor gibt es **eine** L-Klasse-Welt (`large_count = 1`). L-Klasse-Welten haben doppelten Ressourcenertrag und doppelte Attraktivität als Konfliktziel.
 
 </details>
 
 ---
 
 ## ⚡ RESSOURCENLAGEBERICHT — Die fünf Säulen des Faction-Vaults
+
+<img src="assets/ui/readme_banner_resources.jpg" alt="Ressourcen der Eisen-Grenze" width="100%"/>
+
+<br/>
 
 <div align="center">
 
@@ -192,13 +204,19 @@ Die Reihenfolge des `resource_ids`-Shuffles ist Teil des Seed-Vertrags. Wer `dea
 
 ---
 
-## 🏗️ INFRASTRUKTUR-DOKTRIN — 13 Planeten-Upgrades in 4 Zweigen
+## 🏗️ INFRASTRUKTUR-DOKTRIN — 17 Planeten-Upgrades in 4 Zweigen
+
+<img src="assets/ui/readme_banner_upgrades.jpg" alt="Orbitale Planeten-Upgrades" width="100%"/>
+
+<br/>
 
 ```mermaid
 graph TD
 	subgraph " 💰 Economy "
-		EXT["⛏️ Extractor"] --> REF["🏭 Refinery<br/><i>(Produktionsbonus + Maintenance)</i>"]
+		EXT["⛏️ Extractor"] --> REF["🏭 Refinery<br/><i>(Material→Rare-Konvertierung)</i>"]
 		EXT --> TP["🤝 Trade Post<br/><i>(Transfer-Speed-Bonus)</i>"]
+		REF --> AM["🤖 Automated Mine<br/><i>(Tech-gated Alternative)</i>"]
+		TP --> TH["🏪 Trade Hub<br/><i>(Tech-gated Alternative)</i>"]
 	end
 
 	subgraph " ⚔️ Military "
@@ -215,25 +233,33 @@ graph TD
 	subgraph " 🌐 Infrastructure "
 		OS["🛰️ Orbital Station"] --> CH["🏙️ Colony Hub"]
 		OS --> TN["🌐 Trade Network"]
+		OS --> CA["📡 Comms Array"]
+		OS --> DSS["🔭 Deep Space Scanner"]
 	end
 
 	style REF stroke:#f0b429,stroke-width:2px
 	style TP stroke:#f0b429,stroke-width:2px
+	style AM stroke:#f0b429,stroke-width:2px
+	style TH stroke:#f0b429,stroke-width:2px
 	style WSY stroke:#ef476f,stroke-width:2px
 	style DG stroke:#ef476f,stroke-width:2px
 	style WL stroke:#9b5de5,stroke-width:2px
 	style AL stroke:#9b5de5,stroke-width:2px
 ```
 
-**Exklusivitätsregeln:** `refinery` ⮂ `trade_post` · `war_shipyard` ⮂ `colony_shipyard` · `weapon_lab` ⮂ `armor_lab`
+**Exklusivitätsregeln:** `refinery` ⮂ `trade_post` · `automated_mine` ⮂ `trade_hub` · `war_shipyard` ⮂ `colony_shipyard` · `weapon_lab` ⮂ `armor_lab`
 
 > [!NOTE]
 > `cluster_tier_bonus` ist rein visuell. Es verschiebt die sichtbare K/M/L-Clusterstufe nach oben, ändert aber nichts an logischer Kapazität, Packing-Logik, Fluglast oder Ankunftszählern.
-> `refinery` ist aktuell ein Produktionsbonus mit Maintenance-Versuch — noch keine echte Material→Rare-Konvertierung.
+> `refinery` konvertiert 2 Material + 1 Energy → 1 Rare (`convert_refinery_resources()`). Refund bei Energy-Knappheit. `automated_mine` und `trade_hub` sind Tech-gated Alternativen zu `refinery` bzw. `trade_post`.
 
 ---
 
 ## 🚀 SCHIFFSBAU & FORSCHUNG — Vom freien Start-Scout zur Flotte
+
+<img src="assets/ui/readme_banner_ships.jpg" alt="Modularer Schiffs-Hangar und Tech-Forschung" width="100%"/>
+
+<br/>
 
 > *„Wir haben einen modularen Schiffs-Hangar. Er montiert Rümpfe, Antriebe, Waffen, Schilde und Scanner. Montierte Assemblies fliegen heute als echte ShipBase-Transits durch die Overworld und lösen am Ziel einen FleetBattle-Simulator aus."*
 
@@ -251,16 +277,22 @@ graph LR
 
 ### Technologie-Katalog
 
-| Kategorie | Tech-ID | Kosten | Effekt |
-|:---|:---|:---|:---|
-| 🚀 **Ships** | `shipyard_construction` | 10 Energy | Schaltet Werft-Upgrade frei |
-| 🚀 **Ships** | `scout_hull` | 15 Material | Leichter T1-Aufklärungsrumpf |
-| 🚀 **Ships** | `scanner_drone` | 10 Energy | Scout deckt Planeten auf und sichert Intel |
-| 🚀 **Ships** | `weapon_systems` | 12 Volatile | Bordwaffen & T2-Mehrzweckrumpf freigeschaltet |
-| 🚀 **Ships** | `worker_automation` | 15 Biomass | *(Discovery-Gate)* Erste Worker-Fabrik baubar |
-| 🤖 **Mech** | `mech_frame` | 25 Volatile | T1-Chassis, sichtbar aber bis Layer 3 inert |
-| 🪐 **Planet** | `planetary_survey` | 10 Rare | Planetenproduktion auf 125 % |
-| 🪐 **Planet** | `planetary_extraction` | 20 Material | Baut Survey aus: Produktion auf 150 % |
+| Kategorie | Tech-ID | Kosten | Effekt | Exklusiv zu |
+|:---|:---|:---|:---|:---|
+| 🚀 **Ships** | `shipyard_construction` | 10 Energy | Schaltet Werft-Upgrade frei | — |
+| 🚀 **Ships** | `scout_hull` | 15 Material | Leichter T1-Aufklärungsrumpf | — |
+| 🚀 **Ships** | `scanner_drone` | 10 Energy | Scout deckt Planeten auf und sichert Intel | — |
+| 🚀 **Ships** | `weapon_systems` | 12 Volatile | Bordwaffen & T2-Mehrzweckrumpf freigeschaltet | — |
+| 🚀 **Ships** | `worker_automation` | 15 Biomass | *(Discovery-Gate)* Erste Worker-Fabrik baubar | — |
+| 🚀 **Ships** | `advanced_propulsion` | 20 Volatile | Verbesserter Antrieb | `heavy_armor_plating` |
+| 🚀 **Ships** | `heavy_armor_plating` | 20 Material | Schwere Panzerung | `advanced_propulsion` |
+| 🤖 **Mech** | `mech_frame` | 25 Volatile | T1-Chassis, sichtbar aber bis Layer 3 inert | — |
+| 🔍 **Scan** | `deep_scan` | 15 Energy | Tiefenscan-Modus | `long_range_sensors` |
+| 🔍 **Scan** | `long_range_sensors` | 15 Rare | Langstrecken-Sensorik | `deep_scan` |
+| 🪐 **Planet** | `planetary_survey` | 10 Rare | Planetenproduktion auf 125 % | — |
+| 🪐 **Planet** | `planetary_extraction` | 20 Material | Baut Survey aus: Produktion auf 150 % | — |
+| 💰 **Economy** | `automated_refinery` | 25 Rare | Schaltet `automated_mine`-Upgrade frei | `bulk_processing` |
+| 💰 **Economy** | `bulk_processing` | 25 Biomass | Schaltet `trade_hub`-Upgrade frei | `automated_refinery` |
 
 **Forschung ist zeitgesteuert** — Kosten werden beim Start abgebucht. `technology_researched` / `ship_assembled` feuern erst bei Abschluss.
 
@@ -274,6 +306,10 @@ Vollständiger Loadout: `hull + drive + shield + scanner + optionale weapon + mo
 ---
 
 ## 🛤️ TRANSIT & LOGISTIK — Die Physik der Eisen-Grenze
+
+<img src="assets/ui/readme_banner_transit.jpg" alt="Routennetz und Cluster-Transit" width="100%"/>
+
+<br/>
 
 ```
 Flugzeit = (Distanz / 100) × 8.0 × (1.0 + 0.05 × √(max(Einheiten − 1, 0)))
@@ -305,6 +341,10 @@ Preview und tatsächlicher Transit verwenden dieselbe `FlightTime.seconds_for()`
 
 ## 🤖 KI-DISPATCH-DOKTRIN — Fraktion Beta schläft nicht
 
+<img src="assets/ui/banner_ai.svg" alt="CPU Dispatch AI Doktrin" width="100%"/>
+
+<br/>
+
 Das Paper-Kollektiv (`CpuDispatchAI`) arbeitet mit adaptivem Pacing:
 
 ```
@@ -329,20 +369,36 @@ Die KI simuliert keine Schiffs- oder Mech-Kämpfe. Sie ist ein Overworld-Dispatc
 
 ## ⚔️ KONFLIKT-RESOLVE — Die Arithmetik der Eisen-Grenze
 
-Militärischer Arrive-Resolve in `Planet.resolve_arrival()`:
+<img src="assets/ui/banner_conflict.svg" alt="Konflikt-Resolve und Flottenbegegnungen" width="100%"/>
 
+<br/>
+
+Militärischer Arrive-Resolve in `PlanetArrivalResolver` — zwei Pfade:
+
+**Worker-Military-Transits** (`resolve_military_arrival`) — Hauptpfad:
 ```
-1. Gleiche Fraktion              →  alle eingehenden Worker verstärken den Zielplaneten
-2. incoming ≤ defenders + defense_rating  →  Angriff abgewehrt; bis zu incoming vorhandene Worker entfernt
-3. incoming > defenders          →  Faction-Wechsel via GameState.set_faction()
-                                    Verteidiger entfernt; (incoming − defenders) Überlebende bleiben
+1. Gleiche Fraktion              →  alle eingehenden Worker verstärken den Zielplaneten (Fallback: resolve_arrival)
+2. ConquestSimulator.simulate_conquest()  →  deterministische Simulation
+3. conquest.captured == true     →  Faction-Wechsel; Überlebende als Worker registriert
+4. conquest.captured == false    →  Angriff abgewehrt; bis zu incoming Worker entfernt
 ```
 
-Das ist kein Waffen-, Schadens- oder Tower-System. Für montierte Schiffe: Layer 2 (`FleetBattleSimulator`). Für planetare Bodeneroberung: Layer 3, noch nicht fertig.
+**Schiffs-Ankünfte** (`resolve_ship_arrival`) — Layer 2:
+```
+1. Colony-Schiff    →  friedliche Besiedlung (nur gescannte neutrale Ziele)
+2. Defender-Fleet   →  FleetBattleSimulator (fleet-vs-fleet)
+3. Keine Defender   →  ConquestSimulator (fleet-vs-ground)
+```
+
+Für montierte Schiffe: Layer 2 (`FleetBattleSimulator`). Für planetare Bodeneroberung: Layer 3 (`ConquestSimulator`) — funktional für Worker-Military-Transits, Mech-Tech-Stubs vorhanden.
 
 ---
 
 ## 🏛️ ARCHITEKTUR — Vom Katalog zum Spielstand
+
+<img src="assets/ui/banner_architecture.svg" alt="SnipWar Systemarchitektur" width="100%"/>
+
+<br/>
 
 ```
 StarfieldBackground._enter_tree()
@@ -394,19 +450,23 @@ LAYER 2 — FLOTTENSIMULATION
                                           Live-Loop-Integration folgt später
 
 LAYER 3 — PLANETARE EROBERUNG
-████████░░░░░░░░░░░░░░░░░░░░░░░░░░  ~25%  ConquestSimulator, Mech-Tech-Stubs vorhanden
-                                          Tower-Defense, Minion-Adapter: noch nicht
+██████████░░░░░░░░░░░░░░░░░░░░░░░  ~30%  ConquestSimulator für Worker-Military aktiv
+                                          Mech-Tech-Stubs vorhanden; Tower-Defense, Minion-Adapter: noch nicht
 
 CHUNK-WELT (prozedural, unendlich)
 ████████████████████░░░░░░░░░░░░░░  ~60%  ChunkCoordinator, FoV-Cycling, inkrementelle Navigation
 ```
 
 > [!CAUTION]
-> Was **noch nicht existiert** und nicht als implementiert dokumentiert werden darf: Ressourcenkonvertierung in der Raffinerie, echte Planetentyp-Ressourcen-Signaturen, Tower-Defense-Türme, Ship-as-Minion-Adapter, Mech-Kampflogik, Siegbedingungen.
+> Was **noch nicht existiert** und nicht als implementiert dokumentiert werden darf: echte Planetentyp-Ressourcen-Signaturen, Tower-Defense-Türme, Ship-as-Minion-Adapter, Mech-Kampflogik, Siegbedingungen.
 
 ---
 
 ## 🛠️ PRÜFSEQUENZ — Automatisierte Vertragsverifizierung
+
+<img src="assets/ui/readme_banner_preflight.jpg" alt="Automatisierte Preflight Prüfsequenz" width="100%"/>
+
+<br/>
 
 Die Preflight-Suite (`scripts/preflight.gd`) ist der einzige autoritative Verifikationsweg. Kein Framework, kein externer Runner — läuft headless im selben Prozess wie das Spiel.
 
@@ -414,12 +474,12 @@ Die Preflight-Suite (`scripts/preflight.gd`) ist der einzige autoritative Verifi
 # Smoke-Test: Hauptszene bootet durch
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Alle 18 Constraints
+# Alle 19 Constraints
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
 <details>
-<summary>📋 <b>Die 18 Preflight-Constraints</b></summary>
+<summary>📋 <b>Die 19 Preflight-Constraints</b></summary>
 
 | # | Constraint | Prüft |
 |:---:|:---|:---|
@@ -432,7 +492,7 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 | 7 | `resources_and_seed` | Seed-Deterministik & Ressourcen-Deals |
 | 8 | `world_planets_and_dispatch` | Planetennetz, Routen & Transitlinien |
 | 9 | `world_details_and_scale` | Detail-Generierung & Orbit-Skalierungen |
-| 10 | `upgrades_missions_and_ai` | 13 Upgrades, Wirtschaftsticks, CPU-AI |
+| 10 | `upgrades_missions_and_ai` | 17 Upgrades, Wirtschaftsticks, CPU-AI |
 | 11 | `selection_and_context` | SelectionService, Tooltips & Kontextmenüs |
 | 12 | `scout_and_discovery` | Werftbau, Scout-Flug & Scan-Intel |
 | 13 | `ship_builder` | Modulare Montage, Variantenpools & Hangar-Hinterlegung |
@@ -441,14 +501,19 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 | 16 | `pause_and_context` | Modale UI-Hierarchie & Pausenstatus |
 | 17 | `layers_2_and_3` | FleetBattleSimulator, ConquestSimulator, Replay-Daten |
 | 18 | `ingame_player_and_transitions` | IngamePlayerControls, FloatingText & SceneDirector |
+| 19 | `chunk_expansion` | Deterministischer Chunk-Seed, inkrementelle Navigation & Prozedural-Deal |
 
 </details>
 
-Preflight ist modular. `scripts/preflight.gd` ist der Orchestrator. Die Constraints liegen einzeln unter `scripts/preflight/constraint_*.gd`. Neue Coverage kommt als eigene `PreflightConstraintX`-Klasse mit `constraint_name()` + `run(ctx) -> bool` — im Orchestrator in `_ConstraintScripts` eintragen, fertig.
+Preflight ist modular. `scripts/preflight.gd` ist der Orchestrator. Die Constraints liegen einzeln unter `scripts/preflight/constraint_*.gd`. Neue Coverage kommt als eigene `PreflightConstraintX`-Klasse mit `constraint_name()` + `run(ctx) -> bool` — im Orchestrator in `CONSTRAINT_REGISTRY` eintragen, fertig.
 
 ---
 
 ## 🔧 ENTWICKLER-WORKFLOW — Commit-Kette
+
+<img src="assets/ui/banner_workflow.svg" alt="Git Commit und Preflight Hook Workflow" width="100%"/>
+
+<br/>
 
 Jeder `git commit` läuft durch die vollständige Hook-Kette und landet **sofort auf `origin/main`**. Es gibt keinen Skip-Pfad.
 
@@ -522,6 +587,7 @@ timeline
 | 📖 **Galaktisches Archiv** | [`LORE.md`](LORE.md) — Feldberichte & Planetendossiers |
 | 📐 **Technischer Vertrag** | [`DESIGN.md`](DESIGN.md) — Verbindliche Spezifikation |
 | 🎯 **Zielvision** | [`VISION.md`](VISION.md) — 4X-Kreislauf & Roadmap |
+| 🗺️ **Dokumentations-Index** | [`docs/README.md`](docs/README.md) — Struktur & Zugehörigkeiten |
 
 ---
 

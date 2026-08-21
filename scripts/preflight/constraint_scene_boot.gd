@@ -37,6 +37,12 @@ func run(ctx: PreflightContext) -> bool:
 		game_state.faction_changed.connect(ctx.capture_faction_changed)
 	if not ctx.check(game_state.validate().is_empty(), "GameState ownership validation failed"):
 		return false
+	var preserved_player_count: int = game_state.get_ownership_count(GameState.FACTION_PLAYER)
+	var preserved_energy: int = game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY)
+	if not ctx.check(game_state.reconnect_world(&"default", int(world_config.layout_seed), world_config.is_infinite_world()), "GameState reconnect contract rejected an active run"):
+		return false
+	if not ctx.check(game_state.get_ownership_count(GameState.FACTION_PLAYER) == preserved_player_count and game_state.get_faction_resource(GameState.FACTION_PLAYER, GameState.RES_ENERGY) == preserved_energy, "GameState reconnect mutated persistent domain state"):
+		return false
 	var scenario_catalog: ScenarioCatalog = background.get("scenario_catalog") as ScenarioCatalog
 	if not ctx.check(scenario_catalog != null and scenario_catalog.validate().is_empty(), "scenario catalog validation failed"):
 		return false

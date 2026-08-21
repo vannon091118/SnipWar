@@ -184,7 +184,7 @@ Bei planetaren Angriffen greift der **ConquestSimulator**:
 ```
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
   GALAKTISCHER ARCHIV-EINTRAG // ENDE DER TRANSMISSION
-  Stand: Verifiziert durch 17 Preflight-Module // Engine: Godot 4.7
+  Stand: Verifiziert durch 19 Preflight-Module // Engine: Godot 4.7
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 ```
 
@@ -193,5 +193,6 @@ Bei planetaren Angriffen greift der **ConquestSimulator**:
 | 📡 **Lagezentrum** | [`README.md`](README.md) — Overworld-Übersicht & Preflight |
 | 📐 **Technik-Vertrag** | [`DESIGN.md`](DESIGN.md) — Systemarchitektur & Spezifikation |
 | 🎯 **Roadmap** | [`VISION.md`](VISION.md) — Die Zukunft von SnipWar |
+| 🗺️ **Dokumentations-Index** | [`docs/README.md`](docs/README.md) — Struktur & Zugehörigkeiten |
 
 </div>

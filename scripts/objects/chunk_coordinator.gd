@@ -105,7 +105,6 @@ func ensure_chunks_active(fov_regions: Array, max_size_class: StringName) -> voi
 		var cells := _cells_in_rect(rect)
 		for cell in cells:
 			needed_cells[cell] = true
-	# Generate missing chunks for needed cells
 	var chunks_to_generate: Dictionary = {}
 	for cell in needed_cells:
 		var chunk_coord := _cell_to_chunk(cell)
@@ -114,7 +113,6 @@ func ensure_chunks_active(fov_regions: Array, max_size_class: StringName) -> voi
 	for chunk_coord in chunks_to_generate:
 		_generate_chunk(chunk_coord, max_size_class)
 
-	# Instantiate planets in needed cells that aren't active
 	for cell in needed_cells:
 		if not _active_planets.has(cell):
 			_instantiate_planet(cell)
@@ -126,7 +124,6 @@ func ensure_chunks_active(fov_regions: Array, max_size_class: StringName) -> voi
 				existing.visible = true
 				existing.process_mode = Node.PROCESS_MODE_INHERIT
 
-	# Cull planets outside needed cells
 	var to_cull: Array = []
 	for cell in _active_planets.keys():
 		if not needed_cells.has(cell):
@@ -136,7 +133,7 @@ func ensure_chunks_active(fov_regions: Array, max_size_class: StringName) -> voi
 	if _navigation != null:
 		_navigation.rebuild()
 		var network: Node = _navigation.get_parent().get_node_or_null("PlanetNetwork")
-		if network != null and network.has_method("invalidate_neighbor_cache"):
+		if not Engine.is_editor_hint() and network != null and network.has_method("invalidate_neighbor_cache"):
 			network.call("invalidate_neighbor_cache")
 
 ## Synchronously generates chunks containing the given cells (for route plotting).
@@ -153,7 +150,7 @@ func generate_chunks_sync(cells: Array) -> void:
 	if _navigation != null:
 		_navigation.rebuild()
 		var network: Node = _navigation.get_parent().get_node_or_null("PlanetNetwork")
-		if network != null and network.has_method("invalidate_neighbor_cache"):
+		if not Engine.is_editor_hint() and network != null and network.has_method("invalidate_neighbor_cache"):
 			network.call("invalidate_neighbor_cache")
 
 ## Returns the cell key for a planet position.
@@ -363,11 +360,6 @@ func load_state(data: ChunkSaveData) -> void:
 	if data == null:
 		return
 	_layout_seed = data.layout_seed
-	# Restore planet states into the cache (will be applied when chunks
-	# are regenerated).
-	for planet_id in data.planet_states:
-		# States are applied during _generate_chunk via GameState.
-		pass
 	# Re-generate cached chunks from saved coordinates.
 	for chunk_coord in data.cached_chunk_coords:
 		if not _chunk_cache.has(chunk_coord):

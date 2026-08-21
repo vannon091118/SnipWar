@@ -25,9 +25,6 @@ var _planet_view := TechPlanetView.new()
 @onready var _category_tabs: HBoxContainer = get_node_or_null("TechTabUI/TechPanel/TechMargin/TechVBox/CategoryTabs")
 @onready var _list: VBoxContainer = get_node_or_null("TechTabUI/TechPanel/TechMargin/TechVBox/TechScroll/TechList")
 
-func _ready() -> void:
-	pass
-
 func setup(ship_manager: ShipManager, theme_config: UIThemeConfig = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
 	_ship_manager = ship_manager

@@ -6,6 +6,9 @@ signal transition_started()
 signal transition_midpoint()
 signal transition_completed()
 
+const LAYER1_SCENE: PackedScene = preload("res://scenes/backgrounds/starfield_background.tscn")
+const LAYER2_SCENE: PackedScene = preload("res://scenes/battle/battle_scene.tscn")
+
 var _fade_rect: ColorRect
 var _is_transitioning: bool = false
 
@@ -45,6 +48,26 @@ func transition(duration: float = 0.4, on_midpoint: Callable = Callable()) -> vo
 		_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_is_transitioning = false
 		transition_completed.emit()
+	)
+
+func transition_to_layer2(context: BattleContext) -> void:
+	if context == null or context.replay == null or _is_transitioning:
+		return
+	var state: Node = get_node_or_null("/root/GameState")
+	if state != null and state.has_method("set_pending_battle_context"):
+		state.set_pending_battle_context(context)
+	transition(0.6, func():
+		get_tree().change_scene_to_packed(LAYER2_SCENE)
+	)
+
+func transition_to_layer1() -> void:
+	if _is_transitioning:
+		return
+	var state: Node = get_node_or_null("/root/GameState")
+	if state != null and state.has_method("request_world_reconnect"):
+		state.request_world_reconnect()
+	transition(0.6, func():
+		get_tree().change_scene_to_packed(LAYER1_SCENE)
 	)
 
 func is_transitioning() -> bool:

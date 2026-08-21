@@ -152,6 +152,104 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(result_1.events.size() == result_2.events.size(), "FleetBattleSimulator event count must match across identical seeds"):
 		return false
 
+	# 4b. Route engagement detection: shared waypoints and true crossings are
+	# deterministic, while parallel routes and invalid speeds are ignored.
+	var crossing_a: Array[Vector2] = [Vector2(0, 0), Vector2(100, 100)]
+	var crossing_b: Array[Vector2] = [Vector2(0, 100), Vector2(100, 0)]
+	var crossing := RouteEngagementResolver.detect_engagement(crossing_a, 10.0, crossing_b, 10.0)
+	if not ctx.check(not crossing.is_empty() and crossing.get("type", &"") == &"path_crossing", "route resolver must detect a timed path crossing"):
+		return false
+	if not ctx.check(is_equal_approx(float(crossing.get("time_a", 0.0)), float(crossing.get("time_b", 0.0))), "symmetric crossing should have equal arrival times"):
+		return false
+	var shared := RouteEngagementResolver.detect_engagement(
+		[Vector2(0, 0), Vector2(50, 0), Vector2(100, 0)],
+		10.0,
+		[Vector2(0, 100), Vector2(50, 0), Vector2(100, 100)],
+		10.0
+	)
+	if not ctx.check(shared.get("type", &"") == &"waypoint_convergence", "route resolver must detect a shared waypoint"):
+		return false
+	var parallel := RouteEngagementResolver.detect_engagement(
+		[Vector2(0, 0), Vector2(100, 0)], 10.0,
+		[Vector2(0, 20), Vector2(100, 20)], 10.0
+	)
+	if not ctx.check(parallel.is_empty(), "parallel routes must not create an engagement"):
+		return false
+	if not ctx.check(RouteEngagementResolver.detect_engagement(crossing_a, 0.0, crossing_b, 10.0).is_empty(), "non-positive speed must not create an engagement"):
+		return false
+	var route_replay := FleetBattleSimulator.simulate_route_battle(fleet_a, fleet_b, crossing_a, crossing_b, crossing, 9999)
+	if not ctx.check(route_replay.route_a.size() == 2 and route_replay.route_b.size() == 2 and route_replay.engagement_type == &"path_crossing", "route battle replay must preserve its route context"):
+		return false
+	var route_spawn: BattleEvent = route_replay.events[0] as BattleEvent if not route_replay.events.is_empty() else null
+	if not ctx.check(route_spawn != null and route_spawn.source_pos == crossing_a[0], "route battle spawn must begin at the route origin"):
+		return false
+
+	# 4c. Route battle commit: the surviving transit stays in flight with its
+	# reduced fleet while a fully destroyed transit is removed. Guards against
+	# a commit that drops survivors instead of returning them to the overworld.
+	var gs_route: Node = ctx.game_state
+	var cycle: Node = ctx.root().get_node_or_null("GameCycleManager")
+	if gs_route != null and cycle != null and gs_route.has_method("register_transit"):
+		var survivor_ship: ShipAssembly = ctx.make_ship_assembly(&"hull_fighter", &"scanner_drone", [&"mod_laser"])
+		var doomed_ship: ShipAssembly = ctx.make_ship_assembly(&"hull_fighter", &"scanner_drone")
+		var survivor_fleet := FleetSnapshot.new()
+		survivor_fleet.fleet_id = &"fleet_route_survivor"
+		survivor_fleet.faction = GameState.FACTION_PLAYER
+		survivor_fleet.ships = [survivor_ship, survivor_ship.copy()]
+		survivor_fleet.calculate_stats()
+		var doomed_fleet := FleetSnapshot.new()
+		doomed_fleet.fleet_id = &"fleet_route_doomed"
+		doomed_fleet.faction = GameState.FACTION_CPU
+		doomed_fleet.ships = [doomed_ship]
+		doomed_fleet.calculate_stats()
+		var record_survivor := TransitRecord.new()
+		record_survivor.transit_id = &"transit_route_survivor"
+		record_survivor.fleet = survivor_fleet.copy()
+		record_survivor.route_path = crossing_a
+		record_survivor.duration = 10.0
+		record_survivor.status = TransitRecord.STATUS_ENGAGED
+		var record_doomed := TransitRecord.new()
+		record_doomed.transit_id = &"transit_route_doomed"
+		record_doomed.fleet = doomed_fleet.copy()
+		record_doomed.route_path = crossing_b
+		record_doomed.duration = 10.0
+		record_doomed.status = TransitRecord.STATUS_ENGAGED
+		gs_route.register_transit(record_survivor)
+		gs_route.register_transit(record_doomed)
+
+		var route_replay_commit := CombatReplay.new_battle(4242)
+		route_replay_commit.winner = GameState.FACTION_PLAYER
+		route_replay_commit.survivors_a = [survivor_ship.copy()]
+		route_replay_commit.survivors_b = []
+		route_replay_commit.route_a = crossing_a
+		route_replay_commit.route_b = crossing_b
+		route_replay_commit.engagement_point = Vector2(50, 50)
+		route_replay_commit.engagement_type = &"path_crossing"
+		route_replay_commit.engagement_time_a = 5.0
+		route_replay_commit.engagement_time_b = 5.0
+
+		var route_context := BattleContext.new()
+		route_context.battle_id = &"battle_route_commit"
+		route_context.transit_ids = [record_survivor.transit_id, record_doomed.transit_id]
+		route_context.fleet_a = survivor_fleet.copy()
+		route_context.fleet_b = doomed_fleet.copy()
+		route_context.replay = route_replay_commit
+		route_context.route_engagement = true
+
+		if not ctx.check(cycle.call("apply_battle_result", route_context) == true, "route battle commit must apply"):
+			return false
+		var committed_survivor: TransitRecord = gs_route.call("get_transit", record_survivor.transit_id) as TransitRecord
+		if not ctx.check(
+			committed_survivor != null
+			and committed_survivor.status == TransitRecord.STATUS_IN_FLIGHT
+			and committed_survivor.fleet.ships.size() == 1,
+			"route battle commit must keep the surviving transit in flight with its reduced fleet"):
+			return false
+		if not ctx.check(gs_route.call("get_transit", record_doomed.transit_id) == null, "route battle commit must remove a fully destroyed transit"):
+			return false
+		gs_route.call("remove_transit", record_survivor.transit_id)
+		gs_route.call("remove_transit", record_doomed.transit_id)
+
 	# 5. Deterministic Layer 3 Conquest
 	var conq_1 := ConquestSimulator.simulate_conquest(fleet_a, 5, 3, 2, 2, 150.0, 777)
 	var conq_2 := ConquestSimulator.simulate_conquest(fleet_a, 5, 3, 2, 2, 150.0, 777)

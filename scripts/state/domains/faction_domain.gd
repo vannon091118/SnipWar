@@ -86,6 +86,11 @@ func seed_starting_workers(planet_id: StringName, profile: PlanetSizeProfile) ->
 		return
 	starting_workers[planet_id] = profile.starting_workers if profile != null else 0
 
+func add_starting_workers(planet_id: StringName, amount: int) -> void:
+	if String(planet_id).is_empty() or amount <= 0:
+		return
+	starting_workers[planet_id] = int(starting_workers.get(planet_id, 0)) + amount
+
 func faction_of(planet_id: StringName) -> StringName:
 	return ownership.get(planet_id, GameState.FACTION_NEUTRAL) as StringName
 

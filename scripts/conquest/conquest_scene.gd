@@ -139,7 +139,6 @@ func _setup_battlefield() -> void:
 		_arena.add_child(minion)
 		_attackers.append(minion)
 
-		# Advance tween
 		var tw := minion.create_tween()
 		tw.tween_property(minion, "position:x", -90.0, _duration * 0.8)
 
@@ -189,7 +188,6 @@ func _process(delta: float) -> void:
 	_elapsed += delta * playback_speed
 	_player_controls.set_progress(_elapsed)
 
-	# Update garrison progress
 	var frac: float = clampf(1.0 - (_elapsed / _duration), 0.0, 1.0)
 	if _garrison_bar != null:
 		_garrison_bar.value = frac * _garrison_bar.max_value

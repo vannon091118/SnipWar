@@ -23,10 +23,16 @@ var _viewport_container: Control
 var _arena: Node2D
 var _status_label: Label
 var _player_controls: IngamePlayerControls
+var _phase_label: Label
+var _route_nodes: Array[Line2D] = []
+var _route_offset := Vector2.ZERO
+var _engagement_time: float = 0.0
+var _pending_context: BattleContext
 
 func _ready() -> void:
 	layer = 80
 	_build_ui()
+	call_deferred("_boot_pending_battle")
 
 func _build_ui() -> void:
 	if _viewport_container != null:
@@ -55,6 +61,15 @@ func _build_ui() -> void:
 	_status_label.add_theme_font_size_override("font_size", 16)
 	_viewport_container.add_child(_status_label)
 
+	_phase_label = Label.new()
+	_phase_label.name = "PhaseLabel"
+	_phase_label.text = "APPROACH"
+	_phase_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_phase_label.position = Vector2(340.0, 44.0)
+	_phase_label.size = Vector2(280.0, 22.0)
+	_phase_label.add_theme_font_size_override("font_size", 11)
+	_viewport_container.add_child(_phase_label)
+
 	_player_controls = IngamePlayerControls.new()
 	_player_controls.name = "PlayerControls"
 	_player_controls.position = Vector2(200.0, 480.0)
@@ -64,6 +79,25 @@ func _build_ui() -> void:
 	_player_controls.skip_pressed.connect(_on_skip_pressed)
 	_viewport_container.add_child(_player_controls)
 
+func _boot_pending_battle() -> void:
+	var state: Node = get_node_or_null("/root/GameState")
+	if state == null or not state.has_method("pending_battle_context"):
+		return
+	var context: BattleContext = state.pending_battle_context()
+	if context == null or context.replay == null:
+		return
+	_pending_context = context
+	if not battle_completed.is_connected(_on_pending_battle_completed):
+		battle_completed.connect(_on_pending_battle_completed)
+	play_battle(context.replay)
+
+func _on_pending_battle_completed(replay: CombatReplay) -> void:
+	if _pending_context == null:
+		return
+	var cycle: Node = get_node_or_null("/root/GameCycleManager")
+	if cycle != null and cycle.has_method("apply_battle_result"):
+		cycle.call("apply_battle_result", _pending_context)
+
 func play_battle(replay: CombatReplay) -> void:
 	_ensure_ui()
 	if replay == null or not replay.is_battle():
@@ -72,6 +106,10 @@ func play_battle(replay: CombatReplay) -> void:
 	_fx_rng.seed = replay.battle_seed
 	_events = replay.events
 	_total_duration = replay.duration
+	_engagement_time = replay.engagement_time_a if replay.engagement_time_a > 0.0 else _total_duration * 0.35
+	_route_offset = Vector2.ZERO
+	if not replay.route_a.is_empty() and not replay.route_b.is_empty():
+		_route_offset = Vector2(480.0, 270.0) - replay.engagement_point
 	_event_index = 0
 	_elapsed = 0.0
 	_is_playing = true
@@ -80,6 +118,7 @@ func play_battle(replay: CombatReplay) -> void:
 	_player_controls.setup(_total_duration)
 	_clear_arena()
 	_cache_spawn_data()
+	_draw_routes(replay)
 
 func _ensure_ui() -> void:
 	if _viewport_container == null:
@@ -88,7 +127,32 @@ func _ensure_ui() -> void:
 func _clear_arena() -> void:
 	for child in _arena.get_children():
 		child.queue_free()
+	_route_nodes.clear()
 	_ships.clear()
+
+func _draw_routes(replay: CombatReplay) -> void:
+	if replay == null:
+		return
+	for route_data in [replay.route_a, replay.route_b]:
+		if route_data.size() < 2:
+			continue
+		var line := Line2D.new()
+		line.width = 1.5
+		line.default_color = Color(0.2, 0.55, 0.85, 0.4) if _route_nodes.is_empty() else Color(0.9, 0.3, 0.3, 0.4)
+		var points := PackedVector2Array()
+		for point in route_data:
+			points.append(point + _route_offset)
+		line.points = points
+		_arena.add_child(line)
+		_route_nodes.append(line)
+	if replay.engagement_point != Vector2.ZERO:
+		var marker := Sprite2D.new()
+		marker.name = "EngagementPoint"
+		marker.position = replay.engagement_point + _route_offset
+		marker.scale = Vector2.ONE * 0.3
+		marker.modulate = Color(1.0, 0.75, 0.2, 0.85)
+		marker.texture = preload("res://assets/objects/workers/worker_unit.svg")
+		_arena.add_child(marker)
 
 func _cache_spawn_data() -> void:
 	_ship_initial_data.clear()
@@ -106,6 +170,15 @@ func _process(delta: float) -> void:
 
 	_elapsed += delta * playback_speed
 	_player_controls.set_progress(_elapsed)
+	if _phase_label != null:
+		if _elapsed < maxf(_engagement_time - 1.0, 0.0):
+			_phase_label.text = "APPROACH"
+		elif _elapsed < _engagement_time + 1.0:
+			_phase_label.text = "ENGAGEMENT"
+		elif _elapsed < _total_duration - 0.8:
+			_phase_label.text = "CLIMAX"
+		else:
+			_phase_label.text = "RESOLUTION"
 
 	while _event_index < _events.size():
 		var event: BattleEvent = _events[_event_index]
@@ -121,13 +194,13 @@ func _process(delta: float) -> void:
 func _process_event(event: BattleEvent) -> void:
 	match event.event_type:
 		BattleEvent.TYPE_SPAWN:
-			_spawn_ship_visual(event.source_id, event.source_pos, event.ship_data)
+			_spawn_ship_visual(event.source_id, event.source_pos + _route_offset, event.ship_data)
 		BattleEvent.TYPE_FIRE:
-			_animate_fire(event.source_id, event.source_pos, event.target_pos)
+			_animate_fire(event.source_id, event.source_pos + _route_offset, event.target_pos + _route_offset)
 		BattleEvent.TYPE_HIT:
-			_animate_hit(event.target_id, event.target_pos, event.value)
+			_animate_hit(event.target_id, event.target_pos + _route_offset, event.value)
 		BattleEvent.TYPE_DESTROYED:
-			_animate_destruction(event.source_id, event.source_pos)
+			_animate_destruction(event.source_id, event.source_pos + _route_offset)
 
 func _spawn_ship_visual(ship_id: StringName, pos: Vector2, ship_data: ShipAssembly = null) -> void:
 	if _ships.has(ship_id):
@@ -171,8 +244,6 @@ func _spawn_ship_visual(ship_id: StringName, pos: Vector2, ship_data: ShipAssemb
 	)
 	_arena.add_child(view)
 	_ships[ship_id] = view
-
-	# Idle Floating Tween
 	var tw := view.create_tween().set_loops()
 	tw.tween_property(view, "position:y", pos.y + 4.0, 1.2).set_trans(Tween.TRANS_SINE)
 	tw.tween_property(view, "position:y", pos.y - 4.0, 1.2).set_trans(Tween.TRANS_SINE)
@@ -204,7 +275,6 @@ func _resolve_view_variants(catalog: ShipPartCatalog, assembly: ShipAssembly) ->
 	return result
 
 func _animate_fire(src_id: StringName, src_pos: Vector2, tgt_pos: Vector2) -> void:
-	# Recoil animation on shooter
 	if _ships.has(src_id):
 		var ship: Node2D = _ships[src_id] as Node2D
 		var recoil_dir := (src_pos - tgt_pos).normalized() * 5.0
@@ -212,7 +282,6 @@ func _animate_fire(src_id: StringName, src_pos: Vector2, tgt_pos: Vector2) -> vo
 		r_tw.tween_property(ship, "position", ship.position + recoil_dir, 0.08)
 		r_tw.tween_property(ship, "position", ship.position, 0.15)
 
-	# Laser beam
 	var is_cpu := String(src_id).begins_with("b")
 	var line := Line2D.new()
 	line.default_color = Color(1.0, 0.3, 0.3, 0.9) if is_cpu else Color(0.3, 0.8, 1.0, 0.9)
@@ -226,7 +295,6 @@ func _animate_fire(src_id: StringName, src_pos: Vector2, tgt_pos: Vector2) -> vo
 	tw.finished.connect(line.queue_free)
 
 func _animate_hit(target_id: StringName, tgt_pos: Vector2, damage: float) -> void:
-	# Hit flash on target
 	if _ships.has(target_id):
 		var ship: Node2D = _ships[target_id] as Node2D
 		var orig_color := ship.modulate
@@ -234,7 +302,6 @@ func _animate_hit(target_id: StringName, tgt_pos: Vector2, damage: float) -> voi
 		var f_tw := create_tween()
 		f_tw.tween_property(ship, "modulate", orig_color, 0.12)
 
-	# Floating damage number
 	FloatingText.spawn(_arena, "-%.0f" % damage, tgt_pos + Vector2(0, -10), Color(1.0, 0.85, 0.3))
 
 func _animate_destruction(ship_id: StringName, pos: Vector2) -> void:
@@ -242,7 +309,6 @@ func _animate_destruction(ship_id: StringName, pos: Vector2) -> void:
 		var target_node: Node2D = _ships[ship_id]
 		_ships.erase(ship_id)
 
-		# Destruction expansion & explosion ring
 		var ring := Line2D.new()
 		ring.default_color = Color(1.0, 0.6, 0.2, 1.0)
 		ring.width = 3.0
@@ -260,7 +326,6 @@ func _animate_destruction(ship_id: StringName, pos: Vector2) -> void:
 		r_tw.tween_property(ring, "modulate:a", 0.0, 0.35)
 		r_tw.chain().tween_callback(ring.queue_free)
 
-		# Debris sparks
 		for d in range(6):
 			var spark := Sprite2D.new()
 			spark.texture = preload("res://assets/objects/workers/worker_unit.svg")
@@ -288,12 +353,11 @@ func _on_seek_requested(time: float) -> void:
 	_elapsed = time
 	_clear_arena()
 	_event_index = 0
-	# Re-execute events up to scrubbed time
 	for i in range(_events.size()):
 		var ev: BattleEvent = _events[i]
 		if ev.timestamp <= time:
 			if ev.event_type == BattleEvent.TYPE_SPAWN:
-				_spawn_ship_visual(ev.source_id, ev.source_pos, ev.ship_data)
+				_spawn_ship_visual(ev.source_id, ev.source_pos + _route_offset, ev.ship_data)
 			elif ev.event_type == BattleEvent.TYPE_DESTROYED and _ships.has(ev.source_id):
 				var node: Node2D = _ships[ev.source_id]
 				_ships.erase(ev.source_id)
@@ -307,5 +371,6 @@ func _on_skip_pressed() -> void:
 
 func _finish_battle() -> void:
 	_is_playing = false
+	_clear_arena()
 	visible = false
 	battle_completed.emit(_current_result)

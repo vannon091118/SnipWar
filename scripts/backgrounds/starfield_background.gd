@@ -40,6 +40,8 @@ func _enter_tree() -> void:
 	_apply_active_scenario()
 
 func _apply_active_scenario() -> void:
+	var state: Node = get_node_or_null("/root/GameState")
+	var reconnect: bool = state != null and state.has_active_run() and state.consume_world_reconnect_request()
 	var catalog: ScenarioCatalog = scenario_catalog if scenario_catalog != null else DEFAULT_SCENARIO_CATALOG
 	var scenario: ScenarioDefinition = catalog.resolve(active_scenario_id)
 	if scenario == null or scenario.map_definition == null:
@@ -55,7 +57,13 @@ func _apply_active_scenario() -> void:
 		runtime_world.composition_decal_pool = discovered_assets.get("decal_textures", []) as Array[Texture2D]
 	world_config = runtime_world if runtime_world != null else (map.world_config if map.world_config != null else world_config)
 	background_config = scenario.background_config if scenario.background_config != null else background_config
-	_finalize_layout_seed(scenario, runtime_world)
+	if reconnect and state != null:
+		var session: Dictionary = state.world_session_context()
+		active_layout_seed = int(session.get("layout_seed", runtime_world.layout_seed if runtime_world != null else 0))
+		if runtime_world != null:
+			runtime_world.layout_seed = active_layout_seed
+	else:
+		_finalize_layout_seed(scenario, runtime_world)
 	var live_world: WorldConfig = runtime_world if runtime_world != null else map.world_config
 	if live_world != null:
 		_visible_region = Rect2(Vector2.ZERO, live_world.design_size)
@@ -70,7 +78,7 @@ func _apply_active_scenario() -> void:
 			WorldGenerator.target_planet_count(live_world, null)
 		)
 
-	_configure_game_state(map)
+	_configure_game_state(map, reconnect)
 	_configure_planet_field(map, scenario, runtime_world)
 	_configure_meteor_field(map, scenario, runtime_world)
 
@@ -97,11 +105,22 @@ func _configure_planet_field(map: MapDefinition, scenario: ScenarioDefinition, r
 	if worker_manager != null:
 		worker_manager.set("transit_config", scenario.transit_config)
 
-func _configure_game_state(map: MapDefinition) -> void:
+func _configure_game_state(map: MapDefinition, reconnect: bool = false) -> void:
 	var state: Node = get_node_or_null("/root/GameState")
 	if state == null or map == null:
 		return
-	if world_config != null and world_config.is_infinite_world():
+	var live_world: WorldConfig = world_config
+	if reconnect and state.has_method("reconnect_world"):
+		state.reconnect_world(active_scenario_id, active_layout_seed, live_world != null and live_world.is_infinite_world())
+		return
+	if state.has_method("begin_new_game"):
+		state.begin_new_game(
+			active_catalog,
+			active_scenario_id,
+			active_layout_seed,
+			live_world != null and live_world.is_infinite_world()
+		)
+	elif live_world != null and live_world.is_infinite_world():
 		state.reset_for_infinite_world()
 	elif active_catalog != null:
 		state.reset_from_catalog(active_catalog)

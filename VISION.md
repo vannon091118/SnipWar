@@ -133,3 +133,17 @@ Der Paperclip-/Papercraft-Comicgedanke bleibt eine visuelle Leitlinie: klare Sil
 3. Deterministische Layer-2-Simulation und Replay-Ereignisse bauen.
 4. Ship-to-Minion-Adapter und Layer-3-Verteidigung prototypen.
 5. Erst danach komplexere Asset-Transformer, zusätzliche Schiffsklassen und Mech-Varianten verallgemeinern.
+
+---
+
+<div align="center">
+
+| | |
+|:---:|:---|
+| 📡 **Lagezentrum** | [`README.md`](README.md) — Overworld-Übersicht & Preflight |
+| 🪐 **Galaktisches Archiv** | [`LORE.md`](LORE.md) — Feldberichte & Planetendossiers |
+| 📐 **Technischer Vertrag** | [`DESIGN.md`](DESIGN.md) — Verbindliche Spezifikation |
+| 🤖 **Agenten-Leitfaden** | [`AGENTS.md`](AGENTS.md) — Ground Truth & Entwicklerregeln |
+| 🗺️ **Dokumentations-Index** | [`docs/README.md`](docs/README.md) — Struktur & Zugehörigkeiten |
+
+</div>

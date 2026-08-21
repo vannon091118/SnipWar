@@ -105,6 +105,9 @@ static func calculate_ship_stats(ship: ShipAssembly, catalog: ShipPartCatalog = 
 func transfer_speed_multiplier() -> float:
 	return speed / 80.0 if ships.size() > 0 else 1.0
 
+func copy() -> FleetSnapshot:
+	return duplicate(true) as FleetSnapshot
+
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
 	if String(fleet_id).is_empty():

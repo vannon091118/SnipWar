@@ -15,6 +15,12 @@ const TYPE_CONQUEST: StringName = &"conquest"
 @export var survivors_a: Array[ShipAssembly] = []
 @export var survivors_b: Array[ShipAssembly] = []
 @export var events: Array[BattleEvent] = []
+@export var route_a: Array[Vector2] = []
+@export var route_b: Array[Vector2] = []
+@export var engagement_point: Vector2 = Vector2.ZERO
+@export var engagement_type: StringName = &""
+@export var engagement_time_a: float = 0.0
+@export var engagement_time_b: float = 0.0
 
 @export_group("Conquest")
 @export var captured: bool = false

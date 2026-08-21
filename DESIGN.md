@@ -21,7 +21,7 @@
 
 ---
 
-*📖 Lore und Weltbeschreibung: [`LORE.md`](LORE.md) — 📡 Frontlage: [`README.md`](README.md)*
+*📖 Lore: [`LORE.md`](LORE.md) — 📡 Frontlage: [`README.md`](README.md) — 🤖 Agenten-Leitfaden: [`AGENTS.md`](AGENTS.md) — 🗺️ Dokumentations-Index: [`docs/README.md`](docs/README.md)*
 
 ---
 
@@ -65,10 +65,6 @@ PlanetDetails sind seed-basiert und zählen logische Detailtypen. Das Standardpr
 Navigation erzeugt genau einen Moon-/Comet-Waypoint pro Layout-Nachbarschaftskante und überlagert diese Kanten mit einem prozentualen K-Nearest-Langstrecken-Layer (`WorldConfig.graph_neighbor_ratio`: `ceil((n-1) × ratio)` nächste Nachbarn je Planet, symmetrisch dedupliziert, durch `max_extra_edges` gedeckelt). Die KNN-Kanten verbinden Planeten direkt ohne Waypoint-Mittelpunkt; AStar2D wählt automatisch den kürzeren Weg. `NavigationField` ist die einzige Quelle der Wahrheit: `get_neighbors_for_planet()` liefert die vereinigte Nachbarschaft an `PlanetNetwork.get_neighbors()` und damit an Preview, Worker-Transit, Scout und ShipBase. `find_route()` liefert den gemeinsamen Pfad für Preview und Transit. Das Standardrouting erlaubt jedes Ziel, routet aber trotzdem über dieses Graphnetz; `wide` beschränkt die Zielliste auf Nachbarn.
 
 Das Layout skaliert über `WorldGenerator` und `WorldConfig`: `target_planet_count` bestimmt die Größe des seed-deterministisch generierten Katalogs (zwei Homeworlds an Index 0/1, danach neutrale Welten aus den Baustein-Texturen); `columns = 0` leitet die Spaltenzahl aus dem Seitenverhältnis ab; `extra_large_ratio`/`large_ratio` skalieren Größenklassen prozentual. `WorldConfig.growth_factor` ist ein multiplikativer Flächenfaktor (1.0 = Standard): `WorldGenerator.resolve_runtime_world` dupliziert die authored WorldConfig vor dem Scene-Boot und wendet `sqrt(growth_factor)` auf `design_size` und `growth_factor` linear auf `target_planet_count` an, sodass die strategische Dichte stabil bleibt. Die Mutation landet nur auf der Runtime-Kopie; die `.tres`-Datei wird nie überschrieben. `resolved_columns()`, `resolved_size_class_counts()`, `resolved_design_size()` und `resolved_target_planet_count()` sind die gemeinsame Quelle für `SeededLayout`, `NavigationField`, `PlanetNetwork` und `MeteorField`. Der Hintergrund rendert in Weltkoordinaten (`design_size`), nicht in Viewport-Koordinaten, damit eine über den Viewport hinauswachsende Welt (FOV/LoD) konsistent bleibt.
-
-### Unendliche prozedurale Chunk-Welt
-
-Wenn `WorldConfig.chunk_size > 0` ist, ist die Welt unendlich und erweitert sich prozedurial nach und nach, wenn der Spieler eigene Planeten erobert und die FoV-Region wächst. `chunk_size = 0` (Default) aktiviert den Legacy-Modus mit fixem Grid. `ChunkCoordinator` (Kind von `PlanetField`) verwaltet den Chunk-Lebenszyklus: lazy Generierung, lightweight Cache (`ChunkPlanetData` — keine Node-Instanzen), LRU-Eviction und sicheres Planet-Cycling (Halt-Phase → Deferred `queue_free` mit `has_planet()`-Guard). Der Chunk-Seed nutzt eine LCNG-Formel (int64, keine XOR/abs()-Überläufe). Planeten werden aus Bausteinen komponiert (`composition_base_texture` + `composition_tint` + Decals aus `WorldConfig.composition_decal_pool`). `deal_resources_for_planets()` ist eine separate Lazy-Methode ohne `clear()`. `NavigationField` hat inkrementelle `add_planet()`/`remove_planet()` mit cell-basierten pending edges. `deep_space_scanner` (Tier 2, Parent: `orbital_station`) erweitert das FoV über `fov_radius_bonus`.
 
 ### Unendliche prozedurale Chunk-Welt
 

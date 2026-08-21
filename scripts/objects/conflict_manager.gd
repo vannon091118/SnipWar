@@ -5,6 +5,7 @@ const DEFAULT_TRANSIT_CONFIG: TransitConfig = preload("res://resources/config/tr
 const FLIGHT_TIME_SCRIPT: Script = preload("res://scripts/flight_time.gd")
 const BATTLE_SCENE_SCRIPT: Script = preload("res://scripts/battle/battle_scene.gd")
 const CONQUEST_SCENE_SCRIPT: Script = preload("res://scripts/conquest/conquest_scene.gd")
+const ROUTE_ENGAGEMENT_SCRIPT: Script = preload("res://scripts/simulation/route_engagement_resolver.gd")
 const COMBAT_SEED_COUNTER_STRIDE: int = 1000003
 const BATTLE_SEED_SALT: int = 0x51A7E
 const CONQUEST_SEED_SALT: int = 0xC0A57
@@ -21,6 +22,8 @@ var _battle_replay: BattleScene
 var _conquest_replay: ConquestScene
 var _game_seed: int = 0
 var _battle_counter: int = 0
+var _ship_by_transit: Dictionary = {}
+var _pending_overlay_context: BattleContext
 
 func _ready() -> void:
 	var state: Node = _game_state()
@@ -97,6 +100,41 @@ func configure(field: Node, navigation: Node, ship_manager: Node, config: Transi
 	transit_config = config if config != null else DEFAULT_TRANSIT_CONFIG
 	_game_seed = _resolve_game_seed(field)
 	_battle_counter = 0
+	_ship_by_transit.clear()
+	_connect_planet_conflicts()
+	call_deferred("_restore_persistent_transits")
+
+func _restore_persistent_transits() -> void:
+	var state: Node = _game_state()
+	if state == null or not state.has_method("get_transit_records"):
+		return
+	for record_value in state.get_transit_records():
+		var record: TransitRecord = record_value as TransitRecord
+		if record == null or record.status != TransitRecord.STATUS_IN_FLIGHT:
+			continue
+		if _ship_by_transit.has(record.transit_id):
+			continue
+		var destination := _find_planet(record.destination_planet_id)
+		if destination == null:
+			continue
+		var ship: ShipBase = SHIP_BASE_SCENE.instantiate() as ShipBase
+		ship.name = "Transit_%s" % String(record.transit_id)
+		ship.transit_id = record.transit_id
+		ship.configure(record.fleet.copy(), destination, record.route_path, record.duration, _part_catalog(), record.mission_role, record.source_planet_id)
+		add_child(ship)
+		ship.arrived.connect(_on_ship_arrived)
+		_active_ships.append(ship)
+		_ship_by_transit[record.transit_id] = ship
+		ship.start_flight_from_elapsed(record.elapsed)
+
+func _find_planet(planet_id: StringName) -> Planet:
+	if _field == null or not is_instance_valid(_field):
+		return null
+	for child in _field.get_children():
+		var planet := child as Planet
+		if planet != null and planet.planet_id == planet_id:
+			return planet
+	return null
 
 func game_seed() -> int:
 	return _game_seed
@@ -158,6 +196,9 @@ func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName, rol
 	var route_path: Array[Vector2] = _route(source, destination)
 	if route_path.size() < 2:
 		return null
+	# Freeze the destination's current fleet before the attacker leaves. This
+	# snapshot belongs to the transit, not to the eventual arrival frame.
+	var defender_fleet: FleetSnapshot = _defender_fleet(destination, source.get_faction(), resolved_role)
 	var fleet: FleetSnapshot = state.create_fleet_from_planet(source.planet_id, [ship_id], _part_catalog())
 	if fleet == null or fleet.ships.is_empty():
 		return null
@@ -165,15 +206,108 @@ func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName, rol
 	fleet.mission_role = resolved_role
 	var distance: float = PathUtils.distance(route_path)
 	var duration: float = FLIGHT_TIME_SCRIPT.seconds_for_ship(distance, fleet.ships.size(), transit_config, fleet.transfer_speed_multiplier())
+	var record := TransitRecord.new()
+	record.transit_id = state.next_transit_id()
+	record.fleet = fleet.copy()
+	record.source_planet_id = source.planet_id
+	record.destination_planet_id = destination.planet_id
+	record.mission_role = resolved_role
+	record.route_path = route_path.duplicate()
+	record.duration = duration
+	record.defender_fleet = defender_fleet
+	state.register_transit(record)
 	var ship: ShipBase = SHIP_BASE_SCENE.instantiate() as ShipBase
 	ship.name = "Ship_%s_%s" % [source.name, destination.name]
+	ship.transit_id = record.transit_id
 	ship.configure(fleet, destination, route_path, duration, _part_catalog(), resolved_role, source.planet_id)
 	add_child(ship)
 	ship.arrived.connect(_on_ship_arrived)
 	_active_ships.append(ship)
+	_ship_by_transit[record.transit_id] = ship
 	state.ship_launched.emit(source.planet_id, ship_id, resolved_role)
-	ship.start_flight()
+	if not _check_route_engagement(record):
+		ship.start_flight()
 	return ship
+
+func _check_route_engagement(record: TransitRecord) -> bool:
+	if record == null or record.fleet == null or record.mission_role == &"colony":
+		return false
+	var state: Node = _game_state()
+	if state == null or not state.has_method("get_transit_records"):
+		return false
+	for other in state.get_transit_records():
+		var other_record: TransitRecord = other as TransitRecord
+		if other_record == null or other_record.transit_id == record.transit_id:
+			continue
+		if other_record.status != TransitRecord.STATUS_IN_FLIGHT or other_record.fleet == null:
+			continue
+		if other_record.fleet.faction == record.fleet.faction:
+			continue
+		if other_record.mission_role == &"colony":
+			continue
+		var speed_a: float = other_record.fleet.speed
+		var speed_b: float = record.fleet.speed
+		var engagement: Dictionary = ROUTE_ENGAGEMENT_SCRIPT.detect_engagement(
+			other_record.route_path,
+			speed_a,
+			record.route_path,
+			speed_b
+		)
+		if engagement.is_empty() or engagement.get("type", &"") == &"destination_arrival":
+			continue
+		return _begin_route_battle(other_record, record, engagement)
+	return false
+
+func _begin_route_battle(first: TransitRecord, second: TransitRecord, engagement: Dictionary) -> bool:
+	var state: Node = _game_state()
+	if state == null or first == null or second == null:
+		return false
+	var seeds := _next_combat_seeds()
+	var battle_id := StringName("battle_%d" % _battle_counter)
+	first.status = TransitRecord.STATUS_ENGAGED
+	second.status = TransitRecord.STATUS_ENGAGED
+	first.battle_id = battle_id
+	second.battle_id = battle_id
+	state.update_transit(first)
+	state.update_transit(second)
+	var first_ship: ShipBase = _ship_by_transit.get(first.transit_id) as ShipBase
+	var second_ship: ShipBase = _ship_by_transit.get(second.transit_id) as ShipBase
+	if first_ship != null and is_instance_valid(first_ship):
+		first_ship.stop_flight()
+	if second_ship != null and is_instance_valid(second_ship):
+		second_ship.stop_flight()
+	var replay := FleetBattleSimulator.simulate_route_battle(
+		first.fleet,
+		second.fleet,
+		first.route_path,
+		second.route_path,
+		engagement,
+		int(seeds["battle_seed"]),
+		_part_catalog()
+	)
+	var context := BattleContext.new()
+	context.battle_id = battle_id
+	context.transit_ids = [first.transit_id, second.transit_id]
+	context.fleet_a = first.fleet.copy()
+	context.fleet_b = second.fleet.copy()
+	context.route_a = first.route_path.duplicate()
+	context.route_b = second.route_path.duplicate()
+	context.engagement_point = engagement.get("point", Vector2.ZERO)
+	context.engagement_type = engagement.get("type", &"")
+	context.engagement_time_a = float(engagement.get("time_a", 0.0))
+	context.engagement_time_b = float(engagement.get("time_b", 0.0))
+	context.replay = replay
+	context.route_engagement = true
+	var cycle: Node = get_node_or_null("/root/GameCycleManager")
+	var player_involved := first.fleet.faction == GameState.FACTION_PLAYER or second.fleet.faction == GameState.FACTION_PLAYER
+	if cycle != null and cycle.has_method("begin_battle"):
+		cycle.call("begin_battle", context, player_involved)
+		if not player_involved:
+			cycle.call("apply_battle_result", context)
+	elif player_involved:
+		_pending_overlay_context = context
+		_start_replay(&"battle", replay)
+	return true
 
 func preview_duration(source: Planet, destination: Planet, ship_id: StringName) -> float:
 	var state: Node = _game_state()
@@ -193,16 +327,45 @@ func _on_ship_arrived(ship_node: Node2D) -> void:
 	if ship == null:
 		return
 	var state: Node = _game_state()
+	var record: TransitRecord = state.get_transit(ship.transit_id) if state != null and not String(ship.transit_id).is_empty() else null
+	if record != null and record.status == TransitRecord.STATUS_ENGAGED:
+		return
 	var result: Dictionary = {}
 	if ship.destination != null and is_instance_valid(ship.destination) and ship.fleet != null:
-		var defender_fleet: FleetSnapshot = _defender_fleet(ship.destination, ship.fleet.faction, ship.mission_role)
+		var defender_fleet: FleetSnapshot = record.defender_fleet if record != null else _defender_fleet(ship.destination, ship.fleet.faction, ship.mission_role)
 		var battle_seed: int = 0
 		var conquest_seed: int = 0
 		if _requires_combat(ship.destination, ship.fleet, ship.mission_role):
 			var combat_seeds: Dictionary = _next_combat_seeds()
 			battle_seed = int(combat_seeds["battle_seed"])
 			conquest_seed = int(combat_seeds["conquest_seed"])
-		result = ship.destination.resolve_ship_arrival(ship.fleet, defender_fleet, battle_seed, conquest_seed, ship.mission_role)
+		result = PlanetArrivalResolver.simulate_ship_arrival(ship.destination, ship.fleet, defender_fleet, battle_seed, conquest_seed, ship.mission_role)
+		var replay: CombatReplay = result.get("replay") as CombatReplay
+		if replay != null and replay.is_battle() and ship.fleet.faction == GameState.FACTION_PLAYER:
+			var context := BattleContext.new()
+			context.battle_id = StringName("battle_%d" % _battle_counter)
+			context.transit_ids = [ship.transit_id]
+			context.fleet_a = ship.fleet.copy()
+			context.fleet_b = defender_fleet.copy() if defender_fleet != null else null
+			context.route_a = record.route_path if record != null else ship.route_path()
+			context.route_b = [ship.destination.global_position, ship.destination.global_position]
+			context.engagement_point = ship.destination.global_position
+			context.engagement_type = &"destination_arrival"
+			context.replay = replay
+			context.route_engagement = false
+			if record != null:
+				record.status = TransitRecord.STATUS_ENGAGED
+				record.battle_id = context.battle_id
+				state.update_transit(record)
+			var cycle: Node = get_node_or_null("/root/GameCycleManager")
+			if cycle != null and cycle.has_method("begin_battle"):
+				cycle.call("begin_battle", context, true)
+			_active_ships.erase(ship)
+			_ship_by_transit.erase(ship.transit_id)
+			ship.stop_flight()
+			ship.queue_free()
+			return
+		PlanetArrivalResolver.commit_ship_arrival(ship.destination, ship.fleet, result, ship.fleet.faction != GameState.FACTION_CPU)
 		ship.destination.show_arrival_feedback(int(result.get("surviving_attackers", 0)), ship.fleet.faction)
 	var ship_id: StringName = &""
 	if ship.fleet != null and not ship.fleet.ships.is_empty():
@@ -215,7 +378,10 @@ func _on_ship_arrived(ship_node: Node2D) -> void:
 			state.disband_fleet_to_planet(ship.fleet, ship.destination.planet_id)
 		elif outcome == Planet.ARRIVAL_REPELLED or outcome == Planet.ARRIVAL_REJECTED:
 			state.ship_lost.emit(ship.source_planet_id, ship_id)
+		if not String(ship.transit_id).is_empty():
+			state.remove_transit(ship.transit_id)
 	_active_ships.erase(ship)
+	_ship_by_transit.erase(ship.transit_id)
 	if is_instance_valid(ship):
 		ship.queue_free()
 
@@ -235,6 +401,7 @@ func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 		if is_instance_valid(ship):
 			ship.queue_free()
 	_active_ships.clear()
+	_ship_by_transit.clear()
 	_game_seed = _resolve_game_seed(_field)
 	_battle_counter = 0
 	_free_replay(_battle_replay)

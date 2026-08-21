@@ -41,27 +41,80 @@ static func resolve_arrival(planet: Planet, source_faction: StringName, amount: 
 ## Returns a Dictionary with `result` (ARRIVAL_*), `surviving_attackers` (int)
 ## and `duration` (float). Side effects when captured: set_faction(
 ## attacking_faction) and register_workers(survivor_count).
-static func resolve_ship_arrival(planet: Planet, arriving_fleet: FleetSnapshot, defender_fleet: FleetSnapshot = null, battle_seed: int = 1337, conquest_seed: int = 42, ship_role: StringName = &"") -> Dictionary:
-	var out: Dictionary = {"result": Planet.ARRIVAL_REJECTED, "surviving_attackers": 0, "duration": 0.0}
-	if arriving_fleet == null or arriving_fleet.ships.is_empty():
+static func simulate_ship_arrival(planet: Planet, arriving_fleet: FleetSnapshot, defender_fleet: FleetSnapshot = null, battle_seed: int = 1337, conquest_seed: int = 42, ship_role: StringName = &"") -> Dictionary:
+	var out: Dictionary = {
+		"result": Planet.ARRIVAL_REJECTED,
+		"surviving_attackers": 0,
+		"duration": 0.0,
+		"replay": null,
+		"defender_fleet": defender_fleet,
+	}
+	if planet == null or arriving_fleet == null or arriving_fleet.ships.is_empty():
 		return out
 	var attacking_faction: StringName = arriving_fleet.faction
 	if String(attacking_faction).is_empty() or attacking_faction == GameState.FACTION_NEUTRAL:
 		return out
 	var resolved_role: StringName = ship_role if not String(ship_role).is_empty() else arriving_fleet.mission_role
 	if resolved_role == &"colony":
-		return _resolve_colony_ship_arrival(planet, arriving_fleet, attacking_faction, out)
-	var defending_faction: StringName = planet.get_faction()
-	if defending_faction == attacking_faction:
+		if planet.get_faction() == GameState.FACTION_NEUTRAL:
+			var state: Node = GameStateAccess.autoload(planet)
+			if state != null and state.has_scanned_planet(attacking_faction, planet.planet_id):
+				out["result"] = Planet.ARRIVAL_SETTLED
+				out["surviving_attackers"] = maxi(arriving_fleet.ships.size() * 10, 1)
+			return out
+		return out
+	if planet.get_faction() == attacking_faction:
 		out["result"] = Planet.ARRIVAL_FRIENDLY
-		var gain: int = arriving_fleet.ships.size() * _CAPTURED_WORKER_PER_SHIP
-		if gain > 0:
-			planet.register_workers(gain)
-		out["surviving_attackers"] = gain
+		out["surviving_attackers"] = arriving_fleet.ships.size() * _CAPTURED_WORKER_PER_SHIP
 		return out
 	if defender_fleet != null and not defender_fleet.ships.is_empty():
-		return _resolve_ship_vs_fleet(planet, arriving_fleet, defender_fleet, battle_seed, attacking_faction, out)
-	return _resolve_ship_vs_planet(planet, arriving_fleet, conquest_seed, attacking_faction, out)
+		var battle: CombatReplay = FleetBattleSimulator.simulate_battle(arriving_fleet, defender_fleet, battle_seed)
+		out["replay"] = battle.copy()
+		out["duration"] = battle.duration
+		out["surviving_attackers"] = battle.survivors_a.size() * _CAPTURED_WORKER_PER_SHIP
+		out["result"] = Planet.ARRIVAL_CAPTURED if battle.winner == attacking_faction else Planet.ARRIVAL_REPELLED
+		return out
+	var conquest: CombatReplay = ConquestSimulator.simulate_conquest(
+		arriving_fleet,
+		0,
+		planet.worker_count,
+		PlanetTraitAggregator.aggregate_defense_rating(planet),
+		planet.get_perimeter_slots(),
+		planet.get_defense_range(),
+		conquest_seed
+	)
+	out["replay"] = _conquest_replay_result(planet, conquest)
+	out["duration"] = conquest.duration
+	out["surviving_attackers"] = conquest.surviving_attackers
+	out["result"] = Planet.ARRIVAL_CAPTURED if conquest.captured else Planet.ARRIVAL_REPELLED
+	return out
+
+static func commit_ship_arrival(planet: Planet, arriving_fleet: FleetSnapshot, result: Dictionary, emit_replay: bool = true) -> Dictionary:
+	if planet == null or arriving_fleet == null:
+		return result
+	var outcome: StringName = result.get("result", Planet.ARRIVAL_REJECTED) as StringName
+	var replay: CombatReplay = result.get("replay") as CombatReplay
+	if replay != null and emit_replay:
+		planet.conflict_simulated.emit(replay.simulation_type, replay.copy())
+	if outcome == Planet.ARRIVAL_FRIENDLY:
+		planet.register_workers(int(result.get("surviving_attackers", 0)))
+	elif outcome == Planet.ARRIVAL_SETTLED:
+		planet.set_faction(arriving_fleet.faction)
+		planet.register_workers(int(result.get("surviving_attackers", 0)))
+	elif outcome == Planet.ARRIVAL_CAPTURED:
+		planet.unregister_workers(planet.worker_count)
+		planet.set_faction(arriving_fleet.faction)
+		planet.register_workers(int(result.get("surviving_attackers", 0)))
+	var defender_fleet: FleetSnapshot = result.get("defender_fleet") as FleetSnapshot
+	if defender_fleet != null and replay != null and replay.is_battle():
+		var state: Node = GameStateAccess.autoload(planet)
+		if state != null:
+			state.reconcile_defender_fleet(planet.planet_id, defender_fleet, replay.survivors_b)
+	return result
+
+static func resolve_ship_arrival(planet: Planet, arriving_fleet: FleetSnapshot, defender_fleet: FleetSnapshot = null, battle_seed: int = 1337, conquest_seed: int = 42, ship_role: StringName = &"") -> Dictionary:
+	var result := simulate_ship_arrival(planet, arriving_fleet, defender_fleet, battle_seed, conquest_seed, ship_role)
+	return commit_ship_arrival(planet, arriving_fleet, result)
 
 
 static func _resolve_ship_vs_fleet(planet: Planet, arriving_fleet: FleetSnapshot, defender_fleet: FleetSnapshot, battle_seed: int, attacking_faction: StringName, out: Dictionary) -> Dictionary:

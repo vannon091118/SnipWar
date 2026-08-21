@@ -58,6 +58,9 @@ signal milestone_reached(faction: StringName, milestone_id: StringName)
 signal refinery_converted(planet_id: StringName, faction: StringName, consumed: Dictionary, produced: Dictionary)
 signal research_started(faction: StringName, technology_id: StringName, remaining: float)
 signal ship_build_started(planet_id: StringName, ship_id: StringName, remaining: float)
+signal battle_context_changed(context: BattleContext)
+signal transit_changed(record: TransitRecord)
+signal run_started(run_id: StringName, layout_seed: int)
 
 var faction_domain := FactionDomain.new()
 var economy_domain := EconomyDomain.new()
@@ -104,6 +107,15 @@ var _ship_part_inventory: Dictionary:
 		return ship_domain.ship_part_inventory
 
 var _jobs_auto_advance: bool = true
+var _run_active: bool = false
+var _run_id: StringName = &""
+var _run_scenario_id: StringName = &""
+var _run_layout_seed: int = 0
+var _run_infinite_world: bool = false
+var _pending_battle: BattleContext
+var _transit_records: Dictionary = {}
+var _next_transit_index: int = 0
+var _reconnect_requested: bool = false
 
 func _init() -> void:
 	_connect_domain_signals()
@@ -142,6 +154,8 @@ func reset_from_catalog(catalog: PlanetCatalog) -> void:
 	economy_domain.reset()
 	tech_domain.reset()
 	ship_domain.reset()
+	_transit_records.clear()
+	_pending_battle = null
 	catalog_reset.emit(catalog)
 
 func reset_for_infinite_world() -> void:
@@ -149,7 +163,100 @@ func reset_for_infinite_world() -> void:
 	economy_domain.reset()
 	tech_domain.reset()
 	ship_domain.reset()
+	_transit_records.clear()
+	_pending_battle = null
 	catalog_reset.emit(null)
+
+## Starts a new run and is the only public path that resets domain state.
+func begin_new_game(catalog: PlanetCatalog, scenario_id: StringName, layout_seed: int, infinite_world: bool = false) -> void:
+	_run_active = true
+	_run_id = StringName("run_%d" % layout_seed)
+	_run_scenario_id = scenario_id
+	_run_layout_seed = layout_seed
+	_run_infinite_world = infinite_world
+	_reconnect_requested = false
+	if infinite_world:
+		reset_for_infinite_world()
+	else:
+		reset_from_catalog(catalog)
+	run_started.emit(_run_id, _run_layout_seed)
+
+## Reconnects a newly loaded world scene to this run without mutating any
+## faction, economy, technology, or ship-domain data.
+func reconnect_world(scenario_id: StringName, layout_seed: int, infinite_world: bool = false) -> bool:
+	if not _run_active:
+		return false
+	if not String(scenario_id).is_empty():
+		_run_scenario_id = scenario_id
+	_run_layout_seed = layout_seed
+	_run_infinite_world = infinite_world
+	return true
+
+func request_world_reconnect() -> void:
+	_reconnect_requested = true
+
+func consume_world_reconnect_request() -> bool:
+	var requested := _reconnect_requested
+	_reconnect_requested = false
+	return requested
+
+func has_active_run() -> bool:
+	return _run_active
+
+func run_id() -> StringName:
+	return _run_id
+
+func world_session_context() -> Dictionary:
+	return {
+		"run_id": _run_id,
+		"scenario_id": _run_scenario_id,
+		"layout_seed": _run_layout_seed,
+		"infinite_world": _run_infinite_world,
+	}
+
+func set_pending_battle_context(context: BattleContext) -> void:
+	_pending_battle = context.copy() if context != null else null
+	battle_context_changed.emit(_pending_battle)
+
+func pending_battle_context() -> BattleContext:
+	return _pending_battle.copy() if _pending_battle != null else null
+
+func clear_pending_battle_context(battle_id: StringName = &"") -> void:
+	if _pending_battle == null:
+		return
+	if not String(battle_id).is_empty() and _pending_battle.battle_id != battle_id:
+		return
+	_pending_battle = null
+	battle_context_changed.emit(null)
+
+func register_transit(record: TransitRecord) -> bool:
+	if record == null or String(record.transit_id).is_empty():
+		return false
+	_transit_records[record.transit_id] = record.copy()
+	transit_changed.emit(record)
+	return true
+
+func update_transit(record: TransitRecord) -> bool:
+	return register_transit(record)
+
+func remove_transit(transit_id: StringName) -> void:
+	_transit_records.erase(transit_id)
+
+func get_transit(transit_id: StringName) -> TransitRecord:
+	var record: TransitRecord = _transit_records.get(transit_id) as TransitRecord
+	return record.copy() if record != null else null
+
+func get_transit_records() -> Array[TransitRecord]:
+	var result: Array[TransitRecord] = []
+	for value in _transit_records.values():
+		var record: TransitRecord = value as TransitRecord
+		if record != null:
+			result.append(record.copy())
+	return result
+
+func next_transit_id() -> StringName:
+	_next_transit_index += 1
+	return StringName("transit_%d" % _next_transit_index)
 
 func set_jobs_auto_advance(auto_advance: bool) -> void:
 	_jobs_auto_advance = auto_advance
@@ -195,6 +302,9 @@ func all_owned_planets(faction: StringName) -> Array[StringName]:
 
 func starting_workers_of(planet_id: StringName) -> int:
 	return int(faction_domain.starting_workers.get(planet_id, 0))
+
+func add_starting_workers(planet_id: StringName, amount: int) -> void:
+	faction_domain.add_starting_workers(planet_id, amount)
 
 func discover_planet(faction: StringName, planet_id: StringName) -> bool:
 	return faction_domain.discover_planet(faction, planet_id)
