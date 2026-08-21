@@ -168,6 +168,8 @@ CPU-Homeworlds, bekannte Planeten und Nicht-Nachbarn sind keine Scout-Ziele. `Sc
 
 `ShipPartCatalog` enthält die Slottypen Hull, Antrieb, Waffe, Schild, Scanner und Module sowie zwei maximale Modulplätze. Der Default-Katalog enthält drei Hüllen (T1/T2/T3), mehrere Antriebe, Impulsgeschütze und Schilde, einen Scanner und drei Module; Antrieb, Waffe und Schild tragen Varianten-Pools (gewichtete, seed-deterministische Auswahl mit sichtbaren Overlays).
 
+**Asset-Verzeichnisse:** Rümpfe liegen in `assets/objects/ships/hulls/` (`hull_t1_scout.svg`, `hull_t1_courier.svg`, `hull_t1_interceptor.svg`, `hull_t2_destroyer.svg`, `hull_t2_carrier.svg`, `hull_t2_multirole.svg`, `hull_t3_colony.svg`, `hull_t3_dreadnought.svg`, `hull_t3_expansion.svg`). Komponenten liegen in `assets/objects/ships/components/` mit Prefix `drive_`/`weapon_`/`shield_`/`scanner_`/`module_` gefolgt von Tier und Name (z.B. `weapon_t1_beam.svg`, `shield_t2_phase.svg`). Struktur-Assets für Planeten-Upgrades sind tiered in `assets/objects/structures/` (`structure_shipyard_l1/l2/l3.svg` etc., 15 Upgrade-Typen × 3 Tiers = 45 Dateien). Planeten-Basistexte inkl. v2/v3/v4-Varianten liegen in `assets/objects/planets/` (`planet_01_ember.svg` + `_v2/_v3/_v4.svg` für 10 Planetentypen). Decal-Overlays in `assets/objects/planets/decals/` (18 Typen wie `decal_aurora_arcs.svg`, `decal_lava_flows.svg`) werden über `WorldConfig.composition_decal_pool` komponiert. UI-Hintergründe in `assets/ui/backgrounds/` (6 Dateien für Main Menu, Pause, Tech Menu, Ship Hangar, Planet Panel, Modal).
+
 Kaufen, Montieren und Zerlegen sind in `GameState`, `ShipManager` und `TechnologyMenu` implementiert. Jede Assembly verlangt einen vollständigen Loadout:
 
 ```text
