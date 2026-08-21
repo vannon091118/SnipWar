@@ -36,6 +36,8 @@ static func resolve_runtime_world(base_config: WorldConfig, base_catalog: Planet
 ## The first base_catalog.planets.size() entries keep their original identity so
 ## homeworld/faction seeding stays stable; every additional planet is a seeded
 ## duplicate of a base template with a unique id/display-name suffix.
+## @deprecated for infinite worlds — use generate_chunk_planets() instead.
+## Retained for the start-chunk (0,0) legacy path.
 static func expand_catalog(base_catalog: PlanetCatalog, target_count: int) -> PlanetCatalog:
 	var catalog := PlanetCatalog.new()
 	if base_catalog == null or base_catalog.planets.is_empty() or target_count <= 0:
@@ -152,3 +154,114 @@ static func _edge_key(first: Node2D, second: Node2D) -> String:
 	if first_id <= second_id:
 		return "%d-%d" % [first_id, second_id]
 	return "%d-%d" % [second_id, first_id]
+
+## --- Infinite chunk-grid world ---
+
+## LCNG-based chunk seed. Avoids XOR/abs() overflow pitfalls; int64 math with
+## positive masking so the result is always a valid RNG seed.
+static func chunk_seed(layout_seed: int, chunk_x: int, chunk_y: int) -> int:
+	var s: int = layout_seed
+	s = (s * 6364136223846793005 + chunk_x * 1442695040888963407) & 0x7FFFFFFFFFFFFFFF
+	s = (s * 6364136223846793005 + chunk_y * 1442695040888963407) & 0x7FFFFFFFFFFFFFFF
+	return int(s)
+
+## Deterministic slot seed within a chunk.
+static func slot_seed(chunk_seed_value: int, slot: int) -> int:
+	return int((chunk_seed_value * 1103515245 + slot * 12345) & 0x7FFFFFFFFFFFFFFF)
+
+## Deterministic planet composition from a seed and the world's asset pool.
+## Returns a lightweight Dictionary with base_texture, tint, and decal_textures.
+static func compose_planet(seed_value: int, base_textures: Array[Texture2D], tint_palettes: Array[Color], decal_pool: Array[Texture2D], max_decals: int = 3) -> Dictionary:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value
+	var result: Dictionary = {}
+	if base_textures.is_empty():
+		result["base_texture"] = null
+	else:
+		result["base_texture"] = base_textures[rng.randi_range(0, base_textures.size() - 1)]
+	if tint_palettes.is_empty():
+		result["tint"] = Color.WHITE
+	else:
+		result["tint"] = tint_palettes[rng.randi_range(0, tint_palettes.size() - 1)]
+	var decal_textures: Array[Texture2D] = []
+	if not decal_pool.is_empty() and max_decals > 0:
+		var count := rng.randi_range(0, mini(max_decals, decal_pool.size()))
+		for _i in count:
+			decal_textures.append(decal_pool[rng.randi_range(0, decal_pool.size() - 1)])
+	result["decal_textures"] = decal_textures
+	return result
+
+const _NAME_ADJECTIVES: Array[String] = [
+	"Void", "Crystal", "Ember", "Frost", "Storm", "Dust", "Iron", "Neon",
+	"Ash", "Mist", "Solar", "Lunar", "Astral", "Shadow", "Verdant", "Crimson",
+	"Azure", "Golden", "Silent", "Hidden", "Lost", "Distant", "Ancient",
+	"Broken", "Sacred", "Wild", "Dark", "Pale", "Rusted", "Shattered",
+	"Hollow", "Radiant", "Veiled", "Harsh", "Tranquil", "Bitter", "Lone",
+	"Far", "Deep", "Bright", "Cold", "Burning", "Still", "Vast", "Remote",
+	"Wandering", "Drifting", "Forgotten", "Cursed", "Blessed", "Silent",
+]
+const _NAME_NOUNS: Array[String] = [
+	"Drifter", "Reef", "Bastion", "Hollow", "Reach", "Spire", "Cradle",
+	"Wreck", "Veil", "Garden", "Forge", "Haven", "Wastes", "Eye", "Maw",
+	"Crown", "Gate", "Anchor", "Shoal", "Ridge", "Vault", "Throne",
+	"Echo", "Expanse", "Tide", "Mark", "Node", "Post", "Crossing", "Drop",
+	"Dawn", "Dusk", "Mire", "Step", "Ledge", "Marrow", "Husk", "Shell",
+	"Pulse", "Flare", "Crest", "Maw", "Bloom", "Ridge", "Hinge", "Pylon",
+	"Wellspring", "Threshold", "Sanctum", "Rift",
+]
+
+## Deterministic planet name from ~2500 unique adjective+noun combinations.
+static func generate_planet_name(seed_value: int) -> String:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value
+	var adj := _NAME_ADJECTIVES[rng.randi_range(0, _NAME_ADJECTIVES.size() - 1)]
+	var noun := _NAME_NOUNS[rng.randi_range(0, _NAME_NOUNS.size() - 1)]
+	return "%s %s" % [adj, noun]
+
+## Generates planet definitions for a single chunk deterministically.
+## Chunk (0,0) is expected to use the base catalog directly (homeworlds).
+## Other chunks compose planets from the world's asset pool.
+static func generate_chunk_planets(
+	base_catalog: PlanetCatalog,
+	chunk_x: int, chunk_y: int,
+	chunk_seed_value: int,
+	chunk_size: int,
+	config: WorldConfig,
+	max_size_class: StringName
+) -> Array[PlanetDefinition]:
+	var definitions: Array[PlanetDefinition] = []
+	if base_catalog == null or base_catalog.planets.is_empty() or chunk_size <= 0:
+		return definitions
+	var base_size := base_catalog.planets.size()
+	for slot in chunk_size * chunk_size:
+		var slot_s := slot_seed(chunk_seed_value, slot)
+		var source: PlanetDefinition = base_catalog.planets[slot % base_size]
+		if source == null:
+			continue
+		var definition: PlanetDefinition = source.duplicate(true) as PlanetDefinition
+		# Chunk-specific planet ID prevents cross-chunk collisions.
+		definition.planet_id = StringName("c%d_%d_%s_%d" % [chunk_x, chunk_y, source.planet_id, slot])
+		definition.display_name = generate_planet_name(slot_s)
+		definition.generated_name = definition.display_name
+		definition.planet_role = &"planet"
+		definition.faction = &"neutral"
+		# Compose from the asset pool.
+		var composition := compose_planet(
+			slot_s,
+			config.composition_base_textures,
+			config.composition_tint_palettes,
+			config.composition_decal_pool
+		)
+		definition.composition_base_texture = composition.get("base_texture", null) as Texture2D
+		definition.composition_tint = composition.get("tint", Color.WHITE) as Color
+		# Size class: respect max_size_class cap (ship=variable, planet=large, watcher=xl).
+		var size_counts := config.resolved_size_class_counts(chunk_size * chunk_size)
+		var slot_in_chunk := slot
+		if slot_in_chunk < size_counts.x and (max_size_class == &"xl" or max_size_class == &"extra_large"):
+			definition.detail_profile = source.detail_profile
+		elif slot_in_chunk < size_counts.x + size_counts.y and (max_size_class == &"xl" or max_size_class == &"large" or max_size_class == &"extra_large"):
+			definition.detail_profile = source.detail_profile
+		else:
+			definition.detail_profile = source.detail_profile
+		definitions.append(definition)
+	return definitions

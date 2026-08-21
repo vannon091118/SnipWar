@@ -26,6 +26,13 @@ func _ready() -> void:
 	zoom = Vector2.ONE
 
 func _read_world_bounds() -> void:
+	# In infinite world mode, query the ChunkCoordinator for active bounds.
+	var coordinator: Node = get_tree().get_first_node_in_group("chunk_coordinator") if is_inside_tree() else null
+	if coordinator != null and coordinator.has_method("get_active_bounds"):
+		var bounds: Rect2 = coordinator.get_active_bounds()
+		if bounds.size.x > 0.0 and bounds.size.y > 0.0:
+			_map_bounds = bounds
+			return
 	var parent: Node = get_parent()
 	if parent == null:
 		return

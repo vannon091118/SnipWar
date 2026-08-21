@@ -98,6 +98,10 @@ func deal_resources(catalog: PlanetCatalog, pool: ResourcePool = null, seed_valu
 	if catalog == null or effective_pool == null or effective_pool.resources.is_empty():
 		return
 
+	# NOTE: build + shuffle with the SAME rng instance used for the later
+	# homeworld/planet shuffles. The shared-rng consumption order is part of the
+	# seed-deterministic deal contract; _build_resource_id_list() is only for the
+	# lazy per-chunk path (deal_resources_for_planets), which has no shared rng.
 	var resource_ids: Array[StringName] = []
 	for resource in effective_pool.resources:
 		if resource != null and not String(resource.id).is_empty():
@@ -178,6 +182,64 @@ func deal_resources(catalog: PlanetCatalog, pool: ResourcePool = null, seed_valu
 
 func resource_snapshot() -> Dictionary:
 	return planet_resources.duplicate()
+
+## Deals resources for a batch of new planets WITHOUT clearing existing
+## assignments. Completely separate from deal_resources() — the clear() in
+## deal_resources is intentional for the start-catalog path.
+## Each entry in planet_data should have: planet_id, signature_resource,
+## signature_probability (can be empty/zero for plain neutrals).
+func deal_resources_for_planets(planet_data: Array, pool: ResourcePool = null, seed_value: int = 0) -> void:
+	var effective_pool: ResourcePool = pool if pool != null else GameState.DEFAULT_RESOURCE_POOL
+	if effective_pool == null or effective_pool.resources.is_empty():
+		return
+	var resource_ids := _build_resource_id_list(effective_pool, seed_value)
+	if resource_ids.is_empty():
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value
+	var counts: Dictionary = {}
+	for data in planet_data:
+		if data == null:
+			continue
+		# ChunkPlanetData has planet_id, signature_resource, signature_probability
+		# Access directly via property syntax (works for RefCounted subclasses).
+		var p_id: StringName = data.planet_id
+		if String(p_id).is_empty() or planet_resources.has(p_id):
+			continue
+		var sig_res: StringName = data.signature_resource
+		var sig_prob: float = float(data.signature_probability)
+		var chosen: StringName = &""
+		if not String(sig_res).is_empty() and resource_ids.has(sig_res) and rng.randf() < sig_prob:
+			chosen = sig_res
+		if String(chosen).is_empty():
+			chosen = _least_used_resource(resource_ids, counts)
+		planet_resources[p_id] = chosen
+		counts[chosen] = int(counts.get(chosen, 0)) + 1
+
+## Builds a shuffled list of resource IDs from the pool.
+func _build_resource_id_list(pool: ResourcePool, seed_value: int) -> Array[StringName]:
+	var resource_ids: Array[StringName] = []
+	for resource in pool.resources:
+		if resource != null and not String(resource.id).is_empty():
+			resource_ids.append(resource.id)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value
+	for i in range(resource_ids.size() - 1, 0, -1):
+		var j := rng.randi_range(0, i)
+		var tmp: StringName = resource_ids[i]
+		resource_ids[i] = resource_ids[j]
+		resource_ids[j] = tmp
+	return resource_ids
+
+func _least_used_resource(resource_ids: Array[StringName], counts: Dictionary) -> StringName:
+	var best: StringName = resource_ids[0] if not resource_ids.is_empty() else &""
+	var best_count: int = int(counts.get(best, 0))
+	for rid in resource_ids:
+		var c: int = int(counts.get(rid, 0))
+		if c < best_count:
+			best_count = c
+			best = rid
+	return best
 
 func validate_resources(pool: ResourcePool = null, homeworlds: Dictionary = {}) -> PackedStringArray:
 	var errors := PackedStringArray()

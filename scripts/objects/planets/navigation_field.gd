@@ -24,6 +24,12 @@ var _planet_neighbors: Dictionary = {}
 var _next_point_id := 1
 var _rebuild_queued := false
 var _is_built := false
+## Pending edges keyed by cell: cell -> Array[Vector2i] (neighbor cells that
+## haven't been instantiated yet). When a planet is added, its pending edges
+## are realized against already-active neighbors.
+var _pending_edges: Dictionary = {}
+## Cell -> Planet for active planets in the AStar graph.
+var _cell_to_planet: Dictionary = {}
 
 func _ready() -> void:
 	if get_parent() != null and get_parent().has_signal("layout_completed"):
@@ -150,6 +156,127 @@ func get_neighbors_for_planet(planet: Node2D) -> Array[Node2D]:
 	if cached == null:
 		return []
 	return (cached as Array).duplicate() as Array[Node2D]
+
+## --- Incremental graph API for infinite chunk-grid world ---
+
+func has_planet(planet: Planet) -> bool:
+	return _point_ids.has(planet)
+
+## Adds a planet to the AStar graph and connects it to any active neighbors.
+## cell is the chunk-grid cell of this planet. Pending edges are stored for
+## neighbors that don't exist yet.
+func add_planet(planet: Planet, cell: Vector2i) -> void:
+	if _point_ids.has(planet):
+		return
+	_point_ids[planet] = _add_graph_point(planet.global_position)
+	_cell_to_planet[cell] = planet
+	_planet_neighbors[planet] = [] as Array[Node2D]
+	# Connect to deterministic grid neighbors that are already active.
+	for neighbor_cell in _deterministic_neighbor_cells(cell):
+		if _cell_to_planet.has(neighbor_cell):
+			var neighbor: Planet = _cell_to_planet[neighbor_cell]
+			if neighbor != null and is_instance_valid(neighbor):
+				_connect_graph_points(_point_ids[planet], _point_ids[neighbor])
+				_record_neighbor_pair(planet, neighbor)
+		else:
+			# Store as pending — realized when the neighbor is added.
+			if not _pending_edges.has(neighbor_cell):
+				_pending_edges[neighbor_cell] = [] as Array[Vector2i]
+			var pending: Array = _pending_edges[neighbor_cell]
+			if not pending.has(cell):
+				pending.append(cell)
+				_pending_edges[neighbor_cell] = pending
+	# Realize pending edges from other cells pointing to this one.
+	if _pending_edges.has(cell):
+		var waiting_cells: Array = _pending_edges[cell]
+		_pending_edges.erase(cell)
+		for waiting_cell in waiting_cells:
+			if _cell_to_planet.has(waiting_cell):
+				var neighbor: Planet = _cell_to_planet[waiting_cell]
+				if neighbor != null and is_instance_valid(neighbor):
+					_connect_graph_points(_point_ids[planet], _point_ids[neighbor])
+					_record_neighbor_pair(planet, neighbor)
+	_is_built = not _point_ids.is_empty()
+	queue_redraw()
+
+## Removes a planet from the AStar graph. AStar2D.remove_point() automatically
+## cleans up all connections. Also cleans _planet_neighbors, _edges,
+## _edge_endpoints and _cell_to_planet. Pending edges are preserved (they're
+## cell-based, not planet-based).
+func remove_planet(planet: Planet) -> void:
+	if not _point_ids.has(planet):
+		return
+	var point_id: int = _point_ids[planet]
+	# AStar2D.remove_point() automatically removes all connections.
+	_astar.remove_point(point_id)
+	_point_ids.erase(planet)
+	# Clean _planet_neighbors (both directions).
+	if _planet_neighbors.has(planet):
+		for neighbor in _planet_neighbors[planet]:
+			var neighbor_list: Array = _planet_neighbors.get(neighbor, [])
+			neighbor_list.erase(planet)
+			_planet_neighbors[neighbor] = neighbor_list
+		_planet_neighbors.erase(planet)
+	# Clean _edges and _edge_endpoints.
+	var i := 0
+	while i < _edges.size():
+		var endpoints: Array = _edge_endpoints[i] if i < _edge_endpoints.size() else [null, null]
+		if endpoints.has(planet):
+			_edges.remove_at(i)
+			_edge_endpoints.remove_at(i)
+		else:
+			i += 1
+	# Clean _cell_to_planet.
+	var cell_to_erase: Variant = null
+	for cell_key in _cell_to_planet:
+		if _cell_to_planet[cell_key] == planet:
+			cell_to_erase = cell_key
+			break
+	if cell_to_erase != null:
+		_cell_to_planet.erase(cell_to_erase)
+	_is_built = not _point_ids.is_empty()
+	queue_redraw()
+
+## Returns the deterministic grid-neighbor cells for a given cell. These are
+## the 4-connected neighbors (left, right, up, down) in chunk-cell space.
+func _deterministic_neighbor_cells(cell: Vector2i) -> Array[Vector2i]:
+	return [
+		Vector2i(cell.x - 1, cell.y),
+		Vector2i(cell.x + 1, cell.y),
+		Vector2i(cell.x, cell.y - 1),
+		Vector2i(cell.x, cell.y + 1),
+	]
+
+## Returns the list of cells on the line between source and destination that
+## are not yet active in the AStar graph (for synchronous chunk generation).
+func get_missing_cells_for_route(source_cell: Vector2i, destination_cell: Vector2i) -> Array[Vector2i]:
+	var missing: Array[Vector2i] = []
+	# Bresenham line through grid cells.
+	var x0: int = source_cell.x
+	var y0: int = source_cell.y
+	var x1: int = destination_cell.x
+	var y1: int = destination_cell.y
+	var dx: int = absi(x1 - x0)
+	var dy: int = absi(y1 - y0)
+	var sx: int = 1 if x0 < x1 else -1
+	var sy: int = 1 if y0 < y1 else -1
+	var err: int = dx - dy
+	var x: int = x0
+	var y: int = y0
+	while true:
+		var cell := Vector2i(x, y)
+		if not _cell_to_planet.has(cell):
+			missing.append(cell)
+		if x == x1 and y == y1:
+			break
+		var e2: int = 2 * err
+		if e2 > -dy:
+			err -= dy
+			x += sx
+		if e2 < dx:
+			err += dx
+			y += sy
+	return missing
 
 func _record_neighbor_pair(first: Node2D, second: Node2D) -> void:
 	if not _planet_neighbors.has(first):

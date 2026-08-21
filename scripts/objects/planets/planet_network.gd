@@ -54,17 +54,13 @@ func _ready() -> void:
 	for child in get_parent().get_children():
 		if child is Node2D and child.get("layout_size") != null:
 			_planets.append(child)
-			# SelectionService is the sole click-selection consumer. The legacy
-			# planet_selected signal stays available for external callers, but
-			# connecting both signals here would apply a modifier-click twice and
-			# collapse the primary/secondary state back to a single planet.
-			if not child.planet_selection_requested.is_connected(_on_planet_selection_requested):
-				child.planet_selection_requested.connect(_on_planet_selection_requested)
-			child.planet_context_requested.connect(_on_planet_context_requested)
-			child.worker_count_changed.connect(_on_worker_count_changed)
-			child.workers_spawn_requested.connect(_on_workers_spawn_requested)
-			child.planet_hovered.connect(_on_planet_hovered)
-			child.planet_unhovered.connect(_on_planet_unhovered)
+			_connect_planet_signals(child)
+	# Connect to ChunkCoordinator if present (infinite world).
+	var coordinator := get_tree().get_first_node_in_group("chunk_coordinator")
+	if coordinator != null:
+		if coordinator.has_signal("planet_added") and not coordinator.planet_added.is_connected(_on_planet_added):
+			coordinator.planet_added.connect(_on_planet_added)
+			coordinator.planet_removed.connect(_on_planet_removed)
 	if not transit_config_identity_valid():
 		push_error("PlanetNetwork and WorkerManager must share the same TransitConfig resource")
 	_connect_fog_signals()
@@ -75,6 +71,31 @@ func _ready() -> void:
 func _on_layout_completed(_unused_planets: Array = []) -> void:
 	invalidate_neighbor_cache()
 	_refresh_fog_of_war()
+
+## Extracted signal-connection helper used by both _ready() and
+## _on_planet_added() to avoid duplicate connection logic.
+func _connect_planet_signals(planet: Node2D) -> void:
+	if not planet.planet_selection_requested.is_connected(_on_planet_selection_requested):
+		planet.planet_selection_requested.connect(_on_planet_selection_requested)
+	if not planet.planet_context_requested.is_connected(_on_planet_context_requested):
+		planet.planet_context_requested.connect(_on_planet_context_requested)
+	if not planet.worker_count_changed.is_connected(_on_worker_count_changed):
+		planet.worker_count_changed.connect(_on_worker_count_changed)
+	if not planet.workers_spawn_requested.is_connected(_on_workers_spawn_requested):
+		planet.workers_spawn_requested.connect(_on_workers_spawn_requested)
+	if not planet.planet_hovered.is_connected(_on_planet_hovered):
+		planet.planet_hovered.connect(_on_planet_hovered)
+	if not planet.planet_unhovered.is_connected(_on_planet_unhovered):
+		planet.planet_unhovered.connect(_on_planet_unhovered)
+
+func _on_planet_added(planet: Planet) -> void:
+	if not _planets.has(planet):
+		_planets.append(planet)
+		_connect_planet_signals(planet)
+	_refresh_fog_of_war()
+
+func _on_planet_removed(planet: Planet) -> void:
+	_planets.erase(planet)
 
 func _create_selection_service() -> void:
 	_selection_service = SELECTION_SERVICE_SCRIPT.new() as SelectionService
@@ -624,11 +645,15 @@ func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 ## Recomputes the player's fog-of-war frontier: own/known planets are fully
 ## visible, their unknown neighbors are dimmed, and everything else is hidden.
 ## The underlying network is fixed per seed; this only changes what is revealed.
+## In infinite world mode, iterates only active planets (from ChunkCoordinator)
+## to avoid scanning an unbounded set.
 func _refresh_fog_of_war() -> void:
 	var state: Node = _game_state()
 	if state == null:
 		return
-	for planet in _planets:
+	var coordinator := get_tree().get_first_node_in_group("chunk_coordinator")
+	var planets_to_check: Array = coordinator.get_active_planets() if coordinator != null else _planets
+	for planet in planets_to_check:
 		var planet_node: Planet = planet as Planet
 		if planet_node == null:
 			continue

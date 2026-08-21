@@ -117,6 +117,12 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"desc": "In-game player controls & transitions",
 		"requires_scene": true,
 	},
+	{
+		"id": "chunk_expansion",
+		"script": preload("res://scripts/preflight/constraint_chunk_expansion.gd"),
+		"desc": "Procedural chunk-grid world & composition",
+		"requires_scene": false,
+	},
 ]
 
 

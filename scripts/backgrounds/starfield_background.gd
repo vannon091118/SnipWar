@@ -25,6 +25,9 @@ var _batch_nodes: Array[MultiMeshInstance2D] = []
 var _circle_texture: Texture2D
 var _diamond_texture: Texture2D
 var _shape_texture_size := 0
+## Visible region for infinite world (follows FoV). Only updated on chunk
+## boundary change, not per frame, to avoid star regeneration overhead.
+var _visible_region := Rect2(Vector2.ZERO, Vector2(960, 540))
 
 func _enter_tree() -> void:
 	_apply_active_scenario()
@@ -159,6 +162,8 @@ func _on_viewport_size_changed() -> void:
 
 func _world_size() -> Vector2:
 	var world: WorldConfig = world_config if world_config != null else DEFAULT_WORLD_CONFIG
+	if world.is_infinite_world():
+		return _visible_region.size if _visible_region.size.x > 0.0 else world.design_size
 	if world.design_size.x > 0.0 and world.design_size.y > 0.0:
 		return world.design_size
 	return get_viewport_rect().size

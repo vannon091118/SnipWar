@@ -255,6 +255,9 @@ func resource_of(planet_id: StringName) -> StringName:
 func deal_resources(catalog: PlanetCatalog, pool: ResourcePool = null, seed_value: int = 0) -> void:
 	economy_domain.deal_resources(catalog, pool, seed_value)
 
+func deal_resources_for_planets(planet_data: Array, pool: ResourcePool = null, seed_value: int = 0) -> void:
+	economy_domain.deal_resources_for_planets(planet_data, pool, seed_value)
+
 func resource_snapshot() -> Dictionary:
 	return economy_domain.resource_snapshot()
 

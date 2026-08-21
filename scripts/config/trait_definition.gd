@@ -13,6 +13,8 @@ extends Resource
 @export var perimeter_slots_bonus: int = 0
 @export var range_bonus: float = 0.0
 @export var transfer_speed_multiplier: float = 1.0
+## Extends the owning planet's field-of-view radius (chunk cells).
+@export_range(0, 20, 1) var fov_radius_bonus: int = 0
 @export var maintenance_cost_resource: StringName = &""
 @export var maintenance_cost_amount: int = 0
 

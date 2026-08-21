@@ -36,8 +36,37 @@ const ROUTE_MODE_NEIGHBORS_ONLY := "neighbors_only"
 @export var default_profile_id: StringName
 @export_enum("all_planets", "neighbors_only") var route_mode: String = ROUTE_MODE_ALL_PLANETS
 
+## --- Infinite chunk-grid world ---
+## When chunk_size > 0, the world expands procedurally as the player explores.
+## When 0 (default), the world is finite and uses the legacy layout path.
+@export_range(0, 20, 1) var chunk_size: int = 0
+## Size of one chunk cell in world coordinates. Zero = derived from
+## design_size / chunk_size so the start chunk (0,0) lines up with the
+## authored layout.
+@export var cell_size: Vector2 = Vector2.ZERO
+## FoV radii in chunk cells for the three discovery sources.
+@export_range(0, 10, 1) var ship_fov_radius: int = 1
+@export_range(0, 10, 1) var planet_fov_radius: int = 2
+@export_range(0, 10, 1) var orbital_watcher_fov_radius: int = 4
+## Maximum chunks kept in the lightweight cache (LRU-evicted beyond this).
+@export_range(10, 1000, 10) var max_cached_chunks: int = 200
+## Building-block pool for procedural planet composition.
+@export var composition_base_textures: Array[Texture2D] = []
+@export var composition_tint_palettes: Array[Color] = []
+@export var composition_decal_pool: Array[Texture2D] = []
+
 func meteor_bounds() -> Rect2:
 	return Rect2(Vector2.ZERO, design_size)
+
+func is_infinite_world() -> bool:
+	return chunk_size > 0
+
+func resolved_cell_size() -> Vector2:
+	if cell_size.x > 0.0 and cell_size.y > 0.0:
+		return cell_size
+	if chunk_size <= 0:
+		return design_size
+	return Vector2(design_size.x / float(chunk_size), design_size.y / float(chunk_size))
 
 func resolved_columns(planet_count: int) -> int:
 	if columns > 0:

@@ -22,7 +22,7 @@ func run(ctx: PreflightContext) -> bool:
 	# --- UPGRADE SYSTEM TESTS ---
 	if not ctx.check(upgrade_catalog != null and upgrade_catalog.validate().is_empty(), "upgrade catalog validation failed"):
 		return false
-	if not ctx.check(upgrade_catalog.upgrades.size() == 16, "upgrade catalog should have 16 upgrades"):
+	if not ctx.check(upgrade_catalog.upgrades.size() == 17, "upgrade catalog should have 17 upgrades"):
 		return false
 	var automated_mine: PlanetUpgradeDefinition = upgrade_catalog.resolve(&"automated_mine")
 	var trade_hub: PlanetUpgradeDefinition = upgrade_catalog.resolve(&"trade_hub")

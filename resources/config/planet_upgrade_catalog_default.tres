@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PlanetUpgradeCatalog" load_steps=15 format=3]
+[gd_resource type="Resource" script_class="PlanetUpgradeCatalog" load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/planet_upgrade_catalog.gd" id="1_catalog_script"]
 [ext_resource type="Resource" path="res://resources/config/upgrades/extractor.tres" id="2_extractor"]
@@ -17,7 +17,8 @@
 [ext_resource type="Resource" path="res://resources/config/upgrades/automated_mine.tres" id="15_automated_mine"]
 [ext_resource type="Resource" path="res://resources/config/upgrades/trade_hub.tres" id="16_trade_hub"]
 [ext_resource type="Resource" path="res://resources/config/upgrades/comms_array.tres" id="17_comms_array"]
+[ext_resource type="Resource" path="res://resources/config/upgrades/deep_space_scanner.tres" id="18_deep_space_scanner"]
 
 [resource]
 script = ExtResource("1_catalog_script")
-upgrades = [ExtResource("2_extractor"), ExtResource("3_refinery"), ExtResource("4_trade_post"), ExtResource("5_shipyard"), ExtResource("6_war_shipyard"), ExtResource("7_colony_shipyard"), ExtResource("8_defense_grid"), ExtResource("9_tech_center"), ExtResource("10_weapon_lab"), ExtResource("11_armor_lab"), ExtResource("12_orbital_station"), ExtResource("13_colony_hub"), ExtResource("14_trade_network"), ExtResource("15_automated_mine"), ExtResource("16_trade_hub"), ExtResource("17_comms_array")]
+upgrades = [ExtResource("2_extractor"), ExtResource("3_refinery"), ExtResource("4_trade_post"), ExtResource("5_shipyard"), ExtResource("6_war_shipyard"), ExtResource("7_colony_shipyard"), ExtResource("8_defense_grid"), ExtResource("9_tech_center"), ExtResource("10_weapon_lab"), ExtResource("11_armor_lab"), ExtResource("12_orbital_station"), ExtResource("13_colony_hub"), ExtResource("14_trade_network"), ExtResource("15_automated_mine"), ExtResource("16_trade_hub"), ExtResource("17_comms_array"), ExtResource("18_deep_space_scanner")]

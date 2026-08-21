@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="PlanetUpgradeDefinition" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/planet_upgrade_definition.gd" id="1_def"]
+[ext_resource type="Script" path="res://scripts/config/trait_definition.gd" id="2_trait_script"]
+[ext_resource type="Texture2D" path="res://assets/objects/satellites/planet_satellite.svg" id="3_asset"]
+
+[sub_resource type="Resource" id="Trait_deep_space_scanner"]
+script = ExtResource("2_trait_script")
+id = &"trait_deep_space_scanner"
+display_name = "Tiefraumscanner"
+description = "Erweitert das Sichtfeld (FoV) des Planeten um 2 Chunk-Zellen. Ermöglicht Erkundung weiter entfernte Welten."
+fov_radius_bonus = 2
+range_bonus = 50.0
+
+[resource]
+script = ExtResource("1_def")
+id = &"deep_space_scanner"
+display_name = "Tiefraumscanner"
+description = "Ein Tiefraumscanner (Orbital Watcher), der das Sichtfeld des Planeten erweitert und prozedurale Weltregionen erschließt."
+branch = &"infrastructure"
+tier = 2
+parent_upgrade_id = &"orbital_station"
+cost_resource = &"rare"
+cost_amount = 30
+cost_workers = 2
+trait_definition = SubResource("Trait_deep_space_scanner")
+visual_asset = ExtResource("3_asset")
+transformer_tint_mode = &"faction"

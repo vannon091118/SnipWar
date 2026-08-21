@@ -16,3 +16,4 @@ meteor_edge_margin = 48.0
 extra_large_profile_id = &"xl"
 large_profile_id = &"l"
 default_profile_id = &"variable"
+chunk_size = 0

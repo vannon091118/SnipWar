@@ -144,6 +144,8 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	var expected_damage_delta: float = absf(consistency_fleet.total_dps - variant_fleet.total_dps)
 	var actual_damage_delta: float = absf(consistency_fire.value - variant_fire.value) if consistency_fire != null and variant_fire != null else 0.0
+	if not ctx.check(consistency_spawn != null and consistency_spawn.ship_data.get("hull", &"") == &"hull_t2" and consistency_spawn.ship_data.get("drive", &"") == &"drive_t1" and consistency_spawn.ship_data.get("weapon", &"") == &"weapon_t1" and consistency_spawn.ship_data.get("shield", &"") == &"shield_t1" and consistency_spawn.ship_data.get("scanner", &"") == &"scanner_t2" and (consistency_spawn.ship_data.get("modules", []) as Array).has(&"module_reinforced"), "battle spawn event must preserve every combat slot"):
+		return false
 	if not ctx.check(expected_damage_delta > 0.01, "combat variant probe must change FleetSnapshot DPS"):
 		return false
 	if not ctx.check(actual_damage_delta > 0.01, "battle damage must change with the same weapon/shield variant change"):
@@ -157,6 +159,8 @@ func run(ctx: PreflightContext) -> bool:
 	var expected_conquest_dps_delta: float = absf(consistency_fleet.total_dps - variant_fleet.total_dps)
 	var actual_conquest_dps_delta: float = absf(consistency_conquest.attacker_initial_dps - variant_conquest.attacker_initial_dps)
 	if not ctx.check(expected_conquest_dps_delta > 0.01 and actual_conquest_dps_delta > 0.01, "conquest attacker stats must change with the same weapon/shield variant change"):
+		return false
+	if not ctx.check(consistency_conquest.attacker_initial_hp > 0.0 and consistency_conquest.attacker_initial_dps > 0.0 and consistency_conquest.attacker_initial_hp == consistency_fleet.total_hull_hp and consistency_conquest.attacker_initial_dps == consistency_fleet.total_dps, "conquest must consume the complete FleetSnapshot combat profile"):
 		return false
 
 	# 4. Deterministic Layer 2 Simulation

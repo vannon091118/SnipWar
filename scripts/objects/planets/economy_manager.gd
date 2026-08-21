@@ -68,7 +68,12 @@ func _tick_economy() -> int:
 	var state: Node = _game_state()
 	var generated_total: int = 0
 	var automation_researched: bool = _has_worker_automation()
-	for child in field.get_children():
+	# Snapshot the children list to avoid iterating over a mutating child set
+	# during chunk cycling (queue_free + add_child in the same frame).
+	var snapshot: Array = field.get_children().duplicate()
+	for child in snapshot:
+		if not is_instance_valid(child):
+			continue
 		var planet: Planet = child as Planet
 		if planet != null:
 			generated_total += planet.generate_economy_resources()
@@ -85,7 +90,10 @@ func gather_now() -> int:
 	if field == null:
 		return 0
 	var base_amounts: Dictionary = {}
-	for child in field.get_children():
+	var snapshot: Array = field.get_children().duplicate()
+	for child in snapshot:
+		if not is_instance_valid(child):
+			continue
 		var planet: Planet = child as Planet
 		if planet != null:
 			base_amounts[planet.planet_id] = planet.get_size_profile().resource_base

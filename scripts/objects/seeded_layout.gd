@@ -14,6 +14,7 @@ const DEFAULT_ECONOMY_CONFIG: EconomyConfig = preload("res://resources/config/ec
 const DEFAULT_CPU_DISPATCH_CONFIG: CpuDispatchConfig = preload("res://resources/config/cpu_dispatch_default.tres")
 const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_default.tres")
 const DEFAULT_TECHNOLOGY_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
+const CHUNK_COORDINATOR_SCRIPT: Script = preload("res://scripts/objects/chunk_coordinator.gd")
 
 @export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG:
 	set(value):
@@ -34,12 +35,28 @@ signal layout_completed(planets: Array[Planet])
 
 var _catalog_generated := false
 var _runtime_modules_created: bool = false
+var _chunk_coordinator: Node
+
+func get_chunk_coordinator() -> Node:
+	return _chunk_coordinator
 
 func _enter_tree() -> void:
+	if world_config != null and world_config.is_infinite_world():
+		_setup_chunk_coordinator()
+		# In infinite world mode, ChunkCoordinator handles planet generation.
+		# Skip _generate_catalog_planets() — chunk (0,0) gets homeworlds
+		# via the coordinator's lazy generation path.
+		_catalog_generated = true
+		return
 	_generate_catalog_planets()
 
 func _ready() -> void:
-	regenerate()
+	if world_config != null and world_config.is_infinite_world() and _chunk_coordinator != null:
+		_chunk_coordinator.set_layout_seed(world_config.layout_seed)
+		# Generate start chunk (0,0) which has the homeworlds.
+		_chunk_coordinator.ensure_chunks_active(_initial_fov_regions(), &"xl")
+	else:
+		regenerate()
 	_create_runtime_modules()
 
 func set_layout_seed(value: int) -> void:
@@ -211,4 +228,38 @@ func _scale_for(item: Planet, rng: RandomNumberGenerator) -> float:
 
 func _queue_layout() -> void:
 	if is_inside_tree():
-		call_deferred("regenerate")
+		if world_config != null and world_config.is_infinite_world() and _chunk_coordinator != null:
+			_chunk_coordinator.set_layout_seed(world_config.layout_seed)
+			call_deferred("_refresh_chunks")
+		else:
+			call_deferred("regenerate")
+
+func _refresh_chunks() -> void:
+	if _chunk_coordinator != null:
+		_chunk_coordinator.ensure_chunks_active(_initial_fov_regions(), &"xl")
+
+func _setup_chunk_coordinator() -> void:
+	if _chunk_coordinator != null and is_instance_valid(_chunk_coordinator):
+		return
+	_chunk_coordinator = CHUNK_COORDINATOR_SCRIPT.new()
+	_chunk_coordinator.name = "ChunkCoordinator"
+	_chunk_coordinator.add_to_group("chunk_coordinator")
+	_chunk_coordinator.configure(
+		self,
+		get_node_or_null("NavigationField") as NavigationField,
+		world_config if world_config != null else DEFAULT_WORLD_CONFIG,
+		planet_catalog if planet_catalog != null else DEFAULT_PLANET_CATALOG,
+		size_profiles,
+		world_config.layout_seed if world_config != null else 0
+	)
+	add_child(_chunk_coordinator)
+	var state: Node = get_tree().root.get_node_or_null("GameState")
+	if state != null and not state.faction_changed.is_connected(_chunk_coordinator._on_faction_changed):
+		state.faction_changed.connect(_chunk_coordinator._on_faction_changed)
+
+func _initial_fov_regions() -> Array:
+	if world_config == null:
+		return []
+	var cs := world_config.resolved_cell_size()
+	var radius := float(world_config.planet_fov_radius) * cs.x
+	return [Rect2(Vector2.ZERO, world_config.design_size).grow(radius)]
