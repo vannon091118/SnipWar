@@ -18,14 +18,7 @@ var milestones: Dictionary = {}
 var starter_scouts: Dictionary = {}
 
 func reset(catalog: PlanetCatalog) -> void:
-	ownership.clear()
-	starting_workers.clear()
-	homeworlds.clear()
-	known_planets.clear()
-	scanned_planets.clear()
-	scan_intel.clear()
-	milestones.clear()
-	starter_scouts = {GameState.FACTION_PLAYER: 1, GameState.FACTION_CPU: 0}
+	_reset_state()
 
 	if catalog != null:
 		for definition in catalog.planets:
@@ -37,6 +30,19 @@ func reset(catalog: PlanetCatalog) -> void:
 	for planet_id in ownership:
 		remember_planet(ownership[planet_id] as StringName, planet_id as StringName)
 
+func reset_infinite() -> void:
+	_reset_state()
+
+func _reset_state() -> void:
+	ownership.clear()
+	starting_workers.clear()
+	homeworlds.clear()
+	known_planets.clear()
+	scanned_planets.clear()
+	scan_intel.clear()
+	milestones.clear()
+	starter_scouts = {GameState.FACTION_PLAYER: 1, GameState.FACTION_CPU: 0}
+
 func remember_planet(faction: StringName, planet_id: StringName) -> void:
 	if String(faction).is_empty() or faction == GameState.FACTION_NEUTRAL or String(planet_id).is_empty():
 		return
@@ -45,6 +51,13 @@ func remember_planet(faction: StringName, planet_id: StringName) -> void:
 	var known_list: Dictionary = known_planets.get(faction, {}) as Dictionary
 	known_list[planet_id] = true
 	known_planets[faction] = known_list
+
+func register_homeworld(faction: StringName, planet_id: StringName) -> void:
+	if (faction != GameState.FACTION_PLAYER and faction != GameState.FACTION_CPU) or String(planet_id).is_empty():
+		return
+	ownership[planet_id] = faction
+	homeworlds[faction] = planet_id
+	remember_planet(faction, planet_id)
 
 func set_faction(planet_id: StringName, faction: StringName) -> void:
 	if String(planet_id).is_empty():

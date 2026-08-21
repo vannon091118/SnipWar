@@ -18,12 +18,18 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(camera.zoom == Vector2.ONE and camera.position.distance_to(world_config.design_size * 0.5) <= 0.01, "map camera did not initialize to the map center"):
 		return false
-	# With the viewport matching the design size, the camera is pinned to the map center.
+	# Finite maps clamp to their authored rectangle. Infinite maps deliberately
+	# allow exploration beyond the currently active cache and expand by FoV.
 	camera.position = Vector2.ZERO
 	camera.call("_clamp_position")
-	if not ctx.check(camera.position.distance_to(world_config.design_size * 0.5) <= 0.01, "map camera bounds clamp did not constrain the position"):
-		return false
+	if world_config.is_infinite_world():
+		if not ctx.check(camera.position == Vector2.ZERO, "infinite-world camera should allow exploration outside the current cache"):
+			return false
+	else:
+		if not ctx.check(camera.position.distance_to(world_config.design_size * 0.5) <= 0.01, "map camera bounds clamp did not constrain the position"):
+			return false
 	camera.position = world_config.design_size * 0.5
+	camera.call("_sync_infinite_world")
 	var transformer: TransformerConfig = preload("res://resources/config/transformer_default.tres")
 	if not ctx.check(transformer.selection_ring_margin > 0.0 and transformer.selection_ring_width > 0.0 and transformer.selection_ring_color.a > 0.0, "selection ring config is not tuned"):
 		return false

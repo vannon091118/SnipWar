@@ -102,6 +102,11 @@ func _run_layout_scale_case(ctx: PreflightContext, source_field: Node, base_cata
 	custom_config.design_size = design_size
 	custom_config.columns = columns
 	custom_config.layout_seed = seed
+	if custom_config.is_infinite_world():
+		# Scale cases intentionally exercise the finite layout helper; the live
+		# scenario itself is covered by the infinite-world branch below.
+		custom_config.chunk_size = 0
+		custom_config.target_planet_count = planet_count
 	custom_config.extra_large_count = mini(custom_config.extra_large_count, planet_count)
 	custom_config.large_count = mini(custom_config.large_count, maxi(0, planet_count - custom_config.extra_large_count))
 	custom_field.set("world_config", custom_config)
@@ -180,7 +185,11 @@ func _run_scenario_case(ctx: PreflightContext, scene: PackedScene, catalog: Scen
 		scenario_waypoint_catalog = map.navigation_config.waypoint_catalog
 	var wide_waypoint_cadence_valid: bool = scenario_waypoint_catalog != null and scenario_waypoint_catalog.definition_for_edge(0).id == &"comet_sparse" and scenario_waypoint_catalog.definition_for_edge(1).id == &"moon" and scenario_waypoint_catalog.definition_for_edge(3).id == &"comet_sparse"
 	var field_catalog: PlanetCatalog = field.get("planet_catalog") as PlanetCatalog
-	var passed: bool = active_scenario != null and active_scenario.id == scenario_id and active_scenario.route_mode == ScenarioDefinition.ROUTE_MODE_NEIGHBORS_ONLY and not active_scenario.randomize_layout_seed and map != null and scenario_world != null and scenario_world.design_size.distance_to(Vector2(1920.0, 1080.0)) <= 0.01 and scenario_world.route_mode == active_scenario.route_mode and scenario_world.route_mode == WorldConfig.ROUTE_MODE_NEIGHBORS_ONLY and field_catalog != null and field_catalog.planets.size() == planets.size() and scenario_navigation.get("navigation_config") == map.navigation_config and scenario_waypoint_catalog != null and scenario_waypoint_catalog.definitions.size() >= 2 and scenario_waypoint_catalog != (preload("res://resources/config/navigation_default.tres") as NavigationConfig).waypoint_catalog and wide_waypoint_cadence_valid and planets.size() == map.world_config.target_planet_count and route_count == neighbor_count and fixed_seed_applied
+	var passed: bool
+	if scenario_world != null and scenario_world.is_infinite_world():
+		passed = active_scenario != null and active_scenario.id == scenario_id and active_scenario.route_mode == ScenarioDefinition.ROUTE_MODE_NEIGHBORS_ONLY and not active_scenario.randomize_layout_seed and map != null and scenario_world.design_size.distance_to(Vector2(1920.0, 1080.0)) <= 0.01 and scenario_world.route_mode == active_scenario.route_mode and scenario_world.route_mode == WorldConfig.ROUTE_MODE_NEIGHBORS_ONLY and field_catalog != null and field_catalog.planets.size() == 1 and planets.size() >= 2 and scenario_navigation.get("navigation_config") == map.navigation_config and scenario_waypoint_catalog != null and scenario_waypoint_catalog.definitions.size() >= 2 and scenario_waypoint_catalog != (preload("res://resources/config/navigation_default.tres") as NavigationConfig).waypoint_catalog and wide_waypoint_cadence_valid and route_count == neighbor_count and fixed_seed_applied
+	else:
+		passed = active_scenario != null and active_scenario.id == scenario_id and active_scenario.route_mode == ScenarioDefinition.ROUTE_MODE_NEIGHBORS_ONLY and not active_scenario.randomize_layout_seed and map != null and scenario_world != null and scenario_world.design_size.distance_to(Vector2(1920.0, 1080.0)) <= 0.01 and scenario_world.route_mode == active_scenario.route_mode and scenario_world.route_mode == WorldConfig.ROUTE_MODE_NEIGHBORS_ONLY and field_catalog != null and field_catalog.planets.size() == planets.size() and scenario_navigation.get("navigation_config") == map.navigation_config and scenario_waypoint_catalog != null and scenario_waypoint_catalog.definitions.size() >= 2 and scenario_waypoint_catalog != (preload("res://resources/config/navigation_default.tres") as NavigationConfig).waypoint_catalog and wide_waypoint_cadence_valid and planets.size() == map.world_config.target_planet_count and route_count == neighbor_count and fixed_seed_applied
 	scenario_background.queue_free()
 	await ctx.await_frame()
 	return passed

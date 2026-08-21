@@ -23,7 +23,9 @@ func validate() -> PackedStringArray:
 		return errors
 
 	var planet_count := world_config.target_planet_count
-	if planet_count <= 0:
+	if world_config.is_infinite_world():
+		planet_count = world_config.chunk_size * world_config.chunk_size
+	elif planet_count <= 0:
 		errors.append("map definition world target_planet_count must be positive")
 	for world_error in world_config.validate_for_planet_count(planet_count):
 		errors.append("map world: " + world_error)

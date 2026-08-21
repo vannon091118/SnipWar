@@ -144,6 +144,13 @@ func reset_from_catalog(catalog: PlanetCatalog) -> void:
 	ship_domain.reset()
 	catalog_reset.emit(catalog)
 
+func reset_for_infinite_world() -> void:
+	faction_domain.reset_infinite()
+	economy_domain.reset()
+	tech_domain.reset()
+	ship_domain.reset()
+	catalog_reset.emit(null)
+
 func set_jobs_auto_advance(auto_advance: bool) -> void:
 	_jobs_auto_advance = auto_advance
 
@@ -164,6 +171,9 @@ func set_faction(planet_id: StringName, faction: StringName) -> void:
 
 func register_planet(planet_id: StringName, initial_faction: StringName) -> void:
 	faction_domain.register_planet(planet_id, initial_faction)
+
+func register_homeworld(faction: StringName, planet_id: StringName) -> void:
+	faction_domain.register_homeworld(faction, planet_id)
 
 func seed_starting_workers(planet_id: StringName, profile: PlanetSizeProfile) -> void:
 	faction_domain.seed_starting_workers(planet_id, profile)

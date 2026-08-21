@@ -64,20 +64,28 @@ func run(ctx: PreflightContext) -> bool:
 
 	# WorldConfig.is_infinite_world() guard.
 	var default_config: WorldConfig = preload("res://resources/config/world_default.tres")
-	if not ctx.check(not default_config.is_infinite_world(), "default world should NOT be infinite (chunk_size=0)"):
+	if not ctx.check(default_config.is_infinite_world(), "default world should use the infinite chunk generator"):
 		return false
 	var infinite_config := default_config.duplicate(true) as WorldConfig
 	infinite_config.chunk_size = 5
 	if not ctx.check(infinite_config.is_infinite_world(), "config with chunk_size>0 should be infinite"):
 		return false
 
+	var home_cells := WorldGenerator.homeworld_cells(default_config.chunk_size)
+	if not ctx.check(home_cells.size() == 2 and home_cells[0] != home_cells[1], "infinite world should expose two distinct homeworld cells"):
+		return false
+	if not ctx.check(abs(home_cells[0].x - home_cells[1].x) + abs(home_cells[0].y - home_cells[1].y) > 1, "homeworld cells must not be adjacent"):
+		return false
+
 	# resolved_cell_size: when cell_size is zero, derived from design_size / chunk_size.
 	var cs := infinite_config.resolved_cell_size()
 	if not ctx.check(cs.x > 0.0 and cs.y > 0.0, "resolved_cell_size should be positive for infinite world"):
 		return false
-	# For the default config (chunk_size=0), resolved_cell_size returns design_size.
-	var legacy_cs := default_config.resolved_cell_size()
-	if not ctx.check(legacy_cs == default_config.design_size, "resolved_cell_size should return design_size when chunk_size=0"):
+	# A finite duplicate still retains the legacy cell-size contract.
+	var finite_config := default_config.duplicate(true) as WorldConfig
+	finite_config.chunk_size = 0
+	var legacy_cs := finite_config.resolved_cell_size()
+	if not ctx.check(legacy_cs == finite_config.design_size, "resolved_cell_size should return design_size when chunk_size=0"):
 		return false
 
 	# Chunk planet generation: produces chunk_size^2 definitions. The chunk path

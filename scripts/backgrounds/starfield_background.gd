@@ -5,6 +5,7 @@ const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_
 const DEFAULT_BACKGROUND_CONFIG: BackgroundConfig = preload("res://resources/config/background_default.tres")
 const DEFAULT_SCENARIO_CATALOG: ScenarioCatalog = preload("res://resources/config/scenario_catalog.tres")
 const DEFAULT_UI_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
+const ASSET_LIBRARY_SCRIPT: Script = preload("res://scripts/config/asset_library.gd")
 
 @export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG
 @export var background_config: BackgroundConfig = DEFAULT_BACKGROUND_CONFIG
@@ -49,15 +50,25 @@ func _apply_active_scenario() -> void:
 	var runtime_world: WorldConfig = WorldGenerator.resolve_runtime_world(map.world_config, null)
 	if runtime_world != null:
 		runtime_world.route_mode = scenario.resolved_route_mode()
-	world_config = map.world_config if map.world_config != null else world_config
+		var discovered_assets: Dictionary = ASSET_LIBRARY_SCRIPT.scan_composition_assets()
+		runtime_world.composition_base_textures = discovered_assets.get("base_textures", []) as Array[Texture2D]
+		runtime_world.composition_decal_pool = discovered_assets.get("decal_textures", []) as Array[Texture2D]
+	world_config = runtime_world if runtime_world != null else (map.world_config if map.world_config != null else world_config)
 	background_config = scenario.background_config if scenario.background_config != null else background_config
 	_finalize_layout_seed(scenario, runtime_world)
 	var live_world: WorldConfig = runtime_world if runtime_world != null else map.world_config
-	active_catalog = WorldGenerator.generate_catalog(
-		live_world,
-		active_layout_seed,
-		WorldGenerator.target_planet_count(live_world, null)
-	)
+	if live_world != null:
+		_visible_region = Rect2(Vector2.ZERO, live_world.design_size)
+	if live_world != null and live_world.is_infinite_world():
+		# Infinite worlds use one generated definition as the chunk template; the
+		# coordinator owns all live planet instantiation and identity creation.
+		active_catalog = WorldGenerator.generate_catalog(live_world, active_layout_seed, 1)
+	else:
+		active_catalog = WorldGenerator.generate_catalog(
+			live_world,
+			active_layout_seed,
+			WorldGenerator.target_planet_count(live_world, null)
+		)
 
 	_configure_game_state(map)
 	_configure_planet_field(map, scenario, runtime_world)
@@ -88,7 +99,11 @@ func _configure_planet_field(map: MapDefinition, scenario: ScenarioDefinition, r
 
 func _configure_game_state(map: MapDefinition) -> void:
 	var state: Node = get_node_or_null("/root/GameState")
-	if state != null and map != null and active_catalog != null:
+	if state == null or map == null:
+		return
+	if world_config != null and world_config.is_infinite_world():
+		state.reset_for_infinite_world()
+	elif active_catalog != null:
 		state.reset_from_catalog(active_catalog)
 
 func _configure_meteor_field(map: MapDefinition, scenario: ScenarioDefinition, runtime_world: WorldConfig = null) -> void:
@@ -156,6 +171,7 @@ func _update_main_menu_backdrop() -> void:
 	var texture_size: Vector2 = _main_menu_backdrop.texture.get_size()
 	if size.x <= 0.0 or size.y <= 0.0 or texture_size.x <= 0.0 or texture_size.y <= 0.0:
 		return
+	_main_menu_backdrop.position = _world_origin()
 	_main_menu_backdrop.scale = Vector2(size.x / texture_size.x, size.y / texture_size.y)
 
 func _generate_elements() -> void:
@@ -210,6 +226,23 @@ func _on_viewport_size_changed() -> void:
 	_rebuild_render_batches()
 	queue_redraw()
 
+func set_visible_region(region: Rect2) -> void:
+	if region.size.x <= 0.0 or region.size.y <= 0.0:
+		return
+	if _visible_region.position.distance_to(region.position) <= 0.5 and _visible_region.size.distance_to(region.size) <= 0.5:
+		return
+	_visible_region = region
+	_update_main_menu_backdrop()
+	_rebuild_render_batches()
+	queue_redraw()
+
+func get_visible_region() -> Rect2:
+	return _visible_region
+
+func _world_origin() -> Vector2:
+	var world: WorldConfig = world_config if world_config != null else DEFAULT_WORLD_CONFIG
+	return _visible_region.position if world.is_infinite_world() else Vector2.ZERO
+
 func _world_size() -> Vector2:
 	var world: WorldConfig = world_config if world_config != null else DEFAULT_WORLD_CONFIG
 	if world.is_infinite_world():
@@ -231,12 +264,13 @@ func _rebuild_render_batches() -> void:
 		_diamond_texture = _create_shape_texture(&"diamond", _shape_texture_size)
 
 	var texture_radius: float = maxf(float(_shape_texture_size) * 0.5 - 1.0, 1.0)
+	var origin := _world_origin()
 	var star_transforms: Array[Transform2D] = []
 	var star_colors: Array[Color] = []
 	var bright_transforms: Array[Transform2D] = []
 	var bright_colors: Array[Color] = []
 	for star in stars:
-		var star_position: Vector2 = star["position"] * size
+		var star_position: Vector2 = origin + star["position"] * size
 		var radius: float = float(star["radius"])
 		var color := config.star_color
 		color.a = float(star["alpha"])
@@ -264,7 +298,7 @@ func _rebuild_render_batches() -> void:
 		var dust_color := config.dust_color
 		dust_color.a = float(speck["alpha"])
 		dust_transforms.append(_transform_for(
-			speck["position"] * size,
+			origin + speck["position"] * size,
 			Vector2.ONE * float(speck["radius"]) / texture_radius
 		))
 		dust_colors.append(dust_color)
@@ -328,7 +362,8 @@ func _draw() -> void:
 		return
 
 	var config: BackgroundConfig = background_config if background_config != null else DEFAULT_BACKGROUND_CONFIG
-	draw_rect(Rect2(Vector2.ZERO, size), config.background_color)
+	var origin := _world_origin()
+	draw_rect(Rect2(origin, size), config.background_color)
 	_draw_nebula(size, config)
 	_draw_folds(size, config)
 	_draw_grain(size, config)
@@ -338,7 +373,7 @@ func _draw_nebula(size: Vector2, config: BackgroundConfig) -> void:
 	for cloud in config.nebula_clouds:
 		if cloud == null:
 			continue
-		var center := cloud.normalized_position * size
+		var center := _world_origin() + cloud.normalized_position * size
 		var radius: float = cloud.radius_ratio * short_side
 		for layer in range(config.nebula_layer_count, 0, -1):
 			var layer_radius: float = radius * (config.nebula_radius_base + float(layer) * config.nebula_radius_step)
@@ -357,7 +392,7 @@ func _draw_folds(size: Vector2, config: BackgroundConfig) -> void:
 		highlight_segments.append(PackedVector2Array())
 
 	for fold in folds:
-		var center: Vector2 = fold["position"] * size
+		var center: Vector2 = _world_origin() + fold["position"] * size
 		var direction: Vector2 = Vector2.from_angle(float(fold["angle"]))
 		var perpendicular: Vector2 = direction.orthogonal()
 		var length: float = float(fold["length"]) * fold_scale
@@ -404,8 +439,8 @@ func _draw_grain(size: Vector2, config: BackgroundConfig) -> void:
 	for mark in grain:
 		var bucket_index: int = _alpha_bucket_index(float(mark["alpha"]), config.grain_alpha_range, bucket_count)
 		var lines: PackedVector2Array = segments[bucket_index]
-		lines.append(mark["from"] * size)
-		lines.append(mark["to"] * size)
+		lines.append(_world_origin() + mark["from"] * size)
+		lines.append(_world_origin() + mark["to"] * size)
 		segments[bucket_index] = lines
 
 	for bucket_index in bucket_count:

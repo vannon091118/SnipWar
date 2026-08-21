@@ -48,6 +48,23 @@ func configure(field: Node2D, navigation: NavigationField, world_config: WorldCo
 func set_layout_seed(value: int) -> void:
 	_layout_seed = value
 
+func reset_for_layout_seed(value: int) -> void:
+	_layout_seed = value
+	for cell in _active_planets.keys():
+		var planet: Planet = _active_planets[cell]
+		if planet != null and is_instance_valid(planet):
+			planet.set_meta("pending_free", true)
+			planet_removed.emit(planet)
+			if _navigation != null and _navigation.has_planet(planet):
+				_navigation.remove_planet(planet)
+			planet.queue_free()
+	_active_planets.clear()
+	_chunk_cache.clear()
+	_planet_id_to_data.clear()
+	_lru_order.clear()
+	if _navigation != null:
+		_navigation.rebuild()
+
 func get_active_planets() -> Array:
 	var result: Array = []
 	for planet in _active_planets.values():
@@ -96,6 +113,7 @@ func ensure_chunks_active(fov_regions: Array, max_size_class: StringName) -> voi
 			chunks_to_generate[chunk_coord] = true
 	for chunk_coord in chunks_to_generate:
 		_generate_chunk(chunk_coord, max_size_class)
+
 	# Instantiate planets in needed cells that aren't active
 	for cell in needed_cells:
 		if not _active_planets.has(cell):
@@ -107,6 +125,7 @@ func ensure_chunks_active(fov_regions: Array, max_size_class: StringName) -> voi
 				existing.remove_meta("pending_free")
 				existing.visible = true
 				existing.process_mode = Node.PROCESS_MODE_INHERIT
+
 	# Cull planets outside needed cells
 	var to_cull: Array = []
 	for cell in _active_planets.keys():
@@ -114,6 +133,11 @@ func ensure_chunks_active(fov_regions: Array, max_size_class: StringName) -> voi
 			to_cull.append(cell)
 	for cell in to_cull:
 		_cull_planet(cell)
+	if _navigation != null:
+		_navigation.rebuild()
+		var network: Node = _navigation.get_parent().get_node_or_null("PlanetNetwork")
+		if network != null and network.has_method("invalidate_neighbor_cache"):
+			network.call("invalidate_neighbor_cache")
 
 ## Synchronously generates chunks containing the given cells (for route plotting).
 func generate_chunks_sync(cells: Array) -> void:
@@ -126,6 +150,11 @@ func generate_chunks_sync(cells: Array) -> void:
 			_generate_chunk(chunk_coord, &"variable")
 		if not _active_planets.has(cell):
 			_instantiate_planet(cell)
+	if _navigation != null:
+		_navigation.rebuild()
+		var network: Node = _navigation.get_parent().get_node_or_null("PlanetNetwork")
+		if network != null and network.has_method("invalidate_neighbor_cache"):
+			network.call("invalidate_neighbor_cache")
 
 ## Returns the cell key for a planet position.
 func planet_cell(world_position: Vector2) -> Vector2i:
@@ -177,12 +206,13 @@ func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
 		var data := ChunkPlanetData.new()
 		data.planet_id = def.planet_id
 		data.display_name = def.display_name
+		data.planet_role = def.planet_role
+		data.faction = def.faction
 		data.composition_base_texture = def.composition_base_texture
 		data.composition_tint = def.composition_tint
 		data.composition_decal_textures = def.composition_decal_textures
 		data.detail_profile = def.detail_profile
 		data.size_class = _resolve_size_class(slot, cs)
-		data.faction = &"neutral"
 		data.resource_id = &""
 		data.signature_resource = def.signature_resource
 		data.signature_probability = def.signature_probability
@@ -193,9 +223,12 @@ func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
 	_chunk_cache[chunk_coord] = data_array
 	_lru_touch(chunk_coord)
 	_evict_if_needed()
-	# Deal resources for the new planets
 	var state := _game_state()
 	if state != null:
+		for generated_data in data_array:
+			var generated_planet_data: ChunkPlanetData = generated_data as ChunkPlanetData
+			if generated_planet_data != null and generated_planet_data.planet_role == &"homeworld":
+				state.register_homeworld(generated_planet_data.faction, generated_planet_data.planet_id)
 		var pool: ResourcePool = null
 		var map := _get_map_definition()
 		if map != null:
@@ -218,9 +251,14 @@ func _instantiate_planet(cell: Vector2i) -> void:
 	# Configure BEFORE add_child() so _ready() registers the real planet_id/
 	# faction and applies the cached detail/size profiles (mirrors the finite
 	# path, where apply_definition() runs during _enter_tree).
-	planet.configure_from_cache(data, _resolve_size_profile(data.size_class))
+	var profile: PlanetSizeProfile = _resolve_size_profile(data.size_class)
+	planet.configure_from_cache(data, profile)
 	_field.add_child(planet)
 	planet.global_position = data.world_position
+	var state := _game_state()
+	if state != null:
+		state.seed_starting_workers(data.planet_id, profile)
+		planet.set_initial_workers(state.starting_workers_of(data.planet_id))
 	planet.set_meta("cell", cell)
 	_active_planets[cell] = planet
 	if _navigation != null:
@@ -350,6 +388,7 @@ class ChunkPlanetData:
 	extends RefCounted
 	var planet_id: StringName
 	var display_name: String
+	var planet_role: StringName = &"planet"
 	var composition_base_texture: Texture2D
 	var composition_tint: Color
 	var composition_decal_textures: Array[Texture2D] = []

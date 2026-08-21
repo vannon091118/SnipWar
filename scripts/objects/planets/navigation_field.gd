@@ -56,6 +56,8 @@ func rebuild() -> void:
 	_waypoints.clear()
 	_edges.clear()
 	_point_ids.clear()
+	_cell_to_planet.clear()
+	_pending_edges.clear()
 	_astar = AStar2D.new()
 	_next_point_id = 1
 	_is_built = false
@@ -64,7 +66,7 @@ func rebuild() -> void:
 
 	var planets: Array[Planet] = []
 	for child in get_parent().get_children():
-		if child is Planet:
+		if child is Planet and not child.get_meta("pending_free", false):
 			planets.append(child)
 	if planets.size() < 2:
 			queue_redraw()
@@ -83,6 +85,14 @@ func rebuild() -> void:
 		if slot >= 0:
 			slot_planets[slot] = planet
 		_planet_neighbors[planet] = [] as Array[Node2D]
+		if config.is_infinite_world() and planet.has_meta("cell"):
+			_cell_to_planet[planet.get_meta("cell")] = planet
+
+	if config.is_infinite_world():
+		_rebuild_infinite_edges(planets, waypoint_config)
+		_is_built = not _point_ids.is_empty()
+		queue_redraw()
+		return
 
 	var processed_edges: Dictionary = {}
 	var edge_index := 0
@@ -148,6 +158,39 @@ func rebuild() -> void:
 
 	_is_built = not _point_ids.is_empty()
 	queue_redraw()
+
+func _rebuild_infinite_edges(planets: Array[Planet], waypoint_config: NavigationConfig) -> void:
+	var edge_index := 0
+	for first in planets:
+		var first_cell: Vector2i = first.get_meta("cell", Vector2i.ZERO)
+		for second_cell in [Vector2i(first_cell.x + 1, first_cell.y), Vector2i(first_cell.x, first_cell.y + 1)]:
+			if not _cell_to_planet.has(second_cell):
+				continue
+			var second: Planet = _cell_to_planet[second_cell]
+			if second == null or not is_instance_valid(second):
+				continue
+			var midpoint := (first.global_position + second.global_position) * 0.5
+			var direction := (second.global_position - first.global_position).normalized()
+			var perpendicular := Vector2(-direction.y, direction.x)
+			midpoint += perpendicular * waypoint_config.midpoint_jitter * sin(float(edge_index + 1))
+			var waypoint_definition: NavigationWaypointDefinition = waypoint_config.waypoint_for_edge(edge_index)
+			if waypoint_definition == null:
+				continue
+			var waypoint: NavigationWaypoint = WAYPOINT_SCENE.instantiate()
+			waypoint.name = "%sWaypoint_%d" % [waypoint_definition.waypoint_type.capitalize(), edge_index]
+			add_child(waypoint)
+			waypoint.global_position = midpoint
+			waypoint.configure(waypoint_definition)
+			_waypoints.append(waypoint)
+			var waypoint_id := _add_graph_point(midpoint)
+			_connect_graph_points(_point_ids[first], waypoint_id)
+			_connect_graph_points(waypoint_id, _point_ids[second])
+			_edges.append([first.global_position, midpoint])
+			_edges.append([midpoint, second.global_position])
+			_edge_endpoints.append([first, null])
+			_edge_endpoints.append([null, second])
+			_record_neighbor_pair(first, second)
+			edge_index += 1
 
 func get_neighbors_for_planet(planet: Node2D) -> Array[Node2D]:
 	if not _is_built:

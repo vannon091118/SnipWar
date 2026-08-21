@@ -28,6 +28,7 @@ func _ready() -> void:
 	_read_world_bounds()
 	position = _map_bounds.get_center()
 	zoom = Vector2.ONE
+	_sync_infinite_world()
 
 func _read_world_bounds() -> void:
 	# In infinite world mode, query the field-owned ChunkCoordinator for active bounds.
@@ -119,6 +120,7 @@ func _apply_pan(pointer_position: Vector2) -> void:
 	_panning = true
 	position = _camera_at_drag_start - delta / zoom.x
 	_clamp_position()
+	_sync_infinite_world()
 
 func _apply_pinch() -> void:
 	var distance := _current_pinch_distance()
@@ -138,12 +140,16 @@ func _set_zoom_at(new_zoom: float, world_point: Vector2) -> void:
 	position = world_point - world_offset * (zoom.x / new_zoom)
 	zoom = Vector2(new_zoom, new_zoom)
 	_clamp_position()
+	_sync_infinite_world()
 
 func _screen_to_world(screen_point: Vector2) -> Vector2:
 	var viewport_center := get_viewport().get_visible_rect().size * 0.5
 	return (screen_point - viewport_center) / zoom + position
 
 func _clamp_position() -> void:
+	var coordinator: ChunkCoordinator = _planet_field.get_chunk_coordinator() if _planet_field != null else null
+	if coordinator != null and coordinator.is_infinite_world():
+		return
 	var half_view := get_viewport().get_visible_rect().size * 0.5 / zoom
 	var min_pos := _map_bounds.position + half_view
 	var max_pos := _map_bounds.end - half_view
@@ -155,6 +161,28 @@ func _clamp_position() -> void:
 		position.y = _map_bounds.get_center().y
 	else:
 		position.y = clampf(position.y, min_pos.y, max_pos.y)
+
+func _sync_infinite_world() -> void:
+	if _planet_field == null:
+		return
+	var coordinator: ChunkCoordinator = _planet_field.get_chunk_coordinator()
+	if coordinator == null or not coordinator.is_infinite_world():
+		return
+	var viewport_size := get_viewport().get_visible_rect().size
+	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+		return
+	var top_left := _screen_to_world(Vector2.ZERO)
+	var bottom_right := _screen_to_world(viewport_size)
+	var visible_rect := Rect2(top_left, bottom_right - top_left).abs()
+	var world_config: WorldConfig = _planet_field.world_config
+	var cell_size := world_config.resolved_cell_size() if world_config != null else Vector2(1.0, 1.0)
+	var fov_margin := maxf(cell_size.x, cell_size.y) * float(world_config.planet_fov_radius if world_config != null else 1)
+	var active_region := visible_rect.grow(fov_margin)
+	coordinator.ensure_chunks_active([active_region], &"xl")
+	_read_world_bounds()
+	var background: Node = get_parent()
+	if background != null and background.has_method("set_visible_region"):
+		background.call("set_visible_region", visible_rect)
 
 func _planet_at(screen_position: Vector2) -> Node2D:
 	var world_position: Vector2 = _screen_to_world(screen_position)

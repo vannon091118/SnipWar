@@ -66,7 +66,8 @@ func boot_default(ctx: PreflightContext) -> bool:
 	if state == null or planet_catalog == null:
 		return false
 	state.call("set_jobs_auto_advance", false)
-	state.call("deal_resources", planet_catalog, scenario.map_definition.resource_pool if scenario.map_definition.resource_pool != null else DEFAULT_RESOURCE_POOL, PREFLIGHT_LAYOUT_SEED)
+	if world_config == null or not world_config.is_infinite_world():
+		state.call("deal_resources", planet_catalog, scenario.map_definition.resource_pool if scenario.map_definition.resource_pool != null else DEFAULT_RESOURCE_POOL, PREFLIGHT_LAYOUT_SEED)
 	await tree.process_frame
 
 	world_config = field.get("world_config") as WorldConfig
@@ -178,16 +179,26 @@ func _baseline_errors() -> PackedStringArray:
 	if game_state == null or field == null or planet_catalog == null:
 		errors.append("fixture references are incomplete")
 		return errors
+	var coordinator: Node = field.get_chunk_coordinator() if field != null and field.has_method("get_chunk_coordinator") else null
 	if game_state.validate().size() != 0 or game_state.validate_starting_setup().size() != 0:
 		errors.append("GameState ownership/start setup is invalid")
 	if game_state.get_researched_technologies(GameState.FACTION_PLAYER).size() != 0 or game_state.get_researched_technologies(GameState.FACTION_CPU).size() != 0:
 		errors.append("global technology state leaked into the fixture")
 	if game_state.known_planets_of(GameState.FACTION_PLAYER).size() != 1 or game_state.known_planets_of(GameState.FACTION_CPU).size() != 1:
 		errors.append("discovery state is not at the two-homeworld baseline")
-	if game_state.resource_snapshot().size() != planet_catalog.planets.size():
-		errors.append("resource deal does not cover the active catalog")
-	if not game_state.validate_resources(DEFAULT_RESOURCE_POOL).is_empty():
-		errors.append("fixture resource deal is invalid")
+	if world_config != null and world_config.is_infinite_world():
+		var assigned_resources: Dictionary = game_state.resource_snapshot()
+		var seen_resource_ids: Dictionary = {}
+		for assigned_id in assigned_resources.values():
+			seen_resource_ids[assigned_id] = true
+		if assigned_resources.size() < 2 or seen_resource_ids.size() < DEFAULT_RESOURCE_POOL.resources.size():
+			errors.append("infinite-world resource deal is incomplete: assigned=%d distinct=%d pool=%d" % [assigned_resources.size(), seen_resource_ids.size(), DEFAULT_RESOURCE_POOL.resources.size()])
+	else:
+		if game_state.resource_snapshot().size() != planet_catalog.planets.size():
+			errors.append("resource deal does not cover the active catalog: resources=%d active_catalog=%d" % [game_state.resource_snapshot().size(), planet_catalog.planets.size()])
+		var resource_errors: PackedStringArray = game_state.validate_resources(DEFAULT_RESOURCE_POOL)
+		if not resource_errors.is_empty():
+			errors.append("fixture resource deal is invalid: %s" % resource_errors)
 	for child in field.get_children():
 		var planet: Planet = child as Planet
 		if planet == null:

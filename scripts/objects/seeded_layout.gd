@@ -61,6 +61,13 @@ func _ready() -> void:
 
 func set_layout_seed(value: int) -> void:
 	world_config.layout_seed = value
+	if world_config != null and world_config.is_infinite_world() and _chunk_coordinator != null:
+		var state: Node = _game_state()
+		if state != null:
+			state.reset_for_infinite_world()
+			_chunk_coordinator.reset_for_layout_seed(value)
+			call_deferred("_refresh_chunks")
+			return
 	_queue_layout()
 
 func regenerate() -> void:
@@ -276,6 +283,9 @@ func _queue_layout() -> void:
 func _refresh_chunks() -> void:
 	if _chunk_coordinator != null:
 		_chunk_coordinator.ensure_chunks_active(_initial_fov_regions(), &"xl")
+
+func _game_state() -> Node:
+	return GameStateAccess.autoload(self)
 
 func _setup_chunk_coordinator() -> void:
 	if _chunk_coordinator != null and is_instance_valid(_chunk_coordinator):

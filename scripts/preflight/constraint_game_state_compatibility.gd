@@ -12,11 +12,13 @@ extends RefCounted
 const REQUIRED_FACADE_METHODS: Array[StringName] = [
 	&"is_valid_resource",
 	&"reset_from_catalog",
+	&"reset_for_infinite_world",
 	&"set_jobs_auto_advance",
 	&"advance_research",
 	&"advance_builds",
 	&"set_faction",
 	&"register_planet",
+	&"register_homeworld",
 	&"seed_starting_workers",
 	&"faction_of",
 	&"is_owned_by",

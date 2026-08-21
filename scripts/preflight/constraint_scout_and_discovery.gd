@@ -20,7 +20,8 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	var tech_catalog: TechnologyCatalog = ship_manager.get_technology_catalog()
 	var ship_config: ShipConfig = ship_manager.get_ship_config()
-	game_state.deal_resources(planet_catalog, preload("res://resources/config/resource_pool_default.tres"), ctx.world_config.layout_seed)
+	if not ctx.world_config.is_infinite_world():
+		game_state.deal_resources(planet_catalog, preload("res://resources/config/resource_pool_default.tres"), ctx.world_config.layout_seed)
 	if not ctx.check(tech_catalog != null and tech_catalog.validate().is_empty(), "technology catalog validation failed"):
 		return false
 	if not ctx.check(ship_config != null and ship_config.validate().is_empty(), "ship config validation failed"):

@@ -1,72 +1,14 @@
-[gd_resource type="Resource" script_class="WorldConfig" load_steps=60 format=3]
+[gd_resource type="Resource" script_class="WorldConfig" load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/world_config.gd" id="1_world_config"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_01_ember.svg" id="2_t1"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean.svg" id="3_t2"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_03_ice.svg" id="4_t3"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_04_violet.svg" id="5_t4"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_05_desert.svg" id="6_t5"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_06_toxic_red.svg" id="7_t6"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_07_storm.svg" id="8_t7"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_08_volcanic.svg" id="9_t8"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_09_paper.svg" id="10_t9"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_10_golden.svg" id="11_t10"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_01_ember_v2.svg" id="12_t1_v2"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_01_ember_v3.svg" id="13_t1_v3"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_01_ember_v4.svg" id="14_t1_v4"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean_v2.svg" id="15_t2_v2"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean_v3.svg" id="16_t2_v3"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean_v4.svg" id="17_t2_v4"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_03_ice_v2.svg" id="18_t3_v2"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_03_ice_v3.svg" id="19_t3_v3"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_03_ice_v4.svg" id="20_t3_v4"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_04_violet_v2.svg" id="21_t4_v2"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_04_violet_v3.svg" id="22_t4_v3"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_04_violet_v4.svg" id="23_t4_v4"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_05_desert_v2.svg" id="24_t5_v2"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_05_desert_v3.svg" id="25_t5_v3"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_05_desert_v4.svg" id="26_t5_v4"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_06_toxic_red_v2.svg" id="27_t6_v2"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_06_toxic_red_v3.svg" id="28_t6_v3"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_06_toxic_red_v4.svg" id="29_t6_v4"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_07_storm_v2.svg" id="30_t7_v2"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_07_storm_v3.svg" id="31_t7_v3"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_07_storm_v4.svg" id="32_t7_v4"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_08_volcanic_v2.svg" id="33_t8_v2"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_08_volcanic_v3.svg" id="34_t8_v3"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_08_volcanic_v4.svg" id="35_t8_v4"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_09_paper_v2.svg" id="36_t9_v2"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_09_paper_v3.svg" id="37_t9_v3"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_09_paper_v4.svg" id="38_t9_v4"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_10_golden_v2.svg" id="39_t10_v2"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_10_golden_v3.svg" id="40_t10_v3"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_10_golden_v4.svg" id="41_t10_v4"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_aurora_arcs.svg" id="42_d01"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_city_lights.svg" id="43_d02"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_cloud_streaks.svg" id="44_d03"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_crater_field.svg" id="45_d04"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_crystal_veins.svg" id="46_d05"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_defense_grid.svg" id="47_d06"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_dune_pattern.svg" id="48_d07"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_fissure_network.svg" id="49_d08"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_haze_layers.svg" id="50_d09"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_ice_cracks.svg" id="51_d10"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_launch_pads.svg" id="52_d11"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_lava_flows.svg" id="53_d12"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_orbital_ring.svg" id="54_d13"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_polar_caps.svg" id="55_d14"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_ridge_chain.svg" id="56_d15"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_sensor_arrays.svg" id="57_d16"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_spore_patches.svg" id="58_d17"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/decals/decal_storm_bands.svg" id="59_d18"]
 
 [resource]
 script = ExtResource("1_world_config")
 design_size = Vector2(960, 540)
 layout_seed = 241119
 decorative_seed = 241119
-columns = 5
-target_planet_count = 10
+columns = 0
+target_planet_count = 0
 extra_large_count = 2
 large_count = 1
 jitter = 0.12
@@ -75,7 +17,5 @@ meteor_edge_margin = 48.0
 extra_large_profile_id = &"xl"
 large_profile_id = &"l"
 default_profile_id = &"variable"
-chunk_size = 0
-composition_base_textures = Array[ExtResource("2_t1")]([ExtResource("2_t1"), ExtResource("3_t2"), ExtResource("4_t3"), ExtResource("5_t4"), ExtResource("6_t5"), ExtResource("7_t6"), ExtResource("8_t7"), ExtResource("9_t8"), ExtResource("10_t9"), ExtResource("11_t10"), ExtResource("12_t1_v2"), ExtResource("13_t1_v3"), ExtResource("14_t1_v4"), ExtResource("15_t2_v2"), ExtResource("16_t2_v3"), ExtResource("17_t2_v4"), ExtResource("18_t3_v2"), ExtResource("19_t3_v3"), ExtResource("20_t3_v4"), ExtResource("21_t4_v2"), ExtResource("22_t4_v3"), ExtResource("23_t4_v4"), ExtResource("24_t5_v2"), ExtResource("25_t5_v3"), ExtResource("26_t5_v4"), ExtResource("27_t6_v2"), ExtResource("28_t6_v3"), ExtResource("29_t6_v4"), ExtResource("30_t7_v2"), ExtResource("31_t7_v3"), ExtResource("32_t7_v4"), ExtResource("33_t8_v2"), ExtResource("34_t8_v3"), ExtResource("35_t8_v4"), ExtResource("36_t9_v2"), ExtResource("37_t9_v3"), ExtResource("38_t9_v4"), ExtResource("39_t10_v2"), ExtResource("40_t10_v3"), ExtResource("41_t10_v4")])
+chunk_size = 3
 composition_tint_palettes = Array[Color]([Color(1, 0.82, 0.72, 1), Color(0.74, 0.9, 1, 1), Color(0.82, 0.9, 1, 1), Color(0.92, 0.78, 1, 1), Color(1, 0.88, 0.7, 1), Color(1, 0.78, 0.78, 1), Color(0.78, 0.92, 1, 1), Color(1, 0.88, 0.72, 1), Color(0.94, 0.94, 1, 1), Color(1, 0.92, 0.66, 1)])
-composition_decal_pool = Array[ExtResource("42_d01")]([ExtResource("42_d01"), ExtResource("43_d02"), ExtResource("44_d03"), ExtResource("45_d04"), ExtResource("46_d05"), ExtResource("47_d06"), ExtResource("48_d07"), ExtResource("49_d08"), ExtResource("50_d09"), ExtResource("51_d10"), ExtResource("52_d11"), ExtResource("53_d12"), ExtResource("54_d13"), ExtResource("55_d14"), ExtResource("56_d15"), ExtResource("57_d16"), ExtResource("58_d17"), ExtResource("59_d18")])

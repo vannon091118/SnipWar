@@ -184,10 +184,9 @@ func resource_snapshot() -> Dictionary:
 	return planet_resources.duplicate()
 
 ## Deals resources for a batch of new planets WITHOUT clearing existing
-## assignments. Completely separate from deal_resources() — the clear() in
-## deal_resources is intentional for the start-catalog path.
-## Each entry in planet_data should have: planet_id, signature_resource,
-## signature_probability (can be empty/zero for plain neutrals).
+## assignments. Homeworlds in the origin chunk are assigned distinct resource
+## identities whenever the pool has at least two entries; neutral slots then
+## use least-used round-robin balancing.
 func deal_resources_for_planets(planet_data: Array, pool: ResourcePool = null, seed_value: int = 0) -> void:
 	var effective_pool: ResourcePool = pool if pool != null else GameState.DEFAULT_RESOURCE_POOL
 	if effective_pool == null or effective_pool.resources.is_empty():
@@ -198,23 +197,69 @@ func deal_resources_for_planets(planet_data: Array, pool: ResourcePool = null, s
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
 	var counts: Dictionary = {}
+	var homeworld_data: Array = []
+	var neutral_data: Array = []
 	for data in planet_data:
 		if data == null:
 			continue
-		# ChunkPlanetData has planet_id, signature_resource, signature_probability
-		# Access directly via property syntax (works for RefCounted subclasses).
 		var p_id: StringName = data.planet_id
 		if String(p_id).is_empty() or planet_resources.has(p_id):
 			continue
-		var sig_res: StringName = data.signature_resource
-		var sig_prob: float = float(data.signature_probability)
+		if data.planet_role == &"homeworld":
+			homeworld_data.append(data)
+		else:
+			neutral_data.append(data)
+	_homeworld_data_sort(homeworld_data)
+	for data in homeworld_data:
+		var home_id: StringName = data.planet_id
+		var signature: StringName = data.signature_resource
 		var chosen: StringName = &""
-		if not String(sig_res).is_empty() and resource_ids.has(sig_res) and rng.randf() < sig_prob:
-			chosen = sig_res
+		if not String(signature).is_empty() and resource_ids.has(signature) and rng.randf() < float(data.signature_probability):
+			var signature_used := false
+			for other_home in homeworld_data:
+				if other_home == data:
+					continue
+				if planet_resources.get(other_home.planet_id, &"") == signature:
+					signature_used = true
+					break
+			if not signature_used or resource_ids.size() < 2:
+				chosen = signature
+		if String(chosen).is_empty():
+			var best_count := 1 << 30
+			for resource_id in resource_ids:
+				var already_used := false
+				if resource_ids.size() >= 2:
+					for other_home in homeworld_data:
+						if other_home == data:
+							continue
+						if planet_resources.get(other_home.planet_id, &"") == resource_id:
+							already_used = true
+							break
+				if already_used:
+					continue
+				var remaining: int = int(counts.get(resource_id, 0))
+				if remaining < best_count:
+					best_count = remaining
+					chosen = resource_id
+		if String(chosen).is_empty():
+				chosen = _least_used_resource(resource_ids, counts)
+		planet_resources[home_id] = chosen
+		counts[chosen] = int(counts.get(chosen, 0)) + 1
+	for data in neutral_data:
+		var p_id: StringName = data.planet_id
+		var signature: StringName = data.signature_resource
+		var chosen: StringName = &""
+		if not String(signature).is_empty() and resource_ids.has(signature) and rng.randf() < float(data.signature_probability):
+			chosen = signature
 		if String(chosen).is_empty():
 			chosen = _least_used_resource(resource_ids, counts)
 		planet_resources[p_id] = chosen
 		counts[chosen] = int(counts.get(chosen, 0)) + 1
+
+func _homeworld_data_sort(values: Array) -> void:
+	values.sort_custom(func(first, second):
+		return String(first.planet_id) < String(second.planet_id)
+	)
 
 ## Builds a shuffled list of resource IDs from the pool.
 func _build_resource_id_list(pool: ResourcePool, seed_value: int) -> Array[StringName]:

@@ -250,9 +250,16 @@ static func generate_planet_name(seed_value: int) -> String:
 	var noun := _NAME_NOUNS[rng.randi_range(0, _NAME_NOUNS.size() - 1)]
 	return "%s %s" % [adj, noun]
 
-## Generates planet definitions for a single chunk deterministically.
-## Chunk (0,0) is expected to use the base catalog directly (homeworlds).
-## Other chunks compose planets from the world's asset pool.
+## Returns the two deterministic homeworld cells in the origin chunk. Diagonal
+## corners keep them non-adjacent for every supported chunk size (>= 2).
+static func homeworld_cells(chunk_size: int) -> Array[Vector2i]:
+	if chunk_size < 2:
+		return []
+	return [Vector2i.ZERO, Vector2i(chunk_size - 1, chunk_size - 1)]
+
+## Generates planet definitions for a single chunk deterministically. The
+## origin chunk owns the two persistent homeworld identities; every other slot
+## is a neutral procedural planet derived from the supplied template catalog.
 static func generate_chunk_planets(
 	base_catalog: PlanetCatalog,
 	chunk_x: int, chunk_y: int,
@@ -262,22 +269,34 @@ static func generate_chunk_planets(
 	max_size_class: StringName
 ) -> Array[PlanetDefinition]:
 	var definitions: Array[PlanetDefinition] = []
-	if base_catalog == null or base_catalog.planets.is_empty() or chunk_size <= 0:
+	if base_catalog == null or base_catalog.planets.is_empty() or chunk_size <= 0 or config == null:
 		return definitions
 	var base_size := base_catalog.planets.size()
+	var origin_chunk := chunk_x == 0 and chunk_y == 0
+	var home_cells := homeworld_cells(chunk_size)
 	for slot in chunk_size * chunk_size:
 		var slot_s := slot_seed(chunk_seed_value, slot)
 		var source: PlanetDefinition = base_catalog.planets[slot % base_size]
 		if source == null:
 			continue
 		var definition: PlanetDefinition = source.duplicate(true) as PlanetDefinition
-		# Chunk-specific planet ID prevents cross-chunk collisions.
-		definition.planet_id = StringName("c%d_%d_%s_%d" % [chunk_x, chunk_y, source.planet_id, slot])
-		definition.display_name = generate_planet_name(slot_s)
+		var local_col := slot % chunk_size
+		var local_row := int(slot / float(chunk_size))
+		var is_homeworld := origin_chunk and home_cells.has(Vector2i(local_col, local_row))
+		if is_homeworld:
+			var home_index := home_cells.find(Vector2i(local_col, local_row))
+			definition.planet_id = StringName("p%d" % home_index)
+			definition.planet_role = &"homeworld"
+			definition.faction = &"a" if home_index == 0 else &"b"
+			definition.display_name = "Player Homeworld" if home_index == 0 else "CPU Homeworld"
+			definition.generated_name = definition.display_name
+		else:
+			# Chunk-specific planet ID prevents cross-chunk collisions.
+			definition.planet_id = StringName("c%d_%d_%s_%d" % [chunk_x, chunk_y, source.planet_id, slot])
+			definition.display_name = generate_planet_name(slot_s)
+			definition.planet_role = &"planet"
+			definition.faction = &"neutral"
 		definition.generated_name = definition.display_name
-		definition.planet_role = &"planet"
-		definition.faction = &"neutral"
-		# Compose from the asset pool.
 		var composition := compose_planet(
 			slot_s,
 			config.composition_base_textures,
@@ -287,14 +306,17 @@ static func generate_chunk_planets(
 		definition.composition_base_texture = composition.get("base_texture", null) as Texture2D
 		definition.composition_tint = composition.get("tint", Color.WHITE) as Color
 		definition.composition_decal_textures = _texture_array(composition.get("decal_textures", []))
-		# Size class: respect max_size_class cap (ship=variable, planet=large, watcher=xl).
-		var size_counts := config.resolved_size_class_counts(chunk_size * chunk_size)
-		var slot_in_chunk := slot
-		if slot_in_chunk < size_counts.x and (max_size_class == &"xl" or max_size_class == &"extra_large"):
-			definition.detail_profile = source.detail_profile
-		elif slot_in_chunk < size_counts.x + size_counts.y and (max_size_class == &"xl" or max_size_class == &"large" or max_size_class == &"extra_large"):
-			definition.detail_profile = source.detail_profile
-		else:
-			definition.detail_profile = source.detail_profile
+		definition.planet_texture = definition.composition_base_texture
+		# Homeworlds also use generated composition, but use a separate stable
+		# seed offset so their visuals do not duplicate the first neutral slot.
+		if is_homeworld:
+			var home_composition := compose_planet(slot_s + 7919, config.composition_base_textures, config.composition_tint_palettes, config.composition_decal_pool)
+			definition.composition_base_texture = home_composition.get("base_texture", null) as Texture2D
+			definition.composition_tint = home_composition.get("tint", Color.WHITE) as Color
+			definition.composition_decal_textures = _texture_array(home_composition.get("decal_textures", []))
+			definition.planet_texture = definition.composition_base_texture
+		# The template carries the detail profile; the coordinator resolves the
+		# size profile separately from the world config.
+		definition.detail_profile = source.detail_profile if source.detail_profile != null else DEFAULT_DETAIL_PROFILE
 		definitions.append(definition)
 	return definitions

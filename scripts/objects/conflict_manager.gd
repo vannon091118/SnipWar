@@ -33,9 +33,25 @@ func _connect_planet_conflicts() -> void:
 		return
 	var callback := Callable(self, "_on_planet_conflict_simulated")
 	for child in _field.get_children():
-		var planet: Planet = child as Planet
-		if planet != null and not planet.conflict_simulated.is_connected(callback):
-			planet.conflict_simulated.connect(callback)
+		_connect_planet_conflict(child as Planet, callback)
+	var coordinator: ChunkCoordinator = _field.get_chunk_coordinator() if _field.has_method("get_chunk_coordinator") else null
+	if coordinator != null and not coordinator.planet_added.is_connected(_on_planet_added):
+		coordinator.planet_added.connect(_on_planet_added)
+	if coordinator != null and not coordinator.planet_removed.is_connected(_on_planet_removed):
+		coordinator.planet_removed.connect(_on_planet_removed)
+
+func _connect_planet_conflict(planet: Planet, callback: Callable = Callable()) -> void:
+	if planet == null or not is_instance_valid(planet):
+		return
+	var resolved_callback := callback if callback.is_valid() else Callable(self, "_on_planet_conflict_simulated")
+	if not planet.conflict_simulated.is_connected(resolved_callback):
+		planet.conflict_simulated.connect(resolved_callback)
+
+func _on_planet_added(planet: Planet) -> void:
+	_connect_planet_conflict(planet)
+
+func _on_planet_removed(_planet: Planet) -> void:
+	return
 
 func _on_planet_conflict_simulated(simulation_type: StringName, combat_replay: CombatReplay) -> void:
 	_start_replay(simulation_type, combat_replay)

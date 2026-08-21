@@ -102,10 +102,14 @@ func _on_planet_added(planet: Planet) -> void:
 	if not _planets.has(planet):
 		_planets.append(planet)
 		_connect_planet_signals(planet)
+	if is_instance_valid(_ui):
+		_ui.update_planets(_planets)
 	_refresh_fog_of_war()
 
 func _on_planet_removed(planet: Planet) -> void:
 	_planets.erase(planet)
+	if is_instance_valid(_ui):
+		_ui.update_planets(_planets)
 
 func _create_selection_service() -> void:
 	_selection_service = SELECTION_SERVICE_SCRIPT.new() as SelectionService

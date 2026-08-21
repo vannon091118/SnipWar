@@ -23,6 +23,12 @@ var _income_flush_scheduled: bool = false
 @onready var _vault_bar: VaultBar = get_node_or_null("PlanetTabUI/VaultBar")
 @onready var _panel: PlanetPanel = get_node_or_null("PlanetTabUI/PlanetPanel")
 
+func update_planets(planets: Array[Node2D]) -> void:
+	if _panel == null:
+		_ensure_node_references()
+	if _panel != null:
+		_panel.populate_units(planets)
+
 func setup(planets: Array[Node2D], theme_config: UIThemeConfig = null) -> void:
 	layer = 50
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME

@@ -119,6 +119,8 @@ func validate_for_planet_count(planet_count: int) -> PackedStringArray:
 		errors.append("world columns cannot be negative")
 	if planet_count < 1:
 		errors.append("world must contain at least one planet")
+	if chunk_size > 0 and chunk_size < 2:
+		errors.append("infinite world chunk_size must be at least two")
 	if target_planet_count < 0:
 		errors.append("world target_planet_count cannot be negative")
 	if extra_large_count < 0 or large_count < 0:

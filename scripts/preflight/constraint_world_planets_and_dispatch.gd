@@ -95,7 +95,7 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(asteroid_definition.validate().is_empty() and asteroid_definition.fidelity != null and asteroid_definition.fidelity.orbit_motion_mode == PlanetDetailFidelity.MOTION_THROTTLED and asteroid_definition.fidelity.orbit_update_interval > 0.0, "asteroid detail fidelity config is invalid"):
 		return false
-	var source: Planet = ctx.find_planet_with_size(field, &"xl") as Planet
+	var source: Planet = ctx.find_planet_by_id(field, game_state.homeworld_for(GameState.FACTION_PLAYER)) if world_config.is_infinite_world() else ctx.find_planet_with_size(field, &"xl") as Planet
 	var large_planet: Node = ctx.find_planet_with_size(field, &"l")
 	var variable_planet: Node = ctx.find_planet_with_size(field, &"variable")
 	if not ctx.check(source != null and large_planet != null and variable_planet != null, "generated planet sizes are missing"):
@@ -112,18 +112,30 @@ func run(ctx: PreflightContext) -> bool:
 	await ctx.await_frame()
 	if not ctx.check(source.get_faction() == source_faction and game_state.faction_of(source.planet_id) == source_faction, "GameState faction revert was not applied"):
 		return false
-	if not ctx.check(ctx.count_planets_with_size(field, &"xl") == 2 and ctx.count_planets_with_size(field, &"l") == 1, "generated planet size distribution is wrong"):
-		return false
+	var expected_xl: int = 2 if world_config.is_infinite_world() else 2
+	var expected_l: int = 1 if world_config.is_infinite_world() else 1
+	if world_config.is_infinite_world():
+		if not ctx.check(ctx.count_planets_with_size(field, &"xl") >= expected_xl and ctx.count_planets_with_size(field, &"l") >= expected_l, "generated planet size distribution is wrong"):
+			return false
+	else:
+		if not ctx.check(ctx.count_planets_with_size(field, &"xl") == expected_xl and ctx.count_planets_with_size(field, &"l") == expected_l, "generated planet size distribution is wrong"):
+			return false
 	if not ctx.check(source.get_build_slot_count() == 3 and (large_planet as Planet).get_build_slot_count() == 2 and (variable_planet as Planet).get_build_slot_count() == 1, "planet size profiles do not control build space"):
 		return false
 	var source_timer: Timer = ctx.find_timer(source)
 	var large_timer: Timer = ctx.find_timer(large_planet)
 	var variable_timer: Timer = ctx.find_timer(variable_planet)
 
-	if not ctx.check(planet_catalog.planets.size() == 10, "default planet catalog size is wrong"):
-		return false
-	if not ctx.check(ctx.nodes_in_group("planets").size() == planet_catalog.planets.size(), "planet group count is wrong"):
-		return false
+	if world_config.is_infinite_world():
+		if not ctx.check(planet_catalog.planets.size() == 1, "infinite-world catalog should contain one chunk template"):
+			return false
+		if not ctx.check(ctx.nodes_in_group("planets").size() >= 2, "infinite-world planet group is empty"):
+			return false
+	else:
+		if not ctx.check(planet_catalog.planets.size() == 10, "default planet catalog size is wrong"):
+			return false
+		if not ctx.check(ctx.nodes_in_group("planets").size() == planet_catalog.planets.size(), "planet group count is wrong"):
+			return false
 	if not ctx.check(source_timer.wait_time == 5.0 and large_timer.wait_time == 7.0 and variable_timer.wait_time == 10.0, "spawn intervals are wrong"):
 		return false
 	if not ctx.check(not source.is_worker_spawn_enabled() and not large_planet.is_worker_spawn_enabled() and not variable_planet.is_worker_spawn_enabled(), "worker spawning must be disabled before the first worker factory"):
@@ -185,7 +197,8 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(network.get_route_destinations(source).size() == neighbors.size(), "neighbors_only route mode is not enforced"):
 		return false
 	world_config.route_mode = original_route_mode
-	if not ctx.check(panel.visible and destination_option.item_count == route_destinations.size() and route_destinations.size() == 9 and not neighbors.is_empty(), "planet tab or neighbors are missing"):
+	var expected_route_destinations: bool = route_destinations.size() == 9 if not world_config.is_infinite_world() else route_destinations.size() >= neighbors.size() and route_destinations.size() > 0
+	if not ctx.check(panel.visible and destination_option.item_count == route_destinations.size() and expected_route_destinations and not neighbors.is_empty(), "planet tab or neighbors are missing"):
 		return false
 	await ctx.await_frame()
 	var tab_button: Button = ui.get_node("PlanetTabUI/PlanetTab") as Button

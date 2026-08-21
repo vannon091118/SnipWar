@@ -106,7 +106,10 @@ func run(ctx: PreflightContext) -> bool:
 	var catalog_errors := planet_catalog.validate()
 	if not ctx.check(catalog_errors.is_empty(), "planet catalog validation failed"):
 		return false
-	if not ctx.check(world_config.composition_base_textures.size() == 40 and world_config.composition_tint_palettes.size() == 10 and world_config.composition_decal_pool.size() == 18, "world building-block asset pools are incomplete"):
+	if not ctx.check(world_config.composition_base_textures.size() > 0 and world_config.composition_tint_palettes.size() > 0 and world_config.composition_decal_pool.size() > 0, "world building-block asset pools are incomplete"):
+		return false
+	var discovered_assets: Dictionary = AssetLibrary.scan_composition_assets()
+	if not ctx.check(discovered_assets.get("base_textures", []).size() == world_config.composition_base_textures.size() and discovered_assets.get("decal_textures", []).size() == world_config.composition_decal_pool.size(), "startup asset discovery is not wired to the active world config"):
 		return false
 	var composition_assets_valid := true
 	for texture in world_config.composition_base_textures:
@@ -122,10 +125,19 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(game_state.validate_starting_setup().is_empty(), "GameState starting setup validation failed"):
 		return false
-	if not ctx.check(game_state.get_ownership_count(GameState.FACTION_NEUTRAL) == 8 and game_state.get_ownership_count(GameState.FACTION_PLAYER) == 1 and game_state.get_ownership_count(GameState.FACTION_CPU) == 1, "GameState ownership seed does not match the default catalog"):
-		return false
-	if not ctx.check(game_state.homeworld_for(GameState.FACTION_PLAYER) == planet_catalog.planets[0].planet_id and game_state.homeworld_for(GameState.FACTION_CPU) == planet_catalog.planets[1].planet_id, "GameState homeworld assignment is wrong"):
-		return false
+	var coordinator: ChunkCoordinator = field.get_chunk_coordinator()
+	if world_config.is_infinite_world():
+		if not ctx.check(coordinator != null and coordinator.get_active_planets().size() >= 2, "infinite world did not instantiate its starting FoV"):
+			return false
+		if not ctx.check(game_state.get_ownership_count(GameState.FACTION_PLAYER) == 1 and game_state.get_ownership_count(GameState.FACTION_CPU) == 1 and game_state.get_ownership_count(GameState.FACTION_NEUTRAL) >= 1, "infinite-world ownership seed is incomplete"):
+			return false
+		if not ctx.check(game_state.homeworld_for(GameState.FACTION_PLAYER) == &"p0" and game_state.homeworld_for(GameState.FACTION_CPU) == &"p1", "infinite-world homeworld assignment is wrong"):
+			return false
+	else:
+		if not ctx.check(game_state.get_ownership_count(GameState.FACTION_NEUTRAL) == 8 and game_state.get_ownership_count(GameState.FACTION_PLAYER) == 1 and game_state.get_ownership_count(GameState.FACTION_CPU) == 1, "GameState ownership seed does not match the default catalog"):
+			return false
+		if not ctx.check(game_state.homeworld_for(GameState.FACTION_PLAYER) == planet_catalog.planets[0].planet_id and game_state.homeworld_for(GameState.FACTION_CPU) == planet_catalog.planets[1].planet_id, "GameState homeworld assignment is wrong"):
+			return false
 
 	ctx.field = field
 	ctx.network = field.get_node("PlanetNetwork")
