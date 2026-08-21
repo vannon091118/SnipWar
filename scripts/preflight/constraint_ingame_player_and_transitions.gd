@@ -53,26 +53,12 @@ func run(ctx: PreflightContext) -> bool:
 	var visual_fleet := FleetSnapshot.new()
 	visual_fleet.fleet_id = &"fleet_visual_readback"
 	visual_fleet.faction = GameState.FACTION_PLAYER
-	visual_fleet.ships = [{
-		"hull": &"hull_t2",
-		"drive": &"drive_t1",
-		"weapon": &"weapon_t1",
-		"shield": &"shield_t1",
-		"scanner": &"scanner_t2",
-		"modules": [&"module_reactor"]
-	}]
+	visual_fleet.ships = [ctx.make_ship_assembly(&"hull_t2", &"scanner_t2", [&"module_reactor"], &"weapon_t1", &"drive_t1", &"shield_t1")]
 	visual_fleet.calculate_stats()
 	var visual_defender := FleetSnapshot.new()
 	visual_defender.fleet_id = &"fleet_visual_defender"
 	visual_defender.faction = GameState.FACTION_CPU
-	visual_defender.ships = [{
-		"hull": &"hull_t1",
-		"drive": &"drive_t1",
-		"weapon": &"weapon_t1",
-		"shield": &"shield_t1",
-		"scanner": &"scanner_t1",
-		"modules": []
-	}]
+	visual_defender.ships = [ctx.make_ship_assembly(&"hull_t1", &"scanner_t1", [], &"weapon_t1", &"drive_t1", &"shield_t1")]
 	visual_defender.calculate_stats()
 	var visual_result: CombatReplay = FleetBattleSimulator.simulate_battle(visual_fleet, visual_defender, 4242)
 	var visual_spawn: BattleEvent = null
@@ -81,10 +67,8 @@ func run(ctx: PreflightContext) -> bool:
 		if candidate != null and candidate.event_type == BattleEvent.TYPE_SPAWN and candidate.source_id == &"a_0":
 			visual_spawn = candidate
 			break
-	var visual_ship_data: Dictionary = {}
-	if visual_spawn != null:
-		visual_ship_data = visual_spawn.ship_data.duplicate(true)
-	if not ctx.check(visual_ship_data.get("hull", &"") == &"hull_t2", "battle spawn event must preserve its FleetSnapshot ship data"):
+	var visual_ship_data: ShipAssembly = visual_spawn.ship_data if visual_spawn != null else null
+	if not ctx.check(visual_ship_data != null and visual_ship_data.hull_id == &"hull_t2", "battle spawn event must preserve its FleetSnapshot ship data"):
 		return false
 
 	var battle := BattleScene.new()
@@ -97,7 +81,7 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(rendered_ship is CompositeShipView, "BattleScene must render spawn events with CompositeShipView"):
 		return false
 	var rendered_hull: Sprite2D = rendered_ship.get_node_or_null("HullSprite") as Sprite2D
-	if not ctx.check(rendered_hull != null and rendered_hull.texture == preload("res://assets/objects/workers/cluster_m.svg"), "BattleScene must render the event's T2 hull asset"):
+	if not ctx.check(rendered_hull != null and rendered_hull.texture == preload("res://assets/objects/ships/hulls/hull_t2_multirole.svg"), "BattleScene must render the event's T2 hull asset"):
 		return false
 	battle._finish_battle()
 	if not ctx.check(battle.visible == false, "BattleScene should hide on finish"):

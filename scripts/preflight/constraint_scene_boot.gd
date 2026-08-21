@@ -59,6 +59,27 @@ func run(ctx: PreflightContext) -> bool:
 	var background_config: BackgroundConfig = background.get("background_config") as BackgroundConfig
 	if not ctx.check(background_config != null and background_config.validate().is_empty(), "background config validation failed"):
 		return false
+	var ui_theme_config: UIThemeConfig = active_scenario.ui_theme_config if active_scenario != null else null
+	if not ctx.check(ui_theme_config != null and ui_theme_config.validate().is_empty(), "UI theme config validation failed"):
+		return false
+	var ui_backgrounds: Array[Texture2D] = [
+		ui_theme_config.main_menu_background_texture,
+		ui_theme_config.tech_menu_background_texture,
+		ui_theme_config.ship_hangar_background_texture,
+		ui_theme_config.planet_panel_background_texture,
+		ui_theme_config.pause_menu_background_texture,
+		ui_theme_config.modal_background_texture,
+	]
+	var ui_backgrounds_valid := true
+	for texture in ui_backgrounds:
+		if texture == null:
+			ui_backgrounds_valid = false
+			break
+	if not ctx.check(ui_backgrounds_valid, "UI theme is missing one or more graphical background assets"):
+		return false
+	var main_menu_backdrop: Sprite2D = background.get_node_or_null("MainMenuBackdrop") as Sprite2D
+	if not ctx.check(main_menu_backdrop != null and main_menu_backdrop.texture == ui_theme_config.main_menu_background_texture, "main menu background asset is not wired into the background layer"):
+		return false
 	var background_render_stats: Dictionary = background.call("get_render_batch_stats")
 	var background_batch_count: int = int(background_render_stats.get("batch_count", 0))
 	var background_batched_elements: int = int(background_render_stats.get("batched_elements", 0))
@@ -84,6 +105,20 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	var catalog_errors := planet_catalog.validate()
 	if not ctx.check(catalog_errors.is_empty(), "planet catalog validation failed"):
+		return false
+	if not ctx.check(world_config.composition_base_textures.size() == 40 and world_config.composition_tint_palettes.size() == 10 and world_config.composition_decal_pool.size() == 18, "world building-block asset pools are incomplete"):
+		return false
+	var composition_assets_valid := true
+	for texture in world_config.composition_base_textures:
+		if texture == null:
+			composition_assets_valid = false
+	for texture in world_config.composition_decal_pool:
+		if texture == null:
+			composition_assets_valid = false
+	for definition in planet_catalog.planets:
+		if definition == null or definition.composition_base_texture == null or definition.planet_texture != definition.composition_base_texture:
+			composition_assets_valid = false
+	if not ctx.check(composition_assets_valid, "generated planet catalog lost a base or decal composition asset"):
 		return false
 	if not ctx.check(game_state.validate_starting_setup().is_empty(), "GameState starting setup validation failed"):
 		return false

@@ -43,9 +43,7 @@ func run(ctx: PreflightContext) -> bool:
 	var fleet_a := FleetSnapshot.new()
 	fleet_a.fleet_id = &"fleet_test_a"
 	fleet_a.faction = GameState.FACTION_PLAYER
-	fleet_a.ships = [
-		{"hull": &"hull_fighter", "scanner": &"scanner_drone", "modules": [&"mod_laser"]}
-	]
+	fleet_a.ships = [ctx.make_ship_assembly(&"hull_fighter", &"scanner_drone", [&"mod_laser"])]
 	fleet_a.calculate_stats()
 	if not ctx.check(fleet_a.total_hull_hp > 0.0 and fleet_a.total_dps > 0.0, "FleetSnapshot stat calculation failed"):
 		return false
@@ -53,23 +51,14 @@ func run(ctx: PreflightContext) -> bool:
 	var fleet_b := FleetSnapshot.new()
 	fleet_b.fleet_id = &"fleet_test_b"
 	fleet_b.faction = GameState.FACTION_CPU
-	fleet_b.ships = [
-		{"hull": &"hull_fighter", "scanner": &"scanner_drone", "modules": []}
-	]
+	fleet_b.ships = [ctx.make_ship_assembly(&"hull_fighter", &"scanner_drone")]
 	fleet_b.calculate_stats()
 
 	# 3b. Ship-part traits feed the fleet stats used by the simulators.
 	var trait_fleet := FleetSnapshot.new()
 	trait_fleet.fleet_id = &"fleet_trait_readback"
 	trait_fleet.faction = GameState.FACTION_PLAYER
-	trait_fleet.ships = [{
-		"hull": &"hull_fighter",
-		"drive": &"drive_t1",
-		"weapon": &"weapon_t1",
-		"shield": &"shield_t1",
-		"scanner": &"scanner_drone",
-		"modules": []
-	}]
+	trait_fleet.ships = [ctx.make_ship_assembly(&"hull_fighter", &"scanner_drone", [], &"weapon_t1", &"drive_t1", &"shield_t1")]
 	trait_fleet.calculate_stats()
 	if not ctx.check(trait_fleet.total_dps > 10.0 and trait_fleet.total_hull_hp > 50.0 and trait_fleet.speed > 0.0, "drive, weapon, and shield traits were not consumed by FleetSnapshot"):
 		return false
@@ -81,43 +70,24 @@ func run(ctx: PreflightContext) -> bool:
 	var consistency_fleet := FleetSnapshot.new()
 	consistency_fleet.fleet_id = &"fleet_consistency_a"
 	consistency_fleet.faction = GameState.FACTION_PLAYER
-	var consistency_ship: Dictionary = {
-		"hull": &"hull_t2",
-		"drive": &"drive_t1",
-		"weapon": &"weapon_t1",
-		"shield": &"shield_t1",
-		"scanner": &"scanner_t2",
-		"modules": [&"module_reinforced"],
-		"variants": {
-			&"drive": &"drive_fast",
-			&"weapon": &"weapon_precision",
-			&"shield": &"shield_reactive",
-			&"utility": [],
-		},
-	}
+	var consistency_ship: ShipAssembly = ctx.make_ship_assembly(&"hull_t2", &"scanner_t2", [&"module_reinforced"], &"weapon_t1", &"drive_t1", &"shield_t1")
+	consistency_ship.drive_variant_id = &"drive_fast"
+	consistency_ship.weapon_variant_id = &"weapon_precision"
+	consistency_ship.shield_variant_id = &"shield_reactive"
 	consistency_fleet.ships = [consistency_ship]
 	consistency_fleet.calculate_stats(consistency_catalog)
 	var variant_fleet := FleetSnapshot.new()
 	variant_fleet.fleet_id = &"fleet_consistency_variant"
 	variant_fleet.faction = GameState.FACTION_PLAYER
-	var variant_ship: Dictionary = consistency_ship.duplicate(true)
-	var variant_ids: Dictionary = variant_ship.get("variants", {}) as Dictionary
-	variant_ids[&"weapon"] = &"weapon_burst"
-	variant_ids[&"shield"] = &"shield_lattice"
-	variant_ship["variants"] = variant_ids
+	var variant_ship: ShipAssembly = consistency_ship.copy()
+	variant_ship.weapon_variant_id = &"weapon_burst"
+	variant_ship.shield_variant_id = &"shield_lattice"
 	variant_fleet.ships = [variant_ship]
 	variant_fleet.calculate_stats(consistency_catalog)
 	var consistency_defender := FleetSnapshot.new()
 	consistency_defender.fleet_id = &"fleet_consistency_b"
 	consistency_defender.faction = GameState.FACTION_CPU
-	consistency_defender.ships = [{
-		"hull": &"hull_t1",
-		"drive": &"drive_t1",
-		"weapon": &"weapon_t1",
-		"shield": &"shield_t1",
-		"scanner": &"scanner_t1",
-		"modules": [],
-	}]
+	consistency_defender.ships = [ctx.make_ship_assembly(&"hull_t1", &"scanner_t1", [], &"weapon_t1", &"drive_t1", &"shield_t1")]
 	consistency_defender.calculate_stats(consistency_catalog)
 	var consistency_battle: CombatReplay = FleetBattleSimulator.simulate_battle(consistency_fleet, consistency_defender, 1818, consistency_catalog)
 	var variant_battle: CombatReplay = FleetBattleSimulator.simulate_battle(variant_fleet, consistency_defender, 1818, consistency_catalog)
@@ -139,12 +109,23 @@ func run(ctx: PreflightContext) -> bool:
 			break
 	if not ctx.check(consistency_spawn != null and is_equal_approx(consistency_spawn.value, consistency_fleet.total_hull_hp), "battle spawn HP must match FleetSnapshot hull HP including shield/module variants"):
 		return false
-	var persisted_variants: Dictionary = consistency_spawn.ship_data.get("variants", {}) as Dictionary if consistency_spawn != null else {}
-	if not ctx.check(persisted_variants.get(&"weapon", &"") == &"weapon_precision" and persisted_variants.get(&"shield", &"") == &"shield_reactive", "battle spawn event lost persisted combat variants"):
+	if not ctx.check(
+		consistency_spawn != null
+		and consistency_spawn.ship_data.weapon_variant_id == &"weapon_precision"
+		and consistency_spawn.ship_data.shield_variant_id == &"shield_reactive",
+		"battle spawn event lost persisted combat variants"):
 		return false
 	var expected_damage_delta: float = absf(consistency_fleet.total_dps - variant_fleet.total_dps)
 	var actual_damage_delta: float = absf(consistency_fire.value - variant_fire.value) if consistency_fire != null and variant_fire != null else 0.0
-	if not ctx.check(consistency_spawn != null and consistency_spawn.ship_data.get("hull", &"") == &"hull_t2" and consistency_spawn.ship_data.get("drive", &"") == &"drive_t1" and consistency_spawn.ship_data.get("weapon", &"") == &"weapon_t1" and consistency_spawn.ship_data.get("shield", &"") == &"shield_t1" and consistency_spawn.ship_data.get("scanner", &"") == &"scanner_t2" and (consistency_spawn.ship_data.get("modules", []) as Array).has(&"module_reinforced"), "battle spawn event must preserve every combat slot"):
+	if not ctx.check(
+		consistency_spawn != null
+		and consistency_spawn.ship_data.hull_id == &"hull_t2"
+		and consistency_spawn.ship_data.drive_id == &"drive_t1"
+		and consistency_spawn.ship_data.weapon_id == &"weapon_t1"
+		and consistency_spawn.ship_data.shield_id == &"shield_t1"
+		and consistency_spawn.ship_data.scanner_id == &"scanner_t2"
+		and consistency_spawn.ship_data.module_ids.has(&"module_reinforced"),
+		"battle spawn event must preserve every combat slot"):
 		return false
 	if not ctx.check(expected_damage_delta > 0.01, "combat variant probe must change FleetSnapshot DPS"):
 		return false
@@ -206,10 +187,11 @@ func run(ctx: PreflightContext) -> bool:
 	var reinforce := FleetSnapshot.new()
 	reinforce.fleet_id = &"fleet_reinforce"
 	reinforce.faction = arrival_planet.get_faction()
+
 	reinforce.source_planet_id = arrival_planet_id
-	reinforce.ships = [
-		{"hull": &"hull_fighter", "scanner": &"scanner_drone", "modules": [&"mod_laser"]}
-	]
+
+	reinforce.ships =  [ctx.make_ship_assembly(&"hull_fighter", &"scanner_drone", [&"mod_laser"])]
+
 	reinforce.calculate_stats()
 	var reinforce_result: Dictionary = arrival_planet.resolve_ship_arrival(reinforce)
 	if not ctx.check(String(reinforce_result.get("result", "")) == String(Planet.ARRIVAL_FRIENDLY), "same-faction ship arrival must be FRIENDLY"):
@@ -227,9 +209,7 @@ func run(ctx: PreflightContext) -> bool:
 		defender.fleet_id = &"fleet_def"
 		defender.faction = enemy_arrival_planet.get_faction()
 		defender.source_planet_id = enemy_arrival_planet_id
-		defender.ships = [
-			{"hull": &"hull_fighter", "scanner": &"scanner_drone", "modules": []}
-		]
+		defender.ships = [ctx.make_ship_assembly(&"hull_fighter", &"scanner_drone")]
 		defender.calculate_stats()
 
 		var attacker := FleetSnapshot.new()
@@ -237,8 +217,8 @@ func run(ctx: PreflightContext) -> bool:
 		attacker.faction = GameState.FACTION_CPU
 		attacker.source_planet_id = arrival_planet_id
 		attacker.ships = [
-			{"hull": &"hull_fighter", "scanner": &"scanner_drone", "modules": [&"mod_laser"]},
-			{"hull": &"hull_fighter", "scanner": &"scanner_drone", "modules": [&"mod_laser"]}
+			ctx.make_ship_assembly(&"hull_fighter", &"scanner_drone", [&"mod_laser"]),
+			ctx.make_ship_assembly(&"hull_fighter", &"scanner_drone", [&"mod_laser"])
 		]
 		attacker.calculate_stats()
 
@@ -266,9 +246,7 @@ func run(ctx: PreflightContext) -> bool:
 		attacker_only.fleet_id = &"fleet_atk_only"
 		attacker_only.faction = GameState.FACTION_CPU
 		attacker_only.source_planet_id = arrival_planet_id
-		attacker_only.ships = [
-			{"hull": &"hull_fighter", "scanner": &"scanner_drone", "modules": [&"mod_laser"]}
-		]
+		attacker_only.ships = [ctx.make_ship_assembly(&"hull_fighter", &"scanner_drone", [&"mod_laser"])]
 		attacker_only.calculate_stats()
 		var conquest_result: Dictionary = conquest_target.resolve_ship_arrival(attacker_only, null, 0, 1234)
 		var conquest_outcome: String = String(conquest_result.get("result", ""))
@@ -309,7 +287,7 @@ func run(ctx: PreflightContext) -> bool:
 		var neutral_snap := FleetSnapshot.new()
 		neutral_snap.fleet_id = &"fleet_neutral"
 		neutral_snap.faction = GameState.FACTION_NEUTRAL
-		neutral_snap.ships = [{"hull": &"hull_fighter"}]
+		neutral_snap.ships = [ctx.make_ship_assembly(&"hull_fighter")]
 		neutral_snap.calculate_stats()
 		var neutral_result: Dictionary = rejection_planet.resolve_ship_arrival(neutral_snap)
 		if not ctx.check(String(neutral_result.get("result", "")) == String(Planet.ARRIVAL_REJECTED), "neutral-faction fleet must be REJECTED"):
@@ -325,14 +303,7 @@ func run(ctx: PreflightContext) -> bool:
 		seeded.fleet_id = &"fleet_seeded"
 		seeded.faction = draft_source.get_faction()
 		seeded.source_planet_id = draft_source_id
-		seeded.ships = [{
-			"hull": &"hull_fighter",
-			"drive": &"drive_t1",
-			"weapon": &"weapon_t1",
-			"shield": &"shield_t1",
-			"scanner": &"scanner_drone",
-			"modules": [],
-		}]
+		seeded.ships = [ctx.make_ship_assembly(&"hull_fighter", &"scanner_drone", [], &"weapon_t1", &"drive_t1", &"shield_t1", &"seeded_ship", &"military")]
 		seeded.calculate_stats()
 		(ctx.game_state as Node).call("disband_fleet_to_planet", seeded, draft_source_id)
 		if not ctx.check(int((ctx.game_state as Node).get_ship_assemblies(draft_source_id).size()) == 1, "seeded assembly did not land on the source"):

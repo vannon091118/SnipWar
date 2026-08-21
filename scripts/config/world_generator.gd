@@ -60,6 +60,7 @@ static func generate_catalog(config: WorldConfig, seed_value: int, target_count:
 		)
 		definition.composition_base_texture = composition.get("base_texture", null) as Texture2D
 		definition.composition_tint = composition.get("tint", Color.WHITE) as Color
+		definition.composition_decal_textures = _texture_array(composition.get("decal_textures", []))
 		# Keep planet_texture in sync so legacy consumers (conquest replay path
 		# resolution, PlanetDefinition.validate) can resolve generated planets.
 		definition.planet_texture = definition.composition_base_texture
@@ -191,6 +192,15 @@ static func slot_seed(chunk_seed_value: int, slot: int) -> int:
 
 ## Deterministic planet composition from a seed and the world's asset pool.
 ## Returns a lightweight Dictionary with base_texture, tint, and decal_textures.
+static func _texture_array(value: Variant) -> Array[Texture2D]:
+	var result: Array[Texture2D] = []
+	if value is Array:
+		for entry in value:
+			var texture: Texture2D = entry as Texture2D
+			if texture != null:
+				result.append(texture)
+	return result
+
 static func compose_planet(seed_value: int, base_textures: Array[Texture2D], tint_palettes: Array[Color], decal_pool: Array[Texture2D], max_decals: int = 3) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
@@ -276,6 +286,7 @@ static func generate_chunk_planets(
 		)
 		definition.composition_base_texture = composition.get("base_texture", null) as Texture2D
 		definition.composition_tint = composition.get("tint", Color.WHITE) as Color
+		definition.composition_decal_textures = _texture_array(composition.get("decal_textures", []))
 		# Size class: respect max_size_class cap (ship=variable, planet=large, watcher=xl).
 		var size_counts := config.resolved_size_class_counts(chunk_size * chunk_size)
 		var slot_in_chunk := slot

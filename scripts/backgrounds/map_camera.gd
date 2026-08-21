@@ -1,3 +1,4 @@
+class_name MapCamera
 extends Camera2D
 
 signal planet_drag_dropped(source: Node2D, destination: Node2D)
@@ -10,6 +11,7 @@ const PLANET_CLICK_RADIUS := 120.0
 @export_range(2.0, 32.0, 1.0) var drag_threshold: float = 6.0
 
 var _map_bounds: Rect2 = Rect2(Vector2.ZERO, Vector2(960.0, 540.0))
+var _planet_field: SeededLayout
 var _drag_origin: Vector2 = Vector2.ZERO
 var _camera_at_drag_start: Vector2 = Vector2.ZERO
 var _panning: bool = false
@@ -19,24 +21,25 @@ var _pinch_distance: float = 0.0
 var _pinch_zoom_start: float = 1.0
 
 func _ready() -> void:
-	add_to_group("map_camera")
+	var background: Node = get_parent()
+	if background != null:
+		_planet_field = background.get_node_or_null("PlanetField") as SeededLayout
 	make_current()
 	_read_world_bounds()
 	position = _map_bounds.get_center()
 	zoom = Vector2.ONE
 
 func _read_world_bounds() -> void:
-	# In infinite world mode, query the ChunkCoordinator for active bounds.
-	var coordinator: Node = get_tree().get_first_node_in_group("chunk_coordinator") if is_inside_tree() else null
-	if coordinator != null and coordinator.has_method("get_active_bounds"):
+	# In infinite world mode, query the field-owned ChunkCoordinator for active bounds.
+	var coordinator: ChunkCoordinator = _planet_field.get_chunk_coordinator() if _planet_field != null else null
+	if coordinator != null:
 		var bounds: Rect2 = coordinator.get_active_bounds()
 		if bounds.size.x > 0.0 and bounds.size.y > 0.0:
 			_map_bounds = bounds
 			return
-	var parent: Node = get_parent()
-	if parent == null:
+	if _planet_field == null:
 		return
-	var config: WorldConfig = parent.get("world_config") as WorldConfig
+	var config: WorldConfig = _planet_field.world_config
 	if config != null and config.design_size.x > 0.0 and config.design_size.y > 0.0:
 		_map_bounds = Rect2(Vector2.ZERO, config.design_size)
 

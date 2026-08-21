@@ -17,6 +17,7 @@ static func configure_from_cache(planet: Planet, data, size_profile: PlanetSizeP
 	planet.faction = data.faction
 	planet.composition_base_texture = data.composition_base_texture
 	planet.composition_tint = data.composition_tint
+	planet.composition_decal_textures = data.composition_decal_textures
 	# detail_profile must be set for _apply_detail_seed() in _ready().
 	planet.detail_profile = data.detail_profile if data.detail_profile != null else Planet.DEFAULT_DETAIL_PROFILE
 	# set_size_profile() also derives layout_size for the spawn timer.

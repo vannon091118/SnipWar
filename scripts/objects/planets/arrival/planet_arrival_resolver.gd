@@ -68,11 +68,14 @@ static func _resolve_ship_vs_fleet(planet: Planet, arriving_fleet: FleetSnapshot
 	var battle: CombatReplay = FleetBattleSimulator.simulate_battle(arriving_fleet, defender_fleet, battle_seed)
 	planet.conflict_simulated.emit(&"battle", battle.copy())
 	var winner: StringName = battle.winner
-	var survivors: Array[Dictionary] = battle.survivors_a
-	var defender_survivors: Array[Dictionary] = battle.survivors_b
+	var survivors: Array[ShipAssembly] = battle.survivors_a
+	var defender_survivors: Array[ShipAssembly] = battle.survivors_b
 	var state: Node = GameStateAccess.autoload(planet)
+	var surviving_defenders: Array[ShipAssembly] = []
+	if winner != attacking_faction:
+		surviving_defenders = defender_survivors
 	if state != null:
-		state.reconcile_defender_fleet(planet.planet_id, defender_fleet, [] if winner == attacking_faction else defender_survivors)
+		state.reconcile_defender_fleet(planet.planet_id, defender_fleet, surviving_defenders)
 	if winner == attacking_faction:
 		planet.unregister_workers(planet.worker_count)
 		planet.set_faction(attacking_faction)

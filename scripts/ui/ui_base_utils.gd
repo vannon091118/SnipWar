@@ -20,6 +20,26 @@ static func style_box(
 		box.set_corner_radius_all(radius)
 	return box
 
+static func texture_style_box(
+	theme: UIThemeConfig,
+	texture: Texture2D,
+	fallback_background: Color,
+	content_margin: float = 0.0
+) -> StyleBox:
+	if texture == null:
+		return style_box(theme, fallback_background)
+	var box := StyleBoxTexture.new()
+	box.texture = texture
+	box.texture_margin_left = content_margin
+	box.texture_margin_top = content_margin
+	box.texture_margin_right = content_margin
+	box.texture_margin_bottom = content_margin
+	box.content_margin_left = content_margin
+	box.content_margin_top = content_margin
+	box.content_margin_right = content_margin
+	box.content_margin_bottom = content_margin
+	return box
+
 static func make_label(text: String, color: Color, font_size: int, autowrap: bool = true) -> Label:
 	var label := Label.new()
 	label.text = text

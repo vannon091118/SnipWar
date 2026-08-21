@@ -111,8 +111,9 @@ func refresh_shipyard_hangar() -> void:
 	hangar.configure(planet.get_build_slot_count(), planet.is_worker_spawn_enabled(), _active_ship_config())
 
 func add_upgrade_structure(upgrade: PlanetUpgradeDefinition, tint: Color = Color.WHITE) -> void:
-	if upgrade == null or upgrade.visual_asset == null:
+	if upgrade == null or upgrade.asset_for_tier() == null:
 		return
+	var visual_asset: Texture2D = upgrade.asset_for_tier()
 	var structure_name := "UpgradeStructure_" + String(upgrade.id)
 	if has_node(structure_name):
 		return
@@ -135,7 +136,7 @@ func add_upgrade_structure(upgrade: PlanetUpgradeDefinition, tint: Color = Color
 		phase,
 		DEFAULT_FIDELITY
 	)
-	orbit.set_sprite(upgrade.visual_asset, transformer_config.sprite_size)
+	orbit.set_sprite(visual_asset, transformer_config.sprite_size)
 
 	var sprite := orbit.get_node_or_null("Sprite2D") as Sprite2D
 	if sprite != null:

@@ -238,11 +238,15 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(orbital_station.transformer_tint_mode == &"faction", "orbital_station should use faction tint"):
 		return false
 
-	# Test visual assets exist for upgrades
+	# Test visual assets exist for upgrades, including every authored tier.
 	for up in upgrade_catalog.upgrades:
-		if up != null and up.visual_asset == null:
-			ctx.check(false, "upgrade %s missing visual_asset" % up.id)
+		if up == null:
+			continue
+		if not ctx.check(up.visual_asset != null and up.visual_assets_by_tier.size() == 3, "upgrade %s is missing its three tier visual assets" % up.id):
 			return false
+		for tier_asset in up.visual_assets_by_tier:
+			if not ctx.check(tier_asset != null, "upgrade %s contains a null tier visual asset" % up.id):
+				return false
 
 	# --- MISSION SEMANTICS ---
 	var mission_source: Planet = null

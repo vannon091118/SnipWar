@@ -26,7 +26,7 @@ var _planet_view := TechPlanetView.new()
 @onready var _list: VBoxContainer = get_node_or_null("TechTabUI/TechPanel/TechMargin/TechVBox/TechScroll/TechList")
 
 func _ready() -> void:
-	add_to_group("technology_menu")
+	pass
 
 func setup(ship_manager: ShipManager, theme_config: UIThemeConfig = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
@@ -224,7 +224,12 @@ func _apply_theme() -> void:
 	if _panel != null:
 		_panel.add_theme_stylebox_override(
 			"panel",
-			UIBaseUtils.style_box(_theme_config, _theme_config.panel_background, _theme_config.panel_border, _theme_config.panel_border_width, _theme_config.panel_corner_radius)
+			UIBaseUtils.texture_style_box(
+				_theme_config,
+				_theme_config.tech_menu_background_texture,
+				_theme_config.panel_background,
+				float(_theme_config.card_padding)
+			)
 		)
 	if _tab_button != null:
 		_tab_button.add_theme_color_override("font_color", _theme_config.tab_text_color)

@@ -179,6 +179,7 @@ func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
 		data.display_name = def.display_name
 		data.composition_base_texture = def.composition_base_texture
 		data.composition_tint = def.composition_tint
+		data.composition_decal_textures = def.composition_decal_textures
 		data.detail_profile = def.detail_profile
 		data.size_class = _resolve_size_class(slot, cs)
 		data.faction = &"neutral"
@@ -351,6 +352,7 @@ class ChunkPlanetData:
 	var display_name: String
 	var composition_base_texture: Texture2D
 	var composition_tint: Color
+	var composition_decal_textures: Array[Texture2D] = []
 	var detail_profile: PlanetDetailProfile
 	var size_class: StringName
 	var faction: StringName

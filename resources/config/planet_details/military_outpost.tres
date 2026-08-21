@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="PlanetDetailDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/planet_detail_definition.gd" id="1_definition"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/details/detail_military_outpost.svg" id="2_texture"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/fidelity_throttled.tres" id="3_fidelity"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"military_outpost"
+node_name_prefix = "MilitaryOutpost"
+orbit_radius_range = Vector2(130, 146)
+angular_speed_range = Vector2(-0.1, -0.06)
+phase_range = Vector2(0, 6.283185)
+fidelity = ExtResource("3_fidelity")
+sprite_size_range = Vector2(18, 22)
+instance_count = 1
+textures = [ExtResource("2_texture")]

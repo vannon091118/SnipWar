@@ -19,6 +19,13 @@ extends Resource
 @export_range(1, 96, 1) var selected_count_font_size: int
 @export var panel_background: Color
 @export var panel_border: Color
+@export_group("Background Assets")
+@export var main_menu_background_texture: Texture2D
+@export var tech_menu_background_texture: Texture2D
+@export var ship_hangar_background_texture: Texture2D
+@export var planet_panel_background_texture: Texture2D
+@export var pause_menu_background_texture: Texture2D
+@export var modal_background_texture: Texture2D
 @export var tab_text_color: Color
 @export var heading_text_color: Color
 @export var selected_planet_text_color: Color

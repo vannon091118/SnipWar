@@ -1,16 +1,26 @@
-[gd_resource type="Resource" script_class="PlanetDetailProfile" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="PlanetDetailProfile" load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/planet_detail_profile.gd" id="1_profile"]
 [ext_resource type="Script" path="res://scripts/config/planet_detail_definition.gd" id="2_definition"]
 [ext_resource type="Resource" path="res://resources/config/planet_details/satellite.tres" id="3_satellite"]
 [ext_resource type="Resource" path="res://resources/config/planet_details/asteroid_belt.tres" id="4_belt"]
 [ext_resource type="Resource" path="res://resources/config/planet_details/comet.tres" id="5_comet"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/thin_ring.tres" id="6_thin_ring"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/thick_ring.tres" id="7_thick_ring"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/segmented_ring.tres" id="8_segmented_ring"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/research_station.tres" id="9_research_station"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/military_outpost.tres" id="10_military_outpost"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/moon_barren.tres" id="11_moon_barren"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/moon_ice.tres" id="12_moon_ice"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/wormhole_marker.tres" id="13_wormhole_marker"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/mining_platform.tres" id="14_mining_platform"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/refinery_complex.tres" id="15_refinery_complex"]
 
 [resource]
 script = ExtResource("1_profile")
 id = &"toxic"
 max_details = 3
 optional_count_range = Vector2i(0, 1)
-definitions = Array[ExtResource("2_definition")]([ExtResource("3_satellite"), ExtResource("4_belt"), ExtResource("5_comet")])
+definitions = Array[ExtResource("2_definition")]([ExtResource("3_satellite"), ExtResource("4_belt"), ExtResource("5_comet"), ExtResource("6_thin_ring"), ExtResource("7_thick_ring"), ExtResource("8_segmented_ring"), ExtResource("9_research_station"), ExtResource("10_military_outpost"), ExtResource("11_moon_barren"), ExtResource("12_moon_ice"), ExtResource("13_wormhole_marker"), ExtResource("14_mining_platform"), ExtResource("15_refinery_complex")])
 guaranteed_detail_ids = [&"satellite", &"asteroid_belt"]
-optional_detail_ids = [&"comet"]
+optional_detail_ids = [&"comet", &"thin_ring", &"thick_ring", &"segmented_ring", &"research_station", &"military_outpost", &"moon_barren", &"moon_ice", &"wormhole_marker", &"mining_platform", &"refinery_complex"]

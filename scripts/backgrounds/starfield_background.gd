@@ -4,6 +4,7 @@ extends Node2D
 const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_default.tres")
 const DEFAULT_BACKGROUND_CONFIG: BackgroundConfig = preload("res://resources/config/background_default.tres")
 const DEFAULT_SCENARIO_CATALOG: ScenarioCatalog = preload("res://resources/config/scenario_catalog.tres")
+const DEFAULT_UI_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
 
 @export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG
 @export var background_config: BackgroundConfig = DEFAULT_BACKGROUND_CONFIG
@@ -29,6 +30,7 @@ var _batch_nodes: Array[MultiMeshInstance2D] = []
 var _circle_texture: Texture2D
 var _diamond_texture: Texture2D
 var _shape_texture_size := 0
+var _main_menu_backdrop: Sprite2D
 ## Visible region for infinite world (follows FoV). Only updated on chunk
 ## boundary change, not per frame, to avoid star regeneration overhead.
 var _visible_region := Rect2(Vector2.ZERO, Vector2(960, 540))
@@ -120,6 +122,7 @@ func _disable_collision_debug_overlay() -> void:
 func _ready() -> void:
 	_disable_collision_debug_overlay()
 	_generate_elements()
+	_ensure_main_menu_backdrop()
 	_rebuild_render_batches()
 	var viewport := get_viewport()
 	if viewport != null:
@@ -127,6 +130,33 @@ func _ready() -> void:
 		if not viewport.size_changed.is_connected(resize_callable):
 			viewport.size_changed.connect(resize_callable)
 	queue_redraw()
+
+func _ensure_main_menu_backdrop() -> void:
+	if _main_menu_backdrop != null and is_instance_valid(_main_menu_backdrop):
+		_update_main_menu_backdrop()
+		return
+	var texture: Texture2D = DEFAULT_UI_THEME.main_menu_background_texture
+	if texture == null:
+		return
+	_main_menu_backdrop = Sprite2D.new()
+	_main_menu_backdrop.name = "MainMenuBackdrop"
+	_main_menu_backdrop.texture = texture
+	_main_menu_backdrop.centered = false
+	# Keep the backdrop above the root's procedural draw and below the map
+	# children; a negative relative z would place it behind the Background node.
+	_main_menu_backdrop.z_index = 0
+	_main_menu_backdrop.modulate = Color(1.0, 1.0, 1.0, 0.35)
+	add_child(_main_menu_backdrop)
+	_update_main_menu_backdrop()
+
+func _update_main_menu_backdrop() -> void:
+	if _main_menu_backdrop == null or not is_instance_valid(_main_menu_backdrop) or _main_menu_backdrop.texture == null:
+		return
+	var size: Vector2 = _world_size()
+	var texture_size: Vector2 = _main_menu_backdrop.texture.get_size()
+	if size.x <= 0.0 or size.y <= 0.0 or texture_size.x <= 0.0 or texture_size.y <= 0.0:
+		return
+	_main_menu_backdrop.scale = Vector2(size.x / texture_size.x, size.y / texture_size.y)
 
 func _generate_elements() -> void:
 	stars.clear()
@@ -176,6 +206,7 @@ func _generate_elements() -> void:
 		})
 
 func _on_viewport_size_changed() -> void:
+	_update_main_menu_backdrop()
 	_rebuild_render_batches()
 	queue_redraw()
 

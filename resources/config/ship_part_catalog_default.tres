@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ShipPartCatalog" load_steps=38 format=3]
+[gd_resource type="Resource" script_class="ShipPartCatalog" load_steps=90 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/ship_part_catalog.gd" id="1_catalog"]
 [ext_resource type="Script" path="res://scripts/config/ship_part_definition.gd" id="2_part"]
@@ -19,6 +19,45 @@
 [ext_resource type="Texture2D" path="res://assets/objects/ships/drive_advanced.svg" id="17_drive_advanced"]
 [ext_resource type="Texture2D" path="res://assets/objects/ships/armor_heavy.svg" id="18_armor_heavy"]
 [ext_resource type="Texture2D" path="res://assets/objects/ships/sensor_array.svg" id="19_sensor_array"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/hulls/hull_t1_scout.svg" id="20_hull_t1_scout"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/hulls/hull_t1_interceptor.svg" id="21_hull_t1_interceptor"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/hulls/hull_t1_courier.svg" id="22_hull_t1_courier"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/hulls/hull_t2_multirole.svg" id="23_hull_t2_multirole"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/hulls/hull_t2_carrier.svg" id="24_hull_t2_carrier"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/hulls/hull_t2_destroyer.svg" id="25_hull_t2_destroyer"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/hulls/hull_t3_expansion.svg" id="26_hull_t3_expansion"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/hulls/hull_t3_dreadnought.svg" id="27_hull_t3_dreadnought"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/hulls/hull_t3_colony.svg" id="28_hull_t3_colony"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drive_t1_ion_green.svg" id="29_drive_t1_green"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drive_t1_plasma_red.svg" id="30_drive_t1_plasma"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drive_t2_grav_purple.svg" id="31_drive_t2_purple"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drive_t2_warp_gold.svg" id="32_drive_t2_warp"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/weapon_t1_beam.svg" id="33_weapon_t1_beam"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/weapon_t1_projectile.svg" id="34_weapon_t1_projectile"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/weapon_t1_pulse.svg" id="35_weapon_t1_pulse"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/weapon_t2_plasma.svg" id="36_weapon_t2_plasma"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/weapon_t2_railgun.svg" id="37_weapon_t2_railgun"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/weapon_t2_missile.svg" id="38_weapon_t2_missile"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/shield_t1_bubble.svg" id="39_shield_t1_bubble"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/shield_t1_lattice.svg" id="40_shield_t1_lattice"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/shield_t1_reactive.svg" id="41_shield_t1_reactive"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/shield_t2_phase.svg" id="42_shield_t2_phase"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/shield_t2_harmonic.svg" id="43_shield_t2_harmonic"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/shield_t2_ablative.svg" id="44_shield_t2_ablative"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scanner_t1_dish.svg" id="45_scanner_t1_dish"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scanner_t1_array.svg" id="46_scanner_t1_array"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scanner_t2_phased.svg" id="47_scanner_t2_phased"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scanner_t2_quantum.svg" id="48_scanner_t2_quantum"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_armor.svg" id="49_module_armor"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_fuel.svg" id="50_module_fuel"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_cargo.svg" id="51_module_cargo"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_reactor.svg" id="52_module_reactor"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_reinforced.svg" id="53_module_reinforced"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_sensor.svg" id="54_module_sensor"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_ecm.svg" id="55_module_ecm"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_repair.svg" id="56_module_repair"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drive_t1_ion_blue.svg" id="57_drive_t1_blue"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drive_t2_grav_blue.svg" id="58_drive_t2_blue"]
 
 [sub_resource type="Resource" id="Trait_drive_t1"]
 script = ExtResource("3_trait")
@@ -90,7 +129,7 @@ hull_hp_bonus = 25
 script = ExtResource("13_variant")
 id = &"drive_fast"
 display_name = "Überladener Ionenstrom"
-visual_asset = ExtResource("11_drive")
+visual_asset = ExtResource("29_drive_t1_green")
 trait_modifiers = SubResource("Trait_drive_variant_fast")
 weight = 1.0
 min_tier = 1
@@ -99,7 +138,7 @@ min_tier = 1
 script = ExtResource("13_variant")
 id = &"drive_stable"
 display_name = "Stabilisierter Ionenstrom"
-visual_asset = ExtResource("8_fuel")
+visual_asset = ExtResource("30_drive_t1_plasma")
 trait_modifiers = SubResource("Trait_drive_variant_stable")
 weight = 2.0
 min_tier = 1
@@ -108,7 +147,7 @@ min_tier = 1
 script = ExtResource("13_variant")
 id = &"weapon_precision"
 display_name = "Präzisionskern"
-visual_asset = ExtResource("11_drive")
+visual_asset = ExtResource("34_weapon_t1_projectile")
 trait_modifiers = SubResource("Trait_weapon_variant_precision")
 weight = 2.0
 min_tier = 1
@@ -117,7 +156,7 @@ min_tier = 1
 script = ExtResource("13_variant")
 id = &"weapon_burst"
 display_name = "Salvenkern"
-visual_asset = ExtResource("10_weapon")
+visual_asset = ExtResource("35_weapon_t1_pulse")
 trait_modifiers = SubResource("Trait_weapon_variant_burst")
 weight = 1.0
 min_tier = 1
@@ -126,7 +165,7 @@ min_tier = 1
 script = ExtResource("13_variant")
 id = &"shield_lattice"
 display_name = "Gitterfeld"
-visual_asset = ExtResource("12_shield")
+visual_asset = ExtResource("40_shield_t1_lattice")
 trait_modifiers = SubResource("Trait_shield_variant_lattice")
 weight = 2.0
 min_tier = 1
@@ -135,10 +174,80 @@ min_tier = 1
 script = ExtResource("13_variant")
 id = &"shield_reactive"
 display_name = "Reaktivfeld"
-visual_asset = ExtResource("15_ice")
+visual_asset = ExtResource("41_shield_t1_reactive")
 trait_modifiers = SubResource("Trait_shield_variant_reactive")
 weight = 1.0
 min_tier = 1
+
+[sub_resource type="Resource" id="Variant_drive_t2_purple"]
+script = ExtResource("13_variant")
+id = &"drive_t2_purple"
+display_name = "Purpurne Gravitationsspulen"
+visual_asset = ExtResource("31_drive_t2_purple")
+trait_modifiers = SubResource("Trait_drive_variant_fast")
+weight = 1.0
+min_tier = 2
+
+[sub_resource type="Resource" id="Variant_drive_t2_warp"]
+script = ExtResource("13_variant")
+id = &"drive_t2_warp"
+display_name = "Goldener Warp-Kern"
+visual_asset = ExtResource("32_drive_t2_warp")
+trait_modifiers = SubResource("Trait_drive_variant_stable")
+weight = 2.0
+min_tier = 2
+
+[sub_resource type="Resource" id="Variant_weapon_t2_railgun"]
+script = ExtResource("13_variant")
+id = &"weapon_t2_railgun"
+display_name = "Schienenbeschleuniger"
+visual_asset = ExtResource("37_weapon_t2_railgun")
+trait_modifiers = SubResource("Trait_weapon_variant_precision")
+weight = 2.0
+min_tier = 2
+
+[sub_resource type="Resource" id="Variant_weapon_t2_missile"]
+script = ExtResource("13_variant")
+id = &"weapon_t2_missile"
+display_name = "Lenkraketen-Salve"
+visual_asset = ExtResource("38_weapon_t2_missile")
+trait_modifiers = SubResource("Trait_weapon_variant_burst")
+weight = 1.0
+min_tier = 2
+
+[sub_resource type="Resource" id="Variant_shield_t2_harmonic"]
+script = ExtResource("13_variant")
+id = &"shield_t2_harmonic"
+display_name = "Harmonisches Feld"
+visual_asset = ExtResource("43_shield_t2_harmonic")
+trait_modifiers = SubResource("Trait_shield_variant_lattice")
+weight = 2.0
+min_tier = 2
+
+[sub_resource type="Resource" id="Variant_shield_t2_ablative"]
+script = ExtResource("13_variant")
+id = &"shield_t2_ablative"
+display_name = "Ablative Matrix"
+visual_asset = ExtResource("44_shield_t2_ablative")
+trait_modifiers = SubResource("Trait_shield_variant_reactive")
+weight = 1.0
+min_tier = 2
+
+[sub_resource type="Resource" id="Variant_scanner_t1_array"]
+script = ExtResource("13_variant")
+id = &"scanner_t1_array"
+display_name = "Scanner-Array"
+visual_asset = ExtResource("46_scanner_t1_array")
+weight = 1.0
+min_tier = 1
+
+[sub_resource type="Resource" id="Variant_scanner_t2_quantum"]
+script = ExtResource("13_variant")
+id = &"scanner_t2_quantum"
+display_name = "Quanten-Scanner"
+visual_asset = ExtResource("48_scanner_t2_quantum")
+weight = 1.0
+min_tier = 2
 
 [sub_resource type="Resource" id="Blueprint_standard"]
 script = ExtResource("14_blueprint")
@@ -155,7 +264,7 @@ description = "Leichter Standard-Rumpf für Scout-Schiffe."
 cost_resource = &"material"
 cost_amount = 5
 tier = 1
-visual_asset = ExtResource("4_hull_k")
+visual_asset = ExtResource("20_hull_t1_scout")
 required_tech_id = &"shipyard_construction"
 build_time = 63.0
 
@@ -168,7 +277,7 @@ description = "Verstärkter Rumpf für größere Aufbauten."
 cost_resource = &"material"
 cost_amount = 10
 tier = 2
-visual_asset = ExtResource("5_hull_m")
+visual_asset = ExtResource("23_hull_t2_multirole")
 required_tech_id = &"weapon_systems"
 build_time = 123.0
 
@@ -181,7 +290,85 @@ description = "Schwerer Rumpf für die erste interplanetare Kolonisierung."
 cost_resource = &"material"
 cost_amount = 20
 tier = 3
-visual_asset = ExtResource("10_weapon")
+visual_asset = ExtResource("26_hull_t3_expansion")
+required_tech_id = &"weapon_systems"
+build_time = 183.0
+
+[sub_resource type="Resource" id="Part_hull_t1_interceptor"]
+script = ExtResource("2_part")
+id = &"hull_t1_interceptor"
+slot_type = &"hull"
+display_name = "Abfangrumpf T1"
+description = "Wendiger T1-Rumpf mit Deltaflügeln."
+cost_resource = &"material"
+cost_amount = 6
+tier = 1
+visual_asset = ExtResource("21_hull_t1_interceptor")
+required_tech_id = &"shipyard_construction"
+build_time = 63.0
+
+[sub_resource type="Resource" id="Part_hull_t1_courier"]
+script = ExtResource("2_part")
+id = &"hull_t1_courier"
+slot_type = &"hull"
+display_name = "Kurier-Rumpf T1"
+description = "Leichter Langstreckenrumpf mit seitlichen Gondeln."
+cost_resource = &"material"
+cost_amount = 6
+tier = 1
+visual_asset = ExtResource("22_hull_t1_courier")
+required_tech_id = &"shipyard_construction"
+build_time = 63.0
+
+[sub_resource type="Resource" id="Part_hull_t2_carrier"]
+script = ExtResource("2_part")
+id = &"hull_t2_carrier"
+slot_type = &"hull"
+display_name = "Trägerrumpf T2"
+description = "Breiter T2-Rumpf mit sichtbaren Startbuchten."
+cost_resource = &"material"
+cost_amount = 12
+tier = 2
+visual_asset = ExtResource("24_hull_t2_carrier")
+required_tech_id = &"weapon_systems"
+build_time = 123.0
+
+[sub_resource type="Resource" id="Part_hull_t2_destroyer"]
+script = ExtResource("2_part")
+id = &"hull_t2_destroyer"
+slot_type = &"hull"
+display_name = "Zerstörer-Rumpf T2"
+description = "Waffenlastiger T2-Rumpf mit sichtbaren Hardpoints."
+cost_resource = &"material"
+cost_amount = 12
+tier = 2
+visual_asset = ExtResource("25_hull_t2_destroyer")
+required_tech_id = &"weapon_systems"
+build_time = 123.0
+
+[sub_resource type="Resource" id="Part_hull_t3_colony"]
+script = ExtResource("2_part")
+id = &"hull_t3_colony"
+slot_type = &"hull"
+display_name = "Kolonierumpf T3"
+description = "Schwerer T3-Rumpf mit doppeltem Habitat-Ring."
+cost_resource = &"material"
+cost_amount = 22
+tier = 3
+visual_asset = ExtResource("28_hull_t3_colony")
+required_tech_id = &"weapon_systems"
+build_time = 183.0
+
+[sub_resource type="Resource" id="Part_hull_t3_dreadnought"]
+script = ExtResource("2_part")
+id = &"hull_t3_dreadnought"
+slot_type = &"hull"
+display_name = "Dreadnought-Rumpf T3"
+description = "Maximal gepanzerter T3-Kampfrumpf."
+cost_resource = &"material"
+cost_amount = 22
+tier = 3
+visual_asset = ExtResource("27_hull_t3_dreadnought")
 required_tech_id = &"weapon_systems"
 build_time = 183.0
 
@@ -194,7 +381,8 @@ description = "Kartografiert bei Ankunft einen unbekannten Planeten."
 cost_resource = &"energy"
 cost_amount = 6
 tier = 1
-visual_asset = ExtResource("6_scanner")
+visual_asset = ExtResource("45_scanner_t1_dish")
+variant_pool = [SubResource("Variant_scanner_t1_array")]
 required_tech_id = &"scanner_drone"
 build_time = 4.0
 
@@ -207,7 +395,7 @@ description = "Der Antrieb bestimmt die Transfergeschwindigkeit des Schiffs."
 cost_resource = &"volatile"
 cost_amount = 6
 tier = 1
-visual_asset = ExtResource("11_drive")
+visual_asset = ExtResource("57_drive_t1_blue")
 trait_definition = SubResource("Trait_drive_t1")
 variant_pool = [SubResource("Variant_drive_fast"), SubResource("Variant_drive_stable")]
 required_tech_id = &"shipyard_construction"
@@ -222,7 +410,7 @@ description = "Erste Bordbewaffnung; macht aus einem Montageauftrag ein militär
 cost_resource = &"volatile"
 cost_amount = 8
 tier = 1
-visual_asset = ExtResource("10_weapon")
+visual_asset = ExtResource("33_weapon_t1_beam")
 trait_definition = SubResource("Trait_weapon_t1")
 variant_pool = [SubResource("Variant_weapon_precision"), SubResource("Variant_weapon_burst")]
 required_tech_id = &"weapon_systems"
@@ -237,7 +425,7 @@ description = "Schützt den Rumpf und macht die Hüllenstärke im Readback sicht
 cost_resource = &"energy"
 cost_amount = 8
 tier = 1
-visual_asset = ExtResource("12_shield")
+visual_asset = ExtResource("39_shield_t1_bubble")
 trait_definition = SubResource("Trait_shield_t1")
 variant_pool = [SubResource("Variant_shield_lattice"), SubResource("Variant_shield_reactive")]
 required_tech_id = &"shipyard_construction"
@@ -274,9 +462,9 @@ description = "Schneller Antrieb mit höherer Montagezeit."
 cost_resource = &"volatile"
 cost_amount = 14
 tier = 2
-visual_asset = ExtResource("8_fuel")
+visual_asset = ExtResource("58_drive_t2_blue")
 trait_definition = SubResource("Trait_drive_t2")
-variant_pool = [SubResource("Variant_drive_fast"), SubResource("Variant_drive_stable")]
+variant_pool = [SubResource("Variant_drive_t2_purple"), SubResource("Variant_drive_t2_warp")]
 required_tech_id = &"weapon_systems"
 build_time = 10.0
 
@@ -289,9 +477,9 @@ description = "Schwere Bordwaffe mit hohem Schaden."
 cost_resource = &"volatile"
 cost_amount = 18
 tier = 2
-visual_asset = ExtResource("10_weapon")
+visual_asset = ExtResource("36_weapon_t2_plasma")
 trait_definition = SubResource("Trait_weapon_t2")
-variant_pool = [SubResource("Variant_weapon_precision"), SubResource("Variant_weapon_burst")]
+variant_pool = [SubResource("Variant_weapon_t2_railgun"), SubResource("Variant_weapon_t2_missile")]
 required_tech_id = &"weapon_systems"
 build_time = 24.0
 
@@ -304,9 +492,9 @@ description = "Schwere Schildmatrix für Kolonie- und Militärschiffe."
 cost_resource = &"energy"
 cost_amount = 18
 tier = 2
-visual_asset = ExtResource("15_ice")
+visual_asset = ExtResource("42_shield_t2_phase")
 trait_definition = SubResource("Trait_shield_t2")
-variant_pool = [SubResource("Variant_shield_lattice"), SubResource("Variant_shield_reactive")]
+variant_pool = [SubResource("Variant_shield_t2_harmonic"), SubResource("Variant_shield_t2_ablative")]
 required_tech_id = &"weapon_systems"
 build_time = 12.0
 
@@ -319,7 +507,7 @@ description = "Zusätzliche Hüllenpanzerung für das Schiff."
 cost_resource = &"material"
 cost_amount = 4
 tier = 1
-visual_asset = ExtResource("7_armor")
+visual_asset = ExtResource("49_module_armor")
 build_time = 10.0
 
 [sub_resource type="Resource" id="Part_module_fuel"]
@@ -331,7 +519,7 @@ description = "Erweiterter Tank für längere Routen."
 cost_resource = &"volatile"
 cost_amount = 4
 tier = 1
-visual_asset = ExtResource("8_fuel")
+visual_asset = ExtResource("50_module_fuel")
 build_time = 10.0
 
 [sub_resource type="Resource" id="Part_module_cargo"]
@@ -343,7 +531,7 @@ description = "Zusätzlicher Laderaum für Versorgungsmissionen."
 cost_resource = &"material"
 cost_amount = 4
 tier = 1
-visual_asset = ExtResource("9_cargo")
+visual_asset = ExtResource("51_module_cargo")
 build_time = 10.0
 
 [sub_resource type="Resource" id="Part_scanner_t2"]
@@ -355,7 +543,8 @@ description = "Hochauflösender Scanner für detailliertere Scan-Intel."
 cost_resource = &"energy"
 cost_amount = 12
 tier = 2
-visual_asset = ExtResource("16_scanner_t2")
+visual_asset = ExtResource("47_scanner_t2_phased")
+variant_pool = [SubResource("Variant_scanner_t2_quantum")]
 required_tech_id = &"deep_scan"
 build_time = 8.0
 
@@ -375,7 +564,7 @@ description = "Ein kompakter Reaktorkern für schnellere Schiffstransfers."
 cost_resource = &"volatile"
 cost_amount = 8
 tier = 1
-visual_asset = ExtResource("17_drive_advanced")
+visual_asset = ExtResource("52_module_reactor")
 trait_definition = SubResource("Trait_module_reactor")
 required_tech_id = &"advanced_propulsion"
 build_time = 10.0
@@ -396,7 +585,7 @@ description = "Zusätzliche Platten erhöhen die Hüllenintegrität."
 cost_resource = &"material"
 cost_amount = 8
 tier = 1
-visual_asset = ExtResource("18_armor_heavy")
+visual_asset = ExtResource("53_module_reinforced")
 trait_definition = SubResource("Trait_module_reinforced")
 required_tech_id = &"heavy_armor_plating"
 build_time = 10.0
@@ -417,13 +606,39 @@ description = "Ein Gitter aus Antennen für größere Sensorreichweite."
 cost_resource = &"rare"
 cost_amount = 8
 tier = 1
-visual_asset = ExtResource("19_sensor_array")
+visual_asset = ExtResource("54_module_sensor")
 trait_definition = SubResource("Trait_module_sensor_array")
 required_tech_id = &"long_range_sensors"
+build_time = 10.0
+
+[sub_resource type="Resource" id="Part_module_ecm"]
+script = ExtResource("2_part")
+id = &"module_ecm"
+slot_type = &"utility"
+display_name = "ECM-Modul"
+description = "Stört feindliche Zielerfassung im taktischen Readback."
+cost_resource = &"rare"
+cost_amount = 8
+tier = 1
+visual_asset = ExtResource("55_module_ecm")
+required_tech_id = &"weapon_systems"
+build_time = 10.0
+
+[sub_resource type="Resource" id="Part_module_repair"]
+script = ExtResource("2_part")
+id = &"module_repair"
+slot_type = &"utility"
+display_name = "Reparaturmodul"
+description = "Stabilisiert beschädigte Hüllen während langer Transfers."
+cost_resource = &"energy"
+cost_amount = 8
+tier = 1
+visual_asset = ExtResource("56_module_repair")
+required_tech_id = &"scanner_drone"
 build_time = 10.0
 
 [resource]
 script = ExtResource("1_catalog")
 max_module_slots = 2
 blueprints = [SubResource("Blueprint_standard")]
-parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t2"), SubResource("Part_hull_t3"), SubResource("Part_scanner_t1"), SubResource("Part_scanner_t2"), SubResource("Part_drive_t1"), SubResource("Part_drive_t2"), SubResource("Part_weapon_t1"), SubResource("Part_weapon_t2"), SubResource("Part_shield_t1"), SubResource("Part_shield_t2"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo"), SubResource("Part_module_reactor"), SubResource("Part_module_reinforced"), SubResource("Part_module_sensor_array")]
+parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t1_interceptor"), SubResource("Part_hull_t1_courier"), SubResource("Part_hull_t2"), SubResource("Part_hull_t2_carrier"), SubResource("Part_hull_t2_destroyer"), SubResource("Part_hull_t3"), SubResource("Part_hull_t3_colony"), SubResource("Part_hull_t3_dreadnought"), SubResource("Part_scanner_t1"), SubResource("Part_scanner_t2"), SubResource("Part_drive_t1"), SubResource("Part_drive_t2"), SubResource("Part_weapon_t1"), SubResource("Part_weapon_t2"), SubResource("Part_shield_t1"), SubResource("Part_shield_t2"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo"), SubResource("Part_module_reactor"), SubResource("Part_module_reinforced"), SubResource("Part_module_sensor_array"), SubResource("Part_module_ecm"), SubResource("Part_module_repair")]

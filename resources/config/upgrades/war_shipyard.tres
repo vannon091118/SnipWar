@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" uid="uid://c46aw7c040kwr" path="res://scripts/config/planet_upgrade_definition.gd" id="1_def"]
 [ext_resource type="Script" uid="uid://dfbxa4ac73vfm" path="res://scripts/config/trait_definition.gd" id="2_trait_script"]
-[ext_resource type="Texture2D" uid="uid://dqd60ufhmbjn6" path="res://assets/objects/workers/cluster_l.svg" id="3_asset"]
+[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_war_shipyard_l1.svg" id="3_asset_l1"]
+[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_war_shipyard_l2.svg" id="4_asset_l2"]
+[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_war_shipyard_l3.svg" id="5_asset_l3"]
 
 [sub_resource type="Resource" id="Trait_war_shipyard"]
 script = ExtResource("2_trait_script")
@@ -28,4 +30,5 @@ cost_resource = &"material"
 cost_amount = 30
 cost_workers = 3
 trait_definition = SubResource("Trait_war_shipyard")
-visual_asset = ExtResource("3_asset")
+visual_asset = ExtResource("3_asset_l1")
+visual_assets_by_tier = [ExtResource("3_asset_l1"), ExtResource("4_asset_l2"), ExtResource("5_asset_l3")]

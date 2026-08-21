@@ -22,7 +22,12 @@ func _build_visuals() -> void:
 	if _label != null and is_instance_valid(_label):
 		return
 	var theme_cfg: UIThemeConfig = DEFAULT_THEME
-	var style := theme_cfg.make_style_box(theme_cfg.button_hover_background, theme_cfg.panel_border, 1, theme_cfg.panel_corner_radius)
+	var style: StyleBox = UIBaseUtils.texture_style_box(
+		theme_cfg,
+		theme_cfg.modal_background_texture,
+		theme_cfg.button_hover_background,
+		8.0
+	)
 	add_theme_stylebox_override("panel", style)
 	_label = Label.new()
 	_label.name = "SelectionTooltipLabel"

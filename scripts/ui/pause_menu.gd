@@ -3,22 +3,37 @@ extends CanvasLayer
 
 signal pause_toggled(paused: bool)
 
-var _overlay: ColorRect
+const DEFAULT_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
+
+var _overlay: Control
 var _content: VBoxContainer
 var _title: Label
 var _resume_button: Button
 var _hint: Label
+var _planet_network: PlanetNetwork
 
 func _ready() -> void:
+	var background: Node = get_parent()
+	if background != null:
+		_planet_network = background.get_node_or_null("PlanetField/PlanetNetwork") as PlanetNetwork
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 70
 	_build_ui()
 	set_paused(false)
 
 func _build_ui() -> void:
-	_overlay = ColorRect.new()
-	_overlay.name = "Overlay"
-	_overlay.color = Color(0.0, 0.0, 0.0, 0.55)
+	var texture_overlay := TextureRect.new()
+	texture_overlay.texture = DEFAULT_THEME.pause_menu_background_texture
+	texture_overlay.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	texture_overlay.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	texture_overlay.name = "Overlay"
+	texture_overlay.modulate = Color(1.0, 1.0, 1.0, 0.92)
+	_overlay = texture_overlay
+	if texture_overlay.texture == null:
+		var fallback_overlay := ColorRect.new()
+		fallback_overlay.color = Color(0.0, 0.0, 0.0, 0.55)
+		fallback_overlay.name = "Overlay"
+		_overlay = fallback_overlay
 	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	_overlay.visible = false
@@ -92,16 +107,10 @@ func set_paused(paused: bool) -> void:
 	pause_toggled.emit(paused)
 
 func _overlay_ui_open() -> bool:
-	var network: Node = get_tree().get_first_node_in_group("planet_network")
-	if network != null and network.has_method("get_ui"):
-		var ui: Node = network.call("get_ui")
-		if ui != null and ui.has_method("is_panel_visible") and ui.call("is_panel_visible"):
-			return true
-	var menu: Node = _find_technology_menu()
-	if menu != null and menu.has_method("is_open") and menu.call("is_open"):
+	if _planet_network == null or not is_instance_valid(_planet_network):
+		return false
+	var ui: PlanetNetworkUI = _planet_network.get_ui()
+	if ui != null and ui.is_panel_visible():
 		return true
-	return false
-
-func _find_technology_menu() -> Node:
-	var candidates := get_tree().get_nodes_in_group("technology_menu")
-	return candidates[0] if not candidates.is_empty() else null
+	var menu: TechnologyMenu = _planet_network.get_technology_menu()
+	return menu != null and menu.is_open()

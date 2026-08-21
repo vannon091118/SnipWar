@@ -97,7 +97,7 @@ func _cache_spawn_data() -> void:
 			_ship_initial_data[ev.source_id] = {
 				"pos": ev.source_pos,
 				"hp": ev.value,
-				"ship_data": ev.ship_data.duplicate(true)
+				"ship_data": ev.ship_data.copy() if ev.ship_data != null else null
 			}
 
 func _process(delta: float) -> void:
@@ -129,7 +129,7 @@ func _process_event(event: BattleEvent) -> void:
 		BattleEvent.TYPE_DESTROYED:
 			_animate_destruction(event.source_id, event.source_pos)
 
-func _spawn_ship_visual(ship_id: StringName, pos: Vector2, ship_data: Dictionary = {}) -> void:
+func _spawn_ship_visual(ship_id: StringName, pos: Vector2, ship_data: ShipAssembly = null) -> void:
 	if _ships.has(ship_id):
 		return
 
@@ -138,25 +138,21 @@ func _spawn_ship_visual(ship_id: StringName, pos: Vector2, ship_data: Dictionary
 	view.position = pos
 	view.scale = Vector2.ONE * 0.4
 
-	# Legacy hand-authored events may not carry a loadout yet. Resolve that
-	# compatibility case through the catalog too, so the replay has one visual
-	# path and never falls back to a hardcoded worker/cluster texture.
-	var visual_data: Dictionary = ship_data.duplicate(true)
+	# Hand-authored events may omit a typed assembly. Resolve that compatibility
+	# case through the catalog too, so every replay uses the same visual path.
+	var visual_data: ShipAssembly = ship_data.copy() if ship_data != null else ShipAssembly.new()
 	var catalog: ShipPartCatalog = DEFAULT_SHIP_PART_CATALOG
-	var hull_id: StringName = visual_data.get("hull", &"") as StringName
-	if String(hull_id).is_empty() or catalog.resolve(hull_id) == null:
-		hull_id = &"hull_t1"
-		visual_data["hull"] = hull_id
+	if String(visual_data.hull_id).is_empty() or catalog.resolve(visual_data.hull_id) == null:
+		visual_data.hull_id = &"hull_t1"
 
-	var hull: ShipPartDefinition = catalog.resolve(hull_id)
-	var scanner: ShipPartDefinition = catalog.resolve(visual_data.get("scanner", &"") as StringName)
-	var drive: ShipPartDefinition = catalog.resolve(visual_data.get("drive", &"") as StringName)
-	var weapon: ShipPartDefinition = catalog.resolve(visual_data.get("weapon", &"") as StringName)
-	var shield: ShipPartDefinition = catalog.resolve(visual_data.get("shield", &"") as StringName)
+	var hull: ShipPartDefinition = catalog.resolve(visual_data.hull_id)
+	var scanner: ShipPartDefinition = catalog.resolve(visual_data.scanner_id)
+	var drive: ShipPartDefinition = catalog.resolve(visual_data.drive_id)
+	var weapon: ShipPartDefinition = catalog.resolve(visual_data.weapon_id)
+	var shield: ShipPartDefinition = catalog.resolve(visual_data.shield_id)
 	var modules: Array[ShipPartDefinition] = []
-	var module_ids: Array = visual_data.get("modules", []) as Array
-	for module_id in module_ids:
-		var module_part: ShipPartDefinition = catalog.resolve(module_id as StringName)
+	for module_id in visual_data.module_ids:
+		var module_part: ShipPartDefinition = catalog.resolve(module_id)
 		if module_part != null:
 			modules.append(module_part)
 
@@ -181,23 +177,30 @@ func _spawn_ship_visual(ship_id: StringName, pos: Vector2, ship_data: Dictionary
 	tw.tween_property(view, "position:y", pos.y + 4.0, 1.2).set_trans(Tween.TRANS_SINE)
 	tw.tween_property(view, "position:y", pos.y - 4.0, 1.2).set_trans(Tween.TRANS_SINE)
 
-func _resolve_view_variants(catalog: ShipPartCatalog, ship_data: Dictionary) -> Dictionary:
+func _resolve_view_variants(catalog: ShipPartCatalog, assembly: ShipAssembly) -> Dictionary:
 	var result: Dictionary = {}
-	var stored_variants: Dictionary = ship_data.get("variants", {}) as Dictionary
-	for slot_name in [&"hull", &"drive", &"weapon", &"shield", &"scanner"]:
-		var part: ShipPartDefinition = catalog.resolve(ship_data.get(slot_name, &"") as StringName)
-		var variant: ShipComponentVariant = catalog.resolve_variant(part, stored_variants.get(slot_name, &"") as StringName)
+	var slot_types: Array[StringName] = [ShipPartDefinition.SLOT_HULL, ShipPartDefinition.SLOT_DRIVE, ShipPartDefinition.SLOT_WEAPON, ShipPartDefinition.SLOT_SHIELD, ShipPartDefinition.SLOT_SCANNER]
+	for slot_type in slot_types:
+		var part_id: StringName = assembly.hull_id
+		match slot_type:
+			ShipPartDefinition.SLOT_DRIVE:
+				part_id = assembly.drive_id
+			ShipPartDefinition.SLOT_WEAPON:
+				part_id = assembly.weapon_id
+			ShipPartDefinition.SLOT_SHIELD:
+				part_id = assembly.shield_id
+			ShipPartDefinition.SLOT_SCANNER:
+				part_id = assembly.scanner_id
+		var part: ShipPartDefinition = catalog.resolve(part_id)
+		var variant: ShipComponentVariant = catalog.resolve_variant(part, assembly.variant_id_for(slot_type))
 		if variant != null:
-			result[slot_name] = variant
+			result[slot_type] = variant
 
-	var module_ids: Array = ship_data.get("modules", []) as Array
-	var stored_utility: Array = stored_variants.get(&"utility", []) as Array
 	var module_variants: Array[ShipComponentVariant] = []
-	for index in range(module_ids.size()):
-		var module_part: ShipPartDefinition = catalog.resolve(module_ids[index] as StringName)
-		var variant_id: StringName = stored_utility[index] as StringName if index < stored_utility.size() else &""
-		module_variants.append(catalog.resolve_variant(module_part, variant_id))
-	result[&"utility"] = module_variants
+	for index in range(assembly.module_ids.size()):
+		var module_part: ShipPartDefinition = catalog.resolve(assembly.module_ids[index])
+		module_variants.append(catalog.resolve_variant(module_part, assembly.variant_id_for(ShipPartDefinition.SLOT_UTILITY, index)))
+	result[ShipPartDefinition.SLOT_UTILITY] = module_variants
 	return result
 
 func _animate_fire(src_id: StringName, src_pos: Vector2, tgt_pos: Vector2) -> void:

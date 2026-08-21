@@ -68,9 +68,6 @@ func nodes_in_group(group: StringName) -> Array[Node]:
 	return tree.get_nodes_in_group(group)
 
 
-func first_node_in_group(group: StringName) -> Node:
-	return tree.get_first_node_in_group(group)
-
 
 # --- Core Assertion & Check Engine (Debug Helper) ---
 
@@ -223,6 +220,27 @@ func catalog_for_count(base_catalog: PlanetCatalog, planet_count: int) -> Planet
 
 
 # --- Planet/introspection helpers ---
+
+func make_ship_assembly(
+	hull_id: StringName,
+	scanner_id: StringName = &"",
+	module_ids: Array = [],
+	weapon_id: StringName = &"",
+	drive_id: StringName = &"",
+	shield_id: StringName = &"",
+	ship_id: StringName = &"",
+	role: StringName = &"colony"
+) -> ShipAssembly:
+	var assembly := ShipAssembly.new()
+	assembly.ship_id = ship_id
+	assembly.hull_id = hull_id
+	assembly.scanner_id = scanner_id
+	assembly.weapon_id = weapon_id
+	assembly.drive_id = drive_id
+	assembly.shield_id = shield_id
+	assembly.role = role
+	assembly.set_module_ids(module_ids)
+	return assembly
 
 func planet_positions(field: Node) -> Dictionary:
 	var positions: Dictionary = {}

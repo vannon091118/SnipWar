@@ -5,6 +5,9 @@ const DEFAULT_TRANSIT_CONFIG: TransitConfig = preload("res://resources/config/tr
 const FLIGHT_TIME_SCRIPT: Script = preload("res://scripts/flight_time.gd")
 const BATTLE_SCENE_SCRIPT: Script = preload("res://scripts/battle/battle_scene.gd")
 const CONQUEST_SCENE_SCRIPT: Script = preload("res://scripts/conquest/conquest_scene.gd")
+const COMBAT_SEED_COUNTER_STRIDE: int = 1000003
+const BATTLE_SEED_SALT: int = 0x51A7E
+const CONQUEST_SEED_SALT: int = 0xC0A57
 
 signal replay_started(simulation_type: StringName, replay: CombatReplay)
 
@@ -16,6 +19,8 @@ var _enabled: bool = true
 var _active_ships: Array[ShipBase] = []
 var _battle_replay: BattleScene
 var _conquest_replay: ConquestScene
+var _game_seed: int = 0
+var _battle_counter: int = 0
 
 func _ready() -> void:
 	var state: Node = _game_state()
@@ -74,6 +79,41 @@ func configure(field: Node, navigation: Node, ship_manager: Node, config: Transi
 	_navigation = navigation as NavigationField
 	_ship_manager = ship_manager
 	transit_config = config if config != null else DEFAULT_TRANSIT_CONFIG
+	_game_seed = _resolve_game_seed(field)
+	_battle_counter = 0
+
+func game_seed() -> int:
+	return _game_seed
+
+func battle_counter() -> int:
+	return _battle_counter
+
+func _resolve_game_seed(field: Node) -> int:
+	if field == null or not is_instance_valid(field):
+		return 0
+	var config: WorldConfig = field.get("world_config") as WorldConfig
+	return config.layout_seed if config != null else 0
+
+func _requires_combat(destination: Planet, fleet: FleetSnapshot, mission_role: StringName) -> bool:
+	if destination == null or fleet == null or fleet.ships.is_empty():
+		return false
+	var resolved_role: StringName = mission_role if not String(mission_role).is_empty() else fleet.mission_role
+	if resolved_role == &"colony":
+		return false
+	return destination.get_faction() != fleet.faction and fleet.faction != GameState.FACTION_NEUTRAL
+
+func _next_combat_seeds() -> Dictionary:
+	_battle_counter += 1
+	return {
+		"battle_seed": _derive_combat_seed(_battle_counter, BATTLE_SEED_SALT),
+		"conquest_seed": _derive_combat_seed(_battle_counter, CONQUEST_SEED_SALT),
+	}
+
+func _derive_combat_seed(counter: int, salt: int) -> int:
+	var seed_input: int = _game_seed + counter * COMBAT_SEED_COUNTER_STRIDE + salt
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_input
+	return int(rng.randi())
 
 func set_enabled(enabled: bool) -> void:
 	_enabled = enabled
@@ -88,10 +128,12 @@ func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName, rol
 	var state: Node = _game_state()
 	if state == null or not state.has_ship_assembly(source.planet_id, ship_id):
 		return null
-	var assembly: Dictionary = state.get_ship_assembly(source.planet_id, ship_id)
+	var assembly: ShipAssembly = state.get_ship_assembly(source.planet_id, ship_id)
+	if assembly == null:
+		return null
 	var resolved_role: StringName = role
 	if String(resolved_role).is_empty():
-		resolved_role = assembly.get("role", &"colony") as StringName
+		resolved_role = assembly.role
 	if resolved_role == GameState.MISSION_COLONY:
 		resolved_role = &"colony"
 	if resolved_role == &"colony":
@@ -121,8 +163,8 @@ func preview_duration(source: Planet, destination: Planet, ship_id: StringName) 
 	var state: Node = _game_state()
 	if state == null or source == null or destination == null:
 		return 0.0
-	var assembly: Dictionary = state.get_ship_assembly(source.planet_id, ship_id)
-	if assembly.is_empty():
+	var assembly: ShipAssembly = state.get_ship_assembly(source.planet_id, ship_id)
+	if assembly == null:
 		return 0.0
 	var route_path: Array[Vector2] = _route(source, destination)
 	var fleet := _fleet_preview(source, assembly)
@@ -138,11 +180,17 @@ func _on_ship_arrived(ship_node: Node2D) -> void:
 	var result: Dictionary = {}
 	if ship.destination != null and is_instance_valid(ship.destination) and ship.fleet != null:
 		var defender_fleet: FleetSnapshot = _defender_fleet(ship.destination, ship.fleet.faction, ship.mission_role)
-		result = ship.destination.resolve_ship_arrival(ship.fleet, defender_fleet, 1337, 42, ship.mission_role)
+		var battle_seed: int = 0
+		var conquest_seed: int = 0
+		if _requires_combat(ship.destination, ship.fleet, ship.mission_role):
+			var combat_seeds: Dictionary = _next_combat_seeds()
+			battle_seed = int(combat_seeds["battle_seed"])
+			conquest_seed = int(combat_seeds["conquest_seed"])
+		result = ship.destination.resolve_ship_arrival(ship.fleet, defender_fleet, battle_seed, conquest_seed, ship.mission_role)
 		ship.destination.show_arrival_feedback(int(result.get("surviving_attackers", 0)), ship.fleet.faction)
 	var ship_id: StringName = &""
 	if ship.fleet != null and not ship.fleet.ships.is_empty():
-		ship_id = ship.fleet.ships[0].get("id", &"") as StringName
+		ship_id = ship.fleet.ships[0].ship_id
 	var outcome: StringName = result.get("result", Planet.ARRIVAL_REJECTED) as StringName
 	if state != null:
 		if outcome == Planet.ARRIVAL_SETTLED and ship.mission_role == &"colony":
@@ -171,6 +219,8 @@ func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 		if is_instance_valid(ship):
 			ship.queue_free()
 	_active_ships.clear()
+	_game_seed = _resolve_game_seed(_field)
+	_battle_counter = 0
 	_free_replay(_battle_replay)
 	_free_replay(_conquest_replay)
 	_battle_replay = null
@@ -182,11 +232,11 @@ func _route(source: Planet, destination: Planet) -> Array[Vector2]:
 		return _navigation.find_route(source, destination)
 	return [source.global_position, destination.global_position]
 
-func _fleet_preview(source: Planet, assembly: Dictionary) -> FleetSnapshot:
+func _fleet_preview(source: Planet, assembly: ShipAssembly) -> FleetSnapshot:
 	var fleet := FleetSnapshot.new()
 	fleet.faction = source.get_faction()
 	fleet.source_planet_id = source.planet_id
-	fleet.ships = [assembly.duplicate(true)]
+	fleet.ships = [assembly.copy()]
 	fleet.calculate_stats(_part_catalog())
 	return fleet
 

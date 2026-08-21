@@ -15,6 +15,7 @@ extends Resource
 ## planets from chunk generation set this; catalog planets keep planet_texture.
 @export var composition_base_texture: Texture2D
 @export var composition_tint: Color = Color.WHITE
+@export var composition_decal_textures: Array[Texture2D] = []
 ## Name assigned by the planet name generator during chunk generation. Stored
 ## in the chunk cache and reused on re-instantiation (never recomputed).
 @export var generated_name: String = ""
@@ -31,4 +32,7 @@ func validate() -> PackedStringArray:
 		errors.append("planet definition detail profile is missing")
 	if signature_probability < 0.0 or signature_probability > 1.0:
 		errors.append("signature_probability must be between 0.0 and 1.0")
+	for decal in composition_decal_textures:
+		if decal == null:
+			errors.append("planet definition contains a null composition decal")
 	return errors

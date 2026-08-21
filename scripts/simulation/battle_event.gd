@@ -15,9 +15,10 @@ const TYPE_RETREAT: StringName = &"retreat"
 @export var value: float = 0.0
 @export var source_pos: Vector2 = Vector2.ZERO
 @export var target_pos: Vector2 = Vector2.ZERO
-## Immutable loadout snapshot for TYPE_SPAWN replay events. Other event types leave
-## this empty, keeping the event contract compact while preserving full visuals.
-@export var ship_data: Dictionary = {}
+## Immutable typed assembly snapshot for TYPE_SPAWN replay events. Other event
+## types leave this null, keeping the event contract compact while preserving
+## full visuals.
+@export var ship_data: ShipAssembly
 
 
 static func create(
@@ -28,7 +29,7 @@ static func create(
 	val: float = 0.0,
 	src_p: Vector2 = Vector2.ZERO,
 	tgt_p: Vector2 = Vector2.ZERO,
-	spawn_ship_data: Dictionary = {}
+	spawn_ship_data: ShipAssembly = null
 ) -> BattleEvent:
 	var event := BattleEvent.new()
 	event.timestamp = time
@@ -38,5 +39,5 @@ static func create(
 	event.value = val
 	event.source_pos = src_p
 	event.target_pos = tgt_p
-	event.ship_data = spawn_ship_data.duplicate(true)
+	event.ship_data = spawn_ship_data.copy() if spawn_ship_data != null else null
 	return event

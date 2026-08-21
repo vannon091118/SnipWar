@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="PlanetDetailDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/planet_detail_definition.gd" id="1_definition"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/details/detail_refinery_complex.svg" id="2_texture"]
+[ext_resource type="Resource" path="res://resources/config/planet_details/fidelity_throttled.tres" id="3_fidelity"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"refinery_complex"
+node_name_prefix = "RefineryComplex"
+orbit_radius_range = Vector2(134, 148)
+angular_speed_range = Vector2(-0.22, -0.18)
+phase_range = Vector2(0, 6.283185)
+fidelity = ExtResource("3_fidelity")
+sprite_size_range = Vector2(16, 20)
+instance_count = 1
+textures = [ExtResource("2_texture")]

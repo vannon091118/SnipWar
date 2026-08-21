@@ -1,3 +1,4 @@
+class_name PlanetNetwork
 extends Node2D
 
 const _FlightTime := preload("res://scripts/flight_time.gd")
@@ -23,6 +24,8 @@ var _destination_planets: Array[Node2D] = []
 var _ui: PlanetNetworkUI
 var _technology_menu: TechnologyMenu
 var _message_feed: MessageFeed
+var _chunk_coordinator: ChunkCoordinator
+var _map_camera: MapCamera
 var _context_menu: PopupMenu
 var _context_active_planet: Node2D
 var _line_phase := 0.0
@@ -45,7 +48,7 @@ const ACTION_COUNT: int = 8
 var _context_disabled_reasons: Dictionary = {}
 
 func _ready() -> void:
-	add_to_group("planet_network")
+	_resolve_service_references()
 	if get_parent() != null and get_parent().has_signal("layout_completed"):
 		var parent_node: Node = get_parent()
 		if not parent_node.is_connected("layout_completed", Callable(self, "_on_layout_completed")):
@@ -55,18 +58,25 @@ func _ready() -> void:
 		if child is Node2D and child.get("layout_size") != null:
 			_planets.append(child)
 			_connect_planet_signals(child)
-	# Connect to ChunkCoordinator if present (infinite world).
-	var coordinator := get_tree().get_first_node_in_group("chunk_coordinator")
-	if coordinator != null:
-		if coordinator.has_signal("planet_added") and not coordinator.planet_added.is_connected(_on_planet_added):
-			coordinator.planet_added.connect(_on_planet_added)
-			coordinator.planet_removed.connect(_on_planet_removed)
+	# Connect to the field-owned coordinator when infinite world mode is active.
+	if _chunk_coordinator != null and not _chunk_coordinator.planet_added.is_connected(_on_planet_added):
+		_chunk_coordinator.planet_added.connect(_on_planet_added)
+		_chunk_coordinator.planet_removed.connect(_on_planet_removed)
 	if not transit_config_identity_valid():
 		push_error("PlanetNetwork and WorkerManager must share the same TransitConfig resource")
 	_connect_fog_signals()
 	_connect_map_camera.call_deferred()
 	_create_ui.call_deferred()
 	_refresh_fog_of_war.call_deferred()
+
+func _resolve_service_references() -> void:
+	var field: SeededLayout = get_parent() as SeededLayout
+	if field == null:
+		return
+	_chunk_coordinator = field.get_chunk_coordinator()
+	var background: Node = field.get_parent()
+	if background != null:
+		_map_camera = background.get_node_or_null("MapCamera") as MapCamera
 
 func _on_layout_completed(_unused_planets: Array = []) -> void:
 	invalidate_neighbor_cache()
@@ -272,10 +282,9 @@ func _is_neighbor(source: Node2D, target: Node2D) -> bool:
 	return false
 
 func _center_camera_on(planet: Node2D) -> void:
-	var camera: Camera2D = get_tree().get_first_node_in_group("map_camera") as Camera2D
-	if camera == null or planet == null:
+	if _map_camera == null or not is_instance_valid(_map_camera) or planet == null:
 		return
-	camera.set("position", planet.global_position)
+	_map_camera.position = planet.global_position
 
 func _create_technology_menu() -> void:
 	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
@@ -313,9 +322,8 @@ func _on_workers_spawn_requested(source: Node2D, amount: int) -> void:
 	_worker_manager.call("_spawn_clusters", source, amount)
 
 func _connect_map_camera() -> void:
-	var camera: Node = get_tree().get_first_node_in_group("map_camera")
-	if camera != null and camera.has_signal("planet_drag_dropped") and not camera.planet_drag_dropped.is_connected(_on_planet_drag_dropped):
-		camera.planet_drag_dropped.connect(_on_planet_drag_dropped)
+	if _map_camera != null and is_instance_valid(_map_camera) and not _map_camera.planet_drag_dropped.is_connected(_on_planet_drag_dropped):
+		_map_camera.planet_drag_dropped.connect(_on_planet_drag_dropped)
 
 func _on_planet_drag_dropped(source: Node2D, destination: Node2D) -> void:
 	if not is_instance_valid(_ui) or source == null or destination == null or source == destination:
@@ -577,8 +585,7 @@ func _refresh_fog_of_war() -> void:
 	var state: Node = _game_state()
 	if state == null:
 		return
-	var coordinator := get_tree().get_first_node_in_group("chunk_coordinator")
-	var planets_to_check: Array = coordinator.get_active_planets() if coordinator != null else _planets
+	var planets_to_check: Array = _chunk_coordinator.get_active_planets() if _chunk_coordinator != null and is_instance_valid(_chunk_coordinator) else _planets
 	for planet in planets_to_check:
 		var planet_node: Planet = planet as Planet
 		if planet_node == null:

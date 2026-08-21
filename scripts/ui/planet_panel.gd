@@ -142,7 +142,15 @@ func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 		_refresh_upgrade_list(_current_active_planet)
 
 func _apply_theme() -> void:
-	add_theme_stylebox_override("panel", _style_box(_theme_config.panel_background, _theme_config.panel_border, _theme_config.panel_border_width, _theme_config.panel_corner_radius))
+	add_theme_stylebox_override(
+		"panel",
+		UIBaseUtils.texture_style_box(
+			_theme_config,
+			_theme_config.planet_panel_background_texture,
+			_theme_config.panel_background,
+			float(_theme_config.card_padding)
+		)
+	)
 	if _margin != null:
 		_margin.add_theme_constant_override("margin_left", _theme_config.content_margin_left)
 		_margin.add_theme_constant_override("margin_top", _theme_config.content_margin_top)

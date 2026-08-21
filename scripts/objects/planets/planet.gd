@@ -79,6 +79,8 @@ var _worker_spawn_enabled: bool = false
 ## Composition fields (set by configure_from_cache for procedural planets).
 @export var composition_base_texture: Texture2D
 @export var composition_tint: Color = Color.WHITE
+@export var composition_decal_textures: Array[Texture2D] = []
+var _composition_decals: Node2D
 var _spawn_timer: Timer
 var _detail_seed := 0
 var _planet_ready := false
@@ -134,6 +136,8 @@ func apply_fog(state: FogState) -> void:
 			_apply_fog_shader(false)
 			if _details != null:
 				_details.visible = true
+			if _composition_decals != null:
+				_composition_decals.visible = true
 			if _strength_label != null:
 				_strength_label.visible = true
 			_set_click_pickable(true)
@@ -143,6 +147,8 @@ func apply_fog(state: FogState) -> void:
 			_apply_fog_shader(false)
 			if _details != null:
 				_details.visible = false
+			if _composition_decals != null:
+				_composition_decals.visible = true
 			if _strength_label != null:
 				_strength_label.visible = false
 			_set_click_pickable(true)
@@ -152,6 +158,8 @@ func apply_fog(state: FogState) -> void:
 			_apply_fog_shader(true)
 			if _details != null:
 				_details.visible = false
+			if _composition_decals != null:
+				_composition_decals.visible = false
 			if _strength_label != null:
 				_strength_label.visible = false
 			_set_click_pickable(false)
@@ -335,7 +343,11 @@ func apply_definition(definition: PlanetDefinition) -> void:
 	planet_role = definition.planet_role
 	faction = definition.faction
 	detail_profile = definition.detail_profile if definition.detail_profile != null else DEFAULT_DETAIL_PROFILE
+	composition_base_texture = definition.composition_base_texture
+	composition_tint = definition.composition_tint
+	composition_decal_textures = definition.composition_decal_textures.duplicate()
 	planet_texture = definition.planet_texture
+	_apply_visuals()
 
 func set_size_profile(profile: PlanetSizeProfile) -> void:
 	size_profile = profile if profile != null else DEFAULT_SIZE_PROFILE
@@ -470,7 +482,29 @@ func _apply_visuals() -> void:
 	else:
 		_sprite.texture = planet_texture
 		_sprite.scale = Vector2.ONE * visual_scale
+	_rebuild_composition_decals()
 	queue_redraw()
+
+func _rebuild_composition_decals() -> void:
+	if not is_instance_valid(_sprite):
+		return
+	if _composition_decals == null or not is_instance_valid(_composition_decals):
+		_composition_decals = Node2D.new()
+		_composition_decals.name = "CompositionDecals"
+		_composition_decals.z_index = 1
+		add_child(_composition_decals)
+	else:
+		for child in _composition_decals.get_children():
+			_composition_decals.remove_child(child)
+			child.queue_free()
+	for texture in composition_decal_textures:
+		if texture == null:
+			continue
+		var decal := Sprite2D.new()
+		decal.texture = texture
+		decal.modulate = composition_tint
+		decal.scale = Vector2.ONE * visual_scale
+		_composition_decals.add_child(decal)
 
 ## Configures a procedural planet from cached chunk data (not from a
 ## PlanetDefinition). This is the counterpart to apply_definition() for

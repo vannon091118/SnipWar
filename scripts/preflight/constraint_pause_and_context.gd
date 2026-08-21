@@ -134,7 +134,7 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(ui.selected_mission_type() == GameState.MISSION_MILITARY, "set_mission_type did not restore the military mission"):
 		return false
 	# Drag-drop: the camera resolves planets and the network presets source + destination.
-	var camera: Node2D = ctx.first_node_in_group("map_camera") as Node2D
+	var camera: MapCamera = background.get_node_or_null("MapCamera") as MapCamera
 	if not ctx.check(camera != null and camera.has_signal("planet_drag_dropped"), "map camera is missing its planet drag signal"):
 		return false
 	var drag_destination: Planet = null

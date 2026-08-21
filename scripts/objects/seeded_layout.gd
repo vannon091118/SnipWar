@@ -35,9 +35,9 @@ signal layout_completed(planets: Array[Planet])
 
 var _catalog_generated := false
 var _runtime_modules_created: bool = false
-var _chunk_coordinator: Node
+var _chunk_coordinator: ChunkCoordinator
 
-func get_chunk_coordinator() -> Node:
+func get_chunk_coordinator() -> ChunkCoordinator:
 	return _chunk_coordinator
 
 func _enter_tree() -> void:
@@ -280,9 +280,8 @@ func _refresh_chunks() -> void:
 func _setup_chunk_coordinator() -> void:
 	if _chunk_coordinator != null and is_instance_valid(_chunk_coordinator):
 		return
-	_chunk_coordinator = CHUNK_COORDINATOR_SCRIPT.new()
+	_chunk_coordinator = CHUNK_COORDINATOR_SCRIPT.new() as ChunkCoordinator
 	_chunk_coordinator.name = "ChunkCoordinator"
-	_chunk_coordinator.add_to_group("chunk_coordinator")
 	_chunk_coordinator.configure(
 		self,
 		get_node_or_null("NavigationField") as NavigationField,

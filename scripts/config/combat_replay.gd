@@ -12,8 +12,8 @@ const TYPE_CONQUEST: StringName = &"conquest"
 
 @export_group("Battle")
 @export var winner: StringName = &"neutral"
-@export var survivors_a: Array[Dictionary] = []
-@export var survivors_b: Array[Dictionary] = []
+@export var survivors_a: Array[ShipAssembly] = []
+@export var survivors_b: Array[ShipAssembly] = []
 @export var events: Array[BattleEvent] = []
 
 @export_group("Conquest")

@@ -41,6 +41,12 @@ func run(ctx: PreflightContext) -> bool:
 	var details_node: PlanetDetails = detail_planet.get_node("PlanetDetails") as PlanetDetails
 	if not ctx.check(details_node.get_detail_types().size() <= 3, "planet details exceed the max detail cap"):
 		return false
+	# The expanded default profile intentionally makes these details optional;
+	# use the dedicated toxic profile for the fidelity assertions below so the
+	# test does not depend on one particular optional RNG draw.
+	var original_detail_profile: PlanetDetailProfile = detail_planet.detail_profile
+	var original_detail_seed: int = details_node.detail_seed
+	detail_planet.detail_profile = preload("res://resources/config/planet_details/toxic.tres")
 	details_node.set_seed(777)
 	var seeded_types := details_node.get_detail_types()
 	details_node.set_seed(777)
@@ -65,6 +71,8 @@ func run(ctx: PreflightContext) -> bool:
 			break
 	if not ctx.check(orbit_moved and satellite_moved, "Toxic detail orbit is inactive"):
 		return false
+	detail_planet.detail_profile = original_detail_profile
+	details_node.set_seed(original_detail_seed)
 	for child in field.get_children():
 		if child is Planet:
 			var details: PlanetDetails = child.get_node("PlanetDetails") as PlanetDetails

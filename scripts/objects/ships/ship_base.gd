@@ -57,19 +57,18 @@ func _rebuild_visual(catalog: ShipPartCatalog) -> void:
 	if fleet == null or fleet.ships.is_empty():
 		_view.clear()
 		return
-	var ship_data: Dictionary = fleet.ships[0]
+	var assembly: ShipAssembly = fleet.ships[0]
 	var faction: StringName = fleet.faction
-	var variants: Dictionary = ship_data.get("variants", {}) as Dictionary
 	_view.setup_from_parts(
-		_resolve_part(catalog, ship_data.get("hull", &"") as StringName),
-		_resolve_part(catalog, ship_data.get("scanner", &"") as StringName),
-		_resolve_part(catalog, ship_data.get("drive", &"") as StringName),
-		_resolve_part(catalog, ship_data.get("weapon", &"") as StringName),
-		_resolve_part(catalog, ship_data.get("shield", &"") as StringName),
-		_resolve_modules(catalog, ship_data.get("modules", []) as Array),
+		_resolve_part(catalog, assembly.hull_id),
+		_resolve_part(catalog, assembly.scanner_id),
+		_resolve_part(catalog, assembly.drive_id),
+		_resolve_part(catalog, assembly.weapon_id),
+		_resolve_part(catalog, assembly.shield_id),
+		_resolve_modules(catalog, assembly.module_ids),
 		faction,
 		null,
-		_resolve_view_variants(catalog, ship_data, variants)
+		_resolve_view_variants(catalog, assembly)
 	)
 
 func _resolve_part(catalog: ShipPartCatalog, part_id: StringName) -> ShipPartDefinition:
@@ -83,19 +82,27 @@ func _resolve_modules(catalog: ShipPartCatalog, module_ids: Array) -> Array[Ship
 			result.append(part)
 	return result
 
-func _resolve_view_variants(catalog: ShipPartCatalog, ship_data: Dictionary, variants: Dictionary) -> Dictionary:
+func _resolve_view_variants(catalog: ShipPartCatalog, assembly: ShipAssembly) -> Dictionary:
 	var result: Dictionary = {}
-	for slot_name in [&"hull", &"drive", &"weapon", &"shield", &"scanner"]:
-		var part: ShipPartDefinition = catalog.resolve(ship_data.get(slot_name, &"") as StringName)
-		var variant: ShipComponentVariant = catalog.resolve_variant(part, variants.get(slot_name, &"") as StringName)
+	var slot_types: Array[StringName] = [ShipPartDefinition.SLOT_HULL, ShipPartDefinition.SLOT_DRIVE, ShipPartDefinition.SLOT_WEAPON, ShipPartDefinition.SLOT_SHIELD, ShipPartDefinition.SLOT_SCANNER]
+	for slot_type in slot_types:
+		var part_id: StringName = assembly.hull_id
+		match slot_type:
+			ShipPartDefinition.SLOT_DRIVE:
+				part_id = assembly.drive_id
+			ShipPartDefinition.SLOT_WEAPON:
+				part_id = assembly.weapon_id
+			ShipPartDefinition.SLOT_SHIELD:
+				part_id = assembly.shield_id
+			ShipPartDefinition.SLOT_SCANNER:
+				part_id = assembly.scanner_id
+		var part: ShipPartDefinition = catalog.resolve(part_id)
+		var variant: ShipComponentVariant = catalog.resolve_variant(part, assembly.variant_id_for(slot_type))
 		if variant != null:
-			result[slot_name] = variant
-	var module_ids: Array = ship_data.get("modules", []) as Array
-	var stored_utility: Array = variants.get(&"utility", []) as Array
+			result[slot_type] = variant
 	var module_variants: Array[ShipComponentVariant] = []
-	for index in range(module_ids.size()):
-		var module_part: ShipPartDefinition = catalog.resolve(module_ids[index] as StringName)
-		var utility_variant_id: StringName = stored_utility[index] as StringName if index < stored_utility.size() else &""
-		module_variants.append(catalog.resolve_variant(module_part, utility_variant_id))
-	result[&"utility"] = module_variants
+	for index in range(assembly.module_ids.size()):
+		var module_part: ShipPartDefinition = catalog.resolve(assembly.module_ids[index])
+		module_variants.append(catalog.resolve_variant(module_part, assembly.variant_id_for(ShipPartDefinition.SLOT_UTILITY, index)))
+	result[ShipPartDefinition.SLOT_UTILITY] = module_variants
 	return result

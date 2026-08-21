@@ -399,7 +399,7 @@ func get_ship_assemblies(planet_id: StringName) -> Dictionary:
 func has_ship_assembly(planet_id: StringName, ship_id: StringName) -> bool:
 	return ship_domain.has_ship_assembly(planet_id, ship_id)
 
-func get_ship_assembly(planet_id: StringName, ship_id: StringName) -> Dictionary:
+func get_ship_assembly(planet_id: StringName, ship_id: StringName) -> ShipAssembly:
 	return ship_domain.get_ship_assembly(planet_id, ship_id)
 
 func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, catalog: ShipPartCatalog = null, weapon_id: StringName = &"", drive_id: StringName = &"", shield_id: StringName = &"") -> bool:
@@ -425,7 +425,7 @@ func assemble_ship(
 func disassemble_ship(planet_id: StringName, ship_id: StringName) -> bool:
 	return ship_domain.disassemble_ship(planet_id, ship_id)
 
-func launch_ship(planet_id: StringName, ship_id: StringName) -> Dictionary:
+func launch_ship(planet_id: StringName, ship_id: StringName) -> ShipAssembly:
 	return ship_domain.launch_ship(planet_id, ship_id)
 
 func get_ship_build_jobs(planet_id: StringName) -> Dictionary:
@@ -450,7 +450,7 @@ func preview_fleet_from_planet(planet_id: StringName, ship_ids: Array, catalog: 
 func disband_fleet_to_planet(fleet: FleetSnapshot, planet_id: StringName) -> void:
 	ship_domain.disband_fleet_to_planet(fleet, planet_id)
 
-func reconcile_defender_fleet(planet_id: StringName, defender_fleet: FleetSnapshot, surviving: Array) -> void:
+func reconcile_defender_fleet(planet_id: StringName, defender_fleet: FleetSnapshot, surviving: Array[ShipAssembly]) -> void:
 	ship_domain.reconcile_defender_fleet(planet_id, defender_fleet, surviving)
 
 # --- VALIDATION HELPERS ---

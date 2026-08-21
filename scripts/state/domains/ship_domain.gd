@@ -1,7 +1,8 @@
 class_name ShipDomain
 extends RefCounted
 
-## Manages ship part inventory, modular ship assembly, disassembly, fleet creation, and build jobs.
+## Manages ship part inventory, typed modular ship assemblies, disassembly,
+## fleet creation, and build jobs.
 
 signal ship_part_purchased(planet_id: StringName, part_id: StringName)
 signal ship_assembled(planet_id: StringName, ship_id: StringName)
@@ -12,8 +13,11 @@ signal ship_lost(planet_id: StringName, ship_id: StringName)
 signal ship_build_started(planet_id: StringName, ship_id: StringName, remaining: float)
 
 var ship_part_inventory: Dictionary = {}
+# Planet ID -> Dictionary[ship ID, ShipAssembly]. The outer dictionaries are
+# indexes; the loadout itself is never represented as an untyped Dictionary.
 var ship_assemblies: Dictionary = {}
 var next_ship_index: int = 0
+# Planet ID -> Dictionary[ship ID, {remaining: float, assembly: ShipAssembly}].
 var ship_build_jobs: Dictionary = {}
 
 func reset() -> void:
@@ -71,17 +75,25 @@ func buy_ship_part(faction: StringName, planet_id: StringName, part_id: StringNa
 func get_ship_assemblies(planet_id: StringName) -> Dictionary:
 	if not ship_assemblies.has(planet_id):
 		return {}
-	return (ship_assemblies[planet_id] as Dictionary).duplicate(true)
+	var result: Dictionary = {}
+	var assemblies: Dictionary = ship_assemblies[planet_id] as Dictionary
+	for ship_id_value in assemblies:
+		var ship_id: StringName = ship_id_value as StringName
+		var assembly: ShipAssembly = assemblies[ship_id] as ShipAssembly
+		if assembly != null:
+			result[ship_id] = assembly.copy()
+	return result
 
 func has_ship_assembly(planet_id: StringName, ship_id: StringName) -> bool:
 	if not ship_assemblies.has(planet_id):
 		return false
 	return (ship_assemblies[planet_id] as Dictionary).has(ship_id)
 
-func get_ship_assembly(planet_id: StringName, ship_id: StringName) -> Dictionary:
+func get_ship_assembly(planet_id: StringName, ship_id: StringName) -> ShipAssembly:
 	if not ship_assemblies.has(planet_id):
-		return {}
-	return ((ship_assemblies[planet_id] as Dictionary).get(ship_id, {}) as Dictionary).duplicate(true)
+		return null
+	var assembly: ShipAssembly = (ship_assemblies[planet_id] as Dictionary).get(ship_id) as ShipAssembly
+	return assembly.copy() if assembly != null else null
 
 func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: StringName, module_ids: Array, weapon_id: StringName, drive_id: StringName, shield_id: StringName, catalog: ShipPartCatalog) -> bool:
 	if catalog == null or String(planet_id).is_empty() or String(hull_id).is_empty():
@@ -168,19 +180,27 @@ func assemble_ship(
 	var blueprint: ShipBlueprint = catalog.resolve_blueprint(blueprint_id)
 	if blueprint == null:
 		return &""
-	var variants: Dictionary = {
-		&"hull": _select_variant_id(catalog, hull_id, blueprint, instance_seed, &"hull"),
-		&"drive": _select_variant_id(catalog, drive_id, blueprint, instance_seed, &"drive"),
-		&"weapon": _select_variant_id(catalog, weapon_id, blueprint, instance_seed, &"weapon"),
-		&"shield": _select_variant_id(catalog, shield_id, blueprint, instance_seed, &"shield"),
-		&"scanner": _select_variant_id(catalog, scanner_id, blueprint, instance_seed, &"scanner"),
-		&"utility": [],
-	}
-	var utility_variants: Array = []
-	for mod_index in range(module_ids.size()):
-		var mod_id: StringName = module_ids[mod_index] as StringName
-		utility_variants.append(_select_variant_id(catalog, mod_id, blueprint, instance_seed, StringName("mod_%d" % mod_index)))
-	variants[&"utility"] = utility_variants
+
+	var assembly := ShipAssembly.new()
+	assembly.ship_id = ship_id
+	assembly.hull_id = hull_id
+	assembly.drive_id = drive_id
+	assembly.weapon_id = weapon_id
+	assembly.shield_id = shield_id
+	assembly.scanner_id = scanner_id
+	assembly.set_module_ids(module_ids)
+	assembly.role = ship_role if not String(ship_role).is_empty() else (&"military" if not String(weapon_id).is_empty() else &"colony")
+	assembly.blueprint_id = blueprint.id
+	assembly.instance_seed = instance_seed
+	assembly.hull_variant_id = _select_variant_id(catalog, hull_id, blueprint, instance_seed, &"hull")
+	assembly.drive_variant_id = _select_variant_id(catalog, drive_id, blueprint, instance_seed, &"drive")
+	assembly.weapon_variant_id = _select_variant_id(catalog, weapon_id, blueprint, instance_seed, &"weapon")
+	assembly.shield_variant_id = _select_variant_id(catalog, shield_id, blueprint, instance_seed, &"shield")
+	assembly.scanner_variant_id = _select_variant_id(catalog, scanner_id, blueprint, instance_seed, &"scanner")
+	var utility_variant_ids: Array[StringName] = []
+	for mod_index in range(assembly.module_ids.size()):
+		utility_variant_ids.append(_select_variant_id(catalog, assembly.module_ids[mod_index], blueprint, instance_seed, StringName("mod_%d" % mod_index)))
+	assembly.set_utility_variant_ids(utility_variant_ids)
 
 	var total_build_time: float = 0.0
 	for part_id in [hull_id, drive_id, weapon_id, shield_id, scanner_id]:
@@ -188,26 +208,11 @@ func assemble_ship(
 			var p: ShipPartDefinition = catalog.resolve(part_id)
 			if p != null:
 				total_build_time += p.build_time
-	for mod_val in module_ids:
-		var mod_id: StringName = mod_val as StringName
+	for mod_id in assembly.module_ids:
 		if not String(mod_id).is_empty():
 			var mp: ShipPartDefinition = catalog.resolve(mod_id)
 			if mp != null:
 				total_build_time += mp.build_time
-
-	var assembly := {
-		"id": ship_id,
-		"hull": hull_id,
-		"drive": drive_id,
-		"weapon": weapon_id,
-		"shield": shield_id,
-		"scanner": scanner_id,
-		"modules": module_ids.duplicate(),
-		"role": ship_role if not String(ship_role).is_empty() else (&"military" if not String(weapon_id).is_empty() else &"colony"),
-		"blueprint": blueprint.id,
-		"instance_seed": instance_seed,
-		"variants": variants,
-	}
 
 	if total_build_time <= 0.0:
 		_complete_ship_assembly(planet_id, ship_id, assembly)
@@ -224,26 +229,27 @@ func assemble_ship(
 func disassemble_ship(planet_id: StringName, ship_id: StringName) -> bool:
 	if not has_ship_assembly(planet_id, ship_id):
 		return false
-	var assembly: Dictionary = get_ship_assembly(planet_id, ship_id)
+	var assembly: ShipAssembly = get_ship_assembly(planet_id, ship_id)
 	ship_assemblies[planet_id].erase(ship_id)
-	for slot in ["hull", "drive", "weapon", "shield", "scanner"]:
-		var part_id: StringName = assembly.get(slot, &"") as StringName
+	if assembly == null:
+		return false
+	for part_id in [assembly.hull_id, assembly.drive_id, assembly.weapon_id, assembly.shield_id, assembly.scanner_id]:
 		if not String(part_id).is_empty():
 			add_ship_part(planet_id, part_id, 1)
-	for mod_val in assembly.get("modules", []):
-		var mod_id: StringName = mod_val as StringName
+	for mod_id in assembly.module_ids:
 		if not String(mod_id).is_empty():
 			add_ship_part(planet_id, mod_id, 1)
 	ship_disassembled.emit(planet_id, ship_id)
 	return true
 
-func launch_ship(planet_id: StringName, ship_id: StringName) -> Dictionary:
+func launch_ship(planet_id: StringName, ship_id: StringName) -> ShipAssembly:
 	if not has_ship_assembly(planet_id, ship_id):
-		return {}
-	var assembly: Dictionary = get_ship_assembly(planet_id, ship_id)
+		return null
+	var assembly: ShipAssembly = get_ship_assembly(planet_id, ship_id)
 	ship_assemblies[planet_id].erase(ship_id)
-	var role: StringName = assembly.get("role", &"colony") as StringName
-	ship_launched.emit(planet_id, ship_id, role)
+	if assembly == null:
+		return null
+	ship_launched.emit(planet_id, ship_id, assembly.role)
 	return assembly
 
 func get_ship_build_jobs(planet_id: StringName) -> Dictionary:
@@ -253,7 +259,10 @@ func get_ship_build_jobs(planet_id: StringName) -> Dictionary:
 	var jobs: Dictionary = ship_build_jobs[planet_id]
 	for ship_id_value in jobs:
 		var ship_id: StringName = ship_id_value as StringName
-		result[ship_id] = (jobs[ship_id].get("assembly", {}) as Dictionary).duplicate(true)
+		var job: Dictionary = jobs[ship_id] as Dictionary
+		var assembly: ShipAssembly = job.get("assembly") as ShipAssembly
+		if assembly != null:
+			result[ship_id] = assembly.copy()
 	return result
 
 func ship_build_in_progress(planet_id: StringName, ship_id: StringName = &"") -> bool:
@@ -276,10 +285,10 @@ func advance_builds(delta: float) -> void:
 		var jobs: Dictionary = ship_build_jobs[planet_id]
 		for ship_value in jobs.keys():
 			var ship_id: StringName = ship_value as StringName
-			var job: Dictionary = jobs[ship_id]
+			var job: Dictionary = jobs[ship_id] as Dictionary
 			var remaining: float = float(job.get("remaining", 0.0)) - delta
 			if remaining <= 0.0:
-				var assembly: Dictionary = job.get("assembly", {}) as Dictionary
+				var assembly: ShipAssembly = job.get("assembly") as ShipAssembly
 				jobs.erase(ship_id)
 				_complete_ship_assembly(planet_id, ship_id, assembly)
 			else:
@@ -290,11 +299,13 @@ func create_fleet_from_planet(planet_id: StringName, ship_ids: Array, faction: S
 	fleet.fleet_id = StringName("fleet_%s_%d" % [String(planet_id), next_ship_index])
 	fleet.faction = faction
 	fleet.source_planet_id = planet_id
-	var gathered_ships: Array[Dictionary] = []
+	var gathered_ships: Array[ShipAssembly] = []
 	for ship_id_value in ship_ids:
 		var ship_id: StringName = ship_id_value as StringName
 		if has_ship_assembly(planet_id, ship_id):
-			gathered_ships.append(launch_ship(planet_id, ship_id))
+			var assembly: ShipAssembly = launch_ship(planet_id, ship_id)
+			if assembly != null:
+				gathered_ships.append(assembly)
 	fleet.ships = gathered_ships
 	fleet.calculate_stats(catalog)
 	return fleet
@@ -302,19 +313,19 @@ func create_fleet_from_planet(planet_id: StringName, ship_ids: Array, faction: S
 ## Non-destructive fleet snapshot for travel-time preview / dry-run. The source
 ## assemblies stay registered so the caller can dispatch the same ships later.
 func preview_fleet_from_planet(planet_id: StringName, ship_ids: Array, faction: StringName, catalog: ShipPartCatalog) -> FleetSnapshot:
-	var fleets_root: Dictionary = ship_assemblies.get(planet_id, {})
+	var fleets_root: Dictionary = ship_assemblies.get(planet_id, {}) as Dictionary
 	var fleet := FleetSnapshot.new()
 	fleet.fleet_id = StringName("preview_%s_%d" % [String(planet_id), next_ship_index])
 	fleet.faction = faction
 	fleet.source_planet_id = planet_id
-	var previewed: Array[Dictionary] = []
+	var previewed: Array[ShipAssembly] = []
 	for ship_id_value in ship_ids:
 		var ship_id: StringName = ship_id_value as StringName
 		if not fleets_root.has(ship_id):
 			continue
-		var ship: Dictionary = (fleets_root[ship_id] as Dictionary).duplicate(true)
-		ship["id"] = ship_id
-		previewed.append(ship)
+		var assembly: ShipAssembly = fleets_root[ship_id] as ShipAssembly
+		if assembly != null:
+			previewed.append(assembly.copy())
 	fleet.ships = previewed
 	fleet.calculate_stats(catalog)
 	return fleet
@@ -328,28 +339,32 @@ func disband_fleet_to_planet(fleet: FleetSnapshot, planet_id: StringName) -> voi
 		ship_assemblies[planet_id] = {}
 	var assemblies: Dictionary = ship_assemblies[planet_id]
 	for ship_data in fleet.ships:
-		var ship_id: StringName = ship_data.get("id", _next_ship_id()) as StringName
-		var clean_data: Dictionary = ship_data.duplicate()
-		clean_data.erase("id")
-		assemblies[ship_id] = clean_data
+		if ship_data == null:
+			continue
+		var restored: ShipAssembly = ship_data.copy()
+		var ship_id: StringName = restored.ship_id
+		if String(ship_id).is_empty():
+			ship_id = _next_ship_id()
+		restored.ship_id = ship_id
+		assemblies[ship_id] = restored
 
 func _next_ship_id() -> StringName:
 	next_ship_index += 1
 	return StringName("ship_%d" % next_ship_index)
 
 # Reconciles the planet's ship_assemblies against the surviving defenders
-# from a FleetBattleSimulator output. `surviving` carries the IDs that stayed
-# alive; everything else in assemblies is dropped. Used by Planet after the
-# battle deserialises back into the world.
-func reconcile_defender_fleet(planet_id: StringName, defender_fleet: FleetSnapshot, surviving: Array) -> void:
+# from a FleetBattleSimulator output. `surviving` carries typed assemblies
+# whose ship_id identifies the entries that stayed alive.
+func reconcile_defender_fleet(planet_id: StringName, defender_fleet: FleetSnapshot, surviving: Array[ShipAssembly]) -> void:
 	if String(planet_id).is_empty() or defender_fleet == null:
 		return
 	if not ship_assemblies.has(planet_id):
 		return
 	var assemblies: Dictionary = ship_assemblies[planet_id]
 	var survivor_ids: Dictionary = {}
-	for ship_id in surviving:
-		survivor_ids[ship_id] = true
+	for survivor in surviving:
+		if survivor != null and not String(survivor.ship_id).is_empty():
+			survivor_ids[survivor.ship_id] = true
 	var kept: Dictionary = {}
 	for ship_id in assemblies.keys():
 		if survivor_ids.has(ship_id):
@@ -359,9 +374,12 @@ func reconcile_defender_fleet(planet_id: StringName, defender_fleet: FleetSnapsh
 	else:
 		ship_assemblies[planet_id] = kept
 
-func _complete_ship_assembly(planet_id: StringName, ship_id: StringName, assembly: Dictionary) -> void:
+func _complete_ship_assembly(planet_id: StringName, ship_id: StringName, assembly: ShipAssembly) -> void:
+	if assembly == null:
+		return
 	if not ship_assemblies.has(planet_id):
 		ship_assemblies[planet_id] = {}
+	assembly.ship_id = ship_id
 	ship_assemblies[planet_id][ship_id] = assembly
 	ship_assembled.emit(planet_id, ship_id)
 

@@ -8,8 +8,8 @@ const DEFAULT_TECH_CATALOG: TechnologyCatalog = preload("res://resources/config/
 const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
 const FLIGHT_TIME_SCRIPT: Script = preload("res://scripts/flight_time.gd")
 const SHIPYARD_UPGRADE_ID: StringName = &"shipyard"
-const DEFAULT_HULL_TEXTURE: Texture2D = preload("res://assets/objects/workers/cluster_k.svg")
-const DEFAULT_SCANNER_TEXTURE: Texture2D = preload("res://assets/objects/satellites/planet_satellite.svg")
+const DEFAULT_HULL_TEXTURE: Texture2D = preload("res://assets/objects/ships/hulls/hull_t1_scout.svg")
+const DEFAULT_SCANNER_TEXTURE: Texture2D = preload("res://assets/objects/ships/components/scanner_t1_dish.svg")
 
 @export var ship_config: ShipConfig = DEFAULT_SHIP_CONFIG
 @export var technology_catalog: TechnologyCatalog = DEFAULT_TECH_CATALOG
@@ -246,60 +246,78 @@ func refresh_ship_display(source: Planet) -> void:
 	if state == null:
 		return
 	var assemblies: Dictionary = state.get_ship_assemblies(source.planet_id)
-	var assembly: Dictionary = {}
+	var assembly: ShipAssembly = null
 	if assemblies.is_empty():
 		var build_jobs: Dictionary = state.get_ship_build_jobs(source.planet_id)
 		if build_jobs.is_empty():
 			hangar.hide_ship()
 			return
-		assembly = build_jobs[build_jobs.keys()[0]]
+		assembly = build_jobs[build_jobs.keys()[0]] as ShipAssembly
 	else:
-		assembly = assemblies[assemblies.keys()[0]]
+		assembly = assemblies[assemblies.keys()[0]] as ShipAssembly
+	if assembly == null:
+		hangar.hide_ship()
+		return
 	var cat := get_part_catalog()
-	var hull := cat.resolve(assembly.get("hull", &"") as StringName)
-	var scanner := cat.resolve(assembly.get("scanner", &"") as StringName)
-	var drive := cat.resolve(assembly.get("drive", &"") as StringName)
-	var weapon := cat.resolve(assembly.get("weapon", &"") as StringName)
-	var shield := cat.resolve(assembly.get("shield", &"") as StringName)
+	var hull := cat.resolve(assembly.hull_id)
+	var scanner := cat.resolve(assembly.scanner_id)
+	var drive := cat.resolve(assembly.drive_id)
+	var weapon := cat.resolve(assembly.weapon_id)
+	var shield := cat.resolve(assembly.shield_id)
 	var module_parts: Array[ShipPartDefinition] = []
-	for module_value in assembly.get("modules", []):
-		var module := cat.resolve(module_value as StringName)
+	for module_id in assembly.module_ids:
+		var module := cat.resolve(module_id)
 		if module != null:
 			module_parts.append(module)
-	var stored_variants: Dictionary = assembly.get("variants", {}) as Dictionary
 	var view_variants: Dictionary = {}
-	for slot_name in [&"hull", &"drive", &"weapon", &"shield", &"scanner"]:
-		var part: ShipPartDefinition = cat.resolve(assembly.get(slot_name, &"") as StringName)
-		var variant_id: StringName = stored_variants.get(slot_name, &"") as StringName
-		var variant: ShipComponentVariant = cat.resolve_variant(part, variant_id)
+	for slot_type in [ShipPartDefinition.SLOT_HULL, ShipPartDefinition.SLOT_DRIVE, ShipPartDefinition.SLOT_WEAPON, ShipPartDefinition.SLOT_SHIELD, ShipPartDefinition.SLOT_SCANNER]:
+		var part_id: StringName = assembly.hull_id
+		match slot_type:
+			ShipPartDefinition.SLOT_DRIVE:
+				part_id = assembly.drive_id
+			ShipPartDefinition.SLOT_WEAPON:
+				part_id = assembly.weapon_id
+			ShipPartDefinition.SLOT_SHIELD:
+				part_id = assembly.shield_id
+			ShipPartDefinition.SLOT_SCANNER:
+				part_id = assembly.scanner_id
+		var part: ShipPartDefinition = cat.resolve(part_id)
+		var variant: ShipComponentVariant = cat.resolve_variant(part, assembly.variant_id_for(slot_type))
 		if variant != null:
-			view_variants[slot_name] = variant
+			view_variants[slot_type] = variant
 	var utility_variants: Array[ShipComponentVariant] = []
-	var stored_utility_variants: Array = stored_variants.get(&"utility", []) as Array
 	for index in range(module_parts.size()):
-		var utility_id: StringName = stored_utility_variants[index] as StringName if index < stored_utility_variants.size() else &""
-		var utility_variant: ShipComponentVariant = cat.resolve_variant(module_parts[index], utility_id)
+		var utility_variant: ShipComponentVariant = cat.resolve_variant(module_parts[index], assembly.variant_id_for(ShipPartDefinition.SLOT_UTILITY, index))
 		utility_variants.append(utility_variant)
-	view_variants[&"utility"] = utility_variants
+	view_variants[ShipPartDefinition.SLOT_UTILITY] = utility_variants
 	hangar.show_ship_parts(hull, scanner, drive, weapon, shield, module_parts, source.get_faction(), view_variants)
-	var role: String = String(assembly.get("role", "colony")).to_upper()
-	var remaining: float = float(assembly.get("remaining", 0.0))
+	var role: String = String(assembly.role).to_upper()
 	var summary: String = "%s · %s" % [role, hull.display_name if hull != null else "SHIP"]
-	hangar.set_build_readback(summary, _ship_readback_tooltip(cat, assembly), remaining)
+	hangar.set_build_readback(summary, _ship_readback_tooltip(cat, assembly), 0.0)
 
-func _ship_readback_tooltip(catalog: ShipPartCatalog, assembly: Dictionary) -> String:
+func _ship_readback_tooltip(catalog: ShipPartCatalog, assembly: ShipAssembly) -> String:
 	var fleet := FleetSnapshot.new()
 	fleet.faction = GameState.FACTION_PLAYER
-	fleet.ships = [assembly.duplicate(true)]
+	fleet.ships = [assembly.copy()]
 	fleet.calculate_stats(catalog)
-	var lines: Array[String] = ["Rolle: %s" % String(assembly.get("role", "colony")).to_upper()]
-	for slot_name in [&"hull", &"drive", &"weapon", &"shield", &"scanner"]:
-		var part: ShipPartDefinition = catalog.resolve(assembly.get(slot_name, &"") as StringName)
+	var lines: Array[String] = ["Rolle: %s" % String(assembly.role).to_upper()]
+	var slot_types: Array[StringName] = [ShipPartDefinition.SLOT_HULL, ShipPartDefinition.SLOT_DRIVE, ShipPartDefinition.SLOT_WEAPON, ShipPartDefinition.SLOT_SHIELD, ShipPartDefinition.SLOT_SCANNER]
+	for slot_type in slot_types:
+		var part_id: StringName = assembly.hull_id
+		match slot_type:
+			ShipPartDefinition.SLOT_DRIVE:
+				part_id = assembly.drive_id
+			ShipPartDefinition.SLOT_WEAPON:
+				part_id = assembly.weapon_id
+			ShipPartDefinition.SLOT_SHIELD:
+				part_id = assembly.shield_id
+			ShipPartDefinition.SLOT_SCANNER:
+				part_id = assembly.scanner_id
+		var part: ShipPartDefinition = catalog.resolve(part_id)
 		if part == null:
 			continue
-		var variant_ids: Dictionary = assembly.get("variants", {}) as Dictionary
-		var variant: ShipComponentVariant = catalog.resolve_variant(part, variant_ids.get(slot_name, &"") as StringName)
-		lines.append("%s: %s%s" % [String(slot_name).capitalize(), part.display_name, " / " + variant.display_name if variant != null else ""])
+		var variant: ShipComponentVariant = catalog.resolve_variant(part, assembly.variant_id_for(slot_type))
+		lines.append("%s: %s%s" % [String(slot_type).capitalize(), part.display_name, " / " + variant.display_name if variant != null else ""])
 	lines.append("Stats: HP %.0f · DPS %.1f · Range %.0f · Speed x%.2f" % [fleet.total_hull_hp, fleet.total_dps, fleet.effective_range, fleet.transfer_speed_multiplier()])
 	return "\\n".join(lines)
 

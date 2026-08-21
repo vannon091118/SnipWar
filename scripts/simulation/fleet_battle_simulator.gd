@@ -14,19 +14,21 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 		var empty_attacker_replay := CombatReplay.new_battle(battle_seed)
 		empty_attacker_replay.winner = fleet_b.faction if fleet_b != null else &"neutral"
 		if fleet_b != null:
-			empty_attacker_replay.survivors_b = fleet_b.ships.duplicate(true)
+			empty_attacker_replay.survivors_b = _copy_assemblies(fleet_b.ships)
 		return empty_attacker_replay
 
 	if fleet_b == null or fleet_b.ships.is_empty():
 		var empty_defender_replay := CombatReplay.new_battle(battle_seed)
 		empty_defender_replay.winner = fleet_a.faction
-		empty_defender_replay.survivors_a = fleet_a.ships.duplicate(true)
+		empty_defender_replay.survivors_a = _copy_assemblies(fleet_a.ships)
 		return empty_defender_replay
 
-	# Initialisiere Kampf-Einheiten
+	# Initialisiere Kampf-Einheiten. The runtime combat state remains a
+	# Dictionary because it contains mutable hp/position fields; its immutable
+	# loadout payload is always a ShipAssembly resource.
 	var units_a: Array[Dictionary] = []
 	for i in range(fleet_a.ships.size()):
-		var ship: Dictionary = fleet_a.ships[i]
+		var ship: ShipAssembly = fleet_a.ships[i]
 		var stats := _calculate_ship_combat_stats(ship, cat)
 		var unit := {
 			"id": StringName("a_%d" % i),
@@ -47,12 +49,12 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 			unit["hp"],
 			unit["pos"],
 			Vector2.ZERO,
-			unit["ship_data"] as Dictionary
+			unit["ship_data"] as ShipAssembly
 		))
 
 	var units_b: Array[Dictionary] = []
 	for i in range(fleet_b.ships.size()):
-		var ship: Dictionary = fleet_b.ships[i]
+		var ship: ShipAssembly = fleet_b.ships[i]
 		var stats := _calculate_ship_combat_stats(ship, cat)
 		var unit := {
 			"id": StringName("b_%d" % i),
@@ -73,7 +75,7 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 			unit["hp"],
 			unit["pos"],
 			Vector2.ZERO,
-			unit["ship_data"] as Dictionary
+			unit["ship_data"] as ShipAssembly
 		))
 
 	var time := 0.0
@@ -128,13 +130,17 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 	elif surviving_b.size() > surviving_a.size():
 		winner = fleet_b.faction
 
-	var survivors_a_data: Array[Dictionary] = []
-	for u in surviving_a:
-		survivors_a_data.append((u["ship_data"] as Dictionary).duplicate(true))
+	var survivors_a_data: Array[ShipAssembly] = []
+	for unit in surviving_a:
+		var surviving_ship: ShipAssembly = unit["ship_data"] as ShipAssembly
+		if surviving_ship != null:
+			survivors_a_data.append(surviving_ship.copy())
 
-	var survivors_b_data: Array[Dictionary] = []
-	for u in surviving_b:
-		survivors_b_data.append((u["ship_data"] as Dictionary).duplicate(true))
+	var survivors_b_data: Array[ShipAssembly] = []
+	for unit in surviving_b:
+		var surviving_ship: ShipAssembly = unit["ship_data"] as ShipAssembly
+		if surviving_ship != null:
+			survivors_b_data.append(surviving_ship.copy())
 
 	var replay := CombatReplay.new_battle(battle_seed)
 	replay.winner = winner
@@ -144,12 +150,19 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 	replay.duration = time
 	return replay
 
-static func _calculate_ship_combat_stats(ship: Dictionary, cat: ShipPartCatalog) -> Dictionary:
+static func _calculate_ship_combat_stats(ship: ShipAssembly, cat: ShipPartCatalog) -> Dictionary:
 	return FleetSnapshot.calculate_ship_stats(ship, cat)
+
+static func _copy_assemblies(source: Array[ShipAssembly]) -> Array[ShipAssembly]:
+	var result: Array[ShipAssembly] = []
+	for assembly in source:
+		if assembly != null:
+			result.append(assembly.copy())
+	return result
 
 static func _get_living(units: Array[Dictionary]) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
-	for u in units:
-		if u.get("alive", false) and float(u.get("hp", 0.0)) > 0.0:
-			result.append(u)
+	for unit in units:
+		if unit.get("alive", false) and float(unit.get("hp", 0.0)) > 0.0:
+			result.append(unit)
 	return result
