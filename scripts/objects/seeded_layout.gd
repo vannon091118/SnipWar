@@ -91,6 +91,10 @@ func regenerate() -> void:
 	_shuffle(slots, rng)
 	for index in layout_items.size():
 		assigned_slots[layout_items[index]] = slots[index]
+	# Generated sectors must not start the two factions adjacent: a corner
+	# homeworld with the enemy homeworld as its second neighbour would have
+	# only one neutral neighbour and stall the scout/first-scan progression.
+	_separate_homeworlds(layout_items, assigned_slots, column_count, row_count)
 
 	for item in layout_items:
 		var slot: int = assigned_slots[item]
@@ -214,6 +218,41 @@ func _seed_initial_workers(items: Array[Planet]) -> void:
 	for item in items:
 		state.seed_starting_workers(item.planet_id, item.get_size_profile())
 		item.set_initial_workers(state.starting_workers_of(item.planet_id))
+
+func _separate_homeworlds(items: Array[Planet], assigned_slots: Dictionary, column_count: int, row_count: int) -> void:
+	var homeworlds: Array[Planet] = []
+	for item in items:
+		if item.planet_role == &"homeworld":
+			homeworlds.append(item)
+	if homeworlds.size() < 2:
+		return
+	var first: Planet = homeworlds[0]
+	var second: Planet = homeworlds[1]
+	var first_slot: int = assigned_slots[first]
+	var second_slot: int = assigned_slots[second]
+	if not _slots_adjacent(first_slot, second_slot, column_count):
+		return
+	# Swap the second homeworld with a neutral planet whose slot is not adjacent
+	# to the first homeworld. Swapping after all shuffles keeps the RNG
+	# consumption order (and therefore the seed contract) unchanged.
+	for item in items:
+		if item.planet_role == &"homeworld":
+			continue
+		var candidate_slot: int = assigned_slots[item]
+		if _slots_adjacent(first_slot, candidate_slot, column_count):
+			continue
+		assigned_slots[second] = candidate_slot
+		assigned_slots[item] = second_slot
+		return
+
+func _slots_adjacent(slot_a: int, slot_b: int, column_count: int) -> bool:
+	if column_count <= 0:
+		return false
+	var col_a := slot_a % column_count
+	var row_a := int(slot_a / float(column_count))
+	var col_b := slot_b % column_count
+	var row_b := int(slot_b / float(column_count))
+	return absi(col_a - col_b) + absi(row_a - row_b) == 1
 
 func _shuffle(values: Array, rng: RandomNumberGenerator) -> void:
 	for index in range(values.size() - 1, 0, -1):

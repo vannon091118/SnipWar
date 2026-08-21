@@ -308,6 +308,36 @@ godot --headless --path . --script res://scripts/preflight.gd
 
 ---
 
+## 🔧 ENTWICKLER-WORKFLOW — Preflight-Hooks auf jedem Commit
+
+Jeder `git commit` durchläuft die volle Hook-Kette und landet **sofort auf `origin/main`**. Es gibt keinen Skip-Pfad (`core.hooksPath=/dev/null` ist deaktiviert).
+
+```text
+┌─────────────┐     ┌─────────────┐     ┌──────────────┐
+│ pre-commit  │────▶│ commit-msg  │────▶│ post-commit  │
+│             │     │             │     │              │
+│ whitespace  │     │ Begründung  │     │ push origin  │
+│ + preflight │     │ pro Datei   │     │ HEAD:main    │
+└─────────────┘     └─────────────┘     └──────────────┘
+		│                   │                    │
+		▼                   ▼                    ▼
+   Preflight-Fehler    Fehlende Begründung   Commit ist
+   bricht den Push     bricht den Commit    sofort公开
+```
+
+**Voraussetzungen:**
+- `GODOT_BIN` muss auf die Godot Console-Binary zeigen (oder `godot`/`godot4` auf PATH)
+- `git add <dateien>` → nur relevante Dateien stagen (nie `git add -A`)
+- Jede gestagte Datei braucht eine Begründungszeile: `- pfad/zur/datei: Satz.`
+
+**Bei Preflight-Fehlern:**
+1. Fehler im Terminal auslesen
+2. Dateien korrigieren
+3. Erneut `git add` + `git commit` ausführen
+4. Die Hook-Kette wiederholt sich automatisch
+
+---
+
 ## 🗺️ STRATEGISCHE ROADMAP
 
 ```mermaid

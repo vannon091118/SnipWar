@@ -89,7 +89,7 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(game_state.get_ownership_count(GameState.FACTION_NEUTRAL) == 8 and game_state.get_ownership_count(GameState.FACTION_PLAYER) == 1 and game_state.get_ownership_count(GameState.FACTION_CPU) == 1, "GameState ownership seed does not match the default catalog"):
 		return false
-	if not ctx.check(game_state.homeworld_for(GameState.FACTION_PLAYER) == &"ocean" and game_state.homeworld_for(GameState.FACTION_CPU) == &"paper", "GameState homeworld assignment is wrong"):
+	if not ctx.check(game_state.homeworld_for(GameState.FACTION_PLAYER) == planet_catalog.planets[0].planet_id and game_state.homeworld_for(GameState.FACTION_CPU) == planet_catalog.planets[1].planet_id, "GameState homeworld assignment is wrong"):
 		return false
 
 	ctx.field = field

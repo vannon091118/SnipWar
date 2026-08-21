@@ -297,7 +297,7 @@ func _on_spawn_timer() -> void:
 	if not _worker_spawn_enabled:
 		return
 	worker_state = WorkerState.SPAWNING
-	workers_spawn_requested.emit(self, _spawn_count())
+	workers_spawn_requested.emit(self, PlanetTraitAggregator.get_spawn_count(self))
 	worker_state = WorkerState.IDLE
 
 func generate_economy_resources() -> int:
@@ -359,40 +359,14 @@ func _restart_spawn_timer() -> void:
 func _spawn_interval() -> float:
 	return _active_size_profile().spawn_interval
 
-func _spawn_count() -> int:
-	var count := _active_size_profile().spawn_count
-	var state: Node = _game_state()
-	if state != null:
-		for up_id in state.get_planet_upgrades(planet_id):
-			var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
-			if def != null and def.trait_definition != null:
-				count += def.trait_definition.worker_spawn_bonus
-	return mini(count, get_build_slot_count())
-
 func get_build_slot_count() -> int:
-	return maxi(_active_size_profile().build_slot_count, 1)
+	return PlanetTraitAggregator.get_build_slot_count(self)
 
 func get_perimeter_slots() -> int:
-	var base: int = _active_size_profile().build_slot_count
-	var bonus := 0
-	var state: Node = _game_state()
-	if state != null:
-		for up_id in state.get_planet_upgrades(planet_id):
-			var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
-			if def != null and def.trait_definition != null:
-				bonus += def.trait_definition.perimeter_slots_bonus
-	return maxi(1, base + bonus)
+	return PlanetTraitAggregator.get_perimeter_slots(self)
 
 func get_defense_range() -> float:
-	var base := 150.0
-	var bonus := 0.0
-	var state: Node = _game_state()
-	if state != null:
-		for up_id in state.get_planet_upgrades(planet_id):
-			var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
-			if def != null and def.trait_definition != null:
-				bonus += def.trait_definition.range_bonus
-	return maxf(50.0, base + bonus)
+	return PlanetTraitAggregator.get_defense_range(self)
 
 func can_build_workers() -> bool:
 	var state: Node = _game_state()
@@ -410,28 +384,7 @@ func set_initial_workers(amount: int) -> void:
 		_update_strength_indicator()
 
 func resolve_arrival(source_faction: StringName, amount: int) -> StringName:
-	var incoming: int = maxi(amount, 0)
-	if incoming <= 0 or source_faction.is_empty() or source_faction == &"neutral":
-		return ARRIVAL_REJECTED
-	var destination_faction: StringName = get_faction()
-	if destination_faction == source_faction:
-		register_workers(incoming)
-		return ARRIVAL_FRIENDLY
-	var bonus_defense := 0
-	var state: Node = _game_state()
-	if state != null:
-		for up_id in state.get_planet_upgrades(planet_id):
-			var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
-			if def != null and def.trait_definition != null:
-				bonus_defense += def.trait_definition.defense_rating
-	var defenders: int = worker_count + bonus_defense
-	if incoming <= defenders:
-		unregister_workers(mini(incoming, worker_count))
-		return ARRIVAL_REPELLED
-	unregister_workers(worker_count)
-	set_faction(source_faction)
-	register_workers(incoming - defenders)
-	return ARRIVAL_CAPTURED
+	return PlanetArrivalResolver.resolve_arrival(self, source_faction, amount)
 
 ## Spawns the "+N" landing label above this planet for an arrival that landed
 ## workers or ships. No-op for non-positive amounts and outside the tree.
@@ -444,244 +397,23 @@ func show_arrival_feedback(amount: int, arriving_faction: StringName) -> void:
 	var tint: Color = DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", arriving_faction)
 	FloatingText.spawn(parent, "+%d" % amount, position, tint)
 
-# Number of surviving attackers registered as workers on a captured planet when
-# the result comes from a fleet-vs-fleet FleetBattleSimulator outcome. The
-# simulator returns surviving ships (not workers); we convert ships to workers
-# at this fixed rate so capture always produces a measurable garrison on the
-# destination. ConquestSimulator already operates on workers directly.
-const _CAPTURED_WORKER_PER_SHIP := 10
-
-## Resolves an incoming FleetSnapshot (assembled ships) through the existing
-## deterministic FleetBattleSimulator (fleet-vs-fleet) and ConquestSimulator
-## (fleet-vs-ground) – the worker-count MVP rule in resolve_arrival() stays for
-## pure-worker transit.
-##
-## defender_fleet: non-null with ships → FleetBattleSimulator; null/empty →
-## ConquestSimulator using this planet's defenders.
-##
-## Returns a Dictionary with `result` (ARRIVAL_*), `surviving_attackers` (int)
-## and `duration` (float). Side effects when captured: set_faction(
-## attacking_faction) and register_workers(survivor_count).
 func resolve_ship_arrival(arriving_fleet: FleetSnapshot, defender_fleet: FleetSnapshot = null, battle_seed: int = 1337, conquest_seed: int = 42, ship_role: StringName = &"") -> Dictionary:
-	var out: Dictionary = {"result": ARRIVAL_REJECTED, "surviving_attackers": 0, "duration": 0.0}
-	if arriving_fleet == null or arriving_fleet.ships.is_empty():
-		return out
-	var attacking_faction: StringName = arriving_fleet.faction
-	if String(attacking_faction).is_empty() or attacking_faction == GameState.FACTION_NEUTRAL:
-		return out
-	var resolved_role: StringName = ship_role if not String(ship_role).is_empty() else arriving_fleet.mission_role
-	if resolved_role == &"colony":
-		return _resolve_colony_ship_arrival(arriving_fleet, attacking_faction, out)
-	var defending_faction: StringName = get_faction()
-	if defending_faction == attacking_faction:
-		out["result"] = ARRIVAL_FRIENDLY
-		var gain: int = arriving_fleet.ships.size() * _CAPTURED_WORKER_PER_SHIP
-		if gain > 0:
-			register_workers(gain)
-		out["surviving_attackers"] = gain
-		return out
-	if defender_fleet != null and not defender_fleet.ships.is_empty():
-		return _resolve_ship_vs_fleet(arriving_fleet, defender_fleet, battle_seed, attacking_faction, out)
-	return _resolve_ship_vs_planet(arriving_fleet, conquest_seed, attacking_faction, out)
-
-
-func _resolve_ship_vs_fleet(arriving_fleet: FleetSnapshot, defender_fleet: FleetSnapshot, battle_seed: int, attacking_faction: StringName, out: Dictionary) -> Dictionary:
-	var battle: CombatReplay = FleetBattleSimulator.simulate_battle(arriving_fleet, defender_fleet, battle_seed)
-	conflict_simulated.emit(&"battle", battle.copy())
-	var winner: StringName = battle.winner
-	var survivors: Array[Dictionary] = battle.survivors_a
-	var defender_survivors: Array[Dictionary] = battle.survivors_b
-	var state: Node = _game_state()
-	if state != null:
-		state.reconcile_defender_fleet(planet_id, defender_fleet, [] if winner == attacking_faction else defender_survivors)
-	if winner == attacking_faction:
-		unregister_workers(worker_count)
-		set_faction(attacking_faction)
-		var gain: int = survivors.size() * _CAPTURED_WORKER_PER_SHIP
-		if gain > 0:
-			register_workers(gain)
-		out["result"] = ARRIVAL_CAPTURED
-		out["surviving_attackers"] = gain
-	else:
-		out["result"] = ARRIVAL_REPELLED
-	out["duration"] = battle.duration
-	return out
-
-
-func _resolve_colony_ship_arrival(arriving_fleet: FleetSnapshot, attacking_faction: StringName, out: Dictionary) -> Dictionary:
-	var state: Node = _game_state()
-	if get_faction() != GameState.FACTION_NEUTRAL or state == null or not state.has_scanned_planet(attacking_faction, planet_id):
-		out["result"] = ARRIVAL_REJECTED
-		return out
-	var settlers: int = maxi(arriving_fleet.ships.size() * 10, 1)
-	set_faction(attacking_faction)
-	register_workers(settlers)
-	out["result"] = ARRIVAL_SETTLED
-	out["surviving_attackers"] = settlers
-	return out
-
-
-func _resolve_ship_vs_planet(arriving_fleet: FleetSnapshot, conquest_seed: int, attacking_faction: StringName, out: Dictionary) -> Dictionary:
-	var defender_workers: int = worker_count
-	var defense_rating := _aggregate_defense_rating()
-	var conquest: CombatReplay = ConquestSimulator.simulate_conquest(
-		arriving_fleet, 0, defender_workers, defense_rating,
-		get_perimeter_slots(), get_defense_range(), conquest_seed)
-	conflict_simulated.emit(&"conquest", _conquest_replay_result(conquest))
-	if conquest.captured:
-		unregister_workers(worker_count)
-		set_faction(attacking_faction)
-		var gain: int = conquest.surviving_attackers
-		if gain > 0:
-			register_workers(gain)
-		out["result"] = ARRIVAL_CAPTURED
-		out["surviving_attackers"] = gain
-	else:
-		out["result"] = ARRIVAL_REPELLED
-	out["duration"] = conquest.duration
-	return out
-
-
-func _conquest_replay_result(conquest: CombatReplay) -> CombatReplay:
-	# The simulator owns combat numbers; Planet owns the attacked planet's
-	# presentation identity. The replay stores the stable planet id so
-	# ConquestScene can resolve the visual from the active catalog.
-	var replay_result: CombatReplay = conquest.copy()
-	replay_result.planet_id = planet_id
-	replay_result.planet_name = display_name
-	replay_result.planet_texture_path = planet_texture.resource_path if planet_texture != null else ""
-	return replay_result
-
-
-func _aggregate_defense_rating() -> int:
-	var total := 0
-	var state: Node = _game_state()
-	if state == null:
-		return total
-	for up_id in state.get_planet_upgrades(planet_id):
-		var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
-		if def != null and def.trait_definition != null:
-			total += def.trait_definition.defense_rating
-	return total
+	return PlanetArrivalResolver.resolve_ship_arrival(self, arriving_fleet, defender_fleet, battle_seed, conquest_seed, ship_role)
 
 func resolve_mission(source_faction: StringName, amount: int, mission_type: StringName = &"military", source_planet_id: StringName = &"") -> StringName:
-	if mission_type == GameState.MISSION_COLONY:
-		return _resolve_colony(source_faction, amount)
-	if mission_type == GameState.MISSION_CARGO:
-		return _resolve_cargo(source_faction, amount)
-	if mission_type == GameState.MISSION_COLLECT:
-		return _resolve_collect(source_faction, amount, source_planet_id)
-	return resolve_military_arrival(source_faction, amount, source_planet_id)
+	return PlanetArrivalResolver.resolve_mission(self, source_faction, amount, mission_type, source_planet_id)
 
-## Resolves a worker military arrival through the deterministic conquest
-## adapter. Assemblies are not inferred from a worker transit: an assembled
-## ship enters the simulator only through ConflictManager/ShipBase, where its
-## FleetSnapshot was explicitly reserved at launch.
 func resolve_military_arrival(source_faction: StringName, amount: int, _source_planet_id: StringName = &"", conquest_seed: int = 42) -> StringName:
-	var incoming: int = maxi(amount, 0)
-	if incoming <= 0 or source_faction.is_empty() or source_faction == GameState.FACTION_NEUTRAL:
-		return ARRIVAL_REJECTED
-	if get_faction() == source_faction:
-		return resolve_arrival(source_faction, incoming)
-
-	var conquest: CombatReplay = ConquestSimulator.simulate_conquest(
-		null,
-		incoming,
-		worker_count,
-		_aggregate_defense_rating(),
-		get_perimeter_slots(),
-		get_defense_range(),
-		conquest_seed
-	)
-	conflict_simulated.emit(&"conquest", _conquest_replay_result(conquest))
-	if conquest.captured:
-		unregister_workers(worker_count)
-		set_faction(source_faction)
-		var survivors: int = conquest.surviving_attackers
-		if survivors > 0:
-			register_workers(survivors)
-		return ARRIVAL_CAPTURED
-
-	# The simulator decides the outcome; preserve the existing worker-loss
-	# contract for a repelled worker wave rather than turning tower HP into
-	# persistent worker counts.
-	unregister_workers(mini(incoming, worker_count))
-	return ARRIVAL_REPELLED
-
-func _resolve_colony(source_faction: StringName, amount: int) -> StringName:
-	var incoming: int = maxi(amount, 0)
-	if incoming <= 0 or source_faction.is_empty() or source_faction == GameState.FACTION_NEUTRAL:
-		return ARRIVAL_REJECTED
-	if get_faction() != GameState.FACTION_NEUTRAL:
-		return ARRIVAL_REJECTED
-	set_faction(source_faction)
-	register_workers(incoming)
-	return ARRIVAL_SETTLED
-
-func _resolve_cargo(source_faction: StringName, amount: int) -> StringName:
-	var incoming: int = maxi(amount, 0)
-	if incoming <= 0 or source_faction.is_empty() or source_faction == GameState.FACTION_NEUTRAL:
-		return ARRIVAL_REJECTED
-	if get_faction() != source_faction:
-		return ARRIVAL_REJECTED
-	register_workers(incoming)
-	return ARRIVAL_FRIENDLY
-
-func _resolve_collect(source_faction: StringName, amount: int, source_planet_id: StringName = &"") -> StringName:
-	var incoming: int = maxi(amount, 0)
-	if incoming <= 0 or source_faction.is_empty() or source_faction == GameState.FACTION_NEUTRAL:
-		return ARRIVAL_REJECTED
-	if get_faction() != GameState.FACTION_NEUTRAL:
-		return ARRIVAL_REJECTED
-	var state: Node = _game_state()
-	if state == null:
-		return ARRIVAL_REJECTED
-	var registered: int = state.register_gathering_workers(source_faction, planet_id, incoming, source_planet_id)
-	if registered <= 0:
-		return ARRIVAL_REJECTED
-	return ARRIVAL_COLLECTED
+	return PlanetArrivalResolver.resolve_military_arrival(self, source_faction, amount, _source_planet_id, conquest_seed)
 
 func recall_gathering_workers(target_faction: StringName, amount: int) -> int:
-	var state: Node = _game_state()
-	if state == null:
-		return 0
-	var source_id: StringName = state.get_gathering_source(target_faction, planet_id) as StringName
-	var withdrawn: int = state.withdraw_gathering_workers(target_faction, planet_id, amount)
-	if withdrawn <= 0:
-		return 0
-	if String(source_id).is_empty():
-		return withdrawn
-	var field: Node = get_parent()
-	if field == null:
-		return withdrawn
-	for child in field.get_children():
-		var candidate := child as Planet
-		if candidate != null and candidate.planet_id == source_id:
-			candidate.register_workers(withdrawn)
-			break
-	return withdrawn
+	return PlanetArrivalResolver.recall_gathering_workers(self, target_faction, amount)
 
 func get_transfer_speed_multiplier() -> float:
-	var state: Node = _game_state()
-	if state == null:
-		return 1.0
-	var multiplier := 1.0
-	for up_id in state.get_planet_upgrades(planet_id):
-		var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
-		if def != null and def.trait_definition != null:
-			multiplier *= def.trait_definition.transfer_speed_multiplier
-	return multiplier
+	return PlanetTraitAggregator.get_transfer_speed_multiplier(self)
 
 func get_cluster_tier_bonus() -> int:
-	var state: Node = _game_state()
-	if state == null:
-		return 0
-	var bonus := 0
-	for up_id in state.get_planet_upgrades(planet_id):
-		var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
-		if def != null and def.trait_definition != null:
-			bonus += def.trait_definition.cluster_tier_bonus
-	return maxi(bonus, 0)
+	return PlanetTraitAggregator.get_cluster_tier_bonus(self)
 
 func register_workers(amount: int) -> void:
 	worker_count += maxi(amount, 0)
@@ -718,11 +450,13 @@ func _on_resource_generated(changed_planet_id: StringName, resource_id: StringNa
 	var tint: Color = DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"resource", resource_id)
 	FloatingText.spawn(parent, "+%d %s" % [amount, resource_name], position, tint, 1.2)
 
-func _on_faction_changed(changed_planet_id: StringName, _old_faction: StringName, new_faction: StringName) -> void:
+func _on_faction_changed(changed_planet_id: StringName, old_faction: StringName, new_faction: StringName) -> void:
 	if changed_planet_id == planet_id:
-		remove_from_group(_faction_group(faction))
+		# The setter already flipped `faction` before this signal fired, so the
+		# old group must come from `old_faction`, not the already-updated field.
+		remove_from_group(_faction_group(old_faction))
 		faction = new_faction
-		add_to_group(_faction_group(faction))
+		add_to_group(_faction_group(new_faction))
 		queue_redraw()
 		_update_strength_indicator()
 
@@ -743,61 +477,18 @@ func _apply_visuals() -> void:
 ## planets generated by ChunkCoordinator.
 ##
 ## Must be called BEFORE add_child() so _ready() registers the real planet_id
-## and faction and applies the correct detail/size profiles. The caller resolves
-## the size profile (via size_profile_override) because _resolve_size_profile()
-## needs a parent, which does not exist yet before the node enters the tree.
-func configure_from_cache(data, size_profile_override: PlanetSizeProfile = null) -> void:
-	if data == null:
-		return
-	planet_id = data.planet_id
-	display_name = data.display_name
-	faction = data.faction
-	composition_base_texture = data.composition_base_texture
-	composition_tint = data.composition_tint
-	# detail_profile must be set for _apply_detail_seed() in _ready().
-	detail_profile = data.detail_profile if data.detail_profile != null else DEFAULT_DETAIL_PROFILE
-	# layout_size must be set via set_size_profile() for spawn timer.
-	var profile: PlanetSizeProfile = size_profile_override if size_profile_override != null else _resolve_size_profile(data.size_class)
-	set_size_profile(profile)
-
-func _resolve_size_profile(size_class: StringName) -> PlanetSizeProfile:
-	var field: Node = get_parent()
-	if field == null:
-		return DEFAULT_SIZE_PROFILE
-	var config: WorldConfig = field.get("world_config")
-	if config == null:
-		return DEFAULT_SIZE_PROFILE
-	var profiles_by_id: Dictionary = {}
-	for profile in field.get("size_profiles"):
-		if profile != null:
-			profiles_by_id[profile.id] = profile
-	match size_class:
-		&"xl", &"extra_large":
-			return profiles_by_id.get(config.extra_large_profile_id, DEFAULT_SIZE_PROFILE) as PlanetSizeProfile
-		&"l", &"large":
-			return profiles_by_id.get(config.large_profile_id, DEFAULT_SIZE_PROFILE) as PlanetSizeProfile
-		_:
-			return profiles_by_id.get(config.default_profile_id, DEFAULT_SIZE_PROFILE) as PlanetSizeProfile
+## and faction and applies the correct detail/size profiles. The caller
+## (ChunkCoordinator) resolves the size profile, since the parent lookup does
+## not exist yet before the node enters the tree.
+func configure_from_cache(data, size_profile: PlanetSizeProfile = null) -> void:
+	PlanetProcedural.configure_from_cache(self, data, size_profile)
 
 ## Returns the FoV radius (in chunk cells) this planet provides for the owning
 ## faction. Base radius + fov_radius_bonus from upgrades.
 func get_fov_radius() -> int:
-	var state: Node = _game_state()
-	if state == null:
-		return 2
-	var config: WorldConfig = null
 	var field: Node = get_parent()
-	if field != null:
-		config = field.get("world_config")
-	if config == null:
-		return 2
-	var base: int = config.planet_fov_radius
-	var bonus := 0
-	for up_id in state.get_planet_upgrades(planet_id):
-		var def := DEFAULT_UPGRADE_CATALOG.resolve(up_id)
-		if def != null and def.trait_definition != null:
-			bonus += def.trait_definition.fov_radius_bonus
-	return base + bonus
+	var config: WorldConfig = field.get("world_config") if field != null else null
+	return PlanetProcedural.fov_radius(self, config, _game_state())
 
 func _process(_delta: float) -> void:
 	if _strength_label != null and is_instance_valid(_strength_label):

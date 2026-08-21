@@ -173,8 +173,8 @@ func record_milestone(faction: StringName, milestone_id: StringName) -> bool:
 	return true
 
 # Public alias used by island callers (conflict_manager, constraint_ship_builder).
-# Kept under `mark_milestone` because the conflict layer treats milestones as
-# book-keeping flags, while research/scan paths read from `record_milestone`.
+# `mark_milestone` is the only public entry point; `record_milestone` above is
+# the domain implementation it delegates to.
 func mark_milestone(faction: StringName, milestone_id: StringName) -> bool:
 	return record_milestone(faction, milestone_id)
 

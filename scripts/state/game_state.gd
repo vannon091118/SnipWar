@@ -174,10 +174,6 @@ func faction_of(planet_id: StringName) -> StringName:
 func is_owned_by(planet_id: StringName, faction: StringName) -> bool:
 	return faction_domain.is_owned_by(planet_id, faction)
 
-# Kept under the old name for callers that didn't migrate to is_owned_by.
-func owns(planet_id: StringName, faction: StringName) -> bool:
-	return is_owned_by(planet_id, faction)
-
 func homeworld_for(faction: StringName) -> StringName:
 	return faction_domain.homeworld_for(faction)
 
@@ -186,9 +182,6 @@ func get_ownership_count(faction: StringName) -> int:
 
 func all_owned_planets(faction: StringName) -> Array[StringName]:
 	return faction_domain.all_owned_planets(faction)
-
-func set_starting_workers(planet_id: StringName, count: int) -> void:
-	faction_domain.starting_workers[planet_id] = count
 
 func starting_workers_of(planet_id: StringName) -> int:
 	return int(faction_domain.starting_workers.get(planet_id, 0))
@@ -210,9 +203,6 @@ func scan_info_for(faction: StringName, planet_id: StringName) -> Dictionary:
 
 func known_planets_of(faction: StringName) -> Array[StringName]:
 	return faction_domain.known_planets_of(faction)
-
-func record_milestone(faction: StringName, milestone_id: StringName) -> bool:
-	return faction_domain.record_milestone(faction, milestone_id)
 
 # Lookup by callers using the conflict-manager naming convention.
 func mark_milestone(faction: StringName, milestone_id: StringName) -> bool:

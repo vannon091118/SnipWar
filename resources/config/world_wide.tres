@@ -1,6 +1,16 @@
-[gd_resource type="Resource" script_class="WorldConfig" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="WorldConfig" load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/world_config.gd" id="1_world_config"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_01_ember.svg" id="2_t1"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean.svg" id="3_t2"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_03_ice.svg" id="4_t3"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_04_violet.svg" id="5_t4"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_05_desert.svg" id="6_t5"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_06_toxic_red.svg" id="7_t6"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_07_storm.svg" id="8_t7"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_08_volcanic.svg" id="9_t8"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_09_paper.svg" id="10_t9"]
+[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_10_golden.svg" id="11_t10"]
 
 [resource]
 script = ExtResource("1_world_config")
@@ -8,6 +18,7 @@ design_size = Vector2(1920, 1080)
 layout_seed = 462026
 decorative_seed = 462026
 columns = 7
+target_planet_count = 10
 extra_large_count = 2
 large_count = 1
 jitter = 0.12
@@ -18,3 +29,4 @@ large_profile_id = &"l"
 default_profile_id = &"variable"
 chunk_size = 0
 route_mode = "neighbors_only"
+composition_base_textures = Array[ExtResource("2_t1")]([ExtResource("2_t1"), ExtResource("3_t2"), ExtResource("4_t3"), ExtResource("5_t4"), ExtResource("6_t5"), ExtResource("7_t6"), ExtResource("8_t7"), ExtResource("9_t8"), ExtResource("10_t9"), ExtResource("11_t10")])

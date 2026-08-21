@@ -218,7 +218,8 @@ func capture_faction_changed(planet_id: StringName, old_faction: StringName, new
 # --- World/catalog helpers ---
 
 func catalog_for_count(base_catalog: PlanetCatalog, planet_count: int) -> PlanetCatalog:
-	return WorldGenerator.expand_catalog(base_catalog, planet_count)
+	var config: WorldConfig = world_config if world_config != null else preload("res://resources/config/world_default.tres")
+	return WorldGenerator.generate_catalog(config, original_seed, planet_count)
 
 
 # --- Planet/introspection helpers ---

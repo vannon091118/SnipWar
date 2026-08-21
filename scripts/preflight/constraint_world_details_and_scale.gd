@@ -31,19 +31,24 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(respawn_meteor.position != Vector2(-100.0, 270.0), "meteor respawn is inactive"):
 		return false
 
-	var toxic_details: PlanetDetails = field.get_node("Toxic/PlanetDetails") as PlanetDetails
-	var toxic_types := toxic_details.get_detail_types()
-	if not ctx.check(toxic_types.size() >= 2 and toxic_types.size() <= 3 and toxic_types.has(&"satellite") and toxic_types.has(&"asteroid_belt"), "Toxic details are incomplete"):
+	var detail_planet: Planet = null
+	for planet_child in field.get_children():
+		if planet_child is Planet:
+			detail_planet = planet_child as Planet
+			break
+	if not ctx.check(detail_planet != null, "no planet available for detail fidelity test"):
 		return false
-	var stable_types := toxic_types.duplicate()
-	toxic_details.set_seed(777)
-	var seeded_types := toxic_details.get_detail_types()
-	toxic_details.set_seed(777)
-	if not ctx.check(seeded_types == toxic_details.get_detail_types() and stable_types.size() <= 3, "planet details are not seed-stable"):
+	var details_node: PlanetDetails = detail_planet.get_node("PlanetDetails") as PlanetDetails
+	if not ctx.check(details_node.get_detail_types().size() <= 3, "planet details exceed the max detail cap"):
 		return false
-	var orbit: PlanetDetailOrbit = toxic_details.get_node("AsteroidOrbit_0") as PlanetDetailOrbit
-	var satellite_orbit: PlanetDetailOrbit = toxic_details.get_node_or_null("Satellite") as PlanetDetailOrbit
-	if not ctx.check(satellite_orbit != null and satellite_orbit.orbit_motion_mode == PlanetDetailFidelity.MOTION_FULL and orbit.orbit_motion_mode == PlanetDetailFidelity.MOTION_THROTTLED and orbit.orbit_update_interval > 0.0, "Toxic detail motion fidelity was not applied"):
+	details_node.set_seed(777)
+	var seeded_types := details_node.get_detail_types()
+	details_node.set_seed(777)
+	if not ctx.check(seeded_types == details_node.get_detail_types() and seeded_types.size() >= 2 and seeded_types.has(&"satellite") and seeded_types.has(&"asteroid_belt"), "planet details are not seed-stable"):
+		return false
+	var orbit: PlanetDetailOrbit = details_node.get_node("AsteroidOrbit_0") as PlanetDetailOrbit
+	var satellite_orbit: PlanetDetailOrbit = details_node.get_node_or_null("Satellite") as PlanetDetailOrbit
+	if not ctx.check(satellite_orbit != null and satellite_orbit.orbit_motion_mode == PlanetDetailFidelity.MOTION_FULL and orbit.orbit_motion_mode == PlanetDetailFidelity.MOTION_THROTTLED and orbit.orbit_update_interval > 0.0, "detail motion fidelity was not applied"):
 		return false
 	var orbit_angle: float = orbit.rotation
 	var satellite_angle: float = satellite_orbit.rotation
@@ -166,7 +171,8 @@ func _run_scenario_case(ctx: PreflightContext, scene: PackedScene, catalog: Scen
 	if map != null and map.navigation_config != null:
 		scenario_waypoint_catalog = map.navigation_config.waypoint_catalog
 	var wide_waypoint_cadence_valid: bool = scenario_waypoint_catalog != null and scenario_waypoint_catalog.definition_for_edge(0).id == &"comet_sparse" and scenario_waypoint_catalog.definition_for_edge(1).id == &"moon" and scenario_waypoint_catalog.definition_for_edge(3).id == &"comet_sparse"
-	var passed: bool = active_scenario != null and active_scenario.id == scenario_id and active_scenario.route_mode == ScenarioDefinition.ROUTE_MODE_NEIGHBORS_ONLY and not active_scenario.randomize_layout_seed and map != null and scenario_world != null and scenario_world.design_size.distance_to(Vector2(1920.0, 1080.0)) <= 0.01 and scenario_world.route_mode == active_scenario.route_mode and scenario_world.route_mode == WorldConfig.ROUTE_MODE_NEIGHBORS_ONLY and field.get("planet_catalog") == map.planet_catalog and scenario_navigation.get("navigation_config") == map.navigation_config and scenario_waypoint_catalog != null and scenario_waypoint_catalog.definitions.size() >= 2 and scenario_waypoint_catalog != (preload("res://resources/config/navigation_default.tres") as NavigationConfig).waypoint_catalog and wide_waypoint_cadence_valid and planets.size() == map.planet_catalog.planets.size() and route_count == neighbor_count and fixed_seed_applied
+	var field_catalog: PlanetCatalog = field.get("planet_catalog") as PlanetCatalog
+	var passed: bool = active_scenario != null and active_scenario.id == scenario_id and active_scenario.route_mode == ScenarioDefinition.ROUTE_MODE_NEIGHBORS_ONLY and not active_scenario.randomize_layout_seed and map != null and scenario_world != null and scenario_world.design_size.distance_to(Vector2(1920.0, 1080.0)) <= 0.01 and scenario_world.route_mode == active_scenario.route_mode and scenario_world.route_mode == WorldConfig.ROUTE_MODE_NEIGHBORS_ONLY and field_catalog != null and field_catalog.planets.size() == planets.size() and scenario_navigation.get("navigation_config") == map.navigation_config and scenario_waypoint_catalog != null and scenario_waypoint_catalog.definitions.size() >= 2 and scenario_waypoint_catalog != (preload("res://resources/config/navigation_default.tres") as NavigationConfig).waypoint_catalog and wide_waypoint_cadence_valid and planets.size() == map.world_config.target_planet_count and route_count == neighbor_count and fixed_seed_applied
 	scenario_background.queue_free()
 	await ctx.await_frame()
 	return passed

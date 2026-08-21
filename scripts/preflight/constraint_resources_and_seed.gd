@@ -13,7 +13,10 @@ func run(ctx: PreflightContext) -> bool:
 	var game_state: Node = ctx.game_state
 	var world_config: WorldConfig = ctx.world_config
 	var planet_catalog: PlanetCatalog = ctx.planet_catalog
-	if not ctx.check(game_state.faction_of(&"toxic") == GameState.FACTION_NEUTRAL and game_state.faction_of(&"volcanic") == GameState.FACTION_NEUTRAL and game_state.faction_of(&"ember") == GameState.FACTION_NEUTRAL, "GameState faction lookup is wrong"):
+	var neutral_probe_ids: Array[StringName] = []
+	for index in range(2, mini(5, planet_catalog.planets.size())):
+		neutral_probe_ids.append(planet_catalog.planets[index].planet_id)
+	if not ctx.check(neutral_probe_ids.size() >= 3 and game_state.faction_of(neutral_probe_ids[0]) == GameState.FACTION_NEUTRAL and game_state.faction_of(neutral_probe_ids[1]) == GameState.FACTION_NEUTRAL and game_state.faction_of(neutral_probe_ids[2]) == GameState.FACTION_NEUTRAL, "GameState faction lookup is wrong"):
 		return false
 	var resource_pool: ResourcePool = preload("res://resources/config/resource_pool_default.tres")
 	if not ctx.check(resource_pool != null and resource_pool.validate().is_empty(), "resource pool validation failed"):
@@ -31,7 +34,9 @@ func run(ctx: PreflightContext) -> bool:
 
 	if not ctx.check(game_state.call("validate_resources", resource_pool).is_empty(), "GameState resource deal failed"):
 		return false
-	if not ctx.check(not String(game_state.resource_of(&"ocean")).is_empty() and not String(game_state.resource_of(&"paper")).is_empty() and game_state.resource_of(&"ocean") != game_state.resource_of(&"paper"), "homeworld resources are not distinct"):
+	var player_homeworld_id: StringName = game_state.homeworld_for(GameState.FACTION_PLAYER)
+	var cpu_homeworld_id: StringName = game_state.homeworld_for(GameState.FACTION_CPU)
+	if not ctx.check(not String(game_state.resource_of(player_homeworld_id)).is_empty() and not String(game_state.resource_of(cpu_homeworld_id)).is_empty() and game_state.resource_of(player_homeworld_id) != game_state.resource_of(cpu_homeworld_id), "homeworld resources are not distinct"):
 		return false
 	var resource_seed: int = world_config.layout_seed
 	var resource_snapshot_before: Dictionary = game_state.call("resource_snapshot")

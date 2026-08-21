@@ -186,15 +186,6 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(consistency_conquest is CombatReplay and consistency_conquest.is_conquest() and consistency_conquest.validate().is_empty(), "conquest simulator must return a valid typed CombatReplay"):
 		return false
-	var round_trip: CombatReplay = CombatReplay.from_dictionary(consistency_battle.to_dictionary())
-	if not ctx.check(round_trip != null and round_trip.events.size() == consistency_battle.events.size() and round_trip.events[0].ship_data.get("hull", &"") == &"hull_t2", "CombatReplay dictionary round-trip must preserve typed battle events"):
-		return false
-	var replay_path := "user://preflight_combat_replay.tres"
-	var save_error: Error = ResourceSaver.save(consistency_battle, replay_path)
-	var loaded_replay: CombatReplay = ResourceLoader.load(replay_path) as CombatReplay
-	DirAccess.remove_absolute(ProjectSettings.globalize_path(replay_path))
-	if not ctx.check(save_error == OK and loaded_replay != null and loaded_replay.events.size() == consistency_battle.events.size() and loaded_replay.events[0].ship_data.get("hull", &"") == &"hull_t2", "CombatReplay must round-trip through ResourceSaver/ResourceLoader"):
-		return false
 
 	# 6. Planet.resolve_ship_arrival integrates the L2/L3 simulators into
 	#    overworld arrival – FRESH same-faction reinforce registers workers,

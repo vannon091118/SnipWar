@@ -267,23 +267,10 @@ func _resolve_size_class(slot: int, chunk_size: int) -> StringName:
 		return &"l"
 	return &"variable"
 
-## Maps a resolved size class back to the WorldConfig size profile. Mirrors
-## SeededLayout._assign_size_classes() profile resolution for procedural planets.
+## Maps a resolved size class back to the WorldConfig size profile. Shared with
+## PlanetProcedural so coordinator and planet never diverge.
 func _resolve_size_profile(size_class: StringName) -> PlanetSizeProfile:
-	var profiles_by_id: Dictionary = {}
-	for profile in _size_profiles:
-		if profile != null:
-			profiles_by_id[profile.id] = profile
-	var default_profile: PlanetSizeProfile = profiles_by_id.get(_world_config.default_profile_id, Planet.DEFAULT_SIZE_PROFILE) as PlanetSizeProfile
-	var large_profile: PlanetSizeProfile = profiles_by_id.get(_world_config.large_profile_id, default_profile) as PlanetSizeProfile
-	var extra_large_profile: PlanetSizeProfile = profiles_by_id.get(_world_config.extra_large_profile_id, default_profile) as PlanetSizeProfile
-	match size_class:
-		&"xl", &"extra_large":
-			return extra_large_profile
-		&"l", &"large":
-			return large_profile
-		_:
-			return default_profile
+	return PlanetProcedural.resolve_size_profile(_world_config, _size_profiles, size_class)
 
 func _lru_touch(chunk_coord: Vector2i) -> void:
 	_lru_order.erase(chunk_coord)

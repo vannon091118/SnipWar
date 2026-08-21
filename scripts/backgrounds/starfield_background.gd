@@ -11,10 +11,14 @@ const DEFAULT_SCENARIO_CATALOG: ScenarioCatalog = preload("res://resources/confi
 @export var active_scenario_id: StringName = &""
 
 var active_scenario: ScenarioDefinition
-# The catalog the world actually runs on — the map catalog, expanded when the
-# world config requests more planets (target_planet_count). GameState, the
+# The catalog the world actually runs on — generated from the world's
+# building-block pool under the finalized layout seed. GameState, the
 # PlanetField and the resource deal must all share this single catalog.
 var active_catalog: PlanetCatalog
+# Finalized per-run layout seed (authored seed for fixed scenarios, random for
+# randomized ones). Finalized in _enter_tree so the generated catalog and the
+# planet layout share one deterministic seed before either is built.
+var active_layout_seed: int = 0
 
 var stars: Array[Dictionary] = []
 var folds: Array[Dictionary] = []
@@ -40,14 +44,18 @@ func _apply_active_scenario() -> void:
 	active_scenario = scenario
 	active_scenario_id = scenario.id
 	var map: MapDefinition = scenario.map_definition
-	var runtime_world: WorldConfig = WorldGenerator.resolve_runtime_world(map.world_config, map.planet_catalog)
+	var runtime_world: WorldConfig = WorldGenerator.resolve_runtime_world(map.world_config, null)
 	if runtime_world != null:
 		runtime_world.route_mode = scenario.resolved_route_mode()
 	world_config = map.world_config if map.world_config != null else world_config
 	background_config = scenario.background_config if scenario.background_config != null else background_config
-	active_catalog = map.planet_catalog
-	if runtime_world != null and runtime_world.target_planet_count > 0:
-		active_catalog = WorldGenerator.expand_catalog(map.planet_catalog, runtime_world.target_planet_count)
+	_finalize_layout_seed(scenario, runtime_world)
+	var live_world: WorldConfig = runtime_world if runtime_world != null else map.world_config
+	active_catalog = WorldGenerator.generate_catalog(
+		live_world,
+		active_layout_seed,
+		WorldGenerator.target_planet_count(live_world, null)
+	)
 
 	_configure_game_state(map)
 	_configure_planet_field(map, scenario, runtime_world)
@@ -62,7 +70,7 @@ func _configure_planet_field(map: MapDefinition, scenario: ScenarioDefinition, r
 		return
 	field.position = Vector2.ZERO
 	field.world_config = runtime_world if runtime_world != null else map.world_config
-	field.planet_catalog = active_catalog if active_catalog != null else map.planet_catalog
+	field.planet_catalog = active_catalog
 	field.size_profiles = map.size_profiles
 	var navigation: NavigationField = field.get_node_or_null("NavigationField") as NavigationField
 	if navigation != null:
@@ -90,6 +98,17 @@ func _configure_meteor_field(map: MapDefinition, scenario: ScenarioDefinition, r
 
 func get_active_scenario() -> ScenarioDefinition:
 	return active_scenario
+
+func _finalize_layout_seed(scenario: ScenarioDefinition, runtime_world: WorldConfig) -> void:
+	var base_seed: int = runtime_world.layout_seed if runtime_world != null else 0
+	if scenario != null and not scenario.randomize_layout_seed:
+		active_layout_seed = base_seed
+	else:
+		var rng := RandomNumberGenerator.new()
+		rng.randomize()
+		active_layout_seed = rng.randi()
+	if runtime_world != null:
+		runtime_world.layout_seed = active_layout_seed
 
 func _disable_collision_debug_overlay() -> void:
 	# The editor's "Visible Collision Shapes" toggle draws cyan circles around every

@@ -11,36 +11,38 @@ func run(ctx: PreflightContext) -> bool:
 	var base_catalog: PlanetCatalog = preload("res://resources/config/planet_catalog.tres")
 	var base_config: WorldConfig = preload("res://resources/config/world_default.tres")
 
-	if not ctx.check(WorldGenerator.target_planet_count(base_config, base_catalog) == base_catalog.planets.size(), "target_planet_count should fall back to the catalog size"):
+	if not ctx.check(WorldGenerator.target_planet_count(base_config, base_catalog) == base_config.target_planet_count, "target_planet_count should honor the world config override"):
+		return false
+	var fallback_config := base_config.duplicate(true) as WorldConfig
+	fallback_config.target_planet_count = 0
+	if not ctx.check(WorldGenerator.target_planet_count(fallback_config, base_catalog) == 0, "target_planet_count should return zero without an override or catalog"):
 		return false
 	var explicit_config := base_config.duplicate(true) as WorldConfig
 	explicit_config.target_planet_count = 24
 	if not ctx.check(WorldGenerator.target_planet_count(explicit_config, base_catalog) == 24, "target_planet_count should honor an explicit override"):
 		return false
 
-	var expanded := WorldGenerator.expand_catalog(base_catalog, 24)
-	if not ctx.check(expanded.planets.size() == 24, "expanded catalog size is wrong"):
+	var generated := WorldGenerator.generate_catalog(base_config, 424242, 24)
+	if not ctx.check(generated.planets.size() == 24, "generated catalog size is wrong"):
 		return false
-	var expanded_ids: Dictionary = {}
-	var expanded_names: Dictionary = {}
-	for index in expanded.planets.size():
-		var definition: PlanetDefinition = expanded.planets[index]
+	var generated_ids: Dictionary = {}
+	var generated_names: Dictionary = {}
+	for index in generated.planets.size():
+		var definition: PlanetDefinition = generated.planets[index]
 		if definition == null:
-			if not ctx.check(false, "expanded catalog contains a null definition"):
+			if not ctx.check(false, "generated catalog contains a null definition"):
 				return false
 			continue
-		expanded_ids[definition.planet_id] = true
-		expanded_names[definition.display_name] = true
-		if index < base_catalog.planets.size() and not ctx.check(definition.planet_id == base_catalog.planets[index].planet_id, "base planet identity changed during expansion"):
+		generated_ids[definition.planet_id] = true
+		generated_names[definition.display_name] = true
+		if index < 2 and not ctx.check(definition.planet_role == &"homeworld" and definition.faction == (&"a" if index == 0 else &"b"), "generated planet %d should be a homeworld" % index):
 			return false
-	if not ctx.check(expanded_ids.size() == 24 and expanded_names.size() == 24, "expanded planet ids/names are not unique"):
+		if index >= 2 and not ctx.check(definition.planet_role == &"planet" and definition.faction == &"neutral", "generated planet %d should be a neutral world" % index):
+			return false
+	if not ctx.check(generated_ids.size() == 24 and generated_names.size() == 24, "generated planet ids/names are not unique"):
 		return false
-	for index in range(base_catalog.planets.size(), expanded.planets.size()):
-		var rolled: PlanetDefinition = expanded.planets[index]
-		if not ctx.check(rolled.planet_role == &"planet" and rolled.faction == &"neutral", "rolled planet %s must be a neutral world, not a homeworld clone" % rolled.planet_id):
-			return false
-	var expanded_again := WorldGenerator.expand_catalog(base_catalog, 24)
-	if not ctx.check(expanded.planets[23].planet_id == expanded_again.planets[23].planet_id and expanded.planets[23].display_name == expanded_again.planets[23].display_name, "catalog expansion is not deterministic"):
+	var generated_again := WorldGenerator.generate_catalog(base_config, 424242, 24)
+	if not ctx.check(generated.planets[23].planet_id == generated_again.planets[23].planet_id and generated.planets[23].display_name == generated_again.planets[23].display_name, "catalog generation is not deterministic"):
 		return false
 
 	var grid_config := base_config.duplicate(true) as WorldConfig

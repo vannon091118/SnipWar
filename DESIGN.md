@@ -29,15 +29,11 @@
 
 SnipWar ist ein strategischer Overworld-Prototyp mit funktionierendem Karten-, Transit-, Ressourcen-, Forschungs-, Upgrade-, Scout- und deterministischem Konfliktkern. Die Phasen 0 bis 7 (EffectDefinition, Trait-Erweiterungen, Planetensignaturen, Raffinerie-Konvertierung, Perimeter-Slots & Reichweite, CompositeShipView, FleetSnapshot, FleetBattleSimulator, ConquestSimulator und Replay-Szenen) sind implementiert und in `scripts/preflight.gd` verifiziert.
 
-Der Startpunkt ist `scenes/backgrounds/starfield_background.tscn`. `GameState` und `EventLog` sind Autoloads. `StarfieldBackground._enter_tree()` wählt das aktive Szenario und konfiguriert GameState, PlanetField und MeteorField, bevor `Bootstrap` den finalen Layout-Seed setzt.
+Der Startpunkt ist `scenes/backgrounds/starfield_background.tscn`. `GameState` und `EventLog` sind Autoloads. `StarfieldBackground._enter_tree()` wählt das aktive Szenario, finalisiert den Layout-Seed und generiert den Planetenkatalog, bevor es GameState, PlanetField und MeteorField konfiguriert; `Bootstrap` dealt danach nur die Ressourcen.
 
 ## 2. Aktiver Katalog und Szenarien
 
-Der Standardkatalog enthält exakt zehn Planeten:
-
-- Player-Homeworld: `ocean`, Faction `a`
-- CPU-Homeworld: `paper`, Faction `b`
-- acht neutrale Planeten: `ember`, `ice`, `violet`, `desert`, `toxic`, `storm`, `volcanic`, `golden`
+Der Sektor wird bei jedem Start aus dem Baustein-Pool generiert (`WorldGenerator.generate_catalog`): exakt zehn Planeten — zwei Homeworlds (`p0` = Player/Faction `a`, `p1` = CPU/Faction `b`) und acht neutrale Welten (`p2`…`p9`), deren Texturen, Tints und Namen seed-deterministisch via `compose_planet()`/`generate_planet_name()` entstehen.
 
 Interne Faction-IDs sind `a`, `b` und `neutral`; die semantischen Namen Player/CPU werden nur in UI und Meldungen verwendet.
 
@@ -68,7 +64,11 @@ PlanetDetails sind seed-basiert und zählen logische Detailtypen. Das Standardpr
 
 Navigation erzeugt genau einen Moon-/Comet-Waypoint pro Layout-Nachbarschaftskante und überlagert diese Kanten mit einem prozentualen K-Nearest-Langstrecken-Layer (`WorldConfig.graph_neighbor_ratio`: `ceil((n-1) × ratio)` nächste Nachbarn je Planet, symmetrisch dedupliziert, durch `max_extra_edges` gedeckelt). Die KNN-Kanten verbinden Planeten direkt ohne Waypoint-Mittelpunkt; AStar2D wählt automatisch den kürzeren Weg. `NavigationField` ist die einzige Quelle der Wahrheit: `get_neighbors_for_planet()` liefert die vereinigte Nachbarschaft an `PlanetNetwork.get_neighbors()` und damit an Preview, Worker-Transit, Scout und ShipBase. `find_route()` liefert den gemeinsamen Pfad für Preview und Transit. Das Standardrouting erlaubt jedes Ziel, routet aber trotzdem über dieses Graphnetz; `wide` beschränkt die Zielliste auf Nachbarn.
 
-Das Layout skaliert über `WorldGenerator` und `WorldConfig`: `target_planet_count` (0 = Kataloggröße) erweitert die Welt deterministisch, indem zusätzliche Planeten aus den Basis-Templates gewürfelt werden (die ersten Katalogplaneten behalten ihre Identität für Homeworld-/Faction-Seeding); `columns = 0` leitet die Spaltenzahl aus dem Seitenverhältnis ab; `extra_large_ratio`/`large_ratio` skalieren Größenklassen prozentual. `WorldConfig.growth_factor` ist ein multiplikativer Flächenfaktor (1.0 = Standard): `WorldGenerator.resolve_runtime_world` dupliziert die authored WorldConfig vor dem Scene-Boot und wendet `sqrt(growth_factor)` auf `design_size` und `growth_factor` linear auf `target_planet_count` an, sodass die strategische Dichte stabil bleibt. Die Mutation landet nur auf der Runtime-Kopie; die `.tres`-Datei wird nie überschrieben. `resolved_columns()`, `resolved_size_class_counts()`, `resolved_design_size()` und `resolved_target_planet_count()` sind die gemeinsame Quelle für `SeededLayout`, `NavigationField`, `PlanetNetwork` und `MeteorField`. Der Hintergrund rendert in Weltkoordinaten (`design_size`), nicht in Viewport-Koordinaten, damit eine über den Viewport hinauswachsende Welt (FOV/LoD) konsistent bleibt.
+Das Layout skaliert über `WorldGenerator` und `WorldConfig`: `target_planet_count` bestimmt die Größe des seed-deterministisch generierten Katalogs (zwei Homeworlds an Index 0/1, danach neutrale Welten aus den Baustein-Texturen); `columns = 0` leitet die Spaltenzahl aus dem Seitenverhältnis ab; `extra_large_ratio`/`large_ratio` skalieren Größenklassen prozentual. `WorldConfig.growth_factor` ist ein multiplikativer Flächenfaktor (1.0 = Standard): `WorldGenerator.resolve_runtime_world` dupliziert die authored WorldConfig vor dem Scene-Boot und wendet `sqrt(growth_factor)` auf `design_size` und `growth_factor` linear auf `target_planet_count` an, sodass die strategische Dichte stabil bleibt. Die Mutation landet nur auf der Runtime-Kopie; die `.tres`-Datei wird nie überschrieben. `resolved_columns()`, `resolved_size_class_counts()`, `resolved_design_size()` und `resolved_target_planet_count()` sind die gemeinsame Quelle für `SeededLayout`, `NavigationField`, `PlanetNetwork` und `MeteorField`. Der Hintergrund rendert in Weltkoordinaten (`design_size`), nicht in Viewport-Koordinaten, damit eine über den Viewport hinauswachsende Welt (FOV/LoD) konsistent bleibt.
+
+### Unendliche prozedurale Chunk-Welt
+
+Wenn `WorldConfig.chunk_size > 0` ist, ist die Welt unendlich und erweitert sich prozedurial nach und nach, wenn der Spieler eigene Planeten erobert und die FoV-Region wächst. `chunk_size = 0` (Default) aktiviert den Legacy-Modus mit fixem Grid. `ChunkCoordinator` (Kind von `PlanetField`) verwaltet den Chunk-Lebenszyklus: lazy Generierung, lightweight Cache (`ChunkPlanetData` — keine Node-Instanzen), LRU-Eviction und sicheres Planet-Cycling (Halt-Phase → Deferred `queue_free` mit `has_planet()`-Guard). Der Chunk-Seed nutzt eine LCNG-Formel (int64, keine XOR/abs()-Überläufe). Planeten werden aus Bausteinen komponiert (`composition_base_texture` + `composition_tint` + Decals aus `WorldConfig.composition_decal_pool`). `deal_resources_for_planets()` ist eine separate Lazy-Methode ohne `clear()`. `NavigationField` hat inkrementelle `add_planet()`/`remove_planet()` mit cell-basierten pending edges. `deep_space_scanner` (Tier 2, Parent: `orbital_station`) erweitert das FoV über `fov_radius_bonus`.
 
 ### Unendliche prozedurale Chunk-Welt
 
@@ -96,7 +96,7 @@ Planeten spiegeln Faction-Änderungen über `faction_changed`. Ein Capture darf 
   - `TechShipBuilderView`: Schiffsteile-Shop, Hangar-Montage & Job-Countdowns.
   - `TechPlanetView`: Bekannte Planeten, Intel-Analyse & planetare Forschung.
 - **`UIBaseUtils`** (`scripts/ui/ui_base_utils.gd`): Zentraler Helper für `style_box`, `make_label`, `make_separator` und `apply_button_theme`.
-- **`PlanetView`** (`scripts/objects/planets/planet_view.gd`): Kapselt reine CanvasItem-Zeichenroutinen (`_draw`, Faction-Ringe, StrengthLabel-Positionierung) getrennt von der Gameplay-Logik in `Planet.gd`.
+- **`PlanetView`** (`scripts/objects/planets/view/planet_view.gd`): Kapselt reine CanvasItem-Zeichenroutinen (`_draw`, Faction-Ringe, StrengthLabel-Positionierung) getrennt von der Gameplay-Logik in `Planet.gd`.
 
 ## 5. Ressourcen und Wirtschaft
 
@@ -284,7 +284,7 @@ Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgefü
 
 | Bereich | Feature | Status | Code-/Resource-Grenze |
 |---|---|---|---|
-| Fundament | Szenarioauswahl, zehn Katalogplaneten, zwei Homeworlds, acht neutrale Welten | Implementiert | `starfield_background.gd`, `scenario_catalog.tres`, `planet_catalog.tres` |
+| Fundament | Szenarioauswahl, zehn generierte Planeten (Baustein-Pool), zwei Homeworlds, acht neutrale Welten | Implementiert | `starfield_background.gd`, `scenario_catalog.tres`, `world_generator.gd` |
 | Fundament | Seed-Layout, Größenprofile, Startgarnisonen und Bauplätze | Implementiert | `seeded_layout.gd`, `planet_size_profile.gd` |
 | Präsentation | PlanetDetails, Toxic-Garantien, Fidelity-Profile, Meteore, Starfield-Batches | Implementiert | `planet_details.gd`, `starfield_background.gd`, `preflight.gd` |
 | Navigation | Nachbarschaftsgraph, Waypoints, Routen, `all_planets`/`neighbors_only` | Implementiert | `navigation_field.gd`, `planet_network.gd` |

@@ -80,9 +80,18 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(legacy_cs == default_config.design_size, "resolved_cell_size should return design_size when chunk_size=0"):
 		return false
 
-	# Chunk planet generation: produces chunk_size^2 definitions.
+	# Chunk planet generation: produces chunk_size^2 definitions. The chunk path
+	# consumes a template catalog for its detail profile/id prefix; the authored
+	# catalog is now empty because the finite sector is generated from building
+	# blocks, so build a synthetic one-planet template here.
+	var template_catalog := PlanetCatalog.new()
+	var template_definition := PlanetDefinition.new()
+	template_definition.planet_id = &"tmpl"
+	template_definition.display_name = "Template"
+	template_definition.detail_profile = preload("res://resources/config/planet_details/default.tres")
+	template_catalog.planets = [template_definition]
 	var chunk_defs := WorldGenerator.generate_chunk_planets(
-		preload("res://resources/config/planet_catalog.tres"),
+		template_catalog,
 		1, 1, seed_a, 5, infinite_config, &"variable"
 	)
 	if not ctx.check(chunk_defs.size() == 25, "chunk should have 25 planet definitions (5×5)"):
@@ -103,7 +112,7 @@ func run(ctx: PreflightContext) -> bool:
 			return false
 	# Determinism: same seed = same IDs.
 	var chunk_defs_2 := WorldGenerator.generate_chunk_planets(
-		preload("res://resources/config/planet_catalog.tres"),
+		template_catalog,
 		1, 1, seed_a, 5, infinite_config, &"variable"
 	)
 	if not ctx.check(chunk_defs[0].planet_id == chunk_defs_2[0].planet_id, "chunk planet generation is not deterministic"):

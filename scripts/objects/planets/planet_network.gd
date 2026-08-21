@@ -182,53 +182,22 @@ func _build_context_menu_for(planet: Node2D) -> void:
 	if _context_menu == null or not is_instance_valid(_context_menu):
 		return
 	_context_active_planet = planet
-	_context_menu.clear()
-	_context_disabled_reasons.clear()
-	_context_menu.add_item("Planet öffnen", ACTION_OPEN)
-	_context_menu.add_item("Auf Karte zentrieren", ACTION_FOCUS)
-	_context_menu.add_separator()
-	_context_menu.add_item("Angreifen", ACTION_ATTACK)
-	_context_menu.add_item("Sammeln", ACTION_COLLECT)
-	_context_menu.add_item("Kolonisieren", ACTION_COLONIZE)
-	_context_menu.add_separator()
-	_context_menu.add_item("Alles abwählen", ACTION_CLEAR_SELECTION)
-	var selection_size: int = _selection_service.get_selection_count() if _selection_service != null else 1
-	_context_menu.set_item_disabled(ACTION_CLEAR_SELECTION, selection_size <= 1)
-	if selection_size <= 1:
-		_context_disabled_reasons[ACTION_CLEAR_SELECTION] = "Nur ein Planet ausgewählt."
-
-	# Per-action gates. Each entry either enables its item or, when blocked,
-	# stores a player-facing reason for the tooltip popover.
-	var target_planet: Node2D = _context_active_planet
-	var primary_planet: Node2D = _selection_service.get_primary() if _selection_service != null else null
-	var state: Node = _game_state()
-	var target_faction: StringName = GameState.FACTION_NEUTRAL
-	var player_owns_primary: bool = false
-	if primary_planet != null and state != null:
-		player_owns_primary = state.faction_of(primary_planet.planet_id) == GameState.FACTION_PLAYER
-	if target_planet != null and state != null:
-		target_faction = state.faction_of(target_planet.planet_id)
-	var target_known_scanned: bool = state != null and target_planet != null and state.has_scanned_planet(GameState.FACTION_PLAYER, target_planet.planet_id)
-	var hostile_target: bool = target_faction != GameState.FACTION_PLAYER and target_faction != GameState.FACTION_NEUTRAL and player_owns_primary and primary_planet != null and primary_planet != target_planet
-	var neutral_target: bool = target_faction == GameState.FACTION_NEUTRAL and primary_planet != null and primary_planet != target_planet
-	# Angreifen: hostile neighbours only, primary owns.
-	if hostile_target and _is_neighbor(primary_planet, target_planet):
-		_context_menu.set_item_disabled(ACTION_ATTACK, false)
-	else:
-		_context_menu.set_item_disabled(ACTION_ATTACK, true)
-		_context_disabled_reasons[ACTION_ATTACK] = _attack_disable_reason(player_owns_primary, target_faction, primary_planet, target_planet)
-	# Sammeln: scanned neutral neighbour, primary owns.
-	if neutral_target and target_known_scanned and _is_neighbor(primary_planet, target_planet):
-		_context_menu.set_item_disabled(ACTION_COLLECT, false)
-	else:
-		_context_menu.set_item_disabled(ACTION_COLLECT, true)
-		_context_disabled_reasons[ACTION_COLLECT] = _collect_disable_reason(player_owns_primary, target_faction, target_known_scanned, primary_planet, target_planet)
-	# Kolonisieren: scanned neutral neighbour, primary owns AND has colony-capable loadout (a scout-class shipyard OR colony ship in inventory is checked by the ship layer).
-	if neutral_target and target_known_scanned and _is_neighbor(primary_planet, target_planet):
-		_context_menu.set_item_disabled(ACTION_COLONIZE, false)
-	else:
-		_context_menu.set_item_disabled(ACTION_COLONIZE, true)
-		_context_disabled_reasons[ACTION_COLONIZE] = _colonize_disable_reason(player_owns_primary, target_faction, target_known_scanned, primary_planet, target_planet)
+	var result: Dictionary = ContextMenuBuilder.build_menu(
+		_context_menu,
+		planet,
+		_selection_service,
+		_game_state(),
+		_is_neighbor,
+		{
+			"OPEN": ACTION_OPEN,
+			"FOCUS": ACTION_FOCUS,
+			"ATTACK": ACTION_ATTACK,
+			"COLLECT": ACTION_COLLECT,
+			"COLONIZE": ACTION_COLONIZE,
+			"CLEAR": ACTION_CLEAR_SELECTION,
+		}
+	)
+	_context_disabled_reasons = result.get("disabled_reasons", {})
 
 func _on_planet_hovered(planet: Node2D) -> void:
 	if is_instance_valid(_ui):
@@ -292,50 +261,7 @@ func _show_action_tooltip(item_id: int, anchor_position: Vector2) -> void:
 	var reason: String = String(_context_disabled_reasons.get(item_id, "Diese Aktion ist aktuell nicht verfügbar."))
 	_action_tooltip.show_text(reason, anchor_position)
 
-func _attack_disable_reason(player_owns_primary: bool, target_faction: StringName, primary_planet: Node2D, target_planet: Node2D) -> String:
-	if primary_planet == null:
-		return "Kein eigener Planet ausgewählt."
-	if not player_owns_primary:
-		return "Angreifen erfordert einen eigenen Planeten als Quelle."
-	if target_faction == GameState.FACTION_PLAYER:
-		return "Eigener Planet — kein Angriff nötig."
-	if target_planet == null or primary_planet == target_planet:
-		return "Wähle einen feindlichen Nachbarplaneten."
-	if target_faction == GameState.FACTION_NEUTRAL:
-		return "Neutrale Welten können erst nach Scout-Aufklärung angegriffen werden."
-	if not _is_neighbor(primary_planet, target_planet):
-		return "Zielplanet liegt außerhalb der Nachbarschaftskanten."
-	return "Angriff aktuell nicht verfügbar."
 
-func _collect_disable_reason(player_owns_primary: bool, target_faction: StringName, scanned: bool, primary_planet: Node2D, target_planet: Node2D) -> String:
-	if primary_planet == null:
-		return "Kein eigener Planet ausgewählt."
-	if not player_owns_primary:
-		return "Sammeln erfordert einen eigenen Planeten als Quelle."
-	if target_planet == null or primary_planet == target_planet:
-		return "Wähle einen neutralen Nachbarplaneten zum Sammeln."
-	if target_faction != GameState.FACTION_NEUTRAL:
-		return "Sammeln ist nur an neutralen, gescannten Welten möglich."
-	if not scanned:
-		return "Zielplanet wurde noch nicht gescannt (Scout benötigt)."
-	if not _is_neighbor(primary_planet, target_planet):
-		return "Zielplanet liegt außerhalb der Nachbarschaftskanten."
-	return "Sammeln aktuell nicht verfügbar."
-
-func _colonize_disable_reason(player_owns_primary: bool, target_faction: StringName, scanned: bool, primary_planet: Node2D, target_planet: Node2D) -> String:
-	if primary_planet == null:
-		return "Kein eigener Planet ausgewählt."
-	if not player_owns_primary:
-		return "Kolonisieren erfordert einen eigenen Planeten als Quelle."
-	if target_planet == null or primary_planet == target_planet:
-		return "Wähle einen neutralen Nachbarplaneten."
-	if target_faction != GameState.FACTION_NEUTRAL:
-		return "Nur neutrale Welten sind Kolonieziele."
-	if not scanned:
-		return "Zielplanet wurde noch nicht gescannt (Scout benötigt)."
-	if not _is_neighbor(primary_planet, target_planet):
-		return "Zielplanet liegt außerhalb der Nachbarschaftskanten."
-	return "Kolonisieren aktuell nicht verfügbar."
 
 func _is_neighbor(source: Node2D, target: Node2D) -> bool:
 	if source == null or target == null:

@@ -9,6 +9,9 @@ const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/conf
 var playback_speed: float = 1.0
 var _events: Array[BattleEvent] = []
 var _current_result: CombatReplay
+## Deterministic cosmetics RNG, seeded from the replay's battle_seed so replay
+## visuals match the simulation instead of using global randf_range().
+var _fx_rng := RandomNumberGenerator.new()
 var _ships: Dictionary = {} # id -> CompositeShipView
 var _ship_initial_data: Dictionary = {}
 var _elapsed: float = 0.0
@@ -66,6 +69,7 @@ func play_battle(replay: CombatReplay) -> void:
 	if replay == null or not replay.is_battle():
 		return
 	_current_result = replay
+	_fx_rng.seed = replay.battle_seed
 	_events = replay.events
 	_total_duration = replay.duration
 	_event_index = 0
@@ -76,9 +80,6 @@ func play_battle(replay: CombatReplay) -> void:
 	_player_controls.setup(_total_duration)
 	_clear_arena()
 	_cache_spawn_data()
-
-func play_battle_legacy(payload: Dictionary) -> void:
-	play_battle(CombatReplay.from_dictionary(payload, CombatReplay.TYPE_BATTLE))
 
 func _ensure_ui() -> void:
 	if _viewport_container == null:
@@ -263,11 +264,11 @@ func _animate_destruction(ship_id: StringName, pos: Vector2) -> void:
 			spark.position = pos
 			spark.scale = Vector2.ONE * 0.15
 			_arena.add_child(spark)
-			var dir := Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized() * randf_range(20.0, 50.0)
+			var dir := Vector2(_fx_rng.randf_range(-1, 1), _fx_rng.randf_range(-1, 1)).normalized() * _fx_rng.randf_range(20.0, 50.0)
 			var s_tw := create_tween()
 			s_tw.set_parallel(true)
 			s_tw.tween_property(spark, "position", pos + dir, 0.4)
-			s_tw.tween_property(spark, "rotation", randf_range(-TAU, TAU), 0.4)
+			s_tw.tween_property(spark, "rotation", _fx_rng.randf_range(-TAU, TAU), 0.4)
 			s_tw.tween_property(spark, "modulate:a", 0.0, 0.4)
 			s_tw.chain().tween_callback(spark.queue_free)
 

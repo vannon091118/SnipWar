@@ -5,7 +5,6 @@ extends Resource
 @export var id: StringName
 @export var display_name: String
 @export var world_config: WorldConfig
-@export var planet_catalog: PlanetCatalog
 @export var size_profiles: Array[PlanetSizeProfile] = []
 @export var navigation_config: NavigationConfig
 @export var resource_pool: ResourcePool
@@ -18,16 +17,15 @@ func validate() -> PackedStringArray:
 		errors.append("map definition display_name is empty")
 	if world_config == null:
 		errors.append("map definition world_config is missing")
-	if planet_catalog == null:
-		errors.append("map definition planet_catalog is missing")
 	if navigation_config == null:
 		errors.append("map definition navigation_config is missing")
-	if world_config == null or planet_catalog == null:
+	if world_config == null:
 		return errors
 
-	for catalog_error in planet_catalog.validate():
-		errors.append("map catalog: " + catalog_error)
-	for world_error in world_config.validate_for_planet_count(planet_catalog.planets.size()):
+	var planet_count := world_config.target_planet_count
+	if planet_count <= 0:
+		errors.append("map definition world target_planet_count must be positive")
+	for world_error in world_config.validate_for_planet_count(planet_count):
 		errors.append("map world: " + world_error)
 	for profile_error in world_config.validate_profiles(size_profiles):
 		errors.append("map profiles: " + profile_error)

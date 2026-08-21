@@ -32,32 +32,52 @@ static func resolve_runtime_world(base_config: WorldConfig, base_catalog: Planet
 			resolved.target_planet_count = resolved.resolved_target_planet_count(base_catalog.planets.size())
 	return resolved
 
-## Rolls a deterministic catalog of `target_count` planets from the base assets.
-## The first base_catalog.planets.size() entries keep their original identity so
-## homeworld/faction seeding stays stable; every additional planet is a seeded
-## duplicate of a base template with a unique id/display-name suffix.
-## @deprecated for infinite worlds — use generate_chunk_planets() instead.
-## Retained for the start-chunk (0,0) legacy path.
-static func expand_catalog(base_catalog: PlanetCatalog, target_count: int) -> PlanetCatalog:
+## Generates the sector's planet catalog deterministically from the world's
+## building-block pool (base textures + tint palettes + decals). The first two
+## planets are the player and CPU homeworlds; the remaining planets are neutral
+## worlds. This replaces the hand-authored planet catalog: identities, names,
+## textures and factions all come from `compose_planet()`/`generate_planet_name()`
+## under the layout seed, so every seed yields a fresh but reproducible sector.
+static func generate_catalog(config: WorldConfig, seed_value: int, target_count: int) -> PlanetCatalog:
 	var catalog := PlanetCatalog.new()
-	if base_catalog == null or base_catalog.planets.is_empty() or target_count <= 0:
+	if config == null or target_count <= 0:
 		return catalog
 	var definitions: Array[PlanetDefinition] = []
-	var base_size := base_catalog.planets.size()
+	var used_names: Dictionary = {}
 	for index in target_count:
-		var source: PlanetDefinition = base_catalog.planets[index % base_size]
-		if source == null:
-			continue
-		var definition: PlanetDefinition = source.duplicate(true) as PlanetDefinition
-		if index >= base_size:
-			definition.planet_id = StringName("%s_%d" % [definition.planet_id, index])
-			definition.display_name = "%s %d" % [definition.display_name, index]
-			# Rolled variants are ordinary neutral worlds, never extra homeworlds.
-			definition.planet_role = &"planet"
-			definition.faction = &"neutral"
+		var planet_seed := slot_seed(seed_value, index)
+		var definition := PlanetDefinition.new()
+		definition.planet_id = StringName("p%d" % index)
+		definition.display_name = _unique_generated_name(planet_seed, index, used_names)
+		definition.generated_name = definition.display_name
+		definition.planet_role = &"homeworld" if index < 2 else &"planet"
+		definition.faction = &"a" if index == 0 else (&"b" if index == 1 else &"neutral")
+		var composition := compose_planet(
+			planet_seed,
+			config.composition_base_textures,
+			config.composition_tint_palettes,
+			config.composition_decal_pool
+		)
+		definition.composition_base_texture = composition.get("base_texture", null) as Texture2D
+		definition.composition_tint = composition.get("tint", Color.WHITE) as Color
+		# Keep planet_texture in sync so legacy consumers (conquest replay path
+		# resolution, PlanetDefinition.validate) can resolve generated planets.
+		definition.planet_texture = definition.composition_base_texture
+		definition.detail_profile = DEFAULT_DETAIL_PROFILE
 		definitions.append(definition)
 	catalog.planets = definitions
 	return catalog
+
+## Generated display names are drawn from a bounded adjective+noun space, so two
+## planets in a small sector can collide. Keep the seeded name but suffix the
+## colliding one deterministically so the catalog always passes uniqueness
+## validation.
+static func _unique_generated_name(planet_seed: int, index: int, used_names: Dictionary) -> String:
+	var candidate := generate_planet_name(planet_seed)
+	if used_names.has(candidate):
+		candidate = "%s %d" % [candidate, index]
+	used_names[candidate] = true
+	return candidate
 
 ## Pure grid layout: one cell-center position per planet slot, ordered by slot.
 ## Jitter and padding clamping stay in SeededLayout so the math is easy to test.
@@ -190,6 +210,8 @@ static func compose_planet(seed_value: int, base_textures: Array[Texture2D], tin
 			decal_textures.append(decal_pool[rng.randi_range(0, decal_pool.size() - 1)])
 	result["decal_textures"] = decal_textures
 	return result
+
+const DEFAULT_DETAIL_PROFILE: PlanetDetailProfile = preload("res://resources/config/planet_details/default.tres")
 
 const _NAME_ADJECTIVES: Array[String] = [
 	"Void", "Crystal", "Ember", "Frost", "Storm", "Dust", "Iron", "Neon",

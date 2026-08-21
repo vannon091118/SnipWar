@@ -298,7 +298,7 @@ func _refresh_upgrade_list(planet: Node2D) -> void:
 
 	var planet_id: StringName = planet.get("planet_id") if planet.get("planet_id") != null else &""
 	var unlocked_upgrades: Array[StringName] = state.get_planet_upgrades(planet_id)
-	var is_player_owned: bool = state.owns(planet_id, &"a")
+	var is_player_owned: bool = state.is_owned_by(planet_id, &"a")
 	var branch_order: Array[StringName] = [&"economy", &"military", &"tech", &"infrastructure"]
 	var branch_titles: Dictionary = {
 		&"economy": "WIRTSCHAFT",

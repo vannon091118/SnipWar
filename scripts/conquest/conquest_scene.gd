@@ -87,9 +87,6 @@ func play_conquest(replay: CombatReplay) -> void:
 	_player_controls.setup(_duration)
 	_setup_battlefield()
 
-func play_conquest_legacy(payload: Dictionary) -> void:
-	play_conquest(CombatReplay.from_dictionary(payload, CombatReplay.TYPE_CONQUEST))
-
 func _ensure_ui() -> void:
 	if _viewport_container == null:
 		_build_ui()
@@ -169,8 +166,6 @@ func _result_float(key: String, fallback: float) -> float:
 	return fallback
 
 func _resolve_planet_texture() -> Texture2D:
-	if _result != null and _result.legacy_planet_texture != null:
-		return _result.legacy_planet_texture
 	if _result != null and not _result.planet_texture_path.is_empty():
 		var resolved_texture: Texture2D = ResourceLoader.load(_result.planet_texture_path) as Texture2D
 		if resolved_texture != null:

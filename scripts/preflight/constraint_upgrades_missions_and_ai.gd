@@ -248,15 +248,16 @@ func run(ctx: PreflightContext) -> bool:
 	var mission_source: Planet = null
 	var mission_cpu: Planet = null
 	var mission_neutral: Planet = null
+	var cpu_homeworld_id: StringName = game_state.homeworld_for(GameState.FACTION_CPU)
 	for planet_child in field.get_children():
 		if planet_child is Planet:
-			match (planet_child as Planet).planet_id:
-				&"ocean":
-					mission_source = planet_child as Planet
-				&"paper":
-					mission_cpu = planet_child as Planet
-				&"toxic":
-					mission_neutral = planet_child as Planet
+			var candidate: Planet = planet_child as Planet
+			if candidate.planet_id == player_homeworld:
+				mission_source = candidate
+			elif candidate.planet_id == cpu_homeworld_id:
+				mission_cpu = candidate
+			elif mission_neutral == null and candidate.get_faction() == GameState.FACTION_NEUTRAL:
+				mission_neutral = candidate
 	if not ctx.check(mission_source != null and mission_cpu != null and mission_neutral != null, "mission test planets missing"):
 		return false
 

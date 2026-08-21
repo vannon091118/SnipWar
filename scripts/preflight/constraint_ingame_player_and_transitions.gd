@@ -105,8 +105,8 @@ func run(ctx: PreflightContext) -> bool:
 	battle.queue_free()
 
 	# 5. ConquestScene with Ingame Controls and the attacked planet visual.
-	var conquest_target: PlanetDefinition = ctx.planet_catalog.definition_for(&"ocean")
-	if not ctx.check(conquest_target != null, "ocean planet definition missing for conquest visual test"):
+	var conquest_target: PlanetDefinition = ctx.planet_catalog.planets[0] as PlanetDefinition
+	if not ctx.check(conquest_target != null and conquest_target.planet_texture != null, "conquest visual planet definition missing"):
 		return false
 	var conquest := ConquestScene.new()
 	ctx.root().add_child(conquest)
