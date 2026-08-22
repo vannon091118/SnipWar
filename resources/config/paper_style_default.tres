@@ -9,3 +9,7 @@ outline_width = 2.0
 shadow_color = Color(0, 0, 0, 0.3)
 halftone_density = 0.5
 cell_shading_levels = 4
+grain_strength = 0.04
+vignette_strength = 0.35
+vignette_radius = 0.65
+vignette_softness = 0.25

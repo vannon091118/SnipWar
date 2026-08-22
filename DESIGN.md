@@ -39,7 +39,7 @@ Interne Faction-IDs sind `a`, `b` und `neutral`; die semantischen Namen Player/C
 
 Es gibt zwei Szenarien:
 
-- `default`: 960×540, zwei XL-Profile, ein L-Profil, sieben variable Profile, freie Zielauswahl (`all_planets`), zufälliger Laufzeit-Seed.
+- `default`: 960×540, freie Zielauswahl (`all_planets`), zufälliger Laufzeit-Seed.
 - `wide` / Frontier Ring: 1920×1080, fester Map-Seed, `neighbors_only`, größere Spalten-/Padding-Werte.
 
 Das Szenario wird vor dem Laufzeit-Eintritt von `PlanetField` gewählt. Ein laufender Wechsel des Szenariokatalogs ist kein unterstützter Vertrag.
@@ -121,12 +121,12 @@ Wirtschaft:
 
 ## 6. Planet-Upgrades und Traits
 
-Der Default-Katalog enthält 13 `PlanetUpgradeDefinition`-Einträge in vier Zweigen:
+Der Default-Katalog enthält 17 `PlanetUpgradeDefinition`-Einträge in vier Zweigen:
 
-- Economy: `extractor`, `refinery`, `trade_post`
+- Economy: `extractor`, `refinery`, `trade_post`, `automated_mine`, `trade_hub`
 - Military: `shipyard`, `war_shipyard`, `colony_shipyard`, `defense_grid`
 - Tech: `tech_center`, `weapon_lab`, `armor_lab`
-- Infrastructure: `orbital_station`, `colony_hub`, `trade_network`
+- Infrastructure: `orbital_station`, `colony_hub`, `trade_network`, `comms_array`, `deep_space_scanner`
 
 Implementiert sind:
 
@@ -139,20 +139,20 @@ Implementiert sind:
 
 Wichtige Grenzen des aktuellen Vertrags:
 
-- `refinery` konvertiert noch keine Ressource in Rare; sie erhöht nur Produktion und versucht Maintenance.
+- `refinery` konvertiert 2 Material + 1 Energy → 1 Rare über `convert_refinery_resources()` (mit Energy-Refund); die Konvertierung ist noch nicht als serialisierbare Definition ausgelagert.
 - `trade_post` und ähnliche Geschwindigkeitsboni sind generische Transfer-Speed-Modifikatoren; es gibt noch kein separates Frachter-Subsystem.
 - `cluster_tier_bonus` verändert nur die sichtbare Clusterstufe, nicht logische Kapazität, Packung, Fluglast oder Ankunftsmenge.
-- `perimeter_slots_bonus` und `range_bonus` sind Datenfelder ohne vollständige Laufzeitverbraucher für Türme, Garnisonsplätze oder Sichtreichweite.
+- `perimeter_slots_bonus` speist `Planet.get_perimeter_slots()` und `range_bonus` `Planet.get_defense_range()`; beide fließen als Tower-Slots/Defense-Reichweite in `ConquestSimulator.simulate_conquest()` ein.
 - `weapon_lab` und `armor_lab` erzeugen noch keinen allgemeinen Transformer-Pool für Mechs oder Schiffe.
 - Asset-Komposition existiert für Planet-Upgrade-Strukturen, aber noch nicht als allgemeiner Objekt×Transformer-Child-Pool.
 
 ## 7. Forschung, Discovery und Scouts
 
-Der Default-TechnologyCatalog enthält:
+Der Default-TechnologyCatalog enthält 14 Technologien:
 
-- Ship-Technologien: `shipyard_construction`, `scout_hull`, `scanner_drone`, `worker_automation`
+- Ship-Technologien: `shipyard_construction`, `scout_hull`, `scanner_drone`, `weapon_systems`, `worker_automation`, `advanced_propulsion`, `heavy_armor_plating`, `deep_scan`, `long_range_sensors`
 - Mech-Technologie: `mech_frame` — sichtbar, aber bis Layer 3 inert
-- Planet-Technologien: `planetary_survey`, `planetary_extraction`
+- Planet-Technologien: `planetary_survey`, `planetary_extraction`, `automated_refinery`, `bulk_processing`
 
 Globale Forschung liegt pro Fraktion vor. Planetare Forschung liegt pro Planet vor und darf nur auf einem eigenen bekannten Planeten stattfinden. Planetare Forschung beeinflusst aktuell die Produktionsmultiplikation.
 
@@ -210,13 +210,12 @@ Default-Flugzeit:
 
 Preview und tatsächlicher Transit verwenden dieselbe `FlightTime.seconds_for()`-Logik und den Speed-Multiplikator der Quelle.
 
-Militärischer Resolve in `Planet.resolve_arrival()`:
+Militärischer Resolve läuft über `PlanetArrivalResolver` in zwei Pfaden:
 
-1. gleiche Faction: alle eingehenden Worker verstärken den Zielplaneten;
-2. `incoming <= worker_count + defense_rating`: Angriff wird abgewehrt, bis zu `incoming` vorhandene Worker werden entfernt;
-3. `incoming > defenders`: Ziel-Faction wechselt über `GameState.set_faction()`, Verteidiger-Worker werden entfernt, Überlebende `incoming - defenders` bleiben am Ziel.
+- Worker-Military (`resolve_military_arrival`) → `ConquestSimulator.simulate_conquest()`: bei Capture wechselt die Faction über `GameState.set_faction()` und Überlebende werden als Worker registriert; bei Abwehr werden bis zu `incoming` Worker entfernt.
+- Schiffs-Ankunft (`resolve_ship_arrival`) → Kolonieschiff besiedelt ausschließlich gescannte neutrale Ziele; eine Defender-Flotte wird über `FleetBattleSimulator` aufgelöst (fleet-vs-fleet), ohne Defender über `ConquestSimulator` (fleet-vs-ground).
 
-Das ist kein Waffen-, Schadens-, Tower- oder Gefechtssystem. Es gibt keine Layer-2-Simulation und keine aktive Layer-3-Szene.
+Beide Simulatoren sind deterministisch; `BattleScene` und `ConquestScene` illustrieren nur bereits berechnete Ergebnisse.
 
 ## 10. CPU und Laufzeit-Timer
 
@@ -271,7 +270,7 @@ Ein separater Main-Scene-Smoke-Test ist:
 godot --headless --path . --quit-after 2
 ```
 
-Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgeführt und meldete `PASS: SnipWar preflight`; auch der Main-Scene-Smoke-Test mit `--quit-after 2` war erfolgreich. Die Aussagen oben wurden aus Code, Resources, den vorhandenen Preflight-Assertions und diesem Lauf abgeleitet.
+Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgeführt und meldete `RESULT: PASSED (29 constraints)`; auch der Main-Scene-Smoke-Test mit `--quit-after 2` war erfolgreich. Die Aussagen oben wurden aus Code, Resources, den vorhandenen Preflight-Assertions und diesem Lauf abgeleitet.
 
 ## 15. Feature-Matrix
 
@@ -294,11 +293,11 @@ Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgefü
 | Ressourcen | Fünf Ressourcen, seed-deterministischer Deal, Homeworld-Differenz, Vaults | Implementiert | `game_state.gd`, `resource_pool_default.tres` |
 | Wirtschaft | Passive Produktion, Maintenance, Gather-Timer und persistente Sammeltrupps | Implementiert | `economy_manager.gd`, `game_state.gd`, `planet.gd` |
 | Ressourcenmodell | Planetentyp als echte Ressourcen-Signatur | Geplant | Vorhandene Mapping-Hilfsmethode wird nicht vom Deal/Production-Pfad verwendet |
-| Wirtschaft | Raffinerie als tatsächliche Ressourcen-Konvertierung | Geplant | `refinery` ist aktuell Produktionsbonus plus Maintenance |
+| Wirtschaft | Raffinerie als tatsächliche Ressourcen-Konvertierung | Implementiert | `convert_refinery_resources()` (2 Material + 1 Energy → 1 Rare, Energy-Refund) |
 | Upgrades | 17 Upgrades, vier Branches, Kosten, Parent-/Exklusivitätsregeln | Implementiert | `planet_upgrade_catalog_default.tres`, `game_state.gd` |
 | Upgrades | Sichtbare Upgrade-Strukturen auf Planeten | Implementiert | `planet_details.gd`, `planet.gd` |
 | Traits | Produktion, Spawnrate, Defense-Rating, Transfer-Speed, sichtbarer Tier-Bonus | Implementiert | `trait_definition.gd`, `planet.gd`, Transitpfad |
-| Traits | Perimeter-Slots, Reichweite, allgemeiner Objekt×Transformer-Child-Pool | Teilweise | Datenfelder und einzelne Asset-Strukturen existieren; vollständige Verbraucher fehlen |
+| Traits | Perimeter-Slots & Reichweite im Conquest-Pfad; allgemeiner Objekt×Transformer-Child-Pool | Teilweise | Perimeter/Reichweite speisen `get_perimeter_slots()`/`get_defense_range()`; der allgemeine Kompositions-Pool fehlt noch |
 | Forschung | Globale/planetare Technologien, Prerequisites und Discovery-Gates | Implementiert | `technology_catalog.gd`, `game_state.gd` |
 | Scouts | Ein kostenloser Start-Scout, danach Werft-/Tech-/Kosten-/Nachbar-Gates, Flug, Scan-Intel und Freigabe | Implementiert | `ship_manager.gd`, `scout_ship.gd`, `game_state.gd` |
 | Ship Builder | Teile kaufen, vollständige Drive-/Shield-Loadouts montieren, zerlegen, Varianten und Readback | Implementiert | `game_state.gd`, `ship_manager.gd`, `technology_menu.gd`, `shipyard_hangar.gd` |

@@ -80,7 +80,7 @@ graph TD
 
 | Dokument | Pfad | Zweck & Inhalt |
 |:---|:---|:---|
-| **Agenten- & Entwicklerregeln** | [`AGENTS.md`](../AGENTS.md) | **Faktengetreue operative Leitlinien:** Godot-Headless-Regeln, modulares Preflight-Design (24 Constraints, `PreflightFixture`-Isolation, Seed `424242`), atomare Commit-Gruppen (`Change Together`), Godot-Fallstricke und unumgehbare Git-Hook-Kette. |
+| **Agenten- & Entwicklerregeln** | [`AGENTS.md`](../AGENTS.md) | **Faktengetreue operative Leitlinien:** Godot-Headless-Regeln, modulares Preflight-Design (29 Constraints, `PreflightFixture`-Isolation, Seed `424242`), atomare Commit-Gruppen (`Change Together`), Godot-Fallstricke und unumgehbare Git-Hook-Kette. |
 
 ---
 
@@ -108,4 +108,4 @@ graph TD
 
 1. **Wahrheitsgebot:** Keine hypothetischen oder unvollständigen Features dürfen in `AGENTS.md`, `DESIGN.md` oder `README.md` als implementiert dokumentiert werden, wenn kein Laufzeitverbraucher und keine Preflight-Abdeckung existieren.
 2. **Synchronisation bei Änderungen:** Änderungen an Schnittstellen müssen zeitgleich in Code, Preflight und dem zugehörigen Modulvertrag aktualisiert werden (siehe `Change/commit together` in `AGENTS.md`).
-3. **Preflight-Konsistenz:** Die Anzahl der Constraints (aktuell **24 Constraints**) und die CLI-Flags (`--verbose`, `--fail-fast`, `--filter`, `--reverse`, `--list`) müssen über alle Dokumente einheitlich geführt werden.
+3. **Preflight-Konsistenz:** Die Anzahl der Constraints (aktuell **29 Constraints**) und die CLI-Flags (`--verbose`, `--fail-fast`, `--filter`, `--reverse`, `--list`) müssen über alle Dokumente einheitlich geführt werden.

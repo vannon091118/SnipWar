@@ -168,11 +168,11 @@ func recall_gathering_workers(target_faction: StringName, amount: int) -> int:
 |-------|-------|--------|
 | `constraint_world_planets_and_dispatch.gd` | L361 | `destination.resolve_arrival(attack_faction, 2)` |
 | `constraint_world_planets_and_dispatch.gd` | L373 | `repel_target.resolve_arrival(attack_faction, 1)` |
-| `constraint_upgrades_missions_and_ai.gd` | L266 | `mission_neutral.resolve_mission(GameState.FACTION_PLAYER, 2, GameState.MISSION_COLONY)` |
-| `constraint_upgrades_missions_and_ai.gd` | L271 | `mission_neutral.resolve_mission(GameState.FACTION_CPU, 1, GameState.MISSION_COLONY)` |
-| `constraint_upgrades_missions_and_ai.gd` | L278 | `mission_source.resolve_mission(GameState.FACTION_PLAYER, 3, GameState.MISSION_CARGO)` |
-| `constraint_upgrades_missions_and_ai.gd` | L283 | `mission_cpu.resolve_mission(GameState.FACTION_PLAYER, 3, GameState.MISSION_CARGO)` |
-| `constraint_upgrades_missions_and_ai.gd` | L288 | `mission_neutral.resolve_mission(GameState.FACTION_CPU, 4, GameState.MISSION_MILITARY)` |
+| `constraint_mission_semantics.gd` | L38 | `mission_neutral.resolve_mission(GameState.FACTION_PLAYER, 2, GameState.MISSION_COLONY)` |
+| `constraint_mission_semantics.gd` | L43 | `mission_neutral.resolve_mission(GameState.FACTION_CPU, 1, GameState.MISSION_COLONY)` |
+| `constraint_mission_semantics.gd` | L50 | `mission_source.resolve_mission(GameState.FACTION_PLAYER, 3, GameState.MISSION_CARGO)` |
+| `constraint_mission_semantics.gd` | L55 | `mission_cpu.resolve_mission(GameState.FACTION_PLAYER, 3, GameState.MISSION_CARGO)` |
+| `constraint_mission_semantics.gd` | L60 | `mission_neutral.resolve_mission(GameState.FACTION_CPU, 4, GameState.MISSION_MILITARY)` |
 | `constraint_layers_2_and_3.gd` | L214 | `arrival_planet.resolve_ship_arrival(reinforce)` |
 | `constraint_layers_2_and_3.gd` | L245 | `enemy_arrival_planet.resolve_ship_arrival(attacker, defender, 2024)` |
 | `constraint_layers_2_and_3.gd` | L273 | `conquest_target.resolve_ship_arrival(attacker_only, null, 0, 1234)` |

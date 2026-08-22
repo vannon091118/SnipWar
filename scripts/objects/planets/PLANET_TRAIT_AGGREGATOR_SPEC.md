@@ -140,8 +140,8 @@ func get_cluster_tier_bonus() -> int:
 |-------|-------|--------|
 | `constraint_layers_2_and_3.gd` | L15 | `test_planet.get_perimeter_slots()` |
 | `constraint_layers_2_and_3.gd` | L17 | `test_planet.get_defense_range()` |
-| `constraint_upgrades_missions_and_ai.gd` | L343 | `upgrade_planet.get_cluster_tier_bonus()` |
-| `constraint_upgrades_missions_and_ai.gd` | L351 | `upgrade_planet.get_cluster_tier_bonus()` |
+| `constraint_cpu_dispatch.gd` | L65 | `upgrade_planet.get_cluster_tier_bonus()` |
+| `constraint_cpu_dispatch.gd` | L73 | `upgrade_planet.get_cluster_tier_bonus()` |
 
 ### Game-Code
 

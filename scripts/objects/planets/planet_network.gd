@@ -33,6 +33,7 @@ var _neighbor_cache: Dictionary = {}
 var _neighbor_cache_valid := false
 var _selection_service: SelectionService
 var _action_tooltip: SelectionActionTooltip
+var _modal_coordinator: ModalCoordinator
 
 # Context-menu item IDs and stable names used by tests/replay scripts.
 const ACTION_OPEN: int = 0
@@ -136,6 +137,7 @@ func _create_ui() -> void:
 	_create_context_menu()
 	_create_technology_menu.call_deferred()
 	_create_message_feed.call_deferred()
+	_create_modal_coordinator.call_deferred()
 
 func _on_clear_selection_requested() -> void:
 	if _selection_service != null:
@@ -311,8 +313,81 @@ func _create_message_feed() -> void:
 	add_child(_message_feed)
 	_message_feed.setup(event_log, ui_theme_config)
 
+func _create_modal_coordinator() -> void:
+	_modal_coordinator = ModalCoordinator.new()
+	_modal_coordinator.name = "ModalCoordinator"
+	add_child(_modal_coordinator)
+	_modal_coordinator.setup(_map_camera, ui_theme_config)
+	_create_dossier_launcher()
+
+func _create_dossier_launcher() -> void:
+	var layer := CanvasLayer.new()
+	layer.name = "DossierLauncher"
+	layer.layer = 40
+	add_child(layer)
+	var box := VBoxContainer.new()
+	box.name = "LauncherBox"
+	box.position = Vector2(12.0, 12.0)
+	box.add_theme_constant_override("separation", 6)
+	layer.add_child(box)
+	_add_dossier_button(box, "PLANET", _open_planet_dossier)
+	_add_dossier_button(box, "WERKSTATT", _open_workshop_dossier)
+	_add_dossier_button(box, "FORSCHUNG", _open_tech_tree_dossier)
+
+func _add_dossier_button(box: VBoxContainer, text: String, pressed: Callable) -> void:
+	var button := Button.new()
+	button.text = text
+	button.focus_mode = Control.FOCUS_NONE
+	UIBaseUtils.apply_button_theme(button, ui_theme_config)
+	button.pressed.connect(pressed)
+	box.add_child(button)
+
+func _close_overlay_panels() -> void:
+	if is_instance_valid(_ui):
+		_ui.close_panel()
+	if is_instance_valid(_technology_menu):
+		_technology_menu.close()
+
+func _open_planet_dossier() -> void:
+	if _modal_coordinator == null or not is_instance_valid(_modal_coordinator):
+		return
+	if _active_planet == null or not is_instance_valid(_active_planet):
+		return
+	var view := PlanetDossierView.new()
+	view.setup(ui_theme_config)
+	view.populate(_active_planet as Planet, _game_state())
+	_close_overlay_panels()
+	_modal_coordinator.open_view(view, "PLANETEN-DOSSIER")
+
+func _open_workshop_dossier() -> void:
+	if _modal_coordinator == null or not is_instance_valid(_modal_coordinator):
+		return
+	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
+	if ship_manager == null:
+		return
+	var view := WorkshopView.new()
+	view.setup(ship_manager, ui_theme_config)
+	view.refresh(_game_state(), ship_manager.get_planets())
+	_close_overlay_panels()
+	_modal_coordinator.open_view(view, "WERKSTATT / HANGAR")
+
+func _open_tech_tree_dossier() -> void:
+	if _modal_coordinator == null or not is_instance_valid(_modal_coordinator):
+		return
+	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
+	if ship_manager == null:
+		return
+	var view := ParchmentTechTreeView.new()
+	view.setup(ship_manager, ui_theme_config)
+	view.refresh(_game_state())
+	_close_overlay_panels()
+	_modal_coordinator.open_view(view, "FORSCHUNGSBAUM")
+
 func get_technology_menu() -> TechnologyMenu:
 	return _technology_menu
+
+func get_modal_coordinator() -> ModalCoordinator:
+	return _modal_coordinator
 
 func get_message_feed() -> MessageFeed:
 	return _message_feed

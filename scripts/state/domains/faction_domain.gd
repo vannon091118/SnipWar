@@ -190,7 +190,7 @@ func record_milestone(faction: StringName, milestone_id: StringName) -> bool:
 	milestone_reached.emit(faction, milestone_id)
 	return true
 
-# Public alias used by island callers (conflict_manager, constraint_ship_builder).
+# Public alias used by island callers (conflict_manager, constraint_colony_milestone).
 # `mark_milestone` is the only public entry point; `record_milestone` above is
 # the domain implementation it delegates to.
 func mark_milestone(faction: StringName, milestone_id: StringName) -> bool:

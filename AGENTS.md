@@ -13,8 +13,9 @@
 - **Registrierung:** Neue Constraints werden als eigene `PreflightConstraintX`-Klasse mit `constraint_name() -> String` und `run(ctx: PreflightContext) -> bool` implementiert und in `CONSTRAINT_REGISTRY` in `scripts/preflight.gd` registriert (`{"id": "...", "script": preload("..."), "desc": "...", "requires_scene": bool}`).
 - **Fixture-Isolation:** Szenenabhängige Constraints (`requires_scene: true`) erhalten über `ctx.fixture.boot_default(ctx)` eine isolierte Szenen-Fixture. Jeder Boot räumt die vorherige Szene auf und setzt `GameState` aus dem aktiven Katalog zurück. Constraints dürfen sich nicht auf Mutationen vorheriger Constraints verlassen; eine Ausführung in umgekehrter Reihenfolge (`--reverse`) ist explizit unterstützt.
 - **Deterministischer Test-Seed:** Das Live-Szenario randomisiert den Seed (`randomize_layout_seed = true`), aber die Preflight-Fixture erzwingt intern `PREFLIGHT_LAYOUT_SEED = 424242`. Dadurch sind Planetenpositionen, Nachbarschaftsgraph und Ressourcen-Deals im Preflight 100 % deterministisch und stabil.
-- **CLI-Optionen:** Die Preflight-Suite unterstützt `--verbose` / `-v` (Detail-Assertions), `--fail-fast` / `-x` (sofortiger Abbruch bei erstem Fehler), `--filter=<name>` / `-f=...` (gezielte Constraint-Filterung mit automatischem Scene-Boot falls nötig), `--reverse` (Reverse-Execution) und `--list` / `-l` (Übersicht aller 24 Constraints).
+- **CLI-Optionen:** Die Preflight-Suite unterstützt `--verbose` / `-v` (Detail-Assertions), `--fail-fast` / `-x` (sofortiger Abbruch bei erstem Fehler), `--filter=<name>` / `-f=...` (gezielte Constraint-Filterung mit automatischem Scene-Boot falls nötig), `--reverse` (Reverse-Execution) und `--list` / `-l` (Übersicht aller 29 Constraints).
 - **Kompatibilitätsprüfung:** `constraint_game_state_compatibility.gd` läuft als erste Constraint und scannt Reflection-Signaturen sowie Regex-Receiver-Aliase unter `res://scripts`. Neue oder umbenannte Fassaden-Methoden müssen in `REQUIRED_FACADE_METHODS` bzw. `SIGNATURE_CONTRACTS` gepflegt werden.
+- **Boot-Kosten & Soft-Reset-Antipattern:** Die Full-Suite braucht ~85–90 s (29 Constraints); jeder `requires_scene`-Constraint kostet ~3,5 s, dominiert von Planeten-Re-Instanziierung + `NavigationField`-Rebuild — nicht von Szenen-Teardown oder Chunk-Regeneration. Szene/Chunk-Cache wiederverwenden (Soft-Reset) hilft daher nicht und schwächt die Fixture-Isolation; Monster-Constraints aufteilen lohnt nur für Fehlerlokalisierung, nie für Speed. Dev-Loop über `--filter`/`--group` beschleunigen.
 - **Scout- & Collect-Gating im Test:** Collect-Missionen erfordern gescannte, neutrale Planeten (`FACTION_NEUTRAL`). Preflight-Szenarien filtern Scout-Ziele daher strikt nach Fraktion, um Flakiness durch benachbarte gegnerische Homeworlds zu verhindern.
 
 ## Architektur & System-Verträge
@@ -53,6 +54,7 @@
 - **Prozedurale Chunk-Welt (Unendlich):**
   - Wird aktiviert, wenn `WorldConfig.chunk_size > 0`. Beide Shipped-Szenarien sind bereits unendlich: `world_default.tres` (`chunk_size = 3`), `world_wide.tres` (`chunk_size = 4`); `chunk_size = 0` wäre der endliche Pfad.
   - Verwaltet durch `ChunkCoordinator` (Lazy-Generierung, Cache, sicheres Cycling) und getestet in Constraint `chunk_expansion`.
+  - `SeededLayout.set_layout_seed()` ist im unendlichen Pfad kein billiger Setter, sondern ein Voll-Reset: ruft `GameState.reset_for_infinite_world()` + `reset_for_layout_seed` (leert Chunk-Cache) und deferred `_refresh_chunks` — regeneriert die ganze Chunk-Welt. `constraint_resources_and_seed` ruft das zweimal auf (Seed ±1, dann zurück) und ist deshalb der langsamste Szenen-Constraint (~9–10 s).
 - **EventLog:** Autoload `/root/EventLog`. `push()` sendet sichtbare Toasts an das `MessageFeed`, `log_silent()` protokolliert geräuschlos. Export nach `user://player.log` erfolgt erst bei Anwendungsbeendigung (`NOTIFICATION_WM_CLOSE_REQUEST`).
 
 ## Atomare Commit-Gruppen (Change Together)
@@ -76,6 +78,7 @@
 - Meteor-Größen sind pixelbasiert; `meteor_field.gd` skaliert über die SVG-Texturbreite.
 - `SceneTree.quit()` beendet Funktionen nicht sofort; Testskripte müssen nach `quit()` explizit ein `return` ausführen.
 - Headless-Läufe können `.tscn` und `.tres` Dateien formatieren und `uid=` Tags injizieren; vor Commits immer `git status` und `git diff` prüfen.
+- `.uid`-Sidecars (`*.gd.uid`, `*.gdshader.uid`) sind versioniert (nicht in `.gitignore`) und müssen bei neuen Scripts/Shadern mitcommittet werden; fehlende Sidecars führen zu Drift/Neuvergabe der UIDs.
 - Neue `class_name`-Skripte erfordern einen Editor-Scan (`$GODOT_BIN --headless --path . --editor --quit`), um in `.godot/global_script_class_cache.cfg` registriert zu werden.
 - GDScript `:=` Typinferenz schlägt bei `Node`-Kindern und untypisierten Helper-Returns fehl; explizite Casts verwenden (z.B. `(node as Node2D)`).
 - `Node.name` liefert `StringName`, nicht `String`. Bei String-Operationen mit `String(node.name)` konvertieren.
@@ -87,6 +90,7 @@
   - `pre-commit` führt `git diff --cached --check` sowie die vollständige Godot-Preflight-Suite aus.
   - `commit-msg` erzwingt eine aussagekräftige Begründungszeile pro gestagter Datei (`- pfad/datei: Begründung.`).
   - `post-commit` pusht direkt auf `origin HEAD:$branch`.
+- Markdown-Hard-Breaks (zwei Leerzeichen am Zeilenende) lassen `git diff --cached --check` im `pre-commit`-Hook fehlschlagen; Doc-Commits vorher mit `sed -i 's/[[:space:]]*$//' <dateien>` bereinigen.
 - **Workflow-Schritte:**
   1. `GODOT_BIN` auf die Godot-Console-Binary setzen (`export GODOT_BIN=...` bzw. `$env:GODOT_BIN=...`).
   2. Nur relevante geänderte Dateien stagen via `git add <dateien>` (niemals `git add -A` oder `git add .`).

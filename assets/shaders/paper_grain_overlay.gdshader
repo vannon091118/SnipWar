@@ -1,4 +1,5 @@
 shader_type canvas_item;
+render_mode blend_mul;
 
 // Subtle paper-grain noise + vignette. Applied on a full-screen ColorRect
 // at the highest CanvasLayer to unify all visuals beneath it.
@@ -24,7 +25,7 @@ void fragment() {
 	float vig = smoothstep(vignette_radius, vignette_radius + vignette_softness, dist);
 	float vignette_darken = vig * vignette_strength;
 
-	// Combine: grain adds subtle texture, vignette darkens edges.
-	// Use multiply so the grain modulates existing brightness.
-	COLOR = vec4(vec3(1.0 - vignette_darken + grain), 0.0);
+	// Multiply blend: white is neutral, so this factor darkens the edges and
+	// stipples paper grain while leaving the center untouched.
+	COLOR = vec4(vec3(1.0 - vignette_darken + grain), 1.0);
 }

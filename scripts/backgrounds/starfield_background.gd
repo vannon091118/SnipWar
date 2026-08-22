@@ -6,6 +6,7 @@ const DEFAULT_BACKGROUND_CONFIG: BackgroundConfig = preload("res://resources/con
 const DEFAULT_SCENARIO_CATALOG: ScenarioCatalog = preload("res://resources/config/scenario_catalog.tres")
 const DEFAULT_UI_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
 const ASSET_LIBRARY_SCRIPT: Script = preload("res://scripts/config/asset_library.gd")
+const DEFAULT_PAPER_STYLE: PaperStyleConfig = preload("res://resources/config/paper_style_default.tres")
 
 @export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG
 @export var background_config: BackgroundConfig = DEFAULT_BACKGROUND_CONFIG
@@ -33,6 +34,8 @@ var _diamond_texture: Texture2D
 var _shape_texture_size := 0
 var _main_menu_backdrop: Sprite2D
 var _paper_overlay: ColorRect
+var _grain_overlay_layer: CanvasLayer
+var _grain_overlay: ColorRect
 ## Visible region for infinite world (follows FoV). Only updated on chunk
 ## boundary change, not per frame, to avoid star regeneration overhead.
 var _visible_region := Rect2(Vector2.ZERO, Vector2(960, 540))
@@ -159,6 +162,7 @@ func _ready() -> void:
 	_generate_elements()
 	_ensure_main_menu_backdrop()
 	_ensure_paper_overlay()
+	_ensure_grain_overlay()
 	_rebuild_render_batches()
 	var viewport := get_viewport()
 	if viewport != null:
@@ -179,6 +183,30 @@ func _ensure_paper_overlay() -> void:
 	_paper_overlay.position = _world_origin()
 	_paper_overlay.size = _world_size()
 	add_child(_paper_overlay)
+
+## Full-screen paper-grain + vignette multiply overlay at the top CanvasLayer,
+## so the comic-look grain unifies the world and every UI canvas beneath it.
+func _ensure_grain_overlay() -> void:
+	if _grain_overlay != null and is_instance_valid(_grain_overlay):
+		return
+	_grain_overlay_layer = CanvasLayer.new()
+	_grain_overlay_layer.name = "GrainOverlayLayer"
+	_grain_overlay_layer.layer = 100
+	add_child(_grain_overlay_layer)
+
+	_grain_overlay = ColorRect.new()
+	_grain_overlay.name = "GrainOverlay"
+	_grain_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_grain_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var material := ShaderMaterial.new()
+	material.shader = preload("res://assets/shaders/paper_grain_overlay.gdshader")
+	var style := DEFAULT_PAPER_STYLE
+	material.set_shader_parameter("grain_strength", style.grain_strength)
+	material.set_shader_parameter("vignette_strength", style.vignette_strength)
+	material.set_shader_parameter("vignette_radius", style.vignette_radius)
+	material.set_shader_parameter("vignette_softness", style.vignette_softness)
+	_grain_overlay.material = material
+	_grain_overlay_layer.add_child(_grain_overlay)
 
 func _ensure_main_menu_backdrop() -> void:
 	if _main_menu_backdrop != null and is_instance_valid(_main_menu_backdrop):

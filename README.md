@@ -10,7 +10,7 @@
 <br/>
 <samp>
 <b>SNIPWAR — EISEN-GRENZE</b><br/>
-STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 24 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
+STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 29 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
 </samp>
 <br/><br/>
 </td>
@@ -19,7 +19,7 @@ STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 24 PREFLIGHT-CONSTRAINTS · 0 SICH
 
 [![Engine: Godot 4.7](https://img.shields.io/badge/Engine-Godot%204.7-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/)
 [![Status: Frontier-Kern](https://img.shields.io/badge/Status-Frontier--Kern%20aktiv-f0b429?style=for-the-badge)](#-lagezentrum--frontbericht)
-[![Preflight](https://img.shields.io/badge/Preflight-24%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
+[![Preflight](https://img.shields.io/badge/Preflight-29%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
 [![Sprache: GDScript](https://img.shields.io/badge/GDScript-4.7-blue?style=for-the-badge)](#-architektur--vom-katalog-zum-spielstand)
 [![Treibstoff](https://img.shields.io/badge/Fuel-Koffein%20%26%20Größenwahn-6f4e37?style=for-the-badge)](#)
 
@@ -93,7 +93,7 @@ cd snip-war
 # Smoke-Test: Bootet die Hauptszene, wartet 2 Sekunden, beendet sich
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Vollständige Preflight-Suite (24 Constraints)
+# Vollständige Preflight-Suite (29 Constraints)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
@@ -446,19 +446,19 @@ LAYER 1 — STRATEGISCHE OVERWORLD
 ████████████████████████████████░░  ~95%  Wirtschaft, Transit, Forschung, Scouts, UI-HUD
 
 LAYER 2 — FLOTTENSIMULATION
-████████████████████░░░░░░░░░░░░░░  ~60%  FleetBattleSimulator, BattleScene, Replay-Daten bereit
-                                          Live-Loop-Integration folgt später
+████████████████████████████████░░  ~95%  FleetBattleSimulator + BattleScene-Replay implementiert
+                                          Live-Loop-Trigger im Spiel folgt später
 
 LAYER 3 — PLANETARE EROBERUNG
-██████████░░░░░░░░░░░░░░░░░░░░░░░  ~30%  ConquestSimulator für Worker-Military aktiv
-                                          Mech-Tech-Stubs vorhanden; Tower-Defense, Minion-Adapter: noch nicht
+████████████████████████░░░░░░░░░░  ~75%  ConquestSimulator + ConquestScene + Tower-Defense + Minion-Adapter
+                                          Mech-Kampflogik & aktive Verteidiger-Befehle: noch nicht
 
 CHUNK-WELT (prozedural, unendlich)
 ████████████████████░░░░░░░░░░░░░░  ~60%  ChunkCoordinator, FoV-Cycling, inkrementelle Navigation
 ```
 
 > [!CAUTION]
-> Was **noch nicht existiert** und nicht als implementiert dokumentiert werden darf: echte Planetentyp-Ressourcen-Signaturen, Tower-Defense-Türme, Ship-as-Minion-Adapter, Mech-Kampflogik, Siegbedingungen.
+> Was **noch nicht existiert** und nicht als implementiert dokumentiert werden darf: echte Planetentyp-Ressourcen-Signaturen, Mech-Kampflogik, komplexe Siegbedingungen.
 
 ---
 
@@ -474,12 +474,12 @@ Die Preflight-Suite (`scripts/preflight.gd`) ist der einzige autoritative Verifi
 # Smoke-Test: Hauptszene bootet durch
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Alle 24 Constraints
+# Alle 29 Constraints
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
 <details>
-<summary>📋 <b>Die 24 Preflight-Constraints</b></summary>
+<summary>📋 <b>Die 29 Preflight-Constraints</b></summary>
 
 | # | Constraint | Prüft |
 |:---:|:---|:---|
@@ -492,21 +492,26 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 | 7 | `resources_and_seed` | Seed-Deterministik & Ressourcen-Deals |
 | 8 | `world_planets_and_dispatch` | Planetennetz, Routen & Transitlinien |
 | 9 | `world_details_and_scale` | Detail-Generierung & Orbit-Skalierungen |
-| 10 | `upgrades_missions_and_ai` | 17 Upgrades, Wirtschaftsticks, CPU-AI |
-| 11 | `selection_and_context` | SelectionService, Tooltips & Kontextmenüs |
-| 12 | `scout_and_discovery` | Werftbau, Scout-Flug & Scan-Intel |
-| 13 | `ship_builder` | Modulare Montage, Variantenpools & Hangar-Hinterlegung |
-| 14 | `event_log` | Toasts, History & Logfile-Export |
-| 15 | `camera_and_input` | Kamera-Pans, Zoom & Input-Mappings |
-| 16 | `pause_and_context` | Modale UI-Hierarchie & Pausenstatus |
-| 17 | `layers_2_and_3` | FleetBattleSimulator, ConquestSimulator, Replay-Daten |
-| 18 | `ingame_player_and_transitions` | IngamePlayerControls, FloatingText & SceneDirector |
-| 19 | `sector_classification` | Sektor-Klassifikation & Planeten-Typ-Zuordnung |
-| 20 | `grid_system` | Grid-System & Chunk-Grid-Verifikation |
-| 21 | `local_resources` | Lokale Ressourcen & Planeten-Resource-Signaturen |
-| 22 | `conquest_grid_combat` | Grid-basierter Conquest-Kampf & Eroberungslogik |
-| 23 | `paper_style` | Paper-/Papercraft-Comic-Visuallinie & Asset-Stil |
-| 24 | `chunk_expansion` | Deterministischer Chunk-Seed, inkrementelle Navigation & Prozedural-Deal |
+| 10 | `upgrade_catalog` | Upgrade-Zweige, Voraussetzungen, Exklusivität & Trait-Verträge |
+| 11 | `economy_production` | Upgrades, Produktions-Boosts, Maintenance & Raffinerie-Konvertierung |
+| 12 | `mission_semantics` | Colony-/Cargo-/Military-Missions-Semantik |
+| 13 | `cpu_dispatch` | CPU-Dispatch-AI, Worker-Kosten & Cluster-Tier-Boni |
+| 14 | `selection_and_context` | SelectionService, Tooltips & Kontextmenüs |
+| 15 | `scout_and_discovery` | Werftbau, Scout-Flug & Scan-Intel |
+| 16 | `ship_catalog_and_assembly` | Teile-Katalog, Variantenpools, Montage & Tech-Gating |
+| 17 | `ship_transit_and_arrival` | ShipBase-Transit, FleetPreview & Conquest-Replay |
+| 18 | `colony_milestone` | Colony-Ship-Siedlung & first_colony-Meilenstein |
+| 19 | `event_log` | Toasts, History & Logfile-Export |
+| 20 | `camera_and_input` | Kamera-Pans, Zoom & Input-Mappings |
+| 21 | `pause_and_context` | Modale UI-Hierarchie & Pausenstatus |
+| 22 | `layers_2_and_3` | FleetBattleSimulator, ConquestSimulator, Replay-Daten |
+| 23 | `ingame_player_and_transitions` | IngamePlayerControls, FloatingText & SceneDirector |
+| 24 | `sector_classification` | Sektor-Klassifikation & Planeten-Typ-Zuordnung |
+| 25 | `grid_system` | Grid-System & Chunk-Grid-Verifikation |
+| 26 | `local_resources` | Lokale Ressourcen & Planeten-Resource-Signaturen |
+| 27 | `conquest_grid_combat` | Grid-basierter Conquest-Kampf & Eroberungslogik |
+| 28 | `paper_style` | Paper-/Papercraft-Comic-Visuallinie & Asset-Stil |
+| 29 | `chunk_expansion` | Deterministischer Chunk-Seed, inkrementelle Navigation & Prozedural-Deal |
 
 </details>
 
@@ -564,7 +569,7 @@ git commit
 | Szenen | **16** |
 | Assets | **417** |
 | Ressourcen | **91** |
-| Preflight-Constraints | **24 PASS** |
+| Preflight-Constraints | **29 PASS** |
 | Snapshots | **14** (Aug 19–21) |
 
 ```mermaid

@@ -64,9 +64,27 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"requires_scene": true,
 	},
 	{
-		"id": "upgrades_missions_and_ai",
-		"script": preload("res://scripts/preflight/constraint_upgrades_missions_and_ai.gd"),
-		"desc": "Upgrades, missions, CPU AI & economy",
+		"id": "upgrade_catalog",
+		"script": preload("res://scripts/preflight/constraint_upgrade_catalog.gd"),
+		"desc": "Upgrade branches, prerequisites, exclusivity, traits & assets",
+		"requires_scene": false,
+	},
+	{
+		"id": "economy_production",
+		"script": preload("res://scripts/preflight/constraint_economy_production.gd"),
+		"desc": "Upgrade purchases, generation, maintenance & refinery conversion",
+		"requires_scene": true,
+	},
+	{
+		"id": "mission_semantics",
+		"script": preload("res://scripts/preflight/constraint_mission_semantics.gd"),
+		"desc": "Colony, cargo & military mission semantics",
+		"requires_scene": true,
+	},
+	{
+		"id": "cpu_dispatch",
+		"script": preload("res://scripts/preflight/constraint_cpu_dispatch.gd"),
+		"desc": "CPU dispatch AI, worker costs & cluster tier bonuses",
 		"requires_scene": true,
 	},
 	{
@@ -82,9 +100,21 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"requires_scene": true,
 	},
 	{
-		"id": "ship_builder",
-		"script": preload("res://scripts/preflight/constraint_ship_builder.gd"),
-		"desc": "Modular ship builder & hangar assembly",
+		"id": "ship_catalog_and_assembly",
+		"script": preload("res://scripts/preflight/constraint_ship_catalog_and_assembly.gd"),
+		"desc": "Ship parts, variants, build/disassemble & tech gating",
+		"requires_scene": true,
+	},
+	{
+		"id": "ship_transit_and_arrival",
+		"script": preload("res://scripts/preflight/constraint_ship_transit_and_arrival.gd"),
+		"desc": "ShipBase dispatch, fleet preview & conquest replay",
+		"requires_scene": true,
+	},
+	{
+		"id": "colony_milestone",
+		"script": preload("res://scripts/preflight/constraint_colony_milestone.gd"),
+		"desc": "Colony ship settling & first_colony milestone",
 		"requires_scene": true,
 	},
 	{

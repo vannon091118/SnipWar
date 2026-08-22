@@ -48,7 +48,7 @@ Bis diese Zuordnung in der Laufzeitproduktion konsumiert wird, bleibt sie Design
 
 ### Planetare Spezialisierung
 
-Der aktuelle Upgrade-Katalog enthält 13 Definitionen in vier Branches: Economy, Military, Tech und Infrastructure. Parent- und Exklusivitätsregeln, Kosten, Traits und sichtbare Upgrade-Strukturen sind implementiert.
+Der aktuelle Upgrade-Katalog enthält 17 Definitionen in vier Branches: Economy, Military, Tech und Infrastructure. Parent- und Exklusivitätsregeln, Kosten, Traits und sichtbare Upgrade-Strukturen sind implementiert.
 
 Die geplante Richtung ist:
 
@@ -118,7 +118,7 @@ Der angegriffene Planet soll seine vorbereitete Layer-1-Infrastruktur nutzen:
 - Technologiezentrum als Quelle für defensive/offensive Freischaltungen
 - Orbitalstation als Quelle für Kapazität, Reichweite oder zusätzliche Verteidigungsoptionen
 
-Die Zielrichtung ist asymmetrisch: Eigene angegriffene Planeten können aktiv verteidigt werden; eigene Angriffe können gegen deterministische gegnerische Verteidigung automatisch aufgelöst und als Spektakel gezeigt werden. Diese Szenen und Regeln existieren derzeit noch nicht.
+Die Zielrichtung ist asymmetrisch: Eigene angegriffene Planeten können aktiv verteidigt werden; eigene Angriffe können gegen deterministische gegnerische Verteidigung automatisch aufgelöst und als Spektakel gezeigt werden. `ConquestSimulator` und `ConquestScene` decken die Basis bereits ab; aktive Spieler-Verteidigungsbefehle und Mech-Kampflogik bleiben offen.
 
 ## Stil und Präsentation
 

@@ -19,6 +19,7 @@ var _drag_source_planet: Node2D
 var _touches: Dictionary = {}
 var _pinch_distance: float = 0.0
 var _pinch_zoom_start: float = 1.0
+var _input_blocked := false
 
 func _ready() -> void:
 	var background: Node = get_parent()
@@ -44,7 +45,13 @@ func _read_world_bounds() -> void:
 	if config != null and config.design_size.x > 0.0 and config.design_size.y > 0.0:
 		_map_bounds = Rect2(Vector2.ZERO, config.design_size)
 
+## Blocks pan/zoom/selection while a fullscreen modal (e.g. PaperDossier) is open.
+func set_input_blocked(blocked: bool) -> void:
+	_input_blocked = blocked
+
 func _unhandled_input(event: InputEvent) -> void:
+	if _input_blocked:
+		return
 	if event is InputEventMouseButton:
 		_handle_mouse_button(event)
 	elif event is InputEventMouseMotion:
