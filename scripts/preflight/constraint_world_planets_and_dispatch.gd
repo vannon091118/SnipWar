@@ -178,7 +178,7 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(manager.get_child_count() == 0, "idle units should remain count-only"):
 		return false
 	var source_count_label: Label = ui.get_count_label(source)
-	if not ctx.check(source_count_label.text == "%s: %d" % [source.name, source.worker_count], "planet tab count is not live"):
+	if not ctx.check(source_count_label.text == "%s: %d" % [UIBaseUtils.planet_display_name(source), source.worker_count], "planet tab count is not live"):
 		return false
 
 	var event := InputEventMouseButton.new()
@@ -202,8 +202,8 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	await ctx.await_frame()
 	var tab_button: Button = ui.get_node("PlanetTabUI/PlanetTab") as Button
-	var heading_label: Label = ui.get_node("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/HeadingLabel") as Label
-	var selected_count_label: Label = ui.get_node("PlanetTabUI/PlanetPanel/MarginContainer/PanelScroll/Content/SelectedCountLabel") as Label
+	var heading_label: Label = ui.get_node("PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/HeadingLabel") as Label
+	var selected_count_label: Label = ui.get_node("PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/SelectedCountLabel") as Label
 	if not ctx.check(tab_button.get_theme_font_size("font_size") == ui_theme_config.tab_font_size and heading_label.get_theme_font_size("font_size") == ui_theme_config.heading_font_size and selected_count_label.get_theme_font_size("font_size") == ui_theme_config.selected_count_font_size, "UI theme font sizes are not applied from the config"):
 		return false
 	var panel_width: float = panel.size.x
@@ -211,7 +211,7 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	var vault_bar: PanelContainer = ui.get_node("PlanetTabUI/VaultBar") as PanelContainer
 	var rate_label: RichTextLabel = vault_bar.get_node_or_null("VaultMargin/VaultContent/IncomeRateLabel") as RichTextLabel if vault_bar != null else null
-	var panel_scroll: ScrollContainer = panel.get_node("MarginContainer/PanelScroll") as ScrollContainer
+	var panel_scroll: ScrollContainer = panel.get_node("MarginContainer/PanelLayout/PanelScroll") as ScrollContainer
 	if not ctx.check(vault_bar != null and vault_bar.global_position.x + vault_bar.size.x <= panel.global_position.x + 0.1, "resource HUD overlaps the planet panel"):
 		return false
 	if not ctx.check(rate_label != null and rate_label.text.contains("Einkommen"), "vault bar income-rate label is missing"):

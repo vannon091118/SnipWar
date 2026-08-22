@@ -446,7 +446,10 @@ func get_worker_transport_records(faction: StringName = &"") -> Array[Dictionary
 	return economy_domain.get_worker_transport_records(faction)
 
 func complete_worker_transport(transport_id: StringName, delivered: bool = true) -> bool:
-	return economy_domain.complete_worker_transport(transport_id, delivered)
+	var completed: bool = economy_domain.complete_worker_transport(transport_id, delivered)
+	if completed:
+		worker_transport_phase_changed.emit(transport_id, &"delivered" if delivered else &"cancelled")
+	return completed
 
 func get_market_price(from_planet: StringName, to_planet: StringName, resource_id: StringName) -> float:
 	return economy_domain.get_market_price(from_planet, to_planet, resource_id)

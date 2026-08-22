@@ -236,7 +236,9 @@ Die AI läuft als Overworld-Dispatcher; sie simuliert keine Schiffs- oder Mech-K
 - `TechnologyMenu` läuft auf CanvasLayer 60 und schließt das Planet-Panel bei Öffnung.
 - `PauseMenu` läuft auf CanvasLayer 70 und verarbeitet ESC in `PROCESS_MODE_ALWAYS`; bei offenem Planet- oder Technology-Panel pausiert ESC nicht.
 - `PaperDossier` läuft auf CanvasLayer 80 und zeigt fullscreen Modale (Planeten-Dossier, Werkstatt, Forschungsbaum) mit Papier-Blatt-Tween; `ModalCoordinator` blockiert die Kamera während eines offenen Dossiers.
-- Das Panel berechnet seine effektive Mindestbreite nach dynamischen Listen neu; die Ressourcenleiste wird daneben platziert.
+- Das Panel berechnet seine effektive Mindestbreite nach dynamischen Listen neu; sein Inhalt bleibt scrollbar, während der Action-Footer mit **MISSION STARTEN** fixiert bleibt.
+- Die Dispatch-Preview zeigt Einheitenmenge, verbleibende Garnison, Flugzeit und missionsabhängige Konsequenz. Route-Legende und dezente Karten-Zurückstufung markieren den aktiven Fokus.
+- `VaultBar` zeigt Ressourcen, Credits, aktive Transportphasen, Ertragsrate und den Countdown zum Economy-Tick.
 - `EventLog.push()` schreibt einen sichtbaren Toast-Eintrag, `log_silent()` nur Historie.
 - MessageFeed zeigt nur sichtbare Einträge und begrenzt die Toast-Anzahl.
 - `EventLog` exportiert standardmäßig erst bei `NOTIFICATION_WM_CLOSE_REQUEST` nach `user://player.log`; Headless-Läufe schreiben nicht automatisch den echten Spielerlog.
@@ -251,15 +253,14 @@ Die Zielpräsentation ist 4K-fähig gedacht, aber der verifizierte technische MV
 
 Folgende Aussagen sind derzeit Zukunftsplanung und dürfen nicht als implementierte Features behandelt werden:
 
-- Isaac-artiger Ship-Item-Pool mit multiplikativen Loadout-Interaktionen
-- allgemeiner Objekt-/Transformer-/Trait-Child-Pool für alle Domänen
-- mehrere parallel steuerbare Schiffsklassen und vollständige Fleet-Missionsauswahl
-- ~~aktive Layer-2-Flotten-KI und animierte Raumkampf-Cutscene~~ ✅ implementiert: `BattleScene`, `IngamePlayerControls`, `SceneDirector`, `GameCycleManager`
-- ~~Tower-Defense, Türme, aktive Garnisonsverteilung und Layer-3-Eroberung~~ ✅ implementiert: `ConquestSimulator`, `ConquestScene`, `PlanetGrid`, `BuildingCatalog`, 7 Gebäude-Defs
-- ~~Ship-as-Minion-Adapter~~ ✅ implementiert: `AssaultMinionDefinition.from_ship()`
-- Mech-Kampflogik (Layer 3 inert, `mech_frame` nur als Tech-Registrierung)
-- Planetentypen als echte Ressourcen-Signaturen
-- Ressourcenkonvertierung, Siegbedingungen und Kampagnenzustand
+- Isaac-artiger Ship-Item-Pool mit multiplikativen Loadout-Interaktionen;
+- allgemeiner Objekt-/Transformer-/Trait-Child-Pool für alle Domänen;
+- mehrere parallel steuerbare Schiffsklassen und vollständige Fleet-Missionsauswahl;
+- aktive Mech-Kampflogik über die registrierte, derzeit inerte `mech_frame`-Technologie hinaus;
+- feste Planetentyp→Ressourcen-Signaturen;
+- komplexe Dominanz-/Kampagnenregeln und ein vollständiger Game-Over-Screen.
+
+Bereits implementiert und deshalb nicht als Zukunftsplanung zu behandeln sind die Battle-/Conquest-Replays, die Route-Engagements, der Ship-as-Minion-Adapter, Tower-/Grid-Resolve sowie der persistente Forschungs-/Transitpfad. Die aktuelle Spieler-UI mit Dispatch-Konsequenz-Preview, festem Action-Footer, Ertragsrate und Routensemantik gehört ebenfalls zum Laufzeitvertrag.
 
 ## 14. Verifikation
 
@@ -320,7 +321,7 @@ Dieser Plan ist die Reihenfolge für die zuvor als teilweise oder geplant markie
 
 ### 16.1 Architektur- und Engine-Grenzen
 
-Der Projektstand ist mit Godot **4.7.2 stable** geprüft; Main-Scene-Smoke-Test und `scripts/preflight.gd` laufen erfolgreich. Das Projekt verwendet Godot 4.7 mit GL Compatibility und einer 2D-Node-/Resource-Architektur.
+Dieser Abschnitt ist ein **historischer Umsetzungplan** und beschreibt Erweiterungsregeln, nicht fehlende Bestandteile des aktuellen Builds. Der Projektstand ist mit Godot **4.7.2 stable** geprüft; Main-Scene-Smoke-Test und `scripts/preflight.gd` laufen erfolgreich. Das Projekt verwendet Godot 4.7 mit GL Compatibility und einer 2D-Node-/Resource-Architektur.
 
 Für die neuen Layer gilt:
 
@@ -394,7 +395,7 @@ Der erste vertikale Slice ist eine vorhandene Planetstruktur, danach ein Ship-Hu
 1. `PlanetUpgradeDefinition.visual_asset` wird schrittweise durch `ObjectDefinition` plus Transformer-Referenz ergänzt; ein Kompatibilitätsfallback erhält alte Resources.
 2. `ObjectVisual` erzeugt bekannte `Sprite2D`-/Overlay-Kinder aus einem Snapshot. Kinder besitzen keine Wirtschaft oder Kampflogik.
 3. `PlanetDetails.add_upgrade_structure()` verwendet den Visual-Builder; Orbitradius, Phase und Tints kommen weiterhin aus `TransformerConfig`/Transformer-Definitionen.
-4. `ShipyardHangar` erhält denselben Kompositionspfad für Hull, Scanner, Module und Overlay-Assets. `FutureShipBuilder` bleibt als Anzeige kompatibel.
+4. `ShipyardHangar` kann später denselben Kompositionspfad für Hull, Scanner, Module und Overlay-Assets erhalten; bis dahin bleiben die bestehenden ShipPart-Definitionen der autoritative Builder-Vertrag.
 5. Asset-Definitionen werden validiert: keine Null-Assets, kompatible Slots, keine doppelten IDs, deterministische Kindreihenfolge.
 
 **Engine-Regel:** Runtime-Visuals werden als Kinder erzeugt und mit `queue_free()` ersetzt. Da sie nicht serialisiert werden, brauchen sie keinen Editor-Owner; eine echte `@tool`-Vorschau wäre ein späterer, separater Schritt.

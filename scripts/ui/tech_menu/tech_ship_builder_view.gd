@@ -102,14 +102,14 @@ func populate_builder_dynamic(state: Node, on_refresh_callback: Callable) -> voi
 		var row := HBoxContainer.new()
 		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_theme_constant_override("separation", _theme_config.card_padding)
-		var label := UIBaseUtils.make_label("%s — %d %s  (Besitz: %d)" % [part.display_name, part.cost_amount, String(part.cost_resource), owned], _theme_config.secondary_text_color, _theme_config.small_font_size)
+		var label := UIBaseUtils.make_label("%s — %s  (Besitz: %d)" % [part.display_name, UIBaseUtils.cost_text(part.cost_resource, part.cost_amount, part.credit_cost), owned], _theme_config.secondary_text_color, _theme_config.small_font_size)
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(label)
 		var buy := Button.new()
 		buy.text = "KAUFEN"
 		buy.disabled = not _ship_manager.can_buy_part(source, part.id)
 		if buy.disabled:
-			buy.tooltip_text = "Kosten: %d %s" % [part.cost_amount, String(part.cost_resource)]
+			buy.tooltip_text = "Kosten: %s" % UIBaseUtils.cost_text(part.cost_resource, part.cost_amount, part.credit_cost)
 		buy.pressed.connect(func():
 			if _ship_manager.buy_part(source, part.id):
 				populate_builder_dynamic(state, on_refresh_callback)
@@ -213,7 +213,7 @@ func populate_builder_dynamic(state: Node, on_refresh_callback: Callable) -> voi
 			launch.text = "KOLONISIEREN" if assembly_role == &"colony" else "STARTEN"
 			var launch_destination: Planet = _first_ship_destination(source, assembly_role)
 			launch.disabled = launch_destination == null
-			launch.tooltip_text = "Kein zulässiges Ziel verfügbar." if launch_destination == null else "Ziel: %s" % launch_destination.name
+			launch.tooltip_text = "Kein zulässiges Ziel verfügbar." if launch_destination == null else "Ziel: %s" % UIBaseUtils.planet_display_name(launch_destination)
 			launch.pressed.connect(func():
 				var dest: Planet = _first_ship_destination(source, assembly_role)
 				if dest != null:
@@ -425,6 +425,6 @@ func _populate_scout_sources(option: OptionButton, planets: Array[Planet], state
 		var player_owned: bool = state.faction_of(planet.planet_id) == GameState.FACTION_PLAYER
 		var has_shipyard: bool = state.has_planet_upgrade(planet.planet_id, SHIPYARD_UPGRADE_ID)
 		if player_owned and has_shipyard:
-			option.add_item(planet.name)
+			option.add_item(UIBaseUtils.planet_display_name(planet))
 			option.set_item_metadata(option.item_count - 1, planet)
 	option.disabled = option.item_count == 0

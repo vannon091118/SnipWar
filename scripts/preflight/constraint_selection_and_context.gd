@@ -66,11 +66,30 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(panel != null, "PlanetPanel is missing"):
 		return false
 	var ui: PlanetNetworkUI = network.get_ui() as PlanetNetworkUI
+	var dispatch_button: Button = panel.get_send_button()
+	if not ctx.check(dispatch_button != null and dispatch_button.get_parent().name == "FooterContent", "dispatch action must live in the fixed footer"):
+		return false
+	if not ctx.check(panel.get_node_or_null("MarginContainer/PanelLayout/PanelScroll") != null, "planet panel must keep its content scrollable"):
+		return false
+	if not ctx.check(panel.get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/AmountValueLabel") != null, "dispatch amount value label is missing"):
+		return false
+	panel.set_amount_bounds(Vector2i(1, 3))
+	panel.set_selected_count(3)
+	var amount_value_label: Label = panel.get_node("MarginContainer/PanelLayout/PanelScroll/Content/AmountValueLabel") as Label
+	if not ctx.check(amount_value_label != null and amount_value_label.text == "1 / 3 Einheiten", "dispatch amount label must show selected over available units"):
+		return false
+	panel.set_dispatch_preview({"summary": "Sende: 1 / 3 Einheiten\\nTransit: 2.0 s"})
+	var summary_label: Label = panel.get_node("MarginContainer/PanelLayout/ActionFooter/FooterContent/DispatchSummaryLabel") as Label
+	if not ctx.check(summary_label != null and summary_label.text.contains("Sende: 1 / 3"), "dispatch consequence summary is not rendered in the footer"):
+		return false
 	service.handle_request(stand_ins[0], {})
 	service.handle_request(stand_ins[1], {"shift_pressed": true})
 	await ctx.await_frame()
 	ui.refresh_selection_overview(service.get_selection())
 	await ctx.await_frame()
+	var focus_overlay: ColorRect = ui.get_node_or_null("PlanetTabUI/MapFocusOverlay") as ColorRect
+	if not ctx.check(focus_overlay != null and focus_overlay.visible, "opening the planet panel should lower map emphasis"):
+		return false
 	if not ctx.check(panel.has_method("set_selection_overview"), "PlanetPanel does not expose set_selection_overview"):
 		return false
 

@@ -29,10 +29,10 @@ func build_planets_section(
 		if planet == null or not known.has(planet.planet_id):
 			continue
 		shown += 1
-		var planet_name: String = planet.display_name if not planet.display_name.is_empty() else String(planet.name)
+		var planet_name: String = UIBaseUtils.planet_display_name(planet)
 		var faction_id: StringName = state.faction_of(planet.planet_id)
 		var own_planet: bool = faction_id == GameState.FACTION_PLAYER
-		var faction_str: String = "EIGEN [A]" if own_planet else ("CPU [B]" if faction_id == GameState.FACTION_CPU else "NEUTRAL")
+		var faction_str: String = UIBaseUtils.faction_display_name(faction_id)
 
 		container.add_child(UIBaseUtils.make_label("%s  ·  %s" % [planet_name, faction_str], _theme_config.accent_text_color, _theme_config.body_font_size))
 		var upgrades: Array[StringName] = state.get_planet_upgrades(planet.planet_id)
@@ -46,7 +46,7 @@ func build_planets_section(
 		if String(intel_resource).is_empty():
 			container.add_child(UIBaseUtils.make_label("Scan erforderlich: Ressourcen-Signatur unbekannt.", _theme_config.secondary_text_color, _theme_config.small_font_size))
 		else:
-			container.add_child(UIBaseUtils.make_label("Signatur: %s  ·  Größe: %s  ·  Bauplätze: %d" % [String(intel_resource).capitalize(), intel_size, intel_slots], _theme_config.secondary_text_color, _theme_config.small_font_size))
+			container.add_child(UIBaseUtils.make_label("Signatur: %s  ·  Größe: %s  ·  Bauplätze: %d" % [UIBaseUtils.resource_display_name(intel_resource), intel_size, intel_slots], _theme_config.secondary_text_color, _theme_config.small_font_size))
 
 		if planet_technologies.is_empty():
 			container.add_child(UIBaseUtils.make_label("Keine planetaren Technologien definiert.", _theme_config.muted_text_color, _theme_config.small_font_size))
@@ -72,9 +72,9 @@ func _planet_research_row(
 	elif not own_planet:
 		status_text = "Gesperrt (nur eigene bekannte Planeten)"
 	elif can_research:
-		status_text = "Kosten: %d %s" % [technology.cost_amount, String(technology.cost_resource)]
+		status_text = "BEREIT · %s" % UIBaseUtils.technology_cost_text(technology, state)
 	else:
-		status_text = "Gesperrt (Kosten/Voraussetzung fehlt)"
+		status_text = "GESPERRT · %s" % UIBaseUtils.technology_cost_text(technology, state)
 	return _planet_technology_card(
 		technology,
 		status_text,
@@ -109,13 +109,14 @@ func _planet_technology_card(technology: TechnologyDefinition, status_text: Stri
 	var box := VBoxContainer.new()
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(UIBaseUtils.make_label(technology.display_name, _theme_config.heading_text_color, _theme_config.body_font_size))
+	box.add_child(UIBaseUtils.make_label(UIBaseUtils.research_role(technology), _theme_config.accent_text_color, _theme_config.small_font_size))
 	box.add_child(UIBaseUtils.make_label(technology.description, _theme_config.muted_text_color, _theme_config.small_font_size))
 
 	var prerequisite_text: String = _technology_prerequisite_text(technology)
 	if not prerequisite_text.is_empty():
 		box.add_child(UIBaseUtils.make_label(prerequisite_text, _theme_config.secondary_text_color, _theme_config.small_font_size))
 
-	box.add_child(UIBaseUtils.make_label(technology.mechanic_description, _theme_config.accent_text_color, _theme_config.small_font_size))
+	box.add_child(UIBaseUtils.make_label("Freischaltung: " + technology.mechanic_description, _theme_config.accent_text_color, _theme_config.small_font_size))
 	var status_label := UIBaseUtils.make_label(status_text, _theme_config.accent_text_color, _theme_config.small_font_size)
 	box.add_child(status_label)
 
@@ -125,6 +126,7 @@ func _planet_technology_card(technology: TechnologyDefinition, status_text: Stri
 	research_button.disabled = disabled
 	if pressed.is_valid():
 		research_button.pressed.connect(pressed)
+	research_button.tooltip_text = UIBaseUtils.technology_cost_text(technology)
 	box.add_child(research_button)
 
 	content.add_child(box)

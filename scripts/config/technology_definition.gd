@@ -13,6 +13,8 @@ const CATEGORY_PLANET := &"planet"
 @export var cost_resource: StringName = GameState.RES_ENERGY
 @export var cost_amount: int = 10
 @export var credit_cost: int = 5
+## Player-facing strategic category used to scan the technology tree quickly.
+@export var strategic_role: StringName = &""
 @export var prerequisite_tech_id: StringName = &""
 @export var requires_discovery: bool = false
 ## Mutually exclusive tech: if this ID is already researched, this tech is blocked

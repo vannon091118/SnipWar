@@ -16,181 +16,182 @@
 
 # Die Eisen-Grenze — Galaktisches Archiv
 
-> *„Geschichte wird von den Überlebenden geschrieben. Wir sind aktuell noch dabei herauszufinden, wer das am Ende sein wird.“*  
-> *— Unbekannter Funker, 3 Minuten vor Eintreffen eines feindlichen L-Clusters.*
+> *„Geschichte wird von den Überlebenden geschrieben. Wir sind aktuell noch dabei herauszufinden, wer das am Ende sein wird.“*
+> *— Unbekannter Funker, drei Minuten vor Eintreffen eines feindlichen L-Clusters.*
 
 ---
 
 ## 🌌 DIE LAGE // HINTERGRUND-BRIEFING
 
-Die **Eisen-Grenze** ist kein geschütztes Naturreservat. Es ist ein abgelegener Sektor aus exakt zehn Himmelskörpern, verbunden durch ein Netzwerk aus uralten Mond- und Kometen-Waypoints sowie direkten Langstreckenkorridoren.
+Die **Eisen-Grenze** ist die sichtbare Narbe einer alten Sternenbefestigung. Ihre Relais, Förderanlagen und Transitknoten überlebten den Kollaps der Grenzverwaltung, aber kein zentrales Reich. Was heute wie eine kleine Karte aussieht, ist nur der erste aufgeklärte Ausschnitt: Der Anfangskatalog enthält zehn bekannte Knoten, während die Chunk-Grenze dahinter prozedural weiterläuft.
 
-Zwei Mächte erheben zeitgleich Anspruch auf die Hegemonie:
-- **Fraktion Alpha (Basis Ocean):** Geführt von flexibler, aber zuweilen impulsiver Spieler-Hand.
-- **Fraktion Beta (Basis Paper):** Gesteuert von einem unermüdlichen, stoisch kalkulierenden CPU-Dispatch-Netzwerk.
+Die Grenze wird nicht als fertige Welt entdeckt. Sie wird in Schichten sichtbar:
 
-Dazwischen: Acht neutrale Welten, die eigentlich nur ihre Ruhe haben wollten, nun aber als Rohstoff-Vaults und Aufmarschgebiete herhalten müssen.
+1. Ein Planet wird als unbekannter Knoten im Nebel vermutet.
+2. Ein Scout oder ein Forschungsschiff bringt Scan-Intel über Ressourcen, Größe und Bauplätze zurück.
+3. Worker, Schiffe und Forschungsaufträge machen aus Intel eine Entscheidung.
+4. Jede Entscheidung verändert Besitz, Nachschub und die nächste Route.
+
+Zwei Mächte beanspruchen denselben Korridor:
+
+- **Fraktion Alpha, die Ocean-Koalition:** anpassungsfähig, schnell in der Erkundung und bereit, knappe Reserven für einen besseren Informationsstand zu riskieren.
+- **Fraktion Beta, das Paper-Kollektiv:** ein kaltes Dispatch-Netzwerk, das Kolonisierung, Verstärkung und Angriff nach festen Prioritäten taktet.
+
+Zwischen ihnen liegen neutrale Welten, Relais und unkartierte Chunks. Keine davon ist bloß Kulisse. Jede kann Rohstoffquelle, Sammelpunkt, Werftstandort oder Frontlinie werden.
 
 ---
 
 ## 🏛️ DIE FRAKTIONEN
 
----
-
 ### 🟦 Fraktion Alpha — „Die Ocean-Koalition“
-
-<div align="center">
 
 | Merkmal | Statusbericht |
 |:---|:---|
-| **Homeworld** | `Ocean` (Klasse XL · 3 Bauplätze · 6 Worker-Garnison) |
-| **Philosophie** | Erkunden, Forschen, Überleben, hoffentlich nicht vertippen |
-| **Doktrin** | Schneller Werftbau ➔ Aufklärungsdrohnen ➔ Gezielte Expansion |
-| **Startrohstoff** | Deterministisch zugewiesen (fair, aber oft diskussionswürdig) |
-| **Besonderheit** | Setzt auf den modularen Schiffs-Hangar und manuelle Truppenverlegungen |
+| **Homeworld** | `Ocean` · XL-Profil · 3 Bauplätze · 6 Start-Worker |
+| **Philosophie** | Erst verstehen, dann expandieren — und im Zweifel beides gleichzeitig |
+| **Doktrin** | Start-Scout → Scan-Intel → Werft und Forschung → kontrollierte Expansion |
+| **Wirtschaft** | Faction-Vault, lokale Vorräte und persistente Sammeltrupps |
+| **Stärke** | Flexible Worker-Missionen und modulare Schiffs-Assemblies |
 
-</div>
-
-Alpha startet auf der Wasserwelt *Ocean*. Die Devise lautet: Zuerst mit Scouts das Nebelnetz lüften, denn blind entsandte Worker-Flotten enden meist als unfreiwilliges Begrüßungskomitee auf befestigten Welten.
-
----
+Alpha beginnt mit einem kostenlosen Start-Scout. Er ist kein Ersatz für Forschung, sondern die erste Wette auf Information. Nach dem ersten Scan öffnen sich die späteren Gates: Werftbau, Scout-Technologien, Worker-Automation und der modulare Hangar.
 
 ### 🟥 Fraktion Beta — „Das Paper-Kollektiv“
 
-<div align="center">
-
 | Merkmal | Statusbericht |
 |:---|:---|
-| **Homeworld** | `Paper` (Klasse XL · 3 Bauplätze · 6 Worker-Garnison) |
-| **Philosophie** | Reine Logik, exaktes Pacing, kein Raum für Sentimentalitäten |
-| **KI-Pacing** | `decision_interval: 12.0s` ➔ beschleunigt stufenweise auf bis zu `6.0s` |
-| **Sicherheitsmarge** | Behält stets 2 Worker als eiserne Reserve zurück |
-| **Einsatzpriorität** | 1. `Colony` (neutrale Welten) ➔ 2. `Cargo` (eigene Welten) ➔ 3. `Military` (Angriff) |
+| **Homeworld** | `Paper` · XL-Profil · 3 Bauplätze · 6 Start-Worker |
+| **Philosophie** | Jede Verzögerung ist ein Fehler im Plan |
+| **Dispatch-Pacing** | 12 Sekunden Entscheidungsintervall, schrittweise bis 6 Sekunden |
+| **Sicherheitsmarge** | 2 Worker Reserve, mindestens 3 Worker als Dispatch-Quelle |
+| **Priorität** | Kolonie → Cargo-Verstärkung → Military-Angriff |
 
-</div>
-
-Fraktion Beta schläft nicht, wird nicht nervös und vergisst nie, eigene schwache Außenposten mit Cargo-Nachschub zu stützen. Ein Gegner, der Fehler sofort mit militärischen Vorstößen bestraft.
+Paper baut keine Imperien aus Inspiration. Das Kollektiv liest bekannte Routen, hält Reserven zurück und schickt den nächsten Auftrag, sobald die Zahlen einen Vorteil versprechen.
 
 ---
 
-## 🪐 PLANETEN-DOSSIERS // DIE ACHT WELTEN DES NIEMANDSLANDS
+## 🪐 PLANETEN-DOSSIERS // DER ERSTE AUFGESCHLAGENE AUSSCHNITT
 
-Jeder Planet in der Eisen-Grenze besitzt ein seed-deterministisches Profil, das Größe, Bauplätze, Ressourcenbasis und Detail-Orbits festlegt:
-
----
+Die folgenden Namen gehören zum anfänglichen Baustein-Pool. Sie sind keine unveränderlichen Planetentypen und schreiben keine feste Ressource vor. Das Seed-System kombiniert Basistexter, Farbvarianten, Decals, Größenprofile und Detail-Orbits; spätere Chunks können weitere Instanzen derselben visuellen Signaturen hervorbringen.
 
 ### 🔥 EMBER — Die Glutwelt
-- **Profil:** Variable (1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis)
+- **Profil:** Variable · 1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis
 - **Charakteristik:** Tektonisch hyperaktiv, glühende Canyons und Schlackenmeere.
-- **Strategischer Wert:** Bildet oft die direkte Brücke zwischen Ocean und dem inneren Sektor. Wer Ember früh einnimmt, hat einen Brückenkopf; wer es verliert, hat eine offene Flanke.
-
----
+- **Strategischer Wert:** Ein Brückenkopf mit kurzer Verbindung zur Startregion. Ember belohnt frühe Aufklärung, ist aber schwer zu halten, wenn die Nachschublinie offenliegt.
 
 ### ❄️ ICE — Die Frostfeste
-- **Profil:** Variable (1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis)
-- **Charakteristik:** Glatte Methan-Gletscher, endlose Schneestürme und absolute Stille.
-- **Strategischer Wert:** Bildet die zweite Schlüsselroute ab Ocean. Aufgrund der extremen Bedingungen sind Extraktoren hier besonders begehrt, um Außenposten autark zu versorgen.
-
----
+- **Profil:** Variable · 1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis
+- **Charakteristik:** Methan-Gletscher, Schneestürme und Relais, die nur unter Last antworten.
+- **Strategischer Wert:** Ein stiller Sammelpunkt. Die Welt wird wertvoll, sobald ein Collect-Auftrag lange genug eine sichere Route hält.
 
 ### 💜 VIOLET — Die Exotische
-- **Profil:** Variable (1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis)
-- **Charakteristik:** Violette Gasnebel und schimmernde Kristallformationen in den Hochebenen.
-- **Strategischer Wert:** Zentraler Knotenpunkt zwischen Nord- und Südroute. Oft Schauplatz verfrühter Scharmützel, bevor überhaupt Schilde erforscht wurden.
-
----
+- **Profil:** Variable · 1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis
+- **Charakteristik:** Gasnebel, Kristallhochebenen und flackernde alte Sensorfelder.
+- **Strategischer Wert:** Ein Knotenpunkt für mehrere Routen. Wer Violet scannt, erhält häufig mehr Möglichkeiten als sofortige Sicherheit.
 
 ### 🏜️ DESERT — Die Sandöde
-- **Profil:** Large (2 Bauplätze · 4 Start-Worker · 2× Ressourcenbasis)
-- **Charakteristik:** Gewaltige Dünenmeere, uralte verlassene Minenschächte.
-- **Strategischer Wert:** Als Welt der L-Klasse bietet Desert doppelten Ressourcenertrag und zwei Bauplätze. Ideal für eine Kombination aus *Refinery* und *Defense Grid*.
-
----
+- **Profil:** Large · 2 Bauplätze · 4 Start-Worker · 2× Ressourcenbasis
+- **Charakteristik:** Dünenmeere und verlassene Minenschächte der Grenzverwaltung.
+- **Strategischer Wert:** Zwei Bauplätze und höhere Ressourcenbasis machen Desert zum klassischen Ausbauziel für Raffinerie, Werft oder Defense Grid.
 
 ### ☣️ TOXIC — Der Anomalie-Sektor
-- **Profil:** Variable (1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis)
-- **Besonderheit:** **Garantierter Satellit + Asteroidengürtel** (im Katalog fest verankert).
-- **Charakteristik:** Ätzende Schwefelatmosphäre, dichte Trümmerringe und unberechenbare Orbits.
-- **Strategischer Wert:** Taktisch exzellent zu verteidigen. Wer hier ein *Defense Grid* aufbaut, zwingt Angreifer zu massiven Flottenaufgeboten.
-
----
+- **Profil:** Variable · 1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis
+- **Besonderheit:** Garantierter Satellit und Asteroidengürtel.
+- **Charakteristik:** Ätzende Atmosphäre, dichte Trümmerringe und unberechenbare Orbits.
+- **Strategischer Wert:** Ein gefährlicher, aber gut zu kontrollierender Verteidigungsknoten. Die Struktur zählt hier ebenso wie der Rohstoffvorrat.
 
 ### ⚡ STORM — Das Plasma-Auge
-- **Profil:** Large (2 Bauplätze · 4 Start-Worker · 2× Ressourcenbasis)
-- **Charakteristik:** Permanente Atmosphärenblitze, ionisierter Regen und gigantische Wirbelstürme.
-- **Strategischer Wert:** Hohe Kapazität (L-Klasse). Eignet sich hervorragend für ein *Tech Center* mit angeschlossenem *Weapon Lab*.
-
----
+- **Profil:** Large · 2 Bauplätze · 4 Start-Worker · 2× Ressourcenbasis
+- **Charakteristik:** Ionisierter Regen und permanente Atmosphärenblitze.
+- **Strategischer Wert:** Hohe Kapazität für Tech Center, Waffenlabor und die Forschung, die eine Front später stabilisiert.
 
 ### 🌋 VOLCANIC — Der Schmelztiegel
-- **Profil:** Variable (1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis)
-- **Charakteristik:** Fließende Basaltströme, Ascheregen und permanente seismische Erschütterungen.
-- **Strategischer Wert:** Liegt bedrohlich nah am Sektor von Fraktion Beta. Wer Volcanic besetzt, schaut dem CPU-Kollektiv direkt ins Wohnzimmer.
-
----
+- **Profil:** Variable · 1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis
+- **Charakteristik:** Basaltströme, Ascheregen und seismische Erschütterungen.
+- **Strategischer Wert:** Nähe zur Paper-Front macht jeden Ausbau zur politischen Aussage und jeden Transit zum Risiko.
 
 ### ✨ GOLDEN — Das Kronjuwel
-- **Profil:** Variable (1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis)
-- **Charakteristik:** Goldgelbe Partikelfelder, reich an dichten Mineralstrukturen.
-- **Strategischer Wert:** Die zweite Flankensicherung vor Basis Paper. Häufiges Ziel für koordinierte Zangenangriffe im Lategame.
+- **Profil:** Variable · 1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis
+- **Charakteristik:** Goldene Partikelfelder und dichte Mineralstrukturen.
+- **Strategischer Wert:** Ein kleiner Planet kann durch seine Lage wichtiger sein als durch seine Größe. Golden ist Flankensicherung und Angriffsziel zugleich.
 
 ---
 
 ## ⚡ DIE FÜNF ROHSTOFFE // ÖKONOMISCHE DOKTRIN
 
-Im SnipWar-Universum fließen Rohstoffe nicht über physische Förderbänder, sondern speisen direkt die zentralen **Faction-Vaults**:
+Die Grenze unterscheidet zwischen **lokalem Vorrat** und dem **Faction-Vault**. Ein Planet stellt eine Ressource bereit, aber erst Worker, Gatherer, Produktion und Transit machen daraus ein strategisches Gut. Die Ressource ist im aktuellen System seed-deterministisch verteilt und nicht fest an die sichtbare Planetensignatur gebunden.
 
-```
+```text
 ⚡ Energy   🌿 Biomass   💠 Rare   🧪 Volatile   🔩 Material
 ```
 
-### ⚡ Energy — Der Konservierte Herzschlag
-Energy ist nicht einfach Strom. Es ist die konservierte Kraft der uralten Grenzmaschinen — jener Automaten, die einst die gesamte Eisen-Front mit Versorgungsleitungen, Schutzschilden und Wegweisern am Laufen hielten. Als die Grenzbehörde zusammenbrach, blieb ein Teil dieser Energie in den Knotenpunkten gefangen: pulsierend, stabil, bereit zur Abnahme. Wer Energy abbaut, greift in die Adern einer noch immer funktionierenden — wenn auch kopflosen — Infrastruktur. Jeder Tropfen, der aus einem Knotenpunkt gezogen wird, ist ein Stück Lebenszeit, das der Grenze fehlt.
+- **Energy** ist die Restladung der alten Relais und versorgt Scanner, Werften und Systembetrieb.
+- **Biomass** sind konservierte organische Überreste; sie speisen Kolonisation und Worker-Automation.
+- **Rare** sind schwer lesbare Technologiefragmente. Eine Raffinerie gewinnt sie aus Material und Energy zurück.
+- **Volatile** sind instabile Plasma- und Isotopenreserven, die Waffen und riskante Entwicklung antreiben.
+- **Material** ist der Stahl der alten Grenzbefestigungen und die Grundlage für Rümpfe, Gebäude und Werften.
 
-### 🌿 Biomass — Der organische Überrest
-Biomass sind die Überbleibsel einer einst bewohnbaren Grenze. Bevor die Eisen-Front fiel, gab es hier Gärten, Wasserreservoirs, lebende Ökosysteme — alles zerstört, als die Sternenketten durch den Kollaps ruptierten. Was blieb, sind kompakt organische Klumpen: konservierte Gewebe, konservierte Sporen, fossile Proteine in Meteoritenstaub. Jeder Planet, der Biomass produziert, filtriert die letzten organischen Überreste aus seinem Boden — aber die Vorräte sind endlich, und kein Nachschub wird kommen. Biomass zu ernten bedeutet, die letzten Spuren einer lebendigen Vergangenheit aus dem All zu filtern.
-
-### 💠 Rare — Die Splitter der Vergangenheit
-Rare sind Bruchstücke einer Technologie, die niemand mehr vollständig versteht. Fragmentierte Datenträger, teilintegrierte Schaltkreise, Materialeinschlüsse, die keinem bekannten Element zugeordnet werden können. Als die Grenzverwaltung zerfiel, zerstreuten sich ihre wertvollsten Komponenten über die zehn Welten wie Scherben eines gesprungenen Spiegels. Rare entsteht nicht durch simple Förderung — es wird in Raffinerien aus Stahl der Grenze und Energie der alten Maschinen zurückgewonnen, ein mühsamer Prozess, der für jede Einheit Material und Energie verlangt. Es ist die wertvollste Ressource der Eisen-Grenze — und die am schwersten zu verstehende.
-
-### 🧪 Volatile — Der instabile Funke
-Volatile sind Energiereserve, die ihre Stabilität verloren haben. Kompensierte Plasma-Einschlüsse, instabile Isotope, Material, das unter bestimmten Bedingungen rapide Energie freisetzt — und unter anderen explodiert. Volatile zu lagern ist ein Balanceakt; Volatile zu transportieren ist eine Wette. Die Grenzverwaltung nutzte sie als Treibstoff für ihre express Flotten, aber nach dem Kollaps fehlten die Präzisionsbehälter. Wer Volatile abbaut, spielt mit dem Feuer einer untergegangenen Ära — manchmal wörtlich.
-
-### 🔩 Material — Der Stahl der Grenze
-Material ist das Skelett der Eisen-Front: massiver, korrosionsresistenter Stahl, einst als Grenzbefestigung in die Sternenketten eingelassen. Jeder Planet der Eisen-Grenze trägt Reste dieser Architectur in sich — eingebettete Stahlplatten, Strukturfragmente, Verteidigungslinien, die nach dem Kollaps in den Gesteinsschichten versanken. Material zu fördern bedeutet, die Knochen der Grenze auszugraben. Es ist die ubiquitousste Ressource — und die, aus der alles andere gebaut wird.
-
-- **Keine Inflation, keine Kredite:** `spend_faction_resource()` blockiert jede Transaktion, die das Vault ins Minus stürzen würde.
-- **Sammel-Pioniere:** Bevor automatische Worker-Fabriken stehen, sichern `collect`-Meldungen mit persistenten Gatherern auf neutralen Welten den täglichen Ertrag (`workers × resource_base`).
-- **Veredelung:** Eine gebaute *Refinery* konvertiert bei jedem Economy-Tick *Material* und *Energy* in das heiß begehrte *Rare*.
+Die Wirtschaft kennt keine Schuldenmechanik. Ein Vorhaben wird vollständig bezahlt oder gar nicht gestartet. Der passive Economy-Tick läuft erst nach `worker_automation`; der getrennte Gather-Tick läuft dauerhaft und zahlt registrierten Gatherern `Worker × Ressourcenbasis` gut. Eine *Refinery* kann pro Economy-Tick Material und Energy in Rare umwandeln.
 
 ---
 
-## 🚀 DIE TECHNOLOGIE-DOKTRIN // VON SCOUTS ZU MECHS
+## 🚀 DIE TECHNOLOGIE-DOKTRIN // VON INTEL ZU EINSATZKRAFT
 
-Der technologische Fortschritt ist in drei Abteilungen gegliedert:
+Forschung ist kein Sofort-Schalter. Kosten werden beim Start abgebucht, die Forschung läuft als Job und erst der Abschluss verändert den Spielstand. Jede Karte beantwortet deshalb drei Fragen: Welche Rolle erfüllt die Technologie, was kostet sie jetzt und was wird dadurch freigeschaltet?
 
-1. **Flottendoktrin (`ships`):**
-   - *Orbitales Werft-Design (`shipyard_construction`):* Legt das Fundament für orbitalen Schiffbau.
-   - *Aufklärungsrumpf T1 (`scout_hull`) & Scanner-Drohne (`scanner_drone`):* Ermöglicht Scouts, unbekannte Welten aufzudecken.
-   - *Werft-Arbeiterautomatik (`worker_automation`):* Erst nach dem ersten erfolgreichen Scan erforschbar — aktiviert den automatischen Worker-Nachschub!
-   - *Waffensysteme T1 (`weapon_systems`):* Schaltet offensive Bordwaffen für den Hangar frei.
-2. **Mech-Forschung (`mech`):**
-   - *Mech-Chassis T1 (`mech_frame`):* Schwere Einheiten für zukünftige planetare Bodenoffensiven (Layer 3).
-3. **Planetares Ingenieurwesen (`planet`):**
-   - *Planetare Vermessung (`planetary_survey`) & Extraktion (`planetary_extraction`):* Steigern den Rohstoffausstoß der installierten Welt um 125 % bis 150 %.
+### Flottendoktrin (`ships`)
+- **Orbitales Werft-Design:** eröffnet den Ausbau der Shipyard.
+- **Scout-Hull und Scanner-Drohne:** machen aus dem kostenlosen Start-Scout einen wiederholbaren Aufklärungspfad.
+- **Worker-Automation:** aktiviert automatischen Worker-Nachschub und den passiven Economy-Zyklus.
+- **Waffensysteme, Antrieb und Panzerung:** verändern die Einsatzmöglichkeiten montierter Schiffe.
+- **Deep Scan und Long-Range Sensors:** erweitern den Informations- und Sichtbereich.
+
+### Mech-Phase (`mech`)
+- **Mech-Chassis T1:** markiert die spätere Bodendoktrin. Die Forschung kann sichtbar vorbereitet werden; aktive Mech-Kampflogik ist noch nicht Teil des aktuellen Einsatzes.
+
+### Planetares Ingenieurwesen (`planet`)
+- **Planetare Vermessung und Extraktion:** erhöhen die Produktion eines eigenen bekannten Planeten.
+- **Automatisierte Raffinerie und Bulk Processing:** öffnen wirtschaftliche Alternativen, bleiben aber an ihre Prerequisites und Ressourcen gebunden.
+
+---
+
+## 🛰️ AUFKLÄRUNG, FORSCHUNGSSCHIFFE UND INTEL
+
+Ein Scout verrät nicht nur einen Namen. Bei Ankunft bleiben Ressourcen-ID, Größenprofil und Bauplätze als Scan-Intel erhalten. Ein bekanntes neutrales Ziel kann dadurch gesammelt oder kolonisiert werden; ein unbekannter Knoten bleibt strategisch ein Fragezeichen.
+
+Forschungsschiffe sind persistent. Sie stehen an einem Planeten bereit, übernehmen einen Scan-Auftrag, fliegen über denselben Navigationspfad wie die Overworld-Vorschau und kehren nach Abschluss als verfügbares Schiff zurück. Der Flug ist ein Auftrag mit Status, nicht eine einmalige UI-Animation.
+
+Die Grenze belohnt keine blind gesetzte Route. Das Panel zeigt vor dem Start Ziel, Mission, Einheitensumme, Flugzeit, verbleibende Garnison und die erwartete Wirkung. Der Button bestätigt eine Entscheidung; er verbirgt sie nicht.
+
+---
+
+## 🛤️ DIE VIER AUFTRÄGE // STRATEGISCHE ABSICHTEN
+
+| Auftrag | Bedeutung in der Grenze | Konsequenz |
+|:---|:---|:---|
+| **Military** | Angriff auf eine gegnerische Welt oder Verstärkung einer Front | Konflikt möglich; Worker fehlen während des Transits |
+| **Cargo** | Verlegung auf einen eigenen Planeten | Keine Eroberung, aber vorübergehend weniger Einheiten am Start |
+| **Colony** | Friedliche Besiedlung eines gescannten neutralen Ziels | Besitzwechsel ohne Military-Resolve, erster Erfolg setzt den Kolonie-Meilenstein |
+| **Collect** | Sammeltrupp auf einem bekannten neutralen Ziel | Persistenter Gatherer und wiederkehrender Ertrag statt Einmalzahlung |
+
+Worker fliegen dabei als K/M/L-Cluster über Moon- und Comet-Waypoints sowie direkte Langstreckenkanten. Ein Sieben-Worker-Auftrag packt largest-first als `M + K + K`. Die Route ist für Vorschau und tatsächlichen Transit identisch.
 
 ---
 
 ## ⚔️ DER KONFLIKT-HORIZONT // FLOTTEN & CONQUEST
 
-Wenn sich Flotten im Waypoint-Gitter begegnen, greift der **FleetBattleSimulator**:
-- Deterministisch, tick-basiert und seed-gesteuert.
-- Schiffe agieren mit Reichweiten, Schild- und Rumpf-HP, DPS und Waffenfeuer.
-- Das Ergebnis wird nahtlos über den `SceneDirector` und die `BattleScene` als kinoreifes Gefechts-Replay dargestellt — inklusive Playback-Steuerung (`IngamePlayerControls`).
+Montierte Schiffe besitzen einen vollständigen Loadout aus Hull, Antrieb, Schild, Scanner, optionaler Waffe und Modulen. Unbewaffnete Assemblies können als Kolonieschiffe eingesetzt werden; bewaffnete Assemblies sind Militärschiffe.
 
-Bei planetaren Angriffen greift der **ConquestSimulator**:
-- Verteidiger nutzen `perimeter_slots`, `defense_rating` und Upgrades als befestigte Abwehranlagen.
-- Angreifende Flotten werden über Schiffs-zu-Minion-Adapter in Sturmtruppen überführt.
+Treffen gegnerische Flotten auf einem gemeinsamen Routensegment, erzeugt die deterministische Route-Engagement-Logik einen FleetBattle-Replay. Der **FleetBattleSimulator** berechnet Ticks, Treffer, Verluste und Überlebende; die **BattleScene** zeigt dieses Ergebnis nur an. Ein Kampf wird nicht durch freie Visual-Physik entschieden.
+
+Erreicht eine Flotte eine verteidigte Welt, übernimmt der **ConquestSimulator** den planetaren Resolve. Garnison, Perimeter-Slots, Defense-Rating, Türme und Angreifer-Minions werden aus dem Spielstand abgeleitet. Schiffs-Loadouts können über den Assault-Minion-Adapter in diesen Bodenpfad eingehen. Die Mech-Doktrin ist vorbereitet, aber noch nicht als aktive Kampfeinheit ausgebaut.
+
+---
+
+## 📡 ARCHIVNOTIZ // DIE KARTE IST EINE ENTSCHEIDUNG
+
+Die Papercraft-Oberfläche ist kein diegetischer Zufall: Die alten Mächte lesen die Grenze über Papierkarten, Schablonen und Relaisprotokolle. Das heutige Interface setzt diese Sprache fort. Das Planet-Panel trennt Lage, Auftrag und Bestätigung; das Forschungsmenü zeigt Rolle, Kosten, Voraussetzung und Freischaltung; der Vault meldet Ertrag und den nächsten Tick.
+
+So entsteht die eigentliche Geschichte nicht aus langen Zwischensequenzen, sondern aus sichtbaren Folgen: Eine Garnison wird kleiner, ein Forschungsschiff verschwindet aus dem Dock, eine Sammelroute bringt regelmäßig Vorräte zurück oder eine gelbe Dispatchlinie endet in einem Kampf.
 
 ---
 
@@ -199,7 +200,7 @@ Bei planetaren Angriffen greift der **ConquestSimulator**:
 ```
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
   GALAKTISCHER ARCHIV-EINTRAG // ENDE DER TRANSMISSION
-  Stand: Verifiziert durch 19 Preflight-Module // Engine: Godot 4.7
+  Stand: Verifiziert durch 29 Preflight-Constraints // Engine: Godot 4.7
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 ```
 
@@ -207,7 +208,7 @@ Bei planetaren Angriffen greift der **ConquestSimulator**:
 |:---:|:---|
 | 📡 **Lagezentrum** | [`README.md`](README.md) — Overworld-Übersicht & Preflight |
 | 📐 **Technik-Vertrag** | [`DESIGN.md`](DESIGN.md) — Systemarchitektur & Spezifikation |
-| 🎯 **Roadmap** | [`VISION.md`](VISION.md) — Die Zukunft von SnipWar |
-| 🗺️ **Dokumentations-Index** | [`docs/README.md`](docs/README.md) — Struktur & Zugehörigkeiten |
+| 🎯 **Roadmap** | [`VISION.md`](VISION.md) — Zielbild und nächste Schichten |
+| 🗺️ **Dokumentations-Index** | [`docs/README.md`](docs/README.md) — Struktur & Zuständigkeiten |
 
 </div>

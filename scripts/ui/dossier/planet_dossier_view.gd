@@ -70,15 +70,15 @@ func _refresh_left_info() -> void:
 		child.queue_free()
 	if _planet == null or not is_instance_valid(_planet) or _state == null:
 		return
-	var name_text: String = _planet.display_name if not _planet.display_name.is_empty() else String(_planet.name)
+	var name_text: String = UIBaseUtils.planet_display_name(_planet)
 	_left_info.add_child(UIBaseUtils.make_label(name_text.to_upper(), _theme_config.heading_text_color, _theme_config.panel_title_font_size))
 	var faction_id: StringName = _state.faction_of(_planet.planet_id)
-	var faction_str: String = "SPIELER [A]" if faction_id == GameState.FACTION_PLAYER else ("CPU [B]" if faction_id == GameState.FACTION_CPU else "NEUTRAL")
-	var faction_label := UIBaseUtils.make_label("Besitzer: %s" % faction_str, DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", faction_id), _theme_config.body_font_size)
+	var faction_str: String = UIBaseUtils.faction_display_name(faction_id)
+	var faction_label := UIBaseUtils.make_label("Status: %s" % faction_str, DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", faction_id), _theme_config.body_font_size)
 	_left_info.add_child(faction_label)
 	var resource_id: StringName = _state.resource_of(_planet.planet_id) if _state.is_known(_planet.planet_id, GameState.FACTION_PLAYER) else &""
-	var resource_text: String = String(resource_id).capitalize() if not String(resource_id).is_empty() else "Unbekannt (Scout erforderlich)"
-	_left_info.add_child(UIBaseUtils.make_label("Ressource: %s" % resource_text, _theme_config.resource_color(resource_id), _theme_config.body_font_size))
+	var resource_text: String = UIBaseUtils.resource_display_name(resource_id) if not String(resource_id).is_empty() else "Unbekannt (Forschungsschiff benötigt)"
+	_left_info.add_child(UIBaseUtils.make_label("Produktion: %s" % resource_text, _theme_config.resource_color(resource_id), _theme_config.body_font_size))
 	_left_info.add_child(UIBaseUtils.make_label(
 		"Bauplätze: %d  ·  Perimeter: %d  ·  Reichweite: %.0f px" % [_planet.get_build_slot_count(), _planet.get_perimeter_slots(), _planet.get_defense_range()],
 		_theme_config.secondary_text_color,
@@ -134,8 +134,7 @@ func _magnet_tile(planet_id: StringName, upgrade: PlanetUpgradeDefinition, is_un
 func _cost_text(upgrade: PlanetUpgradeDefinition, is_unlocked: bool) -> String:
 	if is_unlocked:
 		return "FREIGESCHALTET"
-	var result := "%d %s" % [upgrade.cost_amount, String(upgrade.cost_resource).capitalize()]
-	result += " · %d Credits" % upgrade.credit_cost
+	var result: String = UIBaseUtils.cost_text(upgrade.cost_resource, upgrade.cost_amount, upgrade.credit_cost)
 	if upgrade.workers_required > 0:
 		result += " · Arbeitskräfte: %d" % upgrade.workers_required
 	return result

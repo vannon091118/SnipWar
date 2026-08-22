@@ -1,7 +1,7 @@
 # SnipWar Lore Research — Was gute Videospie-Lore ausmacht
 
-> **Status:** Research-Folge, August 2026
-> **Ziel:** Fundament für eine erweiterte, konsistente Universums-Lore schaffen
+> **Status:** Retrospektive Leitlinie, August 2026
+> **Ziel:** Die Lore-Entscheidungen hinter dem aktuellen, mechanikgekoppelten Archiv festhalten. Dieses Dokument ist kein Feature-Contract.
 
 ---
 
@@ -69,9 +69,11 @@ Basierend auf Analyse erfolgreicher 4X/Strategy- und Sci-Fi-Titel (Mass Effect, 
 
 ---
 
-## Teil 2 — Analyse der vorhandenen SnipWar-Lore
+## Teil 2 — Historischer Gap-Scan vor der aktuellen Integration
 
-### 2.1 Was bereits existiert (Stärken)
+### 2.1 Was im damaligen Stand bereits existierte (Stärken)
+
+> Die folgenden Gaps sind historische Beobachtungen aus der Konzeptphase. `LORE.md` und die aktuellen Laufzeitverträge lösen die relevanten Punkte inzwischen über Scan-Intel, lokale Vorräte, Dispatch-Konsequenzen, persistente Forschungsschiffe und deterministische Replays. Die Texte unten werden deshalb nicht als offener Implementierungs-Backlog verstanden.
 
 **✅ Starke Basis:**
 - "Eisen-Grenze" als Setting-Name (impliziert Grenzkonflikt, Stahl, Industrie)
@@ -91,33 +93,35 @@ Basierend auf Analyse erfolgreicher 4X/Strategy- und Sci-Fi-Titel (Mass Effect, 
 #### GAP 1: Das WARUM der Eisen-Grenze
 > *Was ist die Eisen-Grenze? Warum gibt es diesen Sektor? Was macht ihn besonders?*
 
-Die Eisen-Grenze ist ein "abgelegener Sektor aus exakt zehn Himmelskörpern" — aber:
-- **Keine Erklärung**, warum dieser Sektor "abgelegen" ist
-- **Keine Geschichte**, wie er entstanden ist
-- **Kein Mythen-Element** — was steckt hinter dem Namen?
+Die Eisen-Grenze wurde im damaligen Konzept als "abgelegener Sektor aus exakt zehn Himmelskörpern" beschrieben — diese Formulierung war zu eng, weil zehn Knoten nur den initialen aufgeklärten Ausschnitt bilden und die Chunk-Welt weiterläuft:
+- **Historischer Gap:** Warum dieser Sektor abgelegen ist
+- **Historischer Gap:** Wie er entstanden ist
+- **Historischer Gap:** Was hinter dem Namen steckt
 
-#### GAP 2: Die Herkunft der Ressourcen
+Diese Punkte sind inzwischen als Lore-Grundlage der sichtbaren Narbe einer alten Sternenbefestigung in `LORE.md` verankert.
+
+#### GAP 2: Die Herkunft der Ressourcen (historisch)
 > *Warum gibt es genau diese 5 Ressourcen? Woher kommen sie?*
 
 - Energy, Biomass, Rare, Volatile, Material sind funktional definiert
 - **Kein narrativer Ursprung** — warum ist Rare "Rare"? Was ist "Volatile" konkret?
 - Planeten-Typ→Ressource-Mapping ist nur als Hilfsmethode vorhanden, nicht als Lore
 
-#### GAP 3: Fraktions-Vorgeschichte
+#### GAP 3: Fraktions-Vorgeschichte (historisch)
 > *Was war BEVOR die beiden Fraktionen in die Eisen-Grenze kamen?*
 
 - Ocean-Koalition und Paper-Kollektiv werden als aktuelle Akteure beschrieben
 - **Keine Ursprungsgeschichte** — wie entstanden diese Fraktionen?
 - **Keine Beziehung zueinander** — warum gerade diese beiden?
 
-#### GAP 4: Planeten-Tiefe
+#### GAP 4: Planeten-Tiefe (historisch)
 > *Was ist an jedem Planeten MENSCHLICH?*
 
 - Planeten haben taktische Dossiers, aber keine Geschichte
 - **Keine Spuren vergangener Zivilisationen**
 - **Keine kulturellen Bedeutungen** — warum heißt die Welt "Ember"?
 
-#### GAP 5: Der Papercraft-Kern als Lore
+#### GAP 5: Der Papercraft-Kern als Lore (historisch)
 > *Warum ist die Welt papierartig?*
 
 - Die Ästhetik ist als Design-Entscheidung dokumentiert

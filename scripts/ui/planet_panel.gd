@@ -16,6 +16,7 @@ signal clear_selection_pressed()
 var _theme_config: UIThemeConfig = DEFAULT_THEME
 var _upgrade_catalog: PlanetUpgradeCatalog = DEFAULT_UPGRADE_CATALOG
 var _count_labels: Dictionary = {}
+var _dispatch_preview: Dictionary = {}
 var _current_active_planet: Node2D
 var _branch_expanded: Dictionary = {
 	&"economy": true,
@@ -24,26 +25,31 @@ var _branch_expanded: Dictionary = {
 	&"infrastructure": false
 }
 
-@onready var _heading_label: Label = get_node_or_null("MarginContainer/PanelScroll/Content/HeadingLabel")
-@onready var _selected_planet_label: Label = get_node_or_null("MarginContainer/PanelScroll/Content/SelectedPlanetLabel")
-@onready var _faction_label: Label = get_node_or_null("MarginContainer/PanelScroll/Content/FactionLabel")
-@onready var _resource_label: Label = get_node_or_null("MarginContainer/PanelScroll/Content/ResourceLabel")
-@onready var _selected_count_label: Label = get_node_or_null("MarginContainer/PanelScroll/Content/SelectedCountLabel")
-@onready var _build_space_label: Label = get_node_or_null("MarginContainer/PanelScroll/Content/BuildSpaceLabel")
-@onready var _destination_heading: Label = get_node_or_null("MarginContainer/PanelScroll/Content/DestinationHeading")
-@onready var _destination_option: OptionButton = get_node_or_null("MarginContainer/PanelScroll/Content/DestinationSelect")
-@onready var _mission_heading: Label = get_node_or_null("MarginContainer/PanelScroll/Content/MissionHeading")
-@onready var _mission_option: OptionButton = get_node_or_null("MarginContainer/PanelScroll/Content/MissionSelect")
-@onready var _send_heading: Label = get_node_or_null("MarginContainer/PanelScroll/Content/SendHeading")
-@onready var _amount_slider: HSlider = get_node_or_null("MarginContainer/PanelScroll/Content/AmountSlider")
-@onready var _preview_label: Label = get_node_or_null("MarginContainer/PanelScroll/Content/PreviewLabel")
-@onready var _send_button: Button = get_node_or_null("MarginContainer/PanelScroll/Content/SendButton")
-@onready var _upgrade_heading: Label = get_node_or_null("MarginContainer/PanelScroll/Content/UpgradeHeading")
-@onready var _upgrade_list: VBoxContainer = get_node_or_null("MarginContainer/PanelScroll/Content/UpgradeScroll/UpgradeList")
-@onready var _units_heading: Label = get_node_or_null("MarginContainer/PanelScroll/Content/UnitsHeading")
-@onready var _count_list: VBoxContainer = get_node_or_null("MarginContainer/PanelScroll/Content/ScrollContainer/CountList")
+@onready var _heading_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/HeadingLabel")
+@onready var _route_legend_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/RouteLegendLabel")
+@onready var _selected_planet_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/SelectedPlanetLabel")
+@onready var _faction_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/FactionLabel")
+@onready var _resource_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/ResourceLabel")
+@onready var _selected_count_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/SelectedCountLabel")
+@onready var _build_space_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/BuildSpaceLabel")
+@onready var _destination_heading: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/DestinationHeading")
+@onready var _destination_option: OptionButton = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/DestinationSelect")
+@onready var _mission_heading: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/MissionHeading")
+@onready var _mission_option: OptionButton = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/MissionSelect")
+@onready var _send_heading: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/SendHeading")
+@onready var _amount_value_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/AmountValueLabel")
+@onready var _mission_description_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/MissionDescriptionLabel")
+@onready var _amount_slider: HSlider = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/AmountSlider")
+@onready var _preview_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/PreviewLabel")
+@onready var _action_footer: PanelContainer = get_node_or_null("MarginContainer/PanelLayout/ActionFooter")
+@onready var _dispatch_summary_label: Label = get_node_or_null("MarginContainer/PanelLayout/ActionFooter/FooterContent/DispatchSummaryLabel")
+@onready var _send_button: Button = get_node_or_null("MarginContainer/PanelLayout/ActionFooter/FooterContent/SendButton")
+@onready var _upgrade_heading: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UpgradeHeading")
+@onready var _upgrade_list: VBoxContainer = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UpgradeScroll/UpgradeList")
+@onready var _units_heading: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UnitsHeading")
+@onready var _count_list: VBoxContainer = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList")
 @onready var _margin: MarginContainer = get_node_or_null("MarginContainer")
-@onready var _content: VBoxContainer = get_node_or_null("MarginContainer/PanelScroll/Content")
+@onready var _content: VBoxContainer = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content")
 
 var _selection_count_label: Label = null
 var _selection_overview_box: VBoxContainer = null
@@ -61,58 +67,68 @@ func setup(theme_config: UIThemeConfig = null) -> void:
 
 func _ensure_node_references() -> void:
 	if _heading_label == null:
-		_heading_label = get_node_or_null("MarginContainer/PanelScroll/Content/HeadingLabel")
+		_heading_label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/HeadingLabel")
+	if _route_legend_label == null:
+		_route_legend_label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/RouteLegendLabel")
 	if _selected_planet_label == null:
-		_selected_planet_label = get_node_or_null("MarginContainer/PanelScroll/Content/SelectedPlanetLabel")
+		_selected_planet_label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/SelectedPlanetLabel")
 	if _faction_label == null:
-		_faction_label = get_node_or_null("MarginContainer/PanelScroll/Content/FactionLabel")
+		_faction_label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/FactionLabel")
 	if _resource_label == null:
-		_resource_label = get_node_or_null("MarginContainer/PanelScroll/Content/ResourceLabel")
+		_resource_label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/ResourceLabel")
 	if _selected_count_label == null:
-		_selected_count_label = get_node_or_null("MarginContainer/PanelScroll/Content/SelectedCountLabel")
+		_selected_count_label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/SelectedCountLabel")
 	if _build_space_label == null:
-		_build_space_label = get_node_or_null("MarginContainer/PanelScroll/Content/BuildSpaceLabel")
+		_build_space_label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/BuildSpaceLabel")
 	if _destination_heading == null:
-		_destination_heading = get_node_or_null("MarginContainer/PanelScroll/Content/DestinationHeading")
+		_destination_heading = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/DestinationHeading")
 	if _destination_option == null:
-		_destination_option = get_node_or_null("MarginContainer/PanelScroll/Content/DestinationSelect")
+		_destination_option = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/DestinationSelect")
 	if _mission_heading == null:
-		_mission_heading = get_node_or_null("MarginContainer/PanelScroll/Content/MissionHeading")
+		_mission_heading = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/MissionHeading")
 	if _mission_option == null:
-		_mission_option = get_node_or_null("MarginContainer/PanelScroll/Content/MissionSelect")
+		_mission_option = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/MissionSelect")
 	if _send_heading == null:
-		_send_heading = get_node_or_null("MarginContainer/PanelScroll/Content/SendHeading")
+		_send_heading = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/SendHeading")
+	if _amount_value_label == null:
+		_amount_value_label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/AmountValueLabel")
+	if _mission_description_label == null:
+		_mission_description_label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/MissionDescriptionLabel")
 	if _amount_slider == null:
-		_amount_slider = get_node_or_null("MarginContainer/PanelScroll/Content/AmountSlider")
+		_amount_slider = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/AmountSlider")
 	if _preview_label == null:
-		_preview_label = get_node_or_null("MarginContainer/PanelScroll/Content/PreviewLabel")
+		_preview_label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/PreviewLabel")
+	if _action_footer == null:
+		_action_footer = get_node_or_null("MarginContainer/PanelLayout/ActionFooter")
+	if _dispatch_summary_label == null:
+		_dispatch_summary_label = get_node_or_null("MarginContainer/PanelLayout/ActionFooter/FooterContent/DispatchSummaryLabel")
 	if _send_button == null:
-		_send_button = get_node_or_null("MarginContainer/PanelScroll/Content/SendButton")
+		_send_button = get_node_or_null("MarginContainer/PanelLayout/ActionFooter/FooterContent/SendButton")
 	if _upgrade_heading == null:
-		_upgrade_heading = get_node_or_null("MarginContainer/PanelScroll/Content/UpgradeHeading")
+		_upgrade_heading = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UpgradeHeading")
 	if _upgrade_list == null:
-		_upgrade_list = get_node_or_null("MarginContainer/PanelScroll/Content/UpgradeScroll/UpgradeList")
+		_upgrade_list = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UpgradeScroll/UpgradeList")
 	if _units_heading == null:
-		_units_heading = get_node_or_null("MarginContainer/PanelScroll/Content/UnitsHeading")
+		_units_heading = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UnitsHeading")
 	if _count_list == null:
-		_count_list = get_node_or_null("MarginContainer/PanelScroll/Content/ScrollContainer/CountList")
+		_count_list = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList")
 	if _margin == null:
 		_margin = get_node_or_null("MarginContainer")
 	if _content == null:
-		_content = get_node_or_null("MarginContainer/PanelScroll/Content")
+		_content = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content")
 
 func _setup_missions() -> void:
 	if _mission_option == null:
 		return
 	_mission_option.clear()
-	_mission_option.add_item("Militärverband (K/M/L)", 0)
-	_mission_option.set_item_metadata(0, &"military")
-	_mission_option.add_item("Frachtschiff (Ressourcen-Transfer)", 1)
-	_mission_option.set_item_metadata(1, &"cargo")
-	_mission_option.add_item("Kolonieschiff (Expansions-Besiedlung)", 2)
-	_mission_option.set_item_metadata(2, &"colony")
-	_mission_option.add_item("Sammeltrupp (erste Einnahmen)", 3)
-	_mission_option.set_item_metadata(3, &"collect")
+	_mission_option.add_item("Militär — Angriff / Verstärkung", 0)
+	_mission_option.set_item_metadata(0, GameState.MISSION_MILITARY)
+	_mission_option.add_item("Transport — Ressourcen bewegen", 1)
+	_mission_option.set_item_metadata(1, GameState.MISSION_CARGO)
+	_mission_option.add_item("Kolonie — neutrale Welt besiedeln", 2)
+	_mission_option.set_item_metadata(2, GameState.MISSION_COLONY)
+	_mission_option.add_item("Sammeln — Ressourcen zurückbringen", 3)
+	_mission_option.set_item_metadata(3, GameState.MISSION_COLLECT)
 	_mission_option.select(0)
 
 func _connect_game_state_signals() -> void:
@@ -162,6 +178,9 @@ func _apply_theme() -> void:
 	if _heading_label != null:
 		_heading_label.add_theme_font_size_override("font_size", _theme_config.heading_font_size)
 		_heading_label.add_theme_color_override("font_color", _theme_config.muted_text_color)
+	if _route_legend_label != null:
+		_route_legend_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+		_route_legend_label.add_theme_color_override("font_color", _theme_config.muted_text_color)
 	if _selected_planet_label != null:
 		_selected_planet_label.add_theme_font_size_override("font_size", _theme_config.panel_title_font_size)
 		_selected_planet_label.add_theme_color_override("font_color", _theme_config.selected_planet_text_color)
@@ -187,9 +206,20 @@ func _apply_theme() -> void:
 			input_control.add_theme_stylebox_override("normal", _style_box(_theme_config.input_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
 			input_control.add_theme_stylebox_override("hover", _style_box(_theme_config.input_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
 			input_control.add_theme_stylebox_override("pressed", _style_box(_theme_config.input_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+	if _mission_description_label != null:
+		_mission_description_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+		_mission_description_label.add_theme_color_override("font_color", _theme_config.muted_text_color)
+	if _amount_value_label != null:
+		_amount_value_label.add_theme_font_size_override("font_size", _theme_config.selected_count_font_size)
+		_amount_value_label.add_theme_color_override("font_color", _theme_config.selected_count_text_color)
 	if _preview_label != null:
-		_preview_label.add_theme_font_size_override("font_size", _theme_config.body_font_size)
-		_preview_label.add_theme_color_override("font_color", _theme_config.selected_count_text_color)
+		_preview_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+		_preview_label.add_theme_color_override("font_color", _theme_config.muted_text_color)
+	if _action_footer != null:
+		_action_footer.add_theme_stylebox_override("panel", _style_box(_theme_config.input_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+	if _dispatch_summary_label != null:
+		_dispatch_summary_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+		_dispatch_summary_label.add_theme_color_override("font_color", _theme_config.accent_text_color)
 	if _send_button != null:
 		_send_button.add_theme_font_size_override("font_size", _theme_config.body_font_size)
 		_send_button.add_theme_stylebox_override("normal", _style_box(_theme_config.button_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
@@ -232,10 +262,12 @@ func set_destinations(destinations: Array[Node2D], default_destination: Node2D) 
 	_ensure_node_references()
 	_destination_option.clear()
 	_destination_option.disabled = destinations.is_empty()
+	if _route_legend_label != null:
+		_route_legend_label.visible = not destinations.is_empty()
 	var state: Node = get_tree().root.get_node_or_null("GameState")
 	var idx := 0
 	for destination in destinations:
-		var d_name: String = destination.name
+		var d_name: String = UIBaseUtils.planet_display_name(destination)
 		if state != null and destination.get("planet_id") != null:
 			if not state.is_known(destination.get("planet_id"), GameState.FACTION_PLAYER):
 				d_name = "??? (Unbekannt)"
@@ -258,22 +290,22 @@ func show_planet(planet: Node2D, destinations: Array[Node2D], default_destinatio
 	var planet_id: StringName = planet.get("planet_id") if planet.get("planet_id") != null else &""
 	var is_known: bool = state != null and state.is_known(planet_id, GameState.FACTION_PLAYER)
 
-	_selected_planet_label.text = planet.name.to_upper() if is_known else "??? (UNBEKANNT)"
+	_selected_planet_label.text = UIBaseUtils.planet_display_name(planet).to_upper() if is_known else "??? (UNBEKANNT)"
 
 	if state != null:
 		var faction_id: StringName = state.faction_of(planet_id)
-		var faction_str: String = "Spieler [A]" if faction_id == &"a" else ("CPU [B]" if faction_id == &"b" else "Neutral")
+		var faction_str: String = UIBaseUtils.faction_display_name(faction_id)
 		if _faction_label != null:
-			_faction_label.text = "Besitzer: %s" % faction_str
+			_faction_label.text = "Status: %s" % faction_str
 			_faction_label.add_theme_color_override("font_color", DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", faction_id))
 
 		var resource_id: StringName = state.resource_of(planet_id) if state.is_known(planet_id, GameState.FACTION_PLAYER) else &""
-		var resource_name: String = String(resource_id).capitalize() if not String(resource_id).is_empty() else "Unbekannt (Scout benötigt)"
+		var resource_name: String = UIBaseUtils.resource_display_name(resource_id) if not String(resource_id).is_empty() else "Unbekannt (Forschungsschiff benötigt)"
 		var extra_info := ""
 		if state.has_planet_upgrade(planet_id, &"refinery"):
 			extra_info = " ⚗️"
 		if _resource_label != null:
-			_resource_label.text = "Ressource: %s%s" % [resource_name, extra_info]
+			_resource_label.text = "Produktion: %s%s" % [resource_name, extra_info]
 			_resource_label.add_theme_color_override("font_color", _theme_config.resource_color(resource_id))
 	if _build_space_label != null:
 		var selected_planet: Planet = planet as Planet
@@ -283,6 +315,7 @@ func show_planet(planet: Node2D, destinations: Array[Node2D], default_destinatio
 		_build_space_label.text = "Bauplätze: %d  ·  Perimeter: %d  ·  Reichweite: %.0f px" % [build_slots, perimeter_slots, defense_range]
 
 	set_destinations(destinations, default_destination)
+	set_mission_description(selected_mission_type())
 
 	_refresh_local_resources(planet_id)
 	_refresh_upgrade_list(planet)
@@ -372,7 +405,7 @@ func _create_upgrade_row(planet_id: StringName, upgrade: PlanetUpgradeDefinition
 	name_label.add_theme_color_override("font_color", _theme_config.selected_count_text_color if is_unlocked else _theme_config.accent_text_color)
 	info.add_child(name_label)
 	var detail_label := Label.new()
-	detail_label.text = _upgrade_cost_text(upgrade, is_unlocked)
+	detail_label.text = _upgrade_cost_text(upgrade, is_unlocked, planet_id)
 	var trait_text := _upgrade_trait_text(upgrade)
 	if not trait_text.is_empty():
 		detail_label.text += "\n" + trait_text
@@ -402,13 +435,17 @@ func _create_upgrade_row(planet_id: StringName, upgrade: PlanetUpgradeDefinition
 	row.add_child(margin)
 	return row
 
-func _upgrade_cost_text(upgrade: PlanetUpgradeDefinition, is_unlocked: bool) -> String:
+func _upgrade_cost_text(upgrade: PlanetUpgradeDefinition, is_unlocked: bool, planet_id: StringName = &"") -> String:
 	if is_unlocked:
 		return "FREIGESCHALTET"
-	var result := "%d %s" % [upgrade.cost_amount, String(upgrade.cost_resource).capitalize()]
-	result += "  ·  %d Credits" % upgrade.credit_cost
+	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var resource_amount: int = state.get_faction_resource(GameState.FACTION_PLAYER, upgrade.cost_resource) if state != null else 0
+	var credit_amount: int = state.get_faction_credits(GameState.FACTION_PLAYER) if state != null else 0
+	var result: String = "%d/%d %s" % [resource_amount, upgrade.cost_amount, UIBaseUtils.resource_display_name(upgrade.cost_resource)]
+	result += "  ·  %d/%d Credits" % [credit_amount, upgrade.credit_cost]
 	if upgrade.workers_required > 0:
-		result += "  ·  Arbeitskräfte: %d" % upgrade.workers_required
+		var worker_amount: int = int(_current_active_planet.get("worker_count")) if is_instance_valid(_current_active_planet) and _current_active_planet.get("planet_id") == planet_id else 0
+		result += "  ·  Arbeitskräfte: %d (%d verfügbar)" % [upgrade.workers_required, worker_amount]
 	return result
 
 func _upgrade_trait_text(upgrade: PlanetUpgradeDefinition) -> String:
@@ -431,7 +468,7 @@ func _upgrade_trait_text(upgrade: PlanetUpgradeDefinition) -> String:
 	if trait_data.transfer_speed_multiplier > 1.0:
 		traits.append("Transit x%.1f" % trait_data.transfer_speed_multiplier)
 	if not String(trait_data.maintenance_cost_resource).is_empty() and trait_data.maintenance_cost_amount > 0:
-		traits.append("Unterhalt %d %s" % [trait_data.maintenance_cost_amount, String(trait_data.maintenance_cost_resource).capitalize()])
+		traits.append("Unterhalt %d %s" % [trait_data.maintenance_cost_amount, UIBaseUtils.resource_display_name(trait_data.maintenance_cost_resource)])
 	return " · ".join(traits)
 
 func _on_buy_upgrade_pressed(planet_id: StringName, upgrade_id: StringName) -> void:
@@ -450,7 +487,8 @@ func _on_buy_upgrade_pressed(planet_id: StringName, upgrade_id: StringName) -> v
 
 func set_selected_count(count: int) -> void:
 	_ensure_node_references()
-	_selected_count_label.text = "Einheiten: %d" % count
+	_selected_count_label.text = "Verfügbare Einheiten: %d" % count
+	_refresh_amount_label()
 
 func _ensure_local_resources_label() -> void:
 	if _content == null or _local_resources_label != null:
@@ -476,7 +514,7 @@ func _refresh_local_resources(planet_id: StringName) -> void:
 		return
 	var parts: Array[String] = []
 	for resource_id in vault:
-		parts.append("%s %d" % [String(resource_id).capitalize(), int(vault[resource_id])])
+		parts.append("%s %d" % [UIBaseUtils.resource_display_name(resource_id as StringName), int(vault[resource_id])])
 	_local_resources_label.text = "Lokaler Vorrat: " + " · ".join(parts)
 
 func _ensure_selection_overview_controls() -> void:
@@ -555,7 +593,7 @@ func _rebuild_selection_overview(selection: Array) -> void:
 			_: neutral_hits += 1
 		var row_label: Label = Label.new()
 		var faction_short: String = "[A]" if faction_id == GameState.FACTION_PLAYER else ("[B]" if faction_id == GameState.FACTION_CPU else "[·]")
-		row_label.text = " %s %s · %d Einheiten" % [faction_short, String(planet.name), workers]
+		row_label.text = " %s %s · %d Einheiten" % [faction_short, UIBaseUtils.planet_display_name(planet), workers]
 		row_label.add_theme_color_override("font_color", DEFAULT_TRANSFORMER_CONFIG.resolve_tint(&"faction", faction_id))
 		_selection_overview_box.add_child(row_label)
 		if _selection_total_label != null:
@@ -577,13 +615,17 @@ func set_amount_bounds(bounds: Vector2i) -> void:
 	_amount_slider.min_value = bounds.x
 	_amount_slider.max_value = bounds.y
 	_amount_slider.editable = bounds.y > 0
-	if _amount_slider.value > bounds.y:
-		_amount_slider.value = bounds.y
+	if bounds.y <= 0:
+		_amount_slider.set_value_no_signal(0)
+	elif _amount_slider.value < bounds.x or _amount_slider.value > bounds.y:
+		_amount_slider.set_value_no_signal(bounds.x)
+	_refresh_amount_label()
 	_send_button.disabled = bounds.y <= 0
 
 func reset_amount() -> void:
 	_ensure_node_references()
 	_amount_slider.set_value_no_signal(1)
+	_refresh_amount_label()
 
 func selected_amount() -> int:
 	_ensure_node_references()
@@ -600,6 +642,7 @@ func set_mission_type(mission_type: StringName) -> void:
 	_ensure_node_references()
 	if _mission_option == null:
 		return
+	set_mission_description(mission_type)
 	for index in _mission_option.item_count:
 		if _mission_option.get_item_metadata(index) == mission_type:
 			_mission_option.select(index)
@@ -613,6 +656,23 @@ func has_selectable_amount() -> bool:
 func set_preview(text: String) -> void:
 	_ensure_node_references()
 	_preview_label.text = text
+
+func set_dispatch_preview(preview: Dictionary) -> void:
+	_dispatch_preview = preview.duplicate(true)
+	if _dispatch_summary_label == null:
+		return
+	_dispatch_summary_label.text = String(preview.get("summary", "Auftrag auswählen, um die Konsequenzen zu sehen."))
+
+func set_mission_description(mission_type: StringName) -> void:
+	if _mission_description_label != null:
+		_mission_description_label.text = UIBaseUtils.mission_description(mission_type)
+
+func _refresh_amount_label() -> void:
+	if _amount_value_label == null or _amount_slider == null:
+		return
+	var maximum: int = maxi(0, int(_amount_slider.max_value))
+	var selected: int = 0 if maximum <= 0 else clampi(int(_amount_slider.value), int(_amount_slider.min_value), maximum)
+	_amount_value_label.text = "%d / %d Einheiten" % [selected, maximum]
 
 func index_of_destination(destination_name: String) -> int:
 	_ensure_node_references()
@@ -642,16 +702,19 @@ func get_count_label(planet: Node2D) -> Label:
 	return _count_labels.get(planet) as Label
 
 func _count_text(planet: Node2D) -> String:
-	return "%s: %d" % [planet.name, int(planet.get("worker_count"))]
+	return "%s: %d" % [UIBaseUtils.planet_display_name(planet), int(planet.get("worker_count"))]
 
 func _on_destination_selected(index: int) -> void:
 	destination_selected.emit(index)
 
 func _on_mission_selected(index: int) -> void:
 	var meta: Variant = _mission_option.get_item_metadata(index)
-	mission_selected.emit(meta as StringName if meta != null else &"military")
+	var mission_type: StringName = meta as StringName if meta != null else GameState.MISSION_MILITARY
+	set_mission_description(mission_type)
+	mission_selected.emit(mission_type)
 
 func _on_amount_changed(value: float) -> void:
+	_refresh_amount_label()
 	amount_changed.emit(value)
 
 func _on_send_pressed() -> void:

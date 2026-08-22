@@ -22,68 +22,86 @@ script = ExtResource("1_panel")
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="PanelScroll" type="ScrollContainer" parent="MarginContainer"]
+[node name="PanelLayout" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="PanelScroll" type="ScrollContainer" parent="MarginContainer/PanelLayout"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 1
 
-[node name="Content" type="VBoxContainer" parent="MarginContainer/PanelScroll"]
+[node name="Content" type="VBoxContainer" parent="MarginContainer/PanelLayout/PanelScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HeadingLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+[node name="HeadingLabel" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
-text = "PLANETENNETZ"
+text = "PLANET"
 
-[node name="SelectedPlanetLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+[node name="RouteLegendLabel" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
+layout_mode = 2
+text = "Gelb: aktive Route · Netz: Navigation"
+
+[node name="SelectedPlanetLabel" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
 text = "KEIN PLANET AUSGEWÄHLT"
 
-[node name="FactionLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+[node name="FactionLabel" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
-text = "Besitzer: Unbekannt"
+text = "Status: Unbekannt"
 
-[node name="ResourceLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+[node name="ResourceLabel" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
-text = "Ressource: Keine"
+text = "Produktion: Keine"
 
-[node name="SelectedCountLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+[node name="SelectedCountLabel" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
-text = "Einheiten: 0"
+text = "Verfügbare Einheiten: 0"
 
-[node name="BuildSpaceLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+[node name="BuildSpaceLabel" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
 text = "Bauplätze: 0"
 
-[node name="HeaderSeparator" type="HSeparator" parent="MarginContainer/PanelScroll/Content"]
+[node name="HeaderSeparator" type="HSeparator" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
 
-[node name="DestinationHeading" type="Label" parent="MarginContainer/PanelScroll/Content"]
+[node name="DestinationHeading" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
-text = "DISPATCH"
+text = "AUFTRAG · ZIEL"
 
-[node name="DestinationSelect" type="OptionButton" parent="MarginContainer/PanelScroll/Content"]
+[node name="DestinationSelect" type="OptionButton" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
-text = "Zielplanet auswählen"
+text = "Ziel auswählen"
 
-[node name="MissionHeading" type="Label" parent="MarginContainer/PanelScroll/Content"]
+[node name="MissionHeading" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
-text = "MISSIONSTYP"
+text = "MISSION"
 
-[node name="MissionSelect" type="OptionButton" parent="MarginContainer/PanelScroll/Content"]
+[node name="MissionSelect" type="OptionButton" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Militärverband (K/M/L)"
+text = "Militär — Angriff / Verstärkung"
 
-[node name="SendHeading" type="Label" parent="MarginContainer/PanelScroll/Content"]
+[node name="MissionDescriptionLabel" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
+layout_mode = 2
+autowrap_mode = 2
+text = "Angriff oder Verstärkung — ein Konflikt ist möglich."
+
+[node name="SendHeading" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
 text = "EINHEITEN SENDEN"
 
-[node name="AmountSlider" type="HSlider" parent="MarginContainer/PanelScroll/Content"]
+[node name="AmountValueLabel" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
+layout_mode = 2
+text = "0 / 0 Einheiten"
+
+[node name="AmountSlider" type="HSlider" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 1.0
@@ -92,42 +110,56 @@ value = 1.0
 step = 1.0
 editable = false
 
-[node name="PreviewLabel" type="Label" parent="MarginContainer/PanelScroll/Content"]
+[node name="PreviewLabel" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
-text = "Keine Einheiten verfügbar"
+autowrap_mode = 2
+text = "Noch kein Auftrag konfiguriert."
 
-[node name="SendButton" type="Button" parent="MarginContainer/PanelScroll/Content"]
+[node name="UpgradeSeparator" type="HSeparator" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
+layout_mode = 2
+
+[node name="UpgradeHeading" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
+layout_mode = 2
+text = "PLANETEN-AUSBAU"
+
+[node name="UpgradeScroll" type="VBoxContainer" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UpgradeList" type="VBoxContainer" parent="MarginContainer/PanelLayout/PanelScroll/Content/UpgradeScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UnitsSeparator" type="HSeparator" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
+layout_mode = 2
+
+[node name="UnitsHeading" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
+layout_mode = 2
+text = "GARNISONEN"
+
+[node name="ScrollContainer" type="VBoxContainer" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CountList" type="VBoxContainer" parent="MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ActionFooter" type="PanelContainer" parent="MarginContainer/PanelLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FooterContent" type="VBoxContainer" parent="MarginContainer/PanelLayout/ActionFooter"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="DispatchSummaryLabel" type="Label" parent="MarginContainer/PanelLayout/ActionFooter/FooterContent"]
+layout_mode = 2
+autowrap_mode = 2
+text = "Auftrag auswählen, um die Konsequenzen zu sehen."
+
+[node name="SendButton" type="Button" parent="MarginContainer/PanelLayout/ActionFooter/FooterContent"]
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "MISSION STARTEN"
-
-[node name="UpgradeSeparator" type="HSeparator" parent="MarginContainer/PanelScroll/Content"]
-layout_mode = 2
-
-[node name="UpgradeHeading" type="Label" parent="MarginContainer/PanelScroll/Content"]
-layout_mode = 2
-text = "PLANETEN-AUSBAU"
-
-[node name="UpgradeScroll" type="VBoxContainer" parent="MarginContainer/PanelScroll/Content"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="UpgradeList" type="VBoxContainer" parent="MarginContainer/PanelScroll/Content/UpgradeScroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="UnitsSeparator" type="HSeparator" parent="MarginContainer/PanelScroll/Content"]
-layout_mode = 2
-
-[node name="UnitsHeading" type="Label" parent="MarginContainer/PanelScroll/Content"]
-layout_mode = 2
-text = "GARNISONEN"
-
-[node name="ScrollContainer" type="VBoxContainer" parent="MarginContainer/PanelScroll/Content"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="CountList" type="VBoxContainer" parent="MarginContainer/PanelScroll/Content/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 3

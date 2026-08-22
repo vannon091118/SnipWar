@@ -20,6 +20,7 @@ var _pending_income: Dictionary = {}
 var _income_flush_scheduled: bool = false
 
 @onready var _tab_button: Button = get_node_or_null("PlanetTabUI/PlanetTab")
+@onready var _map_focus_overlay: ColorRect = get_node_or_null("PlanetTabUI/MapFocusOverlay")
 @onready var _vault_bar: VaultBar = get_node_or_null("PlanetTabUI/VaultBar")
 @onready var _panel: PlanetPanel = get_node_or_null("PlanetTabUI/PlanetPanel")
 
@@ -34,7 +35,8 @@ func setup(planets: Array[Node2D], theme_config: UIThemeConfig = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
 	_ensure_node_references()
 	_apply_theme()
-	_vault_bar.setup(_theme_config)
+	var economy_manager: Node = get_parent().get_node_or_null("EconomyManager") if get_parent() != null else null
+	_vault_bar.setup(_theme_config, economy_manager)
 	_panel.setup(_theme_config)
 	_panel.populate_units(planets)
 	_connect_tab_signal()
@@ -48,6 +50,8 @@ func setup(planets: Array[Node2D], theme_config: UIThemeConfig = null) -> void:
 func _ensure_node_references() -> void:
 	if _tab_button == null:
 		_tab_button = get_node_or_null("PlanetTabUI/PlanetTab")
+	if _map_focus_overlay == null:
+		_map_focus_overlay = get_node_or_null("PlanetTabUI/MapFocusOverlay")
 	if _vault_bar == null:
 		_vault_bar = get_node_or_null("PlanetTabUI/VaultBar")
 	if _panel == null:
@@ -213,6 +217,10 @@ func has_selectable_amount() -> bool:
 func set_preview(text: String) -> void:
 	_panel.set_preview(text)
 
+func set_dispatch_preview(preview: Dictionary) -> void:
+	if _panel != null and _panel.has_method("set_dispatch_preview"):
+		_panel.set_dispatch_preview(preview)
+
 func is_panel_visible() -> bool:
 	return _panel_open and is_instance_valid(_panel) and _panel.visible
 
@@ -302,6 +310,8 @@ func _set_panel_open(open: bool) -> void:
 		_panel.visible = open
 		_panel.mouse_filter = Control.MOUSE_FILTER_STOP if open else Control.MOUSE_FILTER_IGNORE
 		_animate_panel_transition(open)
+	if _map_focus_overlay != null:
+		_map_focus_overlay.visible = open
 	if _tab_button != null:
 		_tab_button.set_pressed_no_signal(open)
 		_tab_button.text = "‹  SCHLIESSEN" if open else "PLANETEN  ›"
@@ -335,9 +345,7 @@ func show_planet_tooltip(planet: Node2D) -> void:
 		_build_tooltip()
 	var text := "???"
 	if _is_planet_known(planet):
-		var name_text: String = String(planet.get("display_name"))
-		if name_text.is_empty():
-			name_text = String(planet.get("planet_id"))
+		var name_text: String = UIBaseUtils.planet_display_name(planet)
 		text = "%s · %d" % [name_text, int(planet.get("worker_count"))]
 	_tooltip_label.text = text
 	_tooltip_panel.visible = true

@@ -64,9 +64,9 @@ func _research_row(technology: TechnologyDefinition, state: Node, on_refresh_cal
 	elif in_progress:
 		status_text = "IN FORSCHUNG (%.0f s · %d%%)" % [remaining, _progress_percent(technology.research_time, remaining)]
 	elif can_research:
-		status_text = "Kosten: %d %s" % [technology.cost_amount, String(technology.cost_resource)]
+		status_text = "BEREIT · %s" % UIBaseUtils.technology_cost_text(technology, state)
 	else:
-		status_text = "Gesperrt (Kosten/Voraussetzung fehlt)"
+		status_text = "GESPERRT · %s" % UIBaseUtils.technology_cost_text(technology, state)
 	return _technology_card(
 		technology,
 		status_text,
@@ -96,11 +96,12 @@ func _technology_card(technology: TechnologyDefinition, status_text: String, dis
 	var box := VBoxContainer.new()
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(UIBaseUtils.make_label(technology.display_name, _theme_config.heading_text_color, _theme_config.body_font_size))
+	box.add_child(UIBaseUtils.make_label(UIBaseUtils.research_role(technology), _theme_config.accent_text_color, _theme_config.small_font_size))
 	box.add_child(UIBaseUtils.make_label(technology.description, _theme_config.muted_text_color, _theme_config.small_font_size))
 	var prerequisite_text: String = _technology_prerequisite_text(technology)
 	if not prerequisite_text.is_empty():
 		box.add_child(UIBaseUtils.make_label(prerequisite_text, _theme_config.secondary_text_color, _theme_config.small_font_size))
-	box.add_child(UIBaseUtils.make_label(technology.mechanic_description, _theme_config.accent_text_color, _theme_config.small_font_size))
+	box.add_child(UIBaseUtils.make_label("Freischaltung: " + technology.mechanic_description, _theme_config.accent_text_color, _theme_config.small_font_size))
 	var status_label := UIBaseUtils.make_label(status_text, _theme_config.accent_text_color, _theme_config.small_font_size)
 	status_label.set_meta("technology_id", technology.id)
 	status_label.set_meta("total_time", total_time)
@@ -125,6 +126,7 @@ func _technology_card(technology: TechnologyDefinition, status_text: String, dis
 	research_button.disabled = disabled
 	if pressed.is_valid():
 		research_button.pressed.connect(pressed)
+	research_button.tooltip_text = UIBaseUtils.technology_cost_text(technology)
 	box.add_child(research_button)
 	content.add_child(box)
 	row.add_child(content)

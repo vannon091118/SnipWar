@@ -50,6 +50,17 @@ func set_enabled(enabled: bool) -> void:
 func is_enabled() -> bool:
 	return _enabled
 
+func economy_tick_remaining() -> float:
+	if _timer == null or _timer.is_stopped() or _timer.paused:
+		return -1.0
+	return _timer.time_left
+
+func economy_tick_interval() -> float:
+	if _timer != null and _timer.wait_time > 0.0:
+		return _timer.wait_time
+	var resolved_config: EconomyConfig = economy_config if economy_config != null else DEFAULT_CONFIG
+	return resolved_config.tick_interval
+
 func set_gathering_enabled(enabled: bool) -> void:
 	_gathering_enabled = enabled
 	if _gather_timer != null:

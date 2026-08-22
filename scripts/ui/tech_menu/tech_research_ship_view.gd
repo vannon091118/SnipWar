@@ -27,7 +27,7 @@ func build_research_ship_and_worker_section(
 
 	container.add_child(UIBaseUtils.make_separator())
 	container.add_child(UIBaseUtils.make_label("FORSCHUNGSSCHIFF", _theme_config.heading_text_color, _theme_config.section_font_size))
-	container.add_child(UIBaseUtils.make_label("Das persistente Forschungsschiff fliegt zu unbekannten Nachbarn und bleibt nach der Ankunft erhalten.", _theme_config.muted_text_color, _theme_config.small_font_size))
+	container.add_child(UIBaseUtils.make_label("Das Forschungsschiff fliegt zu unbekannten Nachbarn und bleibt nach der Ankunft erhalten.", _theme_config.muted_text_color, _theme_config.small_font_size))
 
 	container.add_child(UIBaseUtils.make_label("Startplanet (eigene Werft)", _theme_config.secondary_text_color, _theme_config.small_font_size))
 	scout_source = OptionButton.new()
@@ -50,7 +50,7 @@ func build_research_ship_and_worker_section(
 	var can_start: bool = start_source != null and scout_destination.item_count > 0 and _ship_manager.can_launch_research_ship(start_source)
 	start_button.disabled = not can_start
 	if not can_start:
-		start_button.tooltip_text = "Ein verfügbares ResearchShip und ein unbekannter neutraler Nachbar sind erforderlich."
+		start_button.tooltip_text = "Ein verfügbares Forschungsschiff und ein unbekannter neutraler Nachbar sind erforderlich."
 	start_button.pressed.connect(func():
 		if scout_source == null or scout_destination == null:
 			return
@@ -95,7 +95,7 @@ func populate_sources(option: OptionButton, planets: Array[Planet], state: Node)
 		var has_shipyard: bool = state.has_planet_upgrade(planet.planet_id, SHIPYARD_UPGRADE_ID)
 		var has_research_ship: bool = _has_research_ship_at(state, planet.planet_id)
 		if player_owned and (has_shipyard or has_research_ship):
-			option.add_item(planet.name)
+			option.add_item(UIBaseUtils.planet_display_name(planet))
 			option.set_item_metadata(option.item_count - 1, planet)
 	option.disabled = option.item_count == 0
 
@@ -106,7 +106,7 @@ func populate_destinations(option: OptionButton, source: Planet, state: Node) ->
 	if source != null and _ship_manager != null:
 		for planet in _ship_manager.get_scan_destinations(source):
 			if planet.get_faction() == GameState.FACTION_NEUTRAL and not state.is_known(planet.planet_id, GameState.FACTION_PLAYER):
-				option.add_item(planet.name)
+				option.add_item(UIBaseUtils.planet_display_name(planet))
 				option.set_item_metadata(option.item_count - 1, planet)
 	option.disabled = option.item_count == 0
 
@@ -132,9 +132,9 @@ func _build_task_queue_section(container: VBoxContainer, state: Node, planets: A
 		container.add_child(UIBaseUtils.make_label("Kein Forschungsschiff registriert.", _theme_config.muted_text_color, _theme_config.small_font_size))
 		return
 	for record in records:
-		var ship_status: String = String(record.get("status", &"idle")).to_upper()
-		var location: String = String(record.get("current_planet_id", &"—"))
-		container.add_child(UIBaseUtils.make_label("ResearchShip %s · %s · %s" % [String(record.get("ship_id", &"")), ship_status, location], _theme_config.secondary_text_color, _theme_config.small_font_size))
+		var ship_status: String = _ship_status_name(record.get("status", &"idle") as StringName)
+		var location: String = _planet_display_name(planets, record.get("current_planet_id", &"") as StringName)
+		container.add_child(UIBaseUtils.make_label("Forschungsschiff · %s · %s" % [ship_status, location], _theme_config.secondary_text_color, _theme_config.small_font_size))
 	var missions: Array[Dictionary] = state.get_research_missions(GameState.FACTION_PLAYER) if state.has_method("get_research_missions") else []
 	for mission in missions:
 		var remaining: float = float(mission.get("remaining", 0.0))
@@ -144,7 +144,7 @@ func _build_task_queue_section(container: VBoxContainer, state: Node, planets: A
 		progress.max_value = duration
 		progress.value = duration - remaining
 		progress.show_percentage = false
-		progress.tooltip_text = "%s · %s · %.1f s" % [String(mission.get("task_type", &"task")), String(mission.get("target_planet_id", &"")), remaining]
+		progress.tooltip_text = "%s · %s · %.1f s" % [UIBaseUtils.research_task_name(mission.get("task_type", &"task") as StringName), _planet_display_name(planets, mission.get("target_planet_id", &"") as StringName), remaining]
 		container.add_child(progress)
 	var idle_record: Dictionary = {}
 	for record in records:
@@ -156,20 +156,35 @@ func _build_task_queue_section(container: VBoxContainer, state: Node, planets: A
 	var target: StringName = idle_record.get("current_planet_id", &"") as StringName
 	var task_type := OptionButton.new()
 	task_type.name = "ResearchTaskType"
-	task_type.add_item("SCAN", 0)
-	task_type.add_item("EXPLORE", 1)
+	task_type.add_item("Scannen", 0)
+	task_type.add_item("Erkunden", 1)
 	task_type.set_item_metadata(0, &"scan")
 	task_type.set_item_metadata(1, &"explore")
 	container.add_child(task_type)
 	var add_task := Button.new()
 	add_task.name = "QueueResearchTask"
-	add_task.text = "TASK AM AKTUELLEN PLANETEN EINREIHEN"
+	add_task.text = "AUFTRAG AM AKTUELLEN PLANETEN EINREIHEN"
 	add_task.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	add_task.pressed.connect(func():
 		var task_id: StringName = task_type.get_item_metadata(task_type.selected) as StringName
 		state.queue_research_mission(GameState.FACTION_PLAYER, target, task_id, 2.0)
 	)
 	container.add_child(add_task)
+
+func _planet_display_name(planets: Array[Planet], planet_id: StringName) -> String:
+	for planet in planets:
+		if planet != null and planet.planet_id == planet_id:
+			return UIBaseUtils.planet_display_name(planet)
+	return "Unbekanntes Ziel" if not String(planet_id).is_empty() else "Unbekannter Standort"
+
+func _ship_status_name(status: StringName) -> String:
+	match status:
+		&"idle":
+			return "bereit"
+		&"in_transit":
+			return "unterwegs"
+		_:
+			return String(status).capitalize()
 
 func _has_research_ship_at(state: Node, planet_id: StringName) -> bool:
 	if state == null or not state.has_method("get_research_ship_records"):

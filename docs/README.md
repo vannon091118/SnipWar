@@ -13,7 +13,7 @@
 
 # SnipWar Dokumentations-Struktur & Zugehörigkeiten
 
-Diese Übersicht konsolidiert und gliedert alle Markdown-Dokumente (`.md`) des Repositories in thematische und funktionale Zugehörigkeiten, um Redundanzen zu vermeiden und klare Zuständigkeiten zu sichern.
+Diese Übersicht konsolidiert und gliedert die zentralen Markdown-Dokumente (`.md`) des Repositories in thematische und funktionale Zugehörigkeiten. Öffentliche Dokumente beschreiben den verifizierten Laufzeitstand; historische Konzepte werden ausdrücklich als solche markiert.
 
 ---
 
@@ -60,8 +60,8 @@ graph TD
 
 | Dokument | Pfad | Zweck & Inhalt |
 |:---|:---|:---|
-| **Lagezentrum & Quickstart** | [`README.md`](../README.md) | Öffentlicher Einstiegspunkt, Terminal-Initialisierung, Sektorkarte (10 Welten), Ressourcen, Upgrades, Schiffe, Preflight-Übersicht und Roadmap. |
-| **Galaktisches Archiv** | [`LORE.md`](../LORE.md) | Worldbuilding, Hintergrund der Koalition Ocean & des Kollektivs Paper, Dossiers der 8 neutralen Welten, thematische Rohstoff- und Technologiedoktrin. |
+| **Lagezentrum & Quickstart** | [`README.md`](../README.md) | Öffentlicher Einstiegspunkt, Terminal-Initialisierung, aufgeklärter Startausschnitt der prozeduralen Chunk-Welt, Ressourcen, Upgrades, Schiffe, Dispatch-UI, Preflight-Übersicht und Roadmap. |
+| **Galaktisches Archiv** | [`LORE.md`](../LORE.md) | Worldbuilding, Hintergrund der Ocean-Koalition und des Paper-Kollektivs, Dossiers des initialen Kartenausschnitts, lokale Vorräte, Dispatch-Aufträge, Scan-Intel und Technologiedoktrin. |
 | **Produkt- & 4X-Zielvision** | [`VISION.md`](../VISION.md) | Nicht-bindendes Zielbild für den vollständigen 4X-Kreislauf (`Wirtschaft → Expansion → Kontakt → Flottenkampf → Eroberung`). |
 
 ---
@@ -71,7 +71,7 @@ graph TD
 
 | Dokument | Pfad | Zweck & Inhalt |
 |:---|:---|:---|
-| **System-Spezifikation** | [`DESIGN.md`](../DESIGN.md) | **Verbindlicher technischer MVP-Vertrag** (*„Code schlägt Dokument“*). Enthält deterministische Algorithmen (Flugzeit, Dispatch, Combat-Resolve), GameState-Fassadenarchitektur mit 4 Domänen-Managern, unendliche Chunk-Welt, Phasenplan 0–7 und Feature-Matrix. |
+| **System-Spezifikation** | [`DESIGN.md`](../DESIGN.md) | **Verbindlicher technischer MVP-Vertrag** (*„Code schlägt Dokument“*). Enthält deterministische Algorithmen (Flugzeit, Dispatch, Combat-Resolve), GameState-Fassadenarchitektur mit 4 Domänen-Managern, unendliche Chunk-Welt, aktuelle Layer-2/3-Replays und Feature-Matrix. |
 
 ---
 

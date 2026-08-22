@@ -17,6 +17,18 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="MapFocusOverlay" type="ColorRect" parent="PlanetTabUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.015, 0.025, 0.06, 0.2)
+z_index = -10
+
 [node name="VaultBar" parent="PlanetTabUI" instance=ExtResource("2_vault")]
 
 [node name="PlanetTab" type="Button" parent="PlanetTabUI"]

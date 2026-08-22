@@ -104,7 +104,7 @@ Die Hauptszene liegt unter `scenes/backgrounds/starfield_background.tscn`. Von d
 
 ---
 
-## 🪐 DIE WELTEN DER EISEN-GRENZE — Feldkarte & Sektorstatus
+## 🪐 DIE WELTEN DER EISEN-GRENZE — Aufgeklärter Kartenausschnitt & Sektorstatus
 
 <img src="assets/ui/readme_banner_overworld.jpg" alt="Die Welten der Eisen-Grenze" width="100%"/>
 
@@ -120,7 +120,7 @@ graph LR
 		Status: Hält tapfer die Stellung"]
 	end
 
-	subgraph N[" ⬜  Neutrales Niemandsland (Start-Sektor, prozedural erweitert) "]
+	subgraph N[" ⬜  Neutrales Niemandsland (illustrativer Startausschnitt) "]
 		Ember["🔥 Ember"]
 		Ice["❄️ Ice"]
 		Violet["💜 Violet"]
@@ -157,6 +157,8 @@ graph LR
 ```
 
 > [!NOTE]
+> Die Grafik zeigt den anfänglichen aufgeklärten Ausschnitt, nicht die Grenze der Welt. Beide Shipped-Szenarien nutzen eine prozedurale Chunk-Welt (`chunk_size > 0`); weitere Planeten werden bei Erkundung und wachsendem FoV erzeugt.
+>
 > Routing läuft über **Moon- und Comet-Waypoints** (Layout-Nachbarschaft) plus einen prozentualen K-Nearest-Langstreckengraph (`NavigationField`). AStar2D wählt den kürzesten Pfad. `NavigationField` ist die einzige Quelle der Wahrheit — `get_neighbors_for_planet()` versorgt Preview, Worker-Transit, Scout und ShipBase.
 
 <details>
@@ -188,8 +190,8 @@ Im Default-Sektor gibt es **eine** L-Klasse-Welt (`large_count = 1`). L-Klasse-W
 |:---:|:---|:---|
 | ⚡ | **Energy** | Werftbau, Scanner-Drohnen, Systembetrieb |
 | 🌿 | **Biomass** | Worker-Automation & Kolonisation |
-| 💠 | **Rare** | Planetares Vermessungswesen |
-| 🧪 | **Volatile** | Waffensysteme & zukünftige Mech-Chassis |
+| 💠 | **Exotisch (`rare`)** | Planetares Vermessungswesen |
+| 🧪 | **Volatil (`volatile`)** | Waffensysteme & spätere Mech-Doktrin |
 | 🔩 | **Material** | Rümpfe, Extraktoren, Werften |
 
 </div>
@@ -332,10 +334,22 @@ Preview und tatsächlicher Transit verwenden dieselbe `FlightTime.seconds_for()`
 
 | Typ | Gate | Effekt |
 |:---|:---|:---|
-| `military` | — | Angriff / Eroberung |
+| `military` | — | Angriff / Eroberung; Konflikt möglich |
 | `colony` | Gescanntes neutrales Ziel | Friedliche Besiedlung, setzt `first_colony`-Meilenstein |
-| `cargo` | Eigener Zielplanet | Truppenverlegung |
+| `cargo` | Eigener Zielplanet | Truppenverlegung ohne Eroberung |
 | `collect` | Bekanntes neutrales Scan-Ziel | Persistente Gatherer, zahlen `workers × resource_base` pro Tick |
+
+### Konsequenz-UI vor dem Dispatch
+
+Das Planet-Panel ist in Lage, Auftrag und Bestätigung getrennt. Der Inhalt bleibt scrollbar, während der Action-Footer mit **MISSION STARTEN** sichtbar bleibt. Vor dem Start zeigt die Vorschau:
+
+- `N / Maximum Einheiten` und die nach dem Abflug verbleibende Garnison;
+- Ziel, Missionsabsicht und spielerische Kurzbeschreibung;
+- gemeinsame Flugzeit aus derselben `FlightTime.seconds_for()`-Berechnung wie der Transit;
+- erwartete Rückkehrladung bei `collect`, Verstärkung bei `cargo` sowie Konflikt-/Eroberungsrisiko bei `military`;
+- lokale Vorräte und bekannte Scan-Intel, ohne technische Planet-IDs in der Oberfläche.
+
+Die Karte tritt bei geöffnetem Panel dezent zurück. Gelb markiert die aktive Dispatchroute, das übrige Netz bleibt als Navigationsreferenz sichtbar. Unbekannte Ziele bleiben im Nebel und werden nicht durch eine Vorschau verraten.
 
 ---
 
@@ -404,7 +418,8 @@ Für montierte Schiffe: Layer 2 (`FleetBattleSimulator`). Für planetare Bodener
 StarfieldBackground._enter_tree()
     ├── Szenarioauswahl (ScenarioCatalog)
     ├── Layout-Seed finalisieren (_finalize_layout_seed)
-    ├── WorldGenerator.generate_catalog()  →  active_catalog (10 Planeten, p0/p1 = Homeworlds)
+    ├── WorldGenerator.generate_catalog()  →  aktiver Startkatalog (p0/p1 = Homeworlds)
+    ├── ChunkCoordinator  →  weitere Planeten lazy aus Seed und FoV erzeugen
     └── GameState.reset_from_catalog()     →  SSOT für Ownership, Ressourcen, Forschung, Upgrades
 
 Bootstrap._ready()
@@ -478,19 +493,19 @@ LAYER 1 — STRATEGISCHE OVERWORLD
 ████████████████████████████████░░  ~95%  Wirtschaft, Transit, Forschung, Scouts, UI-HUD + Paper-Dossier-Modale
 
 LAYER 2 — FLOTTENSIMULATION
-████████████████████████████████░░  ~95%  FleetBattleSimulator + BattleScene-Replay implementiert
-                                          Live-Loop-Trigger im Spiel folgt später
+████████████████████████████████░░  ~95%  FleetBattleSimulator + BattleScene-Replay und
+                                          route-basierte Engagements im Live-Transit aktiv
 
 LAYER 3 — PLANETARE EROBERUNG
 ████████████████████████░░░░░░░░░░  ~75%  ConquestSimulator + ConquestScene + Tower-Defense + Minion-Adapter
-                                          Mech-Kampflogik & aktive Verteidiger-Befehle: noch nicht
+                                          Mech-Kampflogik bleibt als spätere Doktrin inert
 
 CHUNK-WELT (prozedural, unendlich)
 ████████████████████░░░░░░░░░░░░░░  ~60%  ChunkCoordinator, FoV-Cycling, inkrementelle Navigation
 ```
 
 > [!CAUTION]
-> Was **noch nicht existiert** und nicht als implementiert dokumentiert werden darf: echte Planetentyp-Ressourcen-Signaturen, Mech-Kampflogik, komplexe Siegbedingungen.
+> Nicht als implementiert behandeln: Eine sichtbare Planetensignatur ist aktuell kein fester Ressourcen-Contract; Mech-Kampflogik bleibt inert; komplexe Kampagnen-/Siegbedingungen sind noch offen. Die aktuelle UI, die Dispatch-Konsequenzen und die deterministischen Layer-2/3-Replays sind dagegen Laufzeitbestandteil.
 
 ---
 

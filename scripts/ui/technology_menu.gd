@@ -172,7 +172,7 @@ func _refresh() -> void:
 		_research_ship_view.build_research_ship_and_worker_section(_list, state, planets, _refresh)
 		_ship_builder_view.build_ship_builder_section(_list, state, planets, _refresh)
 	elif _category == TechnologyDefinition.CATEGORY_MECH:
-		_research_view.build_research_section(_list, TechnologyDefinition.CATEGORY_MECH, state, _refresh, "Layer-3-Mechs werden sichtbar geführt, aber erst mit Layer 3 aktiv.")
+		_research_view.build_research_section(_list, TechnologyDefinition.CATEGORY_MECH, state, _refresh, "MECHS — SPÄTERE PHASE: Diese Forschung bereitet taktische Bodeneinheiten vor; der Mech-Kampf wird mit Layer 3 aktiv.")
 	elif _category == TechnologyDefinition.CATEGORY_PLANET:
 		_planet_view.build_planets_section(_list, state, _refresh)
 

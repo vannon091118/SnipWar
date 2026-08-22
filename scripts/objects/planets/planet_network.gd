@@ -519,16 +519,63 @@ func _update_preview() -> void:
 		return
 	if _active_planet == null or not _ui.has_selectable_amount():
 		_ui.set_preview("Keine Einheiten verfügbar")
+		_ui.set_dispatch_preview({"summary": "Keine Einheiten verfügbar."})
 		return
 	var destination := get_destination(_active_planet)
 	if destination == null:
 		_ui.set_preview("Kein Ziel verfügbar")
+		_ui.set_dispatch_preview({"summary": "Kein Ziel verfügbar — Auftrag kann nicht gestartet werden."})
 		return
-	var route_path := get_route_path(_active_planet, destination)
+	var source: Planet = _active_planet as Planet
+	var destination_planet: Planet = destination as Planet
+	var state: Node = _game_state()
+	var available: int = int(source.get("worker_count"))
+	var selected_amount: int = clampi(_ui.selected_amount(), 1, maxi(available, 1))
+	var route_path := get_route_path(source, destination)
 	var distance := _path_distance(route_path)
-	var speed_multiplier: float = (_active_planet as Planet).get_transfer_speed_multiplier()
-	var seconds := _FlightTime.seconds_for(distance, _ui.selected_amount(), transit_config, speed_multiplier)
-	_ui.set_preview("Flugzeit: %.1f s" % seconds)
+	var speed_multiplier: float = source.get_transfer_speed_multiplier()
+	var seconds := _FlightTime.seconds_for(distance, selected_amount, transit_config, speed_multiplier)
+	var mission_type: StringName = _ui.selected_mission_type()
+	var destination_faction: StringName = destination_planet.get_faction() if destination_planet != null else GameState.FACTION_NEUTRAL
+	var destination_known: bool = false
+	if state != null and destination_planet != null:
+		destination_known = state.is_known(destination_planet.planet_id, GameState.FACTION_PLAYER)
+	var destination_name: String = UIBaseUtils.planet_display_name(destination_planet) if destination_planet != null and destination_known else "Unbekanntes Ziel"
+	var summary_lines: Array[String] = [
+		"%s · %s" % [UIBaseUtils.mission_display_name(mission_type), destination_name],
+		"Sende: %d / %d Einheiten · Danach verfügbar: %d" % [selected_amount, available, maxi(0, available - selected_amount)],
+		"Transit: %.1f s" % seconds,
+	]
+	match mission_type:
+		GameState.MISSION_COLLECT:
+			var resource_id: StringName = state.resource_of(destination_planet.planet_id) if destination_planet != null and destination_known else &""
+			var local_stock: int = state.get_local_resource(destination_planet.planet_id, resource_id) if state != null and destination_planet != null and not String(resource_id).is_empty() else 0
+			var base_amount: int = destination_planet.get_size_profile().resource_base if destination_planet != null else 1
+			var possible_cargo: int = mini(selected_amount * maxi(base_amount, 1), local_stock)
+			if not String(resource_id).is_empty():
+				summary_lines.append("Rückkehrladung: bis zu %d %s" % [possible_cargo, UIBaseUtils.resource_display_name(resource_id)])
+			else:
+				summary_lines.append("Rückkehrladung: Zielressource noch unbekannt")
+		GameState.MISSION_MILITARY:
+			if destination_faction != source.get_faction():
+				summary_lines.append("Risiko: Konflikt möglich")
+			else:
+				summary_lines.append("Einsatz: Verstärkung der eigenen Welt")
+		GameState.MISSION_CARGO:
+			if destination_faction == source.get_faction():
+				summary_lines.append("Wirkung: Verstärkt die Zielwelt")
+			else:
+				summary_lines.append("Hinweis: Transport ist nur zu einer eigenen Welt gültig")
+		GameState.MISSION_COLONY:
+			if destination_faction == GameState.FACTION_NEUTRAL:
+				summary_lines.append("Wirkung: Besiedelt die neutrale Zielwelt")
+			else:
+				summary_lines.append("Hinweis: Ziel muss neutral sein")
+	# Keep the compact preview parseable for existing replay/preflight tooling;
+	# the sticky footer carries the richer consequence summary.
+	var preview_text: String = "Flugzeit: %.1f s" % seconds
+	_ui.set_preview(preview_text)
+	_ui.set_dispatch_preview({"summary": "\n".join(summary_lines), "seconds": seconds, "amount": selected_amount, "available": available})
 
 func _refresh_slider_bounds() -> void:
 	if _active_planet == null or not is_instance_valid(_ui):

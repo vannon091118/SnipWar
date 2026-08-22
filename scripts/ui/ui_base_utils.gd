@@ -72,3 +72,106 @@ static func apply_button_theme(button: Button, theme: UIThemeConfig) -> void:
 		"pressed",
 		style_box(theme, theme.button_hover_background, theme.panel_border, theme.panel_border_width, theme.panel_corner_radius)
 	)
+
+static func resource_display_name(resource_id: StringName) -> String:
+	match resource_id:
+		GameState.RES_ENERGY:
+			return "Energie"
+		GameState.RES_BIOMASS:
+			return "Biomasse"
+		GameState.RES_RARE:
+			return "Exotisch"
+		GameState.RES_MATERIAL:
+			return "Material"
+		GameState.RES_VOLATILE:
+			return "Volatil"
+		_:
+			return String(resource_id).capitalize()
+
+static func faction_display_name(faction: StringName) -> String:
+	match faction:
+		GameState.FACTION_PLAYER:
+			return "Eigene Welt"
+		GameState.FACTION_CPU:
+			return "Gegnerische Welt"
+		GameState.FACTION_NEUTRAL:
+			return "Neutrale Welt"
+		_:
+			return "Unbekannt"
+
+static func planet_display_name(planet: Node) -> String:
+	if planet == null:
+		return "Unbekannter Planet"
+	var display_name: Variant = planet.get("display_name")
+	if display_name != null and not String(display_name).is_empty():
+		return String(display_name)
+	return "Unbekannter Planet"
+
+static func mission_display_name(mission_type: StringName) -> String:
+	match mission_type:
+		GameState.MISSION_MILITARY:
+			return "Militär"
+		GameState.MISSION_CARGO:
+			return "Transport"
+		GameState.MISSION_COLONY:
+			return "Kolonie"
+		GameState.MISSION_COLLECT:
+			return "Sammeln"
+		_:
+			return String(mission_type).capitalize()
+
+static func mission_description(mission_type: StringName) -> String:
+	match mission_type:
+		GameState.MISSION_MILITARY:
+			return "Angriff oder Verstärkung — ein Konflikt ist möglich."
+		GameState.MISSION_CARGO:
+			return "Transportiert Einheiten zu einer eigenen Welt."
+		GameState.MISSION_COLONY:
+			return "Besiedelt eine gescannte neutrale Welt."
+		GameState.MISSION_COLLECT:
+			return "Bindet Einheiten und bringt lokale Ressourcen zurück."
+		_:
+			return ""
+
+static func research_role(technology: TechnologyDefinition) -> String:
+	if technology == null:
+		return "SYSTEM"
+	if not String(technology.strategic_role).is_empty():
+		return String(technology.strategic_role).to_upper()
+	if technology.category == TechnologyDefinition.CATEGORY_MECH:
+		return "KAMPF"
+	if technology.category == TechnologyDefinition.CATEGORY_PLANET:
+		return "WIRTSCHAFT"
+	if String(technology.effect_id).contains("scan") or String(technology.effect_id).contains("scout"):
+		return "EXPLORATION"
+	if String(technology.effect_id).contains("weapon"):
+		return "KAMPF"
+	return "MOBILITÄT"
+
+static func cost_text(resource_id: StringName, amount: int, credit_amount: int = 0) -> String:
+	var result: String = "%d %s" % [amount, resource_display_name(resource_id)]
+	if credit_amount > 0:
+		result += " · %d Credits" % credit_amount
+	return result
+
+static func technology_cost_text(technology: TechnologyDefinition, state: Node = null, faction: StringName = GameState.FACTION_PLAYER) -> String:
+	if technology == null:
+		return ""
+	if state != null and state.has_method("get_faction_resource") and state.has_method("get_faction_credits"):
+		return "%d/%d %s · %d/%d Credits" % [
+			state.get_faction_resource(faction, technology.cost_resource),
+			technology.cost_amount,
+			resource_display_name(technology.cost_resource),
+			state.get_faction_credits(faction),
+			technology.credit_cost,
+		]
+	return cost_text(technology.cost_resource, technology.cost_amount, technology.credit_cost)
+
+static func research_task_name(task_type: StringName) -> String:
+	match task_type:
+		&"scan":
+			return "Scannen"
+		&"explore":
+			return "Erkunden"
+		_:
+			return String(task_type).capitalize()
