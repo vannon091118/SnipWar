@@ -33,7 +33,7 @@ Der Startpunkt ist `scenes/backgrounds/starfield_background.tscn`. `GameState` u
 
 ## 2. Aktiver Katalog und Szenarien
 
-Der Sektor wird bei jedem Start aus dem Baustein-Pool generiert (`WorldGenerator.generate_catalog`): exakt zehn Planeten — zwei Homeworlds (`p0` = Player/Faction `a`, `p1` = CPU/Faction `b`) und acht neutrale Welten (`p2`…`p9`), deren Texturen, Tints und Namen seed-deterministisch via `compose_planet()`/`generate_planet_name()` entstehen.
+Der Sektor wird bei jedem Start aus dem Baustein-Pool generiert (`WorldGenerator.generate_catalog`). Der Default-Sektor nutzt `chunk_size = 3` (infinite/prozedurale Welt): ein Template-Planet wird als Chunk-Seed erzeugt, der `ChunkCoordinator` instantiiert weitere Planeten nach Bedarf. Bei `chunk_size = 0` (Legacy) werden `target_planet_count` fixe Planeten erzeugt — zwei Homeworlds (`p0` = Player/Faction `a`, `p1` = CPU/Faction `b`) und neutrale Welten. Texturen, Tints und Namen entstehen seed-deterministisch via `compose_planet()`/`generate_planet_name()` aus 10 Baustein-Typen (Ember, Ocean, Ice, Violet, Desert, Toxic, Storm, Volcanic, Paper, Golden) mit je 4 Varianten.
 
 Interne Faction-IDs sind `a`, `b` und `neutral`; die semantischen Namen Player/CPU werden nur in UI und Meldungen verwendet.
 
@@ -164,7 +164,7 @@ CPU-Homeworlds, bekannte Planeten und Nicht-Nachbarn sind keine Scout-Ziele. `Sc
 
 `ShipPartCatalog` enthält die Slottypen Hull, Antrieb, Waffe, Schild, Scanner und Module sowie zwei maximale Modulplätze. Der Default-Katalog enthält drei Hüllen (T1/T2/T3), mehrere Antriebe, Impulsgeschütze und Schilde, einen Scanner und drei Module; Antrieb, Waffe und Schild tragen Varianten-Pools (gewichtete, seed-deterministische Auswahl mit sichtbaren Overlays).
 
-**Asset-Verzeichnisse:** Rümpfe liegen in `assets/objects/ships/hulls/` (`hull_t1_scout.svg`, `hull_t1_courier.svg`, `hull_t1_interceptor.svg`, `hull_t2_destroyer.svg`, `hull_t2_carrier.svg`, `hull_t2_multirole.svg`, `hull_t3_colony.svg`, `hull_t3_dreadnought.svg`, `hull_t3_expansion.svg`). Komponenten liegen in `assets/objects/ships/components/` mit Prefix `drive_`/`weapon_`/`shield_`/`scanner_`/`module_` gefolgt von Tier und Name (z.B. `weapon_t1_beam.svg`, `shield_t2_phase.svg`). Struktur-Assets für Planeten-Upgrades sind tiered in `assets/objects/structures/` (`structure_shipyard_l1/l2/l3.svg` etc., 15 Upgrade-Typen × 3 Tiers = 45 Dateien). Planeten-Basistexte inkl. v2/v3/v4-Varianten liegen in `assets/objects/planets/` (`planet_01_ember.svg` + `_v2/_v3/_v4.svg` für 10 Planetentypen). Decal-Overlays in `assets/objects/planets/decals/` (18 Typen wie `decal_aurora_arcs.svg`, `decal_lava_flows.svg`) werden über `WorldConfig.composition_decal_pool` komponiert. UI-Hintergründe in `assets/ui/backgrounds/` (6 Dateien für Main Menu, Pause, Tech Menu, Ship Hangar, Planet Panel, Modal).
+**Asset-Verzeichnisse:** Rümpfe liegen in `assets/objects/ships/hulls/` (`hull_t1_scout.svg`, `hull_t1_courier.svg`, `hull_t1_interceptor.svg`, `hull_t2_destroyer.svg`, `hull_t2_carrier.svg`, `hull_t2_multirole.svg`, `hull_t3_colony.svg`, `hull_t3_dreadnought.svg`, `hull_t3_expansion.svg`). Komponenten liegen in `assets/objects/ships/components/` mit Prefix `drive_`/`weapon_`/`shield_`/`scanner_`/`module_` gefolgt von Tier und Name (z.B. `weapon_t1_beam.svg`, `shield_t2_phase.svg`). Struktur-Assets für Planeten-Upgrades sind tiered in `assets/objects/structures/` (`structure_shipyard_l1/l2/l3.svg` etc., 17 Upgrade-Typen × 3 Tiers + 3 standalone = 54 Dateien). Planeten-Basistexte inkl. v2/v3/v4-Varianten liegen in `assets/objects/planets/` (`planet_01_ember.svg` + `_v2/_v3/_v4.svg` für 10 Planetentypen). Decal-Overlays in `assets/objects/planets/decals/` (18 Typen wie `decal_aurora_arcs.svg`, `decal_lava_flows.svg`) werden über `WorldConfig.composition_decal_pool` komponiert. UI-Hintergründe in `assets/ui/backgrounds/` (6 Dateien für Main Menu, Pause, Tech Menu, Ship Hangar, Planet Panel, Modal).
 
 Kaufen, Montieren und Zerlegen sind in `GameState`, `ShipManager` und `TechnologyMenu` implementiert. Jede Assembly verlangt einen vollständigen Loadout:
 
@@ -254,9 +254,10 @@ Folgende Aussagen sind derzeit Zukunftsplanung und dürfen nicht als implementie
 - Isaac-artiger Ship-Item-Pool mit multiplikativen Loadout-Interaktionen
 - allgemeiner Objekt-/Transformer-/Trait-Child-Pool für alle Domänen
 - mehrere parallel steuerbare Schiffsklassen und vollständige Fleet-Missionsauswahl
-- aktive Layer-2-Flotten-KI und animierte Raumkampf-Cutscene
-- Tower-Defense, Türme, aktive Garnisonsverteilung und Layer-3-Eroberung
-- Ship-as-Minion-Adapter und Mech-Kampflogik
+- ~~aktive Layer-2-Flotten-KI und animierte Raumkampf-Cutscene~~ ✅ implementiert: `BattleScene`, `IngamePlayerControls`, `SceneDirector`, `GameCycleManager`
+- ~~Tower-Defense, Türme, aktive Garnisonsverteilung und Layer-3-Eroberung~~ ✅ implementiert: `ConquestSimulator`, `ConquestScene`, `PlanetGrid`, `BuildingCatalog`, 7 Gebäude-Defs
+- ~~Ship-as-Minion-Adapter~~ ✅ implementiert: `AssaultMinionDefinition.from_ship()`
+- Mech-Kampflogik (Layer 3 inert, `mech_frame` nur als Tech-Registrierung)
 - Planetentypen als echte Ressourcen-Signaturen
 - Ressourcenkonvertierung, Siegbedingungen und Kampagnenzustand
 
@@ -282,7 +283,7 @@ Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgefü
 
 | Bereich | Feature | Status | Code-/Resource-Grenze |
 |---|---|---|---|
-| Fundament | Szenarioauswahl, zehn generierte Planeten (Baustein-Pool), zwei Homeworlds, acht neutrale Welten | Implementiert | `starfield_background.gd`, `scenario_catalog.tres`, `world_generator.gd` |
+| Fundament | Szenarioauswahl, 10 Baustein-Typen (40 Texturen), prozedurale Chunk-Welt (chunk_size=3) oder Legacy-Fix-Ansatz | Implementiert | `starfield_background.gd`, `scenario_catalog.tres`, `world_generator.gd`, `chunk_coordinator.gd` |
 | Fundament | Seed-Layout, Größenprofile, Startgarnisonen und Bauplätze | Implementiert | `seeded_layout.gd`, `planet_size_profile.gd` |
 | Präsentation | PlanetDetails, Toxic-Garantien, Fidelity-Profile, Meteore, Starfield-Batches | Implementiert | `planet_details.gd`, `starfield_background.gd`, `preflight.gd` |
 | Navigation | Nachbarschaftsgraph, Waypoints, Routen, `all_planets`/`neighbors_only` | Implementiert | `navigation_field.gd`, `planet_network.gd` |
@@ -294,7 +295,7 @@ Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgefü
 | Wirtschaft | Passive Produktion, Maintenance, Gather-Timer und persistente Sammeltrupps | Implementiert | `economy_manager.gd`, `game_state.gd`, `planet.gd` |
 | Ressourcenmodell | Planetentyp als echte Ressourcen-Signatur | Geplant | Vorhandene Mapping-Hilfsmethode wird nicht vom Deal/Production-Pfad verwendet |
 | Wirtschaft | Raffinerie als tatsächliche Ressourcen-Konvertierung | Geplant | `refinery` ist aktuell Produktionsbonus plus Maintenance |
-| Upgrades | 13 Upgrades, vier Branches, Kosten, Parent-/Exklusivitätsregeln | Implementiert | `planet_upgrade_catalog_default.tres`, `game_state.gd` |
+| Upgrades | 17 Upgrades, vier Branches, Kosten, Parent-/Exklusivitätsregeln | Implementiert | `planet_upgrade_catalog_default.tres`, `game_state.gd` |
 | Upgrades | Sichtbare Upgrade-Strukturen auf Planeten | Implementiert | `planet_details.gd`, `planet.gd` |
 | Traits | Produktion, Spawnrate, Defense-Rating, Transfer-Speed, sichtbarer Tier-Bonus | Implementiert | `trait_definition.gd`, `planet.gd`, Transitpfad |
 | Traits | Perimeter-Slots, Reichweite, allgemeiner Objekt×Transformer-Child-Pool | Teilweise | Datenfelder und einzelne Asset-Strukturen existieren; vollständige Verbraucher fehlen |
@@ -306,10 +307,10 @@ Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgefü
 | Missionen | Military, Colony, Cargo und Collect mit missionsabhängigen Gates | Implementiert | `planet.gd`, `worker_manager.gd`, `planet_network.gd` |
 | CPU | Timer-basierter Colony-/Cargo-/Military-Dispatcher | Implementiert | `cpu_dispatch_ai.gd`, `cpu_dispatch_default.tres` |
 | Konflikt | Deterministischer Worker- plus Defense-Rating-Resolve | Implementiert | `Planet.resolve_arrival()` |
-| Layer 2 | Deterministische Flottensimulation mit BattleResult/Event-Stream | Teilweise | Simulator und Replay-Daten existieren; aktive Ingame-KI/Cutscene bleibt später |
-| Layer 2 | Animierte Raumschlacht als Replay/Cutscene | Teilweise | BattleScene/Replays existieren; Live-Loop-Integration bleibt später |
-| Layer 3 | Planetare Tower-Defense und aktive Verteidigung | Geplant | Keine Turm-, Wave- oder Conquest-Szene vorhanden |
-| Layer 3 | Ship-as-Minion-Adapter mit visueller/logischer Adaption | Geplant | Keine Assault-Minions vorhanden |
+| Layer 2 | Deterministische Flottensimulation mit BattleResult/Event-Stream | Implementiert | `FleetBattleSimulator`, `BattleContext`, `CombatReplay`, `RouteEngagementResolver` |
+| Layer 2 | Animierte Raumschlacht als Replay/Cutscene | Implementiert | `BattleScene`, `IngamePlayerControls`, `SceneDirector`, `GameCycleManager` |
+| Layer 3 | Planetare Tower-Defense und aktive Verteidigung | Implementiert | `ConquestSimulator`, `ConquestScene`, `PlanetGrid`, `BuildingCatalog`, 7 Gebäude-Defs |
+| Layer 3 | Ship-as-Minion-Adapter mit visueller/logischer Adaption | Implementiert | `AssaultMinionDefinition.from_ship()`, `ConquestScene` Minion-Spawning |
 | Kampagne | `first_colony`-Meilenstein und persistenter Fortschrittsmarker | Teilweise | `game_state.gd`, `event_log.gd`; Dominanz-/Siegbedingungen bleiben später |
 | UI/Tools | Planet-Panel, VaultBar, TechnologyMenu, MessageFeed, PauseMenu, EventLog | Implementiert | `scripts/ui/*`, `planet_network.gd`, `event_log.gd` |
 

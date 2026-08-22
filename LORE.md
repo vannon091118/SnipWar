@@ -144,6 +144,21 @@ Im SnipWar-Universum fließen Rohstoffe nicht über physische Förderbänder, so
 ⚡ Energy   🌿 Biomass   💠 Rare   🧪 Volatile   🔩 Material
 ```
 
+### ⚡ Energy — Der Konservierte Herzschlag
+Energy ist nicht einfach Strom. Es ist die konservierte Kraft der uralten Grenzmaschinen — jener Automaten, die einst die gesamte Eisen-Front mit Versorgungsleitungen, Schutzschilden und Wegweisern am Laufen hielten. Als die Grenzbehörde zusammenbrach, blieb ein Teil dieser Energie in den Knotenpunkten gefangen: pulsierend, stabil, bereit zur Abnahme. Wer Energy abbaut, greift in die Adern einer noch immer funktionierenden — wenn auch kopflosen — Infrastruktur. Jeder Tropfen, der aus einem Knotenpunkt gezogen wird, ist ein Stück Lebenszeit, das der Grenze fehlt.
+
+### 🌿 Biomass — Der organische Überrest
+Biomass sind die Überbleibsel einer einst bewohnbaren Grenze. Bevor die Eisen-Front fiel, gab es hier Gärten, Wasserreservoirs, lebende Ökosysteme — alles zerstört, als die Sternenketten durch den Kollaps ruptierten. Was blieb, sind kompakt organische Klumpen: konservierte Gewebe, konservierte Sporen, fossile Proteine in Meteoritenstaub. Jeder Planet, der Biomass produziert, filtriert die letzten organischen Überreste aus seinem Boden — aber die Vorräte sind endlich, und kein Nachschub wird kommen. Biomass zu ernten bedeutet, die letzten Spuren einer lebendigen Vergangenheit aus dem All zu filtern.
+
+### 💠 Rare — Die Splitter der Vergangenheit
+Rare sind Bruchstücke einer Technologie, die niemand mehr vollständig versteht. Fragmentierte Datenträger, teilintegrierte Schaltkreise, Materialeinschlüsse, die keinem bekannten Element zugeordnet werden können. Als die Grenzverwaltung zerfiel, zerstreuten sich ihre wertvollsten Komponenten über die zehn Welten wie Scherben eines gesprungenen Spiegels. Rare entsteht nicht durch simple Förderung — es wird in Raffinerien aus Stahl der Grenze und Energie der alten Maschinen zurückgewonnen, ein mühsamer Prozess, der für jede Einheit Material und Energie verlangt. Es ist die wertvollste Ressource der Eisen-Grenze — und die am schwersten zu verstehende.
+
+### 🧪 Volatile — Der instabile Funke
+Volatile sind Energiereserve, die ihre Stabilität verloren haben. Kompensierte Plasma-Einschlüsse, instabile Isotope, Material, das unter bestimmten Bedingungen rapide Energie freisetzt — und unter anderen explodiert. Volatile zu lagern ist ein Balanceakt; Volatile zu transportieren ist eine Wette. Die Grenzverwaltung nutzte sie als Treibstoff für ihre express Flotten, aber nach dem Kollaps fehlten die Präzisionsbehälter. Wer Volatile abbaut, spielt mit dem Feuer einer untergegangenen Ära — manchmal wörtlich.
+
+### 🔩 Material — Der Stahl der Grenze
+Material ist das Skelett der Eisen-Front: massiver, korrosionsresistenter Stahl, einst als Grenzbefestigung in die Sternenketten eingelassen. Jeder Planet der Eisen-Grenze trägt Reste dieser Architectur in sich — eingebettete Stahlplatten, Strukturfragmente, Verteidigungslinien, die nach dem Kollaps in den Gesteinsschichten versanken. Material zu fördern bedeutet, die Knochen der Grenze auszugraben. Es ist die ubiquitousste Ressource — und die, aus der alles andere gebaut wird.
+
 - **Keine Inflation, keine Kredite:** `spend_faction_resource()` blockiert jede Transaktion, die das Vault ins Minus stürzen würde.
 - **Sammel-Pioniere:** Bevor automatische Worker-Fabriken stehen, sichern `collect`-Meldungen mit persistenten Gatherern auf neutralen Welten den täglichen Ertrag (`workers × resource_base`).
 - **Veredelung:** Eine gebaute *Refinery* konvertiert bei jedem Economy-Tick *Material* und *Energy* in das heiß begehrte *Rare*.

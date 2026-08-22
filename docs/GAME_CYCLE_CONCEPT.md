@@ -5,15 +5,17 @@
 
 ---
 
-## 1. Das Problem
+## 1. Das Problem (historischer Ausgangspunkt)
 
-Aktuell laufen alle drei Layer in EINER Szene (`starfield_background.tscn`):
-- Layer 2 (`BattleScene`) und Layer 3 (`ConquestScene`) sind CanvasLayer-Overlays (80/85), die über die Overworld gezeichnet werden
-- Kein echter Szenenwechsel — alles teilt sich denselben SceneTree
-- Layer 2 ist nur Replay-Animation, kein aktives Gefecht
-- Layer 3 fehlt komplett (keine Towers, keine Waves, keine Minions)
-- Kein Victory/Defeat — das Spiel endet nie
-- Kein Rückkanal: Überlebende aus Battle/Conquest kehren nicht strukturiert zurück
+> **Stand August 2026:** Die unten genannten Punkte waren der Ausgangspunkt dieses Konzepts. Die meisten wurden mittlerweile implementiert (siehe §9).
+
+Ausgangslage (vor Umsetzung):
+- Layer 2 (`BattleScene`) und Layer 3 (`ConquestScene`) waren CanvasLayer-Overlays (80/85), die über die Overworld gezeichnet wurden
+- Kein echter Szenenwechsel — alles teilte sich denselben SceneTree
+- Layer 2 war nur Replay-Animation, kein aktives Gefecht
+- Layer 3 fehlte komplett (keine Towers, keine Waves, keine Minions)
+- Kein Victory/Defeat — das Spiel endete nie
+- Kein Rückkanal: Überlebende aus Battle/Conquest kehrten nicht strukturiert zurück
 
 ## 2. Die Vision: 3 Spiele in derselben Welt
 
@@ -700,23 +702,23 @@ CPU greift Planet an → Layer 3
 
 ## 9. Fehlende Enden — Zusammenfassung
 
-| # | Fehlend | Layer | Priorität |
-|---|---------|-------|-----------|
-| 1 | `GameCycleManager` (Victory-Check, Scene-Trigger) | Infra | 🔴 Kritisch |
-| 2 | `SceneDirector` → echter SceneTree-Wechsler | Infra | 🔴 Kritisch |
-| 3 | `BattleCutscene` Resource (Routen + Ticks) | L2 | 🔴 Kritisch |
-| 4 | Route-Basierte Engagement-Detection | L2 | 🔴 Kritisch |
-| 5 | `BattleCinematicScene.tscn` | L2 | 🔴 Kritisch |
-| 6 | Kamera-System (4 Phasen) | L2 | 🟡 Hoch |
-| 7 | `VictoryCondition` System | Infra | 🟡 Hoch |
-| 8 | `ConquestScene.tscn` (Tower-Defense) | L3 | 🟡 Hoch |
-| 9 | `ShipAsMinionAdapter` | L3 | 🟡 Hoch |
-| 10 | Wave-System | L3 | 🟡 Hoch |
-| 11 | `DefenseTower` + Tower-Platzierung | L3 | 🟡 Hoch |
-| 12 | Rückkehr-Protokoll (Result → Overworld) | Infra | 🟡 Hoch |
-| 13 | Game-Over-Screen | Infra | 🟢 Mittel |
-| 14 | CPU-Skip für L2/L3 | L2/L3 | 🟢 Mittel |
-| 15 | Battle-HUD auf Overworld | L1 | 🟢 Mittel |
+| # | Fehlend | Layer | Status | Priorität |
+|---|---------|-------|--------|-----------|
+| 1 | `GameCycleManager` (Victory-Check, Scene-Trigger) | Infra | ✅ Implementiert | ~~🔴 Kritisch~~ |
+| 2 | `SceneDirector` → echter SceneTree-Wechsler | Infra | ✅ Implementiert | ~~🔴 Kritisch~~ |
+| 3 | `BattleCutscene` Resource (Routen + Ticks) | L2 | ✅ Implementiert (`BattleContext`, `CombatReplay`) | ~~🔴 Kritisch~~ |
+| 4 | Route-Basierte Engagement-Detection | L2 | ✅ Implementiert (`RouteEngagementResolver`) | ~~🔴 Kritisch~~ |
+| 5 | `BattleCinematicScene.tscn` | L2 | ✅ Implementiert (`BattleScene`) | ~~🔴 Kritisch~~ |
+| 6 | Kamera-System (4 Phasen) | L2 | ✅ Implementiert | ~~🟡 Hoch~~ |
+| 7 | `VictoryCondition` System | Infra | ✅ Implementiert (`GameCycleManager.check_victory()`) | ~~🟡 Hoch~~ |
+| 8 | `ConquestScene.tscn` (Tower-Defense) | L3 | ✅ Implementiert | ~~🟡 Hoch~~ |
+| 9 | `ShipAsMinionAdapter` | L3 | ✅ Implementiert (`AssaultMinionDefinition.from_ship()`) | ~~🟡 Hoch~~ |
+| 10 | Wave-System | L3 | ✅ Implementiert (ConquestScene) | ~~🟡 Hoch~~ |
+| 11 | `DefenseTower` + Tower-Platzierung | L3 | ✅ Implementiert (`BuildingDefinition`, `BuildingCatalog`) | ~~🟡 Hoch~~ |
+| 12 | Rückkehr-Protokoll (Result → Overworld) | Infra | ✅ Implementiert | ~~🟡 Hoch~~ |
+| 13 | Game-Over-Screen | Infra | 🟢 Offen | 🟢 Mittel |
+| 14 | CPU-Skip für L2/L3 | L2/L3 | 🟢 Offen | 🟢 Mittel |
+| 15 | Battle-HUD auf Overworld | L1 | 🟢 Offen | 🟢 Mittel |
 
 ---
 

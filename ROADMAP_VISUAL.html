@@ -1,0 +1,148 @@
+<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SnipWar Roadmap</title>
+<style>
+:root{--bg:#0a0e17;--card:#111827;--cb:#1e293b;--ac:#3b82f6;--ac2:#8b5cf6;--ac3:#10b981;--ac4:#f59e0b;--ac5:#ef4444;--tx:#e2e8f0;--td:#94a3b8;--tb:#f8fafc}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.6}
+.hero{text-align:center;padding:60px 20px 40px;background:linear-gradient(180deg,rgba(59,130,246,.08) 0%,transparent);border-bottom:1px solid var(--cb)}
+.hero h1{font-size:2.8rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--td);font-size:1.1rem;max-width:700px;margin:8px auto 0}.sr{display:flex;justify-content:center;gap:32px;margin-top:32px;flex-wrap:wrap}
+.sb{background:var(--card);border:1px solid var(--cb);border-radius:12px;padding:16px 24px;text-align:center;min-width:140px}
+.sb .n{font-size:2rem;font-weight:800;color:var(--ac)}.sb .g{color:var(--ac3)}.sb .p{color:var(--ac2)}.sb .a{color:var(--ac4)}
+.sb .l{font-size:.75rem;color:var(--td);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.ct{max-width:1200px;margin:0 auto;padding:0 24px}
+.sh{margin:48px 0 24px;display:flex;align-items:center;gap:12px}.sh h2{font-size:1.5rem;font-weight:700;color:var(--tb)}.sh .ln{flex:1;height:1px;background:var(--cb)}
+.tl{position:relative;padding-left:40px}.tl::before{content:"";position:absolute;left:15px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--ac),var(--ac2),var(--ac3))}
+.ti{position:relative;margin-bottom:24px;padding-left:24px}
+.ti::before{content:"";position:absolute;left:-30px;top:8px;width:12px;height:12px;border-radius:50%;background:var(--ac);border:2px solid var(--bg);box-shadow:0 0 8px rgba(59,130,246,.5)}
+.ti.b::before{background:var(--ac2)}.ti.c::before{background:var(--ac3)}.ti.d::before{background:var(--ac4)}.ti.e::before{background:var(--ac5)}
+.td{font-size:.75rem;color:var(--td);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.tt{font-size:1rem;font-weight:700;color:var(--tb)}.tx{font-size:.85rem;color:var(--td);margin-top:4px}
+.bg{display:inline-block;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:999px;text-transform:uppercase;margin-top:6px}
+.bf{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3)}
+.bm{background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3)}
+.bx{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+.ps{background:var(--card);border:1px solid var(--cb);border-radius:16px;padding:28px;margin-bottom:20px}
+.ps h3{font-size:1rem;font-weight:700;color:var(--tb);margin-bottom:16px}
+.pr{margin-bottom:16px}.pr:last-child{margin-bottom:0}
+.pl{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px}.pl .nm{font-weight:600}.pl .pc{color:var(--ac);font-weight:700}
+.pb{height:8px;background:rgba(255,255,255,.05);border-radius:999px;overflow:hidden}
+.pf{height:100%;border-radius:999px}
+.fg{background:linear-gradient(90deg,#10b981,#34d399)}.fb{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.fa{background:linear-gradient(90deg,#f59e0b,#fbbf24)}.fr{background:linear-gradient(90deg,#ef4444,#f87171)}
+.sc{display:flex;align-items:flex-end;gap:6px;height:200px;padding:20px 0;border-bottom:1px solid var(--cb)}
+.sg{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
+.sbar{width:100%;max-width:48px;border-radius:4px 4px 0 0;position:relative;min-height:4px;cursor:pointer}
+.sbar .tp{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--bg);border:1px solid var(--cb);border-radius:8px;padding:8px 12px;font-size:.7rem;white-space:nowrap;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.sbar:hover .tp{display:block}
+.sl{font-size:.6rem;color:var(--td);margin-top:6px;writing-mode:vertical-lr;transform:rotate(180deg);max-height:60px}
+.ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.ac{background:var(--card);border:1px solid var(--cb);border-radius:12px;padding:20px}.ac:hover{border-color:var(--ac)}
+.ac .ic{font-size:1.8rem;margin-bottom:8px}.ac h4{font-size:.95rem;font-weight:700;color:var(--tb);margin-bottom:6px}
+.ac p{font-size:.8rem;color:var(--td)}.ac .fl{font-size:.7rem;color:var(--ac);margin-top:8px;font-weight:600}
+.pcs{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.pc{background:var(--card);border:1px solid var(--cb);border-radius:12px;padding:24px;position:relative;overflow:hidden}
+.pc::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
+.pc.p1::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}.pc.p2::before{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+.pc.p3::before{background:linear-gradient(90deg,#10b981,#34d399)}.pc.p4::before{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.pc h3{font-size:1rem;font-weight:700;color:var(--tb);margin-bottom:12px}
+.pc ul{list-style:none;padding:0}.pc li{font-size:.8rem;color:var(--td);padding:4px 0 4px 20px;position:relative}
+.pc li::before{content:"¹3";position:absolute;left:0;color:var(--ac3);font-weight:700}
+.pc li.t::before{content:"CB";color:var(--td)}
+.ft{text-align:center;padding:40px 20px;color:var(--td);font-size:.8rem;border-top:1px solid var(--cb);margin-top:60px}
+.ft code{background:rgba(255,255,255,.05);padding:2px 6px;border-radius:4px;font-size:.75rem}
+.ab{background:var(--card);border:1px solid var(--cb);border-radius:12px;padding:24px;margin:24px 0;font-family:monospace;font-size:.75rem;color:var(--td);white-space:pre;line-height:1.4}
+</style></head><body><div class="hero">
+<h1>⚔️ SNIPWAR</h1>
+<div class="sub">Eisen-Grenze — Prozedurale Overworld · 10 Bausteine · 24 Preflight-Constraints<br><span style="color:#10b981">Entwicklungs-Roadmap: Init → Aktueller Stand</span></div>
+<div class="sr">
+<div class="sb"><div class="n">14</div><div class="l">Snapshots</div></div>
+<div class="sb"><div class="n g">145</div><div class="l">GDScript-Dateien</div></div>
+<div class="sb"><div class="n p">21.619</div><div class="l">Code-Zeilen</div></div>
+<div class="sb"><div class="n a">24</div><div class="l">Preflight-Constraints</div></div>
+<div class="sb"><div class="n">417</div><div class="l">Asset-Dateien</div></div>
+</div></div>
+<div class="ct">
+<div class="sh"><h2>📊 Snapshot-Wachstum</h2><div class="ln"></div></div>
+<div class="ps"><h3>Datei-Wachstum pro Snapshot (Aug 19 → Aug 21)</h3>
+<div class="sc">
+<div class="sg"><div class="sbar" style="height:49%;background:linear-gradient(180deg,#3b82f6,#1d4ed8)"><div class="tp">04:43 — 656 Dateien · 14 Scripts · 366KB</div></div><div class="sl">04:43</div></div>
+<div class="sg"><div class="sbar" style="height:67%;background:linear-gradient(180deg,#3b82f6,#2563eb)"><div class="tp">06:01 — 903 Dateien · 26 Scripts · 582KB</div></div><div class="sl">06:01</div></div>
+<div class="sg"><div class="sbar" style="height:72%;background:linear-gradient(180deg,#3b82f6,#2563eb)"><div class="tp">06:18 — 966 Dateien · ~644KB</div></div><div class="sl">06:18</div></div>
+<div class="sg"><div class="sbar" style="height:77%;background:linear-gradient(180deg,#3b82f6,#2563eb)"><div class="tp">06:34 — 1034 Dateien · ~724KB</div></div><div class="sl">06:34</div></div>
+<div class="sg"><div class="sbar" style="height:87%;background:linear-gradient(180deg,#8b5cf6,#6d28d9)"><div class="tp">07:17 — 1172 Dateien · 36 Scripts · 887KB</div></div><div class="sl">07:17</div></div>
+<div class="sg"><div class="sbar" style="height:88%;background:linear-gradient(180deg,#8b5cf6,#6d28d9)"><div class="tp">07:42 — 1183 Dateien · ~883KB</div></div><div class="sl">07:42</div></div>
+<div class="sg"><div class="sbar" style="height:96%;background:linear-gradient(180deg,#8b5cf6,#6d28d9)"><div class="tp">08:40 — 1296 Dateien · 41 Scripts</div></div><div class="sl">08:40</div></div>
+<div class="sg"><div class="sbar" style="height:97%;background:linear-gradient(180deg,#10b981,#059669)"><div class="tp">09:00 — 1301 Dateien</div></div><div class="sl">09:00</div></div>
+<div class="sg"><div class="sbar" style="height:96%;background:linear-gradient(180deg,#10b981,#059669)"><div class="tp">09:28 — 1297 · Cleanup</div></div><div class="sl">09:28</div></div>
+<div class="sg"><div class="sbar" style="height:2%;background:linear-gradient(180deg,#ef4444,#dc2626)"><div class="tp">12:17 — 8KB ⚠️ Korrupt</div></div><div class="sl">12:17</div></div>
+<div class="sg"><div class="sbar" style="height:33%;background:linear-gradient(180deg,#f59e0b,#d97706)"><div class="tp">16:46 — 448 · 60 Scripts · Refactor</div></div><div class="sl">16:46</div></div>
+<div class="sg"><div class="sbar" style="height:75%;background:linear-gradient(180deg,#f59e0b,#d97706)"><div class="tp">Aug20 — 1004 · 96 Scripts · 90MB</div></div><div class="sl">Aug20</div></div>
+<div class="sg"><div class="sbar" style="height:89%;background:linear-gradient(180deg,#8b5cf6,#6d28d9)"><div class="tp">Aug20 — 1204 · ~90MB</div></div><div class="sl">02:55</div></div>
+<div class="sg"><div class="sbar" style="height:100%;background:linear-gradient(180deg,#10b981,#059669)"><div class="tp">Aug21 — 1341 · 116 Scripts · 📍 AKTUELL</div></div><div class="sl">Aug21</div></div>
+</div></div>
+
+<div class="sh"><h2>🛤️ Entwicklungs-Zeitstrahl</h2><div class="ln"></div></div>
+<div class="tl">
+<div class="ti"><div class="td">Aug 19 · 04:43 — Snapshot #1</div><div class="tt">Projekt-Init (656 Dateien, 14 Scripts)</div><div class="tx">Grundgerüst: 10 Planeten, 5 Meteor-Typen, Starfield, Start-Scout, 5 Rohstoffe, AStar2D.</div><span class="bg bm">MILESTONE</span></div>
+<div class="ti b"><div class="td">Aug 19 · 06:01 — Snapshot #2 (+247)</div><div class="tt">Kern-Gameplay (26 Scripts)</div><div class="tx">GameState + 4 Domains. 13 Upgrades/4 Zweige. Routing. Missionen (Military, Colony, Cargo, Collect).</div><span class="bg bf">FEAT</span></div>
+<div class="ti b"><div class="td">Aug 19 · 06:18–06:34 — Snapshots #3–4</div><div class="tt">UI & Ressourcen</div><div class="tx">VaultBar, PlanetPanel, Kamera. Seed-deterministisches Ressourcen-Deal. WorldGenerator.</div><span class="bg bf">FEAT</span></div>
+<div class="ti c"><div class="td">Aug 19 · 07:17 — Snapshot #5 (+138)</div><div class="tt">Tech & Ships (36 Scripts)</div><div class="tx">TechnologyMenu 4 Sub-Views. ShipPartCatalog. Scout-Flug. FlightTime + Cluster-Packing.</div><span class="bg bf">FEAT</span></div>
+<div class="ti c"><div class="td">Aug 19 · 07:42–08:40 — Snapshots #6–7</div><div class="tt">CPU-AI & EventLog (41 Scripts)</div><div class="tx">CpuDispatchAI. EventLog + Toast. PauseMenu. SelectionService. FloatingText.</div><span class="bg bf">FEAT</span></div>
+<div class="ti c"><div class="td">Aug 19 · 09:00–09:28 — Snapshots #8–9</div><div class="tt">Cleanup & Stabilisierung</div><div class="tx">Dead-Code-Entfernung (-4 Dateien). Preflight beginnt Form anzunehmen.</div><span class="bg bx">FIX</span></div>
+<div class="ti d"><div class="td">Aug 19 · 12:17 — Snapshot #10 ⚠️</div><div class="tt">Korrupter Snapshot (8KB)</div><div class="tx">Zip-Datei leer oder korrupt. Kein Datenverlust.</div><span class="bg bx">WARN</span></div>
+<div class="ti d"><div class="td">Aug 19 · 16:46 — Snapshot #11 🔧</div><div class="tt">Großes Refactoring (448 Dateien, 60 Scripts)</div><div class="tx">Dateien 1297 → 448 (−65%). Scripts 41 → 60 (+46%). Battle-System beginnt.</div><span class="bg bm">MILESTONE</span></div>
+<div class="ti e"><div class="td">Aug 20 · 00:28 — Snapshot #12 🖼️</div><div class="tt">Asset-Pipeline (90MB)</div><div class="tx">Sprung 745KB → 90MB. SVGs, Shader, Ships T1-T3, 54 Struktur-Assets, 18 Decals. 96 Scripts.</div><span class="bg bm">MILESTONE</span></div>
+<div class="ti e"><div class="td">Aug 20 · 02:55 — Snapshot #13</div><div class="tt">Battle + Chunks (1204 Dateien)</div><div class="tx">ChunkCoordinator. FleetBattle + Conquest. IngamePlayer. SceneDirector.</div><span class="bg bf">FEAT</span></div>
+<div class="ti e"><div class="td">Aug 21 · 20:06 — Snapshot #14 📍</div><div class="tt">Vollständiger Build (1341, 116 Scripts)</div><div class="tx">145 Scripts, 21.619 LOC, 16 Szenen, 417 Assets, 91 Resources, 24 Constraints PASS.</div><span class="bg bm">AKTUELL</span></div>
+</div>
+
+<div class="sh"><h2>📈 System-Fortschritt</h2><div class="ln"></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<div class="ps"><h3>Layer 1 — Strategische Overworld</h3>
+<div class="pr"><div class="pl"><span class="nm">Wirtschaft & Ressourcen</span><span class="pc">95%</span></div><div class="pb"><div class="pf fg" style="width:95%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">Planet-Upgrades</span><span class="pc">90%</span></div><div class="pb"><div class="pf fg" style="width:90%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">Forschung & Discovery</span><span class="pc">85%</span></div><div class="pb"><div class="pf fb" style="width:85%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">Transit & Logistik</span><span class="pc">90%</span></div><div class="pb"><div class="pf fg" style="width:90%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">CPU Dispatch AI</span><span class="pc">85%</span></div><div class="pb"><div class="pf fb" style="width:85%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">Ship-Builder & Hangar</span><span class="pc">80%</span></div><div class="pb"><div class="pf fb" style="width:80%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">UI (HUD, Panels, TechMenu)</span><span class="pc">90%</span></div><div class="pb"><div class="pf fg" style="width:90%"></div></div></div>
+</div>
+<div class="ps"><h3>Layer 2/3 & Infrastruktur</h
+
+<div class="ps"><h3>Layer 2/3 & Infrastruktur</h3>
+<div class="pr"><div class="pl"><span class="nm">FleetBattleSimulator</span><span class="pc">60%</span></div><div class="pb"><div class="pf fa" style="width:60%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">ConquestSimulator</span><span class="pc">30%</span></div><div class="pb"><div class="pf fr" style="width:30%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">Chunk-Welt</span><span class="pc">60%</span></div><div class="pb"><div class="pf fa" style="width:60%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">Preflight Suite</span><span class="pc">100%</span></div><div class="pb"><div class="pf fg" style="width:100%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">EventLog</span><span class="pc">90%</span></div><div class="pb"><div class="pf fg" style="width:90%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">Tower-Defense</span><span class="pc">0%</span></div><div class="pb"><div class="pf fr" style="width:0%"></div></div></div>
+<div class="pr"><div class="pl"><span class="nm">Siegbedingungen</span><span class="pc">0%</span></div><div class="pb"><div class="pf fr" style="width:0%"></div></div></div>
+</div></div>
+
+<div class="sh"><h2>🎯 Phasen</h2><div class="ln"></div></div>
+<div class="pcs">
+<div class="pc p1"><h3>P1 · Foundation</h3><ul><li>10 Planeten, 5 Meteor-Typen</li><li>GameState + 4 Domains</li><li>5 Rohstoffe, seed-det.</li><li>SeededLayout</li><li>AStar2D + Waypoints</li></ul></div>
+<div class="pc p1"><h3>P2 · Gameplay</h3><ul><li>17 Upgrades / 4 Zweige</li><li>Military/Colony/Cargo/Collect</li><li>Cluster-Packing</li><li>FlightTime</li><li>UI: VaultBar, Panel</li></ul></div>
+<div class="pc p2"><h3>P3 · Tech & Ships</h3><ul><li>TechMenu 4 Sub-Views</li><li>ShipPartCatalog 3 Tiers</li><li>Scout + Scan-Intel</li><li>CPU Dispatch AI</li><li>EventLog + Selection</li></ul></div>
+<div class="pc p3"><h3>P4 · Refactor</h3><ul><li>-65% Dateien</li><li>+46% Scripts</li><li>Preflight erweitert</li><li>FleetBattle + Conquest</li><li>ISchemaMigratable</li></ul></div>
+<div class="pc p4"><h3>P5 · Assets</h3><ul><li>90MB Binary Assets</li><li>SVGs, Shader, UI</li><li>ChunkCoordinator</li><li>IngamePlayer</li><li>24 Constraints, 20K LOC</li></ul></div>
+<div class="pc p4"><h3>Offen</h3><ul><li class="t">Tower-Defense</li><li class="t">Mechs & Minions</li><li class="t">Siegbedingungen</li><li class="t">Ship-Traits</li><li class="t">4K VFX</li></ul></div>
+</div>
+
+<div class="sh"><h2>📡 Lagezentrum</h2><div class="ln"></div></div>
+<div class="ab">LAYER 1 — OVERWORLD
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░  ~95%
+
+LAYER 2 — FLOTTENSIMULATION
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░  ~60%
+
+LAYER 3 — PLANETARE EROBERUNG
+▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░  ~30%
+
+CHUNK-WELT
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░  ~60%</div>
+</div>
+<div class="ft">
+<p>SnipWar // Godot 4.7 · August 2026</p>
+<p style="margin-top:8px"><code>145 Scripts</code> · <code>21.619 LOC</code> · <code>16 Szenen</code> · <code>417 Assets</code> · <code>24 Constraints</code> · <code>14 Snapshots</code></p>
+<p style="margin-top:16px;color:#475569">CONNECT · DEPLOY · HOLD THE LINE</p>
+</div></div></body></html>

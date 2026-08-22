@@ -6,7 +6,7 @@ Dieses Dokument beschreibt die gewünschte Richtung von SnipWar. Es ist kein akt
 
 Der aktuelle Build besitzt bereits einen strategischen Overworld-Kern:
 
-- zehn Planet-Definitionen mit zwei Homeworlds und acht neutralen Welten
+- 10 Baustein-Typen (Ember, Ocean, Ice, Violet, Desert, Toxic, Storm, Volcanic, Paper, Golden) mit je 4 Varianten als seed-deterministischer Planeten-Pool; Default-Sektor nutzt chunk_size=3 (infinite/prozedurale Expansion)
 - seed-deterministische Layouts, Größenprofile, Details, Waypoints und Ressourcenverteilung
 - Größenprofile mit unterschiedlichen Spawnintervallen, Startgarnisonen, Bauplätzen und Produktionsbasen
 - `GameState` als autoritative Quelle für Besitz, Ressourcen, Forschung, Discovery, Scan-Intel, Upgrades und Ship-Builder-Zustand
@@ -16,7 +16,7 @@ Der aktuelle Build besitzt bereits einen strategischen Overworld-Kern:
 - Economy- und Gather-Timer, CPU-Dispatch-AI, Scouts und EventLog
 - vier Planet-Upgrade-Zweige, planetare und globale Technologien sowie ein UI-Ship-Builder
 
-Der aktuelle Ship Builder erzeugt noch keine einsatzfähige Kampf- oder Expeditionsflotte. Er verwaltet Assemblies als Inventar- und Anzeigezustand. Der Scout ist der einzige aktiv gebaute und fliegende Schiffstyp.
+Der Ship Builder erzeugt jetzt einsatzfähige Assemblies: `ConflictManager` startet ShipBase-Transits, `FleetBattleSimulator` (Layer 2) und `ConquestSimulator` (Layer 3) resolved Loadouts. Ship-as-Minion-Adapter (`AssaultMinionDefinition.from_ship()`) erlaubt planetare Eroberung mit Schiffslasten. Der Scout bleibt der kostenlose Start-Scout.
 
 ## Der gewünschte Spielkreislauf
 
@@ -26,7 +26,7 @@ Die langfristige Richtung ist ein 4X-artiger Kreislauf:
 Wirtschaft → Expansion → Kontakt → Flottenkonflikt → Eroberung → veränderter Ressourcenfluss
 ```
 
-Dieser Kreislauf ist noch nicht vollständig im Code geschlossen. Ressourcen, Forschung, Besitz und einfache Missionen sind vorhanden; Flottenkampf, planetare Eroberung und Siegbedingungen fehlen.
+Der Kreislauf ist weitgehend geschlossen: Ressourcen, Forschung, Besitz, Missionen, Flottenkampf (`FleetBattleSimulator` + `BattleScene`), planetare Eroberung (`ConquestSimulator` + `ConquestScene` + Tower-Defense) und einfache Victory-Checks (`GameCycleManager`) sind implementiert. Offen bleiben: komplexere Siegbedingungen, Kampagnenzustand und Game-Over-Screen.
 
 ## Layer 1 — Strategische Overworld
 
