@@ -213,6 +213,12 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"desc": "Mechanic discovery, test model integrity & scenario validation",
 		"requires_scene": false,
 	},
+	{
+		"id": "concept_index",
+		"script": preload("res://scripts/preflight/constraint_concept_index.gd"),
+		"desc": "Concept discovery index covers all classes & provides fuzzy search",
+		"requires_scene": false,
+	},
 ]
 
 
