@@ -7,6 +7,8 @@ var _theme_config: UIThemeConfig = DEFAULT_THEME
 var _income_rates: Dictionary = {}
 
 @onready var _label: RichTextLabel = get_node_or_null("VaultMargin/VaultContent/VaultLabel")
+@onready var _credit_label: RichTextLabel = get_node_or_null("VaultMargin/VaultContent/CreditLabel")
+@onready var _transport_label: RichTextLabel = get_node_or_null("VaultMargin/VaultContent/TransportStatusLabel")
 @onready var _rate_label: RichTextLabel = get_node_or_null("VaultMargin/VaultContent/IncomeRateLabel")
 
 func setup(theme_config: UIThemeConfig = null) -> void:
@@ -24,10 +26,30 @@ func refresh(state: Node) -> void:
 		_resource_segment("Material", state.get_faction_resource(player_faction, GameState.RES_MATERIAL), GameState.RES_MATERIAL),
 		_resource_segment("Volatil", state.get_faction_resource(player_faction, GameState.RES_VOLATILE), GameState.RES_VOLATILE)
 	]
+	if _credit_label != null:
+		_credit_label.text = "[color=#f2c14e]Credits: %d[/color]" % state.get_faction_credits(player_faction)
+	_refresh_transport_label(state)
 	_refresh_income_rate_label()
 	var tw: Tween = create_tween()
 	tw.tween_property(self, "scale", Vector2(1.02, 1.02), 0.08)
 	tw.tween_property(self, "scale", Vector2.ONE, 0.12)
+
+func _refresh_transport_label(state: Node) -> void:
+	if _transport_label == null or state == null or not state.has_method("get_worker_transport_records"):
+		return
+	var records: Array[Dictionary] = state.get_worker_transport_records(GameState.FACTION_PLAYER)
+	if records.is_empty():
+		_transport_label.text = "Transport: keine aktiven Routen"
+		return
+	var outbound := 0
+	var loading := 0
+	var returning := 0
+	for record in records:
+		match record.get("phase", &"outbound"):
+			&"outbound": outbound += 1
+			&"loading": loading += 1
+			&"returning": returning += 1
+	_transport_label.text = "Transport: %d raus · %d laden · %d zurück" % [outbound, loading, returning]
 
 func record_income(resource_id: StringName, amount: int, interval_seconds: float) -> void:
 	if amount <= 0 or String(resource_id).is_empty():

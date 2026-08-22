@@ -53,6 +53,20 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(sensor_array_module.required_tech_id == &"long_range_sensors" and sensor_array_module.cost_resource == GameState.RES_RARE and sensor_array_module.cost_amount == 8 and sensor_array_module.trait_definition != null and is_equal_approx(sensor_array_module.trait_definition.range_bonus, 40.0), "module_sensor_array definition does not match the long-range branch contract"):
 		return false
+	var colony_module: ShipPartDefinition = catalog.resolve(&"colony_module")
+	var transport_module: ShipPartDefinition = catalog.resolve(&"transport_module")
+	var science_module: ShipPartDefinition = catalog.resolve(&"science_module")
+	var defense_module: ShipPartDefinition = catalog.resolve(&"defense_module")
+	if not ctx.check(colony_module != null and transport_module != null and science_module != null and defense_module != null and colony_module.module_role == "colony" and transport_module.module_role == "transport" and science_module.module_role == "research" and defense_module.module_role == "military", "canonical role modules are missing or have invalid roles"):
+		return false
+	var role_probe := ShipAssembly.new()
+	role_probe.weapon_id = &""
+	role_probe.set_module_ids([transport_module.id])
+	if not ctx.check(ShipAssembly.derive_role_from_modules(role_probe, catalog) == &"transport", "transport module should derive the transport role"):
+		return false
+	role_probe.set_module_ids([colony_module.id, science_module.id])
+	if not ctx.check(ShipAssembly.derive_role_from_modules(role_probe, catalog) == &"colony", "role derivation should prioritize colony modules"):
+		return false
 	if not ctx.check(ctx.fixture.prepare_ship_builder(), "ship-builder fixture could not prepare the shipyard prerequisite"):
 		return false
 	await ctx.await_frame()

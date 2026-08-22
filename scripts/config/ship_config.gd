@@ -8,6 +8,8 @@ extends Resource
 @export var scout_build_cost_amount: int = 5
 @export var worker_build_cost_resource: StringName = GameState.RES_MATERIAL
 @export var worker_build_cost_amount: int = 5
+@export var worker_build_credit_cost: int = 5
+@export var ship_assembly_credit_cost: int = 10
 @export_range(10.0, 400.0, 1.0) var scout_speed: float = 80.0
 @export_group("Scout Visual")
 @export var scanner_offset: Vector2 = Vector2(7.0, -5.0)
@@ -25,8 +27,8 @@ func validate() -> PackedStringArray:
 		errors.append("ship scout_scanner_tech_id is empty")
 	if scout_build_cost_amount < 0:
 		errors.append("ship scout_build_cost_amount cannot be negative")
-	if worker_build_cost_amount < 0:
-		errors.append("ship worker_build_cost_amount cannot be negative")
+	if worker_build_cost_amount < 0 or worker_build_credit_cost < 0 or ship_assembly_credit_cost < 0:
+		errors.append("ship worker/assembly credit costs cannot be negative")
 	if scanner_visual_scale <= 0.0:
 		errors.append("ship scanner visual scale must be positive")
 	if hangar_slot_spacing <= 0.0 or worker_visual_size <= 0.0:

@@ -40,7 +40,7 @@ STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 29 PREFLIGHT-CONSTRAINTS · 0 SICH
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ```
 
-*„Die Galaxie hat zehn Welten. Zwei davon bilden sich ein, wichtig zu sein.<br/>
+*„Die Galaxie ist unendlich. Zwei davon bilden sich ein, wichtig zu sein.<br/>
 Der Rest hat keine Meinung — noch nicht."*
 
 </div>
@@ -55,7 +55,7 @@ Der Rest hat keine Meinung — noch nicht."*
 
 Die **Eisen-Grenze** ist kein romantischer Name. Jemand hat die Karte gesehen, die Ressourcenverteilung kalkuliert und beschlossen, dass *„Hoffnungslos"* als Codename zu wenig Budget bewilligt bekommt.
 
-Zehn Welten. Fünf Rohstoffe. Zwei Fraktionen mit ausgeprägter Antipathie — und acht neutrale Planeten, die den großen Fehler begangen haben, genau im Transitkorridor zu liegen.
+Unendlich Welten. Fünf Rohstoffe. Zwei Fraktionen mit ausgeprägter Antipathie — und eine wachsende Zahl neutraler Planeten, die den großen Fehler begangen haben, genau im Transitkorridor zu liegen.
 
 Die strategische Lage ist simpel: **Wer das Waypoint-Netz kontrolliert, bestimmt den Ressourcenstrom. Wer den Strom kontrolliert, baut Schiffe. Wer Schiffe hat, behauptet im Nachhinein, das Ganze sei ein genialer Masterplan gewesen.**
 
@@ -104,9 +104,9 @@ Die Hauptszene liegt unter `scenes/backgrounds/starfield_background.tscn`. Von d
 
 ---
 
-## 🪐 DIE ZEHN WELTEN — Feldkarte & Sektorstatus
+## 🪐 DIE WELTEN DER EISEN-GRENZE — Feldkarte & Sektorstatus
 
-<img src="assets/ui/readme_banner_overworld.jpg" alt="Die zehn Welten der Eisen-Grenze" width="100%"/>
+<img src="assets/ui/readme_banner_overworld.jpg" alt="Die Welten der Eisen-Grenze" width="100%"/>
 
 <br/>
 
@@ -120,7 +120,7 @@ graph LR
 		Status: Hält tapfer die Stellung"]
 	end
 
-	subgraph N[" ⬜  Neutrales Niemandsland (8 Sektoren) "]
+	subgraph N[" ⬜  Neutrales Niemandsland (Start-Sektor, prozedural erweitert) "]
 		Ember["🔥 Ember"]
 		Ice["❄️ Ice"]
 		Violet["💜 Violet"]
@@ -431,11 +431,43 @@ Alle öffentlichen APIs und Signale bleiben als abwärtskompatible Delegaten erh
 | Layer | Komponente | CanvasLayer |
 |:---|:---|:---:|
 | Planetennetz & Routing | `PlanetNetwork` | — |
+| Dossier Launcher | `DossierLauncher` | 40 |
 | HUD, VaultBar, PlanetPanel | `PlanetNetworkUI` | 50 |
 | Technologie-Menü | `TechnologyMenu` | 60 |
 | Pause-Menü | `PauseMenu` | 70 (PROCESS_MODE_ALWAYS) |
+| Paper-Dossier (Vollbild) | `PaperDossier` | 80 |
+| Capture Decision | `CaptureDecisionOverlay` | 90 |
+| Paper-Grain & Vignette | GrainOverlay | 100 |
 
-`TechnologyMenu` schließt das Planet-Panel bei Öffnung. ESC pausiert nicht, wenn Panel oder Tech-Menü offen sind.
+`TechnologyMenu` schließt das Planet-Panel bei Öffnung. ESC pausiert nicht, wenn Panel oder Tech-Menü offen sind. Das `PaperDossier` friert die Welt (Dim + Camera-Block) und zeigt ein rotiertes Papier-Blatt mit Scale/Fade-Tween; ESC schließt das Dossier statt zu pausieren.
+
+---
+
+## 📄 PAPER-DOSSIER — Vollbild-Menüs im Papier-Stil
+
+Die drei Hauptansichten (Planeten-Management, Hangar/Werkstatt, Forschungsbaum) sind als fullscreen Modale implementiert, die sich organisch in den Papercraft-Comic-Stil einfügen.
+
+**Öffnen:** Drei Launcher-Buttons oben links (`PLANET`, `WERKSTATT`, `FORSCHUNG`) auf CanvasLayer 40. Beim Öffnen werden die kompakten rechtsseitigen Panel geschlossen.
+
+**Modal-Verhalten:**
+- Welt wird abgedunkelt (semi-transparente Überlagerung)
+- Kamera-Pan/Zoom/Selektion blockiert
+- Leicht schräges Papier-Blatt (−1,1°) klappt mit Scale (0,95→1,0) und Fade-In ein
+- ESC schließt das Dossier, nicht die Pause
+
+**Die drei Ansichten:**
+
+| Ansicht | Inhalt | Verwendete Logik |
+|:---|:---|:---|
+| **Planet-Dossier** | Papier-Planet mit rotierenden Orbital-Ringen, Magnet-Plättchen für Bauplätze | `PlanetUpgradeCatalog`, `GameState.purchase_upgrade` |
+| **Werkstatt** | Millimeterpapier-Hintergrund, modulare Schiffs-Montage, Kaufen/Zerlegen/Starten | `TechShipBuilderView` (bestehende Logik) |
+| **Forschungsbaum** | Verzweigter Stammbaum mit handgezeichneten Elbow-Connectoren, Klick zum Forschen | `TechnologyCatalog`, `GameState.research_technology` |
+
+**Technische Umsetzung:**
+- `PaperDossier` (CanvasLayer 80): wiederverwendbarer Modal-Shell mit Dim, Papier-Sheet, Scale/Fade-Tween
+- `ModalCoordinator` (Node): Besitzt das Dossier, blockiert die Kamera, koordiniert ESC
+- `MapCamera.set_input_blocked()`: sperrt Pan/Zoom/Selektion während ein Modal offen ist
+- `PauseMenu._overlay_ui_open()`: defers ESC an Dossier-Schließen statt Pause
 
 ---
 
@@ -443,7 +475,7 @@ Alle öffentlichen APIs und Signale bleiben als abwärtskompatible Delegaten erh
 
 ```
 LAYER 1 — STRATEGISCHE OVERWORLD
-████████████████████████████████░░  ~95%  Wirtschaft, Transit, Forschung, Scouts, UI-HUD
+████████████████████████████████░░  ~95%  Wirtschaft, Transit, Forschung, Scouts, UI-HUD + Paper-Dossier-Modale
 
 LAYER 2 — FLOTTENSIMULATION
 ████████████████████████████████░░  ~95%  FleetBattleSimulator + BattleScene-Replay implementiert
@@ -564,10 +596,10 @@ git commit
 
 | Metrik | Wert |
 |:---|:---|
-| GDScript-Dateien | **145** |
-| Code-Zeilen | **21.619** |
+| GDScript-Dateien | **155** |
+| Code-Zeilen | **22.469** |
 | Szenen | **16** |
-| Assets | **417** |
+| Assets | **419** |
 | Ressourcen | **91** |
 | Preflight-Constraints | **29 PASS** |
 | Snapshots | **14** (Aug 19–21) |
@@ -602,7 +634,7 @@ timeline
 
 **`CONNECT · DEPLOY · HOLD THE LINE`**
 
-*Zehn Welten. Ein deterministischer Seed. Keine Ausreden.*
+*Unendlich Welten. Ein deterministischer Seed. Keine Ausreden.*
 
 ---
 

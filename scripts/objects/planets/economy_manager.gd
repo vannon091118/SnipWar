@@ -80,6 +80,8 @@ func _tick_economy() -> int:
 			if automation_researched and state != null and state.has_method("convert_refinery_resources"):
 				if state.has_planet_upgrade(planet.planet_id, &"refinery"):
 					state.convert_refinery_resources(planet.planet_id)
+	if state != null and state.has_method("tick_trade_routes"):
+		state.tick_trade_routes()
 	return generated_total
 
 func gather_now() -> int:

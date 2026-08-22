@@ -18,6 +18,7 @@ var _navigation: NavigationField
 var _ship_manager: Node
 var _enabled: bool = true
 var _active_ships: Array[ShipBase] = []
+var _idle_ships: Array[ShipBase] = []
 var _battle_replay: BattleScene
 var _conquest_replay: ConquestScene
 var _game_seed: int = 0
@@ -29,6 +30,8 @@ func _ready() -> void:
 	var state: Node = _game_state()
 	if state != null and state.has_signal("catalog_reset") and not state.catalog_reset.is_connected(_on_catalog_reset):
 		state.catalog_reset.connect(_on_catalog_reset)
+	if state != null and state.has_signal("research_ship_task_completed") and not state.research_ship_task_completed.is_connected(_on_research_task_completed):
+		state.research_ship_task_completed.connect(_on_research_task_completed)
 	_connect_planet_conflicts()
 
 func _connect_planet_conflicts() -> void:
@@ -49,6 +52,14 @@ func _connect_planet_conflict(planet: Planet, callback: Callable = Callable()) -
 	var resolved_callback := callback if callback.is_valid() else Callable(self, "_on_planet_conflict_simulated")
 	if not planet.conflict_simulated.is_connected(resolved_callback):
 		planet.conflict_simulated.connect(resolved_callback)
+
+func _on_research_task_completed(_mission_id: StringName, target_planet_id: StringName, task_type: StringName) -> void:
+	if task_type != &"scan":
+		return
+	var target: Planet = _find_planet(target_planet_id)
+	var state: Node = _game_state()
+	if target != null and state != null:
+		state.scan_planet(GameState.FACTION_PLAYER, target.planet_id, target.get_resource_id(), StringName(target.get_size_profile().id), target.get_build_slot_count())
 
 func _on_planet_added(planet: Planet) -> void:
 	_connect_planet_conflict(planet)
@@ -126,6 +137,32 @@ func _restore_persistent_transits() -> void:
 		_active_ships.append(ship)
 		_ship_by_transit[record.transit_id] = ship
 		ship.start_flight_from_elapsed(record.elapsed)
+	_materialize_research_ships()
+
+func _materialize_research_ships() -> void:
+	var state: Node = _game_state()
+	if state == null or not state.has_method("get_research_ship_records"):
+		return
+	for data in state.get_research_ship_records(GameState.FACTION_PLAYER):
+		var ship_id: StringName = data.get("ship_id", &"") as StringName
+		var already_present := false
+		for idle_ship in _idle_ships:
+			if is_instance_valid(idle_ship) and idle_ship.name == "ResearchShip_%s" % String(ship_id):
+				already_present = true
+				break
+		if already_present:
+			continue
+		var record: ShipDomain.PersistentShipRecord = state.get_persistent_ship(ship_id) as ShipDomain.PersistentShipRecord
+		if record == null or record.fleet == null:
+			continue
+		var location: Planet = _find_planet(record.current_planet_id)
+		if location == null:
+			continue
+		var ship: ShipBase = SHIP_BASE_SCENE.instantiate() as ShipBase
+		ship.name = "ResearchShip_%s" % String(ship_id)
+		ship.configure_idle(record.fleet.copy(), location, _part_catalog(), &"research", record.current_planet_id)
+		add_child(ship)
+		_idle_ships.append(ship)
 
 func _find_planet(planet_id: StringName) -> Planet:
 	if _field == null or not is_instance_valid(_field):
@@ -176,6 +213,74 @@ func active_ship_count() -> int:
 	_prune_active_ships()
 	return _active_ships.size()
 
+## Returns visible idle armed ships that can accompany a worker convoy.
+func get_escort_candidates(source_planet: Planet, destination: Planet) -> Array[ShipBase]:
+	var candidates: Array[ShipBase] = []
+	if source_planet == null or destination == null:
+		return candidates
+	for ship in _idle_ships:
+		if ship == null or not is_instance_valid(ship) or ship.fleet == null:
+			continue
+		for assembly in ship.fleet.ships:
+			if assembly != null and not String(assembly.weapon_id).is_empty():
+				candidates.append(ship)
+				break
+	return candidates
+
+func has_escort_available(source_planet: Planet, destination: Planet) -> bool:
+	if not get_escort_candidates(source_planet, destination).is_empty():
+		return true
+	var state: Node = _game_state()
+	if state == null or source_planet == null or not state.has_method("get_ship_assemblies"):
+		return false
+	for assembly in state.get_ship_assemblies(source_planet.planet_id).values():
+		if assembly is ShipAssembly and not String((assembly as ShipAssembly).weapon_id).is_empty():
+			return true
+	return false
+
+func dispatch_research_ship(source: Planet, destination: Planet) -> ShipBase:
+	if not _enabled or source == null or destination == null or source == destination:
+		return null
+	var state: Node = _game_state()
+	if state == null or not state.has_method("get_research_ship_records"):
+		return null
+	var record: ShipDomain.PersistentShipRecord = null
+	for data in state.get_research_ship_records(GameState.FACTION_PLAYER):
+		var candidate: ShipDomain.PersistentShipRecord = state.get_persistent_ship(data.get("ship_id", &"")) as ShipDomain.PersistentShipRecord
+		if candidate != null and candidate.status == &"idle" and candidate.current_planet_id == source.planet_id and String(candidate.active_mission_id).is_empty():
+			record = candidate
+			break
+	if record == null or record.fleet == null or _route(source, destination).size() < 2:
+		return null
+	var route_path: Array[Vector2] = _route(source, destination)
+	var distance := PathUtils.distance(route_path)
+	var duration: float = FLIGHT_TIME_SCRIPT.seconds_for_ship(distance, record.fleet.ships.size(), transit_config, record.fleet.transfer_speed_multiplier())
+	var transit := TransitRecord.new()
+	transit.transit_id = state.next_transit_id()
+	transit.fleet = record.fleet.copy()
+	transit.source_planet_id = source.planet_id
+	transit.destination_planet_id = destination.planet_id
+	transit.mission_role = &"research"
+	transit.route_path = route_path.duplicate()
+	transit.duration = duration
+	state.register_transit(transit)
+	state.ship_domain.mark_research_ship_departed(record.ship_id)
+	var ship: ShipBase = SHIP_BASE_SCENE.instantiate() as ShipBase
+	ship.name = "ResearchTransit_%s" % String(record.ship_id)
+	ship.transit_id = transit.transit_id
+	ship.configure(record.fleet.copy(), destination, route_path, duration, _part_catalog(), &"research", source.planet_id)
+	add_child(ship)
+	ship.arrived.connect(_on_ship_arrived)
+	_active_ships.append(ship)
+	_ship_by_transit[ship.transit_id] = ship
+	for idle_ship in _idle_ships:
+		if idle_ship != null and is_instance_valid(idle_ship) and idle_ship.name == "ResearchShip_%s" % String(record.ship_id):
+			_idle_ships.erase(idle_ship)
+			idle_ship.queue_free()
+			break
+	ship.start_flight()
+	return ship
+
 func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName, role: StringName = &"") -> ShipBase:
 	if not _enabled or source == null or destination == null or source == destination:
 		return null
@@ -216,6 +321,8 @@ func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName, rol
 	record.duration = duration
 	record.defender_fleet = defender_fleet
 	state.register_transit(record)
+	if state.has_method("register_persistent_fleet"):
+		state.register_persistent_fleet(fleet, &"in_transit")
 	var ship: ShipBase = SHIP_BASE_SCENE.instantiate() as ShipBase
 	ship.name = "Ship_%s_%s" % [source.name, destination.name]
 	ship.transit_id = record.transit_id
@@ -328,6 +435,18 @@ func _on_ship_arrived(ship_node: Node2D) -> void:
 		return
 	var state: Node = _game_state()
 	var record: TransitRecord = state.get_transit(ship.transit_id) if state != null and not String(ship.transit_id).is_empty() else null
+	if ship.mission_role == &"research":
+		if state != null and ship.destination != null:
+			state.mark_research_ship_arrived(ship.fleet.ships[0].ship_id, ship.destination.planet_id)
+			if not String(ship.transit_id).is_empty():
+				state.remove_transit(ship.transit_id)
+		_active_ships.erase(ship)
+		_ship_by_transit.erase(ship.transit_id)
+		if is_instance_valid(ship):
+			ship.stop_flight()
+			_idle_ships.append(ship)
+			ship.name = "ResearchShip_%s" % String(ship.fleet.ships[0].ship_id)
+		return
 	if record != null and record.status == TransitRecord.STATUS_ENGAGED:
 		return
 	var result: Dictionary = {}
@@ -378,13 +497,31 @@ func _on_ship_arrived(ship_node: Node2D) -> void:
 	if ship.fleet != null and not ship.fleet.ships.is_empty():
 		ship_id = ship.fleet.ships[0].ship_id
 	var outcome: StringName = result.get("result", Planet.ARRIVAL_REJECTED) as StringName
+	var surviving_fleet: FleetSnapshot = ship.fleet.copy() if ship.fleet != null else null
+	var replay_result: CombatReplay = result.get("replay") as CombatReplay
+	if outcome == Planet.ARRIVAL_REPELLED and replay_result != null and replay_result.is_battle():
+		surviving_fleet.ships = replay_result.survivors_a.duplicate()
+		surviving_fleet.calculate_stats(_part_catalog())
 	if state != null:
 		if outcome == Planet.ARRIVAL_SETTLED and ship.mission_role == &"colony":
 			state.mark_milestone(ship.fleet.faction, &"first_colony")
-		elif outcome == Planet.ARRIVAL_FRIENDLY and ship.destination != null and is_instance_valid(ship.destination):
-			state.disband_fleet_to_planet(ship.fleet, ship.destination.planet_id)
-		elif outcome == Planet.ARRIVAL_REPELLED or outcome == Planet.ARRIVAL_REJECTED:
-			state.ship_lost.emit(ship.source_planet_id, ship_id)
+		if outcome == Planet.ARRIVAL_SETTLED or outcome == Planet.ARRIVAL_CAPTURED or outcome == Planet.ARRIVAL_FRIENDLY:
+			if surviving_fleet != null:
+				state.disband_fleet_to_planet(surviving_fleet, ship.destination.planet_id)
+				state.mark_persistent_ship_arrived(ship_id, ship.destination.planet_id)
+		elif outcome == Planet.ARRIVAL_REPELLED:
+			if surviving_fleet != null and not surviving_fleet.ships.is_empty():
+				var return_planet: Planet = _find_planet(ship.source_planet_id)
+				if return_planet != null:
+					state.disband_fleet_to_planet(surviving_fleet, return_planet.planet_id)
+					state.mark_persistent_ship_arrived(ship_id, return_planet.planet_id)
+			else:
+				state.mark_persistent_ship_lost(ship_id)
+		elif outcome == Planet.ARRIVAL_REJECTED:
+			var rejected_source: Planet = _find_planet(ship.source_planet_id)
+			if rejected_source != null and surviving_fleet != null:
+				state.disband_fleet_to_planet(surviving_fleet, rejected_source.planet_id)
+				state.mark_persistent_ship_arrived(ship_id, rejected_source.planet_id)
 		if not String(ship.transit_id).is_empty():
 			state.remove_transit(ship.transit_id)
 	_active_ships.erase(ship)
@@ -424,7 +561,11 @@ func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 	for ship in _active_ships:
 		if is_instance_valid(ship):
 			ship.queue_free()
+	for ship in _idle_ships:
+		if is_instance_valid(ship):
+			ship.queue_free()
 	_active_ships.clear()
+	_idle_ships.clear()
 	_ship_by_transit.clear()
 	_game_seed = _resolve_game_seed(_field)
 	_battle_counter = 0

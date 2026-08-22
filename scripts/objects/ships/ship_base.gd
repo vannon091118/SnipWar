@@ -26,6 +26,16 @@ func configure(incoming_fleet: FleetSnapshot, destination_planet: Planet, route_
 	_duration = maxf(duration, 0.001)
 	_rebuild_visual(catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG)
 
+func configure_idle(incoming_fleet: FleetSnapshot, location: Planet, catalog: ShipPartCatalog = null, role: StringName = &"", source_id: StringName = &"") -> void:
+	fleet = incoming_fleet
+	destination = location
+	mission_role = role if not String(role).is_empty() else (fleet.mission_role if fleet != null else &"")
+	source_planet_id = source_id
+	_route_path.clear()
+	_duration = 0.0
+	_arrived = true
+	_rebuild_visual(catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG)
+
 func start_flight() -> void:
 	start_flight_from_elapsed(0.0)
 

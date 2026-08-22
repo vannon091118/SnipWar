@@ -1,6 +1,23 @@
 class_name ShipDomain
 extends RefCounted
 
+class ResearchMission extends RefCounted:
+	var mission_id: StringName = &""
+	var target_planet_id: StringName = &""
+	var task_type: StringName = &"scan"
+	var duration: float = 1.0
+	var remaining: float = 1.0
+	var status: StringName = &"queued"
+
+class PersistentShipRecord extends RefCounted:
+	var ship_id: StringName = &""
+	var faction: StringName = &""
+	var mission_role: StringName = &""
+	var current_planet_id: StringName = &""
+	var status: StringName = &"idle"
+	var fleet: FleetSnapshot
+	var active_mission_id: StringName = &""
+
 ## Manages ship part inventory, typed modular ship assemblies, disassembly,
 ## fleet creation, and build jobs.
 
@@ -11,6 +28,9 @@ signal ship_launched(planet_id: StringName, ship_id: StringName, role: StringNam
 @warning_ignore("unused_signal")
 signal ship_lost(planet_id: StringName, ship_id: StringName)
 signal ship_build_started(planet_id: StringName, ship_id: StringName, remaining: float)
+signal research_ship_task_completed(mission_id: StringName, target_planet_id: StringName, task_type: StringName)
+signal research_ship_idle(ship_id: StringName, planet_id: StringName)
+signal persistent_ship_changed(ship_id: StringName, status: StringName)
 
 var ship_part_inventory: Dictionary = {}
 # Planet ID -> Dictionary[ship ID, ShipAssembly]. The outer dictionaries are
@@ -19,12 +39,207 @@ var ship_assemblies: Dictionary = {}
 var next_ship_index: int = 0
 # Planet ID -> Dictionary[ship ID, {remaining: float, assembly: ShipAssembly}].
 var ship_build_jobs: Dictionary = {}
+var persistent_ships: Dictionary = {}
+var research_missions: Array[ResearchMission] = []
+var next_research_mission_index: int = 0
 
 func reset() -> void:
 	ship_part_inventory.clear()
 	ship_assemblies.clear()
 	next_ship_index = 0
 	ship_build_jobs.clear()
+	persistent_ships.clear()
+	research_missions.clear()
+	next_research_mission_index = 0
+
+func ensure_starter_research_ship(faction: StringName, planet_id: StringName, catalog: ShipPartCatalog) -> StringName:
+	for ship_id in persistent_ships:
+		var existing: PersistentShipRecord = persistent_ships[ship_id] as PersistentShipRecord
+		if existing != null and existing.faction == faction and existing.mission_role == &"research":
+			return existing.ship_id
+	var record := PersistentShipRecord.new()
+	record.ship_id = StringName("research_ship_%s" % String(faction))
+	record.faction = faction
+	record.mission_role = &"research"
+	record.current_planet_id = planet_id
+	record.status = &"idle"
+	var assembly := ShipAssembly.new()
+	assembly.ship_id = record.ship_id
+	assembly.role = &"research"
+	assembly.hull_id = &"hull_t1"
+	assembly.drive_id = &"drive_t1"
+	assembly.scanner_id = &"scanner_t1"
+	assembly.shield_id = &"shield_t1"
+	record.fleet = FleetSnapshot.new()
+	record.fleet.fleet_id = StringName("fleet_%s" % record.ship_id)
+	record.fleet.faction = faction
+	record.fleet.source_planet_id = planet_id
+	record.fleet.mission_role = &"research"
+	record.fleet.ships = [assembly]
+	record.fleet.calculate_stats(catalog)
+	persistent_ships[record.ship_id] = record
+	persistent_ship_changed.emit(record.ship_id, record.status)
+	return record.ship_id
+
+func get_research_ship_records(faction: StringName = &"") -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for ship_value in persistent_ships.values():
+		var record: PersistentShipRecord = ship_value as PersistentShipRecord
+		if record == null or record.mission_role != &"research" or (not String(faction).is_empty() and record.faction != faction):
+			continue
+		result.append({"ship_id": record.ship_id, "faction": record.faction, "current_planet_id": record.current_planet_id, "status": record.status, "active_mission_id": record.active_mission_id})
+	return result
+
+func get_persistent_ship(ship_id: StringName) -> PersistentShipRecord:
+	return persistent_ships.get(ship_id) as PersistentShipRecord
+
+func register_persistent_fleet(fleet: FleetSnapshot, status: StringName = &"in_transit") -> void:
+	if fleet == null:
+		return
+	for assembly in fleet.ships:
+		if assembly == null or String(assembly.ship_id).is_empty() or assembly.role == &"research":
+			continue
+		var record := PersistentShipRecord.new()
+		record.ship_id = assembly.ship_id
+		record.faction = fleet.faction
+		record.mission_role = assembly.role
+		record.current_planet_id = fleet.source_planet_id
+		record.status = status
+		record.fleet = fleet.copy()
+		record.fleet.ships = [assembly.copy()]
+		persistent_ships[record.ship_id] = record
+		persistent_ship_changed.emit(record.ship_id, record.status)
+
+func get_persistent_ship_records(faction: StringName = &"") -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for value in persistent_ships.values():
+		var record: PersistentShipRecord = value as PersistentShipRecord
+		if record == null or (not String(faction).is_empty() and record.faction != faction):
+			continue
+		result.append({"ship_id": record.ship_id, "faction": record.faction, "mission_role": record.mission_role, "current_planet_id": record.current_planet_id, "status": record.status})
+	return result
+
+func mark_persistent_ship_arrived(ship_id: StringName, planet_id: StringName, status: StringName = &"idle") -> bool:
+	var record: PersistentShipRecord = persistent_ships.get(ship_id) as PersistentShipRecord
+	if record == null:
+		return false
+	record.current_planet_id = planet_id
+	record.status = status
+	persistent_ship_changed.emit(ship_id, status)
+	return true
+
+func mark_persistent_ship_lost(ship_id: StringName) -> bool:
+	if not persistent_ships.has(ship_id):
+		return false
+	persistent_ships.erase(ship_id)
+	ship_lost.emit(&"", ship_id)
+	return true
+
+func queue_research_mission(faction: StringName, target_planet_id: StringName, task_type: StringName, duration: float = 2.0) -> StringName:
+	if String(faction).is_empty() or String(target_planet_id).is_empty():
+		return &""
+	var ship: PersistentShipRecord = null
+	for candidate_value in persistent_ships.values():
+		var candidate: PersistentShipRecord = candidate_value as PersistentShipRecord
+		if candidate != null and candidate.faction == faction and candidate.mission_role == &"research":
+			ship = candidate
+			break
+	if ship == null:
+		return &""
+	next_research_mission_index += 1
+	var mission := ResearchMission.new()
+	mission.mission_id = StringName("research_mission_%d" % next_research_mission_index)
+	mission.target_planet_id = target_planet_id
+	mission.task_type = task_type
+	mission.duration = maxf(duration, 0.01)
+	mission.remaining = mission.duration
+	mission.status = &"queued"
+	research_missions.append(mission)
+	if String(ship.active_mission_id).is_empty() and ship.status == &"idle" and ship.current_planet_id == target_planet_id:
+		mission.status = &"active"
+		ship.active_mission_id = mission.mission_id
+	return mission.mission_id
+
+func get_research_missions(faction: StringName = &"") -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for mission in research_missions:
+		if mission == null:
+			continue
+		var ship: PersistentShipRecord = _research_ship_for_mission(mission.mission_id)
+		if ship != null and (String(faction).is_empty() or ship.faction == faction):
+			result.append({"mission_id": mission.mission_id, "target_planet_id": mission.target_planet_id, "task_type": mission.task_type, "duration": mission.duration, "remaining": mission.remaining, "status": mission.status})
+	return result
+
+func cancel_research_mission(mission_id: StringName) -> bool:
+	for index in research_missions.size():
+		var mission: ResearchMission = research_missions[index]
+		if mission == null or mission.mission_id != mission_id:
+			continue
+		var ship := _research_ship_for_mission(mission_id)
+		if ship != null and ship.active_mission_id == mission_id:
+			ship.active_mission_id = &""
+		research_missions.remove_at(index)
+		return true
+	return false
+
+func mark_research_ship_departed(ship_id: StringName) -> bool:
+	var ship: PersistentShipRecord = persistent_ships.get(ship_id) as PersistentShipRecord
+	if ship == null:
+		return false
+	ship.status = &"in_transit"
+	persistent_ship_changed.emit(ship.ship_id, ship.status)
+	return true
+
+func mark_research_ship_arrived(ship_id: StringName, planet_id: StringName) -> bool:
+	var ship: PersistentShipRecord = persistent_ships.get(ship_id) as PersistentShipRecord
+	if ship == null:
+		return false
+	ship.current_planet_id = planet_id
+	ship.status = &"idle"
+	for mission in research_missions:
+		if mission != null and mission.status == &"queued" and mission.target_planet_id == planet_id and String(ship.active_mission_id).is_empty():
+			mission.status = &"active"
+			ship.active_mission_id = mission.mission_id
+			break
+	persistent_ship_changed.emit(ship.ship_id, ship.status)
+	if String(ship.active_mission_id).is_empty():
+		research_ship_idle.emit(ship.ship_id, planet_id)
+	return true
+
+func advance_research_ship_tasks(delta: float) -> void:
+	if delta <= 0.0:
+		return
+	for mission in research_missions:
+		if mission == null or mission.status != &"active":
+			continue
+		mission.remaining -= delta
+		if mission.remaining > 0.0:
+			continue
+		mission.remaining = 0.0
+		mission.status = &"completed"
+		var ship := _research_ship_for_mission(mission.mission_id)
+		if ship != null:
+			ship.active_mission_id = &""
+			research_ship_task_completed.emit(mission.mission_id, mission.target_planet_id, mission.task_type)
+			persistent_ship_changed.emit(ship.ship_id, ship.status)
+		# Keep completed missions in the queue for UI history only briefly; remove
+		# them now so the next queued task can become active deterministically.
+		research_missions.erase(mission)
+		if ship != null:
+			for next_mission in research_missions:
+				if next_mission.status == &"queued" and next_mission.target_planet_id == ship.current_planet_id:
+					next_mission.status = &"active"
+					ship.active_mission_id = next_mission.mission_id
+					break
+			if String(ship.active_mission_id).is_empty() and ship.status == &"idle":
+				research_ship_idle.emit(ship.ship_id, ship.current_planet_id)
+
+func _research_ship_for_mission(mission_id: StringName) -> PersistentShipRecord:
+	for ship_value in persistent_ships.values():
+		var ship: PersistentShipRecord = ship_value as PersistentShipRecord
+		if ship != null and ship.active_mission_id == mission_id:
+			return ship
+	return null
 
 func get_ship_part_inventory(planet_id: StringName) -> Dictionary:
 	if not ship_part_inventory.has(planet_id):
@@ -60,13 +275,13 @@ func can_buy_ship_part(faction: StringName, planet_id: StringName, part_id: Stri
 		return false
 	if not String(part.required_tech_id).is_empty() and not tech.has_technology(faction, part.required_tech_id):
 		return false
-	return economy.can_spend_faction_resource(faction, part.cost_resource, part.cost_amount)
+	return economy.can_spend_cost(faction, part.cost_resource, part.cost_amount, part.credit_cost)
 
 func buy_ship_part(faction: StringName, planet_id: StringName, part_id: StringName, catalog: ShipPartCatalog, economy: EconomyDomain, tech: TechDomain) -> bool:
 	if not can_buy_ship_part(faction, planet_id, part_id, catalog, economy, tech):
 		return false
 	var part: ShipPartDefinition = catalog.resolve(part_id)
-	if not economy.spend_faction_resource(faction, part.cost_resource, part.cost_amount):
+	if not economy.spend_cost(faction, part.cost_resource, part.cost_amount, part.credit_cost):
 		return false
 	add_ship_part(planet_id, part_id, 1)
 	ship_part_purchased.emit(planet_id, part_id)
@@ -189,7 +404,7 @@ func assemble_ship(
 	assembly.shield_id = shield_id
 	assembly.scanner_id = scanner_id
 	assembly.set_module_ids(module_ids)
-	assembly.role = ship_role if not String(ship_role).is_empty() else (&"military" if not String(weapon_id).is_empty() else &"colony")
+	assembly.role = &"research" if ship_role == &"research" else ShipAssembly.derive_role_from_modules(assembly, catalog)
 	assembly.blueprint_id = blueprint.id
 	assembly.instance_seed = instance_seed
 	assembly.hull_variant_id = _select_variant_id(catalog, hull_id, blueprint, instance_seed, &"hull")

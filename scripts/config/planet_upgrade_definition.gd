@@ -12,7 +12,9 @@ extends Resource
 @export var required_technology_id: StringName = &""
 @export var cost_resource: StringName = GameState.RES_ENERGY
 @export var cost_amount: int = 10
-@export var cost_workers: int = 1
+@export var credit_cost: int = 5
+@export var workers_required: int = 1
+@export_range(0.0, 3600.0, 0.1) var build_time: float = 0.0
 @export var trait_definition: TraitDefinition
 @export var visual_asset: Texture2D
 ## Optional L1/L2/L3 visual progression. `visual_asset` remains the
@@ -32,8 +34,12 @@ func validate() -> PackedStringArray:
 		errors.append("upgrade tier must be >= 1")
 	if cost_amount < 0:
 		errors.append("cost_amount cannot be negative")
-	if cost_workers < 0:
-		errors.append("cost_workers cannot be negative")
+	if credit_cost < 0:
+		errors.append("credit_cost cannot be negative")
+	if workers_required < 0:
+		errors.append("workers_required cannot be negative")
+	if build_time < 0.0:
+		errors.append("build_time cannot be negative")
 	if trait_definition != null:
 		errors.append_array(trait_definition.validate())
 	if visual_asset == null and visual_assets_by_tier.is_empty():

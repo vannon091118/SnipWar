@@ -424,8 +424,7 @@ func _populate_scout_sources(option: OptionButton, planets: Array[Planet], state
 			continue
 		var player_owned: bool = state.faction_of(planet.planet_id) == GameState.FACTION_PLAYER
 		var has_shipyard: bool = state.has_planet_upgrade(planet.planet_id, SHIPYARD_UPGRADE_ID)
-		var has_starter: bool = state.get_starter_scouts(GameState.FACTION_PLAYER) > 0
-		if player_owned and (has_shipyard or has_starter):
+		if player_owned and has_shipyard:
 			option.add_item(planet.name)
 			option.set_item_metadata(option.item_count - 1, planet)
 	option.disabled = option.item_count == 0

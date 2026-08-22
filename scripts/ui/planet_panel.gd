@@ -406,8 +406,9 @@ func _upgrade_cost_text(upgrade: PlanetUpgradeDefinition, is_unlocked: bool) -> 
 	if is_unlocked:
 		return "FREIGESCHALTET"
 	var result := "%d %s" % [upgrade.cost_amount, String(upgrade.cost_resource).capitalize()]
-	if upgrade.cost_workers > 0:
-		result += "  ·  %d Arbeiter" % upgrade.cost_workers
+	result += "  ·  %d Credits" % upgrade.credit_cost
+	if upgrade.workers_required > 0:
+		result += "  ·  Arbeitskräfte: %d" % upgrade.workers_required
 	return result
 
 func _upgrade_trait_text(upgrade: PlanetUpgradeDefinition) -> String:
@@ -443,8 +444,7 @@ func _on_buy_upgrade_pressed(planet_id: StringName, upgrade_id: StringName) -> v
 	var available_workers: int = int(_current_active_planet.get("worker_count"))
 	if not state.purchase_upgrade(planet_id, upgrade_id, _upgrade_catalog, available_workers):
 		return
-	if upgrade.cost_workers > 0:
-		_current_active_planet.call("unregister_workers", upgrade.cost_workers)
+	# Construction workers are reserved by the domain and are never consumed.
 	_refresh_upgrade_list(_current_active_planet)
 	layout_requested.emit()
 

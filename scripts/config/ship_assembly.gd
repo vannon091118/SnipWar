@@ -77,6 +77,33 @@ func set_variant_id(slot_type: StringName, variant_id: StringName, module_index:
 				utility_variant_ids.append(&"")
 			utility_variant_ids[module_index] = variant_id
 
+static func derive_role_from_modules(assembly: ShipAssembly, catalog: ShipPartCatalog = null) -> StringName:
+	if assembly == null:
+		return &"colony"
+	if not String(assembly.weapon_id).is_empty():
+		return &"military"
+	var priorities: Array[StringName] = [&"colony", &"transport", &"research", &"military"]
+	var selected: StringName = &""
+	for module_id in assembly.module_ids:
+		var role: StringName = &""
+		if catalog != null:
+			var part: ShipPartDefinition = catalog.resolve(module_id)
+			if part != null:
+				role = StringName(part.module_role)
+		if String(role).is_empty():
+			match module_id:
+				&"colony_module": role = &"colony"
+				&"transport_module": role = &"transport"
+				&"science_module": role = &"research"
+				&"defense_module": role = &"military"
+			if String(role).is_empty():
+				role = &"colony"
+		var current_priority: int = priorities.find(role)
+		var selected_priority: int = priorities.find(selected)
+		if current_priority >= 0 and (selected_priority < 0 or current_priority < selected_priority):
+			selected = role
+	return selected if not String(selected).is_empty() else &"colony"
+
 func set_module_ids(values: Array) -> void:
 	module_ids.clear()
 	for value in values:

@@ -94,9 +94,9 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"requires_scene": true,
 	},
 	{
-		"id": "scout_and_discovery",
-		"script": preload("res://scripts/preflight/constraint_scout_and_discovery.gd"),
-		"desc": "Scout ship, scanning & discovery",
+		"id": "research_ship",
+		"script": preload("res://scripts/preflight/constraint_research_ship.gd"),
+		"desc": "Persistent ResearchShip, task queue & scanning",
 		"requires_scene": true,
 	},
 	{

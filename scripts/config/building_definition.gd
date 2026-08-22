@@ -10,6 +10,10 @@ extends Resource
 @export_range(0.0, 10000.0, 0.1) var attack_range: float = 100.0
 @export_range(0.01, 60.0, 0.01) var fire_interval: float = 1.0
 @export var cost_resources: Dictionary = {}
+@export var credit_cost: int = 5
+@export var workers_required: int = 1
+@export var maintenance_resources: Dictionary = {}
+@export var maintenance_credit_cost: int = 0
 @export var required_tech_id: StringName = &""
 @export_range(0.0, 3600.0, 0.1) var build_time: float = 0.0
 @export var visual_asset: Texture2D
@@ -30,8 +34,13 @@ func validate() -> PackedStringArray:
 		errors.append("building fire_interval must be positive")
 	if build_time < 0.0:
 		errors.append("building build_time cannot be negative")
+	if credit_cost < 0 or workers_required < 0 or maintenance_credit_cost < 0:
+		errors.append("building %s has invalid credit or worker costs" % id)
 	if grid_occupancy < 1:
 		errors.append("building grid_occupancy must be positive")
 	if perimeter_slot_cost < 0:
 		errors.append("building perimeter_slot_cost cannot be negative")
+	for resource_id in maintenance_resources:
+		if int(maintenance_resources[resource_id]) < 0:
+			errors.append("building %s has negative maintenance" % id)
 	return errors

@@ -3,7 +3,20 @@ extends RefCounted
 
 ## Manages faction vaults, resource deals, planet upgrades, worker factories, and gathering state.
 
+const DEFAULT_ECONOMY_CONFIG: EconomyConfig = preload("res://resources/config/economy_default.tres")
+
+var economy_config: EconomyConfig = DEFAULT_ECONOMY_CONFIG
+var _next_trade_route_index: int = 0
+var _trade_tick_index: int = 0
+var market_prices: Dictionary = {}
+var trade_volumes: Dictionary = {}
+var worker_transport_records: Dictionary = {}
+var _next_worker_transport_index: int = 0
+
 signal faction_resources_changed(faction: StringName, resource_id: StringName, new_amount: int)
+signal credits_changed(faction: StringName, new_amount: int)
+signal workers_reserved(planet_id: StringName, job_id: StringName, amount: int)
+signal workers_released(planet_id: StringName, job_id: StringName, amount: int)
 signal planet_upgraded(planet_id: StringName, upgrade_id: StringName)
 signal resource_generated(planet_id: StringName, resource_id: StringName, amount: int)
 signal resources_collected(faction: StringName, planet_id: StringName, resource_id: StringName, amount: int)
@@ -17,6 +30,9 @@ signal building_placed(planet_id: StringName, building_id: StringName, q: int, r
 signal building_removed(planet_id: StringName, q: int, r: int)
 
 var faction_vaults: Dictionary = {}
+var faction_credits: Dictionary = {}
+var worker_reservations: Dictionary = {}
+var upgrade_build_jobs: Dictionary = {}
 var planet_resources: Dictionary = {}
 var planet_upgrades: Dictionary = {}
 var worker_factories: Dictionary = {}
@@ -25,6 +41,7 @@ var gathering_sources: Dictionary = {}
 var local_vaults: Dictionary = {}
 var trade_routes: Dictionary = {}
 var planet_buildings: Dictionary = {}
+var building_jobs: Dictionary = {}
 # Planets whose starting local stock has already been dealt (prevents
 # re-seeding when an evicted chunk is regenerated).
 var _local_seeded_planets: Dictionary = {}
@@ -46,18 +63,130 @@ func reset_vaults() -> void:
 			GameState.RES_VOLATILE: 30
 		}
 	}
+	var config: EconomyConfig = economy_config if economy_config != null else DEFAULT_ECONOMY_CONFIG
+	faction_credits = {
+		GameState.FACTION_PLAYER: config.starting_credits,
+		GameState.FACTION_CPU: config.starting_credits,
+	}
 
 func reset() -> void:
 	planet_resources.clear()
 	planet_upgrades.clear()
+	worker_reservations.clear()
+	upgrade_build_jobs.clear()
 	worker_factories.clear()
 	gathering_workers.clear()
 	gathering_sources.clear()
 	local_vaults.clear()
 	trade_routes.clear()
 	planet_buildings.clear()
+	building_jobs.clear()
+	market_prices.clear()
+	trade_volumes.clear()
+	_next_trade_route_index = 0
+	_trade_tick_index = 0
+	worker_transport_records.clear()
+	_next_worker_transport_index = 0
 	_local_seeded_planets.clear()
 	reset_vaults()
+
+func credit_transport_resources(faction: StringName, resource_id: StringName, amount: int) -> bool:
+	if amount <= 0 or not _is_valid_resource_id(resource_id):
+		return false
+	add_faction_resource(faction, resource_id, amount)
+	return true
+
+func get_faction_credits(faction: StringName) -> int:
+	return int(faction_credits.get(faction, 0))
+
+## Creates the data-side record for a physical worker round-trip. The visible
+## WorkerCluster is disposable; this record is the source of truth across
+## chunk cycling and scene rebuilds.
+func begin_worker_transport(faction: StringName, source_planet_id: StringName, destination_planet_id: StringName, amount: int, duration: float, route_path: Array[Vector2]) -> StringName:
+	if faction == GameState.FACTION_NEUTRAL or String(source_planet_id).is_empty() or String(destination_planet_id).is_empty() or amount <= 0:
+		return &""
+	_next_worker_transport_index += 1
+	var transport_id := StringName("worker_transport_%d" % _next_worker_transport_index)
+	worker_transport_records[transport_id] = {
+		"transport_id": transport_id,
+		"faction": faction,
+		"source_planet_id": source_planet_id,
+		"destination_planet_id": destination_planet_id,
+		"amount": amount,
+		"phase": &"outbound",
+		"cargo_amount": 0,
+		"cargo_resource_id": &"",
+		"duration": maxf(duration, 0.001),
+		"elapsed": 0.0,
+		"route_path": route_path.duplicate(),
+		"escorted": false,
+	}
+	return transport_id
+
+func update_worker_transport(transport_id: StringName, phase: StringName, cargo_resource_id: StringName = &"", cargo_amount: int = 0) -> bool:
+	if not worker_transport_records.has(transport_id):
+		return false
+	var record: Dictionary = worker_transport_records[transport_id]
+	record["phase"] = phase
+	if not String(cargo_resource_id).is_empty():
+		record["cargo_resource_id"] = cargo_resource_id
+	record["cargo_amount"] = maxi(cargo_amount, 0)
+	worker_transport_records[transport_id] = record
+	return true
+
+func set_worker_transport_escorted(transport_id: StringName, escorted: bool = true) -> bool:
+	if not worker_transport_records.has(transport_id):
+		return false
+	var record: Dictionary = worker_transport_records[transport_id]
+	record["escorted"] = escorted
+	worker_transport_records[transport_id] = record
+	return true
+
+func get_worker_transport_records(faction: StringName = &"") -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for value in worker_transport_records.values():
+		var record: Dictionary = value as Dictionary
+		if record != null and (String(faction).is_empty() or record.get("faction", &"") == faction):
+			result.append(record.duplicate(true))
+	return result
+
+func complete_worker_transport(transport_id: StringName, delivered: bool = true) -> bool:
+	if not worker_transport_records.has(transport_id):
+		return false
+	var record: Dictionary = worker_transport_records[transport_id]
+	record["phase"] = &"delivered" if delivered else &"cancelled"
+	worker_transport_records.erase(transport_id)
+	return true
+
+func add_faction_credits(faction: StringName, amount: int) -> int:
+	if amount <= 0 or String(faction).is_empty():
+		return get_faction_credits(faction)
+	var new_amount: int = get_faction_credits(faction) + amount
+	faction_credits[faction] = new_amount
+	credits_changed.emit(faction, new_amount)
+	return new_amount
+
+func can_spend_faction_credits(faction: StringName, amount: int) -> bool:
+	return amount <= 0 or get_faction_credits(faction) >= amount
+
+func spend_faction_credits(faction: StringName, amount: int) -> bool:
+	if amount < 0 or not can_spend_faction_credits(faction, amount):
+		return false
+	if amount == 0:
+		return true
+	faction_credits[faction] = get_faction_credits(faction) - amount
+	credits_changed.emit(faction, faction_credits[faction])
+	return true
+
+func can_spend_cost(faction: StringName, resource_id: StringName, resource_amount: int, credit_amount: int) -> bool:
+	return can_spend_faction_resource(faction, resource_id, resource_amount) and can_spend_faction_credits(faction, credit_amount)
+
+func spend_cost(faction: StringName, resource_id: StringName, resource_amount: int, credit_amount: int) -> bool:
+	if not can_spend_cost(faction, resource_id, resource_amount, credit_amount):
+		return false
+	if not spend_faction_resource(faction, resource_id, resource_amount):
+		return false
+	return spend_faction_credits(faction, credit_amount)
 
 func get_faction_resource(faction: StringName, resource_id: StringName) -> int:
 	if not faction_vaults.has(faction):
@@ -361,6 +490,45 @@ func get_planet_upgrades(planet_id: StringName) -> Array[StringName]:
 		typed_list.append(item as StringName)
 	return typed_list
 
+func available_workers(planet_id: StringName, total_workers: int) -> int:
+	var reserved := 0
+	if worker_reservations.has(planet_id):
+		for amount in (worker_reservations[planet_id] as Dictionary).values():
+			reserved += int(amount)
+	return maxi(0, total_workers - reserved)
+
+func reserve_workers(planet_id: StringName, job_id: StringName, amount: int, total_workers: int) -> bool:
+	if amount <= 0:
+		return true
+	if available_workers(planet_id, total_workers) < amount:
+		return false
+	if not worker_reservations.has(planet_id):
+		worker_reservations[planet_id] = {}
+	var jobs: Dictionary = worker_reservations[planet_id]
+	jobs[job_id] = int(jobs.get(job_id, 0)) + amount
+	workers_reserved.emit(planet_id, job_id, amount)
+	return true
+
+func release_workers(planet_id: StringName, job_id: StringName) -> int:
+	if not worker_reservations.has(planet_id):
+		return 0
+	var jobs: Dictionary = worker_reservations[planet_id]
+	var amount: int = int(jobs.get(job_id, 0))
+	jobs.erase(job_id)
+	if jobs.is_empty():
+		worker_reservations.erase(planet_id)
+	if amount > 0:
+		workers_released.emit(planet_id, job_id, amount)
+	return amount
+
+func reserved_workers_on(planet_id: StringName) -> int:
+	if not worker_reservations.has(planet_id):
+		return 0
+	var total := 0
+	for amount in (worker_reservations[planet_id] as Dictionary).values():
+		total += int(amount)
+	return total
+
 func can_purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_workers: int = -1, catalog: PlanetUpgradeCatalog = null) -> bool:
 	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
 	if effective_catalog == null or faction == GameState.FACTION_NEUTRAL or not faction_vaults.has(faction):
@@ -368,22 +536,83 @@ func can_purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id
 	var upgrade: PlanetUpgradeDefinition = effective_catalog.resolve(upgrade_id)
 	if upgrade == null or has_planet_upgrade(planet_id, upgrade_id):
 		return false
+	if upgrade_build_jobs.has(planet_id) and (upgrade_build_jobs[planet_id] as Dictionary).has(upgrade_id):
+		return false
 	if not String(upgrade.parent_upgrade_id).is_empty() and not has_planet_upgrade(planet_id, upgrade.parent_upgrade_id):
 		return false
 	if not String(upgrade.exclusive_with).is_empty() and has_planet_upgrade(planet_id, upgrade.exclusive_with):
 		return false
-	if available_workers >= 0 and available_workers < upgrade.cost_workers:
+	if available_workers >= 0 and available_workers < upgrade.workers_required:
 		return false
-	return can_spend_faction_resource(faction, upgrade.cost_resource, upgrade.cost_amount)
+	return can_spend_cost(faction, upgrade.cost_resource, upgrade.cost_amount, upgrade.credit_cost)
 
 func purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_workers: int = -1, catalog: PlanetUpgradeCatalog = null) -> bool:
 	if not can_purchase_upgrade(faction, planet_id, upgrade_id, available_workers, catalog):
 		return false
 	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
 	var upgrade: PlanetUpgradeDefinition = effective_catalog.resolve(upgrade_id)
-	if not spend_faction_resource(faction, upgrade.cost_resource, upgrade.cost_amount):
+	var reservation_id := StringName("upgrade_%s_%s" % [String(planet_id), String(upgrade_id)])
+	if upgrade.workers_required > 0 and available_workers >= 0 and not reserve_workers(planet_id, reservation_id, upgrade.workers_required, available_workers):
 		return false
-	add_planet_upgrade(planet_id, upgrade_id)
+	if not spend_cost(faction, upgrade.cost_resource, upgrade.cost_amount, upgrade.credit_cost):
+		release_workers(planet_id, reservation_id)
+		return false
+	if upgrade.build_time > 0.0:
+		if not upgrade_build_jobs.has(planet_id):
+			upgrade_build_jobs[planet_id] = {}
+		upgrade_build_jobs[planet_id][upgrade_id] = {
+			"remaining": upgrade.build_time,
+			"faction": faction,
+			"reservation_id": reservation_id,
+			"cost_resource": upgrade.cost_resource,
+			"cost_amount": upgrade.cost_amount,
+			"credit_cost": upgrade.credit_cost,
+		}
+	else:
+		add_planet_upgrade(planet_id, upgrade_id)
+		# Instant jobs still reserve and release labor atomically.
+		release_workers(planet_id, reservation_id)
+	return true
+
+func upgrade_build_in_progress(planet_id: StringName, upgrade_id: StringName = &"") -> bool:
+	if not upgrade_build_jobs.has(planet_id):
+		return false
+	if String(upgrade_id).is_empty():
+		return not (upgrade_build_jobs[planet_id] as Dictionary).is_empty()
+	return (upgrade_build_jobs[planet_id] as Dictionary).has(upgrade_id)
+
+func upgrade_build_remaining(planet_id: StringName, upgrade_id: StringName) -> float:
+	if not upgrade_build_in_progress(planet_id, upgrade_id):
+		return 0.0
+	return float((upgrade_build_jobs[planet_id] as Dictionary)[upgrade_id].get("remaining", 0.0))
+
+func advance_upgrade_builds(delta: float) -> void:
+	if delta <= 0.0:
+		return
+	for planet_value in upgrade_build_jobs.keys():
+		var planet_id: StringName = planet_value as StringName
+		var jobs: Dictionary = upgrade_build_jobs[planet_id]
+		for upgrade_value in jobs.keys():
+			var upgrade_id: StringName = upgrade_value as StringName
+			var job: Dictionary = jobs[upgrade_id]
+			var remaining: float = float(job.get("remaining", 0.0)) - delta
+			if remaining > 0.0:
+				job["remaining"] = remaining
+				continue
+			jobs.erase(upgrade_id)
+			add_planet_upgrade(planet_id, upgrade_id)
+			release_workers(planet_id, job.get("reservation_id", &"") as StringName)
+		if jobs.is_empty():
+			upgrade_build_jobs.erase(planet_id)
+
+func abort_upgrade_build(planet_id: StringName, upgrade_id: StringName) -> bool:
+	if not upgrade_build_in_progress(planet_id, upgrade_id):
+		return false
+	var job: Dictionary = (upgrade_build_jobs[planet_id] as Dictionary).get(upgrade_id, {})
+	(upgrade_build_jobs[planet_id] as Dictionary).erase(upgrade_id)
+	release_workers(planet_id, job.get("reservation_id", &"") as StringName)
+	add_faction_resource(job.get("faction", &"") as StringName, job.get("cost_resource", &"") as StringName, int(job.get("cost_amount", 0)))
+	add_faction_credits(job.get("faction", &"") as StringName, int(job.get("credit_cost", 0)))
 	return true
 
 func add_planet_upgrade(planet_id: StringName, upgrade_id: StringName) -> void:
@@ -408,7 +637,8 @@ func can_build_worker_factory(
 	has_automation_tech: bool,
 	available_slots: int = -1,
 	cost_resource: StringName = GameState.RES_MATERIAL,
-	cost_amount: int = 5
+	cost_amount: int = 5,
+	credit_cost: int = 5
 ) -> bool:
 	if faction == GameState.FACTION_NEUTRAL or not faction_vaults.has(faction) or has_worker_factory(planet_id):
 		return false
@@ -416,7 +646,7 @@ func can_build_worker_factory(
 		return false
 	if available_slots >= 0 and available_slots <= 0:
 		return false
-	return can_spend_faction_resource(faction, cost_resource, cost_amount)
+	return can_spend_cost(faction, cost_resource, cost_amount, credit_cost)
 
 func build_worker_factory(
 	faction: StringName,
@@ -426,11 +656,12 @@ func build_worker_factory(
 	has_automation_tech: bool,
 	available_slots: int = -1,
 	cost_resource: StringName = GameState.RES_MATERIAL,
-	cost_amount: int = 5
+	cost_amount: int = 5,
+	credit_cost: int = 5
 ) -> bool:
-	if not can_build_worker_factory(faction, planet_id, has_shipyard, first_scan_done, has_automation_tech, available_slots, cost_resource, cost_amount):
+	if not can_build_worker_factory(faction, planet_id, has_shipyard, first_scan_done, has_automation_tech, available_slots, cost_resource, cost_amount, credit_cost):
 		return false
-	if not spend_faction_resource(faction, cost_resource, cost_amount):
+	if not spend_cost(faction, cost_resource, cost_amount, credit_cost):
 		return false
 	worker_factories[planet_id] = true
 	worker_factory_built.emit(planet_id)
@@ -529,6 +760,8 @@ func generate_resources_for_planet(
 			var maintenance_resource: StringName = def.trait_definition.maintenance_cost_resource
 			if not String(maintenance_resource).is_empty() and def.trait_definition.maintenance_cost_amount > 0:
 				spend_faction_resource(faction, maintenance_resource, def.trait_definition.maintenance_cost_amount)
+			if def.trait_definition.maintenance_credit_cost > 0:
+				spend_faction_credits(faction, def.trait_definition.maintenance_credit_cost)
 	for planet_technology_id in tech.get_planet_technologies(planet_id):
 		var planet_technology: TechnologyDefinition = GameState.DEFAULT_TECHNOLOGY_CATALOG.resolve(planet_technology_id)
 		if planet_technology != null:
@@ -631,8 +864,8 @@ func seed_local_resources(planet_ids: Array, pool: ResourcePool = null, seed_val
 # --- BUILDINGS ON GRID ---
 
 func can_spend_building_cost(faction: StringName, building: BuildingDefinition) -> bool:
-	if building == null or building.cost_resources.is_empty():
-		return true
+	if building == null or not can_spend_faction_credits(faction, building.credit_cost):
+		return false
 	for resource_id in building.cost_resources:
 		var amount: int = int(building.cost_resources[resource_id])
 		if amount > 0 and not can_spend_faction_resource(faction, resource_id as StringName, amount):
@@ -646,6 +879,58 @@ func spend_building_cost(faction: StringName, building: BuildingDefinition) -> b
 		var amount: int = int(building.cost_resources[resource_id])
 		if amount > 0:
 			spend_faction_resource(faction, resource_id as StringName, amount)
+	return spend_faction_credits(faction, building.credit_cost)
+
+func queue_planet_building(planet_id: StringName, building_id: StringName, q: int, r: int, faction: StringName, reservation_id: StringName, build_time: float, costs: Dictionary) -> bool:
+	var key := "%d:%d" % [q, r]
+	if planet_building_at(planet_id, q, r) != &"" or building_jobs.get(planet_id, {}).has(key):
+		return false
+	if not building_jobs.has(planet_id):
+		building_jobs[planet_id] = {}
+	building_jobs[planet_id][key] = {
+		"building_id": building_id,
+		"q": q,
+		"r": r,
+		"faction": faction,
+		"reservation_id": reservation_id,
+		"remaining": maxf(build_time, 0.001),
+		"costs": costs.duplicate(true),
+	}
+	return true
+
+func building_job_in_progress(planet_id: StringName, q: int, r: int) -> bool:
+	return building_jobs.has(planet_id) and (building_jobs[planet_id] as Dictionary).has("%d:%d" % [q, r])
+
+func advance_building_jobs(delta: float) -> void:
+	if delta <= 0.0:
+		return
+	for planet_value in building_jobs.keys():
+		var planet_id: StringName = planet_value as StringName
+		var jobs: Dictionary = building_jobs[planet_id]
+		for key in jobs.keys():
+			var job: Dictionary = jobs[key]
+			var remaining: float = float(job.get("remaining", 0.0)) - delta
+			if remaining > 0.0:
+				job["remaining"] = remaining
+				continue
+			jobs.erase(key)
+			record_planet_building(planet_id, job.get("building_id", &"") as StringName, int(job.get("q", 0)), int(job.get("r", 0)))
+			release_workers(planet_id, job.get("reservation_id", &"") as StringName)
+		if jobs.is_empty():
+			building_jobs.erase(planet_id)
+
+func abort_building_job(planet_id: StringName, q: int, r: int) -> bool:
+	var key := "%d:%d" % [q, r]
+	if not building_job_in_progress(planet_id, q, r):
+		return false
+	var job: Dictionary = (building_jobs[planet_id] as Dictionary).get(key, {})
+	(building_jobs[planet_id] as Dictionary).erase(key)
+	release_workers(planet_id, job.get("reservation_id", &"") as StringName)
+	var faction: StringName = job.get("faction", &"") as StringName
+	var costs: Dictionary = job.get("costs", {}) as Dictionary
+	for resource_id in costs.get("resources", {}).keys():
+		add_faction_resource(faction, resource_id as StringName, int(costs["resources"][resource_id]))
+	add_faction_credits(faction, int(costs.get("credits", 0)))
 	return true
 
 func record_planet_building(planet_id: StringName, building_id: StringName, q: int, r: int) -> void:
@@ -677,32 +962,91 @@ func planet_buildings_of(planet_id: StringName) -> Dictionary:
 
 # --- TRADE ROUTES ---
 
+func can_register_trade_route(from_planet: StringName, to_planet: StringName, resource_id: StringName) -> bool:
+	if String(from_planet).is_empty() or String(to_planet).is_empty() or from_planet == to_planet or not _is_valid_resource_id(resource_id):
+		return false
+	var owner: StringName = _route_owner(from_planet)
+	if owner == GameState.FACTION_NEUTRAL:
+		return true
+	# A route becomes a market connection only when at least one endpoint is
+	# backed by a trade post/network upgrade. Neutral synthetic test planets
+	# remain valid for deterministic local-vault tests.
+	return has_planet_upgrade(from_planet, &"trade_post") or has_planet_upgrade(from_planet, &"trade_network") or has_planet_upgrade(to_planet, &"trade_post") or has_planet_upgrade(to_planet, &"trade_network")
+
 func register_trade_route(from_planet: StringName, to_planet: StringName, resource_id: StringName) -> StringName:
-	if String(from_planet).is_empty() or String(to_planet).is_empty() or from_planet == to_planet:
+	if not can_register_trade_route(from_planet, to_planet, resource_id):
 		return &""
-	var route_id := StringName("route_%d" % trade_routes.size())
+	_next_trade_route_index += 1
+	var route_id := StringName("route_%d" % _next_trade_route_index)
 	trade_routes[route_id] = {
 		"from": from_planet,
 		"to": to_planet,
 		"resource_id": resource_id,
 		"flow_rate": 1,
 		"active": true,
+		"volume": 0,
+		"last_price": market_price(from_planet, to_planet, resource_id),
+		"toll_credits": 0,
 	}
 	return route_id
 
+func market_price(from_planet: StringName, to_planet: StringName, resource_id: StringName) -> float:
+	if not _is_valid_resource_id(resource_id):
+		return 0.0
+	var source_stock: int = get_local_resource(from_planet, resource_id)
+	var destination_stock: int = get_local_resource(to_planet, resource_id)
+	# Scarcity at the destination raises the price, while source abundance
+	# lowers it. Clamp it to keep the credit economy stable and deterministic.
+	var scarcity: float = clampf(float(destination_stock - source_stock) / 20.0, -0.5, 1.5)
+	var price: float = clampf(1.0 + scarcity, 0.5, 2.5)
+	market_prices[StringName("%s:%s:%s" % [String(from_planet), String(to_planet), String(resource_id)])] = price
+	return price
+
+func get_market_price(from_planet: StringName, to_planet: StringName, resource_id: StringName) -> float:
+	var key := StringName("%s:%s:%s" % [String(from_planet), String(to_planet), String(resource_id)])
+	return float(market_prices.get(key, market_price(from_planet, to_planet, resource_id)))
+
 func trade_routes_snapshot() -> Dictionary:
-	return trade_routes.duplicate()
+	var snapshot: Dictionary = {}
+	for route_id in trade_routes:
+		snapshot[route_id] = (trade_routes[route_id] as Dictionary).duplicate()
+	return snapshot
 
 func tick_trade_routes() -> int:
+	_trade_tick_index += 1
 	var moved := 0
+	var config: EconomyConfig = economy_config if economy_config != null else DEFAULT_ECONOMY_CONFIG
 	for route_id in trade_routes:
 		var route: Dictionary = trade_routes[route_id]
 		if not bool(route.get("active", false)):
 			continue
-		var resource_id: StringName = route["resource_id"]
-		var amount: int = int(route.get("flow_rate", 1))
-		var from_planet: StringName = route["from"]
-		var to_planet: StringName = route["to"]
+		var resource_id: StringName = route["resource_id"] as StringName
+		var amount: int = maxi(int(route.get("flow_rate", 1)), 1)
+		var from_planet: StringName = route["from"] as StringName
+		var to_planet: StringName = route["to"] as StringName
+		var price: float = market_price(from_planet, to_planet, resource_id)
 		if transfer_resources(from_planet, to_planet, resource_id, amount):
 			moved += amount
+			var volume: int = int(route.get("volume", 0)) + amount
+			var toll: int = maxi(1, int(round(float(amount) * price * config.market_toll_rate)))
+			route["volume"] = volume
+			route["last_price"] = price
+			route["toll_credits"] = int(route.get("toll_credits", 0)) + toll
+			trade_volumes[resource_id] = int(trade_volumes.get(resource_id, 0)) + amount
+			# Test fixtures use synthetic planets without ownership. In a live run,
+			# the route owner receives the tariff; neutral routes simply move cargo.
+			var owner: StringName = _route_owner(from_planet)
+			if owner != GameState.FACTION_NEUTRAL:
+				add_faction_credits(owner, toll)
+		trade_routes[route_id] = route
 	return moved
+
+func _route_owner(planet_id: StringName) -> StringName:
+	var tree: SceneTree = Engine.get_main_loop() as SceneTree
+	var state: Node = tree.root.get_node_or_null("GameState") if tree != null and tree.root != null else null
+	if state != null and state.has_method("faction_of"):
+		return state.faction_of(planet_id)
+	return GameState.FACTION_NEUTRAL
+
+func market_snapshot() -> Dictionary:
+	return {"prices": market_prices.duplicate(), "volumes": trade_volumes.duplicate(), "routes": trade_routes_snapshot()}

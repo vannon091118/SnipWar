@@ -235,6 +235,7 @@ Die AI läuft als Overworld-Dispatcher; sie simuliert keine Schiffs- oder Mech-K
 - `PlanetNetworkUI` läuft auf CanvasLayer 50 und delegiert an `VaultBar` und `PlanetPanel`.
 - `TechnologyMenu` läuft auf CanvasLayer 60 und schließt das Planet-Panel bei Öffnung.
 - `PauseMenu` läuft auf CanvasLayer 70 und verarbeitet ESC in `PROCESS_MODE_ALWAYS`; bei offenem Planet- oder Technology-Panel pausiert ESC nicht.
+- `PaperDossier` läuft auf CanvasLayer 80 und zeigt fullscreen Modale (Planeten-Dossier, Werkstatt, Forschungsbaum) mit Papier-Blatt-Tween; `ModalCoordinator` blockiert die Kamera während eines offenen Dossiers.
 - Das Panel berechnet seine effektive Mindestbreite nach dynamischen Listen neu; die Ressourcenleiste wird daneben platziert.
 - `EventLog.push()` schreibt einen sichtbaren Toast-Eintrag, `log_silent()` nur Historie.
 - MessageFeed zeigt nur sichtbare Einträge und begrenzt die Toast-Anzahl.
@@ -311,7 +312,7 @@ Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgefü
 | Layer 3 | Planetare Tower-Defense und aktive Verteidigung | Implementiert | `ConquestSimulator`, `ConquestScene`, `PlanetGrid`, `BuildingCatalog`, 7 Gebäude-Defs |
 | Layer 3 | Ship-as-Minion-Adapter mit visueller/logischer Adaption | Implementiert | `AssaultMinionDefinition.from_ship()`, `ConquestScene` Minion-Spawning |
 | Kampagne | `first_colony`-Meilenstein und persistenter Fortschrittsmarker | Teilweise | `game_state.gd`, `event_log.gd`; Dominanz-/Siegbedingungen bleiben später |
-| UI/Tools | Planet-Panel, VaultBar, TechnologyMenu, MessageFeed, PauseMenu, EventLog | Implementiert | `scripts/ui/*`, `planet_network.gd`, `event_log.gd` |
+| UI/Tools | Planet-Panel, VaultBar, TechnologyMenu, MessageFeed, PauseMenu, EventLog, Paper-Dossier-Modale (Planet/Werkstatt/Forschung) | Implementiert | `scripts/ui/*`, `scripts/ui/dossier/*`, `planet_network.gd`, `event_log.gd` |
 
 ## 16. Umsetzungplan gegen das bestehende Fundament
 

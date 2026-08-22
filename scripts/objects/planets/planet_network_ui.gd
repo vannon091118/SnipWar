@@ -88,6 +88,10 @@ func _connect_game_state_signals() -> void:
 		return
 	if not state.faction_resources_changed.is_connected(_on_faction_resources_changed):
 		state.faction_resources_changed.connect(_on_faction_resources_changed)
+	if state.has_signal("credits_changed") and not state.credits_changed.is_connected(_on_credits_changed):
+		state.credits_changed.connect(_on_credits_changed)
+	if state.has_signal("worker_transport_phase_changed") and not state.worker_transport_phase_changed.is_connected(_on_transport_changed):
+		state.worker_transport_phase_changed.connect(_on_transport_changed)
 	if not state.resource_generated.is_connected(_on_resource_generated):
 		state.resource_generated.connect(_on_resource_generated)
 	if state.has_signal("resources_collected") and not state.resources_collected.is_connected(_on_resources_collected):
@@ -100,6 +104,13 @@ func _connect_game_state_signals() -> void:
 func _on_faction_resources_changed(faction: StringName, _resource_id: StringName, _new_amount: int) -> void:
 	if faction != GameState.FACTION_PLAYER:
 		return
+	_refresh_vault()
+
+func _on_credits_changed(faction: StringName, _amount: int) -> void:
+	if faction == GameState.FACTION_PLAYER:
+		_refresh_vault()
+
+func _on_transport_changed(_transport_id: StringName, _phase: StringName) -> void:
 	_refresh_vault()
 
 func _on_resource_generated(planet_id: StringName, resource_id: StringName, amount: int) -> void:

@@ -61,4 +61,19 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(military_result == Planet.ARRIVAL_CAPTURED and mission_neutral.get_faction() == GameState.FACTION_CPU, "military mission should capture an undefended planet"):
 		return false
 
+	# Transport state is data-first: the visible cluster may be rebuilt, but the
+	# phase/cargo contract must remain available from GameState.
+	var transport_path: Array[Vector2] = [mission_source.global_position, mission_cpu.global_position]
+	var transport_id: StringName = game_state.begin_worker_transport(GameState.FACTION_PLAYER, mission_source.planet_id, mission_cpu.planet_id, 2, 1.0, transport_path)
+	if not ctx.check(not String(transport_id).is_empty(), "worker transport record should be created"):
+		return false
+	if not ctx.check(game_state.get_worker_transport_records(GameState.FACTION_PLAYER).size() == 1 and game_state.get_worker_transport_records(GameState.FACTION_PLAYER)[0].get("phase") == &"outbound", "worker transport should start outbound"):
+		return false
+	game_state.update_worker_transport(transport_id, &"returning", GameState.RES_MATERIAL, 4)
+	var transport_record: Dictionary = game_state.get_worker_transport_records(GameState.FACTION_PLAYER)[0]
+	if not ctx.check(transport_record.get("phase") == &"returning" and transport_record.get("cargo_amount", 0) == 4, "worker transport should persist returning cargo"):
+		return false
+	if not ctx.check(game_state.complete_worker_transport(transport_id) and game_state.get_worker_transport_records(GameState.FACTION_PLAYER).is_empty(), "delivered worker transport should be removed from active records"):
+		return false
+
 	return true

@@ -16,8 +16,11 @@ const LEGACY_SLOT_MODULE := &"module"
 @export var slot_type: StringName = SLOT_HULL
 @export var display_name: String = ""
 @export var description: String = ""
+@export var module_role: String = ""
 @export var cost_resource: StringName = GameState.RES_MATERIAL
 @export var cost_amount: int = 5
+@export var credit_cost: int = 5
+@export var workers_required: int = 1
 @export_range(1, 3, 1) var tier: int = 1
 @export var visual_asset: Texture2D
 @export var trait_definition: TraitDefinition
@@ -36,6 +39,8 @@ func validate() -> PackedStringArray:
 		errors.append("ship part %s display_name is empty" % id)
 	if cost_amount < 0:
 		errors.append("ship part %s cost_amount cannot be negative" % id)
+	if credit_cost < 0 or workers_required < 0:
+		errors.append("ship part %s credit/worker costs cannot be negative" % id)
 	if build_time < 0.0:
 		errors.append("ship part %s build_time cannot be negative" % id)
 	if visual_asset == null:

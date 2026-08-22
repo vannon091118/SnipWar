@@ -17,6 +17,7 @@ extends Resource
 @export_range(0, 20, 1) var fov_radius_bonus: int = 0
 @export var maintenance_cost_resource: StringName = &""
 @export var maintenance_cost_amount: int = 0
+@export var maintenance_credit_cost: int = 0
 
 @export_group("Combat / Unit Stats")
 @export var hull_hp_bonus: int = 0
@@ -32,6 +33,8 @@ func validate() -> PackedStringArray:
 		errors.append("trait display_name is empty")
 	if cluster_tier_bonus < 0:
 		errors.append("trait cluster_tier_bonus cannot be negative")
+	if maintenance_credit_cost < 0:
+		errors.append("trait maintenance_credit_cost cannot be negative")
 	if gather_income_multiplier <= 0.0:
 		errors.append("trait gather_income_multiplier must be positive")
 	for effect in effects:

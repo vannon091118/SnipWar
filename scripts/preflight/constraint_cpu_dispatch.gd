@@ -53,7 +53,7 @@ func run(ctx: PreflightContext) -> bool:
 			return false
 		game_state.call("advance_research", 999.0)
 	var shipyard_upgrade: PlanetUpgradeDefinition = upgrade_catalog.resolve(&"shipyard")
-	if not ctx.check(shipyard_upgrade != null and shipyard_upgrade.cost_workers == 2, "shipyard should cost 2 workers"):
+	if not ctx.check(shipyard_upgrade != null and shipyard_upgrade.workers_required == 2, "shipyard should reserve 2 workers"):
 		return false
 	if not ctx.check(not game_state.can_purchase_upgrade(player_homeworld, &"shipyard", upgrade_catalog, 1), "shipyard must not be buyable with only 1 worker"):
 		return false

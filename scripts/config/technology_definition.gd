@@ -12,6 +12,7 @@ const CATEGORY_PLANET := &"planet"
 @export var description: String = ""
 @export var cost_resource: StringName = GameState.RES_ENERGY
 @export var cost_amount: int = 10
+@export var credit_cost: int = 5
 @export var prerequisite_tech_id: StringName = &""
 @export var requires_discovery: bool = false
 ## Mutually exclusive tech: if this ID is already researched, this tech is blocked
@@ -35,6 +36,8 @@ func validate() -> PackedStringArray:
 		errors.append("technology %s has invalid category %s" % [id, category])
 	if cost_amount < 0:
 		errors.append("technology %s cost_amount cannot be negative" % id)
+	if credit_cost < 0:
+		errors.append("technology %s credit_cost cannot be negative" % id)
 	if visual_asset == null:
 		errors.append("technology %s visual_asset is missing" % id)
 	if String(effect_id).is_empty():

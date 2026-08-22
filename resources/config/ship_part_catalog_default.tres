@@ -498,35 +498,55 @@ variant_pool = [SubResource("Variant_shield_t2_harmonic"), SubResource("Variant_
 required_tech_id = &"weapon_systems"
 build_time = 12.0
 
+[sub_resource type="Resource" id="Trait_module_defense"]
+script = ExtResource("3_trait")
+id = &"trait_module_defense"
+display_name = "Verteidigungspanzerung"
+description = "+12 Hüllenpunkte und +4 Verteidigungswert"
+hull_hp_bonus = 12
+defense_rating = 4
+
 [sub_resource type="Resource" id="Part_module_armor"]
 script = ExtResource("2_part")
-id = &"module_armor"
+id = &"defense_module"
 slot_type = &"utility"
-display_name = "Panzermodul"
+display_name = "Verteidigungsmodul"
+module_role = "military"
 description = "Zusätzliche Hüllenpanzerung für das Schiff."
 cost_resource = &"material"
 cost_amount = 4
 tier = 1
 visual_asset = ExtResource("49_module_armor")
+trait_definition = SubResource("Trait_module_defense")
 build_time = 10.0
+
+[sub_resource type="Resource" id="Trait_module_transport"]
+script = ExtResource("3_trait")
+id = &"trait_module_transport"
+display_name = "Frachtkern"
+description = "+10% Transfergeschwindigkeit"
+transfer_speed_multiplier = 1.1
 
 [sub_resource type="Resource" id="Part_module_fuel"]
 script = ExtResource("2_part")
-id = &"module_fuel"
+id = &"transport_module"
 slot_type = &"utility"
-display_name = "Treibstoffmodul"
+display_name = "Transportmodul"
+module_role = "transport"
 description = "Erweiterter Tank für längere Routen."
 cost_resource = &"volatile"
 cost_amount = 4
 tier = 1
 visual_asset = ExtResource("50_module_fuel")
+trait_definition = SubResource("Trait_module_transport")
 build_time = 10.0
 
 [sub_resource type="Resource" id="Part_module_cargo"]
 script = ExtResource("2_part")
-id = &"module_cargo"
+id = &"colony_module"
 slot_type = &"utility"
-display_name = "Frachtmodul"
+display_name = "Koloniemodul"
+module_role = "colony"
 description = "Zusätzlicher Laderaum für Versorgungsmissionen."
 cost_resource = &"material"
 cost_amount = 4
@@ -554,6 +574,28 @@ id = &"trait_module_reactor"
 display_name = "Reaktorkern"
 description = "+10% Transfergeschwindigkeit"
 transfer_speed_multiplier = 1.1
+
+[sub_resource type="Resource" id="Trait_module_science"]
+script = ExtResource("3_trait")
+id = &"trait_module_science"
+display_name = "Forschungssensor"
+description = "+40 px Sensorreichweite"
+range_bonus = 40.0
+
+[sub_resource type="Resource" id="Part_module_science"]
+script = ExtResource("2_part")
+id = &"science_module"
+slot_type = &"utility"
+display_name = "Wissenschaftsmodul"
+module_role = "research"
+description = "Erweitert die Sensorreichweite des Forschungsschiffs."
+cost_resource = &"energy"
+cost_amount = 8
+tier = 1
+visual_asset = ExtResource("54_module_sensor")
+trait_definition = SubResource("Trait_module_science")
+required_tech_id = &"scanner_drone"
+build_time = 10.0
 
 [sub_resource type="Resource" id="Part_module_reactor"]
 script = ExtResource("2_part")
@@ -641,4 +683,4 @@ build_time = 10.0
 script = ExtResource("1_catalog")
 max_module_slots = 2
 blueprints = [SubResource("Blueprint_standard")]
-parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t1_interceptor"), SubResource("Part_hull_t1_courier"), SubResource("Part_hull_t2"), SubResource("Part_hull_t2_carrier"), SubResource("Part_hull_t2_destroyer"), SubResource("Part_hull_t3"), SubResource("Part_hull_t3_colony"), SubResource("Part_hull_t3_dreadnought"), SubResource("Part_scanner_t1"), SubResource("Part_scanner_t2"), SubResource("Part_drive_t1"), SubResource("Part_drive_t2"), SubResource("Part_weapon_t1"), SubResource("Part_weapon_t2"), SubResource("Part_shield_t1"), SubResource("Part_shield_t2"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo"), SubResource("Part_module_reactor"), SubResource("Part_module_reinforced"), SubResource("Part_module_sensor_array"), SubResource("Part_module_ecm"), SubResource("Part_module_repair")]
+parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t1_interceptor"), SubResource("Part_hull_t1_courier"), SubResource("Part_hull_t2"), SubResource("Part_hull_t2_carrier"), SubResource("Part_hull_t2_destroyer"), SubResource("Part_hull_t3"), SubResource("Part_hull_t3_colony"), SubResource("Part_hull_t3_dreadnought"), SubResource("Part_scanner_t1"), SubResource("Part_scanner_t2"), SubResource("Part_drive_t1"), SubResource("Part_drive_t2"), SubResource("Part_weapon_t1"), SubResource("Part_weapon_t2"), SubResource("Part_shield_t1"), SubResource("Part_shield_t2"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo"), SubResource("Part_module_science"), SubResource("Part_module_reactor"), SubResource("Part_module_reinforced"), SubResource("Part_module_sensor_array"), SubResource("Part_module_ecm"), SubResource("Part_module_repair")]

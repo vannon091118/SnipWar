@@ -14,7 +14,7 @@ var _category: StringName = TechnologyDefinition.CATEGORY_SHIPS
 var _countdown_accumulator: float = 0.0
 
 var _research_view := TechResearchView.new()
-var _scout_view := TechScoutView.new()
+var _research_ship_view := TechResearchShipView.new()
 var _ship_builder_view := TechShipBuilderView.new()
 var _planet_view := TechPlanetView.new()
 
@@ -29,7 +29,7 @@ func setup(ship_manager: ShipManager, theme_config: UIThemeConfig = null) -> voi
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
 	_ship_manager = ship_manager
 	_research_view.setup(ship_manager, _theme_config)
-	_scout_view.setup(ship_manager, _theme_config)
+	_research_ship_view.setup(ship_manager, _theme_config)
 	_ship_builder_view.setup(ship_manager, _theme_config)
 	_planet_view.setup(ship_manager, _theme_config)
 	_ensure_node_references()
@@ -83,6 +83,10 @@ func _connect_signals() -> void:
 		"ship_build_started",
 		"ship_assembled",
 		"ship_disassembled",
+		"research_ship_task_completed",
+		"research_ship_idle",
+		"persistent_ship_changed",
+		"worker_transport_phase_changed",
 	]:
 		if state.has_signal(signal_name) and not state.get(signal_name).is_connected(_on_state_changed):
 			state.get(signal_name).connect(_on_state_changed)
@@ -165,7 +169,7 @@ func _refresh() -> void:
 	if _category == TechnologyDefinition.CATEGORY_SHIPS:
 		_research_view.build_research_section(_list, TechnologyDefinition.CATEGORY_SHIPS, state, _refresh)
 		var planets: Array[Planet] = _ship_manager.get_planets()
-		_scout_view.build_scout_and_worker_section(_list, state, planets, _refresh)
+		_research_ship_view.build_research_ship_and_worker_section(_list, state, planets, _refresh)
 		_ship_builder_view.build_ship_builder_section(_list, state, planets, _refresh)
 	elif _category == TechnologyDefinition.CATEGORY_MECH:
 		_research_view.build_research_section(_list, TechnologyDefinition.CATEGORY_MECH, state, _refresh, "Layer-3-Mechs werden sichtbar geführt, aber erst mit Layer 3 aktiv.")

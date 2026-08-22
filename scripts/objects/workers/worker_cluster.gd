@@ -22,6 +22,12 @@ var transit_config: TransitConfig = DEFAULT_CONFIG
 var mission_type: StringName = &"military"
 var cluster_tier_bonus: int = 0
 var arrival_result: StringName = ARRIVAL_REJECTED
+enum TransitPhase { OUTBOUND, LOADING, RETURNING, DELIVERED }
+var phase: TransitPhase = TransitPhase.OUTBOUND
+var cargo_amount: int = 0
+var cargo_resource_id: StringName = &""
+var _return_path: Array[Vector2] = []
+var _return_duration: float = 0.0
 
 func _ready() -> void:
 	_apply_visuals()
@@ -36,16 +42,41 @@ func configure_transit(source_position: Vector2, destination: Planet, amount: in
 	cluster_tier_bonus = maxi(tier_bonus, 0)
 	source_planet_id = source_id
 	arrival_result = ARRIVAL_REJECTED
+	phase = TransitPhase.OUTBOUND
+	cargo_amount = 0
+	cargo_resource_id = &""
+	_return_path.clear()
+	_return_duration = 0.0
 	_apply_visuals()
 
 func get_unit_count() -> int:
 	return unit_count
+
+func configure_roundtrip(route_path: Array[Vector2], duration: float) -> void:
+	_return_path = route_path.duplicate()
+	_return_path.reverse()
+	_return_duration = maxf(duration, 0.001)
+
+func set_cargo(resource_id: StringName, amount: int) -> void:
+	cargo_resource_id = resource_id
+	cargo_amount = maxi(amount, 0)
+	phase = TransitPhase.LOADING
+
+func begin_return() -> void:
+	phase = TransitPhase.RETURNING
+	global_position = _return_path[0] if not _return_path.is_empty() else global_position
+
+func mark_delivered() -> void:
+	phase = TransitPhase.DELIVERED
 
 func attach_object(object: Node2D, offset := Vector2.ZERO) -> void:
 	_attachments.add_child(object)
 	object.position = offset
 
 func _arrive() -> StringName:
+	if mission_type == GameState.MISSION_COLLECT:
+		phase = TransitPhase.LOADING
+		return ARRIVAL_COLLECTED
 	if is_instance_valid(destination_planet):
 		arrival_result = destination_planet.resolve_mission(source_faction, unit_count, mission_type, source_planet_id)
 		_spawn_arrival_feedback()

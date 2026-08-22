@@ -55,7 +55,7 @@ cost_amount = 10
 prerequisite_tech_id = &"scout_hull"
 visual_asset = ExtResource("4_scanner")
 effect_id = &"scanner_drone"
-mechanic_description = "Mechanik: ScoutShip ruft bei Ankunft GameState.discover_planet() auf."
+mechanic_description = "Mechanik: Das persistente Forschungsschiff scannt bei Abschluss einer Forschungsmission den Zielplaneten."
 production_multiplier = 1.0
 research_time = 2.0
 

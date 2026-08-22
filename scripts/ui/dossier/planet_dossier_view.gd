@@ -135,8 +135,9 @@ func _cost_text(upgrade: PlanetUpgradeDefinition, is_unlocked: bool) -> String:
 	if is_unlocked:
 		return "FREIGESCHALTET"
 	var result := "%d %s" % [upgrade.cost_amount, String(upgrade.cost_resource).capitalize()]
-	if upgrade.cost_workers > 0:
-		result += " · %d Arbeiter" % upgrade.cost_workers
+	result += " · %d Credits" % upgrade.credit_cost
+	if upgrade.workers_required > 0:
+		result += " · Arbeitskräfte: %d" % upgrade.workers_required
 	return result
 
 func _buy_upgrade(planet_id: StringName, upgrade_id: StringName) -> void:
@@ -148,8 +149,7 @@ func _buy_upgrade(planet_id: StringName, upgrade_id: StringName) -> void:
 	var available_workers: int = int(_planet.get("worker_count"))
 	if not _state.purchase_upgrade(planet_id, upgrade_id, _upgrade_catalog, available_workers):
 		return
-	if upgrade.cost_workers > 0:
-		_planet.call("unregister_workers", upgrade.cost_workers)
+	# Workers are temporarily reserved by construction jobs, never consumed.
 	_rebuild_slots()
 
 func _process(delta: float) -> void:

@@ -66,6 +66,9 @@ func boot_default(ctx: PreflightContext) -> bool:
 	if state == null or planet_catalog == null:
 		return false
 	state.call("set_jobs_auto_advance", false)
+	var player_homeworld_id: StringName = state.homeworld_for(GameState.FACTION_PLAYER)
+	if not String(player_homeworld_id).is_empty():
+		state.call("ensure_starter_research_ship", GameState.FACTION_PLAYER, player_homeworld_id)
 	if world_config == null or not world_config.is_infinite_world():
 		state.call("deal_resources", planet_catalog, scenario.map_definition.resource_pool if scenario.map_definition.resource_pool != null else DEFAULT_RESOURCE_POOL, PREFLIGHT_LAYOUT_SEED)
 	await tree.process_frame

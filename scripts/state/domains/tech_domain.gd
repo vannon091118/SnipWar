@@ -42,13 +42,13 @@ func can_research_technology(faction: StringName, technology_id: StringName, cat
 		return false
 	if tech.requires_discovery and not faction_domain.has_scanned_planet(faction):
 		return false
-	return economy.can_spend_faction_resource(faction, tech.cost_resource, tech.cost_amount)
+	return economy.can_spend_cost(faction, tech.cost_resource, tech.cost_amount, tech.credit_cost)
 
 func research_technology(faction: StringName, technology_id: StringName, catalog: TechnologyCatalog, economy: EconomyDomain, faction_domain: FactionDomain) -> bool:
 	if not can_research_technology(faction, technology_id, catalog, economy, faction_domain):
 		return false
 	var tech: TechnologyDefinition = catalog.resolve(technology_id)
-	if not economy.spend_faction_resource(faction, tech.cost_resource, tech.cost_amount):
+	if not economy.spend_cost(faction, tech.cost_resource, tech.cost_amount, tech.credit_cost):
 		return false
 	if tech.research_time <= 0.0:
 		_complete_research(faction, technology_id)
@@ -119,13 +119,13 @@ func can_research_planet_technology(faction: StringName, planet_id: StringName, 
 		return false
 	if not catalog.can_research(get_planet_technologies(planet_id), technology_id):
 		return false
-	return economy.can_spend_faction_resource(faction, tech.cost_resource, tech.cost_amount)
+	return economy.can_spend_cost(faction, tech.cost_resource, tech.cost_amount, tech.credit_cost)
 
 func research_planet_technology(faction: StringName, planet_id: StringName, technology_id: StringName, catalog: TechnologyCatalog, economy: EconomyDomain, faction_domain: FactionDomain) -> bool:
 	if not can_research_planet_technology(faction, planet_id, technology_id, catalog, economy, faction_domain):
 		return false
 	var tech: TechnologyDefinition = catalog.resolve(technology_id)
-	if not economy.spend_faction_resource(faction, tech.cost_resource, tech.cost_amount):
+	if not economy.spend_cost(faction, tech.cost_resource, tech.cost_amount, tech.credit_cost):
 		return false
 	if not planet_technologies.has(planet_id):
 		planet_technologies[planet_id] = []

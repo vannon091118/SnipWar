@@ -40,6 +40,9 @@ const DEFAULT_BUILDING_CATALOG: BuildingCatalog = preload("res://resources/confi
 signal faction_changed(planet_id: StringName, old_faction: StringName, new_faction: StringName)
 signal catalog_reset(catalog: PlanetCatalog)
 signal faction_resources_changed(faction: StringName, resource_id: StringName, new_amount: int)
+signal credits_changed(faction: StringName, new_amount: int)
+signal workers_reserved(planet_id: StringName, job_id: StringName, amount: int)
+signal workers_released(planet_id: StringName, job_id: StringName, amount: int)
 signal planet_upgraded(planet_id: StringName, upgrade_id: StringName)
 signal resource_generated(planet_id: StringName, resource_id: StringName, amount: int)
 signal planet_discovered(faction: StringName, planet_id: StringName)
@@ -56,15 +59,21 @@ signal ship_disassembled(planet_id: StringName, ship_id: StringName)
 signal ship_launched(planet_id: StringName, ship_id: StringName, role: StringName)
 signal ship_lost(planet_id: StringName, ship_id: StringName)
 signal milestone_reached(faction: StringName, milestone_id: StringName)
+signal mid_game_started(faction: StringName)
 signal refinery_converted(planet_id: StringName, faction: StringName, consumed: Dictionary, produced: Dictionary)
 signal research_started(faction: StringName, technology_id: StringName, remaining: float)
 signal ship_build_started(planet_id: StringName, ship_id: StringName, remaining: float)
+signal research_ship_task_completed(mission_id: StringName, target_planet_id: StringName, task_type: StringName)
+signal research_ship_idle(ship_id: StringName, planet_id: StringName)
+signal persistent_ship_changed(ship_id: StringName, status: StringName)
 signal battle_context_changed(context: BattleContext)
 signal transit_changed(record: TransitRecord)
 signal run_started(run_id: StringName, layout_seed: int)
 signal planet_building_placed(planet_id: StringName, q: int, r: int, building_id: StringName)
 signal planet_building_destroyed(planet_id: StringName, q: int, r: int)
 signal resource_transferred(from_planet: StringName, to_planet: StringName, resource_id: StringName, amount: int)
+signal worker_transport_started(transport_id: StringName, faction: StringName, amount: int)
+signal worker_transport_phase_changed(transport_id: StringName, phase: StringName)
 signal local_resources_changed(planet_id: StringName, resource_id: StringName, new_amount: int)
 
 var faction_domain := FactionDomain.new()
@@ -129,12 +138,15 @@ func _init() -> void:
 func _connect_domain_signals() -> void:
 	# Typed signals in Godot 4.x must be forwarded with explicit arg lists, so
 	# each connection lists the source/domain and target/facade pair.
-	faction_domain.faction_changed.connect(func(p, o, n): faction_changed.emit(p, o, n))
+	faction_domain.faction_changed.connect(_on_domain_faction_changed)
 	faction_domain.planet_discovered.connect(func(f, p): planet_discovered.emit(f, p))
 	faction_domain.planet_scanned.connect(func(f, p, r, s, b): planet_scanned.emit(f, p, r, s, b))
-	faction_domain.milestone_reached.connect(func(f, m): milestone_reached.emit(f, m))
+	faction_domain.milestone_reached.connect(_on_domain_milestone_reached)
 
 	economy_domain.faction_resources_changed.connect(func(f, r, a): faction_resources_changed.emit(f, r, a))
+	economy_domain.credits_changed.connect(func(f, a): credits_changed.emit(f, a))
+	economy_domain.workers_reserved.connect(func(p, j, a): workers_reserved.emit(p, j, a))
+	economy_domain.workers_released.connect(func(p, j, a): workers_released.emit(p, j, a))
 	economy_domain.planet_upgraded.connect(func(p, u): planet_upgraded.emit(p, u))
 	economy_domain.resource_generated.connect(func(p, r, a): resource_generated.emit(p, r, a))
 	economy_domain.resources_collected.connect(func(f, p, r, a): resources_collected.emit(f, p, r, a))
@@ -152,11 +164,29 @@ func _connect_domain_signals() -> void:
 	tech_domain.research_started.connect(func(f, t, r): research_started.emit(f, t, r))
 
 	ship_domain.ship_part_purchased.connect(func(p, pt): ship_part_purchased.emit(p, pt))
-	ship_domain.ship_assembled.connect(func(p, s): ship_assembled.emit(p, s))
+	ship_domain.ship_assembled.connect(_on_ship_assembled_domain)
 	ship_domain.ship_disassembled.connect(func(p, s): ship_disassembled.emit(p, s))
 	ship_domain.ship_launched.connect(func(p, s, r): ship_launched.emit(p, s, r))
 	ship_domain.ship_lost.connect(func(p, s): ship_lost.emit(p, s))
 	ship_domain.ship_build_started.connect(func(p, s, r): ship_build_started.emit(p, s, r))
+	ship_domain.research_ship_task_completed.connect(func(m, p, t): research_ship_task_completed.emit(m, p, t))
+	ship_domain.research_ship_idle.connect(func(s, p): research_ship_idle.emit(s, p))
+	ship_domain.persistent_ship_changed.connect(func(s, status): persistent_ship_changed.emit(s, status))
+
+func _on_ship_assembled_domain(planet_id: StringName, ship_id: StringName) -> void:
+	economy_domain.release_workers(planet_id, ship_id)
+	ship_assembled.emit(planet_id, ship_id)
+	mark_milestone(faction_of(planet_id), &"first_ship")
+
+func _on_domain_faction_changed(planet_id: StringName, old_faction: StringName, new_faction: StringName) -> void:
+	faction_changed.emit(planet_id, old_faction, new_faction)
+	if new_faction != FACTION_NEUTRAL and get_ownership_count(new_faction) >= 2:
+		mark_milestone(new_faction, &"second_planet")
+
+func _on_domain_milestone_reached(faction: StringName, milestone_id: StringName) -> void:
+	milestone_reached.emit(faction, milestone_id)
+	if faction == FACTION_PLAYER and milestone_id == &"second_planet":
+		mid_game_started.emit(faction)
 
 func reset_from_catalog(catalog: PlanetCatalog) -> void:
 	faction_domain.reset(catalog)
@@ -188,6 +218,8 @@ func begin_new_game(catalog: PlanetCatalog, scenario_id: StringName, layout_seed
 		reset_for_infinite_world()
 	else:
 		reset_from_catalog(catalog)
+	var player_homeworld: StringName = faction_domain.homeworld_for(FACTION_PLAYER)
+	ship_domain.ensure_starter_research_ship(FACTION_PLAYER, player_homeworld, DEFAULT_SHIP_PART_CATALOG)
 	run_started.emit(_run_id, _run_layout_seed)
 
 ## Reconnects a newly loaded world scene to this run without mutating any
@@ -270,16 +302,43 @@ func next_transit_id() -> StringName:
 func set_jobs_auto_advance(auto_advance: bool) -> void:
 	_jobs_auto_advance = auto_advance
 
+func advance_upgrade_builds(delta: float) -> void:
+	economy_domain.advance_upgrade_builds(delta)
+
+func upgrade_build_in_progress(planet_id: StringName, upgrade_id: StringName = &"") -> bool:
+	return economy_domain.upgrade_build_in_progress(planet_id, upgrade_id)
+
+func upgrade_build_remaining(planet_id: StringName, upgrade_id: StringName) -> float:
+	return economy_domain.upgrade_build_remaining(planet_id, upgrade_id)
+
+func abort_upgrade_build(planet_id: StringName, upgrade_id: StringName) -> bool:
+	return economy_domain.abort_upgrade_build(planet_id, upgrade_id)
+
+func advance_building_jobs(delta: float) -> void:
+	economy_domain.advance_building_jobs(delta)
+
+func building_job_in_progress(planet_id: StringName, q: int, r: int) -> bool:
+	return economy_domain.building_job_in_progress(planet_id, q, r)
+
+func abort_building_job(planet_id: StringName, q: int, r: int) -> bool:
+	return economy_domain.abort_building_job(planet_id, q, r)
+
 func advance_research(delta: float) -> void:
 	tech_domain.advance_research(delta)
 
 func advance_builds(delta: float) -> void:
 	ship_domain.advance_builds(delta)
 
+func advance_research_ship_tasks(delta: float) -> void:
+	ship_domain.advance_research_ship_tasks(delta)
+
 func _process(delta: float) -> void:
 	if _jobs_auto_advance:
 		advance_research(delta)
 		advance_builds(delta)
+		economy_domain.advance_upgrade_builds(delta)
+		economy_domain.advance_building_jobs(delta)
+		ship_domain.advance_research_ship_tasks(delta)
 
 # --- FACTION & OWNERSHIP DELEGATES ---
 func set_faction(planet_id: StringName, faction: StringName) -> void:
@@ -319,7 +378,10 @@ func discover_planet(faction: StringName, planet_id: StringName) -> bool:
 	return faction_domain.discover_planet(faction, planet_id)
 
 func scan_planet(faction: StringName, planet_id: StringName, resource_id: StringName = &"", size_id: StringName = &"", build_slots: int = 0) -> bool:
-	return faction_domain.scan_planet(faction, planet_id, resource_id, size_id, build_slots)
+	var newly_scanned: bool = faction_domain.scan_planet(faction, planet_id, resource_id, size_id, build_slots)
+	if newly_scanned:
+		mark_milestone(faction, &"first_scan")
+	return newly_scanned
 
 func is_known(planet_id: StringName, faction: StringName) -> bool:
 	return faction_domain.is_known(planet_id, faction)
@@ -343,13 +405,58 @@ func has_milestone(faction: StringName, milestone_id: StringName) -> bool:
 func get_milestones(faction: StringName) -> Dictionary:
 	return faction_domain.get_milestones(faction)
 
-func get_starter_scouts(faction: StringName) -> int:
-	return faction_domain.get_starter_scouts(faction)
-
-func consume_starter_scout(faction: StringName) -> bool:
-	return faction_domain.consume_starter_scout(faction)
-
 # --- ECONOMY & VAULT DELEGATES ---
+func credit_transport_resources(faction: StringName, resource_id: StringName, amount: int) -> bool:
+	var credited: bool = economy_domain.credit_transport_resources(faction, resource_id, amount)
+	if credited:
+		mark_milestone(faction, &"first_transport")
+	return credited
+
+func get_faction_credits(faction: StringName) -> int:
+	return economy_domain.get_faction_credits(faction)
+
+func add_faction_credits(faction: StringName, amount: int) -> int:
+	return economy_domain.add_faction_credits(faction, amount)
+
+func spend_faction_credits(faction: StringName, amount: int) -> bool:
+	return economy_domain.spend_faction_credits(faction, amount)
+
+func can_spend_faction_credits(faction: StringName, amount: int) -> bool:
+	return economy_domain.can_spend_faction_credits(faction, amount)
+
+func can_spend_faction_cost(faction: StringName, resource_id: StringName, resource_amount: int, credit_amount: int) -> bool:
+	return economy_domain.can_spend_cost(faction, resource_id, resource_amount, credit_amount)
+
+func begin_worker_transport(faction: StringName, source_planet_id: StringName, destination_planet_id: StringName, amount: int, duration: float, route_path: Array[Vector2]) -> StringName:
+	var transport_id: StringName = economy_domain.begin_worker_transport(faction, source_planet_id, destination_planet_id, amount, duration, route_path)
+	if not String(transport_id).is_empty():
+		worker_transport_started.emit(transport_id, faction, amount)
+	return transport_id
+
+func update_worker_transport(transport_id: StringName, phase: StringName, cargo_resource_id: StringName = &"", cargo_amount: int = 0) -> bool:
+	var updated: bool = economy_domain.update_worker_transport(transport_id, phase, cargo_resource_id, cargo_amount)
+	if updated:
+		worker_transport_phase_changed.emit(transport_id, phase)
+	return updated
+
+func set_worker_transport_escorted(transport_id: StringName, escorted: bool = true) -> bool:
+	return economy_domain.set_worker_transport_escorted(transport_id, escorted)
+
+func get_worker_transport_records(faction: StringName = &"") -> Array[Dictionary]:
+	return economy_domain.get_worker_transport_records(faction)
+
+func complete_worker_transport(transport_id: StringName, delivered: bool = true) -> bool:
+	return economy_domain.complete_worker_transport(transport_id, delivered)
+
+func get_market_price(from_planet: StringName, to_planet: StringName, resource_id: StringName) -> float:
+	return economy_domain.get_market_price(from_planet, to_planet, resource_id)
+
+func market_snapshot() -> Dictionary:
+	return economy_domain.market_snapshot()
+
+func spend_faction_cost(faction: StringName, resource_id: StringName, resource_amount: int, credit_amount: int) -> bool:
+	return economy_domain.spend_cost(faction, resource_id, resource_amount, credit_amount)
+
 func get_faction_resource(faction: StringName, resource_id: StringName) -> int:
 	return economy_domain.get_faction_resource(faction, resource_id)
 
@@ -401,14 +508,20 @@ func can_purchase_upgrade(planet_id: StringName, upgrade_id: StringName, catalog
 	var upgrade: PlanetUpgradeDefinition = effective_catalog.resolve(upgrade_id) if effective_catalog != null else null
 	if upgrade == null or (not String(upgrade.required_technology_id).is_empty() and not has_technology(faction, upgrade.required_technology_id)):
 		return false
-	return economy_domain.can_purchase_upgrade(faction, planet_id, upgrade_id, available_workers, effective_catalog)
+	var workforce: int = available_workers
+	if workforce < 0 and faction_domain.starting_workers.has(planet_id):
+		workforce = int(faction_domain.starting_workers.get(planet_id, 0))
+	return economy_domain.can_purchase_upgrade(faction, planet_id, upgrade_id, workforce, effective_catalog)
 
 func purchase_upgrade(planet_id: StringName, upgrade_id: StringName, catalog: PlanetUpgradeCatalog = null, available_workers: int = -1) -> bool:
 	var faction: StringName = faction_of(planet_id)
 	if not can_purchase_upgrade(planet_id, upgrade_id, catalog, available_workers):
 		return false
 	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else DEFAULT_UPGRADE_CATALOG
-	return economy_domain.purchase_upgrade(faction, planet_id, upgrade_id, available_workers, effective_catalog)
+	var workforce: int = available_workers
+	if workforce < 0 and faction_domain.starting_workers.has(planet_id):
+		workforce = int(faction_domain.starting_workers.get(planet_id, 0))
+	return economy_domain.purchase_upgrade(faction, planet_id, upgrade_id, workforce, effective_catalog)
 
 func add_planet_upgrade(planet_id: StringName, upgrade_id: StringName) -> void:
 	economy_domain.add_planet_upgrade(planet_id, upgrade_id)
@@ -416,7 +529,7 @@ func add_planet_upgrade(planet_id: StringName, upgrade_id: StringName) -> void:
 func has_worker_factory(planet_id: StringName) -> bool:
 	return economy_domain.has_worker_factory(planet_id)
 
-func can_build_worker_factory(planet_id: StringName, cost_resource: StringName, cost_amount: int) -> bool:
+func can_build_worker_factory(planet_id: StringName, cost_resource: StringName, cost_amount: int, credit_cost: int = 5) -> bool:
 	var faction: StringName = faction_of(planet_id)
 	return economy_domain.can_build_worker_factory(
 		faction,
@@ -426,12 +539,13 @@ func can_build_worker_factory(planet_id: StringName, cost_resource: StringName, 
 		has_technology(faction, TECH_WORKER_AUTOMATION),
 		-1,
 		cost_resource,
-		cost_amount
+		cost_amount,
+		credit_cost
 	)
 
-func build_worker_factory(planet_id: StringName, cost_resource: StringName, cost_amount: int) -> bool:
+func build_worker_factory(planet_id: StringName, cost_resource: StringName, cost_amount: int, credit_cost: int = 5) -> bool:
 	var faction: StringName = faction_of(planet_id)
-	return economy_domain.build_worker_factory(
+	var built: bool = economy_domain.build_worker_factory(
 		faction,
 		planet_id,
 		has_planet_upgrade(planet_id, &"shipyard"),
@@ -439,14 +553,30 @@ func build_worker_factory(planet_id: StringName, cost_resource: StringName, cost
 		has_technology(faction, TECH_WORKER_AUTOMATION),
 		-1,
 		cost_resource,
-		cost_amount
+		cost_amount,
+		credit_cost
 	)
+	if built:
+		mark_milestone(faction, &"first_worker_factory")
+	return built
 
 func register_gathering_workers(faction: StringName, planet_id: StringName, worker_amount: int, source_planet_id: StringName = &"") -> int:
 	if faction == FACTION_NEUTRAL or faction.is_empty() or faction_of(planet_id) != FACTION_NEUTRAL or not has_scanned_planet(faction, planet_id):
 		return 0
 	economy_domain.register_gathering_workers(faction, planet_id, source_planet_id, worker_amount)
 	return economy_domain.gathering_workers_on(faction, planet_id)
+
+func get_reserved_workers(planet_id: StringName) -> int:
+	return economy_domain.reserved_workers_on(planet_id)
+
+func get_available_workers(planet_id: StringName, total_workers: int) -> int:
+	return economy_domain.available_workers(planet_id, total_workers)
+
+func reserve_workers(planet_id: StringName, job_id: StringName, amount: int, total_workers: int) -> bool:
+	return economy_domain.reserve_workers(planet_id, job_id, amount, total_workers)
+
+func release_workers(planet_id: StringName, job_id: StringName) -> int:
+	return economy_domain.release_workers(planet_id, job_id)
 
 func get_gathering_workers(faction: StringName, planet_id: StringName) -> int:
 	return economy_domain.gathering_workers_on(faction, planet_id)
@@ -500,6 +630,42 @@ func research_planet_technology(faction: StringName, planet_id: StringName, tech
 	return tech_domain.research_planet_technology(faction, planet_id, technology_id, cat, economy_domain, faction_domain)
 
 # --- SHIP & FLEET DELEGATES ---
+func ensure_starter_research_ship(faction: StringName, planet_id: StringName) -> StringName:
+	return ship_domain.ensure_starter_research_ship(faction, planet_id, DEFAULT_SHIP_PART_CATALOG)
+
+func mark_research_ship_departed(ship_id: StringName) -> bool:
+	return ship_domain.mark_research_ship_departed(ship_id)
+
+func mark_research_ship_arrived(ship_id: StringName, planet_id: StringName) -> bool:
+	return ship_domain.mark_research_ship_arrived(ship_id, planet_id)
+
+func get_research_ship_records(faction: StringName = &"") -> Array[Dictionary]:
+	return ship_domain.get_research_ship_records(faction)
+
+func register_persistent_fleet(fleet: FleetSnapshot, status: StringName = &"in_transit") -> void:
+	ship_domain.register_persistent_fleet(fleet, status)
+
+func get_persistent_ship_records(faction: StringName = &"") -> Array[Dictionary]:
+	return ship_domain.get_persistent_ship_records(faction)
+
+func mark_persistent_ship_arrived(ship_id: StringName, planet_id: StringName, status: StringName = &"idle") -> bool:
+	return ship_domain.mark_persistent_ship_arrived(ship_id, planet_id, status)
+
+func mark_persistent_ship_lost(ship_id: StringName) -> bool:
+	return ship_domain.mark_persistent_ship_lost(ship_id)
+
+func get_research_missions(faction: StringName = &"") -> Array[Dictionary]:
+	return ship_domain.get_research_missions(faction)
+
+func queue_research_mission(faction: StringName, target_planet_id: StringName, task_type: StringName, duration: float = 2.0) -> StringName:
+	return ship_domain.queue_research_mission(faction, target_planet_id, task_type, duration)
+
+func cancel_research_mission(mission_id: StringName) -> bool:
+	return ship_domain.cancel_research_mission(mission_id)
+
+func get_persistent_ship(ship_id: StringName) -> RefCounted:
+	return ship_domain.get_persistent_ship(ship_id)
+
 func get_ship_part_inventory(planet_id: StringName) -> Dictionary:
 	return ship_domain.get_ship_part_inventory(planet_id)
 
@@ -603,8 +769,29 @@ func place_planet_building(planet_id: StringName, building_id: StringName, q: in
 	var cat: BuildingCatalog = catalog if catalog != null else DEFAULT_BUILDING_CATALOG
 	var building: BuildingDefinition = cat.resolve(building_id)
 	var faction: StringName = faction_of(planet_id)
-	if not economy_domain.spend_building_cost(faction, building):
+	var job_id := StringName("building_%s_%d_%d" % [String(building_id), q, r])
+	if economy_domain.building_job_in_progress(planet_id, q, r) or economy_domain.planet_building_at(planet_id, q, r) != &"":
 		return false
+	var total_workers: int = maxi(int(faction_domain.starting_workers.get(planet_id, 0)), building.workers_required)
+	if building.workers_required > 0 and not economy_domain.reserve_workers(planet_id, job_id, building.workers_required, total_workers):
+		return false
+	if not economy_domain.spend_building_cost(faction, building):
+		economy_domain.release_workers(planet_id, job_id)
+		return false
+	if building.build_time > 0.0:
+		var queued: bool = economy_domain.queue_planet_building(
+			planet_id, building_id, q, r, faction, job_id, building.build_time,
+			{"resources": building.cost_resources, "credits": building.credit_cost}
+		)
+		if queued:
+			return true
+		# Roll back an impossible queue without leaking costs or labor.
+		economy_domain.release_workers(planet_id, job_id)
+		for resource_id in building.cost_resources:
+			economy_domain.add_faction_resource(faction, resource_id as StringName, int(building.cost_resources[resource_id]))
+		economy_domain.add_faction_credits(faction, building.credit_cost)
+		return false
+	economy_domain.release_workers(planet_id, job_id)
 	economy_domain.record_planet_building(planet_id, building_id, q, r)
 	return true
 
@@ -627,13 +814,16 @@ func spend_local_resource(planet_id: StringName, resource_id: StringName, amount
 	return economy_domain.spend_local_resource(planet_id, resource_id, amount)
 
 func can_spend_local_resource(planet_id: StringName, resource_id: StringName, amount: int) -> bool:
-	return economy_domain.get_local_resource(planet_id, resource_id) >= amount
+	return amount >= 0 and economy_domain.get_local_resource(planet_id, resource_id) >= amount
 
 func transfer_local_resources(from_planet: StringName, to_planet: StringName, resource_id: StringName, amount: int) -> bool:
 	return economy_domain.transfer_resources(from_planet, to_planet, resource_id, amount)
 
 func deal_local_resources(planet_ids: Array, pool: ResourcePool = null, seed_value: int = 0) -> void:
 	economy_domain.seed_local_resources(planet_ids, pool, seed_value)
+
+func can_register_trade_route(from_planet: StringName, to_planet: StringName, resource_id: StringName) -> bool:
+	return economy_domain.can_register_trade_route(from_planet, to_planet, resource_id)
 
 func register_trade_route(from_planet: StringName, to_planet: StringName, resource_id: StringName) -> StringName:
 	return economy_domain.register_trade_route(from_planet, to_planet, resource_id)

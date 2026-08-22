@@ -15,7 +15,6 @@ var known_planets: Dictionary = {}
 var scanned_planets: Dictionary = {}
 var scan_intel: Dictionary = {}
 var milestones: Dictionary = {}
-var starter_scouts: Dictionary = {}
 
 func reset(catalog: PlanetCatalog) -> void:
 	_reset_state()
@@ -41,7 +40,6 @@ func _reset_state() -> void:
 	scanned_planets.clear()
 	scan_intel.clear()
 	milestones.clear()
-	starter_scouts = {GameState.FACTION_PLAYER: 1, GameState.FACTION_CPU: 0}
 
 func remember_planet(faction: StringName, planet_id: StringName) -> void:
 	if String(faction).is_empty() or faction == GameState.FACTION_NEUTRAL or String(planet_id).is_empty():
@@ -206,13 +204,3 @@ func get_milestones(faction: StringName) -> Dictionary:
 	if not milestones.has(faction):
 		return {}
 	return (milestones[faction] as Dictionary).duplicate()
-
-func get_starter_scouts(faction: StringName) -> int:
-	return int(starter_scouts.get(faction, 0))
-
-func consume_starter_scout(faction: StringName) -> bool:
-	var available := get_starter_scouts(faction)
-	if available <= 0:
-		return false
-	starter_scouts[faction] = available - 1
-	return true
