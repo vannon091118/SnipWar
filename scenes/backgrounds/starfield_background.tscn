@@ -1,36 +1,11 @@
-[gd_scene format=3 uid="uid://ds4q1ugkyn17l"]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" uid="uid://bradt0hpvtxxc" path="res://scripts/backgrounds/starfield_background.gd" id="1_background"]
-[ext_resource type="PackedScene" path="res://scenes/objects/planets/planet_field.tscn" id="2_planet_field"]
-[ext_resource type="Script" uid="uid://b5kvkwu5mpr8r" path="res://scripts/bootstrap/bootstrap.gd" id="3_bootstrap"]
-[ext_resource type="PackedScene" path="res://scenes/objects/meteors/meteor_field.tscn" id="4_meteor_field"]
-[ext_resource type="Resource" path="res://resources/config/world_default.tres" id="5_world"]
-[ext_resource type="Resource" path="res://resources/config/background_default.tres" id="6_background"]
-[ext_resource type="Resource" path="res://resources/config/scenario_catalog.tres" id="7_scenarios"]
-[ext_resource type="Script" path="res://scripts/backgrounds/map_camera.gd" id="8_camera"]
-[ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="9_pause"]
+[ext_resource type="Resource" path="res://resources/config/world_default.tres" id="2_world"]
+[ext_resource type="Resource" path="res://resources/config/background_default.tres" id="3_background"]
 
-[node name="Background" type="Node2D" unique_id=345278981]
-position = Vector2(0, 0)
+[node name="Background" type="Node2D"]
 z_index = -100
 script = ExtResource("1_background")
-world_config = ExtResource("5_world")
-background_config = ExtResource("6_background")
-scenario_catalog = ExtResource("7_scenarios")
-active_scenario_id = &"default"
-
-[node name="PlanetField" parent="." unique_id=332234759 instance=ExtResource("2_planet_field")]
-position = Vector2(0, 0)
-
-[node name="Bootstrap" type="Node" parent="." unique_id=276504563]
-script = ExtResource("3_bootstrap")
-
-[node name="MeteorField" parent="." unique_id=2036049589 instance=ExtResource("4_meteor_field")]
-position = Vector2(0, 0)
-world_config = ExtResource("5_world")
-
-[node name="MapCamera" type="Camera2D" parent="."]
-script = ExtResource("8_camera")
-
-[node name="PauseMenu" type="CanvasLayer" parent="."]
-script = ExtResource("9_pause")
+world_config = ExtResource("2_world")
+background_config = ExtResource("3_background")

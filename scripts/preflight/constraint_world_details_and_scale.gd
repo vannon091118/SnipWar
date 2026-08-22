@@ -79,7 +79,7 @@ func run(ctx: PreflightContext) -> bool:
 			if not ctx.check(details.get_detail_types().size() <= 3, "%s has too many planet details" % child.name):
 				return false
 
-	var scene: PackedScene = preload("res://scenes/backgrounds/starfield_background.tscn")
+	var scene: PackedScene = preload("res://scenes/world/world.tscn")
 	if not await _run_layout_scale_case(ctx, field, planet_catalog, Vector2(960.0, 540.0), 6, 3, original_seed + 101):
 		ctx.check(false, "960x540 scaled layout case failed")
 		return false

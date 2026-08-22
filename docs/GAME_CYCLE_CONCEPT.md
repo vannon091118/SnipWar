@@ -2,7 +2,7 @@
 
 > **Stand:** August 2026
 > **Status:** Laufzeit- und Erweiterungsnotiz
-> **Regel:** Der Code und die 29 Preflight-Constraints sind verbindlich. Historische Entwürfe werden hier nicht als bestehende Features ausgegeben.
+> **Regel:** Der Code und die 33 Preflight-Constraints sind verbindlich. Historische Entwürfe werden hier nicht als bestehende Features ausgegeben.
 
 ---
 
@@ -60,7 +60,7 @@ UI / Replay / sichtbarer Weltzustand
 
 ## 3. Layer 1 — Overworld und Entscheidungsoberfläche
 
-`StarfieldBackground` wählt das Szenario, finalisiert den Layout-Seed und erzeugt den Startkatalog. Beide Shipped-Szenarien aktivieren die Chunk-Welt; `ChunkCoordinator` erzeugt weitere Planeten bei wachsendem Sichtbereich. Homeworlds und Start-Intel werden beim Boot deterministisch gesetzt.
+`WorldBootstrap` (Wurzel von `world.tscn`) wählt das Szenario, finalisiert den Layout-Seed und erzeugt den Startkatalog. Beide Shipped-Szenarien aktivieren die Chunk-Welt; `ChunkCoordinator` erzeugt weitere Planeten bei wachsendem Sichtbereich. Homeworlds und Start-Intel werden beim Boot deterministisch gesetzt. Der `StarfieldBackground`-Renderer ist reine Optik und berührt weder Szenario noch Katalog. Der Szenenwechsel läuft über den `SceneDirectorService`-Autoload (Custom-Switcher mit Fade); beim Rückweg aus Battle/Conquest bootet die World über `GameState.request_world_reconnect()` mit der gespeicherten Session neu.
 
 `NavigationField` vereinigt Layout-Nachbarschaft, Moon-/Comet-Waypoints und den optionalen K-Nearest-Langstreckengraph. `find_route()` ist die gemeinsame Quelle für Scout, Worker, Forschungsschiff, ShipBase und Flugzeit-Preview.
 
@@ -126,7 +126,7 @@ Diese Punkte sind Erweiterungsziele, keine aktuellen Features:
 - mehrere parallel steuerbare Schiffsklassen mit freier Flotten-Missionsauswahl;
 - frei laufende Echtzeit-Physik als Quelle für Kampfentscheidungen.
 
-Die damaligen Entwurfsskizzen zu fehlenden Battle-/Conquest-Szenen, einem hypothetischen SceneTree-Wechsel und reinen Victory-Condition-Resources sind damit als historische Ideen ersetzt. Neue Erweiterungen müssen zuerst einen autoritativen Datenpfad, Laufzeitverbraucher und Preflight-Abdeckung erhalten.
+Inzwischen umgesetzt: Battle- und Conquest-Replays sind eigene Szenen (`battle_scene.tscn`, `conquest_scene.tscn`), der Szenenwechsel läuft über den `SceneDirectorService`-Autoload (Custom-Switcher mit Fade), und Spielstände werden als `RunSaveData`-Resources über den `SaveGameService` gespeichert. Reine Victory-Condition-Resources bleiben weiterhin offen. Neue Erweiterungen müssen zuerst einen autoritativen Datenpfad, Laufzeitverbraucher und Preflight-Abdeckung erhalten.
 
 ---
 

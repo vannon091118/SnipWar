@@ -9,6 +9,8 @@ var _overlay: Control
 var _content: VBoxContainer
 var _title: Label
 var _resume_button: Button
+var _save_button: Button
+var _menu_button: Button
 var _hint: Label
 var _planet_network: PlanetNetwork
 
@@ -63,6 +65,24 @@ func _build_ui() -> void:
 	_resume_button.pressed.connect(resume)
 	_content.add_child(_resume_button)
 
+	_save_button = Button.new()
+	_save_button.name = "SaveButton"
+	_save_button.text = "SPEICHERN"
+	_save_button.custom_minimum_size = Vector2(220.0, 48.0)
+	_save_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_save_button.focus_mode = Control.FOCUS_ALL
+	_save_button.pressed.connect(_on_save_pressed)
+	_content.add_child(_save_button)
+
+	_menu_button = Button.new()
+	_menu_button.name = "MenuButton"
+	_menu_button.text = "HAUPTMENÜ"
+	_menu_button.custom_minimum_size = Vector2(220.0, 48.0)
+	_menu_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_menu_button.focus_mode = Control.FOCUS_ALL
+	_menu_button.pressed.connect(_on_menu_pressed)
+	_content.add_child(_menu_button)
+
 	_hint = Label.new()
 	_hint.text = "ESC / LEERTASTE zum Fortsetzen"
 	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -105,6 +125,23 @@ func set_paused(paused: bool) -> void:
 		_content.visible = paused
 	get_tree().paused = paused
 	pause_toggled.emit(paused)
+
+func _on_save_pressed() -> void:
+	var service: Node = get_node_or_null("/root/SaveGameService")
+	if service == null or not service.has_method("save_run"):
+		return
+	var saved: bool = bool(service.call("save_run", 0))
+	var log: Node = get_node_or_null("/root/EventLog")
+	if log != null and log.has_method("push"):
+		log.call("push", &"system", "Spielstand gespeichert." if saved else "Speichern fehlgeschlagen.")
+
+## Returns to the main menu. The tree must be unpaused first, otherwise the
+## freshly booted menu scene would inherit the paused state and stay frozen.
+func _on_menu_pressed() -> void:
+	set_paused(false)
+	var director: Node = get_node_or_null("/root/SceneDirectorService")
+	if director != null and director.has_method("goto_scene"):
+		director.call("goto_scene", &"menu")
 
 func _overlay_ui_open() -> bool:
 	if _planet_network == null or not is_instance_valid(_planet_network):

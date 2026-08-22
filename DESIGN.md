@@ -29,7 +29,7 @@
 
 SnipWar ist ein strategischer Overworld-Prototyp mit funktionierendem Karten-, Transit-, Ressourcen-, Forschungs-, Upgrade-, Scout- und deterministischem Konfliktkern. Die Phasen 0 bis 7 (EffectDefinition, Trait-Erweiterungen, Planetensignaturen, Raffinerie-Konvertierung, Perimeter-Slots & Reichweite, CompositeShipView, FleetSnapshot, FleetBattleSimulator, ConquestSimulator und Replay-Szenen) sind implementiert und in `scripts/preflight.gd` verifiziert.
 
-Der Startpunkt ist `scenes/backgrounds/starfield_background.tscn`. `GameState` und `EventLog` sind Autoloads. `StarfieldBackground._enter_tree()` wählt das aktive Szenario, finalisiert den Layout-Seed und generiert den Planetenkatalog, bevor es GameState, PlanetField und MeteorField konfiguriert; `Bootstrap` dealt danach nur die Ressourcen.
+Der Startpunkt ist `scenes/main_menu/main_menu.tscn` (Neues Spiel / Weiter / Beenden). Die Strategie-Overworld liegt in `scenes/world/world.tscn` mit `WorldBootstrap` als Wurzel; Layer-2-/Layer-3-Replays sind eigene Szenen (`battle_scene.tscn`, `conquest_scene.tscn`). Autoloads: `GameState`, `GameCycleManager`, `SceneDirectorService`, `SaveGameService`, `EventLog`, `TouchFeedbackLayer`. `WorldBootstrap._enter_tree()` wählt das aktive Szenario, finalisiert den Layout-Seed und generiert den Planetenkatalog, bevor es GameState, PlanetField und MeteorField konfiguriert; `Bootstrap` dealt danach nur die Ressourcen. Szenen-Wechsel laufen über den `SceneDirectorService` (Custom-Switcher), Kontext über `GameState.pending_battle_context`/`reconnect_world`/`RunSession`.
 
 ## 2. Aktiver Katalog und Szenarien
 
@@ -234,7 +234,7 @@ Die AI läuft als Overworld-Dispatcher; sie simuliert keine Schiffs- oder Mech-K
 - `PlanetNetwork` besitzt Routing, Linien und den dynamischen UI-Aufbau.
 - `PlanetNetworkUI` läuft auf CanvasLayer 50 und delegiert an `VaultBar` und `PlanetPanel`.
 - `TechnologyMenu` läuft auf CanvasLayer 60 und schließt das Planet-Panel bei Öffnung.
-- `PauseMenu` läuft auf CanvasLayer 70 und verarbeitet ESC in `PROCESS_MODE_ALWAYS`; bei offenem Planet- oder Technology-Panel pausiert ESC nicht.
+- `PauseMenu` läuft auf CanvasLayer 70 und verarbeitet ESC in `PROCESS_MODE_ALWAYS`; bei offenem Planet- oder Technology-Panel pausiert ESC nicht. Es bietet **SPEICHERN** (→ `SaveGameService.save_run(0)`, Slot-0-Konvention wie im Hauptmenü) und **HAUPTMENÜ** (→ erst unpausen, dann `SceneDirectorService.goto_scene("menu")`, da ein Scene-Wechsel im gepausten Baum das Menü einfrieren würde).
 - `PaperDossier` läuft auf CanvasLayer 80 und zeigt fullscreen Modale (Planeten-Dossier, Werkstatt, Forschungsbaum) mit Papier-Blatt-Tween; `ModalCoordinator` blockiert die Kamera während eines offenen Dossiers.
 - Das Panel berechnet seine effektive Mindestbreite nach dynamischen Listen neu; sein Inhalt bleibt scrollbar, während der Action-Footer mit **MISSION STARTEN** fixiert bleibt.
 - Die Dispatch-Preview zeigt Einheitenmenge, verbleibende Garnison, Flugzeit und missionsabhängige Konsequenz. Route-Legende und dezente Karten-Zurückstufung markieren den aktiven Fokus.
@@ -272,7 +272,7 @@ Ein separater Main-Scene-Smoke-Test ist:
 godot --headless --path . --quit-after 2
 ```
 
-Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgeführt und meldete `RESULT: PASSED (29 constraints)`; auch der Main-Scene-Smoke-Test mit `--quit-after 2` war erfolgreich. Die Aussagen oben wurden aus Code, Resources, den vorhandenen Preflight-Assertions und diesem Lauf abgeleitet.
+Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgeführt und meldete `RESULT: PASSED (33 constraints)`; auch der Main-Scene-Smoke-Test mit `--quit-after 2` war erfolgreich. Die Aussagen oben wurden aus Code, Resources, den vorhandenen Preflight-Assertions und diesem Lauf abgeleitet.
 
 ## 15. Feature-Matrix
 
@@ -284,12 +284,12 @@ Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgefü
 
 | Bereich | Feature | Status | Code-/Resource-Grenze |
 |---|---|---|---|
-| Fundament | Szenarioauswahl, 10 Baustein-Typen (40 Texturen), prozedurale Chunk-Welt (chunk_size=3) oder Legacy-Fix-Ansatz | Implementiert | `starfield_background.gd`, `scenario_catalog.tres`, `world_generator.gd`, `chunk_coordinator.gd` |
+| Fundament | Szenarioauswahl, 10 Baustein-Typen (40 Texturen), prozedurale Chunk-Welt (chunk_size=3) oder Legacy-Fix-Ansatz | Implementiert | `world_bootstrap.gd`, `scenario_catalog.tres`, `world_generator.gd`, `chunk_coordinator.gd` |
 | Fundament | Seed-Layout, Größenprofile, Startgarnisonen und Bauplätze | Implementiert | `seeded_layout.gd`, `planet_size_profile.gd` |
-| Präsentation | PlanetDetails, Toxic-Garantien, Fidelity-Profile, Meteore, Starfield-Batches | Implementiert | `planet_details.gd`, `starfield_background.gd`, `preflight.gd` |
+| Präsentation | PlanetDetails, Toxic-Garantien, Fidelity-Profile, Meteore, Starfield-Batches | Implementiert | `planet_details.gd`, `starfield_background.gd` (Renderer), `preflight.gd` |
 | Navigation | Nachbarschaftsgraph, Waypoints, Routen, `all_planets`/`neighbors_only` | Implementiert | `navigation_field.gd`, `planet_network.gd` |
 | Navigation | K-Nearest-Langstrecken-Layer, Edge-Budget, KNN als AStar-Zusatzkanten | Implementiert | `world_generator.gd`, `navigation_field.gd` |
-| Weltwachstum | `growth_factor`-Flächenfaktor, sqrt-Skalierung X/Y, Runtime-Duplikat schützt `.tres` | Implementiert | `world_config.gd`, `world_generator.gd`, `starfield_background.gd` |
+| Weltwachstum | `growth_factor`-Flächenfaktor, sqrt-Skalierung X/Y, Runtime-Duplikat schützt `.tres` | Implementiert | `world_config.gd`, `world_generator.gd`, `world_bootstrap.gd` |
 | Prozedurale Welt | Unendliches Chunk-Grid, Baustein-Planeten, FoV-Cycling, inkrementelle Navigation | Implementiert | `chunk_coordinator.gd`, `world_config.gd`, `world_generator.gd`, `navigation_field.gd`, `planet.gd`, `preflight.gd` |
 | Besitz | GameState-Ownership, Faction-Signale, Homeworld- und Capture-Zustand | Implementiert | `game_state.gd`, `planet.gd` |
 | Ressourcen | Fünf Ressourcen, seed-deterministischer Deal, Homeworld-Differenz, Vaults | Implementiert | `game_state.gd`, `resource_pool_default.tres` |

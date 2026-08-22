@@ -67,7 +67,7 @@ func apply_battle_result(context: BattleContext = null) -> bool:
 		if state.has_method("clear_pending_battle_context"):
 			state.clear_pending_battle_context(resolved.battle_id)
 		battle_committed.emit(resolved)
-		_return_to_world()
+		_return_to_world(resolved.return_scene_id)
 		return true
 	if replay.is_battle():
 		var attacker_won := replay.winner == resolved.fleet_a.faction
@@ -94,16 +94,26 @@ func apply_battle_result(context: BattleContext = null) -> bool:
 		if state.has_method("clear_pending_battle_context"):
 			state.clear_pending_battle_context(resolved.battle_id)
 		battle_committed.emit(resolved)
-		_return_to_world()
+		_return_to_world(resolved.return_scene_id)
 		return true
 	return false
 
-func _return_to_world() -> void:
+## Returns to the scene named by the battle context (`return_scene_id`, a
+## SceneDirector registry id; defaults to "world"). The tree is not paused at
+## this point — the battle scene never pauses it — so the director switch is
+## safe without an explicit unpause.
+func _return_to_world(return_scene_id: StringName = &"world") -> void:
 	if not _return_to_world_after_battle:
 		return
 	_return_to_world_after_battle = false
 	var director: Node = get_node_or_null("/root/SceneDirectorService")
-	if director != null and director.has_method("transition_to_layer1"):
+	if director == null:
+		return
+	if director.has_method("goto_scene") and bool(director.call("goto_scene", return_scene_id)):
+		return
+	# Fallback keeps the historical guarantee: an unregistered or empty
+	# return_scene_id still lands back on the strategy overworld.
+	if director.has_method("transition_to_layer1"):
 		director.call("transition_to_layer1")
 
 func check_victory() -> bool:

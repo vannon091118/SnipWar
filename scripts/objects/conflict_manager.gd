@@ -3,8 +3,8 @@ extends Node
 const SHIP_BASE_SCENE: PackedScene = preload("res://scenes/objects/ships/ship_base.tscn")
 const DEFAULT_TRANSIT_CONFIG: TransitConfig = preload("res://resources/config/transit_default.tres")
 const FLIGHT_TIME_SCRIPT: Script = preload("res://scripts/flight_time.gd")
-const BATTLE_SCENE_SCRIPT: Script = preload("res://scripts/battle/battle_scene.gd")
-const CONQUEST_SCENE_SCRIPT: Script = preload("res://scripts/conquest/conquest_scene.gd")
+const BATTLE_SCENE: PackedScene = preload("res://scenes/battle/battle_scene.tscn")
+const CONQUEST_SCENE: PackedScene = preload("res://scenes/conquest/conquest_scene.tscn")
 const ROUTE_ENGAGEMENT_SCRIPT: Script = preload("res://scripts/simulation/route_engagement_resolver.gd")
 const COMBAT_SEED_COUNTER_STRIDE: int = 1000003
 const BATTLE_SEED_SALT: int = 0x51A7E
@@ -73,7 +73,7 @@ func _on_planet_conflict_simulated(simulation_type: StringName, combat_replay: C
 func _start_replay(simulation_type: StringName, combat_replay: CombatReplay) -> void:
 	if simulation_type == &"battle":
 		_free_replay(_battle_replay)
-		var battle_replay: BattleScene = BATTLE_SCENE_SCRIPT.new() as BattleScene
+		var battle_replay: BattleScene = BATTLE_SCENE.instantiate() as BattleScene
 		battle_replay.name = "BattleReplay"
 		add_child(battle_replay)
 		battle_replay.battle_completed.connect(Callable(self, "_on_battle_replay_completed").bind(battle_replay))
@@ -82,7 +82,7 @@ func _start_replay(simulation_type: StringName, combat_replay: CombatReplay) -> 
 		replay_started.emit(simulation_type, combat_replay)
 	elif simulation_type == &"conquest":
 		_free_replay(_conquest_replay)
-		var conquest_replay: ConquestScene = CONQUEST_SCENE_SCRIPT.new() as ConquestScene
+		var conquest_replay: ConquestScene = CONQUEST_SCENE.instantiate() as ConquestScene
 		conquest_replay.name = "ConquestReplay"
 		add_child(conquest_replay)
 		conquest_replay.conquest_completed.connect(Callable(self, "_on_conquest_replay_completed").bind(conquest_replay))

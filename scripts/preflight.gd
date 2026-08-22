@@ -183,6 +183,30 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"desc": "Procedural chunk-grid world & composition",
 		"requires_scene": false,
 	},
+	{
+		"id": "main_menu_and_flow",
+		"script": preload("res://scripts/preflight/constraint_main_menu_and_flow.gd"),
+		"desc": "Main menu, SceneDirector registry & continue gating",
+		"requires_scene": true,
+	},
+	{
+		"id": "context_handover",
+		"script": preload("res://scripts/preflight/constraint_context_handover.gd"),
+		"desc": "World->battle->world scene handover via SceneDirector",
+		"requires_scene": true,
+	},
+	{
+		"id": "save_game_roundtrip",
+		"script": preload("res://scripts/preflight/constraint_save_game_roundtrip.gd"),
+		"desc": "Lossless save/load roundtrip of a mutated run",
+		"requires_scene": true,
+	},
+	{
+		"id": "save_game_slots",
+		"script": preload("res://scripts/preflight/constraint_save_game_slots.gd"),
+		"desc": "Save slot write/read/overwrite/corruption/delete",
+		"requires_scene": false,
+	},
 ]
 
 

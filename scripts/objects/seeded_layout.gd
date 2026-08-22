@@ -53,6 +53,9 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	if world_config != null and world_config.is_infinite_world() and _chunk_coordinator != null:
 		_chunk_coordinator.set_layout_seed(world_config.layout_seed)
+		# Restore a saved chunk cache (factions, coords) before the start chunk
+		# is instantiated, so planet nodes reflect the restored run.
+		_apply_pending_chunk_load()
 		# Generate start chunk (0,0) which has the homeworlds.
 		_chunk_coordinator.ensure_chunks_active(_initial_fov_regions(), &"xl")
 	else:
@@ -310,6 +313,19 @@ func _queue_layout() -> void:
 func _refresh_chunks() -> void:
 	if _chunk_coordinator != null:
 		_chunk_coordinator.ensure_chunks_active(_initial_fov_regions(), &"xl")
+
+## Hands a restored RunSaveData chunk payload to the coordinator before the
+## start chunks are instantiated, so saved factions survive the rebuild.
+func _apply_pending_chunk_load() -> void:
+	if _chunk_coordinator == null:
+		return
+	var state: Node = _game_state()
+	if state == null or not state.has_method("consume_pending_chunk_data"):
+		return
+	var data: ChunkSaveData = state.consume_pending_chunk_data()
+	if data == null:
+		return
+	_chunk_coordinator.load_state(data)
 
 func _game_state() -> Node:
 	return GameStateAccess.autoload(self)

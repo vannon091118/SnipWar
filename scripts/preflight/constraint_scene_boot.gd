@@ -83,7 +83,7 @@ func run(ctx: PreflightContext) -> bool:
 			break
 	if not ctx.check(ui_backgrounds_valid, "UI theme is missing one or more graphical background assets"):
 		return false
-	var main_menu_backdrop: Sprite2D = background.get_node_or_null("MainMenuBackdrop") as Sprite2D
+	var main_menu_backdrop: Sprite2D = background.get_node_or_null("Background/MainMenuBackdrop") as Sprite2D
 	if not ctx.check(main_menu_backdrop != null and main_menu_backdrop.texture == ui_theme_config.main_menu_background_texture, "main menu background asset is not wired into the background layer"):
 		return false
 	var background_render_stats: Dictionary = background.call("get_render_batch_stats")

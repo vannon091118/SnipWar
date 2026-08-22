@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="SnipWar"
-run/main_scene="res://scenes/backgrounds/starfield_background.tscn"
+run/main_scene="res://scenes/main_menu/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 GameState="*res://scripts/state/game_state.gd"
 GameCycleManager="*res://scripts/game_cycle_manager.gd"
 SceneDirectorService="*res://scripts/ui/scene_director.gd"
+SaveGameService="*res://scripts/state/save_game_service.gd"
 EventLog="*res://scripts/state/event_log.gd"
 TouchFeedbackLayer="*res://scripts/ui/touch_feedback_layer.gd"
 

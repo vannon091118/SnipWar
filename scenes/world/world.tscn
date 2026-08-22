@@ -1,0 +1,35 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/bootstrap/world_bootstrap.gd" id="1_bootstrap"]
+[ext_resource type="PackedScene" path="res://scenes/backgrounds/starfield_background.tscn" id="2_background"]
+[ext_resource type="PackedScene" path="res://scenes/objects/planets/planet_field.tscn" id="3_planet_field"]
+[ext_resource type="Script" path="res://scripts/bootstrap/bootstrap.gd" id="4_deal"]
+[ext_resource type="PackedScene" path="res://scenes/objects/meteors/meteor_field.tscn" id="5_meteor_field"]
+[ext_resource type="Script" path="res://scripts/backgrounds/map_camera.gd" id="6_camera"]
+[ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="7_pause"]
+[ext_resource type="Resource" path="res://resources/config/world_default.tres" id="8_world"]
+[ext_resource type="Resource" path="res://resources/config/background_default.tres" id="9_background"]
+[ext_resource type="Resource" path="res://resources/config/scenario_catalog.tres" id="10_scenarios"]
+
+[node name="World" type="Node2D"]
+script = ExtResource("1_bootstrap")
+world_config = ExtResource("8_world")
+background_config = ExtResource("9_background")
+scenario_catalog = ExtResource("10_scenarios")
+active_scenario_id = &"default"
+
+[node name="Background" parent="." instance=ExtResource("2_background")]
+
+[node name="PlanetField" parent="." instance=ExtResource("3_planet_field")]
+
+[node name="Bootstrap" type="Node" parent="."]
+script = ExtResource("4_deal")
+
+[node name="MeteorField" parent="." instance=ExtResource("5_meteor_field")]
+world_config = ExtResource("8_world")
+
+[node name="MapCamera" type="Camera2D" parent="."]
+script = ExtResource("6_camera")
+
+[node name="PauseMenu" type="CanvasLayer" parent="."]
+script = ExtResource("7_pause")

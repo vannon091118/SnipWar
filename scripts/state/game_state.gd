@@ -130,10 +130,16 @@ var _pending_battle: BattleContext
 var _transit_records: Dictionary = {}
 var _next_transit_index: int = 0
 var _reconnect_requested: bool = false
+# Typed context bridge between scenes (world session + save/load handover).
+var _session: RunSession
+# Pending chunk/timer payload handed to the world scene after a save restore.
+var _pending_chunk_data: ChunkSaveData
+var _pending_timers: Dictionary = {}
 
 func _init() -> void:
 	_connect_domain_signals()
 	economy_domain.reset_vaults()
+	_session = RunSession.new()
 
 func _connect_domain_signals() -> void:
 	# Typed signals in Godot 4.x must be forwarded with explicit arg lists, so
@@ -214,6 +220,9 @@ func begin_new_game(catalog: PlanetCatalog, scenario_id: StringName, layout_seed
 	_run_layout_seed = layout_seed
 	_run_infinite_world = infinite_world
 	_reconnect_requested = false
+	_pending_chunk_data = null
+	_pending_timers.clear()
+	_sync_session()
 	if infinite_world:
 		reset_for_infinite_world()
 	else:
@@ -231,6 +240,7 @@ func reconnect_world(scenario_id: StringName, layout_seed: int, infinite_world: 
 		_run_scenario_id = scenario_id
 	_run_layout_seed = layout_seed
 	_run_infinite_world = infinite_world
+	_sync_session()
 	return true
 
 func request_world_reconnect() -> void:
@@ -247,6 +257,26 @@ func has_active_run() -> bool:
 func run_id() -> StringName:
 	return _run_id
 
+## Typed session bridge (scenario, seed, world mode) shared across scenes.
+func session() -> RunSession:
+	if _session == null:
+		_session = RunSession.new()
+	return _session
+
+## Clears the active run so the next world boot starts a fresh game instead of
+## reconnecting. Called by the main menu's "Neues Spiel" flow.
+func request_new_run() -> void:
+	_run_active = false
+	_reconnect_requested = false
+	_run_id = &""
+	_run_scenario_id = &""
+	_run_layout_seed = 0
+	_run_infinite_world = false
+	_pending_chunk_data = null
+	_pending_timers.clear()
+	if _session != null:
+		_session.run_id = &""
+
 func world_session_context() -> Dictionary:
 	return {
 		"run_id": _run_id,
@@ -254,6 +284,16 @@ func world_session_context() -> Dictionary:
 		"layout_seed": _run_layout_seed,
 		"infinite_world": _run_infinite_world,
 	}
+
+func _sync_session() -> void:
+	if _session == null:
+		_session = RunSession.new()
+	_session.run_id = _run_id
+	_session.scenario_id = _run_scenario_id
+	_session.layout_seed = _run_layout_seed
+	_session.infinite_world = _run_infinite_world
+	if _session.started_at <= 0:
+		_session.started_at = int(Time.get_unix_time_from_system())
 
 func set_pending_battle_context(context: BattleContext) -> void:
 	_pending_battle = context.copy() if context != null else null
@@ -860,6 +900,286 @@ func steal_resources(planet_id: StringName, attacker_faction: StringName, percen
 		economy_domain.add_faction_resource(attacker_faction, resource_id as StringName, take)
 		stolen[resource_id] = take
 	return stolen
+
+# --- SAVE / LOAD SNAPSHOTS ---
+
+## Captures the full run state as a pure-data RunSaveData resource. The world
+## scene is not required: everything lives in the domains, transit records and
+## the chunk cache. Runtime-only objects (PersistentShipRecord, ResearchMission)
+## are flattened into serializable dictionaries.
+func snapshot_run() -> RunSaveData:
+	var data := RunSaveData.new()
+	data.save_version = RunSaveData.SAVE_VERSION
+	data.session = session().copy()
+	# Faction
+	data.ownership = faction_domain.ownership.duplicate(true)
+	data.homeworlds = faction_domain.homeworlds.duplicate(true)
+	data.starting_workers = faction_domain.starting_workers.duplicate(true)
+	data.known_planets = faction_domain.known_planets.duplicate(true)
+	data.scanned_planets = faction_domain.scanned_planets.duplicate(true)
+	data.scan_intel = faction_domain.scan_intel.duplicate(true)
+	data.milestones = faction_domain.milestones.duplicate(true)
+	# Economy
+	data.faction_vaults = economy_domain.faction_vaults.duplicate(true)
+	data.faction_credits = economy_domain.faction_credits.duplicate(true)
+	data.worker_reservations = economy_domain.worker_reservations.duplicate(true)
+	data.upgrade_build_jobs = economy_domain.upgrade_build_jobs.duplicate(true)
+	data.planet_resources = economy_domain.planet_resources.duplicate(true)
+	data.planet_upgrades = economy_domain.planet_upgrades.duplicate(true)
+	data.worker_factories = economy_domain.worker_factories.duplicate(true)
+	data.gathering_workers = economy_domain.gathering_workers.duplicate(true)
+	data.gathering_sources = economy_domain.gathering_sources.duplicate(true)
+	data.local_vaults = economy_domain.local_vaults.duplicate(true)
+	data.trade_routes = economy_domain.trade_routes.duplicate(true)
+	data.planet_buildings = economy_domain.planet_buildings.duplicate(true)
+	data.building_jobs = economy_domain.building_jobs.duplicate(true)
+	data.local_seeded_planets = economy_domain._local_seeded_planets.duplicate(true)
+	data.worker_transport_records = economy_domain.worker_transport_records.duplicate(true)
+	data.next_trade_route_index = economy_domain._next_trade_route_index
+	data.next_worker_transport_index = economy_domain._next_worker_transport_index
+	# Tech
+	data.researched_techs = tech_domain.researched_techs.duplicate(true)
+	data.planet_technologies = tech_domain.planet_technologies.duplicate(true)
+	data.research_jobs = tech_domain.research_jobs.duplicate(true)
+	# Ship
+	data.ship_part_inventory = ship_domain.ship_part_inventory.duplicate(true)
+	data.ship_assemblies = ship_domain.ship_assemblies.duplicate(true)
+	data.ship_build_jobs = ship_domain.ship_build_jobs.duplicate(true)
+	data.persistent_ships = _snapshot_persistent_ships()
+	data.research_missions = _snapshot_research_missions()
+	data.next_ship_index = ship_domain.next_ship_index
+	data.next_research_mission_index = ship_domain.next_research_mission_index
+	# Transits
+	for record_value in _transit_records.values():
+		var record: TransitRecord = record_value as TransitRecord
+		if record != null:
+			data.transits.append(record.copy())
+	data.next_transit_index = _next_transit_index
+	# Chunk world + timers
+	data.chunk_data = _capture_chunk_data()
+	data.timers = _capture_timers().duplicate()
+	return data
+
+## Restores a snapshot into the domains and marks the world for reconnect on
+## the next world-scene boot. The chunk payload and pacing timers are handed to
+## the world scene via consume_pending_* accessors.
+func restore_run(data: RunSaveData) -> bool:
+	if data == null:
+		return false
+	_run_active = true
+	_reconnect_requested = true
+	_pending_battle = null
+	if data.session != null:
+		_session = data.session.copy()
+		_run_id = _session.run_id
+		_run_scenario_id = _session.scenario_id
+		_run_layout_seed = _session.layout_seed
+		_run_infinite_world = _session.infinite_world
+	else:
+		_run_id = &""
+		_run_scenario_id = &""
+		_run_layout_seed = 0
+		_run_infinite_world = false
+	# Faction
+	faction_domain.reset_infinite()
+	faction_domain.ownership = _restore_dict(data.ownership)
+	faction_domain.homeworlds = _restore_dict(data.homeworlds)
+	faction_domain.starting_workers = _restore_dict(data.starting_workers)
+	faction_domain.known_planets = _restore_dict(data.known_planets)
+	faction_domain.scanned_planets = _restore_dict(data.scanned_planets)
+	faction_domain.scan_intel = _restore_dict(data.scan_intel)
+	faction_domain.milestones = _restore_dict(data.milestones)
+	# Economy
+	economy_domain.reset()
+	economy_domain.faction_vaults = _restore_dict(data.faction_vaults)
+	economy_domain.faction_credits = _restore_dict(data.faction_credits)
+	economy_domain.worker_reservations = _restore_dict(data.worker_reservations)
+	economy_domain.upgrade_build_jobs = _restore_dict(data.upgrade_build_jobs)
+	economy_domain.planet_resources = _restore_dict(data.planet_resources)
+	economy_domain.planet_upgrades = _restore_dict(data.planet_upgrades)
+	economy_domain.worker_factories = _restore_dict(data.worker_factories)
+	economy_domain.gathering_workers = _restore_dict(data.gathering_workers)
+	economy_domain.gathering_sources = _restore_dict(data.gathering_sources)
+	economy_domain.local_vaults = _restore_dict(data.local_vaults)
+	economy_domain.trade_routes = _restore_dict(data.trade_routes)
+	economy_domain.planet_buildings = _restore_dict(data.planet_buildings)
+	economy_domain.building_jobs = _restore_dict(data.building_jobs)
+	economy_domain._local_seeded_planets = _restore_dict(data.local_seeded_planets)
+	economy_domain.worker_transport_records = _restore_dict(data.worker_transport_records)
+	economy_domain._next_trade_route_index = data.next_trade_route_index
+	economy_domain._next_worker_transport_index = data.next_worker_transport_index
+	# Tech
+	tech_domain.reset()
+	tech_domain.researched_techs = _restore_dict(data.researched_techs)
+	tech_domain.planet_technologies = _restore_dict(data.planet_technologies)
+	tech_domain.research_jobs = _restore_dict(data.research_jobs)
+	# Ship
+	ship_domain.reset()
+	ship_domain.ship_part_inventory = _restore_dict(data.ship_part_inventory)
+	ship_domain.ship_assemblies = _restore_dict(data.ship_assemblies)
+	ship_domain.ship_build_jobs = _restore_dict(data.ship_build_jobs)
+	_restore_persistent_ships(data.persistent_ships)
+	_restore_research_missions(data.research_missions)
+	ship_domain.next_ship_index = data.next_ship_index
+	ship_domain.next_research_mission_index = data.next_research_mission_index
+	# Transits
+	_transit_records.clear()
+	for record in data.transits:
+		if record != null:
+			_transit_records[record.transit_id] = record.copy()
+	_next_transit_index = data.next_transit_index
+	# Chunk world + timers (consumed by the world scene on boot)
+	_pending_chunk_data = data.chunk_data
+	_pending_timers = data.timers.duplicate()
+	return true
+
+func pending_chunk_data() -> ChunkSaveData:
+	return _pending_chunk_data
+
+func consume_pending_chunk_data() -> ChunkSaveData:
+	var data: ChunkSaveData = _pending_chunk_data
+	_pending_chunk_data = null
+	return data
+
+func pending_timers() -> Dictionary:
+	return _pending_timers.duplicate()
+
+func consume_pending_timers() -> Dictionary:
+	var timers: Dictionary = _pending_timers.duplicate()
+	_pending_timers.clear()
+	return timers
+
+func _capture_chunk_data() -> ChunkSaveData:
+	var coordinator: Node = _find_chunk_coordinator()
+	if coordinator != null and coordinator.has_method("save_state"):
+		return coordinator.call("save_state") as ChunkSaveData
+	return null
+
+func _capture_timers() -> Dictionary:
+	var economy_manager: Node = _find_economy_manager()
+	if economy_manager == null:
+		return {}
+	var result: Dictionary = {}
+	if economy_manager.has_method("economy_tick_remaining"):
+		result["economy_remaining"] = float(economy_manager.call("economy_tick_remaining"))
+	if economy_manager.has_method("gather_tick_remaining"):
+		result["gather_remaining"] = float(economy_manager.call("gather_tick_remaining"))
+	return result
+
+func _find_chunk_coordinator() -> Node:
+	var scene: Node = get_tree().current_scene if get_tree() != null else null
+	if scene == null:
+		return null
+	return _find_node_with_method(scene, "save_state", "ChunkCoordinator")
+
+func _find_economy_manager() -> Node:
+	var scene: Node = get_tree().current_scene if get_tree() != null else null
+	if scene == null:
+		return null
+	return _find_node_with_method(scene, "restore_timer_remaining", "PlanetEconomyManager")
+
+func _find_node_with_method(node: Node, method: String, class_hint: String) -> Node:
+	if node == null:
+		return null
+	if node.has_method(method):
+		var script: Script = node.get_script()
+		if script != null and String(script.get_global_name()) == class_hint:
+			return node
+	for child in node.get_children():
+		var found: Node = _find_node_with_method(child, method, class_hint)
+		if found != null:
+			return found
+	return null
+
+func _snapshot_persistent_ships() -> Dictionary:
+	var result: Dictionary = {}
+	for ship_id in ship_domain.persistent_ships:
+		var record: ShipDomain.PersistentShipRecord = ship_domain.persistent_ships[ship_id] as ShipDomain.PersistentShipRecord
+		if record == null:
+			continue
+		result[ship_id] = {
+			"faction": record.faction,
+			"mission_role": record.mission_role,
+			"current_planet_id": record.current_planet_id,
+			"status": record.status,
+			"active_mission_id": record.active_mission_id,
+			"fleet": record.fleet.copy() if record.fleet != null else null,
+		}
+	return result
+
+func _snapshot_research_missions() -> Dictionary:
+	var result: Dictionary = {}
+	for mission in ship_domain.research_missions:
+		if mission == null:
+			continue
+		result[String(mission.mission_id)] = {
+			"mission_id": mission.mission_id,
+			"target_planet_id": mission.target_planet_id,
+			"task_type": mission.task_type,
+			"duration": mission.duration,
+			"remaining": mission.remaining,
+			"status": mission.status,
+		}
+	return result
+
+func _restore_persistent_ships(source: Dictionary) -> void:
+	ship_domain.persistent_ships.clear()
+	for key in source:
+		var ship_id := StringName(key)
+		var entry: Dictionary = source[key] as Dictionary
+		if entry == null:
+			continue
+		var record := ShipDomain.PersistentShipRecord.new()
+		record.ship_id = ship_id
+		record.faction = StringName(entry.get("faction", &""))
+		record.mission_role = StringName(entry.get("mission_role", &""))
+		record.current_planet_id = StringName(entry.get("current_planet_id", &""))
+		record.status = StringName(entry.get("status", &"idle"))
+		record.active_mission_id = StringName(entry.get("active_mission_id", &""))
+		record.fleet = entry.get("fleet") as FleetSnapshot
+		ship_domain.persistent_ships[ship_id] = record
+
+func _restore_research_missions(source: Dictionary) -> void:
+	ship_domain.research_missions.clear()
+	for key in source:
+		var entry: Dictionary = source[key] as Dictionary
+		if entry == null:
+			continue
+		var mission := ShipDomain.ResearchMission.new()
+		mission.mission_id = StringName(entry.get("mission_id", &""))
+		mission.target_planet_id = StringName(entry.get("target_planet_id", &""))
+		mission.task_type = StringName(entry.get("task_type", &"scan"))
+		mission.duration = float(entry.get("duration", 1.0))
+		mission.remaining = float(entry.get("remaining", mission.duration))
+		mission.status = StringName(entry.get("status", &"queued"))
+		ship_domain.research_missions.append(mission)
+
+## Deep-restores a dictionary, converting String keys back to StringName so
+## domain lookups behave exactly like the pre-save state. Int keys stay ints.
+func _restore_dict(source: Dictionary) -> Dictionary:
+	var result := {}
+	for key in source:
+		var new_key: Variant = key
+		if key is String:
+			new_key = StringName(key)
+		var value: Variant = source[key]
+		if value is Dictionary:
+			value = _restore_dict(value)
+		elif value is Array:
+			value = _restore_array(value)
+		result[new_key] = value
+	return result
+
+func _restore_array(source: Array) -> Array:
+	var result := []
+	for item in source:
+		if item is Dictionary:
+			result.append(_restore_dict(item))
+		elif item is Array:
+			result.append(_restore_array(item))
+		else:
+			result.append(item)
+	return result
 
 # --- VALIDATION HELPERS ---
 func validate() -> PackedStringArray:

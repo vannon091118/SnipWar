@@ -156,6 +156,15 @@ const REQUIRED_FACADE_METHODS: Array[StringName] = [
 	&"steal_resources",
 	&"validate",
 	&"validate_starting_setup",
+	# Scene-flow & save/load façade (scene director / save game service bridge)
+	&"request_new_run",
+	&"session",
+	&"snapshot_run",
+	&"restore_run",
+	&"pending_chunk_data",
+	&"consume_pending_chunk_data",
+	&"pending_timers",
+	&"consume_pending_timers",
 ]
 
 ## These are the signatures most likely to drift when a domain method is moved
@@ -193,6 +202,7 @@ const SIGNATURE_CONTRACTS: Dictionary = {
 	&"ship_build_in_progress": {"args": [&"planet_id", &"ship_id"], "required": 1},
 	&"create_fleet_from_planet": {"args": [&"planet_id", &"ship_ids", &"catalog"], "required": 2},
 	&"preview_fleet_from_planet": {"args": [&"planet_id", &"ship_ids", &"catalog"], "required": 2},
+	&"restore_run": {"args": [&"data"], "required": 1},
 }
 
 const LEGACY_SIGNATURE_PATTERNS: Array[Dictionary] = [

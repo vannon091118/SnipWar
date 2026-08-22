@@ -38,6 +38,17 @@ func run(ctx: PreflightContext) -> bool:
 	await ctx.await_frame()
 	if not ctx.check(not game_state.get_tree().paused, "pause menu did not resume the tree"):
 		return false
+	# Save/menu flow controls: SPEICHERN + HAUPTMENÜ must be wired and the
+	# main-menu handler must exist (it unpauses before switching scenes; the
+	# actual scene switch is covered by context_handover).
+	var save_button: Button = pause_menu.get_node_or_null("Content/SaveButton") as Button
+	var menu_button: Button = pause_menu.get_node_or_null("Content/MenuButton") as Button
+	if not ctx.check(save_button != null and menu_button != null, "pause menu is missing its save/menu flow controls"):
+		return false
+	if not ctx.check(pause_menu.has_method("_on_menu_pressed"), "pause menu is missing its main-menu handler"):
+		return false
+	if not ctx.check(pause_menu.has_method("_on_save_pressed"), "pause menu is missing its save handler"):
+		return false
 	var ui: PlanetNetworkUI = network.get_ui()
 	var context_menu: PopupMenu = ui.get_node_or_null("PlanetContextMenu") as PopupMenu
 	if not ctx.check(context_menu != null, "planet context menu is missing its quick actions"):

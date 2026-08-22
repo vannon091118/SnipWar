@@ -69,6 +69,19 @@ func set_gathering_enabled(enabled: bool) -> void:
 func is_gathering_enabled() -> bool:
 	return _gathering_enabled
 
+func gather_tick_remaining() -> float:
+	if _gather_timer == null or _gather_timer.is_stopped() or _gather_timer.paused:
+		return -1.0
+	return _gather_timer.time_left
+
+## Re-seeds the pacing timers from a restored run so economy/gather ticks
+## continue on the saved cadence instead of restarting at full interval.
+func restore_timer_remaining(economy_remaining: float, gather_remaining: float) -> void:
+	if _timer != null and economy_remaining >= 0.0:
+		_timer.start(maxf(economy_remaining, 0.01))
+	if _gather_timer != null and gather_remaining >= 0.0:
+		_gather_timer.start(maxf(gather_remaining, 0.01))
+
 func tick_now() -> int:
 	return _tick_economy()
 

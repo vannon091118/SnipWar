@@ -411,7 +411,12 @@ func _get_map_definition() -> MapDefinition:
 func save_state() -> ChunkSaveData:
 	var data := ChunkSaveData.new()
 	data.layout_seed = _layout_seed
-	data.cached_chunk_coords = _chunk_cache.keys() as Array[Vector2i]
+	# Build the typed array explicitly: casting an untyped Array with `as` does
+	# not convert it, and assigning an untyped Array to a typed property fails.
+	var coords: Array[Vector2i] = []
+	for key in _chunk_cache.keys():
+		coords.append(key as Vector2i)
+	data.cached_chunk_coords = coords
 	var states: Dictionary = {}
 	for planet_id in _planet_id_to_data:
 		var pd = _planet_id_to_data[planet_id]

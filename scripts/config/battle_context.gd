@@ -13,7 +13,8 @@ extends Resource
 @export var engagement_time_a: float = 0.0
 @export var engagement_time_b: float = 0.0
 @export var replay: CombatReplay
-@export var return_scene_path: String = "res://scenes/backgrounds/starfield_background.tscn"
+# SceneDirector registry id to return to after the battle resolves.
+@export var return_scene_id: StringName = &"world"
 @export var committed: bool = false
 @export var route_engagement: bool = false
 

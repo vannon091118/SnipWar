@@ -2,12 +2,13 @@ class_name PreflightFixture
 extends RefCounted
 
 ## Owns the mutable runtime surface used by scene-dependent preflight constraints.
-## Every boot disposes the previous background before the new one enters the tree;
-## StarfieldBackground then resets the single GameState autoload from the active
-## catalog. This keeps one constraint's research, upgrades, fleets, workers, and
-## layout mutations from becoming another constraint's hidden prerequisites.
+## Every boot disposes the previous world scene before the new one enters the tree;
+## WorldBootstrap (root of world.tscn) then resets the single GameState autoload
+## from the active catalog. This keeps one constraint's research, upgrades, fleets,
+## workers, and layout mutations from becoming another constraint's hidden
+## prerequisites.
 
-const BACKGROUND_SCENE: PackedScene = preload("res://scenes/backgrounds/starfield_background.tscn")
+const BACKGROUND_SCENE: PackedScene = preload("res://scenes/world/world.tscn")
 const DEFAULT_RESOURCE_POOL: ResourcePool = preload("res://resources/config/resource_pool_default.tres")
 const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
 const DEFAULT_TECHNOLOGY_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")

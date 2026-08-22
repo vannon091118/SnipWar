@@ -1,27 +1,25 @@
 @tool
+class_name StarfieldBackground
 extends Node2D
+
+## Pure visual background renderer (child of scenes/world/world.tscn).
+##
+## Draws the starfield, nebula, folds, grain and dust, plus the paper/grain
+## overlays and the main-menu backdrop. It is deliberately stateless with
+## respect to gameplay: scenario selection, seed finalization, catalog
+## generation and GameState wiring live in WorldBootstrap (the world root).
+##
+## The active world/background config is pushed in by WorldBootstrap before
+## this node's _ready() runs, so star generation matches the resolved runtime
+## world.
 
 const DEFAULT_WORLD_CONFIG: WorldConfig = preload("res://resources/config/world_default.tres")
 const DEFAULT_BACKGROUND_CONFIG: BackgroundConfig = preload("res://resources/config/background_default.tres")
-const DEFAULT_SCENARIO_CATALOG: ScenarioCatalog = preload("res://resources/config/scenario_catalog.tres")
 const DEFAULT_UI_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
-const ASSET_LIBRARY_SCRIPT: Script = preload("res://scripts/config/asset_library.gd")
 const DEFAULT_PAPER_STYLE: PaperStyleConfig = preload("res://resources/config/paper_style_default.tres")
 
 @export var world_config: WorldConfig = DEFAULT_WORLD_CONFIG
 @export var background_config: BackgroundConfig = DEFAULT_BACKGROUND_CONFIG
-@export var scenario_catalog: ScenarioCatalog = DEFAULT_SCENARIO_CATALOG
-@export var active_scenario_id: StringName = &""
-
-var active_scenario: ScenarioDefinition
-# The catalog the world actually runs on — generated from the world's
-# building-block pool under the finalized layout seed. GameState, the
-# PlanetField and the resource deal must all share this single catalog.
-var active_catalog: PlanetCatalog
-# Finalized per-run layout seed (authored seed for fixed scenarios, random for
-# randomized ones). Finalized in _enter_tree so the generated catalog and the
-# planet layout share one deterministic seed before either is built.
-var active_layout_seed: int = 0
 
 var stars: Array[Dictionary] = []
 var folds: Array[Dictionary] = []
@@ -40,125 +38,7 @@ var _grain_overlay: ColorRect
 ## boundary change, not per frame, to avoid star regeneration overhead.
 var _visible_region := Rect2(Vector2.ZERO, Vector2(960, 540))
 
-func _enter_tree() -> void:
-	_apply_active_scenario()
-
-func _apply_active_scenario() -> void:
-	var state: Node = get_node_or_null("/root/GameState")
-	var reconnect: bool = state != null and state.has_active_run() and state.consume_world_reconnect_request()
-	var catalog: ScenarioCatalog = scenario_catalog if scenario_catalog != null else DEFAULT_SCENARIO_CATALOG
-	var scenario: ScenarioDefinition = catalog.resolve(active_scenario_id)
-	if scenario == null or scenario.map_definition == null:
-		return
-	active_scenario = scenario
-	active_scenario_id = scenario.id
-	var map: MapDefinition = scenario.map_definition
-	var runtime_world: WorldConfig = WorldGenerator.resolve_runtime_world(map.world_config, null)
-	if runtime_world != null:
-		runtime_world.route_mode = scenario.resolved_route_mode()
-		var discovered_assets: Dictionary = ASSET_LIBRARY_SCRIPT.scan_composition_assets()
-		runtime_world.composition_base_textures = discovered_assets.get("base_textures", []) as Array[Texture2D]
-		runtime_world.composition_decal_pool = discovered_assets.get("decal_textures", []) as Array[Texture2D]
-	world_config = runtime_world if runtime_world != null else (map.world_config if map.world_config != null else world_config)
-	background_config = scenario.background_config if scenario.background_config != null else background_config
-	if reconnect and state != null:
-		var session: Dictionary = state.world_session_context()
-		active_layout_seed = int(session.get("layout_seed", runtime_world.layout_seed if runtime_world != null else 0))
-		if runtime_world != null:
-			runtime_world.layout_seed = active_layout_seed
-	else:
-		_finalize_layout_seed(scenario, runtime_world)
-	var live_world: WorldConfig = runtime_world if runtime_world != null else map.world_config
-	if live_world != null:
-		_visible_region = Rect2(Vector2.ZERO, live_world.design_size)
-	if live_world != null and live_world.is_infinite_world():
-		# Infinite worlds use one generated definition as the chunk template; the
-		# coordinator owns all live planet instantiation and identity creation.
-		active_catalog = WorldGenerator.generate_catalog(live_world, active_layout_seed, 1)
-	else:
-		active_catalog = WorldGenerator.generate_catalog(
-			live_world,
-			active_layout_seed,
-			WorldGenerator.target_planet_count(live_world, null)
-		)
-
-	_configure_game_state(map, reconnect)
-	_configure_planet_field(map, scenario, runtime_world)
-	_configure_meteor_field(map, scenario, runtime_world)
-
-# Drops the runtime duplicate onto the planet field/navigation so that the
-# authored .tres is never written into. The duplicate carries the growth
-# contract (sqrt-scaled design_size, scaled target_planet_count, auto-columns).
-func _configure_planet_field(map: MapDefinition, scenario: ScenarioDefinition, runtime_world: WorldConfig) -> void:
-	var field: SeededLayout = get_node_or_null("PlanetField") as SeededLayout
-	if field == null or map == null or scenario == null:
-		return
-	field.position = Vector2.ZERO
-	field.world_config = runtime_world if runtime_world != null else map.world_config
-	field.planet_catalog = active_catalog
-	field.size_profiles = map.size_profiles
-	var navigation: NavigationField = field.get_node_or_null("NavigationField") as NavigationField
-	if navigation != null:
-		navigation.world_config = runtime_world if runtime_world != null else map.world_config
-		navigation.navigation_config = map.navigation_config
-	var network: Node = field.get_node_or_null("PlanetNetwork")
-	if network != null:
-		network.set("transit_config", scenario.transit_config)
-		network.set("ui_theme_config", scenario.ui_theme_config)
-	var worker_manager: Node = field.get_node_or_null("WorkerManager")
-	if worker_manager != null:
-		worker_manager.set("transit_config", scenario.transit_config)
-
-func _configure_game_state(map: MapDefinition, reconnect: bool = false) -> void:
-	var state: Node = get_node_or_null("/root/GameState")
-	if state == null or map == null:
-		return
-	var live_world: WorldConfig = world_config
-	if reconnect and state.has_method("reconnect_world"):
-		state.reconnect_world(active_scenario_id, active_layout_seed, live_world != null and live_world.is_infinite_world())
-		return
-	if state.has_method("begin_new_game"):
-		state.begin_new_game(
-			active_catalog,
-			active_scenario_id,
-			active_layout_seed,
-			live_world != null and live_world.is_infinite_world()
-		)
-	elif live_world != null and live_world.is_infinite_world():
-		state.reset_for_infinite_world()
-	elif active_catalog != null:
-		state.reset_from_catalog(active_catalog)
-
-func _configure_meteor_field(map: MapDefinition, scenario: ScenarioDefinition, runtime_world: WorldConfig = null) -> void:
-	var meteor_field: Node2D = get_node_or_null("MeteorField") as Node2D
-	if meteor_field != null and map != null and scenario != null:
-		meteor_field.position = Vector2.ZERO
-		meteor_field.set("world_config", runtime_world if runtime_world != null else map.world_config)
-		meteor_field.set("meteor_config", scenario.meteor_config)
-
-func get_active_scenario() -> ScenarioDefinition:
-	return active_scenario
-
-func _finalize_layout_seed(scenario: ScenarioDefinition, runtime_world: WorldConfig) -> void:
-	var base_seed: int = runtime_world.layout_seed if runtime_world != null else 0
-	if scenario != null and not scenario.randomize_layout_seed:
-		active_layout_seed = base_seed
-	else:
-		var rng := RandomNumberGenerator.new()
-		rng.randomize()
-		active_layout_seed = rng.randi()
-	if runtime_world != null:
-		runtime_world.layout_seed = active_layout_seed
-
-func _disable_collision_debug_overlay() -> void:
-	# The editor's "Visible Collision Shapes" toggle draws cyan circles around every
-	# ClickArea. Force it off in the running game so faction rings stay readable.
-	var tree := get_tree()
-	if tree != null:
-		tree.set("debug_collisions_hint", false)
-
 func _ready() -> void:
-	_disable_collision_debug_overlay()
 	_generate_elements()
 	_ensure_main_menu_backdrop()
 	_ensure_paper_overlay()

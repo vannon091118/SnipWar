@@ -10,7 +10,7 @@
 <br/>
 <samp>
 <b>SNIPWAR — EISEN-GRENZE</b><br/>
-STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 29 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
+STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 33 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
 </samp>
 <br/><br/>
 </td>
@@ -19,7 +19,7 @@ STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 29 PREFLIGHT-CONSTRAINTS · 0 SICH
 
 [![Engine: Godot 4.7](https://img.shields.io/badge/Engine-Godot%204.7-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/)
 [![Status: Frontier-Kern](https://img.shields.io/badge/Status-Frontier--Kern%20aktiv-f0b429?style=for-the-badge)](#-lagezentrum--frontbericht)
-[![Preflight](https://img.shields.io/badge/Preflight-29%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
+[![Preflight](https://img.shields.io/badge/Preflight-33%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
 [![Sprache: GDScript](https://img.shields.io/badge/GDScript-4.7-blue?style=for-the-badge)](#-architektur--vom-katalog-zum-spielstand)
 [![Treibstoff](https://img.shields.io/badge/Fuel-Koffein%20%26%20Größenwahn-6f4e37?style=for-the-badge)](#)
 
@@ -93,14 +93,14 @@ cd snip-war
 # Smoke-Test: Bootet die Hauptszene, wartet 2 Sekunden, beendet sich
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Vollständige Preflight-Suite (29 Constraints)
+# Vollständige Preflight-Suite (33 Constraints)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
 > [!NOTE]
 > Der Headless-Lauf spuckt am Ende `ERROR: ...RID allocations...leaked` und `ObjectDB instances leaked`. Das ist Teardown-Rauschen des Dummy-Renderers, kein Fehler. Was zählt: die Zeile `RESULT: PASSED`.
 
-Die Hauptszene liegt unter `scenes/backgrounds/starfield_background.tscn`. Von dort bootet alles.
+Die Hauptszene ist `scenes/main_menu/main_menu.tscn` (Neues Spiel / Weiter / Beenden). Von dort bootet der `SceneDirectorService` die Strategie-Overworld (`scenes/world/world.tscn`), Layer-2-Flottenreplays (`scenes/battle/battle_scene.tscn`) und Layer-3-Eroberungsreplays (`scenes/conquest/conquest_scene.tscn`) — drei bootbare Szenen über einem gemeinsamen `GameState`-SSO.
 
 ---
 
@@ -415,12 +415,16 @@ Für montierte Schiffe: Layer 2 (`FleetBattleSimulator`). Für planetare Bodener
 <br/>
 
 ```
-StarfieldBackground._enter_tree()
+MainMenu (scenes/main_menu/main_menu.tscn)
+	├── Neues Spiel  →  GameState.request_new_run() + SceneDirector.goto_scene("world")
+	└── Weiter       →  SaveGameService.load_run(0) + goto_scene("world")
+
+WorldBootstrap._enter_tree()  (Wurzel von scenes/world/world.tscn)
     ├── Szenarioauswahl (ScenarioCatalog)
     ├── Layout-Seed finalisieren (_finalize_layout_seed)
     ├── WorldGenerator.generate_catalog()  →  aktiver Startkatalog (p0/p1 = Homeworlds)
     ├── ChunkCoordinator  →  weitere Planeten lazy aus Seed und FoV erzeugen
-    └── GameState.reset_from_catalog()     →  SSOT für Ownership, Ressourcen, Forschung, Upgrades
+    └── GameState.begin_new_game()/reconnect_world()  →  SSOT für Ownership, Ressourcen, Forschung, Upgrades
 
 Bootstrap._ready()
     └── deal_resources(catalog, pool, seed)  →  deterministischer Ressourcen-Deal
@@ -429,6 +433,8 @@ PlanetField._enter_tree()
     └── SeededLayout._enter_tree()  →  Planeten-Nodes erzeugen, Größenprofile, Detail-Seeds
         └── PlanetNetwork._ready()  →  Nachbarschaftsgraph, NavigationField, UI-Aufbau
 ```
+
+Der `Background`-Renderer (`starfield_background.gd`) ist reine Optik; Szenario-, Seed- und Kataloglogik lebt ausschließlich im `WorldBootstrap`. Spielstände schreibt der `SaveGameService`-Autoload als `RunSaveData`-Resource nach `user://saves/` (atomar, versioniert); Layer-2/3-Replays wandern über `GameState.pending_battle_context` + `SceneDirectorService` nahtlos hin und zurück.
 
 **`GameState`** ist Autoload und delegiert intern an vier Domain-Manager:
 
@@ -521,12 +527,12 @@ Die Preflight-Suite (`scripts/preflight.gd`) ist der einzige autoritative Verifi
 # Smoke-Test: Hauptszene bootet durch
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Alle 29 Constraints
+# Alle 33 Constraints
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
 <details>
-<summary>📋 <b>Die 29 Preflight-Constraints</b></summary>
+<summary>📋 <b>Die 33 Preflight-Constraints</b></summary>
 
 | # | Constraint | Prüft |
 |:---:|:---|:---|
@@ -559,6 +565,10 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 | 27 | `conquest_grid_combat` | Grid-basierter Conquest-Kampf & Eroberungslogik |
 | 28 | `paper_style` | Paper-/Papercraft-Comic-Visuallinie & Asset-Stil |
 | 29 | `chunk_expansion` | Deterministischer Chunk-Seed, inkrementelle Navigation & Prozedural-Deal |
+| 30 | `main_menu_and_flow` | Hauptmenü, SceneDirector-Registry & Continue-Gating |
+| 31 | `context_handover` | World→Battle→World-Szenenwechsel über den SceneDirector |
+| 32 | `save_game_roundtrip` | Verlustfreier Save/Load-Roundtrip eines mutierten Runs |
+| 33 | `save_game_slots` | Save-Slot-Write/Read/Overwrite/Corruption/Delete |
 
 </details>
 
@@ -616,7 +626,7 @@ git commit
 | Szenen | **16** |
 | Assets | **419** |
 | Ressourcen | **91** |
-| Preflight-Constraints | **29 PASS** |
+| Preflight-Constraints | **33 PASS** |
 | Snapshots | **14** (Aug 19–21) |
 
 ```mermaid
