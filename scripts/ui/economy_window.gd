@@ -266,7 +266,7 @@ func _income_sources_text(resource_id: StringName) -> String:
 			var base_amount: int = planet.get_size_profile().resource_base
 			parts.append("%s (+%d/%.0fs)" % [UIBaseUtils.planet_display_name(planet), base_amount, interval])
 		if _state.has_method("get_gathering_workers"):
-			var gatherers: int = int(_state.get_gathering_workers(planet.planet_id))
+			var gatherers: int = int(_state.get_gathering_workers(GameState.FACTION_PLAYER, planet.planet_id))
 			if gatherers > 0:
 				var rate: int = gatherers * planet.get_size_profile().resource_base
 				parts.append("%s (%d Sammler → ~+%d/10s)" % [UIBaseUtils.planet_display_name(planet), gatherers, rate])

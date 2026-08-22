@@ -14,6 +14,23 @@ func run(ctx: PreflightContext) -> bool:
 	var camera: Camera2D = background.get_node_or_null("MapCamera") as Camera2D
 	if not ctx.check(camera != null, "map camera is missing from the background scene"):
 		return false
+
+	# ── WASD+Edge-scroll input actions ─────────────────────────────
+	if not ctx.check(InputMap.has_action(&"camera_pan_up") and InputMap.has_action(&"camera_pan_down") and InputMap.has_action(&"camera_pan_left") and InputMap.has_action(&"camera_pan_right"), "WASD camera pan actions are missing from InputMap"):
+		return false
+	if not ctx.check(InputMap.has_action(&"camera_home"), "camera_home action is missing from InputMap"):
+		return false
+
+	# ── Camera export parameters ────────────────────────────────────
+	var edge_margin: float = float(camera.get("edge_scroll_margin"))
+	var edge_speed: float = float(camera.get("edge_scroll_speed"))
+	var kb_speed: float = float(camera.get("keyboard_pan_speed"))
+	if not ctx.check(edge_margin > 0.0 and edge_speed > 0.0 and kb_speed > 0.0, "camera edge-scroll and WASD exports are not configured"):
+		return false
+	if not ctx.check(camera.has_method("_center_on_homeworld"), "map camera is missing its homeworld centering handler"):
+		return false
+
+	# ── Basic camera init + bounds ──────────────────────────────────
 	if not ctx.check(ctx.get_root().get_viewport().get_camera_2d() == camera, "map camera is not the active 2D camera"):
 		return false
 	if not ctx.check(camera.zoom == Vector2.ONE and camera.position.distance_to(world_config.design_size * 0.5) <= 0.01, "map camera did not initialize to the map center"):

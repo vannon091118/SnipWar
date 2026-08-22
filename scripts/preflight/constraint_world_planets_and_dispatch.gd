@@ -391,4 +391,29 @@ func run(ctx: PreflightContext) -> bool:
 	await ctx.await_frame()
 	if not ctx.check(manager.get_child_count() == 0, "arrived units should no longer render"):
 		return false
+
+	# ── FleetOverview existence + wiring ────────────────────────────
+	var fleet_overview: FleetOverview = network.get_fleet_overview() if network.has_method("get_fleet_overview") else null
+	if not ctx.check(fleet_overview != null, "fleet overview is not attached to PlanetNetwork"):
+		return false
+	if not ctx.check(fleet_overview.has_signal("ship_drop_requested") and fleet_overview.has_signal("focus_requested"), "fleet overview is missing its drag-drop or focus signals"):
+		return false
+
+	# ── EconomyWindow module existence + toggle ─────────────────────
+	var economy_window: EconomyWindow = network.get("_economy_window") as EconomyWindow
+	if not ctx.check(economy_window != null and is_instance_valid(economy_window), "economy window module is not attached to PlanetNetwork"):
+		return false
+	if not ctx.check(economy_window.has_method("toggle") and economy_window.has_method("open") and economy_window.has_method("close"), "economy window is missing toggle/open/close methods"):
+		return false
+	if not ctx.check(not economy_window.is_open(), "economy window should start closed"):
+		return false
+	economy_window.open()
+	await ctx.await_frame()
+	if not ctx.check(economy_window.is_open(), "economy window did not open"):
+		return false
+	economy_window.close()
+	await ctx.await_frame()
+	if not ctx.check(not economy_window.is_open(), "economy window did not close"):
+		return false
+
 	return true
