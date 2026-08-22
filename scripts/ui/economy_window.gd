@@ -1,11 +1,9 @@
 class_name EconomyWindow
 extends Control
 
-## Modal overlay showing full economic breakdown:
-## vault totals, income rates, transport routes, and tick status per resource.
-## Opened by clicking the VaultBar; closes via X button or ESC.
-
-signal closed()
+## Persistent economy module showing per-resource vault totals, income sources,
+## transport routes, and tick status. Lives on its own CanvasLayer and toggles
+## open/closed via the "ECONOMY" dossier button or VaultBar click.
 
 const DEFAULT_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
 const DEFAULT_ECONOMY: EconomyConfig = preload("res://resources/config/economy_default.tres")
@@ -15,56 +13,115 @@ const ICON_RARE: Texture2D = preload("res://assets/ui/resources/resource_rare.sv
 const ICON_MATERIAL: Texture2D = preload("res://assets/ui/resources/resource_material.svg")
 const ICON_VOLATILE: Texture2D = preload("res://assets/ui/resources/resource_volatile.svg")
 
+signal closed()
+
 var _theme_config: UIThemeConfig = DEFAULT_THEME
 var _economy_manager: Node
 var _state: Node
+var _visible: bool = false
+
+# Content nodes rebuilt each toggle-open so data is always fresh.
+var _backdrop: ColorRect
+var _panel: PanelContainer
+var _content_vbox: VBoxContainer
+var _content_built: bool = false
 
 func setup(theme_config: UIThemeConfig = null, economy_manager: Node = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
 	_economy_manager = economy_manager
-	# _state is resolved after add_child, inside _build_content.
+	# Build backdrop and panel shell once; content is rebuilt on each open.
+	_grow_shell()
+	hide()
 
-func _ready() -> void:
+func is_open() -> bool:
+	return _visible
+
+func toggle() -> void:
+	if _visible:
+		close()
+	else:
+		open()
+
+func open() -> void:
+	if _visible:
+		return
 	_state = get_tree().root.get_node_or_null("GameState")
+	_economy_manager = _find_economy_manager()
 	_build_content()
+	_bind_signals()
+	show()
+	_visible = true
 
-func _build_content() -> void:
-	# Semi-transparent backdrop captures clicks behind the panel.
-	var backdrop := ColorRect.new()
-	backdrop.name = "Backdrop"
-	backdrop.color = Color(0.0, 0.0, 0.0, 0.55)
-	backdrop.anchor_right = 1.0
-	backdrop.anchor_bottom = 1.0
-	add_child(backdrop)
-	backdrop.gui_input.connect(_on_backdrop_input)
+func close() -> void:
+	if not _visible:
+		return
+	_unbind_signals()
+	_clear_content()
+	hide()
+	_visible = false
+	closed.emit()
 
-	# Panel centred on screen.
-	var panel := PanelContainer.new()
-	panel.name = "EconomyPanel"
-	panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+# ── shell (once) ─────────────────────────────────────────────────────
+
+func _grow_shell() -> void:
+	anchor_right = 1.0
+	anchor_bottom = 1.0
+	mouse_filter = MOUSE_FILTER_STOP
+
+	_backdrop = ColorRect.new()
+	_backdrop.name = "Backdrop"
+	_backdrop.color = Color(0.0, 0.0, 0.0, 0.55)
+	_backdrop.anchor_right = 1.0
+	_backdrop.anchor_bottom = 1.0
+	add_child(_backdrop)
+	_backdrop.gui_input.connect(_on_backdrop_input)
+
+	_panel = PanelContainer.new()
+	_panel.name = "EconomyPanel"
+	_panel.size_flags_horizontal = SIZE_SHRINK_CENTER
+	_panel.size_flags_vertical = SIZE_SHRINK_CENTER
 	var box: StyleBoxFlat = _theme_config.make_style_box(
 		Color(0.06, 0.07, 0.10, 0.97),
 		_theme_config.panel_border, 1, _theme_config.panel_corner_radius
 	)
-	panel.add_theme_stylebox_override("panel", box)
+	_panel.add_theme_stylebox_override("panel", box)
 
 	var margin := MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 24)
 	margin.add_theme_constant_override("margin_top", 18)
 	margin.add_theme_constant_override("margin_right", 24)
 	margin.add_theme_constant_override("margin_bottom", 18)
-	panel.add_child(margin)
+	_panel.add_child(margin)
 
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 12)
-	margin.add_child(vbox)
+	_content_vbox = VBoxContainer.new()
+	_content_vbox.add_theme_constant_override("separation", 12)
+	margin.add_child(_content_vbox)
+
+	add_child(_panel)
+
+func _find_economy_manager() -> Node:
+	# Walk up: CanvasLayer → PlanetNetwork → SeededLayout → EconomyManager
+	var ancestor: Node = self
+	while ancestor != null:
+		if ancestor is CanvasLayer:
+			ancestor = ancestor.get_parent()
+			continue
+		var em: Node = ancestor.get_node_or_null("EconomyManager") if ancestor != null else null
+		if em != null:
+			return em
+		ancestor = ancestor.get_parent() if ancestor != null else null
+	return null
+
+# ── content (per open) ───────────────────────────────────────────────
+
+func _build_content() -> void:
+	_clear_content()
 
 	# Title row with close button.
 	var title_row := HBoxContainer.new()
 	var title := Label.new()
 	title.text = "WIRTSCHAFT & EINKOMMEN"
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.size_flags_horizontal = SIZE_EXPAND_FILL
 	title.add_theme_font_size_override("font_size", _theme_config.panel_title_font_size)
 	title.add_theme_color_override("font_color", _theme_config.accent_text_color)
 	title_row.add_child(title)
@@ -72,48 +129,80 @@ func _build_content() -> void:
 	var close_btn := Button.new()
 	close_btn.text = "X"
 	close_btn.focus_mode = Control.FOCUS_NONE
-	close_btn.pressed.connect(_close)
+	close_btn.pressed.connect(close)
 	title_row.add_child(close_btn)
-	vbox.add_child(title_row)
+	_content_vbox.add_child(title_row)
 
-	# Credits row.
-	var credits := Label.new()
-	credits.text = _credits_text()
-	credits.add_theme_font_size_override("font_size", _theme_config.heading_font_size)
-	credits.add_theme_color_override("font_color", Color(0.95, 0.76, 0.31))
-	vbox.add_child(credits)
+	# Credits.
+	_content_vbox.add_child(_make_credit_label())
 
 	var sep1 := HSeparator.new()
-	vbox.add_child(sep1)
+	_content_vbox.add_child(sep1)
 
-	# Per-resource summary blocks.
+	# Per-resource blocks.
 	for res_id in GameState.ALL_RESOURCES:
-		var block := _resource_block(res_id)
-		vbox.add_child(block)
+		_content_vbox.add_child(_resource_block(res_id))
 
 	var sep2 := HSeparator.new()
-	vbox.add_child(sep2)
+	_content_vbox.add_child(sep2)
 
-	# Transport summary.
-	var transport := Label.new()
-	transport.text = _transport_text()
-	transport.add_theme_font_size_override("font_size", _theme_config.small_font_size)
-	transport.add_theme_color_override("font_color", _theme_config.muted_text_color)
-	vbox.add_child(transport)
+	# Transport.
+	_content_vbox.add_child(_make_transport_label())
 
-	# Tick status.
-	var tick := Label.new()
-	tick.text = _tick_text()
-	tick.add_theme_font_size_override("font_size", _theme_config.small_font_size)
-	tick.add_theme_color_override("font_color", _theme_config.muted_text_color)
-	vbox.add_child(tick)
+	# Tick.
+	_content_vbox.add_child(_make_tick_label())
 
-	add_child(panel)
-
-	# Centre panel on screen.
+	# Centre.
 	await get_tree().process_frame
 	var vsize: Vector2 = get_viewport().get_visible_rect().size
-	panel.position = (vsize - panel.size) * 0.5
+	_panel.position = (vsize - _panel.size) * 0.5
+	_content_built = true
+
+func _clear_content() -> void:
+	_content_built = false
+	for child in _content_vbox.get_children():
+		child.queue_free()
+
+func refresh() -> void:
+	"""Re-read GameState and rebuild the content tree."""
+	if not _visible or not _content_built:
+		return
+	_state = get_tree().root.get_node_or_null("GameState")
+	_economy_manager = _find_economy_manager()
+	_build_content()
+
+# ── signal binding ───────────────────────────────────────────────────
+
+func _bind_signals() -> void:
+	if _state != null:
+		if _state.has_signal("faction_resources_changed") and not _state.faction_resources_changed.is_connected(_on_faction_resources_changed):
+			_state.faction_resources_changed.connect(_on_faction_resources_changed)
+		if _state.has_signal("credits_changed") and not _state.credits_changed.is_connected(_on_credits_changed):
+			_state.credits_changed.connect(_on_credits_changed)
+		if _state.has_signal("worker_transport_phase_changed") and not _state.worker_transport_phase_changed.is_connected(_on_transport_changed):
+			_state.worker_transport_phase_changed.connect(_on_transport_changed)
+
+func _unbind_signals() -> void:
+	if _state != null:
+		if _state.has_signal("faction_resources_changed") and _state.faction_resources_changed.is_connected(_on_faction_resources_changed):
+			_state.faction_resources_changed.disconnect(_on_faction_resources_changed)
+		if _state.has_signal("credits_changed") and _state.credits_changed.is_connected(_on_credits_changed):
+			_state.credits_changed.disconnect(_on_credits_changed)
+		if _state.has_signal("worker_transport_phase_changed") and _state.worker_transport_phase_changed.is_connected(_on_transport_changed):
+			_state.worker_transport_phase_changed.disconnect(_on_transport_changed)
+
+func _on_faction_resources_changed(faction: StringName, _resource_id: StringName, _new_amount: int) -> void:
+	if faction == GameState.FACTION_PLAYER:
+		refresh()
+
+func _on_credits_changed(faction: StringName, _amount: int) -> void:
+	if faction == GameState.FACTION_PLAYER:
+		refresh()
+
+func _on_transport_changed(_transport_id: StringName, _phase: StringName) -> void:
+	refresh()
+
+# ── building blocks ──────────────────────────────────────────────────
 
 func _resource_block(resource_id: StringName) -> Control:
 	var block := VBoxContainer.new()
@@ -145,7 +234,6 @@ func _resource_block(resource_id: StringName) -> Control:
 		amount_label.add_theme_font_size_override("font_size", _theme_config.body_font_size)
 		block.add_child(amount_label)
 
-		# Owned planets producing this resource.
 		var income := _income_sources_text(resource_id)
 		if not income.is_empty():
 			var income_label := Label.new()
@@ -160,7 +248,7 @@ func _income_sources_text(resource_id: StringName) -> String:
 	if _state == null:
 		return ""
 	var parts: Array[String] = []
-	var field: Node = get_parent().get_parent() if get_parent() != null else null
+	var field: Node = _find_seeded_layout()
 	if field == null:
 		return ""
 	var snapshot: Array = field.get_children().duplicate()
@@ -172,14 +260,11 @@ func _income_sources_text(resource_id: StringName) -> String:
 			continue
 		if _state.faction_of(planet.planet_id) != GameState.FACTION_PLAYER:
 			continue
-		# Check if this planet generates this resource type.
 		var planet_resource: StringName = _state.resource_of(planet.planet_id) if _state.has_method("resource_of") else &""
 		if planet_resource == resource_id:
-			# Use economy_config.tick_interval for rate calculation.
 			var interval: float = DEFAULT_ECONOMY.tick_interval if DEFAULT_ECONOMY != null else 10.0
 			var base_amount: int = planet.get_size_profile().resource_base
 			parts.append("%s (+%d/%.0fs)" % [UIBaseUtils.planet_display_name(planet), base_amount, interval])
-		# Gather workers on this planet also yield resources.
 		if _state.has_method("get_gathering_workers"):
 			var gatherers: int = int(_state.get_gathering_workers(planet.planet_id))
 			if gatherers > 0:
@@ -188,6 +273,37 @@ func _income_sources_text(resource_id: StringName) -> String:
 	if parts.is_empty():
 		return "Keine laufende Produktion"
 	return " ·  ".join(parts)
+
+func _find_seeded_layout() -> Node:
+	# EconomyWindow → CanvasLayer → PlanetNetwork → SeededLayout
+	var layer: Node = get_parent()
+	if layer == null:
+		return null
+	var network: Node = layer.get_parent()
+	if network == null:
+		return null
+	return network.get_parent()
+
+func _make_credit_label() -> Label:
+	var label := Label.new()
+	label.text = _credits_text()
+	label.add_theme_font_size_override("font_size", _theme_config.heading_font_size)
+	label.add_theme_color_override("font_color", Color(0.95, 0.76, 0.31))
+	return label
+
+func _make_transport_label() -> Label:
+	var label := Label.new()
+	label.text = _transport_text()
+	label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+	label.add_theme_color_override("font_color", _theme_config.muted_text_color)
+	return label
+
+func _make_tick_label() -> Label:
+	var label := Label.new()
+	label.text = _tick_text()
+	label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+	label.add_theme_color_override("font_color", _theme_config.muted_text_color)
+	return label
 
 func _credits_text() -> String:
 	if _state == null:
@@ -224,20 +340,11 @@ func _icon_for(resource_id: StringName) -> Texture2D:
 		GameState.RES_VOLATILE: return ICON_VOLATILE
 		_: return null
 
-func _close() -> void:
-	closed.emit()
-	# Free our parent CanvasLayer too so the layer doesn't linger.
-	var parent_layer: Node = get_parent()
-	if parent_layer is CanvasLayer:
-		parent_layer.queue_free()
-	else:
-		queue_free()
-
 func _on_backdrop_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
-		_close()
+		close()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ui_cancel"):
-		_close()
+		close()
 		get_viewport().set_input_as_handled()

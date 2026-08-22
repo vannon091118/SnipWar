@@ -37,6 +37,7 @@ var _selection_service: SelectionService
 var _action_tooltip: SelectionActionTooltip
 var _modal_coordinator: ModalCoordinator
 var _fleet_overview: FleetOverview
+var _economy_window: EconomyWindow
 var _selected_ship: ShipBase
 
 # Context-menu item IDs and stable names used by tests/replay scripts.
@@ -327,6 +328,7 @@ func _create_modal_coordinator() -> void:
 	_modal_coordinator.setup(_map_camera, ui_theme_config)
 	_create_dossier_launcher()
 	_create_fleet_overview.call_deferred()
+	_create_economy_module.call_deferred()
 
 func _create_dossier_launcher() -> void:
 	var layer := CanvasLayer.new()
@@ -341,6 +343,7 @@ func _create_dossier_launcher() -> void:
 	_add_dossier_button(box, "PLANET", _open_planet_dossier)
 	_add_dossier_button(box, "WERKSTATT", _open_workshop_dossier)
 	_add_dossier_button(box, "FORSCHUNG", _open_tech_tree_dossier)
+	_add_dossier_button(box, "ECONOMY", _toggle_economy_module)
 
 func _create_fleet_overview() -> void:
 	_fleet_overview = FLEET_OVERVIEW_SCRIPT.new() as FleetOverview
@@ -349,27 +352,30 @@ func _create_fleet_overview() -> void:
 	layer.name = "FleetOverviewLayer"
 	layer.layer = 38
 	add_child(layer)
-	_fleet_overview.position = Vector2(12.0, 180.0)
+	_fleet_overview.position = Vector2(12.0, 220.0)
 	_fleet_overview.custom_minimum_size = Vector2(190.0, 0.0)
 	layer.add_child(_fleet_overview)
 	_fleet_overview.setup(ui_theme_config, _map_camera)
 	_fleet_overview.focus_requested.connect(_on_fleet_overview_focus)
 	_fleet_overview.ship_drop_requested.connect(_on_ship_drop_requested)
 
-func _on_economy_overview_requested() -> void:
-	var economy_manager: Node = get_parent().get_node_or_null("EconomyManager")
-	var window: EconomyWindow = ECONOMY_WINDOW_SCRIPT.new() as EconomyWindow
-	window.name = "EconomyWindow"
+func _create_economy_module() -> void:
+	_economy_window = ECONOMY_WINDOW_SCRIPT.new() as EconomyWindow
+	_economy_window.name = "EconomyWindow"
 	var layer := CanvasLayer.new()
 	layer.name = "EconomyWindowLayer"
 	layer.layer = 65
 	add_child(layer)
-	window.setup(ui_theme_config, economy_manager)
-	layer.add_child(window)
-	window.closed.connect(_on_economy_window_closed)
+	_economy_window.setup(ui_theme_config)
+	layer.add_child(_economy_window)
 
-func _on_economy_window_closed() -> void:
-	pass  # window queue_free's itself; the CanvasLayer stays but is harmless
+func _toggle_economy_module() -> void:
+	if _economy_window != null and is_instance_valid(_economy_window):
+		_economy_window.toggle()
+
+func _on_economy_overview_requested() -> void:
+	if _economy_window != null and is_instance_valid(_economy_window):
+		_economy_window.open()
 
 func _on_ship_dispatched(ship: ShipBase) -> void:
 	_connect_ship_selection(ship)
