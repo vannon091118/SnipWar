@@ -37,6 +37,8 @@ func setup(planets: Array[Node2D], theme_config: UIThemeConfig = null) -> void:
 	_apply_theme()
 	var economy_manager: Node = get_parent().get_node_or_null("EconomyManager") if get_parent() != null else null
 	_vault_bar.setup(_theme_config, economy_manager)
+	if not _vault_bar.economy_requested.is_connected(_on_economy_requested):
+		_vault_bar.economy_requested.connect(_on_economy_requested)
 	_panel.setup(_theme_config)
 	_panel.populate_units(planets)
 	_connect_tab_signal()
@@ -85,6 +87,7 @@ func _connect_panel_signals() -> void:
 		_panel.clear_selection_pressed.connect(_on_clear_selection_pressed)
 
 signal clear_selection_requested()
+signal economy_overview_requested()
 
 func _connect_game_state_signals() -> void:
 	var state: Node = get_tree().root.get_node_or_null("GameState")
@@ -152,6 +155,9 @@ func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 	_income_flush_scheduled = false
 	_vault_bar.clear_income_rates()
 	_refresh_vault()
+
+func _on_economy_requested() -> void:
+	economy_overview_requested.emit()
 
 func _refresh_vault() -> void:
 	if _vault_bar == null:
@@ -269,17 +275,15 @@ func _apply_responsive_layout() -> void:
 	var edge: float = _theme_config.edge_margin
 	var panel_left: float = viewport_size.x - panel_width - edge
 
-	# Keep the resource HUD centered in the map area instead of underneath the panel.
+	# Pin the resource bar to the top-left corner so it stays visible and
+	# is always clickable for the full economy window.
 	if _vault_bar != null:
-		var available_vault_width: float = maxf(0.0, panel_left - edge * 2.0)
-		var vault_width: float = minf(_theme_config.resource_bar_max_width, available_vault_width)
-		_vault_bar.visible = vault_width > 0.0
-		if _vault_bar.visible:
-			var vault_left: float = maxf(edge, (panel_left - vault_width) * 0.5)
-			_vault_bar.offset_left = vault_left
-			_vault_bar.offset_top = edge
-			_vault_bar.offset_right = vault_left + vault_width
-			_vault_bar.offset_bottom = edge + _theme_config.resource_bar_height
+		var vault_width: float = minf(_theme_config.resource_bar_max_width, viewport_size.x * 0.45)
+		_vault_bar.visible = true
+		_vault_bar.offset_left = edge
+		_vault_bar.offset_top = edge
+		_vault_bar.offset_right = edge + vault_width
+		_vault_bar.offset_bottom = edge + _theme_config.resource_bar_height
 
 	# The tab is a compact handle, not a second full-width title bar.
 	_tab_button.offset_left = -_theme_config.tab_width - edge

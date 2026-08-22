@@ -96,6 +96,10 @@ func _edge_scroll_vector() -> Vector2:
 func _unhandled_input(event: InputEvent) -> void:
 	if _input_blocked:
 		return
+	if event.is_action_pressed(&"camera_home"):
+		_center_on_homeworld()
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton:
 		_handle_mouse_button(event)
 	elif event is InputEventMouseMotion:
@@ -239,6 +243,21 @@ func _sync_infinite_world() -> void:
 ## need to resolve a screen-space mouse position to the nearest planet.
 func planet_at_screen(screen_position: Vector2) -> Node2D:
 	return _planet_at(screen_position)
+
+## Moves the camera instantly to the player's homeworld planet.
+func _center_on_homeworld() -> void:
+	var state: Node = get_tree().root.get_node_or_null("GameState")
+	if state == null:
+		return
+	var homeworld_id: StringName = state.homeworld_for(GameState.FACTION_PLAYER)
+	if String(homeworld_id).is_empty():
+		return
+	for planet in get_tree().get_nodes_in_group("planets"):
+		var planet_node: Planet = planet as Planet
+		if planet_node != null and planet_node.planet_id == homeworld_id:
+			position = planet_node.global_position
+			_sync_infinite_world()
+			return
 
 func _planet_at(screen_position: Vector2) -> Node2D:
 	var world_position: Vector2 = _screen_to_world(screen_position)

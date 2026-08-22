@@ -219,7 +219,7 @@ func run(ctx: PreflightContext) -> bool:
 	var rate_state: Node = ctx.get_root().get_node_or_null("GameState")
 	rate_state.resource_generated.emit(economy_planet.planet_id, GameState.RES_ENERGY, 3)
 	await ctx.await_frame()
-	if not ctx.check(rate_label.text.contains("+0.3/s") and rate_label.text.contains("Energie"), "vault bar did not display the latest economy income rate", {"actual_text": rate_label.text}):
+	if not ctx.check(rate_label.text.contains("+0.3/s") and rate_label.text.contains("resource_energy"), "vault bar did not display the latest economy income rate", {"actual_text": rate_label.text}):
 		return false
 	if not ctx.check(panel_scroll != null and panel_scroll.vertical_scroll_mode == ScrollContainer.SCROLL_MODE_AUTO, "planet panel does not provide a scrollable menu"):
 		return false

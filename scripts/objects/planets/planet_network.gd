@@ -11,6 +11,7 @@ const MESSAGE_FEED_SCENE: PackedScene = preload("res://scenes/ui/message_feed.ts
 const SELECTION_SERVICE_SCRIPT: Script = preload("res://scripts/objects/selection_service.gd")
 const SELECTION_ACTION_TOOLTIP_SCRIPT: Script = preload("res://scripts/ui/selection_tooltip.gd")
 const FLEET_OVERVIEW_SCRIPT: Script = preload("res://scripts/ui/fleet_overview.gd")
+const ECONOMY_WINDOW_SCRIPT: Script = preload("res://scripts/ui/economy_window.gd")
 
 @export var transit_config: TransitConfig = DEFAULT_CONFIG
 @export var ui_theme_config: UIThemeConfig = DEFAULT_UI_THEME
@@ -138,6 +139,8 @@ func _create_ui() -> void:
 	_ui.send_pressed.connect(_on_send_pressed)
 	if not _ui.clear_selection_requested.is_connected(_on_clear_selection_requested):
 		_ui.clear_selection_requested.connect(_on_clear_selection_requested)
+	if not _ui.economy_overview_requested.is_connected(_on_economy_overview_requested):
+		_ui.economy_overview_requested.connect(_on_economy_overview_requested)
 	_create_context_menu()
 	_create_technology_menu.call_deferred()
 	_create_message_feed.call_deferred()
@@ -332,7 +335,7 @@ func _create_dossier_launcher() -> void:
 	add_child(layer)
 	var box := VBoxContainer.new()
 	box.name = "LauncherBox"
-	box.position = Vector2(12.0, 48.0)
+	box.position = Vector2(12.0, 72.0)
 	box.add_theme_constant_override("separation", 6)
 	layer.add_child(box)
 	_add_dossier_button(box, "PLANET", _open_planet_dossier)
@@ -346,12 +349,27 @@ func _create_fleet_overview() -> void:
 	layer.name = "FleetOverviewLayer"
 	layer.layer = 38
 	add_child(layer)
-	_fleet_overview.position = Vector2(12.0, 144.0)
+	_fleet_overview.position = Vector2(12.0, 180.0)
 	_fleet_overview.custom_minimum_size = Vector2(190.0, 0.0)
 	layer.add_child(_fleet_overview)
 	_fleet_overview.setup(ui_theme_config, _map_camera)
 	_fleet_overview.focus_requested.connect(_on_fleet_overview_focus)
 	_fleet_overview.ship_drop_requested.connect(_on_ship_drop_requested)
+
+func _on_economy_overview_requested() -> void:
+	var economy_manager: Node = get_parent().get_node_or_null("EconomyManager")
+	var window: EconomyWindow = ECONOMY_WINDOW_SCRIPT.new() as EconomyWindow
+	window.name = "EconomyWindow"
+	var layer := CanvasLayer.new()
+	layer.name = "EconomyWindowLayer"
+	layer.layer = 65
+	add_child(layer)
+	window.setup(ui_theme_config, economy_manager)
+	layer.add_child(window)
+	window.closed.connect(_on_economy_window_closed)
+
+func _on_economy_window_closed() -> void:
+	pass  # window queue_free's itself; the CanvasLayer stays but is harmless
 
 func _on_ship_dispatched(ship: ShipBase) -> void:
 	_connect_ship_selection(ship)
