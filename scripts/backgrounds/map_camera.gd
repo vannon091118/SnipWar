@@ -10,6 +10,8 @@ const PLANET_CLICK_RADIUS := 120.0
 @export_range(0.05, 0.5, 0.05) var zoom_step: float = 0.15
 @export_range(2.0, 32.0, 1.0) var drag_threshold: float = 6.0
 @export_range(100.0, 800.0, 10.0) var keyboard_pan_speed: float = 400.0
+@export_range(100.0, 800.0, 10.0) var edge_scroll_speed: float = 300.0
+@export_range(4.0, 64.0, 1.0) var edge_scroll_margin: float = 16.0
 
 var _map_bounds: Rect2 = Rect2(Vector2.ZERO, Vector2(960.0, 540.0))
 var _planet_field: SeededLayout
@@ -62,11 +64,34 @@ func _process(delta: float) -> void:
 		pan_dir.y -= 1.0
 	if Input.is_action_pressed(&"camera_pan_down"):
 		pan_dir.y += 1.0
+	var edge_dir := _edge_scroll_vector()
+	if edge_dir.length_squared() > 0.01:
+		pan_dir += edge_dir
 	if pan_dir.length_squared() > 0.01:
 		pan_dir = pan_dir.normalized()
 		position += pan_dir * keyboard_pan_speed * delta / zoom.x
 		_clamp_position()
 		_sync_infinite_world()
+
+func _edge_scroll_vector() -> Vector2:
+	# Godot 4 headless runs pin the mouse at (0,0) with no display server.
+	if DisplayServer.get_name() == "headless":
+		return Vector2.ZERO
+	var mouse_pos := get_viewport().get_mouse_position()
+	var vp_size := get_viewport().get_visible_rect().size
+	if vp_size.x <= 0.0 or vp_size.y <= 0.0:
+		return Vector2.ZERO
+	var margin := edge_scroll_margin
+	var result := Vector2.ZERO
+	if mouse_pos.x < margin:
+		result.x = -(1.0 - mouse_pos.x / margin)
+	elif mouse_pos.x > vp_size.x - margin:
+		result.x = 1.0 - (vp_size.x - mouse_pos.x) / margin
+	if mouse_pos.y < margin:
+		result.y = -(1.0 - mouse_pos.y / margin)
+	elif mouse_pos.y > vp_size.y - margin:
+		result.y = 1.0 - (vp_size.y - mouse_pos.y) / margin
+	return result * (edge_scroll_speed / keyboard_pan_speed)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _input_blocked:
