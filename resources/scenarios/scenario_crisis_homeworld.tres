@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ScenarioSnapshot" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/testing/scenario_snapshot.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+scenario_id = &"crisis_homeworld"
+display_name = "Crisis — Homeworld Threatened"
+description = "Enemy fleet approaching player homeworld, minimal defenses. Exercises extreme economic pressure, ship loss, and faction change scenarios."
+phase = &"crisis"
+mechanics_covered = [&"catalog_reset", &"faction_changed", &"faction_resources_changed", &"credits_changed", &"ship_launched", &"ship_lost", &"ship_assembled", &"ship_part_purchased", &"gathering_started", &"gathering_withdrawn", &"resources_collected", &"workers_reserved", &"workers_released", &"resource_generated", &"battle_context_changed", &"milestone_reached"]
+tags = [&"world", &"faction", &"economy", &"ship", &"combat"]
+layout_seed_override = -1

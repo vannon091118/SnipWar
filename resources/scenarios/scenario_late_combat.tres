@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ScenarioSnapshot" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/testing/scenario_snapshot.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+scenario_id = &"late_combat"
+display_name = "Late Game — Combat"
+description = "Full tech tree, 5 ships, active conflict. Exercises battle simulation, conquest, ship transit, arrival resolution, and all economy mechanics."
+phase = &"late"
+mechanics_covered = [&"catalog_reset", &"faction_changed", &"planet_discovered", &"planet_scanned", &"faction_resources_changed", &"credits_changed", &"technology_researched", &"planet_technology_researched", &"research_started", &"ship_assembled", &"ship_disassembled", &"ship_launched", &"ship_lost", &"ship_part_purchased", &"ship_build_started", &"persistent_ship_changed", &"gathering_started", &"gathering_withdrawn", &"resources_collected", &"workers_reserved", &"workers_released", &"worker_factory_built", &"resource_generated", &"planet_upgraded", &"battle_context_changed", &"milestone_reached", &"refinery_converted", &"building_placed", &"building_removed", &"local_resources_changed", &"resource_transferred"]
+tags = [&"world", &"faction", &"economy", &"tech", &"ship", &"combat"]
+layout_seed_override = -1

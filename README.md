@@ -93,7 +93,7 @@ cd snip-war
 # Smoke-Test: Bootet die Hauptszene, wartet 2 Sekunden, beendet sich
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Vollständige Preflight-Suite (33 Constraints)
+# Vollständige Preflight-Suite (34 Constraints)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
@@ -527,12 +527,12 @@ Die Preflight-Suite (`scripts/preflight.gd`) ist der einzige autoritative Verifi
 # Smoke-Test: Hauptszene bootet durch
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Alle 33 Constraints
+# Alle 34 Constraints
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
 <details>
-<summary>📋 <b>Die 33 Preflight-Constraints</b></summary>
+<summary>📋 <b>Die 34 Preflight-Constraints</b></summary>
 
 | # | Constraint | Prüft |
 |:---:|:---|:---|

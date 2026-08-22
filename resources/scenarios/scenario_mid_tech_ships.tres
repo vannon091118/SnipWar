@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ScenarioSnapshot" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/testing/scenario_snapshot.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+scenario_id = &"mid_tech_ships"
+display_name = "Mid Game — Tech & Ships"
+description = "Established economy with worker automation, 3 techs researched, 2 ships assembled. Exercises tech tree, ship assembly, worker dispatch, and gathering."
+phase = &"mid"
+mechanics_covered = [&"catalog_reset", &"faction_changed", &"planet_discovered", &"planet_scanned", &"faction_resources_changed", &"credits_changed", &"technology_researched", &"research_started", &"ship_assembled", &"ship_launched", &"ship_part_purchased", &"ship_build_started", &"gathering_started", &"resources_collected", &"workers_reserved", &"workers_released", &"worker_factory_built", &"resource_generated"]
+tags = [&"world", &"faction", &"economy", &"tech", &"ship"]
+layout_seed_override = -1

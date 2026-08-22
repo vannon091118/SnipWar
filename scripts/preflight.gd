@@ -207,6 +207,12 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"desc": "Save slot write/read/overwrite/corruption/delete",
 		"requires_scene": false,
 	},
+	{
+		"id": "mechanic_coverage",
+		"script": preload("res://scripts/preflight/constraint_mechanic_coverage.gd"),
+		"desc": "Mechanic discovery, test model integrity & scenario validation",
+		"requires_scene": false,
+	},
 ]
 
 

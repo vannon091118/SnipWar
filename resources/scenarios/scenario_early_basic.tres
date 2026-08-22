@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ScenarioSnapshot" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/testing/scenario_snapshot.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+scenario_id = &"early_basic"
+display_name = "Early Game — Basic"
+description = "Starting state: 2 homeworlds, no tech, minimal resources. Exercises world generation, faction ownership, and basic economy."
+phase = &"early"
+mechanics_covered = [&"catalog_reset", &"faction_changed", &"planet_discovered", &"planet_scanned", &"faction_resources_changed", &"credits_changed"]
+tags = [&"world", &"faction", &"economy"]
+layout_seed_override = -1
