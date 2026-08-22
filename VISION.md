@@ -14,7 +14,7 @@ Der aktuelle Build besitzt bereits einen strategischen Overworld-Kern:
 - missionsabhängiger Transit für Military, Colony, Cargo und Collect
 - einfacher Resolve bei militärischer Ankunft: Verstärkung, Abwehr oder Besitzwechsel
 - Economy- und Gather-Timer, CPU-Dispatch-AI, Scouts und EventLog
-- vier Planet-Upgrade-Zweige, planetare und globale Technologien sowie ein UI-Ship-Builder
+- 17 Planet-Upgrade in vier Branches, planetare und globale Technologien, UI-Ship-Builder, FleetOverview mit Drag-to-Dispatch und EconomyWindow-Modul
 
 Der Ship Builder erzeugt jetzt einsatzfähige Assemblies: `ConflictManager` startet ShipBase-Transits, `FleetBattleSimulator` (Layer 2) und `ConquestSimulator` (Layer 3) resolved Loadouts. Ship-as-Minion-Adapter (`AssaultMinionDefinition.from_ship()`) erlaubt planetare Eroberung mit Schiffslasten. Der Scout bleibt der kostenlose Start-Scout.
 

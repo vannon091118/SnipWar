@@ -27,7 +27,7 @@
 
 ## 1. Aktueller Status
 
-SnipWar ist ein strategischer Overworld-Prototyp mit funktionierendem Karten-, Transit-, Ressourcen-, Forschungs-, Upgrade-, Scout- und deterministischem Konfliktkern. Die Phasen 0 bis 7 (EffectDefinition, Trait-Erweiterungen, Planetensignaturen, Raffinerie-Konvertierung, Perimeter-Slots & Reichweite, CompositeShipView, FleetSnapshot, FleetBattleSimulator, ConquestSimulator und Replay-Szenen) sind implementiert und in `scripts/preflight.gd` verifiziert.
+SnipWar ist ein strategischer Overworld-Prototyp mit funktionierendem Karten-, Transit-, Ressourcen-, Forschungs-, Upgrade-, Scout- und deterministischem Konfliktkern. Die Phasen 0 bis 7 (EffectDefinition, Trait-Erweiterungen, Planetensignaturen, Raffinerie-Konvertierung, Perimeter-Slots & Reichweite, CompositeShipView, FleetSnapshot, FleetBattleSimulator, ConquestSimulator und Replay-Szenen) sind implementiert und in `scripts/preflight.gd` (aktuell 34 Constraints) verifiziert.
 
 Der Startpunkt ist `scenes/main_menu/main_menu.tscn` (Neues Spiel / Weiter / Beenden). Die Strategie-Overworld liegt in `scenes/world/world.tscn` mit `WorldBootstrap` als Wurzel; Layer-2-/Layer-3-Replays sind eigene Szenen (`battle_scene.tscn`, `conquest_scene.tscn`). Autoloads: `GameState`, `GameCycleManager`, `SceneDirectorService`, `SaveGameService`, `EventLog`, `TouchFeedbackLayer`. `WorldBootstrap._enter_tree()` wählt das aktive Szenario, finalisiert den Layout-Seed und generiert den Planetenkatalog, bevor es GameState, PlanetField und MeteorField konfiguriert; `Bootstrap` dealt danach nur die Ressourcen. Szenen-Wechsel laufen über den `SceneDirectorService` (Custom-Switcher), Kontext über `GameState.pending_battle_context`/`reconnect_world`/`RunSession`.
 
@@ -235,10 +235,12 @@ Die AI läuft als Overworld-Dispatcher; sie simuliert keine Schiffs- oder Mech-K
 - `PlanetNetworkUI` läuft auf CanvasLayer 50 und delegiert an `VaultBar` und `PlanetPanel`.
 - `TechnologyMenu` läuft auf CanvasLayer 60 und schließt das Planet-Panel bei Öffnung.
 - `PauseMenu` läuft auf CanvasLayer 70 und verarbeitet ESC in `PROCESS_MODE_ALWAYS`; bei offenem Planet- oder Technology-Panel pausiert ESC nicht. Es bietet **SPEICHERN** (→ `SaveGameService.save_run(0)`, Slot-0-Konvention wie im Hauptmenü) und **HAUPTMENÜ** (→ erst unpausen, dann `SceneDirectorService.goto_scene("menu")`, da ein Scene-Wechsel im gepausten Baum das Menü einfrieren würde).
-- `PaperDossier` läuft auf CanvasLayer 80 und zeigt fullscreen Modale (Planeten-Dossier, Werkstatt, Forschungsbaum) mit Papier-Blatt-Tween; `ModalCoordinator` blockiert die Kamera während eines offenen Dossiers.
+- `PaperDossier` läuft auf CanvasLayer 80 und zeigt fullscreen Modale (Planeten-Dossier, Werkstatt, Forschungsbaum, Economy) mit Papier-Blatt-Tween; `ModalCoordinator` blockiert die Kamera während eines offenen Dossiers.
+- `FleetOverview` (CanvasLayer 38, links unter dem DossierLauncher) zeigt aktive/idle Schiffe und selektierte Planeten mit Klick-Zoom und Drag-to-Dispatch.
+- `EconomyWindow` (CanvasLayer 65) ist ein persistentes Modul, das die vollständige Wirtschaftsübersicht (Rohstoff-Vorräte, Produktionsquellen, Credits, aktive Transporte, Tick-Status) zeigt und live auf `faction_resources_changed`/`credits_changed` reagiert. Geöffnet per `ECONOMY`-Dossier-Button oder VaultBar-Klick.
 - Das Panel berechnet seine effektive Mindestbreite nach dynamischen Listen neu; sein Inhalt bleibt scrollbar, während der Action-Footer mit **MISSION STARTEN** fixiert bleibt.
 - Die Dispatch-Preview zeigt Einheitenmenge, verbleibende Garnison, Flugzeit und missionsabhängige Konsequenz. Route-Legende und dezente Karten-Zurückstufung markieren den aktiven Fokus.
-- `VaultBar` zeigt Ressourcen, Credits, aktive Transportphasen, Ertragsrate und den Countdown zum Economy-Tick.
+- `VaultBar` (CanvasLayer 50, links oben) zeigt die fünf Rohstoffe als Icons+Zahlen, Credits, aktive Transportphasen, Ertragsrate und den Countdown zum Economy-Tick. Klick öffnet das EconomyWindow.
 - `EventLog.push()` schreibt einen sichtbaren Toast-Eintrag, `log_silent()` nur Historie.
 - MessageFeed zeigt nur sichtbare Einträge und begrenzt die Toast-Anzahl.
 - `EventLog` exportiert standardmäßig erst bei `NOTIFICATION_WM_CLOSE_REQUEST` nach `user://player.log`; Headless-Läufe schreiben nicht automatisch den echten Spielerlog.
@@ -272,7 +274,7 @@ Ein separater Main-Scene-Smoke-Test ist:
 godot --headless --path . --quit-after 2
 ```
 
-Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgeführt und meldete `RESULT: PASSED (33 constraints)`; auch der Main-Scene-Smoke-Test mit `--quit-after 2` war erfolgreich. Die Aussagen oben wurden aus Code, Resources, den vorhandenen Preflight-Assertions und diesem Lauf abgeleitet.
+Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgeführt und meldete `RESULT: PASSED (34 constraints)`; auch der Main-Scene-Smoke-Test mit `--quit-after 2` war erfolgreich. Die Aussagen oben wurden aus Code, Resources, den vorhandenen Preflight-Assertions und diesem Lauf abgeleitet.
 
 ## 15. Feature-Matrix
 
@@ -313,7 +315,7 @@ Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgefü
 | Layer 3 | Planetare Tower-Defense und aktive Verteidigung | Implementiert | `ConquestSimulator`, `ConquestScene`, `PlanetGrid`, `BuildingCatalog`, 7 Gebäude-Defs |
 | Layer 3 | Ship-as-Minion-Adapter mit visueller/logischer Adaption | Implementiert | `AssaultMinionDefinition.from_ship()`, `ConquestScene` Minion-Spawning |
 | Kampagne | `first_colony`-Meilenstein und persistenter Fortschrittsmarker | Teilweise | `game_state.gd`, `event_log.gd`; Dominanz-/Siegbedingungen bleiben später |
-| UI/Tools | Planet-Panel, VaultBar, TechnologyMenu, MessageFeed, PauseMenu, EventLog, Paper-Dossier-Modale (Planet/Werkstatt/Forschung) | Implementiert | `scripts/ui/*`, `scripts/ui/dossier/*`, `planet_network.gd`, `event_log.gd` |
+| UI/Tools | Planet-Panel, VaultBar (Icons+Klick), TechnologyMenu, MessageFeed, PauseMenu, EventLog, Paper-Dossier-Modale (Planet/Werkstatt/Forschung/Economy), FleetOverview mit Drag-to-Dispatch, EconomyWindow (Modul) | Implementiert | `scripts/ui/*`, `scripts/ui/dossier/*`, `planet_network.gd`, `event_log.gd`, `scripts/ui/fleet_overview.gd`, `scripts/ui/economy_window.gd` |
 
 ## 16. Umsetzungplan gegen das bestehende Fundament
 

@@ -2,7 +2,7 @@
 
 > **Stand:** August 2026
 > **Status:** Laufzeit- und Erweiterungsnotiz
-> **Regel:** Der Code und die 33 Preflight-Constraints sind verbindlich. Historische Entwürfe werden hier nicht als bestehende Features ausgegeben.
+> **Regel:** Der Code und die 34 Preflight-Constraints sind verbindlich. Historische Entwürfe werden hier nicht als bestehende Features ausgegeben.
 
 ---
 
@@ -77,7 +77,9 @@ Die Karte wird bei offenem Panel dezent zurückgestuft. Gelb ist die aktive Disp
 
 ### Wirtschaft und HUD
 
-Der Economy-Timer startet erst nach `worker_automation`; der Gather-Timer läuft getrennt. Die VaultBar zeigt die fünf Rohstoffe, Credits, aktive Transportphasen, beobachtete Ertragsrate und den Countdown bis zum nächsten Tick. Die Darstellung ist ein Readback des Wirtschaftszustands, keine zweite Wirtschaftssimulation.
+Der Economy-Timer startet erst nach `worker_automation`; der Gather-Timer läuft getrennt. Die VaultBar (links oben) zeigt die fünf Rohstoffe als Icons+Zahlen, Credits, aktive Transportphasen, beobachtete Ertragsrate und den Countdown bis zum nächsten Tick. Die Darstellung ist ein Readback des Wirtschaftszustands, keine zweite Wirtschaftssimulation. Ein Klick auf die VaultBar öffnet das `EconomyWindow`-Modul mit vollständiger Wirtschaftsübersicht (Rohstoff-Vorräte, Produktionsquellen je Planet, aktive Transporte, Tick-Status). Das EconomyWindow ist persistent, toggelbar und aktualisiert sich live via `faction_resources_changed`/`credits_changed`.
+
+`FleetOverview` (links unter den Dossier-Buttons) zeigt aktive/idle Schiffe mit Part-Icons und Zielplaneten — Schiffe sind per Drag auf Zielplaneten dispatcherbar. Der `DossierLauncher` bietet 4 Buttons (PLANET/WERKSTATT/FORSCHUNG/ECONOMY) zum Öffnen der Paper-Dossier-Modale.
 
 ### Forschung und Werkstatt
 

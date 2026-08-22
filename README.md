@@ -10,7 +10,7 @@
 <br/>
 <samp>
 <b>SNIPWAR — EISEN-GRENZE</b><br/>
-STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 33 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
+STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 34 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
 </samp>
 <br/><br/>
 </td>
@@ -19,7 +19,7 @@ STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 33 PREFLIGHT-CONSTRAINTS · 0 SICH
 
 [![Engine: Godot 4.7](https://img.shields.io/badge/Engine-Godot%204.7-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/)
 [![Status: Frontier-Kern](https://img.shields.io/badge/Status-Frontier--Kern%20aktiv-f0b429?style=for-the-badge)](#-lagezentrum--frontbericht)
-[![Preflight](https://img.shields.io/badge/Preflight-33%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
+[![Preflight](https://img.shields.io/badge/Preflight-34%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
 [![Sprache: GDScript](https://img.shields.io/badge/GDScript-4.7-blue?style=for-the-badge)](#-architektur--vom-katalog-zum-spielstand)
 [![Treibstoff](https://img.shields.io/badge/Fuel-Koffein%20%26%20Größenwahn-6f4e37?style=for-the-badge)](#)
 
