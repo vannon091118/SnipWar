@@ -349,12 +349,48 @@ func _create_fleet_overview() -> void:
 	_fleet_overview.position = Vector2(12.0, 144.0)
 	_fleet_overview.custom_minimum_size = Vector2(190.0, 0.0)
 	layer.add_child(_fleet_overview)
-	_fleet_overview.setup(ui_theme_config)
+	_fleet_overview.setup(ui_theme_config, _map_camera)
 	_fleet_overview.focus_requested.connect(_on_fleet_overview_focus)
+	_fleet_overview.ship_drop_requested.connect(_on_ship_drop_requested)
 
 func _on_ship_dispatched(ship: ShipBase) -> void:
 	_connect_ship_selection(ship)
 	_update_fleet_overview()
+
+func _on_ship_drop_requested(ship: ShipBase, destination_planet: Node2D) -> void:
+	if ship == null or destination_planet == null or not is_instance_valid(ship):
+		return
+	# Only dispatch idle/arrived ships; in-flight ones just get camera focus.
+	var source_planet := _find_planet_by_id(ship.source_planet_id)
+	if ship.has_arrived() and source_planet != null and source_planet != destination_planet:
+		var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
+		if conflict_manager != null and conflict_manager.has_method("dispatch_ship"):
+			var ship_id: StringName = &""
+			if ship.fleet != null and not ship.fleet.ships.is_empty():
+				ship_id = ship.fleet.ships[0].ship_id
+			if not String(ship_id).is_empty():
+				var result: ShipBase = conflict_manager.call("dispatch_ship", source_planet, destination_planet, ship_id, ship.mission_role) as ShipBase
+				if result != null:
+					var log: Node = get_node_or_null("/root/EventLog")
+					if log != null and log.has_method("push"):
+						log.push("Schiff entsendet nach %s" % UIBaseUtils.planet_display_name(destination_planet))
+					_update_fleet_overview.call_deferred()
+					return
+	# Fallback: centre camera and select the destination planet.
+	_center_camera_on(destination_planet)
+	if _selection_service != null:
+		_selection_service.handle_request(destination_planet, {})
+	else:
+		_on_planet_selected(destination_planet)
+
+func _find_planet_by_id(planet_id: StringName) -> Planet:
+	if String(planet_id).is_empty():
+		return null
+	for child in get_parent().get_children():
+		var planet := child as Planet
+		if planet != null and planet.get("planet_id") == planet_id:
+			return planet
+	return null
 
 func _connect_ship_selection(ship: ShipBase) -> void:
 	if ship == null or not is_instance_valid(ship):
@@ -380,8 +416,13 @@ func _update_fleet_overview() -> void:
 		return
 	var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
 	var ships: Array[ShipBase] = []
-	if conflict_manager != null and conflict_manager.has_method("get_active_ships"):
-		ships = conflict_manager.get_active_ships() as Array[ShipBase]
+	if conflict_manager != null:
+		if conflict_manager.has_method("get_active_ships"):
+			for ship in conflict_manager.get_active_ships() as Array[ShipBase]:
+				ships.append(ship)
+		if conflict_manager.has_method("get_idle_ships"):
+			for ship in conflict_manager.get_idle_ships() as Array[ShipBase]:
+				ships.append(ship)
 	_fleet_overview.update_ships(ships)
 	if _selection_service != null:
 		_fleet_overview.update_planets(_selection_service.get_selection())

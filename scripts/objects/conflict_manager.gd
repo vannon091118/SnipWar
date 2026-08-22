@@ -569,6 +569,13 @@ func get_active_ships() -> Array[ShipBase]:
 			result.append(ship)
 	return result
 
+func get_idle_ships() -> Array[ShipBase]:
+	var result: Array[ShipBase] = []
+	for ship in _idle_ships:
+		if ship != null and is_instance_valid(ship):
+			result.append(ship)
+	return result
+
 func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 	for ship in _active_ships:
 		if is_instance_valid(ship):

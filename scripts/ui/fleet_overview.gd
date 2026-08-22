@@ -8,12 +8,18 @@ const DEFAULT_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_de
 const DEFAULT_TRANSFORMER: TransformerConfig = preload("res://resources/config/transformer_default.tres")
 
 signal focus_requested(target: Node2D)
+signal ship_drop_requested(ship: ShipBase, destination_planet: Node2D)
 
 var _theme_config: UIThemeConfig = DEFAULT_THEME
 var _ships: Array[ShipBase] = []
 var _planets: Array[Node2D] = []
 var _state: Node
 var _collapsed := false
+var _camera: MapCamera
+var _drag_ghost: Label
+var _dragging_ship: ShipBase
+var _drag_active := false
+var _button_ship_map: Dictionary = {}
 
 var _title: Label
 var _ships_header: Label
@@ -24,8 +30,9 @@ var _no_ships_label: Label
 var _no_planets_label: Label
 var _collapse_button: Button
 
-func setup(theme_config: UIThemeConfig = null) -> void:
+func setup(theme_config: UIThemeConfig = null, camera: MapCamera = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
+	_camera = camera
 	_build_content()
 
 func _build_content() -> void:
@@ -77,6 +84,66 @@ func _build_content() -> void:
 	vbox.add_child(_planets_list)
 
 	_apply_style()
+	_create_drag_ghost()
+
+func _create_drag_ghost() -> void:
+	_drag_ghost = Label.new()
+	_drag_ghost.name = "DragGhost"
+	_drag_ghost.visible = false
+	_drag_ghost.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_drag_ghost.z_index = 100
+	_drag_ghost.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+	_drag_ghost.add_theme_color_override("font_color", Color(0.6, 0.85, 1.0, 0.85))
+	_drag_ghost.modulate.a = 0.8
+	add_child(_drag_ghost)
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				_try_begin_drag(event.position)
+			else:
+				_end_drag(event.position)
+	elif event is InputEventMouseMotion and _drag_active:
+		_update_drag_ghost(event.position)
+
+func _try_begin_drag(screen_position: Vector2) -> void:
+	if _ships_list == null or not _ships_list.visible:
+		return
+	for btn in _button_ship_map:
+		if not is_instance_valid(btn):
+			continue
+		var global_btn_pos: Vector2 = btn.global_position
+		var btn_rect := Rect2(global_btn_pos, btn.size)
+		if btn_rect.has_point(screen_position):
+			_dragging_ship = _button_ship_map[btn] as ShipBase
+			_drag_active = true
+			_drag_ghost.text = "↗ %s" % _ship_label(_dragging_ship)
+			_drag_ghost.visible = true
+			_update_drag_ghost(screen_position)
+			return
+
+func _update_drag_ghost(screen_position: Vector2) -> void:
+	if _drag_ghost == null or not _drag_ghost.visible:
+		return
+	_drag_ghost.global_position = screen_position + Vector2(14.0, -_drag_ghost.size.y * 0.5)
+
+func _end_drag(screen_position: Vector2) -> void:
+	if not _drag_active:
+		return
+	_drag_active = false
+	if _drag_ghost != null:
+		_drag_ghost.visible = false
+	if _dragging_ship == null or not is_instance_valid(_dragging_ship):
+		return
+	if _camera == null or not is_instance_valid(_camera):
+		return
+	# Convert from FleetOverview-local to viewport-global screen coords.
+	var global_pos := get_global_mouse_position()
+	var target: Node2D = _camera.planet_at_screen(global_pos)
+	if target != null:
+		ship_drop_requested.emit(_dragging_ship, target)
+	_dragging_ship = null
 
 func _make_header(text: String) -> Label:
 	var label := Label.new()
@@ -112,6 +179,7 @@ func _rebuild_ships_list() -> void:
 		return
 	for child in _ships_list.get_children():
 		child.queue_free()
+	_button_ship_map.clear()
 	queue_redraw()
 	_ships_list.visible = not _collapsed and not _ships.is_empty()
 	if _ships_header != null:
@@ -127,8 +195,11 @@ func _rebuild_ships_list() -> void:
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.text = _ship_label(ship)
+		btn.mouse_default_cursor_shape = Control.CURSOR_MOVE
 		btn.pressed.connect(Callable(self, "_on_ship_focus").bind(ship))
 		btn.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+		btn.add_theme_color_override("font_hover_color", _theme_config.accent_text_color)
+		_button_ship_map[btn] = ship
 		_ships_list.add_child(btn)
 
 func _rebuild_planets_list() -> void:

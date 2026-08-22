@@ -210,6 +210,11 @@ func _sync_infinite_world() -> void:
 	if background != null and background.has_method("set_visible_region"):
 		background.call("set_visible_region", visible_rect)
 
+## Public entry point for external callers (e.g. FleetOverview drag-drop) that
+## need to resolve a screen-space mouse position to the nearest planet.
+func planet_at_screen(screen_position: Vector2) -> Node2D:
+	return _planet_at(screen_position)
+
 func _planet_at(screen_position: Vector2) -> Node2D:
 	var world_position: Vector2 = _screen_to_world(screen_position)
 	var best: Node2D = null
