@@ -414,6 +414,10 @@ func _deselect_current_ship() -> void:
 func _update_fleet_overview() -> void:
 	if _fleet_overview == null or not is_instance_valid(_fleet_overview):
 		return
+	# Keep the part catalog fresh so ship rows can render composition icons.
+	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
+	if ship_manager != null and _fleet_overview.has_method("set_part_catalog"):
+		_fleet_overview.set_part_catalog(ship_manager.get_part_catalog())
 	var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
 	var ships: Array[ShipBase] = []
 	if conflict_manager != null:

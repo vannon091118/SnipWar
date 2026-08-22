@@ -20,6 +20,9 @@ var _drag_ghost: Label
 var _dragging_ship: ShipBase
 var _drag_active := false
 var _button_ship_map: Dictionary = {}
+var _part_catalog: ShipPartCatalog
+
+const ICON_SIZE := 18.0
 
 var _title: Label
 var _ships_header: Label
@@ -34,6 +37,9 @@ func setup(theme_config: UIThemeConfig = null, camera: MapCamera = null) -> void
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
 	_camera = camera
 	_build_content()
+
+func set_part_catalog(catalog: ShipPartCatalog) -> void:
+	_part_catalog = catalog
 
 func _build_content() -> void:
 	var vbox := VBoxContainer.new()
@@ -110,13 +116,13 @@ func _gui_input(event: InputEvent) -> void:
 func _try_begin_drag(screen_position: Vector2) -> void:
 	if _ships_list == null or not _ships_list.visible:
 		return
-	for btn in _button_ship_map:
-		if not is_instance_valid(btn):
+	for row in _button_ship_map:
+		if not is_instance_valid(row):
 			continue
-		var global_btn_pos: Vector2 = btn.global_position
-		var btn_rect := Rect2(global_btn_pos, btn.size)
-		if btn_rect.has_point(screen_position):
-			_dragging_ship = _button_ship_map[btn] as ShipBase
+		var global_pos: Vector2 = (row as Control).global_position
+		var row_rect := Rect2(global_pos, (row as Control).size)
+		if row_rect.has_point(screen_position):
+			_dragging_ship = _button_ship_map[row] as ShipBase
 			_drag_active = true
 			_drag_ghost.text = "↗ %s" % _ship_label(_dragging_ship)
 			_drag_ghost.visible = true
@@ -190,17 +196,44 @@ func _rebuild_ships_list() -> void:
 		return
 
 	for ship in _ships:
-		var btn := Button.new()
-		btn.focus_mode = Control.FOCUS_NONE
-		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.text = _ship_label(ship)
-		btn.mouse_default_cursor_shape = Control.CURSOR_MOVE
-		btn.pressed.connect(Callable(self, "_on_ship_focus").bind(ship))
-		btn.add_theme_font_size_override("font_size", _theme_config.small_font_size)
-		btn.add_theme_color_override("font_hover_color", _theme_config.accent_text_color)
-		_button_ship_map[btn] = ship
-		_ships_list.add_child(btn)
+		var row := _make_ship_row(ship)
+		_ships_list.add_child(row)
+
+func _make_ship_row(ship: ShipBase) -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+
+	# Render small part icons: hull → drive → weapon → shield
+	var assembly: ShipAssembly = ship.fleet.ships[0] if (ship.fleet != null and not ship.fleet.ships.is_empty()) else null
+	if assembly != null and _part_catalog != null:
+		for part_id in [assembly.hull_id, assembly.drive_id, assembly.weapon_id, assembly.shield_id]:
+			if String(part_id).is_empty():
+				continue
+			var part: ShipPartDefinition = _part_catalog.resolve(part_id)
+			if part == null or part.visual_asset == null:
+				continue
+			var icon := TextureRect.new()
+			icon.texture = part.visual_asset
+			icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			icon.custom_minimum_size = Vector2(ICON_SIZE, ICON_SIZE)
+			icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			icon.tooltip_text = part.display_name
+			row.add_child(icon)
+
+	var btn := Button.new()
+	btn.focus_mode = Control.FOCUS_NONE
+	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	btn.text = "  " + _ship_label(ship)
+	btn.flat = true
+	btn.mouse_default_cursor_shape = Control.CURSOR_MOVE
+	btn.pressed.connect(Callable(self, "_on_ship_focus").bind(ship))
+	btn.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+	btn.add_theme_color_override("font_hover_color", _theme_config.accent_text_color)
+	row.add_child(btn)
+	_button_ship_map[row] = ship
+	return row
 
 func _rebuild_planets_list() -> void:
 	if _planets_list == null:
