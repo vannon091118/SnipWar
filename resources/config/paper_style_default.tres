@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PaperStyleConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/paper_style_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+outline_color = Color(0.1, 0.1, 0.15, 1)
+outline_width = 2.0
+shadow_color = Color(0, 0, 0, 0.3)
+halftone_density = 0.5
+cell_shading_levels = 4

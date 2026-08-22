@@ -17,5 +17,6 @@ meteor_edge_margin = 48.0
 extra_large_profile_id = &"xl"
 large_profile_id = &"l"
 default_profile_id = &"variable"
+planet_visual_scale = 0.6
 chunk_size = 3
 composition_tint_palettes = Array[Color]([Color(1, 0.82, 0.72, 1), Color(0.74, 0.9, 1, 1), Color(0.82, 0.9, 1, 1), Color(0.92, 0.78, 1, 1), Color(1, 0.88, 0.7, 1), Color(1, 0.78, 0.78, 1), Color(0.78, 0.92, 1, 1), Color(1, 0.88, 0.72, 1), Color(0.94, 0.94, 1, 1), Color(1, 0.92, 0.66, 1)])

@@ -118,6 +118,10 @@ func regenerate() -> void:
 		item.position = item_position
 		item.scale = Vector2.ONE * _scale_for(item, rng)
 
+	# --- Density-field sector pass (opt-in; separate RNG keeps the seed contract) ---
+	if config.resolved_sector_count() > 0 and not config.sector_flavors.is_empty():
+		_apply_sector_classification(layout_items, config)
+
 	layout_completed.emit(layout_items)
 
 	var navigation: NavigationField = get_node_or_null("NavigationField") as NavigationField
@@ -270,7 +274,30 @@ func _shuffle(values: Array, rng: RandomNumberGenerator) -> void:
 
 func _scale_for(item: Planet, rng: RandomNumberGenerator) -> float:
 	var profile: PlanetSizeProfile = item.get_size_profile()
-	return rng.randf_range(profile.scale_range.x, profile.scale_range.y)
+	var config: WorldConfig = world_config if world_config != null else DEFAULT_WORLD_CONFIG
+	return rng.randf_range(profile.scale_range.x, profile.scale_range.y) * config.resolved_planet_visual_scale()
+
+## Classifies planets against sector anchors, perturbs their positions by role,
+## and modulates render scale. Uses a dedicated RNG (layout_seed + 9999) so the
+## main layout RNG stream and therefore the seed contract stay untouched.
+func _apply_sector_classification(items: Array[Planet], config: WorldConfig) -> void:
+	var sector_rng := RandomNumberGenerator.new()
+	sector_rng.seed = config.layout_seed + 9999
+	var anchors := SectorClassifier.generate_anchors(
+		config.layout_seed,
+		config.resolved_sector_count(),
+		config.design_size,
+		config.sector_flavors,
+		config.resolved_sector_radius()
+	)
+	var noise := SectorClassifier.create_noise(config.layout_seed)
+	for item in items:
+		var classification := SectorClassifier.classify_position(item.position, anchors, noise)
+		item.set_meta("sector_id", classification["sector_id"])
+		item.set_meta("sector_role", classification["role"])
+		item.set_meta("sector_depth", classification["depth"])
+		item.position = SectorClassifier.adjust_position(item.position, classification, sector_rng)
+		item.scale = item.scale * SectorClassifier.scale_multiplier(classification)
 
 func _queue_layout() -> void:
 	if is_inside_tree():

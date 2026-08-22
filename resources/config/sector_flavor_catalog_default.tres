@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SectorFlavorCatalog" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/sector_flavor_catalog.gd" id="1_catalog"]
+[ext_resource type="Resource" path="res://resources/config/sector_flavors/dense_core.tres" id="2_dense"]
+[ext_resource type="Resource" path="res://resources/config/sector_flavors/sparse_arm.tres" id="3_sparse"]
+[ext_resource type="Resource" path="res://resources/config/sector_flavors/frontier.tres" id="4_frontier"]
+[ext_resource type="Resource" path="res://resources/config/sector_flavors/void.tres" id="5_void"]
+
+[resource]
+script = ExtResource("1_catalog")
+flavors = [ExtResource("2_dense"), ExtResource("3_sparse"), ExtResource("4_frontier"), ExtResource("5_void")]

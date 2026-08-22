@@ -5,6 +5,8 @@ extends CanvasLayer
 signal battle_completed(replay: CombatReplay)
 
 const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
+const PAPER_OUTLINE_SHADER: Shader = preload("res://assets/shaders/paper_outline.gdshader")
+const DEFAULT_PAPER_STYLE: PaperStyleConfig = preload("res://resources/config/paper_style_default.tres")
 
 var playback_speed: float = 1.0
 var _events: Array[BattleEvent] = []
@@ -243,10 +245,25 @@ func _spawn_ship_visual(ship_id: StringName, pos: Vector2, ship_data: ShipAssemb
 		_resolve_view_variants(catalog, visual_data)
 	)
 	_arena.add_child(view)
+	_apply_comic_fx(view)
 	_ships[ship_id] = view
 	var tw := view.create_tween().set_loops()
 	tw.tween_property(view, "position:y", pos.y + 4.0, 1.2).set_trans(Tween.TRANS_SINE)
 	tw.tween_property(view, "position:y", pos.y - 4.0, 1.2).set_trans(Tween.TRANS_SINE)
+
+## Paper-comic outline on every sprite of a ship view (Layer 2 visual polish).
+func _apply_comic_fx(node: Node) -> void:
+	if node == null or DEFAULT_PAPER_STYLE == null:
+		return
+	for child in node.get_children():
+		var sprite := child as Sprite2D
+		if sprite == null:
+			continue
+		var material := ShaderMaterial.new()
+		material.shader = PAPER_OUTLINE_SHADER
+		material.set_shader_parameter("outline_color", DEFAULT_PAPER_STYLE.outline_color)
+		material.set_shader_parameter("outline_width", DEFAULT_PAPER_STYLE.outline_width)
+		sprite.material = material
 
 func _resolve_view_variants(catalog: ShipPartCatalog, assembly: ShipAssembly) -> Dictionary:
 	var result: Dictionary = {}

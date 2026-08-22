@@ -3,9 +3,11 @@ class_name FleetBattleSimulator
 extends RefCounted
 
 const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
+const DEFAULT_BATTLE_CONFIG: BattleConfig = preload("res://resources/config/battle_config_default.tres")
 
-static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, battle_seed: int = 1337, catalog: ShipPartCatalog = null) -> CombatReplay:
+static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, battle_seed: int = 1337, catalog: ShipPartCatalog = null, config: BattleConfig = null) -> CombatReplay:
 	var cat: ShipPartCatalog = catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG
+	var cfg: BattleConfig = config if config != null else DEFAULT_BATTLE_CONFIG
 	var events: Array[BattleEvent] = []
 	var rng := RandomNumberGenerator.new()
 	rng.seed = battle_seed
@@ -79,8 +81,8 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 		))
 
 	var time := 0.0
-	var tick := 0.5
-	var max_time := 30.0
+	var tick := cfg.tick
+	var max_time := cfg.max_time
 
 	while time < max_time:
 		time += tick
@@ -93,7 +95,7 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 		# Flotte A feuert auf Flotte B
 		for attacker in living_a:
 			var target: Dictionary = living_b[rng.randi_range(0, living_b.size() - 1)]
-			var damage: float = attacker["dps"] * tick * rng.randf_range(0.85, 1.15)
+			var damage: float = attacker["dps"] * tick * rng.randf_range(cfg.damage_variance_min, cfg.damage_variance_max)
 			target["hp"] = maxf(0.0, target["hp"] - damage)
 			events.append(BattleEvent.create(time, BattleEvent.TYPE_FIRE, attacker["id"], target["id"], damage, attacker["pos"], target["pos"]))
 			events.append(BattleEvent.create(time + 0.1, BattleEvent.TYPE_HIT, attacker["id"], target["id"], damage, attacker["pos"], target["pos"]))
@@ -109,7 +111,7 @@ static func simulate_battle(fleet_a: FleetSnapshot, fleet_b: FleetSnapshot, batt
 			if target_candidates.is_empty():
 				break
 			var target: Dictionary = target_candidates[rng.randi_range(0, target_candidates.size() - 1)]
-			var damage: float = attacker["dps"] * tick * rng.randf_range(0.85, 1.15)
+			var damage: float = attacker["dps"] * tick * rng.randf_range(cfg.damage_variance_min, cfg.damage_variance_max)
 			target["hp"] = maxf(0.0, target["hp"] - damage)
 			events.append(BattleEvent.create(time, BattleEvent.TYPE_FIRE, attacker["id"], target["id"], damage, attacker["pos"], target["pos"]))
 			events.append(BattleEvent.create(time + 0.1, BattleEvent.TYPE_HIT, attacker["id"], target["id"], damage, attacker["pos"], target["pos"]))
@@ -160,9 +162,10 @@ static func simulate_route_battle(
 	route_b: Array[Vector2],
 	engagement: Dictionary,
 	battle_seed: int = 1337,
-	catalog: ShipPartCatalog = null
+	catalog: ShipPartCatalog = null,
+	config: BattleConfig = null
 ) -> CombatReplay:
-	var replay := simulate_battle(fleet_a, fleet_b, battle_seed, catalog)
+	var replay := simulate_battle(fleet_a, fleet_b, battle_seed, catalog, config)
 	replay.route_a = route_a.duplicate()
 	replay.route_b = route_b.duplicate()
 	if engagement != null:

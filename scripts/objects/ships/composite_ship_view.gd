@@ -3,6 +3,8 @@ class_name CompositeShipView
 extends Node2D
 
 const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/transformer_default.tres")
+const PAPER_OUTLINE_SHADER: Shader = preload("res://assets/shaders/paper_outline.gdshader")
+const DEFAULT_PAPER_STYLE: PaperStyleConfig = preload("res://resources/config/paper_style_default.tres")
 
 @export var transformer_config: TransformerConfig = DEFAULT_TRANSFORMER_CONFIG
 
@@ -167,6 +169,23 @@ func _setup_visuals(
 		mod_sprite.set_meta("part_id", module_part.id if module_part != null else &"")
 		mod_sprite.set_meta("variant_id", module_variant.id if module_variant != null else &"")
 		_modules_container.add_child(mod_sprite)
+	apply_paper_outline()
+
+## Applies the comic outline shader to every sprite of this ship view.
+func apply_paper_outline(config: PaperStyleConfig = null) -> void:
+	_ensure_structure()
+	var style := config if config != null else DEFAULT_PAPER_STYLE
+	if style == null:
+		return
+	var sprites: Array[Sprite2D] = [_hull_sprite, _scanner_sprite, _engine_overlay, _weapon_overlay, _shield_overlay]
+	for sprite in sprites:
+		if sprite == null:
+			continue
+		var material := ShaderMaterial.new()
+		material.shader = PAPER_OUTLINE_SHADER
+		material.set_shader_parameter("outline_color", style.outline_color)
+		material.set_shader_parameter("outline_width", style.outline_width)
+		sprite.material = material
 
 func _hull_relative_scale(hull_tex: Texture2D) -> float:
 	if hull_tex == null:

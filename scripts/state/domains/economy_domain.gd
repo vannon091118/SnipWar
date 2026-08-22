@@ -11,6 +11,10 @@ signal gathering_started(faction: StringName, planet_id: StringName, workers: in
 signal gathering_withdrawn(faction: StringName, planet_id: StringName, workers: int)
 signal worker_factory_built(planet_id: StringName)
 signal refinery_converted(planet_id: StringName, faction: StringName, consumed: Dictionary, produced: Dictionary)
+signal local_resources_changed(planet_id: StringName, resource_id: StringName, new_amount: int)
+signal resource_transferred(from_planet: StringName, to_planet: StringName, resource_id: StringName, amount: int)
+signal building_placed(planet_id: StringName, building_id: StringName, q: int, r: int)
+signal building_removed(planet_id: StringName, q: int, r: int)
 
 var faction_vaults: Dictionary = {}
 var planet_resources: Dictionary = {}
@@ -18,6 +22,12 @@ var planet_upgrades: Dictionary = {}
 var worker_factories: Dictionary = {}
 var gathering_workers: Dictionary = {}
 var gathering_sources: Dictionary = {}
+var local_vaults: Dictionary = {}
+var trade_routes: Dictionary = {}
+var planet_buildings: Dictionary = {}
+# Planets whose starting local stock has already been dealt (prevents
+# re-seeding when an evicted chunk is regenerated).
+var _local_seeded_planets: Dictionary = {}
 
 func reset_vaults() -> void:
 	faction_vaults = {
@@ -43,6 +53,10 @@ func reset() -> void:
 	worker_factories.clear()
 	gathering_workers.clear()
 	gathering_sources.clear()
+	local_vaults.clear()
+	trade_routes.clear()
+	planet_buildings.clear()
+	_local_seeded_planets.clear()
 	reset_vaults()
 
 func get_faction_resource(faction: StringName, resource_id: StringName) -> int:
@@ -550,3 +564,145 @@ func convert_refinery_resources(planet_id: StringName, faction_domain: FactionDo
 # instance triggers a STATIC_CALLED_ON_INSTANCE warning under Godot's parser.
 func _is_valid_resource_id(resource_id: StringName) -> bool:
 	return resource_id == GameState.RES_ENERGY or resource_id == GameState.RES_BIOMASS or resource_id == GameState.RES_RARE or resource_id == GameState.RES_MATERIAL or resource_id == GameState.RES_VOLATILE
+
+# --- LOCAL VAULTS (per-planet) ---
+
+func local_vault(planet_id: StringName) -> Dictionary:
+	if not local_vaults.has(planet_id):
+		local_vaults[planet_id] = GameState.DEFAULT_RESOURCE_POOL.empty_vault()
+	return local_vaults[planet_id]
+
+func get_local_resource(planet_id: StringName, resource_id: StringName) -> int:
+	return int(local_vault(planet_id).get(resource_id, 0))
+
+func add_local_resource(planet_id: StringName, resource_id: StringName, amount: int) -> int:
+	if amount <= 0 or String(planet_id).is_empty() or not _is_valid_resource_id(resource_id):
+		return get_local_resource(planet_id, resource_id)
+	var vault := local_vault(planet_id)
+	var new_val := get_local_resource(planet_id, resource_id) + amount
+	vault[resource_id] = new_val
+	local_vaults[planet_id] = vault
+	local_resources_changed.emit(planet_id, resource_id, new_val)
+	return new_val
+
+func spend_local_resource(planet_id: StringName, resource_id: StringName, amount: int) -> bool:
+	if amount < 0:
+		return false
+	if amount == 0:
+		return true
+	if get_local_resource(planet_id, resource_id) < amount:
+		return false
+	var vault := local_vault(planet_id)
+	var new_val := get_local_resource(planet_id, resource_id) - amount
+	vault[resource_id] = new_val
+	local_vaults[planet_id] = vault
+	local_resources_changed.emit(planet_id, resource_id, new_val)
+	return true
+
+func transfer_resources(from_planet: StringName, to_planet: StringName, resource_id: StringName, amount: int) -> bool:
+	if amount <= 0 or from_planet == to_planet:
+		return false
+	if not spend_local_resource(from_planet, resource_id, amount):
+		return false
+	add_local_resource(to_planet, resource_id, amount)
+	resource_transferred.emit(from_planet, to_planet, resource_id, amount)
+	return true
+
+## Seeds a small deterministic starting stock of each planet's own resource.
+func seed_local_resources(planet_ids: Array, pool: ResourcePool = null, seed_value: int = 0) -> void:
+	var effective_pool: ResourcePool = pool if pool != null else GameState.DEFAULT_RESOURCE_POOL
+	if effective_pool == null:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value
+	for planet_id_value in planet_ids:
+		var planet_id: StringName = planet_id_value as StringName
+		if _local_seeded_planets.has(planet_id):
+			continue
+		var res_id: StringName = resource_of(planet_id)
+		if String(res_id).is_empty():
+			continue
+		var vault := local_vault(planet_id)
+		var starting := maxi(1, rng.randi_range(2, 8))
+		vault[res_id] = int(vault.get(res_id, 0)) + starting
+		local_vaults[planet_id] = vault
+		_local_seeded_planets[planet_id] = true
+
+# --- BUILDINGS ON GRID ---
+
+func can_spend_building_cost(faction: StringName, building: BuildingDefinition) -> bool:
+	if building == null or building.cost_resources.is_empty():
+		return true
+	for resource_id in building.cost_resources:
+		var amount: int = int(building.cost_resources[resource_id])
+		if amount > 0 and not can_spend_faction_resource(faction, resource_id as StringName, amount):
+			return false
+	return true
+
+func spend_building_cost(faction: StringName, building: BuildingDefinition) -> bool:
+	if not can_spend_building_cost(faction, building):
+		return false
+	for resource_id in building.cost_resources:
+		var amount: int = int(building.cost_resources[resource_id])
+		if amount > 0:
+			spend_faction_resource(faction, resource_id as StringName, amount)
+	return true
+
+func record_planet_building(planet_id: StringName, building_id: StringName, q: int, r: int) -> void:
+	if String(planet_id).is_empty() or String(building_id).is_empty():
+		return
+	if not planet_buildings.has(planet_id):
+		planet_buildings[planet_id] = {}
+	planet_buildings[planet_id]["%d:%d" % [q, r]] = building_id
+	building_placed.emit(planet_id, building_id, q, r)
+
+func remove_planet_building(planet_id: StringName, q: int, r: int) -> StringName:
+	if not planet_buildings.has(planet_id):
+		return &""
+	var key := "%d:%d" % [q, r]
+	var removed: StringName = planet_buildings[planet_id].get(key, &"") as StringName
+	if String(removed).is_empty():
+		return &""
+	planet_buildings[planet_id].erase(key)
+	building_removed.emit(planet_id, q, r)
+	return removed
+
+func planet_building_at(planet_id: StringName, q: int, r: int) -> StringName:
+	if not planet_buildings.has(planet_id):
+		return &""
+	return planet_buildings[planet_id].get("%d:%d" % [q, r], &"") as StringName
+
+func planet_buildings_of(planet_id: StringName) -> Dictionary:
+	return planet_buildings.get(planet_id, {}).duplicate()
+
+# --- TRADE ROUTES ---
+
+func register_trade_route(from_planet: StringName, to_planet: StringName, resource_id: StringName) -> StringName:
+	if String(from_planet).is_empty() or String(to_planet).is_empty() or from_planet == to_planet:
+		return &""
+	var route_id := StringName("route_%d" % trade_routes.size())
+	trade_routes[route_id] = {
+		"from": from_planet,
+		"to": to_planet,
+		"resource_id": resource_id,
+		"flow_rate": 1,
+		"active": true,
+	}
+	return route_id
+
+func trade_routes_snapshot() -> Dictionary:
+	return trade_routes.duplicate()
+
+func tick_trade_routes() -> int:
+	var moved := 0
+	for route_id in trade_routes:
+		var route: Dictionary = trade_routes[route_id]
+		if not bool(route.get("active", false)):
+			continue
+		var resource_id: StringName = route["resource_id"]
+		var amount: int = int(route.get("flow_rate", 1))
+		var from_planet: StringName = route["from"]
+		var to_planet: StringName = route["to"]
+		if transfer_resources(from_planet, to_planet, resource_id, amount):
+			moved += amount
+	return moved

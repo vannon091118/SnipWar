@@ -7,9 +7,11 @@ extends Resource
 @export_range(0.01, 3600.0, 0.01) var spawn_interval: float = 1.0
 @export_range(1, 100000, 1) var spawn_count: int = 1
 @export_range(0, 100000, 1) var starting_workers: int = 0
-@export_range(1, 32, 1) var build_slot_count: int = 1
+@export_range(1, 64, 1) var build_slot_count: int = 1
 @export_range(0.0, 2.0, 0.01) var jitter_factor: float = 1.0
-@export_range(1, 10, 1) var resource_base: int = 1
+@export_range(1, 20, 1) var resource_base: int = 1
+## Buildable hex/rect grid attached to planets using this size profile.
+@export var grid_config: PlanetGridConfig
 
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()

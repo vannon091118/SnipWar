@@ -17,6 +17,9 @@ var _edges: Array[Array] = []
 ## waypoint midpoints). _draw() uses this array to dim/skip edges that lie
 ## outside the player's fog-of-war frontier without re-resolving nodes.
 var _edge_endpoints: Array[Array] = []
+## Parallel to _edges: sector edge type per edge (intra/inter/void, or empty
+## when the sector system is disabled). _draw() uses this for sector tinting.
+var _edge_types: Array[StringName] = []
 ## Per-planet neighbor map covering both grid edges and K-nearest long-range
 ## edges. Single source of truth for PlanetNetwork.get_neighbors() — the slot
 ## grid is no longer authoritative on its own.
@@ -62,6 +65,7 @@ func rebuild() -> void:
 	_next_point_id = 1
 	_is_built = false
 	_edge_endpoints.clear()
+	_edge_types.clear()
 	_planet_neighbors.clear()
 
 	var planets: Array[Planet] = []
@@ -137,6 +141,8 @@ func rebuild() -> void:
 			_edges.append([midpoint, second.global_position])
 			_edge_endpoints.append([first, null])
 			_edge_endpoints.append([null, second])
+			_push_edge_type(first, second)
+			_push_edge_type(first, second)
 			_record_neighbor_pair(first, second)
 			grid_edge_pairs.append([first, second])
 			edge_index += 1
@@ -155,6 +161,7 @@ func rebuild() -> void:
 		_connect_graph_points(_point_ids[first], _point_ids[second])
 		_edges.append([first.global_position, second.global_position])
 		_edge_endpoints.append([first, second])
+		_push_edge_type(first, second)
 
 	_is_built = not _point_ids.is_empty()
 	queue_redraw()
@@ -189,6 +196,8 @@ func _rebuild_infinite_edges(planets: Array[Planet], waypoint_config: Navigation
 			_edges.append([midpoint, second.global_position])
 			_edge_endpoints.append([first, null])
 			_edge_endpoints.append([null, second])
+			_push_edge_type(first, second)
+			_push_edge_type(first, second)
 			_record_neighbor_pair(first, second)
 			edge_index += 1
 
@@ -260,13 +269,15 @@ func remove_planet(planet: Planet) -> void:
 			neighbor_list.erase(planet)
 			_planet_neighbors[neighbor] = neighbor_list
 		_planet_neighbors.erase(planet)
-	# Clean _edges and _edge_endpoints.
+	# Clean _edges, _edge_endpoints and _edge_types.
 	var i := 0
 	while i < _edges.size():
 		var endpoints: Array = _edge_endpoints[i] if i < _edge_endpoints.size() else [null, null]
 		if endpoints.has(planet):
 			_edges.remove_at(i)
 			_edge_endpoints.remove_at(i)
+			if i < _edge_types.size():
+				_edge_types.remove_at(i)
 		else:
 			i += 1
 	# Clean _cell_to_planet.
@@ -355,6 +366,26 @@ func get_waypoint_count() -> int:
 func get_edges() -> Array[Array]:
 	return _edges.duplicate()
 
+func get_edge_type(edge_index: int) -> StringName:
+	if edge_index < 0 or edge_index >= _edge_types.size():
+		return &""
+	return _edge_types[edge_index]
+
+func _sector_typing_active() -> bool:
+	var config: WorldConfig = _resolved_world_config()
+	return config != null and config.resolved_sector_count() > 0 and not config.sector_flavors.is_empty()
+
+func _sector_id_of(planet: Planet) -> StringName:
+	if planet == null:
+		return &""
+	return planet.get_meta("sector_id", &"") as StringName
+
+func _push_edge_type(first: Planet, second: Planet) -> void:
+	if _sector_typing_active():
+		_edge_types.append(SectorClassifier.edge_type(_sector_id_of(first), _sector_id_of(second)))
+	else:
+		_edge_types.append(&"")
+
 func _resolved_world_config() -> WorldConfig:
 	var parent_config: WorldConfig = get_parent().get("world_config") as WorldConfig
 	if parent_config != null:
@@ -377,6 +408,15 @@ func _draw() -> void:
 		if max_fog == FOG_HIDDEN:
 			continue
 		var color := base_color if max_fog == FOG_VISIBLE else frontier_color
+		# Sector edge typing dims inter-sector / void edges (paper-look tint).
+		if index < _edge_types.size() and not String(_edge_types[index]).is_empty():
+			var edge_type: StringName = _edge_types[index]
+			var factor := 1.0
+			if edge_type == SectorClassifier.EDGE_INTER:
+				factor = 0.6
+			elif edge_type == SectorClassifier.EDGE_VOID:
+				factor = 0.3
+			color = Color(color.r * factor, color.g * factor, color.b * factor, color.a)
 		color.a = config.edge_alpha
 		draw_line(to_local(edge[0]), to_local(edge[1]), color, config.edge_width, true)
 

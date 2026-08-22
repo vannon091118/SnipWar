@@ -284,3 +284,53 @@ static func recall_gathering_workers(planet: Planet, target_faction: StringName,
 			candidate.register_workers(withdrawn)
 			break
 	return withdrawn
+
+## Grid-based tower-defense arrival: used when the destination has buildings
+## (base_hp > 0). Falls back to the legacy conquest path for bare planets.
+static func simulate_grid_arrival(planet: Planet, arriving_fleet: FleetSnapshot, config: ConquestConfig = null, conquest_seed: int = 42) -> Dictionary:
+	var out: Dictionary = {
+		"result": Planet.ARRIVAL_REJECTED,
+		"surviving_attackers": 0,
+		"duration": 0.0,
+		"replay": null,
+	}
+	if planet == null or arriving_fleet == null or arriving_fleet.ships.is_empty():
+		return out
+	var attacking_faction: StringName = arriving_fleet.faction
+	if String(attacking_faction).is_empty() or attacking_faction == GameState.FACTION_NEUTRAL:
+		return out
+	if planet.get_faction() == attacking_faction:
+		return resolve_ship_arrival(planet, arriving_fleet, null, 1337, conquest_seed)
+	var defender_grid := planet.get_defense_snapshot()
+	var conquest: CombatReplay = ConquestSimulator.simulate_grid_conquest(
+		arriving_fleet,
+		0,
+		defender_grid,
+		config,
+		conquest_seed
+	)
+	out["replay"] = _conquest_replay_result(planet, conquest)
+	out["duration"] = conquest.duration
+	out["surviving_attackers"] = conquest.surviving_attackers
+	out["result"] = Planet.ARRIVAL_CAPTURED if conquest.captured else Planet.ARRIVAL_REPELLED
+	return out
+
+## Applies a post-combat capture decision. "adopt" is the default already
+## committed by the arrival path; "loot"/"neutralize" apply their deltas.
+static func commit_capture_decision(planet: Planet, decision: StringName, arriving_faction: StringName) -> void:
+	if planet == null:
+		return
+	var state: Node = GameStateAccess.autoload(planet)
+	match decision:
+		&"loot":
+			if state != null and state.has_method("steal_resources"):
+				state.steal_resources(planet.planet_id, arriving_faction, 0.5)
+			planet.damage_base(int(round(float(planet.get_base_hp()) * 0.3)))
+		&"neutralize":
+			if state != null and state.has_method("capture_planet"):
+				state.capture_planet(planet.planet_id, decision, arriving_faction)
+			planet.neutralize(600.0)
+		_:
+			if state != null and state.has_method("capture_planet"):
+				state.capture_planet(planet.planet_id, &"adopt", arriving_faction)
+			planet.set_faction(arriving_faction)

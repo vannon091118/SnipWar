@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SectorFlavor" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/sector_flavor.gd" id="1_flavor"]
+
+[resource]
+script = ExtResource("1_flavor")
+id = &"dense_core"
+display_name = "Dichter Kern"
+density_multiplier = 1.5
+size_class_bias = &"xl"
+size_class_bias_strength = 0.6
+min_intra_distance = 3.0
+max_intra_distance = 8.0
+noise_amplitude = 0.2
+visual_edge_color = Color(0.9, 0.3, 0.3, 1)

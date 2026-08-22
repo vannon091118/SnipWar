@@ -7,6 +7,8 @@ const DEFAULT_FIDELITY: PlanetDetailFidelity = preload("res://resources/config/p
 const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/transformer_default.tres")
 const SHIPYARD_HANGAR_SCENE: PackedScene = preload("res://scenes/objects/ships/shipyard_hangar.tscn")
 const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_default.tres")
+const PAPER_CELL_SHADER: Shader = preload("res://assets/shaders/paper_cell_shading.gdshader")
+const DEFAULT_PAPER_STYLE: PaperStyleConfig = preload("res://resources/config/paper_style_default.tres")
 
 @export var detail_seed := 0:
 	set(value):
@@ -43,6 +45,25 @@ func regenerate() -> void:
 		var definition := profile.definition_for(detail_id)
 		if definition != null:
 			_add_definition(definition, rng)
+	apply_paper_style()
+
+## Applies the paper-comic cell-shading shader to all detail sprites.
+func apply_paper_style(config: PaperStyleConfig = null) -> void:
+	var style: PaperStyleConfig = config if config != null else DEFAULT_PAPER_STYLE
+	if style == null:
+		return
+	for child in get_children():
+		var orbit := child as PlanetDetailOrbit
+		if orbit == null:
+			continue
+		var sprite := orbit.get_node_or_null("Sprite2D") as Sprite2D
+		if sprite == null:
+			continue
+		var material := ShaderMaterial.new()
+		material.shader = PAPER_CELL_SHADER
+		material.set_shader_parameter("cell_shading_levels", style.cell_shading_levels)
+		material.set_shader_parameter("halftone_density", style.halftone_density)
+		sprite.material = material
 
 func get_detail_types() -> Array[StringName]:
 	return _selected_details.duplicate()

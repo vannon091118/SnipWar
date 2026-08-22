@@ -37,6 +37,11 @@ const TYPE_CONQUEST: StringName = &"conquest"
 @export var tower_count: int = 0
 @export var defense_range: float = 0.0
 
+@export_group("Grid Conquest")
+@export var base_hp_history: Array[float] = []
+@export var wave_events: Array[BattleEvent] = []
+@export var grid_snapshots: Array[Dictionary] = []
+
 @export_group("Planet Identity")
 ## Replays carry stable planet and asset identities, not a direct Texture2D
 ## reference. ConquestScene resolves the asset path first, then its catalog.

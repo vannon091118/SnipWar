@@ -10,6 +10,15 @@ func resource_for(resource_id: StringName) -> GameResource:
 			return resource
 	return null
 
+## Empty vault dictionary keyed by every resource id in this pool (used for
+## per-planet local vaults).
+func empty_vault() -> Dictionary:
+	var vault: Dictionary = {}
+	for resource in resources:
+		if resource != null and not String(resource.id).is_empty():
+			vault[resource.id] = 0
+	return vault
+
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
 	if resources.is_empty():

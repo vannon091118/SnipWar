@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SectorFlavor" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/sector_flavor.gd" id="1_flavor"]
+
+[resource]
+script = ExtResource("1_flavor")
+id = &"frontier"
+display_name = "Grenzgebiet"
+density_multiplier = 1.0
+size_class_bias = &"variable"
+size_class_bias_strength = 0.0
+min_intra_distance = 6.0
+max_intra_distance = 12.0
+noise_amplitude = 0.5
+visual_edge_color = Color(0.5, 0.8, 0.3, 1)

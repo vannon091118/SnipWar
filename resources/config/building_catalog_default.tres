@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BuildingCatalog" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/building_catalog.gd" id="1_catalog"]
+[ext_resource type="Resource" path="res://resources/config/buildings/wall.tres" id="2_wall"]
+[ext_resource type="Resource" path="res://resources/config/buildings/laser_tower.tres" id="3_laser"]
+[ext_resource type="Resource" path="res://resources/config/buildings/missile_tower.tres" id="4_missile"]
+[ext_resource type="Resource" path="res://resources/config/buildings/shield_generator.tres" id="5_shield"]
+[ext_resource type="Resource" path="res://resources/config/buildings/barracks.tres" id="6_barracks"]
+[ext_resource type="Resource" path="res://resources/config/buildings/power_plant.tres" id="7_power"]
+[ext_resource type="Resource" path="res://resources/config/buildings/repair_station.tres" id="8_repair"]
+
+[resource]
+script = ExtResource("1_catalog")
+buildings = [ExtResource("2_wall"), ExtResource("3_laser"), ExtResource("4_missile"), ExtResource("5_shield"), ExtResource("6_barracks"), ExtResource("7_power"), ExtResource("8_repair")]

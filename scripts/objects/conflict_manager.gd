@@ -335,11 +335,16 @@ func _on_ship_arrived(ship_node: Node2D) -> void:
 		var defender_fleet: FleetSnapshot = record.defender_fleet if record != null else _defender_fleet(ship.destination, ship.fleet.faction, ship.mission_role)
 		var battle_seed: int = 0
 		var conquest_seed: int = 0
+		var used_grid: bool = false
 		if _requires_combat(ship.destination, ship.fleet, ship.mission_role):
 			var combat_seeds: Dictionary = _next_combat_seeds()
 			battle_seed = int(combat_seeds["battle_seed"])
 			conquest_seed = int(combat_seeds["conquest_seed"])
-		result = PlanetArrivalResolver.simulate_ship_arrival(ship.destination, ship.fleet, defender_fleet, battle_seed, conquest_seed, ship.mission_role)
+			if ship.destination.has_method("get_base_hp") and int(ship.destination.get_base_hp()) > 0:
+				used_grid = true
+				result = PlanetArrivalResolver.simulate_grid_arrival(ship.destination, ship.fleet, null, conquest_seed)
+		if not used_grid:
+			result = PlanetArrivalResolver.simulate_ship_arrival(ship.destination, ship.fleet, defender_fleet, battle_seed, conquest_seed, ship.mission_role)
 		var replay: CombatReplay = result.get("replay") as CombatReplay
 		if replay != null and replay.is_battle() and ship.fleet.faction == GameState.FACTION_PLAYER:
 			var context := BattleContext.new()
@@ -366,6 +371,8 @@ func _on_ship_arrived(ship_node: Node2D) -> void:
 			ship.queue_free()
 			return
 		PlanetArrivalResolver.commit_ship_arrival(ship.destination, ship.fleet, result, ship.fleet.faction != GameState.FACTION_CPU)
+		if used_grid:
+			_maybe_show_capture_decision(ship.destination, ship.fleet, result)
 		ship.destination.show_arrival_feedback(int(result.get("surviving_attackers", 0)), ship.fleet.faction)
 	var ship_id: StringName = &""
 	if ship.fleet != null and not ship.fleet.ships.is_empty():
@@ -384,6 +391,23 @@ func _on_ship_arrived(ship_node: Node2D) -> void:
 	_ship_by_transit.erase(ship.transit_id)
 	if is_instance_valid(ship):
 		ship.queue_free()
+
+func _maybe_show_capture_decision(destination: Planet, fleet: FleetSnapshot, result: Dictionary) -> void:
+	var outcome: StringName = result.get("result", Planet.ARRIVAL_REJECTED) as StringName
+	if outcome != Planet.ARRIVAL_CAPTURED or destination == null or fleet == null:
+		return
+	if fleet.faction != GameState.FACTION_PLAYER:
+		return
+	var overlay := CaptureDecisionOverlay.new()
+	overlay.name = "CaptureDecisionOverlay"
+	add_child(overlay)
+	overlay.capture_decision_made.connect(Callable(self, "_on_capture_decision_made").bind(destination, fleet.faction, overlay))
+	overlay.present(destination)
+
+func _on_capture_decision_made(decision: StringName, destination: Planet, faction: StringName, overlay: CaptureDecisionOverlay) -> void:
+	PlanetArrivalResolver.commit_capture_decision(destination, decision, faction)
+	if overlay != null and is_instance_valid(overlay):
+		overlay.queue_free()
 
 func _defender_fleet(destination: Planet, attacking_faction: StringName, mission_role: StringName) -> FleetSnapshot:
 	if destination == null or mission_role == &"colony" or destination.get_faction() == attacking_faction:

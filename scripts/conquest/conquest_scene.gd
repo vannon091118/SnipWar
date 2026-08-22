@@ -21,6 +21,7 @@ var _status_label: Label
 var _planet_sprite: Sprite2D
 var _garrison_bar: ProgressBar
 var _player_controls: IngamePlayerControls
+var _wave_label: Label
 
 var _attackers: Array[Node2D] = []
 var _towers: Array[Node2D] = []
@@ -62,6 +63,15 @@ func _build_ui() -> void:
 	_garrison_bar.size = Vector2(280.0, 16.0)
 	_garrison_bar.value = 100.0
 	_viewport_container.add_child(_garrison_bar)
+
+	_wave_label = Label.new()
+	_wave_label.name = "WaveLabel"
+	_wave_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_wave_label.position = Vector2(340.0, 70.0)
+	_wave_label.size = Vector2(280.0, 20.0)
+	_wave_label.add_theme_font_size_override("font_size", 13)
+	_wave_label.visible = false
+	_viewport_container.add_child(_wave_label)
 
 	_player_controls = IngamePlayerControls.new()
 	_player_controls.name = "PlayerControls"
@@ -111,6 +121,11 @@ func _setup_battlefield() -> void:
 	_planet_sprite.texture = _resolve_planet_texture()
 	_planet_sprite.scale = Vector2.ONE * 0.5
 	_arena.add_child(_planet_sprite)
+
+	_draw_grid()
+	if _result != null and not _result.grid_snapshots.is_empty() and _wave_label != null:
+		_wave_label.visible = true
+		_wave_label.text = "Welle 0 / %d" % _result.grid_snapshots.size()
 
 	# Orbiting Defense Towers. The simulator reports the effective tower count
 	# (perimeter slots constrained by defense rating), while perimeter_slots is
@@ -164,6 +179,18 @@ func _result_float(key: String, fallback: float) -> float:
 			return _result.defense_range
 	return fallback
 
+## Renders the defender's hex grid in the arena when the replay carries a
+## grid-conquest payload (grid_snapshots non-empty).
+func _draw_grid() -> void:
+	if _result == null or _result.grid_snapshots.is_empty():
+		return
+	var grid := PlanetGrid.new()
+	grid.name = "DefenseGrid"
+	var config := PlanetGridConfig.new()
+	config.grid_radius = 3
+	grid.configure(config, null)
+	_arena.add_child(grid)
+
 func _resolve_planet_texture() -> Texture2D:
 	if _result != null and not _result.planet_texture_path.is_empty():
 		var resolved_texture: Texture2D = ResourceLoader.load(_result.planet_texture_path) as Texture2D
@@ -191,6 +218,9 @@ func _process(delta: float) -> void:
 	var frac: float = clampf(1.0 - (_elapsed / _duration), 0.0, 1.0)
 	if _garrison_bar != null:
 		_garrison_bar.value = frac * _garrison_bar.max_value
+	if _wave_label != null and _wave_label.visible and _result != null and _result.grid_snapshots.size() > 0:
+		var wave_idx := mini(int(_elapsed / maxf(_duration / float(_result.grid_snapshots.size()), 0.001)), _result.grid_snapshots.size())
+		_wave_label.text = "Welle %d / %d" % [wave_idx, _result.grid_snapshots.size()]
 
 	# Periodical Tower & Minion Fire. The schedule and choices are seeded from
 	# the simulator result, rather than depending on global frame timing/RNG.

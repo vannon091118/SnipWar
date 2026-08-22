@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/building_definition.gd" id="1_building"]
+
+[resource]
+script = ExtResource("1_building")
+id = &"laser_tower"
+display_name = "Laserturm"
+building_type = "tower"
+hp = 40
+dps = 6.0
+attack_range = 120.0
+fire_interval = 0.8
+grid_occupancy = 1
+perimeter_slot_cost = 1

@@ -2,9 +2,9 @@
 class_name TransitConfig
 extends Resource
 
-@export_range(0.01, 10000.0, 0.01) var distance_unit: float
-@export_range(0.0, 1000.0, 0.01) var base_seconds_per_distance_unit: float
-@export_range(0.0, 10.0, 0.01) var unit_load_factor: float
+@export_range(0.01, 50000.0, 0.01) var distance_unit: float
+@export_range(0.0, 5000.0, 0.01) var base_seconds_per_distance_unit: float
+@export_range(0.0, 20.0, 0.01) var unit_load_factor: float
 @export_range(0.01, 1.0, 0.01) var overlap_budget: float
 @export_range(0.0, 2.0, 0.01) var formation_depth_ratio: float
 @export var cluster_tiers: Array[ClusterTierDefinition] = []

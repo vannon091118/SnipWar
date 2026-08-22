@@ -9,13 +9,13 @@ const ROUTE_MODE_NEIGHBORS_ONLY := "neighbors_only"
 @export var layout_seed: int
 @export var decorative_seed: int
 # 0 = derive the column count from design_size aspect ratio and planet count.
-@export_range(0, 128, 1) var columns: int
+@export_range(0, 256, 1) var columns: int
 @export_range(0, 100000, 1) var target_planet_count: int = 0
 ## Multiplicative world-area growth. 1.0 keeps the authored size/planet count
 ## (sqrt-scaled design_size + linearly-scaled target_planet_count are applied to
 ## a runtime duplicate before the live tree reads them; the authored .tres is
 ## never mutated).
-@export_range(1.0, 8.0, 0.05) var growth_factor: float = 1.0
+@export_range(1.0, 20.0, 0.05) var growth_factor: float = 1.0
 ## Fraction of `(planet_count - 1)` other planets that should be linked as
 ## K-nearest long-range edges on top of the slot grid (NavigationField enforces
 ## it).
@@ -28,18 +28,30 @@ const ROUTE_MODE_NEIGHBORS_ONLY := "neighbors_only"
 # Percentage size-class targets; when > 0 they override the absolute counts above.
 @export_range(0.0, 1.0, 0.01) var extra_large_ratio: float = 0.0
 @export_range(0.0, 1.0, 0.01) var large_ratio: float = 0.0
-@export_range(0.0, 0.4, 0.01) var jitter: float
-@export_range(0.0, 160.0, 1.0) var padding: float
-@export_range(0.0, 160.0, 1.0) var meteor_edge_margin: float
+@export_range(0.0, 1.0, 0.01) var jitter: float
+@export_range(0.0, 500.0, 1.0) var padding: float
+@export_range(0.0, 500.0, 1.0) var meteor_edge_margin: float
 @export var extra_large_profile_id: StringName
 @export var large_profile_id: StringName
 @export var default_profile_id: StringName
 @export_enum("all_planets", "neighbors_only") var route_mode: String = ROUTE_MODE_ALL_PLANETS
 
+## --- Density-field sectors (opt-in) ---
+## 0 = disabled; planets stay on the plain grid, preserving the legacy seed
+## contract. When > 0, SeededLayout/ChunkCoordinator classify planets against
+## sector anchors and perturb spacing + render scale.
+@export_range(0, 20, 1) var sector_count: int = 0
+@export_range(50.0, 5000.0, 10.0) var sector_radius: float = 200.0
+@export_range(0.0, 1.0, 0.05) var sector_noise_strength: float = 0.3
+@export var sector_flavors: Array[SectorFlavor] = []
+## Global render-scale multiplier applied to every planet so more fit on
+## screen at once. 1.0 = authored scale (backward compatible).
+@export_range(0.1, 2.0, 0.05) var planet_visual_scale: float = 1.0
+
 ## --- Infinite chunk-grid world ---
 ## When chunk_size > 0, the world expands procedurally as the player explores.
 ## When 0 (default), the world is finite and uses the legacy layout path.
-@export_range(0, 20, 1) var chunk_size: int = 0
+@export_range(0, 50, 1) var chunk_size: int = 0
 ## Size of one chunk cell in world coordinates. Zero = derived from
 ## design_size / chunk_size so the start chunk (0,0) lines up with the
 ## authored layout.
@@ -111,6 +123,21 @@ func resolved_size_class_counts(planet_count: int) -> Vector2i:
 		resolved_large = mini(large_count, maxi(0, planet_count - resolved_extra_large))
 	return Vector2i(resolved_extra_large, resolved_large)
 
+## 0 = sector system disabled (opt-in, keeps the legacy seed contract intact).
+func resolved_sector_count() -> int:
+	return sector_count if sector_count > 0 else 0
+
+func resolved_sector_radius() -> float:
+	var authored := design_size
+	if authored.x <= 0.0 or authored.y <= 0.0:
+		return sector_radius
+	var design := resolved_design_size()
+	var scale := sqrt((design.x * design.y) / (authored.x * authored.y))
+	return sector_radius * scale
+
+func resolved_planet_visual_scale() -> float:
+	return maxf(planet_visual_scale, 0.001)
+
 func validate_for_planet_count(planet_count: int) -> PackedStringArray:
 	var errors := PackedStringArray()
 	if design_size.x <= 0.0 or design_size.y <= 0.0:
@@ -137,8 +164,27 @@ func validate_for_planet_count(planet_count: int) -> PackedStringArray:
 		errors.append("world size class ratios cannot exceed one")
 	if extra_large_ratio == 0.0 and large_ratio == 0.0 and extra_large_count + large_count > planet_count:
 		errors.append("world size class counts exceed the planet count")
-	if jitter < 0.0 or jitter > 0.4:
-		errors.append("world jitter must stay between zero and 0.4")
+	if jitter < 0.0 or jitter > 1.0:
+		errors.append("world jitter must stay between zero and one")
+	if sector_count < 0:
+		errors.append("world sector_count cannot be negative")
+	if sector_count > 0 and sector_count >= planet_count:
+		errors.append("world sector_count must be less than the planet count")
+	if planet_visual_scale <= 0.0:
+		errors.append("world planet_visual_scale must be positive")
+	if sector_count > 0:
+		if sector_flavors.is_empty():
+			errors.append("world sector_flavors must not be empty when sector_count is set")
+		var seen_sector_ids: Dictionary = {}
+		for flavor in sector_flavors:
+			if flavor == null:
+				errors.append("world sector_flavors contains a null flavor")
+				continue
+			for flavor_error in flavor.validate():
+				errors.append("sector flavor %s: %s" % [flavor.id, flavor_error])
+			if seen_sector_ids.has(flavor.id):
+				errors.append("world sector flavor ids must be unique")
+			seen_sector_ids[flavor.id] = true
 	if padding < 0.0:
 		errors.append("world padding cannot be negative")
 	if padding * 2.0 >= design_size.x or padding * 2.0 >= design_size.y:

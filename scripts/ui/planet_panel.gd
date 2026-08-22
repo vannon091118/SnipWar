@@ -49,6 +49,7 @@ var _selection_count_label: Label = null
 var _selection_overview_box: VBoxContainer = null
 var _selection_clear_button: Button = null
 var _selection_total_label: Label = null
+var _local_resources_label: Label = null
 
 func setup(theme_config: UIThemeConfig = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
@@ -283,6 +284,7 @@ func show_planet(planet: Node2D, destinations: Array[Node2D], default_destinatio
 
 	set_destinations(destinations, default_destination)
 
+	_refresh_local_resources(planet_id)
 	_refresh_upgrade_list(planet)
 	layout_requested.emit()
 
@@ -449,6 +451,33 @@ func _on_buy_upgrade_pressed(planet_id: StringName, upgrade_id: StringName) -> v
 func set_selected_count(count: int) -> void:
 	_ensure_node_references()
 	_selected_count_label.text = "Einheiten: %d" % count
+
+func _ensure_local_resources_label() -> void:
+	if _content == null or _local_resources_label != null:
+		return
+	_local_resources_label = Label.new()
+	_local_resources_label.name = "LocalResourcesLabel"
+	_local_resources_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_local_resources_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
+	_local_resources_label.add_theme_color_override("font_color", _theme_config.muted_text_color)
+	_content.add_child(_local_resources_label)
+
+func _refresh_local_resources(planet_id: StringName) -> void:
+	_ensure_local_resources_label()
+	if _local_resources_label == null:
+		return
+	var state: Node = get_tree().root.get_node_or_null("GameState")
+	if state == null or not state.has_method("get_local_resources"):
+		_local_resources_label.text = ""
+		return
+	var vault: Dictionary = state.get_local_resources(planet_id)
+	if vault.is_empty():
+		_local_resources_label.text = ""
+		return
+	var parts: Array[String] = []
+	for resource_id in vault:
+		parts.append("%s %d" % [String(resource_id).capitalize(), int(vault[resource_id])])
+	_local_resources_label.text = "Lokaler Vorrat: " + " · ".join(parts)
 
 func _ensure_selection_overview_controls() -> void:
 	if _content == null:

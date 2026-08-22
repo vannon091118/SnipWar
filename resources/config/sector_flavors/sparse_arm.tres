@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SectorFlavor" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/sector_flavor.gd" id="1_flavor"]
+
+[resource]
+script = ExtResource("1_flavor")
+id = &"sparse_arm"
+display_name = "Lockerer Arm"
+density_multiplier = 0.7
+size_class_bias = &"variable"
+size_class_bias_strength = 0.2
+min_intra_distance = 8.0
+max_intra_distance = 15.0
+noise_amplitude = 0.4
+visual_edge_color = Color(0.3, 0.6, 0.9, 1)

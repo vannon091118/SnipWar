@@ -118,6 +118,36 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"requires_scene": true,
 	},
 	{
+		"id": "sector_classification",
+		"script": preload("res://scripts/preflight/constraint_sector_classification.gd"),
+		"desc": "Sector density field classification & edge typing",
+		"requires_scene": false,
+	},
+	{
+		"id": "grid_system",
+		"script": preload("res://scripts/preflight/constraint_grid_system.gd"),
+		"desc": "Hex grid, building placement & pathfinding",
+		"requires_scene": true,
+	},
+	{
+		"id": "local_resources",
+		"script": preload("res://scripts/preflight/constraint_local_resources.gd"),
+		"desc": "Local vaults, transfers & trade routes",
+		"requires_scene": true,
+	},
+	{
+		"id": "conquest_grid_combat",
+		"script": preload("res://scripts/preflight/constraint_conquest_grid_combat.gd"),
+		"desc": "Wave-based grid conquest & capture decisions",
+		"requires_scene": true,
+	},
+	{
+		"id": "paper_style",
+		"script": preload("res://scripts/preflight/constraint_paper_style.gd"),
+		"desc": "Paper-comic shaders & style config",
+		"requires_scene": false,
+	},
+	{
 		"id": "chunk_expansion",
 		"script": preload("res://scripts/preflight/constraint_chunk_expansion.gd"),
 		"desc": "Procedural chunk-grid world & composition",

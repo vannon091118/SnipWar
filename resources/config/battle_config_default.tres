@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BattleConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/battle_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+tick = 0.5
+max_time = 30.0
+damage_variance_min = 0.85
+damage_variance_max = 1.15

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BuildingDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/building_definition.gd" id="1_building"]
+
+[resource]
+script = ExtResource("1_building")
+id = &"power_plant"
+display_name = "Kraftwerk"
+building_type = "production"
+hp = 50
+dps = 0.0
+attack_range = 0.0
+fire_interval = 1.0
+grid_occupancy = 1
+perimeter_slot_cost = 1

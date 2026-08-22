@@ -2,6 +2,7 @@
 
 ## Godot & Headless Verifikation
 - Godot ist nicht auf dem globalen PATH; Headless-Kommandos über die Console-Binary ausführen und `GODOT_BIN` darauf setzen (oder `godot`/`godot4` auf den PATH legen).
+- Gefundene Console-Binary: `C:\Users\Vannon\Desktop\godu\Godot_v4.7.2-stable_win64_console.exe` — liegt weder auf dem PATH noch in `$LOCALAPPDATA/Programs`; per `export GODOT_BIN="…"` setzen.
 - `--headless --path . --quit-after 2` = Main-Scene-Smoke-Test; `--headless --path . --script res://scripts/preflight.gd` = persistente Testsuite (kein externes GUT). Temporäre Lifecycle-Checks nutzen `res://.tmp_*.gd` und müssen nach Abschluss restlos entfernt werden (inklusive generiertem `.tmp_*.gd.uid`-Sidecar).
 - Preflight gibt am Ende `ERROR: …RID allocations… leaked at exit` / `ObjectDB instances leaked` aus — das ist normales Teardown-Rauschen des Dummy-Renderers im Headless-Modus. Verbindlich ist die Zeile `RESULT: PASSED`.
 - Der Headless-Modus nutzt den Dummy-Renderer, daher ist `Window.get_texture()` null; visuelle Screenshots/Captures benötigen den Desktop Compatibility/OpenGL-Renderer, und `Window.size` muss nach Szenen-Initialisierung explizit gesetzt werden.
@@ -12,7 +13,7 @@
 - **Registrierung:** Neue Constraints werden als eigene `PreflightConstraintX`-Klasse mit `constraint_name() -> String` und `run(ctx: PreflightContext) -> bool` implementiert und in `CONSTRAINT_REGISTRY` in `scripts/preflight.gd` registriert (`{"id": "...", "script": preload("..."), "desc": "...", "requires_scene": bool}`).
 - **Fixture-Isolation:** Szenenabhängige Constraints (`requires_scene: true`) erhalten über `ctx.fixture.boot_default(ctx)` eine isolierte Szenen-Fixture. Jeder Boot räumt die vorherige Szene auf und setzt `GameState` aus dem aktiven Katalog zurück. Constraints dürfen sich nicht auf Mutationen vorheriger Constraints verlassen; eine Ausführung in umgekehrter Reihenfolge (`--reverse`) ist explizit unterstützt.
 - **Deterministischer Test-Seed:** Das Live-Szenario randomisiert den Seed (`randomize_layout_seed = true`), aber die Preflight-Fixture erzwingt intern `PREFLIGHT_LAYOUT_SEED = 424242`. Dadurch sind Planetenpositionen, Nachbarschaftsgraph und Ressourcen-Deals im Preflight 100 % deterministisch und stabil.
-- **CLI-Optionen:** Die Preflight-Suite unterstützt `--verbose` / `-v` (Detail-Assertions), `--fail-fast` / `-x` (sofortiger Abbruch bei erstem Fehler), `--filter=<name>` / `-f=...` (gezielte Constraint-Filterung mit automatischem Scene-Boot falls nötig), `--reverse` (Reverse-Execution) und `--list` / `-l` (Übersicht aller 19 Constraints).
+- **CLI-Optionen:** Die Preflight-Suite unterstützt `--verbose` / `-v` (Detail-Assertions), `--fail-fast` / `-x` (sofortiger Abbruch bei erstem Fehler), `--filter=<name>` / `-f=...` (gezielte Constraint-Filterung mit automatischem Scene-Boot falls nötig), `--reverse` (Reverse-Execution) und `--list` / `-l` (Übersicht aller 24 Constraints).
 - **Kompatibilitätsprüfung:** `constraint_game_state_compatibility.gd` läuft als erste Constraint und scannt Reflection-Signaturen sowie Regex-Receiver-Aliase unter `res://scripts`. Neue oder umbenannte Fassaden-Methoden müssen in `REQUIRED_FACADE_METHODS` bzw. `SIGNATURE_CONTRACTS` gepflegt werden.
 - **Scout- & Collect-Gating im Test:** Collect-Missionen erfordern gescannte, neutrale Planeten (`FACTION_NEUTRAL`). Preflight-Szenarien filtern Scout-Ziele daher strikt nach Fraktion, um Flakiness durch benachbarte gegnerische Homeworlds zu verhindern.
 
@@ -23,6 +24,8 @@
 - **Homeworld-Separation:** `SeededLayout._separate_homeworlds()` hält die beiden Homeworlds nicht-benachbart, sodass jede mindestens 2 neutrale Nachbarn für Scouts und Expansion besitzt.
 - **Raster- & Nachbarschaftsauflösung:** Adjazenz und Dimensionen werden ausschließlich über `WorldConfig.resolved_columns()`, `resolved_size_class_counts()`, `resolved_design_size()` und `resolved_target_planet_count()` bezogen — niemals über rohes `columns`.
 - **Planeten-Lebenszyklus & Detail-Profile:** `Planet.layout_size` leitet sich aus `Planet.size_profile` ab. Bauplätze sind profilgesteuert (variable=1, large=2, XL=3). Worker-Spawn-Timer existieren, bleiben aber gestoppt bis `worker_automation` erforscht und eine Worker-Fabrik errichtet wurde.
+- **SectorSystem (opt-in Dichte-Feld):** Neue Typen tragen bewusst das Präfix `Sector*` (Namenskollision mit dem Worker-Transit-System `WorkerCluster`/`ClusterTierDefinition`). Aktiv nur bei `WorldConfig.sector_count > 0` (`resolved_sector_count()`); `SectorClassifier` ist ein statischer `RefCounted` und wird von `SeededLayout` (endlicher Pfad) und `ChunkCoordinator` (unendlicher Pfad) aufgerufen.
+- **Sector-Größenwirkung ist rein visuell:** Skalierung ausschließlich über `planet_visual_scale`/`resolved_planet_visual_scale()` (0.6 im Shipped-Szenario) in beiden Pfaden — niemals `set_size_profile`, sonst bricht Worker-/Gameplay-Determinismus. Klassifikation landet als `set_meta` (`sector_id`/`sector_role`/`sector_depth`) auf den Planeten.
 - **Planet-Modul-Architektur:** `planet.gd` ist der zentrale Knotenpunkt und delegiert spezialisierte Aufgaben:
   - `PlanetArrivalResolver` (`scripts/objects/planets/planet_arrival_resolver.gd`): Deterministische Arrival-, Missions- und Konfliktauflösung.
   - `PlanetTraitAggregator` (`scripts/objects/planets/planet_trait_aggregator.gd`): Aggregation von Upgrade- und Trait-Boni.
@@ -45,10 +48,11 @@
 - **Flottenkampf & Eroberung (Layer 2/3):**
   - Layer 2: `FleetBattleSimulator` (deterministischer, getakteter `RefCounted`-Simulator) + `BattleScene` + `IngamePlayerControls`.
   - Layer 3: `ConquestSimulator` (deterministischer `RefCounted`-Simulator für planetare Eroberung) + `ConquestScene`.
+  - `ConquestSimulator.simulate_conquest` darf HP/DPS-Konstanten nicht ändern — die bestehenden Layer-2/3-Preflight-Assertions koppeln exakt darauf. Nur `tick`/`max_time`/`variance` parametrisieren.
   - Orchestrierung erfolgt über `ConflictManager` auf `PlanetField` und den `SceneDirector`.
 - **Prozedurale Chunk-Welt (Unendlich):**
-  - Wird aktiviert, wenn `WorldConfig.chunk_size > 0`. Shipped Standard-Szenarien (`world_default.tres`, `world_wide.tres`) setzen `chunk_size = 0` für den endlichen 10-Welten-Sektor.
-  - Verwaltet durch `ChunkCoordinator` (Lazy-Generierung, Cache, sicheres Cycling) und getestet in Constraint 19 (`chunk_expansion`).
+  - Wird aktiviert, wenn `WorldConfig.chunk_size > 0`. Beide Shipped-Szenarien sind bereits unendlich: `world_default.tres` (`chunk_size = 3`), `world_wide.tres` (`chunk_size = 4`); `chunk_size = 0` wäre der endliche Pfad.
+  - Verwaltet durch `ChunkCoordinator` (Lazy-Generierung, Cache, sicheres Cycling) und getestet in Constraint `chunk_expansion`.
 - **EventLog:** Autoload `/root/EventLog`. `push()` sendet sichtbare Toasts an das `MessageFeed`, `log_silent()` protokolliert geräuschlos. Export nach `user://player.log` erfolgt erst bei Anwendungsbeendigung (`NOTIFICATION_WM_CLOSE_REQUEST`).
 
 ## Atomare Commit-Gruppen (Change Together)
@@ -60,6 +64,9 @@
 - **Schiffsbau & Forschung:** `ship_part_definition.gd`, `ship_component_variant.gd`, `ship_blueprint.gd`, `ship_part_catalog.gd`+`.tres`, `technology_definition.gd`, `technology_catalog*.tres`, `ship_manager.gd`, `shipyard_hangar.gd`, `composite_ship_view.gd`, `technology_menu.gd`, Sub-Views (`scripts/ui/tech_menu/*`), `preflight.gd`.
 - **Kampf & Simulation (Layer 2/3):** `fleet_battle_simulator.gd`, `conquest_simulator.gd`, `battle_scene.gd`, `conquest_scene.gd`, `composite_ship_view.gd`, `ingame_player_controls.gd`, `scene_director.gd`, `conflict_manager.gd`, `fleet_snapshot.gd`, `preflight.gd`.
 - **Prozedurale Welt:** `world_config.gd`, `world_generator.gd`, `chunk_coordinator.gd`, `chunk_save_data.gd`, `planet_procedural.gd`, `navigation_field.gd`, `preflight.gd`.
+- **SectorSystem:** `sector_flavor.gd`, `sector_anchor.gd`, `sector_classifier.gd`, `sector_flavor_catalog.gd` + Presets/`sector_flavor_catalog_default.tres`, `world_config.gd`, `seeded_layout.gd`, `chunk_coordinator.gd`, `navigation_field.gd`, `planet.gd`, `preflight.gd`.
+- **Grid, Buildings & lokale Ressourcen:** `planet_grid*.gd`, `building_*.gd`, `building_catalog_default.tres` + `resources/config/buildings/*`, `planet.gd`, `economy_domain.gd`, `game_state.gd`, `bootstrap.gd`, `planet_details.gd`, `planet_panel.gd`, `preflight.gd`.
+- **Tower-Defense & Capture:** `conquest_simulator.gd`, `battle_event.gd`, `combat_replay.gd`, `planet_arrival_resolver.gd`, `conflict_manager.gd`, `capture_decision_overlay.gd`, `conquest_scene.gd`, `battle_scene.gd`, `preflight.gd`.
 
 ## Godot-Entwicklungsregeln & Fallstricke
 - Godot 4.7 `@export_enum` benötigt String-/Integer-kompatible Typen, nicht `StringName`.
@@ -73,6 +80,7 @@
 - GDScript `:=` Typinferenz schlägt bei `Node`-Kindern und untypisierten Helper-Returns fehl; explizite Casts verwenden (z.B. `(node as Node2D)`).
 - `Node.name` liefert `StringName`, nicht `String`. Bei String-Operationen mit `String(node.name)` konvertieren.
 - Lokale Variablen und Signal-Parameter dürfen keine Engine-Properties (`visible`, `owner`) oder Instanzfelder shadowen (`SHADOWED_VARIABLE`).
+- GDScript kennt kein `sqrtf`/`powf` (C-Namen); Fließkomma-Mathe nutzt `sqrt()`/`pow()` — `sqrtf` erzeugt einen Lookup-/Parse-Fehler.
 
 ## Git-Hooks & Commit-Workflow
 - `core.hooksPath` ist auf `.githooks` konfiguriert (aktiv und verbindlich):

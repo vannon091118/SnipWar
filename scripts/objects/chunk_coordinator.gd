@@ -35,6 +35,10 @@ var _lru_order: Array[Vector2i] = []
 var _navigation: NavigationField
 var _field: Node2D
 var _is_configured := false
+# Density-field sector cache (opt-in; recomputed when the layout seed changes).
+var _sector_anchors: Array[SectorAnchor] = []
+var _sector_noise: FastNoiseLite
+var _sector_cache_ready := false
 
 func configure(field: Node2D, navigation: NavigationField, world_config: WorldConfig, base_catalog: PlanetCatalog, size_profiles: Array[PlanetSizeProfile], layout_seed: int) -> void:
 	_field = field
@@ -46,10 +50,17 @@ func configure(field: Node2D, navigation: NavigationField, world_config: WorldCo
 	_is_configured = true
 
 func set_layout_seed(value: int) -> void:
+	if _layout_seed != value:
+		_sector_cache_ready = false
+		_sector_anchors = [] as Array[SectorAnchor]
+		_sector_noise = null
 	_layout_seed = value
 
 func reset_for_layout_seed(value: int) -> void:
 	_layout_seed = value
+	_sector_cache_ready = false
+	_sector_anchors = [] as Array[SectorAnchor]
+	_sector_noise = null
 	for cell in _active_planets.keys():
 		var planet: Planet = _active_planets[cell]
 		if planet != null and is_instance_valid(planet):
@@ -217,6 +228,16 @@ func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
 		data.cell = cell
 		data_array.append(data)
 		_planet_id_to_data[data.planet_id] = data
+	# --- Density-field sector classification (opt-in, deterministic per seed) ---
+	if _world_config.resolved_sector_count() > 0 and not _world_config.sector_flavors.is_empty():
+		var anchors := _get_sector_anchors()
+		var noise := _get_sector_noise()
+		for data in data_array:
+			var classification := SectorClassifier.classify_position(data.world_position, anchors, noise)
+			data.sector_id = classification["sector_id"]
+			data.sector_role = classification["role"]
+			data.sector_depth = classification["depth"]
+			data.sector_flavor_id = classification["sector_id"]
 	_chunk_cache[chunk_coord] = data_array
 	_lru_touch(chunk_coord)
 	_evict_if_needed()
@@ -231,6 +252,10 @@ func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
 		if map != null:
 			pool = map.resource_pool
 		state.deal_resources_for_planets(data_array, pool, c_seed)
+		var local_ids: Array = []
+		for generated_data in data_array:
+			local_ids.append(generated_data.planet_id)
+		state.deal_local_resources(local_ids, pool, c_seed)
 
 func _instantiate_planet(cell: Vector2i) -> void:
 	var chunk_coord := _cell_to_chunk(cell)
@@ -252,6 +277,10 @@ func _instantiate_planet(cell: Vector2i) -> void:
 	planet.configure_from_cache(data, profile)
 	_field.add_child(planet)
 	planet.global_position = data.world_position
+	planet.scale = Vector2.ONE * _planet_render_scale(data, profile)
+	planet.set_meta("sector_id", data.sector_id)
+	planet.set_meta("sector_role", data.sector_role)
+	planet.set_meta("sector_depth", data.sector_depth)
 	var state := _game_state()
 	if state != null:
 		state.seed_starting_workers(data.planet_id, profile)
@@ -293,6 +322,44 @@ func _cell_center(cell: Vector2i) -> Vector2:
 		(float(cell.x) + 0.5) * cs.x,
 		(float(cell.y) + 0.5) * cs.y
 	)
+
+## Deterministic per-planet render scale for the infinite path: size-profile
+## midpoint × global visual multiplier × optional sector-scale multiplier.
+func _planet_render_scale(data: ChunkPlanetData, profile: PlanetSizeProfile) -> float:
+	var mid := (profile.scale_range.x + profile.scale_range.y) * 0.5
+	var scale := mid * _world_config.resolved_planet_visual_scale()
+	if _world_config.resolved_sector_count() > 0 and not _world_config.sector_flavors.is_empty():
+		scale *= SectorClassifier.scale_multiplier({
+			"role": data.sector_role,
+			"depth": data.sector_depth,
+		})
+	return scale
+
+## Cached sector anchors covering a virtual region centred on the world origin.
+func _get_sector_anchors() -> Array[SectorAnchor]:
+	if not _sector_cache_ready:
+		_sector_cache_ready = true
+		if _world_config.resolved_sector_count() <= 0 or _world_config.sector_flavors.is_empty():
+			_sector_anchors = [] as Array[SectorAnchor]
+		else:
+			var cs := _world_config.resolved_cell_size()
+			var span := _world_config.resolved_sector_radius() * float(_world_config.resolved_sector_count()) * 3.0
+			var virtual_size := Vector2(maxf(span, cs.x), maxf(span, cs.y))
+			_sector_anchors = SectorClassifier.generate_anchors(
+				_layout_seed,
+				_world_config.resolved_sector_count(),
+				virtual_size,
+				_world_config.sector_flavors,
+				_world_config.resolved_sector_radius()
+			)
+			for anchor in _sector_anchors:
+				anchor.position -= virtual_size * 0.5
+	return _sector_anchors
+
+func _get_sector_noise() -> FastNoiseLite:
+	if _sector_noise == null:
+		_sector_noise = SectorClassifier.create_noise(_layout_seed)
+	return _sector_noise
 
 func _resolve_size_class(slot: int, chunk_size: int) -> StringName:
 	var total := chunk_size * chunk_size
@@ -352,6 +419,10 @@ func save_state() -> ChunkSaveData:
 			states[planet_id] = {
 				"faction": pd.faction,
 				"resource_id": pd.resource_id,
+				"sector_id": pd.sector_id,
+				"sector_role": pd.sector_role,
+				"sector_depth": pd.sector_depth,
+				"sector_flavor_id": pd.sector_flavor_id,
 			}
 	data.planet_states = states
 	return data
@@ -372,6 +443,10 @@ func load_state(data: ChunkSaveData) -> void:
 			var entry: Dictionary = data.planet_states[planet_id]
 			pd.faction = entry.get("faction", pd.faction)
 			pd.resource_id = entry.get("resource_id", pd.resource_id)
+			pd.sector_id = entry.get("sector_id", pd.sector_id)
+			pd.sector_role = entry.get("sector_role", pd.sector_role)
+			pd.sector_depth = entry.get("sector_depth", pd.sector_depth)
+			pd.sector_flavor_id = entry.get("sector_flavor_id", pd.sector_flavor_id)
 			if state != null:
 				state.set_faction(planet_id, pd.faction)
 
@@ -392,3 +467,7 @@ class ChunkPlanetData:
 	var signature_probability: float
 	var world_position: Vector2
 	var cell: Vector2i
+	var sector_id: StringName = &""
+	var sector_role: StringName = &"void"
+	var sector_depth: float = 0.0
+	var sector_flavor_id: StringName = &""

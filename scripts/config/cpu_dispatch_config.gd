@@ -3,11 +3,11 @@ class_name CpuDispatchConfig
 extends Resource
 
 @export var enabled: bool = true
-@export_range(0.5, 3600.0, 0.5) var decision_interval: float = 12.0
-@export_range(0.5, 3600.0, 0.5) var min_decision_interval: float = 6.0
+@export_range(0.5, 7200.0, 0.5) var decision_interval: float = 12.0
+@export_range(0.5, 7200.0, 0.5) var min_decision_interval: float = 6.0
 @export_range(0.0, 1.0, 0.01) var pacing_decay_rate: float = 0.02
-@export_range(0, 100000, 1) var reserve_workers: int = 2
-@export_range(1, 100000, 1) var minimum_source_workers: int = 3
+@export_range(0, 1000000, 1) var reserve_workers: int = 2
+@export_range(1, 1000000, 1) var minimum_source_workers: int = 3
 @export_range(0.1, 1.0, 0.05) var dispatch_fraction: float = 0.5
 
 func validate() -> PackedStringArray:

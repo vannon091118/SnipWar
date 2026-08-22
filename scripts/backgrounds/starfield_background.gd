@@ -32,6 +32,7 @@ var _circle_texture: Texture2D
 var _diamond_texture: Texture2D
 var _shape_texture_size := 0
 var _main_menu_backdrop: Sprite2D
+var _paper_overlay: ColorRect
 ## Visible region for infinite world (follows FoV). Only updated on chunk
 ## boundary change, not per frame, to avoid star regeneration overhead.
 var _visible_region := Rect2(Vector2.ZERO, Vector2(960, 540))
@@ -157,6 +158,7 @@ func _ready() -> void:
 	_disable_collision_debug_overlay()
 	_generate_elements()
 	_ensure_main_menu_backdrop()
+	_ensure_paper_overlay()
 	_rebuild_render_batches()
 	var viewport := get_viewport()
 	if viewport != null:
@@ -164,6 +166,19 @@ func _ready() -> void:
 		if not viewport.size_changed.is_connected(resize_callable):
 			viewport.size_changed.connect(resize_callable)
 	queue_redraw()
+
+## Subtle warm paper tint behind the starfield (comic-look ground layer).
+func _ensure_paper_overlay() -> void:
+	if _paper_overlay != null and is_instance_valid(_paper_overlay):
+		return
+	_paper_overlay = ColorRect.new()
+	_paper_overlay.name = "PaperOverlay"
+	_paper_overlay.color = Color(0.96, 0.93, 0.86, 0.05)
+	_paper_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_paper_overlay.z_index = -95
+	_paper_overlay.position = _world_origin()
+	_paper_overlay.size = _world_size()
+	add_child(_paper_overlay)
 
 func _ensure_main_menu_backdrop() -> void:
 	if _main_menu_backdrop != null and is_instance_valid(_main_menu_backdrop):

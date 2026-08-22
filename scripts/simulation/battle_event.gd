@@ -7,6 +7,11 @@ const TYPE_FIRE: StringName = &"fire"
 const TYPE_HIT: StringName = &"hit"
 const TYPE_DESTROYED: StringName = &"destroyed"
 const TYPE_RETREAT: StringName = &"retreat"
+const TYPE_WAVE_START: StringName = &"wave_start"
+const TYPE_MINION_SPAWN: StringName = &"minion_spawn"
+const TYPE_TOWER_FIRE: StringName = &"tower_fire"
+const TYPE_BASE_DAMAGE: StringName = &"base_damage"
+const TYPE_WAVE_CLEARED: StringName = &"wave_cleared"
 
 @export var timestamp: float = 0.0
 @export var event_type: StringName = TYPE_SPAWN

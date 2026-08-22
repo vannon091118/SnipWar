@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ConquestConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/conquest_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+tick = 0.5
+max_time = 20.0
+damage_variance_min = 0.9
+damage_variance_max = 1.1
+wave_interval = 3.0
+max_waves = 5
+minions_per_wave_base = 3
+minion_hp = 10.0
+minion_dps = 2.0
+minion_speed = 60.0
+base_total_hp = 100.0
+tower_dps = 5.0
+tower_hp = 20.0
+worker_hp = 10.0
+worker_dps = 2.0

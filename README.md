@@ -10,7 +10,7 @@
 <br/>
 <samp>
 <b>SNIPWAR — EISEN-GRENZE</b><br/>
-STRATEGISCHE OVERWORLD · 10 WELTEN · 19 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
+STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 24 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
 </samp>
 <br/><br/>
 </td>
@@ -19,7 +19,7 @@ STRATEGISCHE OVERWORLD · 10 WELTEN · 19 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORB
 
 [![Engine: Godot 4.7](https://img.shields.io/badge/Engine-Godot%204.7-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/)
 [![Status: Frontier-Kern](https://img.shields.io/badge/Status-Frontier--Kern%20aktiv-f0b429?style=for-the-badge)](#-lagezentrum--frontbericht)
-[![Preflight](https://img.shields.io/badge/Preflight-19%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
+[![Preflight](https://img.shields.io/badge/Preflight-24%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
 [![Sprache: GDScript](https://img.shields.io/badge/GDScript-4.7-blue?style=for-the-badge)](#-architektur--vom-katalog-zum-spielstand)
 [![Treibstoff](https://img.shields.io/badge/Fuel-Koffein%20%26%20Größenwahn-6f4e37?style=for-the-badge)](#)
 
@@ -93,7 +93,7 @@ cd snip-war
 # Smoke-Test: Bootet die Hauptszene, wartet 2 Sekunden, beendet sich
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Vollständige Preflight-Suite (19 Constraints)
+# Vollständige Preflight-Suite (24 Constraints)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
@@ -474,12 +474,12 @@ Die Preflight-Suite (`scripts/preflight.gd`) ist der einzige autoritative Verifi
 # Smoke-Test: Hauptszene bootet durch
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Alle 19 Constraints
+# Alle 24 Constraints
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
 <details>
-<summary>📋 <b>Die 19 Preflight-Constraints</b></summary>
+<summary>📋 <b>Die 24 Preflight-Constraints</b></summary>
 
 | # | Constraint | Prüft |
 |:---:|:---|:---|
@@ -501,7 +501,12 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 | 16 | `pause_and_context` | Modale UI-Hierarchie & Pausenstatus |
 | 17 | `layers_2_and_3` | FleetBattleSimulator, ConquestSimulator, Replay-Daten |
 | 18 | `ingame_player_and_transitions` | IngamePlayerControls, FloatingText & SceneDirector |
-| 19 | `chunk_expansion` | Deterministischer Chunk-Seed, inkrementelle Navigation & Prozedural-Deal |
+| 19 | `sector_classification` | Sektor-Klassifikation & Planeten-Typ-Zuordnung |
+| 20 | `grid_system` | Grid-System & Chunk-Grid-Verifikation |
+| 21 | `local_resources` | Lokale Ressourcen & Planeten-Resource-Signaturen |
+| 22 | `conquest_grid_combat` | Grid-basierter Conquest-Kampf & Eroberungslogik |
+| 23 | `paper_style` | Paper-/Papercraft-Comic-Visuallinie & Asset-Stil |
+| 24 | `chunk_expansion` | Deterministischer Chunk-Seed, inkrementelle Navigation & Prozedural-Deal |
 
 </details>
 
@@ -547,6 +552,20 @@ git commit
 ---
 
 ## 🗺️ STRATEGISCHE ROADMAP
+
+> **[📊 Visuelle Entwicklungs-Roadmap öffnen](ROADMAP_VISUAL.html)** — Interaktive HTML-Übersicht mit Snapshot-Wachstums-Chart, Zeitstrahl, Fortschrittsbalken und Phasen-Zusammenfassung. Basierend auf 14 Snapshots (Aug 19–21) und dem aktuellen Code-Stand.
+
+**Aktueller Stand (Aug 2026):**
+
+| Metrik | Wert |
+|:---|:---|
+| GDScript-Dateien | **145** |
+| Code-Zeilen | **21.619** |
+| Szenen | **16** |
+| Assets | **417** |
+| Ressourcen | **91** |
+| Preflight-Constraints | **24 PASS** |
+| Snapshots | **14** (Aug 19–21) |
 
 ```mermaid
 timeline

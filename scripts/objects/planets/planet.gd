@@ -5,6 +5,7 @@ extends Node2D
 const DEFAULT_SIZE_PROFILE: PlanetSizeProfile = preload("res://resources/config/planet_sizes/variable.tres")
 const DEFAULT_DETAIL_PROFILE: PlanetDetailProfile = preload("res://resources/config/planet_details/default.tres")
 const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_default.tres")
+const DEFAULT_BUILDING_CATALOG: BuildingCatalog = preload("res://resources/config/building_catalog_default.tres")
 
 signal planet_selected(planet: Node2D)
 ## Emitted next to planet_selected with the input modifier flags captured at
@@ -23,6 +24,10 @@ signal planet_unhovered(planet: Node2D)
 ## result. ConflictManager consumes this handoff; Planet remains the authority
 ## that commits ownership and worker state.
 signal conflict_simulated(simulation_type: StringName, replay: CombatReplay)
+signal building_placed(planet_id: StringName, q: int, r: int, building_id: StringName)
+signal building_destroyed(planet_id: StringName, q: int, r: int)
+signal planet_neutralized(planet_id: StringName)
+signal planet_neutralization_expired(planet_id: StringName)
 
 enum WorkerState { IDLE, SPAWNING }
 
@@ -89,6 +94,9 @@ var _strength_label: Label
 var _selected: bool = false
 var _fog_material_instance: ShaderMaterial
 var _fog_state: FogState = FogState.VISIBLE
+var _grid: PlanetGrid
+var _neutralization_timer: Timer
+var _is_neutralized := false
 
 const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
 const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/transformer_default.tres")
@@ -612,3 +620,139 @@ func _apply_detail_seed() -> void:
 func set_group_enabled(enabled: bool) -> void:
 	visible = enabled
 	process_mode = Node.PROCESS_MODE_INHERIT if enabled else Node.PROCESS_MODE_DISABLED
+
+# --- SECTOR META (density-field classification) ---
+
+func get_sector_role() -> StringName:
+	return get_meta("sector_role", &"void") as StringName
+
+func get_sector_id() -> StringName:
+	return get_meta("sector_id", &"") as StringName
+
+func get_sector_depth() -> float:
+	return float(get_meta("sector_depth", 0.0))
+
+# --- HEX/RECT GRID & BUILDINGS ---
+
+func get_grid() -> PlanetGrid:
+	if _grid != null and is_instance_valid(_grid):
+		return _grid
+	_grid = PlanetGrid.new()
+	_grid.name = "PlanetGrid"
+	var profile := get_size_profile()
+	var config: PlanetGridConfig = profile.grid_config if profile != null and profile.grid_config != null else PlanetGridConfig.new()
+	_grid.configure(config, DEFAULT_BUILDING_CATALOG)
+	if is_inside_tree() and not Engine.is_editor_hint():
+		add_child(_grid)
+	return _grid
+
+func place_building_on_grid(q: int, r: int, building_id: StringName) -> bool:
+	var grid := get_grid()
+	var building := DEFAULT_BUILDING_CATALOG.resolve(building_id)
+	if building == null:
+		return false
+	var state: Node = _game_state()
+	if state != null and state.has_method("can_place_planet_building") and not state.can_place_planet_building(planet_id, building_id, DEFAULT_BUILDING_CATALOG):
+		return false
+	if not grid.place_building(q, r, building):
+		return false
+	if state != null and state.has_method("place_planet_building"):
+		state.place_planet_building(planet_id, building_id, q, r, DEFAULT_BUILDING_CATALOG)
+	building_placed.emit(planet_id, q, r, building_id)
+	return true
+
+func remove_building_from_grid(q: int, r: int) -> bool:
+	var grid := get_grid()
+	if not grid.remove_building(q, r):
+		return false
+	var state: Node = _game_state()
+	if state != null and state.has_method("remove_planet_building"):
+		state.remove_planet_building(planet_id, q, r)
+	building_destroyed.emit(planet_id, q, r)
+	return true
+
+# --- LOCAL RESOURCES ---
+
+func get_local_resources() -> Dictionary:
+	var state: Node = _game_state()
+	if state != null and state.has_method("get_local_resources"):
+		return state.get_local_resources(planet_id)
+	return {}
+
+func can_afford_local(costs: Dictionary) -> bool:
+	var state: Node = _game_state()
+	if state == null or not state.has_method("can_spend_local_resource"):
+		return costs.is_empty()
+	for resource_id in costs:
+		var amount: int = int(costs[resource_id])
+		if amount > 0 and not state.can_spend_local_resource(planet_id, resource_id as StringName, amount):
+			return false
+	return true
+
+# --- DEFENSE SNAPSHOT / BASE HP ---
+
+func get_defense_snapshot() -> Dictionary:
+	var snapshot := {
+		"planet_id": planet_id,
+		"base_hp": get_base_hp(),
+		"garrison": worker_count,
+		"buildings": [],
+	}
+	var grid := get_grid()
+	if grid != null:
+		for cell in grid.building_cells():
+			snapshot["buildings"].append({
+				"q": cell.axial_q,
+				"r": cell.axial_r,
+				"building_id": cell.building.id,
+				"hp": cell.current_hp,
+			})
+	return snapshot
+
+func get_base_hp() -> int:
+	var grid := get_grid()
+	return grid.base_hp() if grid != null else 0
+
+func damage_base(amount: int) -> void:
+	if amount <= 0:
+		return
+	var grid := get_grid()
+	if grid == null:
+		return
+	var remaining := amount
+	for cell in grid.building_cells():
+		if remaining <= 0:
+			break
+		var dealt := mini(cell.current_hp, remaining)
+		cell.current_hp -= dealt
+		remaining -= dealt
+		if cell.current_hp <= 0:
+			var q := cell.axial_q
+			var r := cell.axial_r
+			grid.remove_building(q, r)
+			var state: Node = _game_state()
+			if state != null and state.has_method("remove_planet_building"):
+				state.remove_planet_building(planet_id, q, r)
+			building_destroyed.emit(planet_id, q, r)
+	grid.queue_redraw()
+
+# --- NEUTRALIZATION ---
+
+func neutralize(duration: float = 600.0) -> void:
+	_is_neutralized = true
+	if _neutralization_timer == null or not is_instance_valid(_neutralization_timer):
+		_neutralization_timer = Timer.new()
+		_neutralization_timer.name = "NeutralizationTimer"
+		_neutralization_timer.one_shot = true
+		_neutralization_timer.timeout.connect(_on_neutralization_expired)
+		if is_inside_tree():
+			add_child(_neutralization_timer)
+	_neutralization_timer.start(maxf(duration, 0.1))
+	planet_neutralized.emit(planet_id)
+
+func is_neutralized() -> bool:
+	return _is_neutralized
+
+func _on_neutralization_expired() -> void:
+	_is_neutralized = false
+	planet_neutralization_expired.emit(planet_id)

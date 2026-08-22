@@ -35,6 +35,7 @@ const DEFAULT_RESOURCE_POOL: ResourcePool = preload("res://resources/config/reso
 const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
 const DEFAULT_TECHNOLOGY_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
 const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
+const DEFAULT_BUILDING_CATALOG: BuildingCatalog = preload("res://resources/config/building_catalog_default.tres")
 
 signal faction_changed(planet_id: StringName, old_faction: StringName, new_faction: StringName)
 signal catalog_reset(catalog: PlanetCatalog)
@@ -61,6 +62,10 @@ signal ship_build_started(planet_id: StringName, ship_id: StringName, remaining:
 signal battle_context_changed(context: BattleContext)
 signal transit_changed(record: TransitRecord)
 signal run_started(run_id: StringName, layout_seed: int)
+signal planet_building_placed(planet_id: StringName, q: int, r: int, building_id: StringName)
+signal planet_building_destroyed(planet_id: StringName, q: int, r: int)
+signal resource_transferred(from_planet: StringName, to_planet: StringName, resource_id: StringName, amount: int)
+signal local_resources_changed(planet_id: StringName, resource_id: StringName, new_amount: int)
 
 var faction_domain := FactionDomain.new()
 var economy_domain := EconomyDomain.new()
@@ -137,6 +142,10 @@ func _connect_domain_signals() -> void:
 	economy_domain.gathering_withdrawn.connect(func(f, p, w): gathering_withdrawn.emit(f, p, w))
 	economy_domain.worker_factory_built.connect(func(p): worker_factory_built.emit(p))
 	economy_domain.refinery_converted.connect(func(p, f, c, pr): refinery_converted.emit(p, f, c, pr))
+	economy_domain.local_resources_changed.connect(func(p, r, a): local_resources_changed.emit(p, r, a))
+	economy_domain.resource_transferred.connect(func(f, t, r, a): resource_transferred.emit(f, t, r, a))
+	economy_domain.building_placed.connect(func(p, b, q, r): planet_building_placed.emit(p, q, r, b))
+	economy_domain.building_removed.connect(func(p, q, r): planet_building_destroyed.emit(p, q, r))
 
 	tech_domain.technology_researched.connect(func(f, t): technology_researched.emit(f, t))
 	tech_domain.planet_technology_researched.connect(func(p, t): planet_technology_researched.emit(p, t))
@@ -572,6 +581,92 @@ func disband_fleet_to_planet(fleet: FleetSnapshot, planet_id: StringName) -> voi
 
 func reconcile_defender_fleet(planet_id: StringName, defender_fleet: FleetSnapshot, surviving: Array[ShipAssembly]) -> void:
 	ship_domain.reconcile_defender_fleet(planet_id, defender_fleet, surviving)
+
+# --- GRID BUILDINGS, LOCAL RESOURCES & CAPTURE DELEGATES ---
+func can_place_planet_building(planet_id: StringName, building_id: StringName, catalog: BuildingCatalog = null) -> bool:
+	var faction: StringName = faction_of(planet_id)
+	if faction == FACTION_NEUTRAL:
+		return false
+	var cat: BuildingCatalog = catalog if catalog != null else DEFAULT_BUILDING_CATALOG
+	if cat == null:
+		return false
+	var building: BuildingDefinition = cat.resolve(building_id)
+	if building == null:
+		return false
+	if not String(building.required_tech_id).is_empty() and not has_technology(faction, building.required_tech_id):
+		return false
+	return economy_domain.can_spend_building_cost(faction, building)
+
+func place_planet_building(planet_id: StringName, building_id: StringName, q: int, r: int, catalog: BuildingCatalog = null) -> bool:
+	if not can_place_planet_building(planet_id, building_id, catalog):
+		return false
+	var cat: BuildingCatalog = catalog if catalog != null else DEFAULT_BUILDING_CATALOG
+	var building: BuildingDefinition = cat.resolve(building_id)
+	var faction: StringName = faction_of(planet_id)
+	if not economy_domain.spend_building_cost(faction, building):
+		return false
+	economy_domain.record_planet_building(planet_id, building_id, q, r)
+	return true
+
+func remove_planet_building(planet_id: StringName, q: int, r: int) -> bool:
+	return not String(economy_domain.remove_planet_building(planet_id, q, r)).is_empty()
+
+func planet_building_at(planet_id: StringName, q: int, r: int) -> StringName:
+	return economy_domain.planet_building_at(planet_id, q, r)
+
+func get_local_resource(planet_id: StringName, resource_id: StringName) -> int:
+	return economy_domain.get_local_resource(planet_id, resource_id)
+
+func get_local_resources(planet_id: StringName) -> Dictionary:
+	return economy_domain.local_vault(planet_id).duplicate()
+
+func add_local_resource(planet_id: StringName, resource_id: StringName, amount: int) -> int:
+	return economy_domain.add_local_resource(planet_id, resource_id, amount)
+
+func spend_local_resource(planet_id: StringName, resource_id: StringName, amount: int) -> bool:
+	return economy_domain.spend_local_resource(planet_id, resource_id, amount)
+
+func can_spend_local_resource(planet_id: StringName, resource_id: StringName, amount: int) -> bool:
+	return economy_domain.get_local_resource(planet_id, resource_id) >= amount
+
+func transfer_local_resources(from_planet: StringName, to_planet: StringName, resource_id: StringName, amount: int) -> bool:
+	return economy_domain.transfer_resources(from_planet, to_planet, resource_id, amount)
+
+func deal_local_resources(planet_ids: Array, pool: ResourcePool = null, seed_value: int = 0) -> void:
+	economy_domain.seed_local_resources(planet_ids, pool, seed_value)
+
+func register_trade_route(from_planet: StringName, to_planet: StringName, resource_id: StringName) -> StringName:
+	return economy_domain.register_trade_route(from_planet, to_planet, resource_id)
+
+func tick_trade_routes() -> int:
+	return economy_domain.tick_trade_routes()
+
+func trade_routes_snapshot() -> Dictionary:
+	return economy_domain.trade_routes_snapshot()
+
+func capture_planet(planet_id: StringName, decision: StringName, faction: StringName) -> void:
+	match decision:
+		&"loot":
+			steal_resources(planet_id, faction, 0.5)
+		&"neutralize":
+			set_faction(planet_id, FACTION_NEUTRAL)
+		_:
+			set_faction(planet_id, faction)
+
+func steal_resources(planet_id: StringName, attacker_faction: StringName, percentage: float = 0.5) -> Dictionary:
+	var stolen: Dictionary = {}
+	var vault := economy_domain.local_vault(planet_id).duplicate()
+	for resource_id in vault:
+		var amount: int = int(vault[resource_id])
+		if amount <= 0:
+			continue
+		var take: int = maxi(1, int(round(float(amount) * clampf(percentage, 0.0, 1.0))))
+		if take <= 0:
+			continue
+		economy_domain.spend_local_resource(planet_id, resource_id as StringName, take)
+		economy_domain.add_faction_resource(attacker_faction, resource_id as StringName, take)
+		stolen[resource_id] = take
+	return stolen
 
 # --- VALIDATION HELPERS ---
 func validate() -> PackedStringArray:
