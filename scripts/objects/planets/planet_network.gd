@@ -10,6 +10,7 @@ const TECHNOLOGY_MENU_SCENE: PackedScene = preload("res://scenes/ui/technology_m
 const MESSAGE_FEED_SCENE: PackedScene = preload("res://scenes/ui/message_feed.tscn")
 const SELECTION_SERVICE_SCRIPT: Script = preload("res://scripts/objects/selection_service.gd")
 const SELECTION_ACTION_TOOLTIP_SCRIPT: Script = preload("res://scripts/ui/selection_tooltip.gd")
+const FLEET_OVERVIEW_SCRIPT: Script = preload("res://scripts/ui/fleet_overview.gd")
 
 @export var transit_config: TransitConfig = DEFAULT_CONFIG
 @export var ui_theme_config: UIThemeConfig = DEFAULT_UI_THEME
@@ -34,6 +35,8 @@ var _neighbor_cache_valid := false
 var _selection_service: SelectionService
 var _action_tooltip: SelectionActionTooltip
 var _modal_coordinator: ModalCoordinator
+var _fleet_overview: FleetOverview
+var _selected_ship: ShipBase
 
 # Context-menu item IDs and stable names used by tests/replay scripts.
 const ACTION_OPEN: int = 0
@@ -67,6 +70,7 @@ func _ready() -> void:
 		push_error("PlanetNetwork and WorkerManager must share the same TransitConfig resource")
 	_connect_fog_signals()
 	_connect_map_camera.call_deferred()
+	_connect_conflict_ships.call_deferred()
 	_create_ui.call_deferred()
 	_refresh_fog_of_war.call_deferred()
 
@@ -319,6 +323,7 @@ func _create_modal_coordinator() -> void:
 	add_child(_modal_coordinator)
 	_modal_coordinator.setup(_map_camera, ui_theme_config)
 	_create_dossier_launcher()
+	_create_fleet_overview.call_deferred()
 
 func _create_dossier_launcher() -> void:
 	var layer := CanvasLayer.new()
@@ -327,12 +332,74 @@ func _create_dossier_launcher() -> void:
 	add_child(layer)
 	var box := VBoxContainer.new()
 	box.name = "LauncherBox"
-	box.position = Vector2(12.0, 12.0)
+	box.position = Vector2(12.0, 48.0)
 	box.add_theme_constant_override("separation", 6)
 	layer.add_child(box)
 	_add_dossier_button(box, "PLANET", _open_planet_dossier)
 	_add_dossier_button(box, "WERKSTATT", _open_workshop_dossier)
 	_add_dossier_button(box, "FORSCHUNG", _open_tech_tree_dossier)
+
+func _create_fleet_overview() -> void:
+	_fleet_overview = FLEET_OVERVIEW_SCRIPT.new() as FleetOverview
+	_fleet_overview.name = "FleetOverview"
+	var layer := CanvasLayer.new()
+	layer.name = "FleetOverviewLayer"
+	layer.layer = 38
+	add_child(layer)
+	_fleet_overview.position = Vector2(12.0, 144.0)
+	_fleet_overview.custom_minimum_size = Vector2(190.0, 0.0)
+	layer.add_child(_fleet_overview)
+	_fleet_overview.setup(ui_theme_config)
+	_fleet_overview.focus_requested.connect(_on_fleet_overview_focus)
+
+func _on_ship_dispatched(ship: ShipBase) -> void:
+	_connect_ship_selection(ship)
+	_update_fleet_overview()
+
+func _connect_ship_selection(ship: ShipBase) -> void:
+	if ship == null or not is_instance_valid(ship):
+		return
+	if not ship.ship_selected.is_connected(_on_ship_clicked):
+		ship.ship_selected.connect(_on_ship_clicked)
+
+func _on_ship_clicked(ship: ShipBase) -> void:
+	_deselect_current_ship()
+	if _selection_service != null:
+		_selection_service.clear()
+	ship.set_selected(true)
+	_selected_ship = ship
+	_center_camera_on(ship)
+
+func _deselect_current_ship() -> void:
+	if _selected_ship != null and is_instance_valid(_selected_ship):
+		_selected_ship.set_selected(false)
+	_selected_ship = null
+
+func _update_fleet_overview() -> void:
+	if _fleet_overview == null or not is_instance_valid(_fleet_overview):
+		return
+	var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
+	var ships: Array[ShipBase] = []
+	if conflict_manager != null and conflict_manager.has_method("get_active_ships"):
+		ships = conflict_manager.get_active_ships() as Array[ShipBase]
+	_fleet_overview.update_ships(ships)
+	if _selection_service != null:
+		_fleet_overview.update_planets(_selection_service.get_selection())
+
+func _on_fleet_overview_focus(target: Node2D) -> void:
+	_center_camera_on(target)
+	if target is Planet:
+		_deselect_current_ship()
+		if _selection_service != null:
+			_selection_service.handle_request(target, {})
+		else:
+			_on_planet_selected(target)
+	elif target is ShipBase:
+		_deselect_current_ship()
+		if _selection_service != null:
+			_selection_service.clear()
+		target.set_selected(true)
+		_selected_ship = target as ShipBase
 
 func _add_dossier_button(box: VBoxContainer, text: String, pressed: Callable) -> void:
 	var button := Button.new()
@@ -386,6 +453,9 @@ func _open_tech_tree_dossier() -> void:
 func get_technology_menu() -> TechnologyMenu:
 	return _technology_menu
 
+func get_fleet_overview() -> FleetOverview:
+	return _fleet_overview
+
 func get_modal_coordinator() -> ModalCoordinator:
 	return _modal_coordinator
 
@@ -403,6 +473,22 @@ func _on_workers_spawn_requested(source: Node2D, amount: int) -> void:
 func _connect_map_camera() -> void:
 	if _map_camera != null and is_instance_valid(_map_camera) and not _map_camera.planet_drag_dropped.is_connected(_on_planet_drag_dropped):
 		_map_camera.planet_drag_dropped.connect(_on_planet_drag_dropped)
+
+func _connect_conflict_ships() -> void:
+	var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
+	if conflict_manager == null:
+		return
+	if conflict_manager.has_signal("ship_dispatched") and not conflict_manager.is_connected("ship_dispatched", _on_ship_dispatched):
+		conflict_manager.connect("ship_dispatched", _on_ship_dispatched)
+	if conflict_manager.has_signal("ship_arrived") and not conflict_manager.is_connected("ship_arrived", _on_ship_arrived):
+		conflict_manager.connect("ship_arrived", _on_ship_arrived)
+	# Connect existing materialized ships (e.g. restore from save).
+	if conflict_manager.has_method("get_active_ships"):
+		for ship in conflict_manager.get_active_ships() as Array[ShipBase]:
+			_connect_ship_selection(ship)
+
+func _on_ship_arrived(_ship: Node2D) -> void:
+	_update_fleet_overview.call_deferred()
 
 func _on_planet_drag_dropped(source: Node2D, destination: Node2D) -> void:
 	if not is_instance_valid(_ui) or source == null or destination == null or source == destination:
@@ -453,6 +539,8 @@ func _on_selection_group_changed(_selection: Array[Node2D]) -> void:
 		return
 	if _ui.has_method("refresh_selection_overview"):
 		_ui.refresh_selection_overview(_selection)
+	if _fleet_overview != null and is_instance_valid(_fleet_overview):
+		_fleet_overview.update_planets(_selection)
 	queue_redraw()
 
 func _on_selection_count_changed(count: int) -> void:

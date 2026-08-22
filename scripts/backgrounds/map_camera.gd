@@ -9,6 +9,7 @@ const PLANET_CLICK_RADIUS := 120.0
 @export_range(1.0, 6.0, 0.05) var max_zoom: float = 2.5
 @export_range(0.05, 0.5, 0.05) var zoom_step: float = 0.15
 @export_range(2.0, 32.0, 1.0) var drag_threshold: float = 6.0
+@export_range(100.0, 800.0, 10.0) var keyboard_pan_speed: float = 400.0
 
 var _map_bounds: Rect2 = Rect2(Vector2.ZERO, Vector2(960.0, 540.0))
 var _planet_field: SeededLayout
@@ -48,6 +49,24 @@ func _read_world_bounds() -> void:
 ## Blocks pan/zoom/selection while a fullscreen modal (e.g. PaperDossier) is open.
 func set_input_blocked(blocked: bool) -> void:
 	_input_blocked = blocked
+
+func _process(delta: float) -> void:
+	if _input_blocked:
+		return
+	var pan_dir := Vector2.ZERO
+	if Input.is_action_pressed(&"camera_pan_left"):
+		pan_dir.x -= 1.0
+	if Input.is_action_pressed(&"camera_pan_right"):
+		pan_dir.x += 1.0
+	if Input.is_action_pressed(&"camera_pan_up"):
+		pan_dir.y -= 1.0
+	if Input.is_action_pressed(&"camera_pan_down"):
+		pan_dir.y += 1.0
+	if pan_dir.length_squared() > 0.01:
+		pan_dir = pan_dir.normalized()
+		position += pan_dir * keyboard_pan_speed * delta / zoom.x
+		_clamp_position()
+		_sync_infinite_world()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _input_blocked:

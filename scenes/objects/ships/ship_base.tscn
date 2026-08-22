@@ -1,6 +1,37 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/objects/ships/ship_base.gd" id="1_ship_base"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_ship"]
+radius = 32.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_click"]
+radius = 48.0
+
 [node name="ShipBase" type="Node2D"]
 script = ExtResource("1_ship_base")
+
+[node name="ClickArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
+shape = SubResource("CircleShape2D_click")
+
+[node name="SelectionRing" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(0.6, 0.85, 1.0, 0.9)
+
+[node name="TransitLabel" type="Label" parent="."]
+visible = false
+offset_left = -60.0
+offset_top = -48.0
+offset_right = 60.0
+offset_bottom = -32.0
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 10
+horizontal_alignment = 1
+
+[node name="RouteLine" type="Line2D" parent="."]
+visible = false
+width = 1.5
+default_color = Color(0.6, 0.85, 1.0, 0.35)
+z_index = -5

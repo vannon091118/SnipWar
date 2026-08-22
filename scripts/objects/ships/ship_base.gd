@@ -2,8 +2,13 @@ class_name ShipBase
 extends Node2D
 
 const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
+const SELECTION_RING_COLOR := Color(0.6, 0.85, 1.0, 0.9)
+const SELECTION_RING_RADIUS := 36.0
 
 signal arrived(ship: Node2D)
+signal ship_selected(ship: Node2D)
+signal ship_hovered(ship: Node2D)
+signal ship_unhovered(ship: Node2D)
 
 var fleet: FleetSnapshot
 var destination: Planet
@@ -16,6 +21,123 @@ var _duration := 0.0
 var _arrived := false
 var _view: CompositeShipView
 var _flight_tween: Tween
+var _selected := false
+
+@onready var _click_area: Area2D = get_node_or_null("ClickArea") as Area2D
+@onready var _selection_ring: Sprite2D = get_node_or_null("SelectionRing") as Sprite2D
+@onready var _transit_label: Label = get_node_or_null("TransitLabel") as Label
+@onready var _route_line: Line2D = get_node_or_null("RouteLine") as Line2D
+
+func _ready() -> void:
+	if _click_area != null:
+		_click_area.input_event.connect(_on_click_area_input_event)
+		_click_area.mouse_entered.connect(_on_click_area_mouse_entered)
+		_click_area.mouse_exited.connect(_on_click_area_mouse_exited)
+	if _selection_ring != null:
+		_draw_selection_ring()
+		_selection_ring.position = Vector2.ZERO
+	_update_transit_label()
+
+func _draw_selection_ring() -> void:
+	if _selection_ring == null:
+		return
+	# Create a procedural circle texture for the selection ring
+	var radius := SELECTION_RING_RADIUS
+	var image := Image.create(int(radius * 2.0) + 4, int(radius * 2.0) + 4, false, Image.FORMAT_RGBA8)
+	image.fill(Color.TRANSPARENT)
+	var center := Vector2(float(image.get_width()) * 0.5, float(image.get_height()) * 0.5)
+	# Draw dashed ring segments
+	var segment_count := 12
+	var gap_ratio := 0.25
+	var segment_angle := TAU / float(segment_count)
+	var filled_angle := segment_angle * (1.0 - gap_ratio)
+	for i in segment_count:
+		var start_a := float(i) * segment_angle - TAU * 0.25
+		var end_a := start_a + filled_angle
+		var steps := 8
+		for s in steps:
+			var a := start_a + (end_a - start_a) * float(s) / float(steps)
+			var x := int(center.x + cos(a) * radius)
+			var y := int(center.y + sin(a) * radius)
+			if x >= 0 and x < image.get_width() and y >= 0 and y < image.get_height():
+				image.set_pixel(x, y, SELECTION_RING_COLOR)
+	var tex := ImageTexture.create_from_image(image)
+	_selection_ring.texture = tex
+	_selection_ring.centered = true
+
+func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_index: int) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			ship_selected.emit(self)
+			get_viewport().set_input_as_handled()
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			# Right-click on a ship centers the camera on it and selects it
+			ship_selected.emit(self)
+			get_viewport().set_input_as_handled()
+	elif event is InputEventScreenTouch and event.pressed:
+		ship_selected.emit(self)
+		get_viewport().set_input_as_handled()
+
+func _on_click_area_mouse_entered() -> void:
+	ship_hovered.emit(self)
+	_show_route(true)
+
+func _on_click_area_mouse_exited() -> void:
+	ship_unhovered.emit(self)
+	if not _selected:
+		_show_route(false)
+
+func set_selected(enabled: bool) -> void:
+	_selected = enabled
+	if is_instance_valid(_selection_ring):
+		_selection_ring.visible = enabled
+	if is_instance_valid(_transit_label):
+		_transit_label.visible = enabled
+	if is_instance_valid(_route_line):
+		_route_line.visible = enabled
+	if not enabled and is_instance_valid(_route_line):
+		_route_line.visible = false
+	if enabled:
+		_update_transit_label()
+		_update_route_line()
+
+func is_selected() -> bool:
+	return _selected
+
+func _show_route(show: bool) -> void:
+	if is_instance_valid(_route_line) and not _selected:
+		_route_line.visible = show
+	if is_instance_valid(_transit_label) and not _selected:
+		_transit_label.visible = show
+
+func _update_transit_label() -> void:
+	if _transit_label == null:
+		return
+	if _arrived:
+		var dest_name := "Homeworld"
+		if destination != null and is_instance_valid(destination):
+			dest_name = UIBaseUtils.planet_display_name(destination)
+		_transit_label.text = "Stationiert bei %s" % dest_name
+	else:
+		var remaining: float = _duration * (1.0 - _flight_progress())
+		_transit_label.text = "Unterwegs · %.1f s" % maxf(remaining, 0.0)
+
+func _update_route_line() -> void:
+	if _route_line == null:
+		return
+	_route_line.clear_points()
+	if _arrived or _route_path.is_empty():
+		return
+	# Convert world-space route to local points
+	for wp in _route_path:
+		_route_line.add_point(to_local(wp))
+	# Draw from current position to first remaining waypoint
+	_route_line.points[0] = Vector2.ZERO
+
+func _flight_progress() -> float:
+	return get_meta(&"flight_elapsed", 0.0) / maxf(_duration, 0.001)
+
+# --- Original API (unchanged) ---
 
 func configure(incoming_fleet: FleetSnapshot, destination_planet: Planet, route_path: Array[Vector2], duration: float, catalog: ShipPartCatalog = null, role: StringName = &"", source_id: StringName = &"") -> void:
 	fleet = incoming_fleet
@@ -25,6 +147,8 @@ func configure(incoming_fleet: FleetSnapshot, destination_planet: Planet, route_
 	_route_path = route_path.duplicate() if route_path.size() >= 2 else []
 	_duration = maxf(duration, 0.001)
 	_rebuild_visual(catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG)
+	_update_transit_label()
+	_update_route_line()
 
 func configure_idle(incoming_fleet: FleetSnapshot, location: Planet, catalog: ShipPartCatalog = null, role: StringName = &"", source_id: StringName = &"") -> void:
 	fleet = incoming_fleet
@@ -35,11 +159,13 @@ func configure_idle(incoming_fleet: FleetSnapshot, location: Planet, catalog: Sh
 	_duration = 0.0
 	_arrived = true
 	_rebuild_visual(catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG)
+	_update_transit_label()
 
 func start_flight() -> void:
 	start_flight_from_elapsed(0.0)
 
 func start_flight_from_elapsed(elapsed: float) -> void:
+	set_meta(&"flight_elapsed", elapsed)
 	if _route_path.is_empty() or destination == null or not is_instance_valid(destination):
 		_arrive()
 		return
@@ -78,6 +204,8 @@ func start_flight_from_elapsed(elapsed: float) -> void:
 		var segment_length: float = _route_path[index].distance_to(_route_path[index + 1])
 		tween.tween_property(self, "global_position", _route_path[index + 1], remaining_duration * segment_length / remaining_distance).set_trans(Tween.TRANS_LINEAR)
 	tween.finished.connect(Callable(self, "_arrive"))
+	_update_transit_label()
+	_update_route_line()
 
 func stop_flight() -> void:
 	if _flight_tween != null and _flight_tween.is_valid():
@@ -98,6 +226,7 @@ func _arrive() -> void:
 	if _arrived:
 		return
 	_arrived = true
+	_update_transit_label()
 	arrived.emit(self)
 
 func _rebuild_visual(catalog: ShipPartCatalog) -> void:
@@ -105,6 +234,9 @@ func _rebuild_visual(catalog: ShipPartCatalog) -> void:
 		_view = CompositeShipView.new()
 		_view.name = "ShipVisual"
 		add_child(_view)
+		# Move visual below ClickArea in the scene tree order
+		if _click_area != null:
+			move_child(_view, 0)
 	if fleet == null or fleet.ships.is_empty():
 		_view.clear()
 		return

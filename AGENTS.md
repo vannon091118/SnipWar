@@ -52,6 +52,8 @@
 - **UI-Stack:**
   - `PlanetNetworkUI` (CanvasLayer 50): Komponiert `VaultBar` (`scenes/ui/vault_bar.tscn`) und `PlanetPanel` (`scenes/ui/planet_panel.tscn`).
   - `TechnologyMenu` (CanvasLayer 60): Unterteilt in `TechResearchView`, `TechScoutView`, `TechShipBuilderView` und `TechPlanetView`. Schließt das PlanetPanel bei Öffnung.
+  - `DossierLauncher` (CanvasLayer 40): Drei Buttons (PLANET/WERKSTATT/FORSCHUNG) links oben, öffnen modale Dossier-Views via `ModalCoordinator`. Position y=48 (unter VaultBar).
+  - `FleetOverview` (CanvasLayer 38): Linksseitiges Schnellzugriffs-Panel für aktive Ships und selektierte Planeten, über `ConflictManager.ship_dispatched`/`ship_arrived`-Signals live aktualisiert.
   - `PauseMenu` (CanvasLayer 70): Reagiert auf ESC (`PROCESS_MODE_ALWAYS`), wenn weder PlanetPanel noch TechMenu geöffnet sind. Bietet **SPEICHERN** (→ `SaveGameService.save_run(0)` + EventLog-Toast) und **HAUPTMENÜ** (→ erst unpausen, dann `SceneDirectorService.goto_scene("menu")` — ein Scene-Wechsel im gepausten Baum würde das neue Menü einfrieren). Beide Buttons tragen stabile Namen (`Content/SaveButton`, `Content/MenuButton`) und sind über `constraint_pause_and_context` abgesichert.
   - `MainMenu` (Einstiegsszene, `run/main_scene`): **NEUES SPIEL** (löscht Slot 0, `GameState.request_new_run()`, dann World), **WEITER** (deaktiviert ohne Save; `SaveGameService.load_run(0)` setzt `_reconnect_requested`, dann World), **BEENDEN**. Flow ist über `constraint_main_menu_and_flow` + `constraint_context_handover` abgesichert.
 - **Flottenkampf & Eroberung (Layer 2/3):**
@@ -73,6 +75,7 @@
 - **Wirtschaft & CPU-AI:** `economy_config.gd`+`.tres`, `cpu_dispatch_config.gd`+`.tres`, `economy_manager.gd`, `cpu_dispatch_ai.gd`, `seeded_layout.gd`, `planet.gd`, `worker_manager.gd`, `preflight.gd`.
 - **Schiffsbau & Forschung:** `ship_part_definition.gd`, `ship_component_variant.gd`, `ship_blueprint.gd`, `ship_part_catalog.gd`+`.tres`, `technology_definition.gd`, `technology_catalog*.tres`, `ship_manager.gd`, `shipyard_hangar.gd`, `composite_ship_view.gd`, `technology_menu.gd`, Sub-Views (`scripts/ui/tech_menu/*`), `preflight.gd`.
 - **Kampf & Simulation (Layer 2/3):** `fleet_battle_simulator.gd`, `conquest_simulator.gd`, `battle_scene.gd`, `conquest_scene.gd`, `composite_ship_view.gd`, `ingame_player_controls.gd`, `scene_director.gd`, `conflict_manager.gd`, `fleet_snapshot.gd`, `preflight.gd`.
+- **ShipBase & Fleet-UI:** `ship_base.gd`, `ship_base.tscn`, `conflict_manager.gd` (Signals `ship_dispatched`/`ship_arrived`), `planet_network.gd` (Ship-Event-Handling), `fleet_overview.gd`, `preflight.gd`.
 - **Prozedurale Welt:** `world_config.gd`, `world_generator.gd`, `chunk_coordinator.gd`, `chunk_save_data.gd`, `planet_procedural.gd`, `navigation_field.gd`, `preflight.gd`.
 - **SectorSystem:** `sector_flavor.gd`, `sector_anchor.gd`, `sector_classifier.gd`, `sector_flavor_catalog.gd` + Presets/`sector_flavor_catalog_default.tres`, `world_config.gd`, `seeded_layout.gd`, `chunk_coordinator.gd`, `navigation_field.gd`, `planet.gd`, `preflight.gd`.
 - **Grid, Buildings & lokale Ressourcen:** `planet_grid*.gd`, `building_*.gd`, `building_catalog_default.tres` + `resources/config/buildings/*`, `planet.gd`, `economy_domain.gd`, `game_state.gd`, `bootstrap.gd`, `planet_details.gd`, `planet_panel.gd`, `preflight.gd`.
@@ -94,6 +97,8 @@
 - `Node.name` liefert `StringName`, nicht `String`. Bei String-Operationen mit `String(node.name)` konvertieren.
 - Lokale Variablen und Signal-Parameter dürfen keine Engine-Properties (`visible`, `owner`) oder Instanzfelder shadowen (`SHADOWED_VARIABLE`).
 - GDScript kennt kein `sqrtf`/`powf` (C-Namen); Fließkomma-Mathe nutzt `sqrt()`/`pow()` — `sqrtf` erzeugt einen Lookup-/Parse-Fehler.
+- Prozedural generierte Texture-Maps: `Image.create()` + `Image.set_pixel()` + `ImageTexture.create_from_image()` funktionieren zum Erzeugen von Selektionsringen, Markern etc. ohne externe Asset-Dateien.
+- `get_tree()` ist null bevor ein Node via `add_child()` in den Baum gehängt wurde. `setup()`/`_init()`-Methoden, die `get_tree().root` abfragen, müssen **nach** `add_child()` laufen — bei CanvasLayer-Wrappern also erst `layer.add_child(node)`, dann `node.setup()`.
 
 ## Git-Hooks & Commit-Workflow
 - `core.hooksPath` ist auf `.githooks` konfiguriert (aktiv und verbindlich):

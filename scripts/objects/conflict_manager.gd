@@ -11,6 +11,8 @@ const BATTLE_SEED_SALT: int = 0x51A7E
 const CONQUEST_SEED_SALT: int = 0xC0A57
 
 signal replay_started(simulation_type: StringName, replay: CombatReplay)
+signal ship_dispatched(ship: ShipBase)
+signal ship_arrived(ship: ShipBase)
 
 var transit_config: TransitConfig = DEFAULT_TRANSIT_CONFIG
 var _field: Node
@@ -279,6 +281,7 @@ func dispatch_research_ship(source: Planet, destination: Planet) -> ShipBase:
 			idle_ship.queue_free()
 			break
 	ship.start_flight()
+	ship_dispatched.emit(ship)
 	return ship
 
 func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName, role: StringName = &"") -> ShipBase:
@@ -334,6 +337,7 @@ func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName, rol
 	state.ship_launched.emit(source.planet_id, ship_id, resolved_role)
 	if not _check_route_engagement(record):
 		ship.start_flight()
+	ship_dispatched.emit(ship)
 	return ship
 
 func _check_route_engagement(record: TransitRecord) -> bool:
@@ -433,6 +437,7 @@ func _on_ship_arrived(ship_node: Node2D) -> void:
 	var ship: ShipBase = ship_node as ShipBase
 	if ship == null:
 		return
+	ship_arrived.emit(ship)
 	var state: Node = _game_state()
 	var record: TransitRecord = state.get_transit(ship.transit_id) if state != null and not String(ship.transit_id).is_empty() else null
 	if ship.mission_role == &"research":
@@ -556,6 +561,13 @@ func _defender_fleet(destination: Planet, attacking_faction: StringName, mission
 	if assemblies.is_empty():
 		return null
 	return state.preview_fleet_from_planet(destination.planet_id, assemblies.keys(), _part_catalog())
+
+func get_active_ships() -> Array[ShipBase]:
+	var result: Array[ShipBase] = []
+	for ship in _active_ships:
+		if ship != null and is_instance_valid(ship):
+			result.append(ship)
+	return result
 
 func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 	for ship in _active_ships:
