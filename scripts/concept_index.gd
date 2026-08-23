@@ -105,6 +105,68 @@ func stale_class_references() -> PackedStringArray:
 func summary() -> String:
 	return "%d concepts across %d domains, %d class mappings, %d synonyms" % [_concepts.size(), domains().size(), _class_to_concept.size(), _synonyms.size()]
 
+func get_unmapped_classes() -> Array[String]:
+	var result: Array[String] = []
+	var discovered: Dictionary = {}
+	_collect_class_names("res://scripts", discovered)
+	for class_name_value in discovered:
+		if not _class_to_concept.has(class_name_value):
+			result.append(class_name_value)
+	return result
+
+func get_concepts_with_free_slots() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for concept_value in _concepts.values():
+		var entry: ConceptEntry = concept_value as ConceptEntry
+		var mapped: int = 0
+		for cls in entry.classes:
+			if _class_to_file.has(cls):
+				mapped += 1
+		if mapped < entry.classes.size():
+			result.append({
+				"concept": entry.concept,
+				"domain": entry.domain,
+				"mapped": mapped,
+				"total": entry.classes.size(),
+				"missing": entry.classes.size() - mapped,
+				"classes": entry.classes,
+				"files": entry.files,
+				"methods": entry.methods,
+				"description": entry.description
+			})
+	return result
+
+func _collect_class_names(path: String, result: Dictionary) -> void:
+	var directory: DirAccess = DirAccess.open(path)
+	if directory == null:
+		return
+	directory.list_dir_begin()
+	while true:
+		var entry: String = directory.get_next()
+		if entry.is_empty():
+			break
+		if entry.begins_with("."):
+			continue
+		var child_path: String = path.path_join(entry)
+		if directory.current_is_dir():
+			_collect_class_names(child_path, result)
+		elif entry.ends_with(".gd"):
+			_scan_class_name(child_path, result)
+	directory.list_dir_end()
+
+func _scan_class_name(path: String, result: Dictionary) -> void:
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return
+	while not file.eof_reached():
+		var line: String = file.get_line().strip_edges()
+		if line.begins_with("class_name "):
+			var class_name_value: String = line.substr("class_name ".length()).strip_edges()
+			if not class_name_value.is_empty():
+				result[class_name_value] = path
+			break
+	file.close()
+
 func _score_entry(entry: ConceptEntry, query: String) -> int:
 	if _synonyms.get(query, "") == entry.concept:
 		return 100
