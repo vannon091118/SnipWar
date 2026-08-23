@@ -1,0 +1,43 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://addons/gdscript_mcp/testing/mcp_test_scenario.gd" id="1_scenario"]
+
+[resource]
+script = ExtResource("1_scenario")
+id = "main_menu_buttons"
+description = "Main menu: detect buttons (Neues Spiel, Weiter, Beenden), verify scene=main_menu"
+scene_path = "res://scenes/main_menu/main_menu.tscn"
+wait_frames = 30
+requires_renderer = true
+enabled_by_default = true
+steps = Array[Dictionary]([{
+"tool": "runtime_ux_analyze",
+"args": {},
+"expect_key": "scene",
+"expect_op": "==",
+"expect_value": "main_menu"
+}, {
+"tool": "runtime_ux_analyze",
+"args": {},
+"expect_key": "elements.size",
+"expect_op": ">=",
+"expect_value": 2
+}, {
+"tool": "runtime_ux_analyze",
+"args": {},
+"expect_key": "interactables.size",
+"expect_op": ">=",
+"expect_value": 1
+}, {
+"tool": "runtime_ux_find",
+"args": {"description": "Neues Spiel"},
+"expect_key": "found",
+"expect_op": "==",
+"expect_value": true
+}, {
+"tool": "runtime_ux_find",
+"args": {"description": "Beenden"},
+"expect_key": "found",
+"expect_op": "==",
+"expect_value": true
+}])
