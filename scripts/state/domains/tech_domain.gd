@@ -74,15 +74,23 @@ func advance_research(delta: float) -> void:
 		return
 	for faction_value in research_jobs.keys():
 		var faction: StringName = faction_value as StringName
-		var jobs: Dictionary = research_jobs[faction]
-		for tech_value in jobs.keys():
-			var technology_id: StringName = tech_value as StringName
-			var remaining: float = jobs[technology_id] - delta
-			if remaining <= 0.0:
-				jobs.erase(technology_id)
-				_complete_research(faction, technology_id)
-			else:
-				jobs[technology_id] = remaining
+		advance_research_faction(faction, delta)
+
+## Advances only one faction's research jobs. The CPU ship builder uses this
+## so its research progresses without speeding up the player's jobs (the
+## global advance_research() would tick every faction).
+func advance_research_faction(faction: StringName, delta: float) -> void:
+	if delta <= 0.0 or not research_jobs.has(faction):
+		return
+	var jobs: Dictionary = research_jobs[faction]
+	for tech_value in jobs.keys():
+		var technology_id: StringName = tech_value as StringName
+		var remaining: float = jobs[technology_id] - delta
+		if remaining <= 0.0:
+			jobs.erase(technology_id)
+			_complete_research(faction, technology_id)
+		else:
+			jobs[technology_id] = remaining
 
 func _complete_research(faction: StringName, technology_id: StringName) -> void:
 	if not researched_techs.has(faction):

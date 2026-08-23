@@ -149,7 +149,8 @@ static func simulate_grid_conquest(
 				wave_events.append(BattleEvent.create(time, BattleEvent.TYPE_TOWER_FIRE, &"tower", &"", dmg, Vector2(base_x - 20.0, 0.0), target.pos))
 				var applied := target.take_damage(dmg, rng)
 				if applied > 0.0:
-					wave_events.append(BattleEvent.create(time + 0.05, BattleEvent.TYPE_MODULE_HIT, &"tower", &"", applied, target.pos, target.pos))
+					# L2/L3 convention: TYPE_MODULE_HIT carries the hit unit in target_id.
+					wave_events.append(BattleEvent.create(time + 0.05, BattleEvent.TYPE_MODULE_HIT, &"tower", target.id, applied, target.pos, target.pos))
 					for destroyed_mod in target.consume_destroyed_modules():
 						wave_events.append(BattleEvent.create_module(
 							time + 0.05,

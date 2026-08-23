@@ -195,6 +195,41 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(TECH_CATALOG.resolve(&"repair_drone_t2").prerequisite_tech_id == &"repair_drone_t1" and TECH_CATALOG.resolve(&"repair_drone_t3").prerequisite_tech_id == &"repair_drone_t2", "repair branch must chain T1 → T2 → T3"):
 		return false
 
+	# 11. CPU loadout builder: the opponent uses the module meta, not presets.
+	var cpu_rng := RandomNumberGenerator.new()
+	cpu_rng.seed = 42
+	var no_techs := CpuLoadoutBuilder.build_loadout(SHIP_PART_CATALOG, [], cpu_rng, GameState.MISSION_MILITARY)
+	if not ctx.check(no_techs.is_empty(), "CPU loadout builder must stay empty without research"):
+		return false
+	var cpu_techs: Array = [&"shipyard_construction", &"scanner_drone", &"weapon_systems", &"repair_drone_t1", &"combat_drone_t1", &"drone_booster_t1"]
+	var military_loadout: Dictionary = CpuLoadoutBuilder.build_loadout(SHIP_PART_CATALOG, cpu_techs, cpu_rng, GameState.MISSION_MILITARY)
+	if not ctx.check(military_loadout.has("hull_id") and military_loadout.has("drive_id"), "CPU military loadout must contain hull and drive"):
+		return false
+	var military_hull: ShipPartDefinition = SHIP_PART_CATALOG.resolve(military_loadout.get("hull_id", &""))
+	var military_layout: Dictionary = SHIP_PART_CATALOG.slot_layout_for(military_hull)
+	if not ctx.check(not String(military_loadout.get("weapon_id", &"")).is_empty(), "CPU military loadout must mount a weapon"):
+		return false
+	var military_modules: Array = military_loadout.get("module_ids", [])
+	var drive_tally := 1 + int(military_modules.count(military_loadout.get("drive_id", &"")))
+	if not ctx.check(drive_tally <= int(military_layout.get(ShipPartDefinition.SLOT_DRIVE, 1)), "CPU military loadout must respect the hull's drive capacity"):
+		return false
+	if not ctx.check(military_modules.has(&"combat_drone_t1"), "CPU military loadout must use combat drones"):
+		return false
+	var booster_techs: Array = [&"shipyard_construction", &"scanner_drone", &"weapon_systems", &"drone_booster_t1"]
+	var boosted_loadout: Dictionary = CpuLoadoutBuilder.build_loadout(SHIP_PART_CATALOG, booster_techs, cpu_rng, GameState.MISSION_MILITARY)
+	if not ctx.check(boosted_loadout.get("module_ids", []).has(&"drone_booster_t1"), "CPU military loadout must mount a booster when researched"):
+		return false
+	var colony_loadout: Dictionary = CpuLoadoutBuilder.build_loadout(SHIP_PART_CATALOG, cpu_techs, cpu_rng, GameState.MISSION_COLONY)
+	if not ctx.check(String(colony_loadout.get("weapon_id", &"")).is_empty(), "CPU colony loadout must stay unarmed"):
+		return false
+	if not ctx.check(colony_loadout.get("module_ids", []).has(&"repair_drone_t1"), "CPU colony loadout must carry a repair drone"):
+		return false
+	var colony_hull: ShipPartDefinition = SHIP_PART_CATALOG.resolve(colony_loadout.get("hull_id", &""))
+	var colony_layout: Dictionary = SHIP_PART_CATALOG.slot_layout_for(colony_hull)
+	var colony_drive_tally := 1 + int(colony_loadout.get("module_ids", []).count(colony_loadout.get("drive_id", &"")))
+	if not ctx.check(colony_drive_tally <= int(colony_layout.get(ShipPartDefinition.SLOT_DRIVE, 1)), "CPU colony loadout must respect the hull's drive capacity"):
+		return false
+
 	return true
 
 

@@ -366,6 +366,9 @@ func abort_building_job(planet_id: StringName, q: int, r: int) -> bool:
 func advance_research(delta: float) -> void:
 	tech_domain.advance_research(delta)
 
+func advance_research_faction(faction: StringName, delta: float) -> void:
+	tech_domain.advance_research_faction(faction, delta)
+
 func advance_builds(delta: float) -> void:
 	ship_domain.advance_builds(delta)
 

@@ -18,6 +18,7 @@ var _ships: Dictionary = {} # id -> CompositeShipView
 var _ship_initial_data: Dictionary = {}
 var _ship_drive_counts: Dictionary = {} # id -> remaining functioning drives
 var _ship_bob_tweens: Dictionary = {} # id -> Tween
+var _ship_hp_bars: Dictionary = {} # id -> ModuleHpBar
 var _elapsed: float = 0.0
 var _event_index: int = 0
 var _is_playing: bool = false
@@ -135,6 +136,7 @@ func _clear_arena() -> void:
 	_ships.clear()
 	_ship_drive_counts.clear()
 	_ship_bob_tweens.clear()
+	_ship_hp_bars.clear()
 
 func _draw_routes(replay: CombatReplay) -> void:
 	if replay == null:
@@ -209,8 +211,10 @@ func _process_event(event: BattleEvent) -> void:
 			_animate_hit(event.target_id, event.target_pos + _route_offset, event.value)
 		BattleEvent.TYPE_MODULE_HIT:
 			_animate_hit(event.target_id, event.target_pos + _route_offset, event.value)
+			_apply_module_hit_to_bar(event.target_id, event)
 		BattleEvent.TYPE_MODULE_DESTROYED:
 			_animate_module_destroyed(event.source_id, event.source_pos + _route_offset, event)
+			_apply_module_destroyed_to_bar(event.source_id, event)
 		BattleEvent.TYPE_REPAIR:
 			FloatingText.spawn(_arena, "+%.0f" % event.value, event.target_pos + _route_offset + Vector2(0, -10), Color(0.4, 1.0, 0.5))
 		BattleEvent.TYPE_DESTROYED:
@@ -260,10 +264,28 @@ func _spawn_ship_visual(ship_id: StringName, pos: Vector2, ship_data: ShipAssemb
 	_apply_comic_fx(view)
 	_ships[ship_id] = view
 	_ship_drive_counts[ship_id] = _count_ship_drives(visual_data)
+	var stats := FleetSnapshot.calculate_ship_stats(visual_data, catalog)
+	var hp_bar := ModuleHpBar.new()
+	hp_bar.setup(stats.get("modules", []))
+	# Counteract the ship scale so the bar renders at a constant world size.
+	hp_bar.scale = Vector2.ONE / maxf(view.scale.x, 0.001)
+	hp_bar.position = Vector2(-ModuleHpBar.BAR_WIDTH * 0.5, -50.0) / maxf(view.scale.x, 0.001)
+	view.add_child(hp_bar)
+	_ship_hp_bars[ship_id] = hp_bar
 	var tw := view.create_tween().set_loops()
 	tw.tween_property(view, "position:y", pos.y + 4.0, 1.2).set_trans(Tween.TRANS_SINE)
 	tw.tween_property(view, "position:y", pos.y - 4.0, 1.2).set_trans(Tween.TRANS_SINE)
 	_ship_bob_tweens[ship_id] = tw
+
+func _apply_module_hit_to_bar(ship_id: StringName, event: BattleEvent) -> void:
+	var bar: ModuleHpBar = _ship_hp_bars.get(ship_id) as ModuleHpBar
+	if bar != null and not bar.is_empty():
+		bar.apply_hit(event.module_part_id, event.value)
+
+func _apply_module_destroyed_to_bar(ship_id: StringName, event: BattleEvent) -> void:
+	var bar: ModuleHpBar = _ship_hp_bars.get(ship_id) as ModuleHpBar
+	if bar != null and not bar.is_empty():
+		bar.destroy_module(event.module_part_id)
 
 func _count_ship_drives(ship_data: ShipAssembly) -> int:
 	if ship_data == null:

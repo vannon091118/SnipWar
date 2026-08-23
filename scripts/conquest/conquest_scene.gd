@@ -26,6 +26,7 @@ var _wave_label: Label
 var _attackers: Array[Node2D] = []
 var _towers: Array[Node2D] = []
 var _minions_by_id: Dictionary = {} # minion id -> Node2D
+var _minion_hp_bars: Dictionary = {} # minion id -> ModuleHpBar
 var _wave_event_index: int = 0
 
 func _ready() -> void:
@@ -108,6 +109,8 @@ func _setup_battlefield() -> void:
 		child.queue_free()
 	_attackers.clear()
 	_towers.clear()
+	_minions_by_id.clear()
+	_minion_hp_bars.clear()
 
 	var tower_count: int = maxi(_result_int("tower_count", _result_int("perimeter_slots", 3)), 0)
 	var attacker_count: int = maxi(_result_int("surviving_attackers", 5), 0)
@@ -152,10 +155,12 @@ func _setup_battlefield() -> void:
 	var ship_visual_index := 0
 	for i in range(attacker_count):
 		var minion: Node2D
+		var minion_assembly: ShipAssembly = null
 		# Ship assemblies are appended after the worker minions in the replay,
 		# so consume them with a dedicated index instead of the slot index.
 		if ship_visual_index < minion_ships.size():
-			minion = _make_ship_minion(minion_ships[ship_visual_index] as ShipAssembly, i, vertical_center)
+			minion_assembly = minion_ships[ship_visual_index] as ShipAssembly
+			minion = _make_ship_minion(minion_assembly, i, vertical_center)
 			ship_visual_index += 1
 		else:
 			minion = Sprite2D.new()
@@ -173,10 +178,23 @@ func _setup_battlefield() -> void:
 		if i < survivor_ids.size() and not String(survivor_ids[i]).is_empty():
 			slot_id = survivor_ids[i] as StringName
 		_minions_by_id[slot_id] = minion
+		# Ship minions carry a segmented module HP bar; the replay events update
+		# it live (module hits, destruction, drone repair).
+		if minion is CompositeShipView and minion_assembly != null:
+			var bar := ModuleHpBar.new()
+			var stats := FleetSnapshot.calculate_ship_stats(minion_assembly, _part_catalog())
+			bar.setup(stats.get("modules", []))
+			bar.scale = Vector2.ONE / maxf(minion.scale.x, 0.001)
+			bar.position = Vector2(-ModuleHpBar.BAR_WIDTH * 0.5, -60.0) / maxf(minion.scale.x, 0.001)
+			minion.add_child(bar)
+			_minion_hp_bars[slot_id] = bar
 
 		var tw := minion.create_tween()
 		tw.tween_property(minion, "position:x", -90.0, _duration * 0.8)
 	_wave_event_index = 0
+
+func _part_catalog() -> ShipPartCatalog:
+	return preload("res://resources/config/ship_part_catalog_default.tres")
 
 func _make_ship_minion(assembly: ShipAssembly, index: int, vertical_center: float) -> CompositeShipView:
 	var view := CompositeShipView.new()
@@ -318,12 +336,22 @@ func _process_wave_event(event: BattleEvent) -> void:
 	if event == null:
 		return
 	match event.event_type:
+		BattleEvent.TYPE_MODULE_HIT:
+			var hit_bar: ModuleHpBar = _minion_hp_bars.get(event.target_id) as ModuleHpBar
+			if hit_bar != null and not hit_bar.is_empty():
+				hit_bar.apply_hit(event.module_part_id, event.value)
 		BattleEvent.TYPE_MODULE_DESTROYED:
 			# The simulator writes the minion id into source_id for destruction
 			# events (mirroring the L2 convention).
 			_hide_minion_module(event.source_id, event.module_part_id, event.module_slot_type)
+			var destroyed_bar: ModuleHpBar = _minion_hp_bars.get(event.source_id) as ModuleHpBar
+			if destroyed_bar != null and not destroyed_bar.is_empty():
+				destroyed_bar.destroy_module(event.module_part_id)
 		BattleEvent.TYPE_REPAIR:
 			FloatingText.spawn(_arena, "+%.0f" % event.value, event.target_pos + Vector2(0, -12), Color(0.4, 1.0, 0.5))
+			var repair_bar: ModuleHpBar = _minion_hp_bars.get(event.target_id) as ModuleHpBar
+			if repair_bar != null and not repair_bar.is_empty():
+				repair_bar.heal_total(event.value)
 
 func _hide_minion_module(minion_id: StringName, module_part_id: StringName, module_slot_type: StringName) -> void:
 	if not _minions_by_id.has(minion_id):
