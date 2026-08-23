@@ -32,9 +32,34 @@ func run(ctx: PreflightContext) -> bool:
 		if not ctx.check(not index.expand(term).is_empty(), "ConceptIndex.expand('%s') returned no results" % term):
 			return false
 
+	# NEW: Test get_unmapped_classes() API
+	var unmapped: Array[String] = index.get_unmapped_classes()
+	if not ctx.check(unmapped.size() == missing.size(), "get_unmapped_classes() count matches discovered-unmapped (%d vs %d)" % [unmapped.size(), missing.size()]):
+		return false
+
+	# NEW: Test get_concepts_with_free_slots() API
+	var free_slots: Array[Dictionary] = index.get_concepts_with_free_slots()
+	if not ctx.check(free_slots.size() >= 0, "get_concepts_with_free_slots() returns valid array"):
+		return false
+	# Verify structure of returned entries
+	for slot in free_slots:
+		if not ctx.check(slot.has("concept"), "Free slot entry has 'concept' field"):
+			return false
+		if not ctx.check(slot.has("domain"), "Free slot entry has 'domain' field"):
+			return false
+		if not ctx.check(slot.has("mapped"), "Free slot entry has 'mapped' field"):
+			return false
+		if not ctx.check(slot.has("total"), "Free slot entry has 'total' field"):
+			return false
+		if not ctx.check(slot.has("missing"), "Free slot entry has 'missing' field"):
+			return false
+		if not ctx.check(slot.missing > 0, "Free slot entry has missing > 0 (%s: %d/%d)" % [slot.concept, slot.mapped, slot.total]):
+			return false
+
 	if ctx.verbose:
 		print("ConceptIndex: %s" % index.summary())
 		print("ConceptIndex: %d classes discovered, %d unmapped, %d stale" % [discovered.size(), missing.size(), stale.size()])
+		print("ConceptIndex: %d free-slot concepts, %d unmapped classes (API)" % [free_slots.size(), unmapped.size()])
 	return true
 
 func _collect_class_names(path: String, result: Dictionary) -> void:

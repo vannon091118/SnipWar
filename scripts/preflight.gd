@@ -220,6 +220,12 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"requires_scene": false,
 	},
 	{
+		"id": "global_search",
+		"script": preload("res://scripts/preflight/constraint_global_search.gd"),
+		"desc": "Global full-text search tool functional validation",
+		"requires_scene": false,
+	},
+	{
 		"id": "concept_index",
 		"script": preload("res://scripts/preflight/constraint_concept_index.gd"),
 		"desc": "Concept discovery index covers classes and supports fuzzy search",

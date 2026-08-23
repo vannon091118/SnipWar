@@ -220,6 +220,9 @@ BEISPIELE:
   # Suche mit deutschem Synonym
   $GODOT_BIN --headless --path . --script res://scripts/concept_search.gd schiff
 
+  # OR-Suche mit Pipe: findet "fleet" ODER "dispatch"
+  $GODOT_BIN --headless --path . --script res://scripts/concept_search.gd "fleet|dispatch"
+
   # Alle Economy-Konzepte
   $GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --domain economy
 
@@ -228,6 +231,12 @@ BEISPIELE:
 
   # Alle Domänen anzeigen
   $GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --list-domains
+
+PIPE-ALTERNATION:
+  Verwende "|" als Trenner fuer OR-Suchen:
+    "fleet|dispatch"  findet Konzepte mit "fleet" ODER "dispatch"
+    "a|b|c"           findet Konzepte die auf "a", "b" oder "c" matchen
+  Funktioniert auch im GlobalSearch (global_search.gd).
 
 DOMÄNEN: ships, economy, transit, navigation, world, planets, combat, tech, ui, scenes, preflight, ai, missions, background, events, input, factions, state
 

@@ -26,10 +26,20 @@ $GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --class 
 $GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --domain economy
 ```
 
-**Global Search CLI** (volltext):
+**Global Search CLI** (volltext, jetzt mit LOC, Regex, Frequenz, Defs):
 ```bash
+# Basis-Suche (Output zeigt jetzt LOC pro Datei)
 $GODOT_BIN --headless --path . --script res://scripts/global_search.gd "fleet" --no-json
 $GODOT_BIN --headless --path . --script res://scripts/global_search.gd "assemble_ship" --context 5
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "runtime_audio|runtime_animation"  # OR-Suche
+# Frequenz-Aggregation: unique count pro Treffer-Zeile
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "emit_signal" --freq --no-json
+# Dead-Code-Analyse: func definiert vs. aufgerufen
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "assemble_ship" --defs --no-json
+# Regex mit Capture-Groups
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "func (_?[a-z_]+)" --regex --no-json
+# Timeout-Schutz: max. 500 Dateien scannen
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "func" --max-files 500 --no-json
 ```
 
 ### 3. Preflight (Verbindlicher Qualitäts-Check)
@@ -100,6 +110,11 @@ ConceptIndex.new().by_domain("ships")
 | "Wo kommt 'fleet_supply_bonus' in .tres/.tscn/.md vor?" | **Global Search** |
 | "Gibt es Klasse 'FleetManager'?" | **ConceptIndex --class** |
 | "Alle Dateien mit 'worker_transport'" | **Global Search** |
+| "Suche nach A oder B (OR-Suche)" | Beide: `"a|b"` mit Pipe-Syntax |
+| "Welche Zeilen kommen wie oft vor?" | **Global Search --freq** |
+| "Dead-Code-Kandidat? func definiert aber nicht aufgerufen?" | **Global Search --defs** |
+| "Capture-Groups extrahieren (z.B. Funktionsnamen)" | **Global Search --regex** |
+| "Zu viele Treffer → Timeout" | **Global Search --max-files 500** |
 
 ---
 
