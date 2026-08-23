@@ -273,8 +273,6 @@ func _apply_responsive_layout() -> void:
 	var minimum_panel_width: float = _panel.get_combined_minimum_size().x
 	panel_width = maxf(panel_width, minimum_panel_width)
 	var edge: float = _theme_config.edge_margin
-	var panel_left: float = viewport_size.x - panel_width - edge
-
 	# Pin the resource bar to the top-left corner so it stays visible and
 	# is always clickable for the full economy window.
 	if _vault_bar != null:

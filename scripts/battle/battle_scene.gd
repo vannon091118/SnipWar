@@ -93,7 +93,7 @@ func _boot_pending_battle() -> void:
 		battle_completed.connect(_on_pending_battle_completed)
 	play_battle(context.replay)
 
-func _on_pending_battle_completed(replay: CombatReplay) -> void:
+func _on_pending_battle_completed(_replay: CombatReplay) -> void:
 	if _pending_context == null:
 		return
 	var cycle: Node = get_node_or_null("/root/GameCycleManager")

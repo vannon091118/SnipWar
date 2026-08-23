@@ -24,7 +24,6 @@ signal planet_unhovered(planet: Node2D)
 ## result. ConflictManager consumes this handoff; Planet remains the authority
 ## that commits ownership and worker state.
 signal conflict_simulated(simulation_type: StringName, replay: CombatReplay)
-signal building_placed(planet_id: StringName, q: int, r: int, building_id: StringName)
 signal building_destroyed(planet_id: StringName, q: int, r: int)
 signal planet_neutralized(planet_id: StringName)
 signal planet_neutralization_expired(planet_id: StringName)
@@ -617,10 +616,6 @@ func _apply_detail_seed() -> void:
 	if details != null:
 		details.set_seed(_detail_seed)
 
-func set_group_enabled(enabled: bool) -> void:
-	visible = enabled
-	process_mode = Node.PROCESS_MODE_INHERIT if enabled else Node.PROCESS_MODE_DISABLED
-
 # --- SECTOR META (density-field classification) ---
 
 func get_sector_role() -> StringName:
@@ -645,31 +640,6 @@ func get_grid() -> PlanetGrid:
 	if is_inside_tree() and not Engine.is_editor_hint():
 		add_child(_grid)
 	return _grid
-
-func place_building_on_grid(q: int, r: int, building_id: StringName) -> bool:
-	var grid := get_grid()
-	var building := DEFAULT_BUILDING_CATALOG.resolve(building_id)
-	if building == null:
-		return false
-	var state: Node = _game_state()
-	if state != null and state.has_method("can_place_planet_building") and not state.can_place_planet_building(planet_id, building_id, DEFAULT_BUILDING_CATALOG):
-		return false
-	if not grid.place_building(q, r, building):
-		return false
-	if state != null and state.has_method("place_planet_building"):
-		state.place_planet_building(planet_id, building_id, q, r, DEFAULT_BUILDING_CATALOG)
-	building_placed.emit(planet_id, q, r, building_id)
-	return true
-
-func remove_building_from_grid(q: int, r: int) -> bool:
-	var grid := get_grid()
-	if not grid.remove_building(q, r):
-		return false
-	var state: Node = _game_state()
-	if state != null and state.has_method("remove_planet_building"):
-		state.remove_planet_building(planet_id, q, r)
-	building_destroyed.emit(planet_id, q, r)
-	return true
 
 # --- LOCAL RESOURCES ---
 

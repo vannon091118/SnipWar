@@ -60,11 +60,11 @@ static func classify_position(pos: Vector2, anchors: Array[SectorAnchor], noise:
 	var best_index := -1
 	var best_score := -INF
 	for index in range(anchors.size()):
-		var anchor: SectorAnchor = anchors[index]
-		if anchor == null:
+		var candidate_anchor: SectorAnchor = anchors[index]
+		if candidate_anchor == null:
 			continue
-		var dist := pos.distance_to(anchor.position)
-		var score := _sector_falloff(dist, anchor.radius)
+		var dist := pos.distance_to(candidate_anchor.position)
+		var score := _sector_falloff(dist, candidate_anchor.radius)
 		if score > best_score:
 			best_score = score
 			best_index = index
@@ -72,6 +72,7 @@ static func classify_position(pos: Vector2, anchors: Array[SectorAnchor], noise:
 		return result
 
 	var anchor: SectorAnchor = anchors[best_index]
+
 	var radius := maxf(anchor.radius, 0.001)
 	var noisy_radius := radius
 	if noise != null and anchor.flavor != null:

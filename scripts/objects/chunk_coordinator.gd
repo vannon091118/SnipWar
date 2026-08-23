@@ -103,6 +103,17 @@ func get_active_bounds() -> Rect2:
 func is_infinite_world() -> bool:
 	return _world_config != null and _world_config.is_infinite_world()
 
+## Returns the largest FoV radius among active player-owned planets. The
+## Planet facade includes researched scanner bonuses, so infinite-world
+## activation follows the same upgrade-aware rule as the planet itself.
+func player_fov_radius() -> int:
+	var radius: int = _world_config.planet_fov_radius if _world_config != null else 2
+	for planet_value in _active_planets.values():
+		var planet: Planet = planet_value as Planet
+		if planet != null and is_instance_valid(planet) and planet.get_faction() == GameState.FACTION_PLAYER:
+			radius = maxi(radius, planet.get_fov_radius())
+	return radius
+
 ## Ensures all chunks overlapping the given FoV regions are active (planets
 ## instantiated). Planets outside all regions are culled via Halt-Phase.
 func ensure_chunks_active(fov_regions: Array, max_size_class: StringName) -> void:
@@ -141,23 +152,6 @@ func ensure_chunks_active(fov_regions: Array, max_size_class: StringName) -> voi
 			to_cull.append(cell)
 	for cell in to_cull:
 		_cull_planet(cell)
-	if _navigation != null:
-		_navigation.rebuild()
-		var network: Node = _navigation.get_parent().get_node_or_null("PlanetNetwork")
-		if not Engine.is_editor_hint() and network != null and network.has_method("invalidate_neighbor_cache"):
-			network.call("invalidate_neighbor_cache")
-
-## Synchronously generates chunks containing the given cells (for route plotting).
-func generate_chunks_sync(cells: Array) -> void:
-	if not _is_configured or not is_infinite_world():
-		return
-	for cell_value in cells:
-		var cell: Vector2i = cell_value
-		var chunk_coord := _cell_to_chunk(cell)
-		if not _chunk_cache.has(chunk_coord):
-			_generate_chunk(chunk_coord, &"variable")
-		if not _active_planets.has(cell):
-			_instantiate_planet(cell)
 	if _navigation != null:
 		_navigation.rebuild()
 		var network: Node = _navigation.get_parent().get_node_or_null("PlanetNetwork")

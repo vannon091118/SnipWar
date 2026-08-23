@@ -609,9 +609,6 @@ func register_gathering_workers(faction: StringName, planet_id: StringName, work
 	economy_domain.register_gathering_workers(faction, planet_id, source_planet_id, worker_amount)
 	return economy_domain.gathering_workers_on(faction, planet_id)
 
-func get_reserved_workers(planet_id: StringName) -> int:
-	return economy_domain.reserved_workers_on(planet_id)
-
 func get_available_workers(planet_id: StringName, total_workers: int) -> int:
 	return economy_domain.available_workers(planet_id, total_workers)
 

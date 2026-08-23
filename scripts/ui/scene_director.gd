@@ -31,7 +31,6 @@ const SCENE_ID_CONQUEST: StringName = &"conquest"
 
 var _fade_rect: ColorRect
 var _is_transitioning: bool = false
-var _pending_scene_id: StringName = &""
 
 func _ready() -> void:
 	layer = 95
@@ -73,7 +72,6 @@ func goto_scene(scene_id: StringName, context: Resource = null) -> bool:
 	var scene: PackedScene = scene_for_id(scene_id)
 	if scene == null:
 		return false
-	_pending_scene_id = scene_id
 	scene_requested.emit(scene_id, context)
 	var state: Node = get_node_or_null("/root/GameState")
 	if scene_id == SCENE_ID_WORLD:
@@ -134,6 +132,3 @@ func transition_to_layer1() -> void:
 
 func is_transitioning() -> bool:
 	return _is_transitioning
-
-func pending_scene_id() -> StringName:
-	return _pending_scene_id

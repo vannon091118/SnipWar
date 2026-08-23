@@ -199,9 +199,11 @@ func populate_builder_dynamic(state: Node, on_refresh_callback: Callable) -> voi
 
 			var disassemble := Button.new()
 			disassemble.text = "ZERLEGEN"
+			disassemble.disabled = not _ship_manager.can_disassemble_ship(source, ship_id)
+			disassemble.tooltip_text = "Schiff ist nicht mehr im Hangar." if disassemble.disabled else "Bauteile zurückerstatten"
 			disassemble.pressed.connect(func():
-				_ship_manager.disassemble_ship(source, ship_id)
-				populate_builder_dynamic(state, on_refresh_callback)
+				if _ship_manager.can_disassemble_ship(source, ship_id) and _ship_manager.disassemble_ship(source, ship_id):
+					populate_builder_dynamic(state, on_refresh_callback)
 			)
 			ship_row.add_child(disassemble)
 

@@ -78,14 +78,14 @@ func _ensure_grain_overlay() -> void:
 	_grain_overlay.name = "GrainOverlay"
 	_grain_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_grain_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var material := ShaderMaterial.new()
-	material.shader = preload("res://assets/shaders/paper_grain_overlay.gdshader")
+	var grain_material := ShaderMaterial.new()
+	grain_material.shader = preload("res://assets/shaders/paper_grain_overlay.gdshader")
 	var style := DEFAULT_PAPER_STYLE
-	material.set_shader_parameter("grain_strength", style.grain_strength)
-	material.set_shader_parameter("vignette_strength", style.vignette_strength)
-	material.set_shader_parameter("vignette_radius", style.vignette_radius)
-	material.set_shader_parameter("vignette_softness", style.vignette_softness)
-	_grain_overlay.material = material
+	grain_material.set_shader_parameter("grain_strength", style.grain_strength)
+	grain_material.set_shader_parameter("vignette_strength", style.vignette_strength)
+	grain_material.set_shader_parameter("vignette_radius", style.vignette_radius)
+	grain_material.set_shader_parameter("vignette_softness", style.vignette_softness)
+	_grain_overlay.material = grain_material
 	_grain_overlay_layer.add_child(_grain_overlay)
 
 func _ensure_main_menu_backdrop() -> void:

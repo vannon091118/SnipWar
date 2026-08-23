@@ -395,9 +395,9 @@ func _on_ship_drop_requested(ship: ShipBase, destination_planet: Node2D) -> void
 			if not String(ship_id).is_empty():
 				var result: ShipBase = conflict_manager.call("dispatch_ship", source_planet, destination_planet, ship_id, ship.mission_role) as ShipBase
 				if result != null:
-					var log: Node = get_node_or_null("/root/EventLog")
-					if log != null and log.has_method("push"):
-						log.push("Schiff entsendet nach %s" % UIBaseUtils.planet_display_name(destination_planet))
+					var event_log: Node = get_node_or_null("/root/EventLog")
+					if event_log != null and event_log.has_method("push"):
+						event_log.push("Schiff entsendet nach %s" % UIBaseUtils.planet_display_name(destination_planet))
 					_update_fleet_overview.call_deferred()
 					return
 	# Fallback: centre camera and select the destination planet.

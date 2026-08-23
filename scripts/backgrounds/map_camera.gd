@@ -231,7 +231,8 @@ func _sync_infinite_world() -> void:
 	var visible_rect := Rect2(top_left, bottom_right - top_left).abs()
 	var world_config: WorldConfig = _planet_field.world_config
 	var cell_size := world_config.resolved_cell_size() if world_config != null else Vector2(1.0, 1.0)
-	var fov_margin := maxf(cell_size.x, cell_size.y) * float(world_config.planet_fov_radius if world_config != null else 1)
+	var fov_radius: int = coordinator.player_fov_radius()
+	var fov_margin := maxf(cell_size.x, cell_size.y) * float(fov_radius)
 	var active_region := visible_rect.grow(fov_margin)
 	coordinator.ensure_chunks_active([active_region], &"xl")
 	_read_world_bounds()

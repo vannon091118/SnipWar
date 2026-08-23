@@ -140,7 +140,8 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(not empty_def.validate().is_empty(), "planet definition with neither texture should fail validation"):
 		return false
 
-	# TraitDefinition has fov_radius_bonus field.
+	# TraitDefinition has fov_radius_bonus field and the runtime planet facade
+	# exposes the upgrade-aware radius used by infinite-world activation.
 	var test_trait := TraitDefinition.new()
 	test_trait.id = &"test_fov"
 	test_trait.display_name = "Test FoV"

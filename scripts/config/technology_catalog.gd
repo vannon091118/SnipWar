@@ -36,13 +36,6 @@ func can_research(researched_ids: Array, technology_id: StringName) -> bool:
 		return false
 	return true
 
-## Returns the mutually exclusive peer of technology_id, or empty if none.
-func get_exclusion_peer(technology_id: StringName) -> StringName:
-	var technology := resolve(technology_id)
-	if technology == null:
-		return &""
-	return technology.mutually_exclusive_with
-
 func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
 	if technologies.is_empty():

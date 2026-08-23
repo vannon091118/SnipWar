@@ -31,9 +31,6 @@ func begin_battle(context: BattleContext, show_scene: bool = true) -> bool:
 			director.call("transition_to_layer2", _pending_battle)
 	return true
 
-func pending_battle() -> BattleContext:
-	return _pending_battle.copy() if _pending_battle != null else null
-
 func apply_battle_result(context: BattleContext = null) -> bool:
 	var resolved: BattleContext = context if context != null else _pending_battle
 	if resolved == null or resolved.replay == null or resolved.committed:

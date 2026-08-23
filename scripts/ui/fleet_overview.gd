@@ -134,7 +134,7 @@ func _update_drag_ghost(screen_position: Vector2) -> void:
 		return
 	_drag_ghost.global_position = screen_position + Vector2(14.0, -_drag_ghost.size.y * 0.5)
 
-func _end_drag(screen_position: Vector2) -> void:
+func _end_drag(_screen_position: Vector2) -> void:
 	if not _drag_active:
 		return
 	_drag_active = false

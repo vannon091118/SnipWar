@@ -132,19 +132,19 @@ func _update_route_line() -> void:
 	for wp in _route_path:
 		_route_line.add_point(to_local(wp))
 	# Draw from current position to first remaining waypoint
-	_route_line.points[0] = Vector2.ZERO
+	_route_line.set_point_position(0, Vector2.ZERO)
 
 func _flight_progress() -> float:
 	return get_meta(&"flight_elapsed", 0.0) / maxf(_duration, 0.001)
 
 # --- Original API (unchanged) ---
 
-func configure(incoming_fleet: FleetSnapshot, destination_planet: Planet, route_path: Array[Vector2], duration: float, catalog: ShipPartCatalog = null, role: StringName = &"", source_id: StringName = &"") -> void:
+func configure(incoming_fleet: FleetSnapshot, destination_planet: Planet, incoming_route_path: Array[Vector2], duration: float, catalog: ShipPartCatalog = null, role: StringName = &"", source_id: StringName = &"") -> void:
 	fleet = incoming_fleet
 	destination = destination_planet
 	mission_role = role if not String(role).is_empty() else (fleet.mission_role if fleet != null else &"")
 	source_planet_id = source_id
-	_route_path = route_path.duplicate() if route_path.size() >= 2 else []
+	_route_path = incoming_route_path.duplicate() if incoming_route_path.size() >= 2 else []
 	_duration = maxf(duration, 0.001)
 	_rebuild_visual(catalog if catalog != null else DEFAULT_SHIP_PART_CATALOG)
 	_update_transit_label()

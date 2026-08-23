@@ -233,7 +233,7 @@ func _seed_initial_workers(items: Array[Planet]) -> void:
 		state.seed_starting_workers(item.planet_id, item.get_size_profile())
 		item.set_initial_workers(state.starting_workers_of(item.planet_id))
 
-func _separate_homeworlds(items: Array[Planet], assigned_slots: Dictionary, column_count: int, row_count: int) -> void:
+func _separate_homeworlds(items: Array[Planet], assigned_slots: Dictionary, column_count: int, _row_count: int) -> void:
 	var homeworlds: Array[Planet] = []
 	for item in items:
 		if item.planet_role == &"homeworld":
@@ -352,5 +352,8 @@ func _initial_fov_regions() -> Array:
 	if world_config == null:
 		return []
 	var cs := world_config.resolved_cell_size()
-	var radius := float(world_config.planet_fov_radius) * cs.x
+	var radius_cells: int = world_config.planet_fov_radius
+	if _chunk_coordinator != null and is_instance_valid(_chunk_coordinator):
+		radius_cells = _chunk_coordinator.player_fov_radius()
+	var radius := float(radius_cells) * cs.x
 	return [Rect2(Vector2.ZERO, world_config.design_size).grow(radius)]

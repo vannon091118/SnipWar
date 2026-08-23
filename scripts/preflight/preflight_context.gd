@@ -118,10 +118,6 @@ func assert_eq(actual: Variant, expected: Variant, message: String) -> bool:
 	return check(ok, message, {"expected": expected, "actual": actual} if not ok else {})
 
 
-func assert_ne(actual: Variant, unexpected: Variant, message: String) -> bool:
-	var ok: bool = (actual != unexpected)
-	return check(ok, message, {"unexpected": unexpected, "actual": actual} if not ok else {})
-
 
 func assert_approx(actual: float, expected: float, tolerance: float = 0.001, message: String = "") -> bool:
 	var diff: float = absf(actual - expected)
@@ -129,19 +125,11 @@ func assert_approx(actual: float, expected: float, tolerance: float = 0.001, mes
 	return check(ok, message if not message.is_empty() else "Values should be approximately equal", {"expected": expected, "actual": actual, "tolerance": tolerance, "diff": diff} if not ok else {})
 
 
-func assert_null(val: Variant, message: String) -> bool:
-	var ok: bool = (val == null)
-	return check(ok, message, {"expected": null, "actual": val} if not ok else {})
-
 
 func assert_not_null(val: Variant, message: String) -> bool:
 	var ok: bool = (val != null)
 	return check(ok, message, {"expected": "not null", "actual": val} if not ok else {})
 
-
-func assert_gt(actual: Variant, min_val: Variant, message: String) -> bool:
-	var ok: bool = (actual > min_val)
-	return check(ok, message, {"actual": actual, "must_be_greater_than": min_val} if not ok else {})
 
 
 func assert_ge(actual: Variant, min_val: Variant, message: String) -> bool:
@@ -149,53 +137,20 @@ func assert_ge(actual: Variant, min_val: Variant, message: String) -> bool:
 	return check(ok, message, {"actual": actual, "must_be_at_least": min_val} if not ok else {})
 
 
-func assert_lt(actual: Variant, max_val: Variant, message: String) -> bool:
-	var ok: bool = (actual < max_val)
-	return check(ok, message, {"actual": actual, "must_be_less_than": max_val} if not ok else {})
-
 
 func assert_le(actual: Variant, max_val: Variant, message: String) -> bool:
 	var ok: bool = (actual <= max_val)
 	return check(ok, message, {"actual": actual, "must_be_at_most": max_val} if not ok else {})
 
 
-func assert_contains(collection: Variant, item: Variant, message: String) -> bool:
-	var has_item: bool = false
-	if collection is Array or collection is PackedStringArray or collection is PackedInt32Array:
-		has_item = (collection as Array).has(item)
-	elif collection is Dictionary:
-		has_item = (collection as Dictionary).has(item)
-	elif collection is String:
-		has_item = (collection as String).contains(str(item))
-	return check(has_item, message, {"collection": collection, "missing_item": item} if not has_item else {})
-
 
 # --- Logging & Debugging Utilities ---
-
-func log_info(message: String) -> void:
-	print("  [INFO] " + message)
 
 
 func log_verbose(message: String) -> void:
 	if verbose:
 		print("  [DEBUG] " + message)
 
-
-func dump_debug_state() -> Dictionary:
-	var state_dump: Dictionary = {
-		"active_constraint": active_constraint,
-		"uptime_msec": Time.get_ticks_msec() - start_timestamp_msec,
-		"failure_count": failure_count,
-		"checks_run": checks_run,
-	}
-	if game_state != null and is_instance_valid(game_state):
-		state_dump["game_state_known_planets"] = game_state.get("_known_planets")
-		state_dump["game_state_vaults"] = game_state.get("_faction_vaults")
-	if field != null and is_instance_valid(field):
-		state_dump["planet_count"] = planet_positions(field).size()
-	if fixture != null:
-		state_dump["fixture_boot_count"] = fixture.boot_count
-	return state_dump
 
 
 # --- Signal-capture helpers ---

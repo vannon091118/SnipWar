@@ -16,6 +16,9 @@ func run(ctx: PreflightContext) -> bool:
 
 	# --- Verify all mechanics have descriptions ---
 	var all_mechanics := registry.get_all()
+	var economy_mechanics := registry.get_by_domain(&"economy")
+	if not ctx.check(not economy_mechanics.is_empty(), "MechanicRegistry domain lookup returned no economy mechanics"):
+		return false
 	for mechanic in all_mechanics:
 		if not ctx.check(
 			not mechanic.description.is_empty() and not mechanic.description.begins_with("Unknown"),

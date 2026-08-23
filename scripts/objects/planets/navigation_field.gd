@@ -301,37 +301,6 @@ func _deterministic_neighbor_cells(cell: Vector2i) -> Array[Vector2i]:
 		Vector2i(cell.x, cell.y + 1),
 	]
 
-## Returns the list of cells on the line between source and destination that
-## are not yet active in the AStar graph (for synchronous chunk generation).
-func get_missing_cells_for_route(source_cell: Vector2i, destination_cell: Vector2i) -> Array[Vector2i]:
-	var missing: Array[Vector2i] = []
-	# Bresenham line through grid cells.
-	var x0: int = source_cell.x
-	var y0: int = source_cell.y
-	var x1: int = destination_cell.x
-	var y1: int = destination_cell.y
-	var dx: int = absi(x1 - x0)
-	var dy: int = absi(y1 - y0)
-	var sx: int = 1 if x0 < x1 else -1
-	var sy: int = 1 if y0 < y1 else -1
-	var err: int = dx - dy
-	var x: int = x0
-	var y: int = y0
-	while true:
-		var cell := Vector2i(x, y)
-		if not _cell_to_planet.has(cell):
-			missing.append(cell)
-		if x == x1 and y == y1:
-			break
-		var e2: int = 2 * err
-		if e2 > -dy:
-			err -= dy
-			x += sx
-		if e2 < dx:
-			err += dx
-			y += sy
-	return missing
-
 func _record_neighbor_pair(first: Node2D, second: Node2D) -> void:
 	if not _planet_neighbors.has(first):
 		_planet_neighbors[first] = [] as Array[Node2D]

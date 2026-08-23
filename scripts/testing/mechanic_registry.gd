@@ -30,15 +30,6 @@ class MechanicEntry extends RefCounted:
 	func has_test_model() -> bool:
 		return not test_model_path.is_empty()
 
-	func to_dict() -> Dictionary:
-		return {
-			"id": String(id),
-			"description": description,
-			"domain": String(domain),
-			"test_model": test_model_path,
-			"verified": verified,
-		}
-
 ## --- Registry State ---
 
 var _entries: Dictionary = {}  ## id -> MechanicEntry

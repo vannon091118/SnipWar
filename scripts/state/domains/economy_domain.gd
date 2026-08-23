@@ -521,14 +521,6 @@ func release_workers(planet_id: StringName, job_id: StringName) -> int:
 		workers_released.emit(planet_id, job_id, amount)
 	return amount
 
-func reserved_workers_on(planet_id: StringName) -> int:
-	if not worker_reservations.has(planet_id):
-		return 0
-	var total := 0
-	for amount in (worker_reservations[planet_id] as Dictionary).values():
-		total += int(amount)
-	return total
-
 func can_purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_workers: int = -1, catalog: PlanetUpgradeCatalog = null) -> bool:
 	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
 	if effective_catalog == null or faction == GameState.FACTION_NEUTRAL or not faction_vaults.has(faction):
@@ -538,9 +530,7 @@ func can_purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id
 		return false
 	if upgrade_build_jobs.has(planet_id) and (upgrade_build_jobs[planet_id] as Dictionary).has(upgrade_id):
 		return false
-	if not String(upgrade.parent_upgrade_id).is_empty() and not has_planet_upgrade(planet_id, upgrade.parent_upgrade_id):
-		return false
-	if not String(upgrade.exclusive_with).is_empty() and has_planet_upgrade(planet_id, upgrade.exclusive_with):
+	if not effective_catalog.can_unlock(get_planet_upgrades(planet_id), upgrade_id):
 		return false
 	if available_workers >= 0 and available_workers < upgrade.workers_required:
 		return false

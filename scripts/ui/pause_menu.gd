@@ -131,9 +131,9 @@ func _on_save_pressed() -> void:
 	if service == null or not service.has_method("save_run"):
 		return
 	var saved: bool = bool(service.call("save_run", 0))
-	var log: Node = get_node_or_null("/root/EventLog")
-	if log != null and log.has_method("push"):
-		log.call("push", &"system", "Spielstand gespeichert." if saved else "Speichern fehlgeschlagen.")
+	var event_log: Node = get_node_or_null("/root/EventLog")
+	if event_log != null and event_log.has_method("push"):
+		event_log.call("push", &"system", "Spielstand gespeichert." if saved else "Speichern fehlgeschlagen.")
 
 ## Returns to the main menu. The tree must be unpaused first, otherwise the
 ## freshly booted menu scene would inherit the paused state and stay frozen.

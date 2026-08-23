@@ -216,7 +216,7 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 	{
 		"id": "concept_index",
 		"script": preload("res://scripts/preflight/constraint_concept_index.gd"),
-		"desc": "Concept discovery index covers all classes & provides fuzzy search",
+		"desc": "Concept discovery index covers classes and supports fuzzy search",
 		"requires_scene": false,
 	},
 ]

@@ -53,6 +53,20 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(economy_upgrades.size() >= 3 and military_upgrades.size() >= 4 and tech_upgrades.size() >= 3 and infra_upgrades.size() >= 3, "each branch should have multiple tiers"):
 		return false
 
+	# The runtime economy gate delegates prerequisite/exclusivity validation to
+	# PlanetUpgradeCatalog.can_unlock rather than maintaining a second rule set.
+	var gate_probe := PlanetUpgradeCatalog.new()
+	var parent_probe := PlanetUpgradeDefinition.new()
+	parent_probe.id = &"parent_probe"
+	parent_probe.display_name = "Parent"
+	var child_probe := PlanetUpgradeDefinition.new()
+	child_probe.id = &"child_probe"
+	child_probe.display_name = "Child"
+	child_probe.parent_upgrade_id = parent_probe.id
+	gate_probe.upgrades = [parent_probe, child_probe]
+	if not ctx.check(gate_probe.can_unlock([parent_probe.id], child_probe.id) and not gate_probe.can_unlock([], child_probe.id), "PlanetUpgradeCatalog.can_unlock does not enforce parent gating"):
+		return false
+
 	# Test upgrade prerequisite chain: extractor -> refinery/trade_post
 	var extractor := upgrade_catalog.resolve(&"extractor")
 	var refinery := upgrade_catalog.resolve(&"refinery")

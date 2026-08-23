@@ -5,37 +5,22 @@ const SHIP_BASE_SCENE: PackedScene = preload("res://scenes/objects/ships/ship_ba
 const DEFAULT_SHIP_CONFIG: ShipConfig = preload("res://resources/config/ship_default.tres")
 const DEFAULT_TECH_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
 const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
-const FLIGHT_TIME_SCRIPT: Script = preload("res://scripts/flight_time.gd")
 const SHIPYARD_UPGRADE_ID: StringName = &"shipyard"
-const DEFAULT_HULL_TEXTURE: Texture2D = preload("res://assets/objects/ships/hulls/hull_t1_scout.svg")
-const DEFAULT_SCANNER_TEXTURE: Texture2D = preload("res://assets/objects/ships/components/scanner_t1_dish.svg")
 
 @export var ship_config: ShipConfig = DEFAULT_SHIP_CONFIG
 @export var technology_catalog: TechnologyCatalog = DEFAULT_TECH_CATALOG
 @export var ship_part_catalog: ShipPartCatalog = DEFAULT_SHIP_PART_CATALOG
 
 var _field: Node
-var _navigation: NavigationField
 var _network: Node
 var _enabled := true
-var _research_ships: Array[ShipBase] = []
-var _active_build_counts: Dictionary = {}
 
 func _ready() -> void:
 	var state: Node = _game_state()
 	if state == null:
 		return
-	if state.has_signal("catalog_reset") and not state.catalog_reset.is_connected(_on_catalog_reset):
-		state.catalog_reset.connect(_on_catalog_reset)
 	if state.has_signal("ship_assembled") and not state.ship_assembled.is_connected(_on_ship_assembled):
 		state.ship_assembled.connect(_on_ship_assembled)
-
-func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
-	_active_build_counts.clear()
-	for research_ship in _research_ships:
-		if is_instance_valid(research_ship):
-			research_ship.queue_free()
-	_research_ships.clear()
 
 func _on_ship_assembled(planet_id: StringName, _ship_id: StringName) -> void:
 	for planet in get_planets():
@@ -43,9 +28,8 @@ func _on_ship_assembled(planet_id: StringName, _ship_id: StringName) -> void:
 			refresh_ship_display(planet)
 			return
 
-func configure(field: Node, navigation: Node, config: ShipConfig = null, catalog: TechnologyCatalog = null, network: Node = null) -> void:
+func configure(field: Node, _navigation: Node, config: ShipConfig = null, catalog: TechnologyCatalog = null, network: Node = null) -> void:
 	_field = field
-	_navigation = navigation as NavigationField
 	_network = network if network != null else field.get_node_or_null("PlanetNetwork")
 	ship_config = config if config != null else DEFAULT_SHIP_CONFIG
 	technology_catalog = catalog if catalog != null else DEFAULT_TECH_CATALOG
@@ -97,19 +81,6 @@ func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName, rol
 	if conflict_manager == null or not conflict_manager.has_method("dispatch_ship"):
 		return null
 	return conflict_manager.call("dispatch_ship", source, destination, ship_id, role) as ShipBase
-
-func _on_ship_base_arrived(ship: Node2D) -> void:
-	var ship_base: ShipBase = ship as ShipBase
-	if ship_base == null or ship_base.fleet == null:
-		if is_instance_valid(ship):
-			ship.queue_free()
-		return
-	var destination_planet: Planet = ship_base.destination
-	if destination_planet != null and is_instance_valid(destination_planet):
-		var result: Dictionary = destination_planet.resolve_ship_arrival(ship_base.fleet)
-		destination_planet.show_arrival_feedback(int(result.get("surviving_attackers", 0)), ship_base.fleet.faction)
-	if is_instance_valid(ship):
-		ship.queue_free()
 
 func get_ship_destinations(source: Planet, role: StringName = &"military") -> Array[Planet]:
 	var result: Array[Planet] = []
@@ -304,12 +275,6 @@ func _ship_readback_tooltip(catalog: ShipPartCatalog, assembly: ShipAssembly) ->
 	lines.append("Stats: HP %.0f · DPS %.1f · Range %.0f · Speed x%.2f" % [fleet.total_hull_hp, fleet.total_dps, fleet.effective_range, fleet.transfer_speed_multiplier()])
 	return "\\n".join(lines)
 
-func get_active_build_count(source: Planet) -> int:
-	return get_active_build_count_by_id(source.planet_id) if source != null else 0
-
-func get_active_build_count_by_id(planet_id: StringName) -> int:
-	return int(_active_build_counts.get(planet_id, 0))
-
 func get_planets() -> Array[Planet]:
 	if _field == null or not is_instance_valid(_field):
 		return []
@@ -318,44 +283,6 @@ func get_planets() -> Array[Planet]:
 		if child is Planet:
 			result.append(child)
 	return result
-
-func research_ship_count() -> int:
-	var alive: Array[ShipBase] = []
-	for ship in _research_ships:
-		if is_instance_valid(ship):
-			alive.append(ship)
-	_research_ships = alive
-	return _research_ships.size()
-
-func _route(source: Planet, destination: Planet) -> Array[Vector2]:
-	if _navigation != null and is_instance_valid(_navigation):
-		return _navigation.find_route(source, destination)
-	return [source.global_position, destination.global_position]
-
-func _flight_duration(route_path: Array[Vector2]) -> float:
-	var distance := 0.0
-	for index in range(route_path.size() - 1):
-		distance += route_path[index].distance_to(route_path[index + 1])
-	var config := get_ship_config()
-	return distance / maxf(config.scout_speed, 1.0)
-
-func _fleet_flight_duration(route_path: Array[Vector2], fleet: FleetSnapshot) -> float:
-	var distance: float = PathUtils.distance(route_path)
-	var multiplier: float = fleet.transfer_speed_multiplier() if fleet != null else 1.0
-	return FLIGHT_TIME_SCRIPT.seconds_for_ship(distance, fleet.ships.size() if fleet != null else 1, preload("res://resources/config/transit_default.tres"), multiplier)
-
-func _hull_texture() -> Texture2D:
-	return _tech_asset(get_ship_config().scout_hull_tech_id, DEFAULT_HULL_TEXTURE)
-
-func _scanner_texture() -> Texture2D:
-	return _tech_asset(get_ship_config().scout_scanner_tech_id, DEFAULT_SCANNER_TEXTURE)
-
-func _tech_asset(tech_id: StringName, fallback: Texture2D) -> Texture2D:
-	var catalog := get_technology_catalog()
-	var technology := catalog.resolve(tech_id)
-	if technology != null and technology.visual_asset != null:
-		return technology.visual_asset
-	return fallback
 
 func _game_state() -> Node:
 	return GameStateAccess.autoload(self)
