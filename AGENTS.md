@@ -1,246 +1,186 @@
 # SnipWar Agent Notes
 
-## Godot & Headless Verifikation
-- Godot ist nicht auf dem globalen PATH; Headless-Kommandos über die Console-Binary ausführen und `GODOT_BIN` darauf setzen (oder `godot`/`godot4` auf den PATH legen).
-- Gefundene Console-Binary: `C:\Users\Vannon\Desktop\godu\Godot_v4.7.2-stable_win64_console.exe` — liegt weder auf dem PATH noch in `$LOCALAPPDATA/Programs`; per `export GODOT_BIN="…"` setzen.
-- `--headless --path . --quit-after 2` = Main-Scene-Smoke-Test; `--headless --path . --script res://scripts/preflight.gd` = persistente Testsuite (kein externes GUT). Temporäre Lifecycle-Checks nutzen `res://.tmp_*.gd` und müssen nach Abschluss restlos entfernt werden (inklusive generiertem `.tmp_*.gd.uid`-Sidecar).
-- Preflight gibt am Ende `ERROR: …RID allocations… leaked at exit` / `ObjectDB instances leaked` aus — das ist normales Teardown-Rauschen des Dummy-Renderers im Headless-Modus. Verbindlich ist die Zeile `RESULT: PASSED`.
-- Full-Suite: `ERROR: user://saves/run_2.tres Parse Error: Expected '['` aus `constraint_save_game_slots` ist erwartetes Rauschen (liest Test-Slots), die Constraint besteht trotzdem.
-- Ad-hoc-`--script`-Harnesse (eigene `.tmp_*.gd`), die `.tres` direkt preloaden, melden irreführend `Parse Error: Cannot assign a value of type Resource to constant … ShipPartCatalog` (game_state.gd) plus `Failed to instantiate an autoload … does not inherit from 'Node'` — Preload-Reihenfolge-Artefakte des Harness-Modus, kein echter Spiel-Defekt; verbindlich sind Smoke-Test + Preflight.
-- Der Headless-Modus nutzt den Dummy-Renderer, daher ist `Window.get_texture()` null; visuelle Screenshots/Captures benötigen den Desktop Compatibility/OpenGL-Renderer, und `Window.size` muss nach Szenen-Initialisierung explizit gesetzt werden.
-- **Achtung:** Die Godot-4.7-Console-Binary (`*_win64_console.exe`) setzt `OS.has_feature("headless")` **nicht** auf `true`, selbst bei `--headless`-Start. Der Dummy-Renderer ist trotzdem aktiv — `Window.get_texture()` liefert ein non-null Texture2D-Objekt mit gültigen Dimensionen, aber dessen interner RID ist null → `get_image()` crasht mit "Parameter t is null". Headless-Erkennung für Captures muss zusätzlich `"--headless" in OS.get_cmdline_args()` prüfen oder einen try/catch um `get_image()` legen.
-- `Image`-Decodierung aus beliebigen Bytes erzeugt Godot-interne ERROR-Traces ("read beyond end of data", "ERR_FILE_CORRUPT") auf stdout, auch wenn der Returnwert korrekt `ERR_PARSE_ERROR` ist. Vor `load_png_from_buffer()`/`load_jpg_from_buffer()` die Magic-Bytes validieren: PNG = `\x89PNG`, JPEG = `\xFF\xD8`. Verhindert Rausch-Logs bei Base64-Validierung.
-- `InputEventKey` benötigt sowohl `keycode` als auch `physical_keycode` — Spiele die auf Scancode-Konstanten (`KEY_W` etc.) prüfen, reagieren sonst nicht auf simulierte Eingaben via `push_input()`. Beide Felder auf denselben Wert setzen.
-- Ein Headless-Editor-Scan kann mit Exit-Code 0 enden, selbst wenn ein `EditorFileServer` Port-6010-Konflikt den Scan-Thread abbricht. Verlässlicher Maßstab sind Preflight + Smoke-Test. Render-Budget-Assertions schätzen CanvasItem-Submissions, nicht GPU-Framezeiten.
+---
 
-## Preflight-Suite Architektur & Verträge
-- **Preflight ist modular aufgebaut:** `scripts/preflight.gd` ist der Orchestrator. Er instanziiert einen `PreflightContext` sowie eine `PreflightFixture` und führt die Module aus `CONSTRAINT_REGISTRY` aus.
-- **Registrierung:** Neue Constraints werden als eigene `PreflightConstraintX`-Klasse mit `constraint_name() -> String` und `run(ctx: PreflightContext) -> bool` implementiert und in `CONSTRAINT_REGISTRY` in `scripts/preflight.gd` registriert (`{"id": "...", "script": preload("..."), "desc": "...", "requires_scene": bool}`).
-- **Fixture-Isolation:** Szenenabhängige Constraints (`requires_scene: true`) erhalten über `ctx.fixture.boot_default(ctx)` eine isolierte Szenen-Fixture. Jeder Boot räumt die vorherige Szene auf und setzt `GameState` aus dem aktiven Katalog zurück. Constraints dürfen sich nicht auf Mutationen vorheriger Constraints verlassen; eine Ausführung in umgekehrter Reihenfolge (`--reverse`) ist explizit unterstützt.
-- **Deterministischer Test-Seed:** Das Live-Szenario randomisiert den Seed (`randomize_layout_seed = true`), aber die Preflight-Fixture erzwingt intern `PREFLIGHT_LAYOUT_SEED = 424242`. Dadurch sind Planetenpositionen, Nachbarschaftsgraph und Ressourcen-Deals im Preflight 100 % deterministisch und stabil.
-- **CLI-Optionen:** Die Preflight-Suite unterstützt `--verbose` / `-v` (Detail-Assertions), `--fail-fast` / `-x` (sofortiger Abbruch bei erstem Fehler), `--filter=<name>` / `-f=...` (gezielte Constraint-Filterung mit automatischem Scene-Boot falls nötig; akzeptiert kommagetrennte Substring-Token), `--reverse` (Reverse-Execution) und `--list` / `-l` (Übersicht aller 36 Constraints). Ein `--group`-Flag existiert nicht.
-- **Kompatibilitätsprüfung:** `constraint_game_state_compatibility.gd` läuft als erste Constraint und scannt Reflection-Signaturen sowie Regex-Receiver-Aliase unter `res://scripts`. Neue oder umbenannte Fassaden-Methoden müssen in `REQUIRED_FACADE_METHODS` bzw. `SIGNATURE_CONTRACTS` gepflegt werden.
-- **Boot-Kosten & Soft-Reset-Antipattern:** Die Full-Suite braucht ~85–95 s (36 Constraints, ~2000 Assertions); jeder `requires_scene`-Constraint kostet ~3,5 s, dominiert von Planeten-Re-Instanziierung + `NavigationField`-Rebuild — nicht von Szenen-Teardown oder Chunk-Regeneration. Szene/Chunk-Cache wiederverwenden (Soft-Reset) hilft daher nicht und schwächt die Fixture-Isolation; Monster-Constraints aufteilen lohnt nur für Fehlerlokalisierung, nie für Speed. Dev-Loop über `--filter` beschleunigen.
-- **Scout- & Collect-Gating im Test:** Collect-Missionen erfordern gescannte, neutrale Planeten (`FACTION_NEUTRAL`). Preflight-Szenarien filtern Scout-Ziele daher strikt nach Fraktion, um Flakiness durch benachbarte gegnerische Homeworlds zu verhindern.
-- **ScenarioLoader (READ-Only Test-Modul):** `scripts/testing/` enthält einen eigenständigen, READ-Only Scenario-Loader der Spielzustände aus `.tres`-Snapshots auf GameState anwendet, ohne die Snapshot-Ressource zu verändern. `MechanicRegistry` entdeckt alle Spielmechaniken via Reflection (`GameState.get_signal_list()`), `ScenarioSnapshot` kapselt Metadaten + Coverage, `ScenarioLoader` lädt und wendet an. Preflight-Constraint `mechanic_coverage` validiert automatisch: entdeckte Mechaniken haben Beschreibung + Domäne, Test-Modelle existieren, Scenario-Files sind valide. Neue Mechaniken werden automatisch erkannt und gemeldet. Doku: `scripts/testing/SCENARIO_LOADER_SPEC.md`.
+## 🚀 QUICK START — WAS JEDER AGENT SOFORT WISSEN MUSS
 
-## Architektur & System-Verträge
-- **Szenen-Architektur (3 Spiele, 1 SSO):** Das Spiel ist in vier bootbare Szenen getrennt, die sich GameState als SSO teilen und über den `SceneDirectorService`-Autoload wechseln:
-  - `scenes/main_menu/main_menu.tscn` (Einstieg; `run/main_scene`): Neues Spiel / Weiter / Beenden.
-  - `scenes/world/world.tscn` (Layer 1, Strategie-Overworld): `WorldBootstrap`-Wurzel + `Background`-Renderer + `PlanetField` + `MeteorField` + `MapCamera` + `PauseMenu`.
-  - `scenes/battle/battle_scene.tscn` (Layer 2, Flotten-Replay).
-  - `scenes/conquest/conquest_scene.tscn` (Layer 3, Eroberungs-Replay).
-  - `SceneDirectorService` führt Szenen-Wechsel über den dokumentierten Custom-Switcher aus (deferred free + add_child + `current_scene`), nicht `change_scene_to_packed`. `GameCycleManager` entscheidet WANN gewechselt wird, der Director WIE. Kontext wandert ausschließlich über GameState (`pending_battle_context` / `request_world_reconnect` / `RunSession`).
-- **Geteilte WorldConfig:** `WorldBootstrap._enter_tree()` (Wurzel von `world.tscn`) wählt das Szenario, finalisiert `layout_seed` (`_finalize_layout_seed`) und generiert `active_catalog`, bevor `GameState`, `PlanetField` und `MeteorField` initialisiert werden. `Bootstrap._ready()` dealt die Ressourcen mit diesem finalisierten Seed. Der `Background`-Renderer (`starfield_background.gd`) ist reine Optik und berührt weder GameState noch Katalog oder Szenario.
-- **Save/Load (Godot-Resource):** `SaveGameService` (Autoload) schreibt `RunSaveData`-Snapshots nach `user://saves/run_<slot>.tres` (atomar via `_tmp.tres` + Rename). `GameState.snapshot_run()`/`restore_run()` erfassen/restaurieren alle vier Domains, Transits, Chunk-Daten und Timer. `load_run()` setzt `_reconnect_requested`, die World bootet danach über `reconnect_world()` mit der gespeicherten Session; `SeededLayout` lädt den Chunk-Payload vor der Instanziierung. Auto-Save bei `NOTIFICATION_WM_CLOSE_REQUEST` — nie im Headless-Modus (`OS.has_feature("headless")`-Guard), sonst schreibt die Preflight-Suite/der pre-commit-Hook Testzustand über echte Spielstände.
-- **Slot-Konvention:** Das Spiel nutzt ausschließlich Slot 0 (PauseMenu-Save, MainMenu-Continue, Auto-Save). Die Preflight-Suite darf Slot 0 nie zerstören: `constraint_main_menu_and_flow` sichert/restauriert den echten Save via Backup (backup/restore-Vertrag, empirisch verifiziert), `constraint_save_game_roundtrip` nutzt Test-Slot 7, `constraint_save_game_slots` die Slots 1–2. Neue Save-Tests müssen sich an diese Konvention halten (Slots 1–7 = Test-Slots, Slot 0 = echter Spielstand).
-- **Single-Source Weltgenerierung:** `WorldGenerator.generate_catalog(config, active_layout_seed, target_planet_count)` erzeugt den Sektor-Katalog genau einmal (`p0`/`p1` = Homeworlds von Spieler `a` und CPU `b`, `p2`..`p9` = neutrale Welten aus Baustein-Texturen). `SeededLayout` darf den Katalog nicht neu generieren.
-- **Homeworld-Separation:** `SeededLayout._separate_homeworlds()` hält die beiden Homeworlds nicht-benachbart, sodass jede mindestens 2 neutrale Nachbarn für Scouts und Expansion besitzt.
-- **Raster- & Nachbarschaftsauflösung:** Adjazenz und Dimensionen werden ausschließlich über `WorldConfig.resolved_columns()`, `resolved_size_class_counts()`, `resolved_design_size()` und `resolved_target_planet_count()` bezogen — niemals über rohes `columns`.
-- **Planeten-Lebenszyklus & Detail-Profile:** `Planet.layout_size` leitet sich aus `Planet.size_profile` ab. Bauplätze sind profilgesteuert (variable=1, large=2, XL=3). Worker-Spawn-Timer existieren, bleiben aber gestoppt bis `worker_automation` erforscht und eine Worker-Fabrik errichtet wurde.
-- **SectorSystem (opt-in Dichte-Feld):** Neue Typen tragen bewusst das Präfix `Sector*` (Namenskollision mit dem Worker-Transit-System `WorkerCluster`/`ClusterTierDefinition`). Aktiv nur bei `WorldConfig.sector_count > 0` (`resolved_sector_count()`); `SectorClassifier` ist ein statischer `RefCounted` und wird von `SeededLayout` (endlicher Pfad) und `ChunkCoordinator` (unendlicher Pfad) aufgerufen.
-- **Sector-Größenwirkung ist rein visuell:** Skalierung ausschließlich über `planet_visual_scale`/`resolved_planet_visual_scale()` (0.6 im Shipped-Szenario) in beiden Pfaden — niemals `set_size_profile`, sonst bricht Worker-/Gameplay-Determinismus. Klassifikation landet als `set_meta` (`sector_id`/`sector_role`/`sector_depth`) auf den Planeten.
-- **Planet-Modul-Architektur:** `planet.gd` ist der zentrale Knotenpunkt und delegiert spezialisierte Aufgaben:
-  - `PlanetArrivalResolver` (`scripts/objects/planets/planet_arrival_resolver.gd`): Deterministische Arrival-, Missions- und Konfliktauflösung.
-  - `PlanetTraitAggregator` (`scripts/objects/planets/planet_trait_aggregator.gd`): Aggregation von Upgrade- und Trait-Boni.
-  - `PlanetView` (`scripts/objects/planets/view/planet_view.gd`): Reine CanvasItem-Zeichenroutinen (Faction-Ringe, StrengthLabels).
-  - `PlanetProcedural` (`scripts/objects/planets/procedural/planet_procedural.gd`): Komposition prozeduraler Planeten.
-  - `ContextMenuBuilder` (`scripts/objects/planets/context_menu_builder.gd`): Konstruktion und Gating des Rechtsklick-Kontextmenüs.
-- **GameState als Domain-Fassade:** `GameState` (/root/GameState) ist der zentrale SSOT für Besitz, Ressourcen, Forschung und Schiffe und delegiert an 4 Sub-Domänen (`scripts/state/domains/`):
-  - `FactionDomain`: Besitzverhältnisse, Homeworlds, Discovery, Scan-Intel, Starter-Scout.
-  - `EconomyDomain`: Faction-Vaults, Ressourcen-Deals, Upgrades, Worker-Factories, persistente Gatherer.
-  - `TechDomain`: Globale & planetare Technologien, Forschungs-Jobs, Voraussetzungen.
-  - `ShipDomain`: Teile-Inventare, Schiffsmontage (`assemble_ship`), Zerlegung, Bau-Jobs, FleetSnapshots.
-- **Ressourcen & Overdraft-Schutz:** Ressourcen sind unsichtbare `GameResource`-Datenobjekte aus dem `ResourcePool`. `spend_faction_resource()` blockiert bei unzureichendem Guthaben vollständig (kein Overdraft, keine Teilzahlung).
-- **Wirtschaft & Sammeltrupps:** Der Economy-Timer (10s) läuft erst nach `worker_automation`. Ein separater Gather-Timer (10s) läuft dauerhaft: `collect`-Missionen registrieren persistente Gatherer in `GameState._gathering_workers`, die pro Tick `workers × resource_base` einbringen.
-- **Navigation & Routing:** Pro Nachbarschaftskante existiert ein Moon-/Comet-Waypoint, überlagert von einem K-Nearest-Langstreckengraph (`NavigationField`). `NavigationField.find_route()` liefert den Pfad für Flugvorschau und Transit.
-- **Flugzeit & Cluster-Packing:** `FlightTime.seconds_for()` berechnet die Dauer basierend auf Distanz, Einheitenlast und Quell-Transfer-Speed. Worker-Transit packt nach Largest-First (K=1, M=5, L=100); alle Gruppen starten im selben Frame.
-- **UI-Stack:**
-  - `PlanetNetworkUI` (CanvasLayer 50): Komponiert `VaultBar` (`scenes/ui/vault_bar.tscn`) und `PlanetPanel` (`scenes/ui/planet_panel.tscn`).
-  - `TechnologyMenu` (CanvasLayer 60): Unterteilt in `TechResearchView`, `TechScoutView`, `TechShipBuilderView` und `TechPlanetView`. Schließt das PlanetPanel bei Öffnung.
-  - `DossierLauncher` (CanvasLayer 40): Drei Buttons (PLANET/WERKSTATT/FORSCHUNG) links oben, öffnen modale Dossier-Views via `ModalCoordinator`. Position y=48 (unter VaultBar).
-  - `FleetOverview` (CanvasLayer 38): Linksseitiges Schnellzugriffs-Panel für aktive Ships und selektierte Planeten, über `ConflictManager.ship_dispatched`/`ship_arrived`-Signals live aktualisiert.
-  - `PauseMenu` (CanvasLayer 70): Reagiert auf ESC (`PROCESS_MODE_ALWAYS`), wenn weder PlanetPanel noch TechMenu geöffnet sind. Bietet **SPEICHERN** (→ `SaveGameService.save_run(0)` + EventLog-Toast) und **HAUPTMENÜ** (→ erst unpausen, dann `SceneDirectorService.goto_scene("menu")` — ein Scene-Wechsel im gepausten Baum würde das neue Menü einfrieren). Beide Buttons tragen stabile Namen (`Content/SaveButton`, `Content/MenuButton`) und sind über `constraint_pause_and_context` abgesichert.
-  - `MainMenu` (Einstiegsszene, `run/main_scene`): **NEUES SPIEL** (löscht Slot 0, `GameState.request_new_run()`, dann World), **WEITER** (deaktiviert ohne Save; `SaveGameService.load_run(0)` setzt `_reconnect_requested`, dann World), **BEENDEN**. Flow ist über `constraint_main_menu_and_flow` + `constraint_context_handover` abgesichert.
-- **Flottenkampf & Eroberung (Layer 2/3):**
-  - Layer 2: `FleetBattleSimulator` (deterministischer, getakteter `RefCounted`-Simulator) + `BattleScene` + `IngamePlayerControls`.
-  - Layer 3: `ConquestSimulator` (deterministischer `RefCounted`-Simulator für planetare Eroberung) + `ConquestScene`.
-  - `ConquestSimulator.simulate_conquest` darf HP/DPS-Konstanten nicht ändern — die bestehenden Layer-2/3-Preflight-Assertions koppeln exakt darauf. Nur `tick`/`max_time`/`variance` parametrisieren.
-  - Orchestrierung erfolgt über `ConflictManager` auf `PlanetField` und den `SceneDirector`.
-- **Modul-Schadensmodell (Layer 2/3):** `FleetSnapshot.calculate_ship_stats` liefert pro-Modul-Payloads (`part_id`/`slot_type`/`trait`/`weight`/`hp`/`max_hp`); nur montierte Module tragen HP. Event-Konvention in beiden Szenen: `TYPE_MODULE_DESTROYED` trägt die getroffene Einheit in `source_id`, `TYPE_MODULE_HIT` in `target_id` (L2: Ziel-Schiff, L3: `target.id`). `ConquestSimulator` vergibt ALLEN Minions IDs `m_<Array-Index>` (Worker zuerst, Schiffe danach); die `ConquestScene` mappt Views über `CombatReplay.surviving_minion_ids` (Fallback `m_<i>`) und konsumiert `minion_ships` mit eigenem Zähler — niemals über den Slot-Index. `AssaultMinionDefinition.from_ship` akzeptiert `null`-Katalog und löst selbst den Default auf; Reparatur-Profile nie mit leerem Katalog berechnen.
-- **Prozedurale Chunk-Welt (Unendlich):**
-  - Wird aktiviert, wenn `WorldConfig.chunk_size > 0`. Beide Shipped-Szenarien sind bereits unendlich: `world_default.tres` (`chunk_size = 3`), `world_wide.tres` (`chunk_size = 4`); `chunk_size = 0` wäre der endliche Pfad.
-  - Verwaltet durch `ChunkCoordinator` (Lazy-Generierung, Cache, sicheres Cycling) und getestet in Constraint `chunk_expansion`.
-  - `SeededLayout.set_layout_seed()` ist im unendlichen Pfad kein billiger Setter, sondern ein Voll-Reset: ruft `GameState.reset_for_infinite_world()` + `reset_for_layout_seed` (leert Chunk-Cache) und deferred `_refresh_chunks` — regeneriert die ganze Chunk-Welt. `constraint_resources_and_seed` ruft das zweimal auf (Seed ±1, dann zurück) und ist deshalb der langsamste Szenen-Constraint (~9–10 s).
-- **EventLog:** `EventLog` sendet sichtbare Toasts an das `MessageFeed`, `log_silent()` protokolliert geräuschlos. Export nach `user://player.log` erst bei Anwendungsbeendigung.
-
-## MCP-Addon (Remote-Testing, Scope)
-- **Physikalische Ordnerstruktur:** `addons/gdscript_mcp/` ist nach Rollen gruppiert: `runtime/` (core/Registry, host/Server+Autoload, lifecycle/, protocol/, context/, tools/{runtime,vision,debug,ux,e2e}), `client/` (Python/Node: mcp_client, remote_playout, mcp_stresstest), `editor/` (Plugin+Dock), `testing/` (mcp_test_runner + Szenarien + `e2e/mcp_playthrough_driver.gd`). Neue Dateien dort einordnen, `.uid`-Sidecars mitcommitten.
-- **Eigener Lifecycle:** `GdscriptMcpServer` + `McpRuntime`-Autoload laufen mit `PROCESS_MODE_ALWAYS` — Transport-Polling, Async-Queue und UX-Watch ticken auch bei `get_tree().paused = true` (Pause-Menü) weiter. `runtime_mcp_status` (Host-Tool, immer verfügbar) zeigt state/uptime/latency/watch/context.
-- **Scope: Remote-Testing des laufenden Spiels.** Alle `runtime_*`-Tools ändern nie Editor-Projektdateien.
-- **Sichtbarkeit:** E2E-Playthroughs laufen im echten Spiel (full renderer, windowed): `$GODOT_BIN --path . --script res://addons/gdscript_mcp/testing/e2e/mcp_playthrough_driver.gd [--mcp-e2e=<scenario>|--mcp-e2e-list]` — setzt die exact gleichen Tool-Calls ein wie ein externer Agent; `runtime_e2e_run` (async, über TCP/stdio gleiche Szenen).
-- **Klicks:** `runtime_click` sendet Motion (1 Frame vorher) + Press + Release über `Viewport.push_input` (default `inject_mode=push`, Viewport-Koordinaten) bzw. `Input.parse_input_event` (`parse`-Mode, Screen-Transform für skalierte Viewports). Release wird um `hold_frames` verzögert; KEIN Windows-API-Click, funktioniert unfokussiert.
-- **Bilder:** MCP-Image-Content (Standard: `{type:"image",data,mimeType}`) + lokaler Kontext-Pfad (`user://mcp_context`, TTL 45s, max 6). Externe Worker (Python, Node) lesen **lokal von Disk** (`vision_worker.py`), kein Base64-Roundtrip nötig.
-- **Screenshots:** Nach dem Konsum löschen/ablaufen (TTL, `runtime_context_release`, `runtime_context_cleanup`); Server räumt beim Lifecycle-Tick selbst auf.
-- **Watch-Clock:** `runtime_ux_watch_start` ist ereignisgesteuert (Signatur-Delta der sichtbaren Controls) — keine Continuous-Full-Analyse, minimaler Overhead.
-- **Playability-Tests:** `McpE2E`-Szenarien sammeln `anomalies[]` aus EventLog (Fehler/Warnungen) — Auffälligkeiten werden während des Laufs lokalisiert. Szenarien triggern echte Spielmechaniken (z.B. `research_start`: FORSCHUNG → FORSCHEN → `GameState.research_technology`) und persistieren erfolgreiche Läufe in der Playthrough-Archiv-DB (`user://mcp_playthrough/`, JSONL + Frame-PNGs + `.tres`-Presets).
-- **Playthrough-Archiv (`runtime/context/mcp_playthrough_archive.gd`):** lokale Erfolgs-/Kontextspeicherung für autonomes Weiterspielen über Sessions. Jede erfolgreiche Aktion (explizit via `runtime_playthrough_success` oder automatisch nach E2E-Szenario-PASS) wird mit Snapshot-Bild und `GameState.snapshot_run()`-Preset (`.tres`) abgelegt; `runtime_playthrough_search/latest/stats/frames` lesen sie aus, `runtime_playthrough_preset_load` stellt reproduzierbare Situationen via `restore_run()` wieder her (World reconnect beim nächsten Boot). Alle Daten lokal unter `user://mcp_playthrough/`.
-- **Fallstricke:** Headless-Dummy-Renderer liefert keine echten Screenshots (`get_image()` crasht bei null RID); `runtime_wait_ms` nutzt Pause-ignorante Engine-Timer; Klick-Positionen bei skalierten Viewports rechnen über die Screen-Transform.
-
-## Atomare Commit-Gruppen (Change Together)
-- **Transit & Dispatch:** `flight_time.gd`, `dispatch.gd`, Transit-/Tier-Configs, `planet_network.gd`, `planet_network_ui.gd`, `ui_theme_config.gd`, `worker_cluster.*`, `worker_manager.gd`, `planet.gd`, `game_state.gd`, `preflight.gd`.
-- **Navigation:** `navigation_field.gd`, `navigation_waypoint.gd`, `seeded_layout.gd`, `planet_network.gd`, `worker_manager.gd`, `preflight.gd`.
-- **Planeten & Katalog:** `planet.tscn`, `planet.gd`, `planet_details.gd`, `planet_arrival_resolver.gd`, `planet_trait_aggregator.gd`, `planet_view.gd`, `planet_procedural.gd`, `seeded_layout.gd`, Welt-/Größen-/Detail-Configs & SVGs.
-- **GameState & Ressourcen:** `game_state.gd`, Domänen-Manager (`scripts/state/domains/*`), `planet.gd`, `seeded_layout.gd`, `resource_pool*.tres`, `bootstrap.gd`, `starfield_background.gd`, `preflight.gd`.
-- **Wirtschaft & CPU-AI:** `economy_config.gd`+`.tres`, `cpu_dispatch_config.gd`+`.tres`, `economy_manager.gd`, `cpu_dispatch_ai.gd`, `seeded_layout.gd`, `planet.gd`, `worker_manager.gd`, `preflight.gd`.
-- **Schiffsbau & Forschung:** `ship_part_definition.gd`, `ship_component_variant.gd`, `ship_blueprint.gd`, `ship_part_catalog.gd`+`.tres`, `technology_definition.gd`, `technology_catalog*.tres`, `ship_manager.gd`, `shipyard_hangar.gd`, `composite_ship_view.gd`, `technology_menu.gd`, Sub-Views (`scripts/ui/tech_menu/*`), `preflight.gd`.
-- **Kampf & Simulation (Layer 2/3):** `fleet_battle_simulator.gd`, `conquest_simulator.gd`, `battle_scene.gd`, `conquest_scene.gd`, `composite_ship_view.gd`, `ingame_player_controls.gd`, `scene_director.gd`, `conflict_manager.gd`, `fleet_snapshot.gd`, `preflight.gd`.
-- **ShipBase & Fleet-UI:** `ship_base.gd`, `ship_base.tscn`, `conflict_manager.gd` (Signals `ship_dispatched`/`ship_arrived`), `planet_network.gd` (Ship-Event-Handling), `fleet_overview.gd`, `preflight.gd`.
-- **Prozedurale Welt:** `world_config.gd`, `world_generator.gd`, `chunk_coordinator.gd`, `chunk_save_data.gd`, `planet_procedural.gd`, `navigation_field.gd`, `preflight.gd`.
-- **SectorSystem:** `sector_flavor.gd`, `sector_anchor.gd`, `sector_classifier.gd`, `sector_flavor_catalog.gd` + Presets/`sector_flavor_catalog_default.tres`, `world_config.gd`, `seeded_layout.gd`, `chunk_coordinator.gd`, `navigation_field.gd`, `planet.gd`, `preflight.gd`.
-- **Grid, Buildings & lokale Ressourcen:** `planet_grid*.gd`, `building_*.gd`, `building_catalog_default.tres` + `resources/config/buildings/*`, `planet.gd`, `economy_domain.gd`, `game_state.gd`, `bootstrap.gd`, `planet_details.gd`, `planet_panel.gd`, `preflight.gd`.
-- **Tower-Defense & Capture:** `conquest_simulator.gd`, `battle_event.gd`, `combat_replay.gd`, `planet_arrival_resolver.gd`, `conflict_manager.gd`, `capture_decision_overlay.gd`, `conquest_scene.gd`, `battle_scene.gd`, `preflight.gd`.
-- **Szenen-Architektur & Flow:** `scene_director.gd`, `world.tscn`, `world_bootstrap.gd`, `starfield_background.gd`+`.tscn`, `main_menu.gd`+`.tscn`, `conquest_scene.tscn`, `battle_scene.tscn`, `conflict_manager.gd`, `game_cycle_manager.gd`, `project.godot`, `preflight_fixture.gd`, `constraint_scene_boot.gd`, `constraint_world_details_and_scale.gd`, `preflight.gd`.
-- **Save/Load:** `save_game_service.gd`, `run_save_data.gd`, `run_session.gd`, `game_state.gd`, Domänen-Manager (`scripts/state/domains/*`), `seeded_layout.gd`, `economy_manager.gd`, `pause_menu.gd`, `main_menu.gd`, `project.godot`, `preflight.gd` (+ `constraint_save_game_*`).
-
-## Godot-Entwicklungsregeln & Fallstricke
-- Godot 4.7 `@export_enum` benötigt String-/Integer-kompatible Typen, nicht `StringName`.
-- Resource- und Waypoint-Skripte, die von `@tool`-Skripten genutzt werden, müssen ebenfalls `@tool` sein.
-- `NavigationWaypoint.configure()` kann vor `_enter_tree()` laufen; nicht auf `@onready` verlassen und Node vor Zuweisung der globalen Position in den Baum einhängen.
-- `MultiMeshInstance2D` erfordert zwingend `MultiMesh.mesh` (z.B. `QuadMesh`) vor dem Setzen von `instance_count`.
-- Meteor-Größen sind pixelbasiert; `meteor_field.gd` skaliert über die SVG-Texturbreite.
-- `SceneTree.quit()` beendet Funktionen nicht sofort; Testskripte müssen nach `quit()` explizit ein `return` ausführen.
-- Headless-Läufe können `.tscn` und `.tres` Dateien formatieren und `uid=` Tags injizieren; vor Commits immer `git status` und `git diff` prüfen.
-- Dictionary-Keys in `.tres`: `String` und `StringName` sind verschiedene Keys. `slot_schema`-Einträge müssen `&"drive"` (StringName) bleiben, sonst greift die Slot-Validierung in `can_assemble_ship` still nicht.
-- `.uid`-Sidecars (`*.gd.uid`, `*.gdshader.uid`) sind versioniert (nicht in `.gitignore`) und müssen bei neuen Scripts/Shadern mitcommittet werden; fehlende Sidecars führen zu Drift/Neuvergabe der UIDs.
-- Neue `class_name`-Skripte erfordern einen Editor-Scan (`$GODOT_BIN --headless --path . --editor --quit`), um in `.godot/global_script_class_cache.cfg` registriert zu werden.
-- GDScript `:=` Typinferenz schlägt bei `Node`-Kindern und untypisierten Helper-Returns fehl; explizite Casts verwenden (z.B. `(node as Node2D)`).
-- `Node.name` liefert `StringName`, nicht `String`. Bei String-Operationen mit `String(node.name)` konvertieren.
-- Lokale Variablen und Signal-Parameter dürfen keine Engine-Properties (`visible`, `owner`) oder Instanzfelder shadowen (`SHADOWED_VARIABLE`).
-- GDScript kennt kein `sqrtf`/`powf` (C-Namen); Fließkomma-Mathe nutzt `sqrt()`/`pow()` — `sqrtf` erzeugt einen Lookup-/Parse-Fehler.
-- Prozedural generierte Texture-Maps: `Image.create()` + `Image.set_pixel()` + `ImageTexture.create_from_image()` funktionieren zum Erzeugen von Selektionsringen, Markern etc. ohne externe Asset-Dateien.
-- `get_tree()` ist null bevor ein Node via `add_child()` in den Baum gehängt wurde. `setup()`/`_init()`-Methoden, die `get_tree().root` abfragen, müssen **nach** `add_child()` laufen — bei CanvasLayer-Wrappern also erst `layer.add_child(node)`, dann `node.setup()`.
-- GDScript `class_name` als Funktionsparameter bricht den Parser: `func get_class_info(class_name: String)` erzeugt in Godot 4.7 `Parse Error: Expected parameter name.` — den Parameter umbenennen (z.B. `cls_name`).
-- GDScript-Schlüsselwörter als Parameternamen: `class_name` ist belegt, `method`/`signal`/`enum`/`tool`/`static` vermutlich ebenfalls — vorsorglich descriptive Namen wählen.
-- `is_instance_valid()` ist in Godot 4.7 nicht zuverlässig bei soeben via `free()` gelöschten Nodes: `v.get_class()` auf einem gefreeden Node crasht selbst wenn `is_instance_valid(v)` noch `true` returniert. Serialisierer/Reflektoren dürfen auf Object-Methoden im Fallback-Pfad niemals blind aufrufen.
-- `StreamPeerTCP.get_data(int)` gibt `Array` zurück, nicht `PackedByteArray`: Element 0 = Error-Code, Element 1 = Daten. Direktes `.get_string_from_utf8()` auf den Returnwert erzeugt `Parse Error: Function "get_string_from_utf8()" not found in base Array`.
-- `RefCounted`-Objekte haben kein `get_node_or_null()` — es gibt keinen impliziten Scene-Tree-Zugriff. Stattdessen `Engine.get_main_loop()` → `(SceneTree).root.get_node_or_null()`. Im Editor-Modus `EditorInterface.get_edited_scene_root()` verwenden.
-- `SceneTree`-Ad-hoc-Testskripte (`extends SceneTree`) müssen `_process(float) -> bool` implementieren, nicht `-> void`. Godot 4.7 ist strikt: falsche Signatur erzeugt `Parse Error: The function signature doesn't match the parent.`
-
-## Git-Hooks & Commit-Workflow
-- `core.hooksPath` ist auf `.githooks` konfiguriert (aktiv und verbindlich):
-  - `pre-commit` führt `git diff --cached --check` sowie die vollständige Godot-Preflight-Suite aus.
-  - `commit-msg` erzwingt pro gestagter Datei eine EIGENE Begründungszeile (`- pfad/datei: Begründung.`); Wildcards (`*.svg`) und kombinierte Einträge (`a.gd + b.gd: …`) werden abgelehnt, `.import`/`.uid`-Sidecars brauchen eigene Zeilen.
-  - `post-commit` pusht direkt auf `origin HEAD:$branch`.
-- `git diff --cached --check` (pre-commit) schlägt bei Leerzeilen am Dateiende fehl (`new blank line at EOF`); Fix: `printf '%s' "$(cat <datei>)" > <datei>` und neu stagen.
-- Freebuff-Worktrees committen auf `freebuff/thread-*`-Branches; `git push . HEAD:main` wird verweigert, solange `main` im Haupt-Worktree ausgecheckt ist → lokalen Fast-Forward per `git update-ref refs/heads/main <sha>` durchführen; das Haupt-Worktree danach mit `git pull --ff-only` aktualisieren.
-- Markdown-Hard-Breaks (zwei Leerzeichen am Zeilenende) lassen `git diff --cached --check` im `pre-commit`-Hook fehlschlagen; Doc-Commits vorher mit `sed -i 's/[[:space:]]*$//' <dateien>` bereinigen.
-- **Workflow-Schritte:**
-  1. `GODOT_BIN` auf die Godot-Console-Binary setzen (`export GODOT_BIN=...` bzw. `$env:GODOT_BIN=...`).
-  2. Nur relevante geänderte Dateien stagen via `git add <dateien>` (niemals `git add -A` oder `git add .`).
-  3. `git commit` mit Datei-Begründungszeilen ausführen (`- datei: Begründung.`).
-  4. Bei Preflight-Fehlern: Ursache beheben, korrigierte Dateien stagen und Commit wiederholen.
-
-## ConceptIndex — Semantische Code-Suche (grep/rg-Ersatz für Architektur)
-
-Der `ConceptIndex` (`scripts/concept_index.gd`) ist das **zentrale Suchwerkzeug für Agenten**, um Klassen, Methoden und Domänen im Codebase zu finden — **Ersatz für `grep`/`rg` bei Architektur-Fragen**.
-
-### Nutzung (Headless, per Preflight oder direkt)
-
+### 1. Godot Binary & Headless
 ```bash
-# Alle Konzepte auflisten
-$GODOT_BIN --headless --path . --script res://scripts/preflight.gd --filter=concept_index -v
-
-# Im Code: ConceptIndex.new().search("fleet") → Array[ConceptEntry]
-# Im Code: ConceptIndex.new().expand("economy") → alle Economy-Konzepte
-# Im Code: ConceptIndex.new().class_concept("ShipManager") → ConceptEntry
-# Im Code: ConceptIndex.new().by_domain("ships") → Array[ConceptEntry]
-
-# CLI (schneller, ohne Preflight-Suite):
-$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd fleet
-$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd schiff
-$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --domain economy
-$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --class ShipManager
-$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --list-domains
-$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --list-concepts
-
-# NEU: Freie Slots & ungemappte Klassen finden (Redundanz-Prüfung)
-$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --unmapped
-$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --free-slots
+export GODOT_BIN="C:/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console.exe"
+# Alle Headless-Calls: $GODOT_BIN --headless --path . --script res://scripts/...
 ```
 
-### Wartung (bei neuen `class_name`-Skripten)
+### 2. ZWEI SUCH-TOOLS (statt grep/rg)
 
-1. **Neue Klasse hinzufügen:** In `_build_concepts()` im passenden Konzept unter `class_names` eintragen
-2. **Datei-Mapping ist automatisch:** `_collect_class_files()` scannt `res://scripts` nach `class_name` — neue Skripte werden beim nächsten Preflight-Lauf erkannt
-3. **Synonyme pflegen:** Für deutsche/englische Suchbegriffe im `synonyms`-Array ergänzen
-4. **Preflight prüft:** `constraint_concept_index.gd` validiert:
-   - Alle entdeckten Klassen sind gemappt (Warning wenn nicht, **kein FAIL**)
-   - Stale References (Klassen im Index, die es nicht mehr gibt) → **Warning nur**
-   - `search()`/`expand()` liefern Ergebnisse für Kern-Domänen
+| Frage | Tool | Beispiel |
+|-------|------|----------|
+| **Architektur**: Klassen, Domänen, freie Slots, Synonyme | `concept_search.gd` | `$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd fleet` |
+| **Volltext**: String in .tres/.tscn/.md/.json + Kontext | `global_search.gd` | `$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "fleet_supply_bonus" --type tres,json` |
 
-### Atomare Commit-Gruppe (Change Together)
-- **ConceptIndex & Suche:** `scripts/concept_index.gd`, `scripts/preflight/constraint_concept_index.gd`, `scripts/testing/mechanic_registry.gd`, `scripts/testing/scenario_loader.gd`, `scripts/testing/scenario_snapshot.gd`, `preflight.gd`.
-
-## Global Search — Volltext-Suche über ALLE Dateitypen (ripgrep-Ersatz für Godot-Repos)
-
-`global_search.gd` (`scripts/global_search.gd`) durchsucht **rekursiv das gesamte `res://`** nach Text in **allen Dateiformaten** — `.gd`, `.tres`, `.tscn`, `.gdshader`, `.import`, `.json`, `.csv`, `.md`, `.txt`, `.cs`, `.glsl`, `.shader`, `.png`, `.jpg`, `.ogg`, etc. — **kein Shell, kein rg**, reines Godot-Headless.
-
-### Nutzung
-
+**ConceptIndex CLI** (semantisch):
 ```bash
-# Volltext-Suche in allen Dateien
-$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "fleet"
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd fleet          # Suche
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --unmapped      # Ungemappte Klassen
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --free-slots    # Freie Slots
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --class ShipManager
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --domain economy
+```
 
-# Nur bestimmte Typen
-$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "fleet_supply_bonus" --type tres,json
-
-# Verzeichnisse ausschließen
-$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "resource" --exclude addons,.godot
-
-# Menschlich lesbar (statt JSON)
+**Global Search CLI** (volltext):
+```bash
 $GODOT_BIN --headless --path . --script res://scripts/global_search.gd "fleet" --no-json
-
-# Mehr Kontext-Zeilen
 $GODOT_BIN --headless --path . --script res://scripts/global_search.gd "assemble_ship" --context 5
 ```
 
-### Output (JSON, LLM-freundlich)
+### 3. Preflight (Verbindlicher Qualitäts-Check)
+```bash
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x   # Full Suite (36 Constraints, ~90s)
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd --filter=concept_index -v  # Einzelne Constraint
+```
+**Verbindlich:** `RESULT: PASSED` — ERROR-Traces am Ende sind normales Headless-Rauschen.
 
-```json
-{
-  "query": "fleet",
-  "total_hits": 63,
-  "total_files_scanned": 1247,
-  "duration_ms": 847,
-  "by_type": { "gd": 28, "tres": 9, "tscn": 6, "gdshader": 2, "json": 4, "md": 14 },
-  "results": [
-    {
-      "file": "res://scripts/state/ship_manager.gd",
-      "type": "gd",
-      "matches": [
-        {
-          "match_line": 87,
-          "context": [
-            {"line": 85, "content": "var economy: EconomyDomain", "is_match": false},
-            {"line": 86, "content": "var fleet: Array[ShipBase] = []", "is_match": true},
-            {"line": 87, "content": "var pending_dispatches: Array = []", "is_match": false}
-          ]
-        }
-      ]
-    }
-  ]
-}
+### 4. Commit-Workflow (Hooks sind aktiv!)
+```bash
+git add <datei1> <datei2> ...           # NIEMALS git add -A / .
+git commit -m "type: kurzer titel" \
+  -m "- pfad/datei1: Begründung." \
+  -m "- pfad/datei2: Begründung."
+# pre-commit führt Preflight aus → bei FAIL: fixen, neu stagen, commit wiederholen
 ```
 
-### Wann welches Tool?
+---
 
+## 📦 ARCHITEKTUR & SYSTEM-VERTRÄGE (Referenz)
+
+### Szenen-Architektur (3 Spiele, 1 SSO)
+| Szene | Layer | Zweck |
+|-------|-------|-------|
+| `scenes/main_menu/main_menu.tscn` | Einstieg | Neues Spiel / Weiter / Beenden |
+| `scenes/world/world.tscn` | 1 (Overworld) | `WorldBootstrap` + `PlanetField` + `MeteorField` + `MapCamera` + `PauseMenu` |
+| `scenes/battle/battle_scene.tscn` | 2 (Flotten) | `FleetBattleSimulator` + `BattleScene` + `IngamePlayerControls` |
+| `scenes/conquest/conquest_scene.tscn` | 3 (Eroberung) | `ConquestSimulator` + `ConquestScene` |
+
+**SSO:** `GameState` (Autoload) — 4 Domänen: `FactionDomain`, `EconomyDomain`, `TechDomain`, `ShipDomain`.
+
+### Wichtige Konventionen
+- **Save Slots:** Slot 0 = echter Spielstand (nie im Preflight löschen!), Slots 1–7 = Test-Slots
+- **Seed:** Preflight erzwingt `PREFLIGHT_LAYOUT_SEED = 424242` (deterministisch)
+- **Chunk-Welt:** Beide Shipped-Szenarien sind unendlich (`chunk_size > 0`)
+- **Sector-System:** Nur visuell (`planet_visual_scale`), nie `set_size_profile` ändern
+
+---
+
+## 🔍 SUCHE & CODE-NAVIGATION (Detail)
+
+### ConceptIndex — Semantische Suche (Architektur)
+```bash
+# Im Code:
+ConceptIndex.new().search("fleet")      # → Array[ConceptEntry]
+ConceptIndex.new().expand("economy")    # → alle Economy-Konzepte
+ConceptIndex.new().class_concept("ShipManager")
+ConceptIndex.new().by_domain("ships")
+```
+
+**Wartung (neue class_name-Skripte):**
+1. In `_build_concepts()` unter passendem Konzept in `class_names` eintragen
+2. Datei-Mapping ist **automatisch** (Scan bei nächstem Preflight)
+3. Synonyme im `synonyms`-Array ergänzen
+4. Preflight prüft: `search()`/`expand()` funktionieren, Stale → nur Warning
+
+### Global Search — Volltext über ALLE Formate
+```bash
+# Scannt rekursiv res:// — .gd, .tres, .tscn, .gdshader, .import, .json, .csv, .md, .txt, .cs, .glsl, .shader, ...
+# Output: JSON mit file, type, matches[{match_line, context[{line, content, is_match}]}]
+```
+
+**When-to-use:**
 | Frage | Tool |
 |-------|------|
-| "Welche Klassen gehören zur Fleet-Logik? Gibt es freie Slots? Domäne?" | **ConceptIndex** (`concept_search.gd`) |
-| "Wo kommt 'fleet_supply_bonus' überall vor? Auch in .tres, .tscn, .md?" | **Global Search** (`global_search.gd`) |
-| "Gibt es Klasse 'FleetManager'?" | **ConceptIndex** (`--class FleetManager`) |
+| "Welche Klassen für Fleet-Logik? Freie Slots? Domäne?" | **ConceptIndex** |
+| "Wo kommt 'fleet_supply_bonus' in .tres/.tscn/.md vor?" | **Global Search** |
+| "Gibt es Klasse 'FleetManager'?" | **ConceptIndex --class** |
 | "Alle Dateien mit 'worker_transport'" | **Global Search** |
 
-### Atomare Commit-Gruppe (Change Together)
-- **Global Search:** `scripts/global_search.gd`, `AGENTS.md` (Doku).
+---
+
+## ⚙️ PREFLIGHT-SUITE (Detail)
+
+### CLI-Optionen
+| Flag | Zweck |
+|------|-------|
+| `-v, --verbose` | Detail-Assertions |
+| `-x, --fail-fast` | Abbruch bei erstem Fehler |
+| `-f, --filter=<name>` | Nur Constraints mit Substring (z.B. `fleet`, `save`) |
+| `--reverse` | Reverse-Execution (Testet Isolation) |
+| `-l, --list` | Alle 36 Constraints auflisten |
+
+### Constraints (36, atomare Commit-Gruppen beachten!)
+- `game_state_compatibility` — Reflection-Signaturen, Fassaden-Methoden
+- `concept_index` — **Nur funktional**: search/expand für Kern-Domänen
+- `save_game_roundtrip`, `save_game_slots` — Slot-Konvention beachten!
+- `mechanic_coverage` — Auto-Erkennung neuer Mechaniken
+- ... (siehe `--list`)
+
+---
+
+## 🏗️ ATOMARE COMMIT-GRUPPEN (Change Together)
+
+| Bereich | Dateien (müssen gemeinsam commitet werden) |
+|---------|---------------------------------------------|
+| **Transit & Dispatch** | `flight_time.gd`, `dispatch.gd`, `planet_network.gd`, `worker_cluster.*`, `worker_manager.gd`, `game_state.gd`, `preflight.gd` |
+| **Navigation** | `navigation_field.gd`, `navigation_waypoint.gd`, `seeded_layout.gd`, `planet_network.gd`, `worker_manager.gd`, `preflight.gd` |
+| **Planeten & Katalog** | `planet.tscn`, `planet.gd`, `planet_arrival_resolver.gd`, `planet_trait_aggregator.gd`, `planet_view.gd`, `seeded_layout.gd`, Configs & SVGs |
+| **GameState & Ressourcen** | `game_state.gd`, `scripts/state/domains/*`, `resource_pool*.tres`, `bootstrap.gd`, `preflight.gd` |
+| **Schiffsbau & Forschung** | `ship_part_definition.gd`, `ship_blueprint.gd`, `ship_part_catalog.gd+tres`, `technology_definition.gd`, `ship_manager.gd`, `technology_menu.gd`, `preflight.gd` |
+| **Kampf & Simulation (L2/3)** | `fleet_battle_simulator.gd`, `conquest_simulator.gd`, `battle_scene.gd`, `conquest_scene.gd`, `composite_ship_view.gd`, `conflict_manager.gd`, `fleet_snapshot.gd`, `preflight.gd` |
+| **Prozedurale Welt** | `world_config.gd`, `world_generator.gd`, `chunk_coordinator.gd`, `planet_procedural.gd`, `navigation_field.gd`, `preflight.gd` |
+| **SectorSystem** | `sector_flavor.gd`, `sector_anchor.gd`, `sector_classifier.gd`, `sector_flavor_catalog.gd`, `world_config.gd`, `seeded_layout.gd`, `preflight.gd` |
+| **Save/Load** | `save_game_service.gd`, `run_save_data.gd`, `game_state.gd`, `scripts/state/domains/*`, `seeded_layout.gd`, `pause_menu.gd`, `main_menu.gd`, `preflight.gd` |
+| **ConceptIndex & Suche** | `concept_index.gd`, `constraint_concept_index.gd`, `mechanic_registry.gd`, `scenario_loader.gd`, `scenario_snapshot.gd`, `preflight.gd` |
+| **Global Search** | `global_search.gd`, `AGENTS.md` |
+
+---
+
+## 🐛 GODOT-FALLSTRICKE (Kurz)
+
+- `@export_enum` → String/Integer, **nicht** `StringName`
+- Resource/Waypoint-Skripte für `@tool` → **auch** `@tool`
+- `NavigationWaypoint.configure()` läuft **vor** `_enter_tree()` — kein `@onready`
+- `MultiMeshInstance2D` braucht `MultiMesh.mesh` (QuadMesh) **vor** `instance_count`
+- `SceneTree.quit()` → **danach `return`** nötig
+- `.uid`-Sidecars (`*.gd.uid`) **mitcommitten** (nicht in `.gitignore`)
+- Neue `class_name` → Editor-Scan: `$GODOT_BIN --headless --path . --editor --quit`
+- `Node.name` = `StringName` → für String-Ops: `String(node.name)`
+- `class_name` als Parametername **verboten** (Parser-Fehler) → `cls_name` nutzen
+- `is_instance_valid()` unzuverlässig bei gerade `free()` → `v.get_class()` crasht
+- `StreamPeerTCP.get_data()` → `Array[Error, Daten]`, nicht `PackedByteArray`
+- `RefCounted` hat **kein** `get_node_or_null()` → `Engine.get_main_loop().root.get_node_or_null()`
+
+---
+
+## 📋 WORKFLOW ZUSAMMENFASSUNG
+
+### AM ANFANG (jeder Task)
+1. `GODOT_BIN` setzen
+2. **ConceptIndex** nutzen: `concept_search.gd --domain <xyz>` / `--class <Name>` / `--free-slots`
+3. **Global Search** für Volltext: `global_search.gd "term" --type tres,tscn`
+4. Relevante Dateien lesen (`read_file`), **nicht** raten
+
+### ZWISCHENDURCH
+- Kleine, atomare Änderungen
+- Nach jeder logischen Einheit: `git add <dateien>` + `git commit` mit Begründungszeilen
+- Preflight läuft automatisch im Hook
+
+### AM ENDE (nach Arbeit)
+1. **Full Preflight**: `$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x`
+2. `git status` / `git diff` prüfen (Headless formatiert .tscn/.tres, injects uids)
+3. `.uid`-Sidecars für neue Scripts mitcommitten
+4. Push erfolgt via `post-commit` Hook automatisch
+
+---
+
+## 🔗 WEITERE DOKS
+- `DESIGN.md` — Feature-Status, Umsetzungsplan
+- `VISION.md` — Spielkreislauf, Layer-Details
+- `scripts/testing/SCENARIO_LOADER_SPEC.md` — ScenarioLoader API
+- `addons/gdscript_mcp/` — MCP-Remote-Testing (E2E, Playthrough-Archiv)
