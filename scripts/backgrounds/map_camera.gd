@@ -73,11 +73,31 @@ func _process(delta: float) -> void:
 		_clamp_position()
 		_sync_infinite_world()
 
+func _input_mouse_position() -> Vector2:
+	var tree := Engine.get_main_loop()
+	if tree is SceneTree:
+		var root := (tree as SceneTree).root
+		# 1) MCP server mode — check McpRuntime autoload.
+		var mcp_runtime := root.get_node_or_null("McpRuntime")
+		if mcp_runtime != null and mcp_runtime.has_method("get_virtual_mouse_status"):
+			var status: Dictionary = mcp_runtime.call("get_virtual_mouse_status")
+			if bool(status.get("active", false)):
+				var position: Dictionary = status.get("position", {})
+				return Vector2(float(position.get("x", 0.0)), float(position.get("y", 0.0)))
+		# 2) Standalone E2E driver mode — check McpInputScheduler directly.
+		var scheduler := root.get_node_or_null("McpInputScheduler")
+		if scheduler != null and scheduler.has_method("get_virtual_mouse_status"):
+			var status: Dictionary = scheduler.call("get_virtual_mouse_status")
+			if bool(status.get("active", false)):
+				var position: Dictionary = status.get("position", {})
+				return Vector2(float(position.get("x", 0.0)), float(position.get("y", 0.0)))
+	return get_viewport().get_mouse_position()
+
 func _edge_scroll_vector() -> Vector2:
 	# Godot 4 headless runs pin the mouse at (0,0) with no display server.
 	if DisplayServer.get_name() == "headless":
 		return Vector2.ZERO
-	var mouse_pos := get_viewport().get_mouse_position()
+	var mouse_pos := _input_mouse_position()
 	var vp_size := get_viewport().get_visible_rect().size
 	if vp_size.x <= 0.0 or vp_size.y <= 0.0:
 		return Vector2.ZERO
