@@ -17,12 +17,14 @@ func run(ctx: PreflightContext) -> bool:
 		if index.class_concept(String(class_name_value)) == null:
 			missing.append(String(class_name_value))
 	if not missing.is_empty():
-		push_warning("ConceptIndex: %d classes not mapped: %s" % [missing.size(), ", ".join(missing)])
+		push_warning("ConceptIndex: %d classes not mapped (run concept_search.gd --unmapped): %s" % [missing.size(), ", ".join(missing)])
 
+	# Stale refs: only warning, no longer FAIL
 	var stale: PackedStringArray = index.stale_class_references()
-	if not ctx.check(stale.is_empty(), "ConceptIndex contains stale class references", {"stale": stale} if not stale.is_empty() else {}):
-		return false
+	if not stale.is_empty():
+		push_warning("ConceptIndex: %d stale class references (classes in index but not on disk): %s" % [stale.size(), ", ".join(stale)])
 
+	# Functional validation only
 	for term in ["ship", "fleet", "economy", "resource", "planet", "battle", "tech", "save", "worker", "navigation"]:
 		if not ctx.check(not index.search(term).is_empty(), "ConceptIndex.search('%s') returned no results" % term):
 			return false

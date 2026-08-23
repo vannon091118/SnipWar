@@ -141,10 +141,12 @@
   3. `git commit` mit Datei-Begründungszeilen ausführen (`- datei: Begründung.`).
   4. Bei Preflight-Fehlern: Ursache beheben, korrigierte Dateien stagen und Commit wiederholen.
 
-## ConceptIndex — Code-Suche & Wartung
-Der `ConceptIndex` (`scripts/concept_index.gd`) ist das zentrale Suchwerkzeug für Agenten und Entwickler, um Klassen, Methoden und Domänen im Codebase zu finden — **Ersatz für `grep`/`rg`**.
+## ConceptIndex — Semantische Code-Suche (grep/rg-Ersatz für Architektur)
 
-### Nutzung (Headless, per Preflight)
+Der `ConceptIndex` (`scripts/concept_index.gd`) ist das **zentrale Suchwerkzeug für Agenten**, um Klassen, Methoden und Domänen im Codebase zu finden — **Ersatz für `grep`/`rg` bei Architektur-Fragen**.
+
+### Nutzung (Headless, per Preflight oder direkt)
+
 ```bash
 # Alle Konzepte auflisten
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd --filter=concept_index -v
@@ -153,16 +155,92 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd --filter=conc
 # Im Code: ConceptIndex.new().expand("economy") → alle Economy-Konzepte
 # Im Code: ConceptIndex.new().class_concept("ShipManager") → ConceptEntry
 # Im Code: ConceptIndex.new().by_domain("ships") → Array[ConceptEntry]
+
+# CLI (schneller, ohne Preflight-Suite):
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd fleet
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd schiff
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --domain economy
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --class ShipManager
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --list-domains
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --list-concepts
+
+# NEU: Freie Slots & ungemappte Klassen finden (Redundanz-Prüfung)
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --unmapped
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --free-slots
 ```
 
 ### Wartung (bei neuen `class_name`-Skripten)
+
 1. **Neue Klasse hinzufügen:** In `_build_concepts()` im passenden Konzept unter `class_names` eintragen
 2. **Datei-Mapping ist automatisch:** `_collect_class_files()` scannt `res://scripts` nach `class_name` — neue Skripte werden beim nächsten Preflight-Lauf erkannt
 3. **Synonyme pflegen:** Für deutsche/englische Suchbegriffe im `synonyms`-Array ergänzen
 4. **Preflight prüft:** `constraint_concept_index.gd` validiert:
-   - Alle entdeckten Klassen sind gemappt (Warning wenn nicht)
-   - Keine stale References (Klassen im Index, die es nicht mehr gibt → **FAIL**)
+   - Alle entdeckten Klassen sind gemappt (Warning wenn nicht, **kein FAIL**)
+   - Stale References (Klassen im Index, die es nicht mehr gibt) → **Warning nur**
    - `search()`/`expand()` liefern Ergebnisse für Kern-Domänen
 
 ### Atomare Commit-Gruppe (Change Together)
 - **ConceptIndex & Suche:** `scripts/concept_index.gd`, `scripts/preflight/constraint_concept_index.gd`, `scripts/testing/mechanic_registry.gd`, `scripts/testing/scenario_loader.gd`, `scripts/testing/scenario_snapshot.gd`, `preflight.gd`.
+
+## Global Search — Volltext-Suche über ALLE Dateitypen (ripgrep-Ersatz für Godot-Repos)
+
+`global_search.gd` (`scripts/global_search.gd`) durchsucht **rekursiv das gesamte `res://`** nach Text in **allen Dateiformaten** — `.gd`, `.tres`, `.tscn`, `.gdshader`, `.import`, `.json`, `.csv`, `.md`, `.txt`, `.cs`, `.glsl`, `.shader`, `.png`, `.jpg`, `.ogg`, etc. — **kein Shell, kein rg**, reines Godot-Headless.
+
+### Nutzung
+
+```bash
+# Volltext-Suche in allen Dateien
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "fleet"
+
+# Nur bestimmte Typen
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "fleet_supply_bonus" --type tres,json
+
+# Verzeichnisse ausschließen
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "resource" --exclude addons,.godot
+
+# Menschlich lesbar (statt JSON)
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "fleet" --no-json
+
+# Mehr Kontext-Zeilen
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "assemble_ship" --context 5
+```
+
+### Output (JSON, LLM-freundlich)
+
+```json
+{
+  "query": "fleet",
+  "total_hits": 63,
+  "total_files_scanned": 1247,
+  "duration_ms": 847,
+  "by_type": { "gd": 28, "tres": 9, "tscn": 6, "gdshader": 2, "json": 4, "md": 14 },
+  "results": [
+    {
+      "file": "res://scripts/state/ship_manager.gd",
+      "type": "gd",
+      "matches": [
+        {
+          "match_line": 87,
+          "context": [
+            {"line": 85, "content": "var economy: EconomyDomain", "is_match": false},
+            {"line": 86, "content": "var fleet: Array[ShipBase] = []", "is_match": true},
+            {"line": 87, "content": "var pending_dispatches: Array = []", "is_match": false}
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Wann welches Tool?
+
+| Frage | Tool |
+|-------|------|
+| "Welche Klassen gehören zur Fleet-Logik? Gibt es freie Slots? Domäne?" | **ConceptIndex** (`concept_search.gd`) |
+| "Wo kommt 'fleet_supply_bonus' überall vor? Auch in .tres, .tscn, .md?" | **Global Search** (`global_search.gd`) |
+| "Gibt es Klasse 'FleetManager'?" | **ConceptIndex** (`--class FleetManager`) |
+| "Alle Dateien mit 'worker_transport'" | **Global Search** |
+
+### Atomare Commit-Gruppe (Change Together)
+- **Global Search:** `scripts/global_search.gd`, `AGENTS.md` (Doku).

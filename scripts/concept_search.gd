@@ -51,6 +51,16 @@ func _init() -> void:
 		quit(0)
 		return
 
+	if _args.has("unmapped"):
+		_print_unmapped()
+		quit(0)
+		return
+
+	if _args.has("free-slots"):
+		_print_free_slots()
+		quit(0)
+		return
+
 	# Default: search query
 	var query: String = _args.get("query", "")
 	if query.is_empty():
@@ -144,6 +154,36 @@ func _print_class(cls_name: String) -> void:
 	print("Dateien: %s" % (", ".join(entry.files) if not entry.files.is_empty() else "—"))
 	print("Methoden: %s" % (", ".join(entry.methods) if not entry.methods.is_empty() else "—"))
 
+func _print_unmapped() -> void:
+	var unmapped: Array[String] = _index.get_unmapped_classes()
+	if unmapped.is_empty():
+		print("Keine ungemappten Klassen gefunden. Alle class_name-Dateien sind im Index.")
+		return
+	print("=== Ungemappte Klassen (%d) ===" % unmapped.size())
+	print("")
+	for cls in unmapped:
+		var file_path: String = _index._class_to_file.get(cls, "?") as String
+		print("  %s  (%s)" % [cls, file_path])
+	print("")
+	print("Tipp: Füge diese Klassen in _build_concepts() unter passendem Konzept ein.")
+
+func _print_free_slots() -> void:
+	var slots: Array[Dictionary] = _index.get_concepts_with_free_slots()
+	if slots.is_empty():
+		print("Alle Konzepte vollständig gemappt — keine freien Slots.")
+		return
+	print("=== Konzepte mit freien Slots ===")
+	print("")
+	for slot in slots:
+		print("┌ %s [%s] — %d/%d gemappt (%d frei)" % [slot.concept, slot.domain, slot.mapped, slot.total, slot.missing])
+		print("│  Beschreibung: %s" % slot.description)
+		if not slot.classes.is_empty():
+			print("│  Erwartete Klassen: %s" % ", ".join(slot.classes))
+		if not slot.files.is_empty():
+			print("│  Bereits gemappte Dateien: %s" % ", ".join(slot.files))
+		print("└─")
+		print("")
+
 func _print_domains() -> void:
 	print("=== Verfügbare Domänen ===")
 	for domain in _index.domains():
@@ -169,6 +209,8 @@ BEFEHLE:
   --class, -c <name>    Details zu einer spezifischen Klasse
   --list-domains        Alle Domänen auflisten
   --list-concepts       Alle Konzepte auflisten
+  --unmapped            Alle class_name-Klassen zeigen, die noch in KEINEM Konzept gemappt sind
+  --free-slots          Konzepte anzeigen, die noch nicht alle erwarteten Klassen haben
   --help, -h            Diese Hilfe
 
 BEISPIELE:
