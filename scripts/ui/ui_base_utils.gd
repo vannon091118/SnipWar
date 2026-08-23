@@ -142,6 +142,8 @@ static func research_role(technology: TechnologyDefinition) -> String:
 		return "KAMPF"
 	if technology.category == TechnologyDefinition.CATEGORY_PLANET:
 		return "WIRTSCHAFT"
+	if technology.category == TechnologyDefinition.CATEGORY_DRONES:
+		return "DROHNEN"
 	if String(technology.effect_id).contains("scan") or String(technology.effect_id).contains("scout"):
 		return "EXPLORATION"
 	if String(technology.effect_id).contains("weapon"):

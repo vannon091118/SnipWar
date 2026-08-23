@@ -59,6 +59,11 @@ static func simulate_conquest(attack_fleet: FleetSnapshot, attacker_workers: int
 ## Wave-based tower-defense simulation against a planet's buildable grid.
 ## `defender_grid` is a Planet.get_defense_snapshot() payload. Deterministic:
 ## the same conquest_seed always produces the same replay.
+##
+## Minions derived from ships carry their module state: towers destroy modules
+## individually (drive destroyed → minion stops advancing), repair drones
+## regenerate module HP up to their tier cap, and the base only takes damage
+## from minions that actually reached it.
 static func simulate_grid_conquest(
 	attacker_fleet: FleetSnapshot,
 	attacker_workers: int,
@@ -71,20 +76,31 @@ static func simulate_grid_conquest(
 	rng.seed = conquest_seed
 
 	var minions: Array[AssaultMinionDefinition] = []
+	var minion_ships: Array[ShipAssembly] = []
+	var spread_index := 0
 	for _i in range(maxi(attacker_workers, 0)):
 		var worker_minion := AssaultMinionDefinition.new()
 		worker_minion.hp = cfg.minion_hp
+		worker_minion.max_hp = cfg.minion_hp
 		worker_minion.dps = cfg.minion_dps
 		worker_minion.speed = cfg.minion_speed
+		worker_minion.pos = _spawn_pos(spread_index)
+		worker_minion.id = StringName("m_%d" % minions.size())
+		spread_index += 1
 		minions.append(worker_minion)
 	if attacker_fleet != null:
 		for ship in attacker_fleet.ships:
-			minions.append(AssaultMinionDefinition.from_ship(ship, null, cfg.minion_hp, cfg.minion_dps, cfg.minion_speed))
+			var ship_minion := AssaultMinionDefinition.from_ship(ship, null, cfg.minion_hp, cfg.minion_dps, cfg.minion_speed, cfg)
+			ship_minion.id = StringName("m_%d" % minions.size())
+			ship_minion.pos = _spawn_pos(spread_index)
+			spread_index += 1
+			minions.append(ship_minion)
+			minion_ships.append(ship.copy())
 
 	var attacker_hp := 0.0
 	var attacker_dps := 0.0
 	for minion in minions:
-		attacker_hp += minion.hp
+		attacker_hp += minion.current_hp()
 		attacker_dps += minion.dps
 	var attacker_initial_hp: float = attacker_hp
 	var attacker_initial_dps: float = attacker_dps
@@ -106,27 +122,67 @@ static func simulate_grid_conquest(
 	var wave_events: Array[BattleEvent] = []
 	var grid_snapshots: Array[Dictionary] = []
 	var wave_index := 0
+	var base_x := 0.0
 
-	while wave_index < cfg.max_waves and time < max_time and base_hp > 0.0 and attacker_hp > 0.0:
+	while wave_index < cfg.max_waves and time < max_time and base_hp > 0.0 and _alive_minions(minions).size() > 0:
 		wave_events.append(BattleEvent.create(time, BattleEvent.TYPE_WAVE_START, &"wave", &"", float(wave_index)))
 		var wave_elapsed := 0.0
-		var dmg_to_base := 0.0
-		while wave_elapsed < cfg.wave_interval and base_hp > 0.0 and attacker_hp > 0.0:
+		var wave_dmg_to_base := 0.0
+		while wave_elapsed < cfg.wave_interval and base_hp > 0.0 and _alive_minions(minions).size() > 0:
 			time += tick
 			wave_elapsed += tick
-			dmg_to_base = attacker_dps * tick * rng.randf_range(cfg.damage_variance_min, cfg.damage_variance_max)
-			var dmg_to_minions: float = tower_dps * tick * rng.randf_range(cfg.damage_variance_min, cfg.damage_variance_max)
-			base_hp = maxf(0.0, base_hp - dmg_to_base)
-			attacker_hp = maxf(0.0, attacker_hp - dmg_to_minions)
+			# Minions march toward the base; destroyed drives immobilize them.
+			for minion in minions:
+				if not minion.is_alive() or minion.speed <= 0.0:
+					continue
+				minion.pos.x = minf(minion.pos.x + minion.speed * tick, base_x)
+				if minion.pos.x >= base_x - 1.0:
+					wave_dmg_to_base += minion.dps * tick
+			base_hp = maxf(0.0, base_hp - wave_dmg_to_base * rng.randf_range(cfg.damage_variance_min, cfg.damage_variance_max))
+			# Towers engage random minions and destroy individual modules.
+			for _tower_index in tower_count:
+				var targets := _alive_minions(minions)
+				if targets.is_empty():
+					break
+				var target: AssaultMinionDefinition = targets[rng.randi_range(0, targets.size() - 1)]
+				var dmg: float = cfg.tower_dps * tick * rng.randf_range(cfg.damage_variance_min, cfg.damage_variance_max)
+				wave_events.append(BattleEvent.create(time, BattleEvent.TYPE_TOWER_FIRE, &"tower", &"", dmg, Vector2(base_x - 20.0, 0.0), target.pos))
+				var applied := target.take_damage(dmg, rng)
+				if applied > 0.0:
+					wave_events.append(BattleEvent.create(time + 0.05, BattleEvent.TYPE_MODULE_HIT, &"tower", &"", applied, target.pos, target.pos))
+					for destroyed_mod in target.consume_destroyed_modules():
+						wave_events.append(BattleEvent.create_module(
+							time + 0.05,
+							BattleEvent.TYPE_MODULE_DESTROYED,
+							target.id,
+							&"",
+							0.0,
+							destroyed_mod.get("part_id", &"") as StringName,
+							destroyed_mod.get("slot_type", &"") as StringName,
+							destroyed_mod.get("trait", &"") as StringName,
+							target.pos,
+							target.pos
+						))
+			# Repair drones regenerate module HP (capped, never full).
+			for minion in minions:
+				if not minion.is_alive():
+					continue
+				var healed: float = minion.repair(tick, rng)
+				if healed > 0.0:
+					wave_events.append(BattleEvent.create(time + 0.1, BattleEvent.TYPE_REPAIR, &"", minion.id, healed, minion.pos, minion.pos))
 			base_hp_history.append(base_hp)
-		wave_events.append(BattleEvent.create(time, BattleEvent.TYPE_BASE_DAMAGE, &"wave", &"base", dmg_to_base))
+		wave_events.append(BattleEvent.create(time, BattleEvent.TYPE_BASE_DAMAGE, &"wave", &"base", wave_dmg_to_base))
 		wave_events.append(BattleEvent.create(time, BattleEvent.TYPE_WAVE_CLEARED, &"wave", &"", float(wave_index)))
-		grid_snapshots.append({"wave": wave_index, "base_hp": base_hp, "attacker_hp": attacker_hp})
+		grid_snapshots.append({"wave": wave_index, "base_hp": base_hp, "attacker_hp": _total_minion_hp(minions)})
 		wave_index += 1
 
 	var replay := CombatReplay.new_conquest(conquest_seed)
-	replay.captured = base_hp <= 0.0 and attacker_hp > 0.0
-	replay.surviving_attackers = int(ceil(attacker_hp / maxf(cfg.minion_hp, 1.0))) if replay.captured else 0
+	var survivors := _alive_minions(minions)
+	replay.captured = base_hp <= 0.0 and survivors.size() > 0
+	replay.surviving_attackers = survivors.size() if replay.captured else 0
+	replay.surviving_minion_ids = []
+	for survivor in survivors:
+		replay.surviving_minion_ids.append(survivor.id)
 	replay.surviving_garrison = tower_count
 	replay.duration = time
 	replay.attacker_initial_hp = attacker_initial_hp
@@ -138,4 +194,25 @@ static func simulate_grid_conquest(
 	replay.base_hp_history = base_hp_history
 	replay.wave_events = wave_events
 	replay.grid_snapshots = grid_snapshots
+	replay.minion_ships = minion_ships
 	return replay
+
+
+static func _spawn_pos(spread_index: int) -> Vector2:
+	return Vector2(-220.0, float(spread_index % 7 - 3) * 30.0)
+
+
+static func _alive_minions(minions: Array[AssaultMinionDefinition]) -> Array[AssaultMinionDefinition]:
+	var result: Array[AssaultMinionDefinition] = []
+	for minion in minions:
+		if minion != null and minion.is_alive():
+			result.append(minion)
+	return result
+
+
+static func _total_minion_hp(minions: Array[AssaultMinionDefinition]) -> float:
+	var total := 0.0
+	for minion in minions:
+		if minion != null and minion.is_alive():
+			total += minion.current_hp()
+	return total

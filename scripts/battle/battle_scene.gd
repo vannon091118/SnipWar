@@ -16,6 +16,8 @@ var _current_result: CombatReplay
 var _fx_rng := RandomNumberGenerator.new()
 var _ships: Dictionary = {} # id -> CompositeShipView
 var _ship_initial_data: Dictionary = {}
+var _ship_drive_counts: Dictionary = {} # id -> remaining functioning drives
+var _ship_bob_tweens: Dictionary = {} # id -> Tween
 var _elapsed: float = 0.0
 var _event_index: int = 0
 var _is_playing: bool = false
@@ -131,6 +133,8 @@ func _clear_arena() -> void:
 		child.queue_free()
 	_route_nodes.clear()
 	_ships.clear()
+	_ship_drive_counts.clear()
+	_ship_bob_tweens.clear()
 
 func _draw_routes(replay: CombatReplay) -> void:
 	if replay == null:
@@ -197,10 +201,18 @@ func _process_event(event: BattleEvent) -> void:
 	match event.event_type:
 		BattleEvent.TYPE_SPAWN:
 			_spawn_ship_visual(event.source_id, event.source_pos + _route_offset, event.ship_data)
+		BattleEvent.TYPE_MOVE:
+			_animate_move(event.source_id, event.source_pos + _route_offset)
 		BattleEvent.TYPE_FIRE:
 			_animate_fire(event.source_id, event.source_pos + _route_offset, event.target_pos + _route_offset)
 		BattleEvent.TYPE_HIT:
 			_animate_hit(event.target_id, event.target_pos + _route_offset, event.value)
+		BattleEvent.TYPE_MODULE_HIT:
+			_animate_hit(event.target_id, event.target_pos + _route_offset, event.value)
+		BattleEvent.TYPE_MODULE_DESTROYED:
+			_animate_module_destroyed(event.source_id, event.source_pos + _route_offset, event)
+		BattleEvent.TYPE_REPAIR:
+			FloatingText.spawn(_arena, "+%.0f" % event.value, event.target_pos + _route_offset + Vector2(0, -10), Color(0.4, 1.0, 0.5))
 		BattleEvent.TYPE_DESTROYED:
 			_animate_destruction(event.source_id, event.source_pos + _route_offset)
 
@@ -247,9 +259,113 @@ func _spawn_ship_visual(ship_id: StringName, pos: Vector2, ship_data: ShipAssemb
 	_arena.add_child(view)
 	_apply_comic_fx(view)
 	_ships[ship_id] = view
+	_ship_drive_counts[ship_id] = _count_ship_drives(visual_data)
 	var tw := view.create_tween().set_loops()
 	tw.tween_property(view, "position:y", pos.y + 4.0, 1.2).set_trans(Tween.TRANS_SINE)
 	tw.tween_property(view, "position:y", pos.y - 4.0, 1.2).set_trans(Tween.TRANS_SINE)
+	_ship_bob_tweens[ship_id] = tw
+
+func _count_ship_drives(ship_data: ShipAssembly) -> int:
+	if ship_data == null:
+		return 1
+	var count := 1 if not String(ship_data.drive_id).is_empty() else 0
+	var catalog: ShipPartCatalog = DEFAULT_SHIP_PART_CATALOG
+	for module_id in ship_data.module_ids:
+		var part: ShipPartDefinition = catalog.resolve(module_id)
+		if part != null and part.slot_type == ShipPartDefinition.SLOT_DRIVE:
+			count += 1
+	return count
+
+func _animate_move(ship_id: StringName, pos: Vector2) -> void:
+	if not _ships.has(ship_id):
+		return
+	var ship: Node2D = _ships[ship_id] as Node2D
+	var tw := create_tween()
+	tw.tween_property(ship, "position", pos, 0.2).set_trans(Tween.TRANS_LINEAR)
+
+func _animate_module_destroyed(ship_id: StringName, pos: Vector2, event: BattleEvent) -> void:
+	if not _ships.has(ship_id):
+		return
+	var view: CompositeShipView = _ships[ship_id] as CompositeShipView
+	# Hide the first visible sprite matching the destroyed module part (module
+	# sprites live inside ModulesContainer; core overlays are direct children).
+	var hidden := false
+	var containers: Array[Node] = [view]
+	var modules_container: Node = view.get_node_or_null("ModulesContainer")
+	if modules_container != null:
+		containers.append(modules_container)
+	for container in containers:
+		for child in container.get_children():
+			var sprite := child as Sprite2D
+			if sprite == null or not sprite.visible:
+				continue
+			if String(sprite.get_meta("part_id", "")) != String(event.module_part_id):
+				continue
+			_animate_sprite_puff(sprite, pos)
+			sprite.visible = false
+			hidden = true
+			break
+		if hidden:
+			break
+	if not hidden and not String(event.module_slot_type).is_empty():
+		var fallback := _slot_sprite(view, event.module_slot_type)
+		if fallback != null and fallback.visible and String(fallback.get_meta("part_id", "")) == String(event.module_part_id):
+			_animate_sprite_puff(fallback, pos)
+			fallback.visible = false
+	# Engine destruction: mark the ship immobile once every drive is gone.
+	if event.module_trait == ModuleInfluence.TRAIT_SPEED:
+		_ship_drive_counts[ship_id] = maxi(int(_ship_drive_counts.get(ship_id, 1)) - 1, 0)
+		if int(_ship_drive_counts.get(ship_id, 0)) == 0:
+			_stop_ship_bob(ship_id, pos)
+
+func _slot_sprite(view: CompositeShipView, slot_type: StringName) -> Sprite2D:
+	if view == null:
+		return null
+	match slot_type:
+		ShipPartDefinition.SLOT_DRIVE:
+			return view.get_node_or_null("EngineOverlay") as Sprite2D
+		ShipPartDefinition.SLOT_WEAPON:
+			return view.get_node_or_null("WeaponOverlay") as Sprite2D
+		ShipPartDefinition.SLOT_SHIELD:
+			return view.get_node_or_null("ShieldOverlay") as Sprite2D
+		ShipPartDefinition.SLOT_SCANNER:
+			return view.get_node_or_null("ScannerSprite") as Sprite2D
+		ShipPartDefinition.SLOT_HULL:
+			return view.get_node_or_null("HullSprite") as Sprite2D
+	return null
+
+func _animate_sprite_puff(sprite: Sprite2D, pos: Vector2) -> void:
+	var spark := Sprite2D.new()
+	spark.texture = sprite.texture
+	spark.scale = sprite.scale * 0.6
+	spark.modulate = Color(1.0, 0.6, 0.3, 0.9)
+	spark.position = pos + sprite.position * 0.0
+	_arena.add_child(spark)
+	var tw := create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(spark, "modulate:a", 0.0, 0.4)
+	tw.tween_property(spark, "scale", spark.scale * 1.8, 0.4)
+	tw.chain().tween_callback(spark.queue_free)
+
+func _stop_ship_bob(ship_id: StringName, pos: Vector2) -> void:
+	if not _ships.has(ship_id):
+		return
+	var view: CompositeShipView = _ships[ship_id] as CompositeShipView
+	var bob: Tween = _ship_bob_tweens.get(ship_id) as Tween
+	if bob != null and bob.is_valid():
+		bob.kill()
+	view.position.y = pos.y
+	var label := Label.new()
+	label.name = "ImmobilLabel"
+	label.text = "IMMOBIL"
+	label.position = Vector2(-24.0, -46.0)
+	label.size = Vector2(48.0, 16.0)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 8)
+	label.add_theme_color_override("font_color", Color(1.0, 0.4, 0.3, 0.95))
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	view.add_child(label)
+	view.modulate = Color(1.0, 0.75, 0.7, 1.0)
 
 ## Paper-comic outline on every sprite of a ship view (Layer 2 visual polish).
 func _apply_comic_fx(node: Node) -> void:

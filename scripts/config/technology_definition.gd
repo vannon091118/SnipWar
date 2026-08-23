@@ -5,6 +5,7 @@ extends Resource
 const CATEGORY_SHIPS := &"ships"
 const CATEGORY_MECH := &"mech"
 const CATEGORY_PLANET := &"planet"
+const CATEGORY_DRONES := &"drones"
 
 @export var id: StringName = &""
 @export var category: StringName = CATEGORY_SHIPS
@@ -16,6 +17,9 @@ const CATEGORY_PLANET := &"planet"
 ## Player-facing strategic category used to scan the technology tree quickly.
 @export var strategic_role: StringName = &""
 @export var prerequisite_tech_id: StringName = &""
+## Additional prerequisites (all must be researched). Lets branches merge
+## multiple trees, e.g. the drone root requires a mech AND a ship tech.
+@export var prerequisite_tech_ids: Array[StringName] = []
 @export var requires_discovery: bool = false
 ## Mutually exclusive tech: if this ID is already researched, this tech is blocked
 ## and vice versa — forces a branch decision.
@@ -34,7 +38,7 @@ func validate() -> PackedStringArray:
 		errors.append("technology id is empty")
 	if display_name.is_empty():
 		errors.append("technology %s display_name is empty" % id)
-	if category != CATEGORY_SHIPS and category != CATEGORY_MECH and category != CATEGORY_PLANET:
+	if category != CATEGORY_SHIPS and category != CATEGORY_MECH and category != CATEGORY_PLANET and category != CATEGORY_DRONES:
 		errors.append("technology %s has invalid category %s" % [id, category])
 	if cost_amount < 0:
 		errors.append("technology %s cost_amount cannot be negative" % id)

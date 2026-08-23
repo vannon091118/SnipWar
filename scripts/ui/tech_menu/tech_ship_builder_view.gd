@@ -121,6 +121,7 @@ func populate_builder_dynamic(state: Node, on_refresh_callback: Callable) -> voi
 	builder_dynamic.add_child(UIBaseUtils.make_label("MONTAGE", _theme_config.heading_text_color, _theme_config.section_font_size))
 	builder_dynamic.add_child(UIBaseUtils.make_label("Hülle", _theme_config.secondary_text_color, _theme_config.small_font_size))
 	builder_hull = _builder_slot_option(inventory, ShipPartDefinition.SLOT_HULL)
+	builder_hull.item_selected.connect(func(_idx: int): populate_builder_dynamic(state, on_refresh_callback))
 	builder_dynamic.add_child(builder_hull)
 
 	builder_dynamic.add_child(UIBaseUtils.make_label("Antrieb", _theme_config.secondary_text_color, _theme_config.small_font_size))
@@ -139,9 +140,22 @@ func populate_builder_dynamic(state: Node, on_refresh_callback: Callable) -> voi
 	builder_scanner = _builder_slot_option(inventory, ShipPartDefinition.SLOT_SCANNER)
 	builder_dynamic.add_child(builder_scanner)
 
-	for index in catalog.max_module_slots:
+	# Dynamic slot system: the hull's slot_schema defines how many extra core
+	# copies (drives/weapons/shields) and utility modules can be mounted. Extra
+	# core slots and utility slots are rendered from the schema, so a two-drive
+	# build needs a hull that offers two drive slots.
+	var layout: Dictionary = catalog.slot_layout_for(_selected_hull_part())
+	for slot_type in [ShipPartDefinition.SLOT_DRIVE, ShipPartDefinition.SLOT_WEAPON, ShipPartDefinition.SLOT_SHIELD]:
+		var capacity: int = int(layout.get(slot_type, 1))
+		for extra_index in range(maxi(capacity - 1, 0)):
+			builder_dynamic.add_child(UIBaseUtils.make_label("%s %d (Zusatz-Slot)" % [String(slot_type).capitalize(), extra_index + 2], _theme_config.secondary_text_color, _theme_config.small_font_size))
+			var extra_option := _builder_slot_option(inventory, slot_type, true)
+			builder_modules.append(extra_option)
+			builder_dynamic.add_child(extra_option)
+	var utility_count: int = int(layout.get(ShipPartDefinition.SLOT_UTILITY, catalog.max_module_slots))
+	for index in utility_count:
 		builder_dynamic.add_child(UIBaseUtils.make_label("Modul %d" % (index + 1), _theme_config.secondary_text_color, _theme_config.small_font_size))
-		var module_option: OptionButton = _builder_slot_option(inventory, ShipPartDefinition.SLOT_MODULE, true)
+		var module_option: OptionButton = _builder_mixed_slot_option(inventory)
 		builder_modules.append(module_option)
 		builder_dynamic.add_child(module_option)
 
@@ -268,6 +282,35 @@ func _builder_slot_option(inventory: Dictionary, slot_type: StringName, allow_no
 			option.set_item_metadata(option.item_count - 1, part.id)
 	option.disabled = option.item_count == 0
 	return option
+
+## Utility slot dropdown offering utility modules AND extra copies of core
+## combat modules (drives/weapons/shields) — the multi-engine builder path.
+func _builder_mixed_slot_option(inventory: Dictionary) -> OptionButton:
+	var option := OptionButton.new()
+	option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	option.add_item("— (kein Modul)")
+	option.set_item_metadata(0, &"")
+	var catalog: ShipPartCatalog = _ship_manager.get_part_catalog()
+	var candidates: Array[ShipPartDefinition] = []
+	candidates.append_array(catalog.for_slot(ShipPartDefinition.SLOT_UTILITY))
+	candidates.append_array(catalog.for_slot(ShipPartDefinition.SLOT_DRIVE))
+	candidates.append_array(catalog.for_slot(ShipPartDefinition.SLOT_WEAPON))
+	candidates.append_array(catalog.for_slot(ShipPartDefinition.SLOT_SHIELD))
+	for part in candidates:
+		if part == null or int(inventory.get(part.id, 0)) <= 0:
+			continue
+		option.add_item(part.display_name)
+		option.set_item_metadata(option.item_count - 1, part.id)
+	option.disabled = option.item_count == 0
+	return option
+
+func _selected_hull_part() -> ShipPartDefinition:
+	if builder_hull == null or _ship_manager == null:
+		return null
+	var hull_id := _builder_selected_part(builder_hull)
+	if String(hull_id).is_empty():
+		return null
+	return _ship_manager.get_part_catalog().resolve(hull_id)
 
 func _builder_selected_part(option: OptionButton) -> StringName:
 	if option == null or option.selected < 0 or option.selected >= option.item_count:
@@ -397,9 +440,21 @@ func _assembly_tooltip(catalog: ShipPartCatalog, assembly: ShipAssembly, remaini
 	fleet.ships = [assembly.copy()]
 	fleet.calculate_stats(catalog)
 	lines.append("Stats: HP %.0f · DPS %.1f · Reichweite %.0f · Speed x%.2f" % [fleet.total_hull_hp, fleet.total_dps, fleet.effective_range, fleet.transfer_speed_multiplier()])
+	lines.append(_influence_readback(catalog, assembly))
 	if remaining > 0.0:
 		lines.append("Montage verbleibend: %.1f s" % remaining)
 	return "\n".join(lines)
+
+func _influence_readback(catalog: ShipPartCatalog, assembly: ShipAssembly) -> String:
+	var stats := FleetSnapshot.calculate_ship_stats(assembly, catalog)
+	var influence_lines: Array[String] = []
+	for mod in stats.get("modules", []):
+		var part: ShipPartDefinition = catalog.resolve(mod.get("part_id", &"") as StringName)
+		var name: String = part.display_name if part != null else String(mod.get("part_id", ""))
+		influence_lines.append("%s %s" % [name, ModuleInfluence.percent(float(mod.get("weight", 0.0)))])
+	if influence_lines.is_empty():
+		return ""
+	return "Einfluss: " + " · ".join(influence_lines)
 
 func _assembly_part_id(assembly: ShipAssembly, slot_type: StringName) -> StringName:
 	if assembly == null:

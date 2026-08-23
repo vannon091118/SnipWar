@@ -32,6 +32,9 @@ func can_research(researched_ids: Array, technology_id: StringName) -> bool:
 		return false
 	if not String(technology.prerequisite_tech_id).is_empty() and not researched_ids.has(technology.prerequisite_tech_id):
 		return false
+	for prerequisite_id in technology.prerequisite_tech_ids:
+		if not researched_ids.has(prerequisite_id):
+			return false
 	if technology.is_blocked_by_exclusion(researched_ids):
 		return false
 	return true
@@ -55,6 +58,9 @@ func validate() -> PackedStringArray:
 			continue
 		if not String(technology.prerequisite_tech_id).is_empty() and not ids.has(technology.prerequisite_tech_id):
 			errors.append("technology %s references unknown prerequisite %s" % [technology.id, technology.prerequisite_tech_id])
+		for prerequisite_id in technology.prerequisite_tech_ids:
+			if not ids.has(prerequisite_id):
+				errors.append("technology %s references unknown prerequisite %s" % [technology.id, prerequisite_id])
 		if not String(technology.mutually_exclusive_with).is_empty():
 			if not ids.has(technology.mutually_exclusive_with):
 				errors.append("technology %s references unknown exclusion %s" % [technology.id, technology.mutually_exclusive_with])

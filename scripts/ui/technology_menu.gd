@@ -97,7 +97,7 @@ func _build_category_tabs() -> void:
 	for child in _category_tabs.get_children():
 		_category_tabs.remove_child(child)
 		child.queue_free()
-	for category in [TechnologyDefinition.CATEGORY_SHIPS, TechnologyDefinition.CATEGORY_MECH, TechnologyDefinition.CATEGORY_PLANET]:
+	for category in [TechnologyDefinition.CATEGORY_SHIPS, TechnologyDefinition.CATEGORY_MECH, TechnologyDefinition.CATEGORY_PLANET, TechnologyDefinition.CATEGORY_DRONES]:
 		var button := Button.new()
 		button.toggle_mode = true
 		button.focus_mode = Control.FOCUS_NONE
@@ -113,6 +113,8 @@ func _category_label(category: StringName) -> String:
 		return "MECH"
 	if category == TechnologyDefinition.CATEGORY_PLANET:
 		return "PLANET"
+	if category == TechnologyDefinition.CATEGORY_DRONES:
+		return "DROHNEN"
 	return String(category).to_upper()
 
 func _on_category_pressed(category: StringName, button: Button) -> void:
@@ -175,6 +177,8 @@ func _refresh() -> void:
 		_research_view.build_research_section(_list, TechnologyDefinition.CATEGORY_MECH, state, _refresh, "MECHS — SPÄTERE PHASE: Diese Forschung bereitet taktische Bodeneinheiten vor; der Mech-Kampf wird mit Layer 3 aktiv.")
 	elif _category == TechnologyDefinition.CATEGORY_PLANET:
 		_planet_view.build_planets_section(_list, state, _refresh)
+	elif _category == TechnologyDefinition.CATEGORY_DRONES:
+		_research_view.build_research_section(_list, TechnologyDefinition.CATEGORY_DRONES, state, _refresh, "DROHNEN — VERZWEIGTER BAUM: Reparatur-, Kampf-, Scan- und Booster-Drohnen verbinden Mech- und Schiffs-Forschung. Reparatur-Drohnen halten Schiffe in der Tower-Defense funktionsfähig (nie volle Heilung).")
 
 ## Largest signal bound here is planet_scanned with 5 args, so the variadic
 ## handler takes 5 trailing default-null slots to cover every smaller signal.

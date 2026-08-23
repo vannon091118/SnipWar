@@ -41,6 +41,13 @@ const TYPE_CONQUEST: StringName = &"conquest"
 @export var base_hp_history: Array[float] = []
 @export var wave_events: Array[BattleEvent] = []
 @export var grid_snapshots: Array[Dictionary] = []
+## Ship assemblies behind the assault minions so the replay renders the real
+## loadouts (modules included) instead of generic worker sprites.
+@export var minion_ships: Array[ShipAssembly] = []
+## Ids of the minions that survived, in render order, so the scene can map
+## module-destruction / repair events (which reference m_<array index>) to the
+## right views even when some minions died mid-battle.
+@export var surviving_minion_ids: Array[StringName] = []
 
 @export_group("Planet Identity")
 ## Replays carry stable planet and asset identities, not a direct Texture2D

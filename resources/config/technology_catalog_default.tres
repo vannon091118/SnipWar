@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="TechnologyCatalog" load_steps=9 format=3]
+[gd_resource type="Resource" script_class="TechnologyCatalog" load_steps=25 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/technology_catalog.gd" id="1_catalog"]
 [ext_resource type="Script" path="res://scripts/config/technology_definition.gd" id="2_definition"]
@@ -14,6 +14,16 @@
 [ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_sensor.svg" id="12_sensor_array"]
 [ext_resource type="Texture2D" path="res://assets/objects/structures/structure_automated_mine_l1.svg" id="13_automated_mine"]
 [ext_resource type="Texture2D" path="res://assets/objects/structures/structure_trade_hub_l1.svg" id="14_trade_hub"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/repair_drone_t1.svg" id="15_repair_t1"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/repair_drone_t2.svg" id="16_repair_t2"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/repair_drone_t3.svg" id="17_repair_t3"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/combat_drone_t1.svg" id="18_combat_t1"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/combat_drone_t2.svg" id="19_combat_t2"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scan_drone_t1.svg" id="20_scan_t1"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scan_drone_t2.svg" id="21_scan_t2"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drone_vision.svg" id="22_vision"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drone_booster_t1.svg" id="23_booster_t1"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drone_booster_t2.svg" id="24_booster_t2"]
 
 [sub_resource type="Resource" id="Tech_shipyard_construction"]
 script = ExtResource("2_definition")
@@ -235,6 +245,182 @@ strategic_role = &"economy"
 mechanic_description = "Mechanik: Das Upgrade Handelszentrum wird baubar."
 research_time = 5.0
 
+[sub_resource type="Resource" id="Tech_drone_swarm"]
+script = ExtResource("2_definition")
+id = &"drone_swarm"
+category = &"drones"
+display_name = "Drohnenschwarm T1"
+description = "Verbinder Mech- und Schiffs-Forschung: öffnet den verzweigten Drohnen-Techbaum und macht Drohnen-Module montierbar."
+cost_resource = &"volatile"
+cost_amount = 25
+prerequisite_tech_ids = [&"mech_frame", &"scanner_drone"]
+visual_asset = ExtResource("18_combat_t1")
+effect_id = &"drone_swarm"
+strategic_role = &"drones"
+mechanic_description = "Mechanik: Drohnen-Module (Reparatur/Kampf/Scan/Vision/Booster) werden in der Werft kaufbar."
+production_multiplier = 1.0
+research_time = 6.0
+
+[sub_resource type="Resource" id="Tech_repair_drone_t1"]
+script = ExtResource("2_definition")
+id = &"repair_drone_t1"
+category = &"drones"
+display_name = "Reparatur-Drohne T1"
+description = "Repariert Schiffe in der Tower-Defense — aber nie vollständig, nur bis zum funktionsfähigen Zustand (~35 %)."
+cost_resource = &"energy"
+cost_amount = 15
+prerequisite_tech_id = &"drone_swarm"
+visual_asset = ExtResource("15_repair_t1")
+effect_id = &"repair_drone_t1"
+strategic_role = &"repair"
+mechanic_description = "Mechanik: Reparatur-Drohnen-Modul T1 regeneriert Modul-HP in der Grid-Conquest bis 35 %."
+production_multiplier = 1.0
+research_time = 4.0
+
+[sub_resource type="Resource" id="Tech_repair_drone_t2"]
+script = ExtResource("2_definition")
+id = &"repair_drone_t2"
+category = &"drones"
+display_name = "Reparatur-Drohne T2"
+description = "Repariert bis 50 % der Modul-HP, mit hoher Aufladezeit (langsame Regeneration)."
+cost_resource = &"energy"
+cost_amount = 25
+prerequisite_tech_id = &"repair_drone_t1"
+visual_asset = ExtResource("16_repair_t2")
+effect_id = &"repair_drone_t2"
+strategic_role = &"repair"
+mechanic_description = "Mechanik: Reparatur-Drohnen-Modul T2 regeneriert Modul-HP bis 50 % (langsamer)."
+production_multiplier = 1.0
+research_time = 6.0
+
+[sub_resource type="Resource" id="Tech_repair_drone_t3"]
+script = ExtResource("2_definition")
+id = &"repair_drone_t3"
+category = &"drones"
+display_name = "Reparatur-Drohne T3"
+description = "Repariert bis 60 % der Modul-HP mit mittlerer Aufladung."
+cost_resource = &"energy"
+cost_amount = 35
+prerequisite_tech_id = &"repair_drone_t2"
+visual_asset = ExtResource("17_repair_t3")
+effect_id = &"repair_drone_t3"
+strategic_role = &"repair"
+mechanic_description = "Mechanik: Reparatur-Drohnen-Modul T3 regeneriert Modul-HP bis 60 % (mittlere Aufladung)."
+production_multiplier = 1.0
+research_time = 8.0
+
+[sub_resource type="Resource" id="Tech_combat_drone_t1"]
+script = ExtResource("2_definition")
+id = &"combat_drone_t1"
+category = &"drones"
+display_name = "Kampf-Drohne T1"
+description = "Bewaffnete Begleitdrohnen, die als Modul montiert zusätzlichen Schaden beitragen."
+cost_resource = &"volatile"
+cost_amount = 20
+prerequisite_tech_id = &"drone_swarm"
+visual_asset = ExtResource("18_combat_t1")
+effect_id = &"combat_drone_t1"
+strategic_role = &"combat"
+mechanic_description = "Mechanik: Kampf-Drohnen-Modul T1 addiert +6 DPS (plus Tier-Basis) als Drohnenschwarm."
+production_multiplier = 1.0
+research_time = 4.0
+
+[sub_resource type="Resource" id="Tech_combat_drone_t2"]
+script = ExtResource("2_definition")
+id = &"combat_drone_t2"
+category = &"drones"
+display_name = "Kampf-Drohne T2"
+description = "Schwerere Kampf-Drohnen mit deutlich mehr Schwarm-Schaden."
+cost_resource = &"volatile"
+cost_amount = 30
+prerequisite_tech_id = &"combat_drone_t1"
+visual_asset = ExtResource("19_combat_t2")
+effect_id = &"combat_drone_t2"
+strategic_role = &"combat"
+mechanic_description = "Mechanik: Kampf-Drohnen-Modul T2 addiert +12 DPS (plus Tier-Basis)."
+production_multiplier = 1.0
+research_time = 6.0
+
+[sub_resource type="Resource" id="Tech_scan_drone_t1"]
+script = ExtResource("2_definition")
+id = &"scan_drone_t1"
+category = &"drones"
+display_name = "Scan-Drohne T1"
+description = "Schwarm-Sensoren erweitern die effektive Reichweite des Schiffs."
+cost_resource = &"rare"
+cost_amount = 15
+prerequisite_tech_id = &"drone_swarm"
+visual_asset = ExtResource("20_scan_t1")
+effect_id = &"scan_drone_t1"
+strategic_role = &"exploration"
+mechanic_description = "Mechanik: Scan-Drohnen-Modul T1 addiert +40 Reichweite."
+production_multiplier = 1.0
+research_time = 4.0
+
+[sub_resource type="Resource" id="Tech_scan_drone_t2"]
+script = ExtResource("2_definition")
+id = &"scan_drone_t2"
+category = &"drones"
+display_name = "Scan-Drohne T2"
+description = "Hochauflösende Schwarm-Sensoren mit großem Reichweiten-Bonus."
+cost_resource = &"rare"
+cost_amount = 25
+prerequisite_tech_id = &"scan_drone_t1"
+visual_asset = ExtResource("21_scan_t2")
+effect_id = &"scan_drone_t2"
+strategic_role = &"exploration"
+mechanic_description = "Mechanik: Scan-Drohnen-Modul T2 addiert +80 Reichweite."
+production_multiplier = 1.0
+research_time = 6.0
+
+[sub_resource type="Resource" id="Tech_drone_vision"]
+script = ExtResource("2_definition")
+id = &"drone_vision"
+category = &"drones"
+display_name = "Drohnen-Vision"
+description = "Ein optisches Schwarm-Netzwerk, das die Sensorreichweite spürbar erweitert."
+cost_resource = &"energy"
+cost_amount = 20
+prerequisite_tech_id = &"drone_swarm"
+visual_asset = ExtResource("22_vision")
+effect_id = &"drone_vision"
+strategic_role = &"exploration"
+mechanic_description = "Mechanik: Vision-Modul addiert +60 Reichweite."
+production_multiplier = 1.0
+research_time = 5.0
+
+[sub_resource type="Resource" id="Tech_drone_booster_t1"]
+script = ExtResource("2_definition")
+id = &"drone_booster_t1"
+category = &"drones"
+display_name = "Drohnen-Booster T1"
+description = "Verstärkt alle montierten Drohnen-Module um 25 % — ein Mid-Tier-Verstärker."
+cost_resource = &"rare"
+cost_amount = 20
+prerequisite_tech_id = &"drone_swarm"
+visual_asset = ExtResource("23_booster_t1")
+effect_id = &"drone_booster_t1"
+strategic_role = &"support"
+mechanic_description = "Mechanik: Booster-Modul T1 verstärkt montierte Drohnen-Module um +25 %."
+production_multiplier = 1.0
+research_time = 5.0
+
+[sub_resource type="Resource" id="Tech_drone_booster_t2"]
+script = ExtResource("2_definition")
+id = &"drone_booster_t2"
+category = &"drones"
+display_name = "Drohnen-Booster T2"
+description = "Verstärkt alle montierten Drohnen-Module um 50 %."
+cost_resource = &"rare"
+cost_amount = 30
+prerequisite_tech_id = &"drone_booster_t1"
+visual_asset = ExtResource("24_booster_t2")
+effect_id = &"drone_booster_t2"
+strategic_role = &"support"
+mechanic_description = "Mechanik: Booster-Modul T2 verstärkt montierte Drohnen-Module um +50 %."
+production_multiplier = 1.0
+research_time = 7.0
+
 [resource]
 script = ExtResource("1_catalog")
-technologies = [SubResource("Tech_shipyard_construction"), SubResource("Tech_scout_hull"), SubResource("Tech_scanner_drone"), SubResource("Tech_weapon_systems"), SubResource("Tech_worker_automation"), SubResource("Tech_mech_frame"), SubResource("Tech_planetary_survey"), SubResource("Tech_planetary_extraction"), SubResource("Tech_advanced_propulsion"), SubResource("Tech_heavy_armor_plating"), SubResource("Tech_deep_scan"), SubResource("Tech_long_range_sensors"), SubResource("Tech_automated_refinery"), SubResource("Tech_bulk_processing")]
+technologies = [SubResource("Tech_shipyard_construction"), SubResource("Tech_scout_hull"), SubResource("Tech_scanner_drone"), SubResource("Tech_weapon_systems"), SubResource("Tech_worker_automation"), SubResource("Tech_mech_frame"), SubResource("Tech_planetary_survey"), SubResource("Tech_planetary_extraction"), SubResource("Tech_advanced_propulsion"), SubResource("Tech_heavy_armor_plating"), SubResource("Tech_deep_scan"), SubResource("Tech_long_range_sensors"), SubResource("Tech_automated_refinery"), SubResource("Tech_bulk_processing"), SubResource("Tech_drone_swarm"), SubResource("Tech_repair_drone_t1"), SubResource("Tech_repair_drone_t2"), SubResource("Tech_repair_drone_t3"), SubResource("Tech_combat_drone_t1"), SubResource("Tech_combat_drone_t2"), SubResource("Tech_scan_drone_t1"), SubResource("Tech_scan_drone_t2"), SubResource("Tech_drone_vision"), SubResource("Tech_drone_booster_t1"), SubResource("Tech_drone_booster_t2")]

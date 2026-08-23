@@ -25,6 +25,8 @@ var _wave_label: Label
 
 var _attackers: Array[Node2D] = []
 var _towers: Array[Node2D] = []
+var _minions_by_id: Dictionary = {} # minion id -> Node2D
+var _wave_event_index: int = 0
 
 func _ready() -> void:
 	layer = 85
@@ -141,21 +143,91 @@ func _setup_battlefield() -> void:
 		_arena.add_child(tower)
 		_towers.append(tower)
 
-	# Assault Minions on perimeter. A result with no surviving attackers has no
-	# attacker sprites; this keeps the replay honest for a fully repelled wave.
+	# Assault Minions on perimeter. Ship-based minions render their real
+	# loadout via CompositeShipView (modules included) when the replay carries
+	# them; a result with no surviving attackers keeps the replay honest.
 	var vertical_center: float = float(attacker_count - 1) * 17.5
+	var minion_ships: Array = _result.minion_ships if _result != null else []
+	var survivor_ids: Array = _result.surviving_minion_ids if _result != null else []
+	var ship_visual_index := 0
 	for i in range(attacker_count):
-		var minion := Sprite2D.new()
-		minion.name = "Minion_%d" % i
-		minion.texture = preload("res://assets/objects/workers/cluster_k.svg")
+		var minion: Node2D
+		# Ship assemblies are appended after the worker minions in the replay,
+		# so consume them with a dedicated index instead of the slot index.
+		if ship_visual_index < minion_ships.size():
+			minion = _make_ship_minion(minion_ships[ship_visual_index] as ShipAssembly, i, vertical_center)
+			ship_visual_index += 1
+		else:
+			minion = Sprite2D.new()
+			minion.name = "Minion_%d" % i
+			(minion as Sprite2D).texture = preload("res://assets/objects/workers/cluster_k.svg")
+			(minion as Sprite2D).scale = Vector2.ONE * 0.3
+			(minion as Sprite2D).modulate = Color(0.3, 0.7, 1.0)
 		minion.position = Vector2(-220.0, float(i) * 35.0 - vertical_center)
-		minion.scale = Vector2.ONE * 0.3
-		minion.modulate = Color(0.3, 0.7, 1.0)
 		_arena.add_child(minion)
 		_attackers.append(minion)
+		# Register the view under its simulator id so module-destruction and
+		# repair events find it. The replay carries the survivor ids in render
+		# order; fall back to m_<index> for older payloads.
+		var slot_id: StringName = StringName("m_%d" % i)
+		if i < survivor_ids.size() and not String(survivor_ids[i]).is_empty():
+			slot_id = survivor_ids[i] as StringName
+		_minions_by_id[slot_id] = minion
 
 		var tw := minion.create_tween()
 		tw.tween_property(minion, "position:x", -90.0, _duration * 0.8)
+	_wave_event_index = 0
+
+func _make_ship_minion(assembly: ShipAssembly, index: int, vertical_center: float) -> CompositeShipView:
+	var view := CompositeShipView.new()
+	view.name = "Minion_%d" % index
+	view.scale = Vector2.ONE * 0.22
+	var catalog: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
+	view.setup_from_parts(
+		catalog.resolve(assembly.hull_id),
+		catalog.resolve(assembly.scanner_id),
+		catalog.resolve(assembly.drive_id),
+		catalog.resolve(assembly.weapon_id),
+		catalog.resolve(assembly.shield_id),
+		_resolve_modules(catalog, assembly.module_ids),
+		&"a",
+		null,
+		_resolve_view_variants(catalog, assembly)
+	)
+	return view
+
+func _resolve_modules(catalog: ShipPartCatalog, module_ids: Array) -> Array[ShipPartDefinition]:
+	var result: Array[ShipPartDefinition] = []
+	for module_id in module_ids:
+		var part: ShipPartDefinition = catalog.resolve(module_id as StringName)
+		if part != null:
+			result.append(part)
+	return result
+
+func _resolve_view_variants(catalog: ShipPartCatalog, assembly: ShipAssembly) -> Dictionary:
+	var result: Dictionary = {}
+	var slot_types: Array[StringName] = [ShipPartDefinition.SLOT_HULL, ShipPartDefinition.SLOT_DRIVE, ShipPartDefinition.SLOT_WEAPON, ShipPartDefinition.SLOT_SHIELD, ShipPartDefinition.SLOT_SCANNER]
+	for slot_type in slot_types:
+		var part_id: StringName = assembly.hull_id
+		match slot_type:
+			ShipPartDefinition.SLOT_DRIVE:
+				part_id = assembly.drive_id
+			ShipPartDefinition.SLOT_WEAPON:
+				part_id = assembly.weapon_id
+			ShipPartDefinition.SLOT_SHIELD:
+				part_id = assembly.shield_id
+			ShipPartDefinition.SLOT_SCANNER:
+				part_id = assembly.scanner_id
+		var part: ShipPartDefinition = catalog.resolve(part_id)
+		var variant: ShipComponentVariant = catalog.resolve_variant(part, assembly.variant_id_for(slot_type))
+		if variant != null:
+			result[slot_type] = variant
+	var module_variants: Array[ShipComponentVariant] = []
+	for index in range(assembly.module_ids.size()):
+		var module_part: ShipPartDefinition = catalog.resolve(assembly.module_ids[index])
+		module_variants.append(catalog.resolve_variant(module_part, assembly.variant_id_for(ShipPartDefinition.SLOT_UTILITY, index)))
+	result[ShipPartDefinition.SLOT_UTILITY] = module_variants
+	return result
 
 func _result_int(key: String, fallback: int) -> int:
 	if _result == null:
@@ -222,6 +294,15 @@ func _process(delta: float) -> void:
 		var wave_idx := mini(int(_elapsed / maxf(_duration / float(_result.grid_snapshots.size()), 0.001)), _result.grid_snapshots.size())
 		_wave_label.text = "Welle %d / %d" % [wave_idx, _result.grid_snapshots.size()]
 
+	# Replay module destruction + repair events from the simulator payload.
+	if _result != null:
+		while _wave_event_index < _result.wave_events.size():
+			var event: BattleEvent = _result.wave_events[_wave_event_index]
+			if event.timestamp > _elapsed:
+				break
+			_process_wave_event(event)
+			_wave_event_index += 1
+
 	# Periodical Tower & Minion Fire. The schedule and choices are seeded from
 	# the simulator result, rather than depending on global frame timing/RNG.
 	while _elapsed >= _next_laser_time and _attackers.size() > 0 and _towers.size() > 0:
@@ -232,6 +313,38 @@ func _process(delta: float) -> void:
 
 	if _elapsed >= _duration:
 		_finish_conquest()
+
+func _process_wave_event(event: BattleEvent) -> void:
+	if event == null:
+		return
+	match event.event_type:
+		BattleEvent.TYPE_MODULE_DESTROYED:
+			# The simulator writes the minion id into source_id for destruction
+			# events (mirroring the L2 convention).
+			_hide_minion_module(event.source_id, event.module_part_id, event.module_slot_type)
+		BattleEvent.TYPE_REPAIR:
+			FloatingText.spawn(_arena, "+%.0f" % event.value, event.target_pos + Vector2(0, -12), Color(0.4, 1.0, 0.5))
+
+func _hide_minion_module(minion_id: StringName, module_part_id: StringName, module_slot_type: StringName) -> void:
+	if not _minions_by_id.has(minion_id):
+		return
+	var view: CompositeShipView = _minions_by_id[minion_id] as CompositeShipView
+	if view == null:
+		return
+	var containers: Array[Node] = [view]
+	var modules_container: Node = view.get_node_or_null("ModulesContainer")
+	if modules_container != null:
+		containers.append(modules_container)
+	for container in containers:
+		for child in container.get_children():
+			var sprite := child as Sprite2D
+			if sprite == null or not sprite.visible:
+				continue
+			if String(sprite.get_meta("part_id", "")) != String(module_part_id):
+				continue
+			sprite.visible = false
+			FloatingText.spawn(_arena, "MODUL ZERSTÖRT", view.position + sprite.position, Color(1.0, 0.4, 0.2), 0.8)
+			return
 
 func _fire_laser(src: Vector2, tgt: Vector2, col: Color) -> void:
 	var line := Line2D.new()

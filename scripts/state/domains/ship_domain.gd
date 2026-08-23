@@ -321,39 +321,66 @@ func can_assemble_ship(planet_id: StringName, hull_id: StringName, scanner_id: S
 	# build cannot consume parts into a non-flyable ship.
 	if String(drive_id).is_empty() or String(shield_id).is_empty():
 		return false
+	var layout := catalog.slot_layout_for(hull)
 	var inv := get_ship_part_inventory(planet_id)
 	var needed: Dictionary = {}
+	var tally: Dictionary = {
+		ShipPartDefinition.SLOT_DRIVE: 0,
+		ShipPartDefinition.SLOT_WEAPON: 0,
+		ShipPartDefinition.SLOT_SHIELD: 0,
+		ShipPartDefinition.SLOT_SCANNER: 0,
+		ShipPartDefinition.SLOT_UTILITY: 0,
+	}
 	_tally(needed, hull_id)
 	if not String(drive_id).is_empty():
 		var drive: ShipPartDefinition = catalog.resolve(drive_id)
 		if drive == null or drive.slot_type != ShipPartDefinition.SLOT_DRIVE:
 			return false
 		_tally(needed, drive_id)
+		tally[ShipPartDefinition.SLOT_DRIVE] = int(tally[ShipPartDefinition.SLOT_DRIVE]) + 1
 	if not String(weapon_id).is_empty():
 		var weapon: ShipPartDefinition = catalog.resolve(weapon_id)
 		if weapon == null or weapon.slot_type != ShipPartDefinition.SLOT_WEAPON:
 			return false
 		_tally(needed, weapon_id)
+		tally[ShipPartDefinition.SLOT_WEAPON] = int(tally[ShipPartDefinition.SLOT_WEAPON]) + 1
 	if not String(shield_id).is_empty():
 		var shield: ShipPartDefinition = catalog.resolve(shield_id)
 		if shield == null or shield.slot_type != ShipPartDefinition.SLOT_SHIELD:
 			return false
 		_tally(needed, shield_id)
+		tally[ShipPartDefinition.SLOT_SHIELD] = int(tally[ShipPartDefinition.SLOT_SHIELD]) + 1
 	if not String(scanner_id).is_empty():
 		var scanner: ShipPartDefinition = catalog.resolve(scanner_id)
 		if scanner == null or scanner.slot_type != ShipPartDefinition.SLOT_SCANNER:
 			return false
 		_tally(needed, scanner_id)
-	if module_ids.size() > catalog.max_module_slots:
-		return false
+		tally[ShipPartDefinition.SLOT_SCANNER] = int(tally[ShipPartDefinition.SLOT_SCANNER]) + 1
+	# The dynamic slot system: module_ids may carry utility modules AND extra
+	# copies of core combat modules (drives/weapons/shields). Capacity is
+	# enforced against the hull's slot_schema, so a two-drive build needs a
+	# hull that offers two drive slots.
 	for mod_val in module_ids:
 		var mod_id: StringName = mod_val as StringName
 		if String(mod_id).is_empty():
 			continue
 		var mod_part: ShipPartDefinition = catalog.resolve(mod_id)
-		if mod_part == null or not ShipPartDefinition.is_utility_slot(mod_part.slot_type):
+		if mod_part == null:
 			return false
+		var slot_key: StringName = mod_part.slot_type
+		if ShipPartDefinition.is_utility_slot(slot_key):
+			slot_key = ShipPartDefinition.SLOT_UTILITY
+		if not tally.has(slot_key):
+			return false
+		tally[slot_key] = int(tally[slot_key]) + 1
 		_tally(needed, mod_id)
+	for slot_type in layout:
+		if int(tally.get(slot_type, 0)) > int(layout[slot_type]):
+			return false
+	# Drive/shield/scanner capacities >= 1 are mandatory for a flyable ship;
+	# weapon slots stay optional (a bare civilian loadout is legal).
+	if int(layout.get(ShipPartDefinition.SLOT_SCANNER, 0)) >= 1 and String(scanner_id).is_empty():
+		return false
 	for part_id_val in needed:
 		var p_id: StringName = part_id_val as StringName
 		if int(inv.get(p_id, 0)) < needed[p_id]:

@@ -35,6 +35,40 @@ func for_slot(slot_type: StringName) -> Array[ShipPartDefinition]:
 			result.append(part)
 	return result
 
+## Resolves the dynamic slot layout of a hull part. Hulls without an explicit
+## slot_schema fall back to the legacy layout (1 drive, 1 weapon, 1 shield,
+## 1 scanner, max_module_slots utility). Returns a Dictionary keyed by
+## slot type StringName -> count.
+func slot_layout_for(hull: ShipPartDefinition) -> Dictionary:
+	var layout := {
+		ShipPartDefinition.SLOT_DRIVE: 1,
+		ShipPartDefinition.SLOT_WEAPON: 1,
+		ShipPartDefinition.SLOT_SHIELD: 1,
+		ShipPartDefinition.SLOT_SCANNER: 1,
+		ShipPartDefinition.SLOT_UTILITY: max_module_slots,
+	}
+	if hull == null or hull.slot_schema.is_empty():
+		return layout
+	layout = {
+		ShipPartDefinition.SLOT_DRIVE: 0,
+		ShipPartDefinition.SLOT_WEAPON: 0,
+		ShipPartDefinition.SLOT_SHIELD: 0,
+		ShipPartDefinition.SLOT_SCANNER: 0,
+		ShipPartDefinition.SLOT_UTILITY: 0,
+	}
+	for entry in hull.slot_schema:
+		var entry_type: StringName = entry.get("type", &"") as StringName
+		layout[entry_type] = int(entry.get("count", 0))
+	return layout
+
+## Total number of slots a hull offers (core + utility).
+func slot_count_for(hull: ShipPartDefinition) -> int:
+	var layout := slot_layout_for(hull)
+	var total := 0
+	for key in layout:
+		total += int(layout[key])
+	return total
+
 func select_variant(part: ShipPartDefinition, blueprint: ShipBlueprint, instance_seed: int, available_tier: int = -1, salt: StringName = &"") -> ShipComponentVariant:
 	if part == null or blueprint == null:
 		return null
@@ -123,6 +157,18 @@ func validate() -> PackedStringArray:
 		ids[part.id] = true
 	if max_module_slots < 0:
 		errors.append("ship part catalog max_module_slots cannot be negative")
+	# Every hull with an explicit slot schema must keep drive/shield/scanner
+	# capacities so assembled ships stay flyable and the builder renders slots.
+	for part in parts:
+		if part == null or part.slot_type != ShipPartDefinition.SLOT_HULL or part.slot_schema.is_empty():
+			continue
+		var layout := slot_layout_for(part)
+		if int(layout.get(ShipPartDefinition.SLOT_DRIVE, 0)) < 1:
+			errors.append("hull %s slot_schema must offer at least one drive slot" % part.id)
+		if int(layout.get(ShipPartDefinition.SLOT_SHIELD, 0)) < 1:
+			errors.append("hull %s slot_schema must offer at least one shield slot" % part.id)
+		if int(layout.get(ShipPartDefinition.SLOT_SCANNER, 0)) < 1:
+			errors.append("hull %s slot_schema must offer at least one scanner slot" % part.id)
 	var blueprint_ids: Dictionary = {}
 	for blueprint in blueprints:
 		if blueprint == null:

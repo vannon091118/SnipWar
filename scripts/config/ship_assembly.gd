@@ -90,6 +90,9 @@ static func derive_role_from_modules(assembly: ShipAssembly, catalog: ShipPartCa
 			var part: ShipPartDefinition = catalog.resolve(module_id)
 			if part != null:
 				role = StringName(part.module_role)
+				# A weapon mounted in a dynamic slot still arms the ship.
+				if String(role).is_empty() and part.slot_type == ShipPartDefinition.SLOT_WEAPON:
+					role = &"military"
 		if String(role).is_empty():
 			match module_id:
 				&"colony_module": role = &"colony"

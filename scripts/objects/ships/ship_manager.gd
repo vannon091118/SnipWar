@@ -273,6 +273,14 @@ func _ship_readback_tooltip(catalog: ShipPartCatalog, assembly: ShipAssembly) ->
 		var variant: ShipComponentVariant = catalog.resolve_variant(part, assembly.variant_id_for(slot_type))
 		lines.append("%s: %s%s" % [String(slot_type).capitalize(), part.display_name, " / " + variant.display_name if variant != null else ""])
 	lines.append("Stats: HP %.0f · DPS %.1f · Range %.0f · Speed x%.2f" % [fleet.total_hull_hp, fleet.total_dps, fleet.effective_range, fleet.transfer_speed_multiplier()])
+	var stats := FleetSnapshot.calculate_ship_stats(assembly, catalog)
+	var influence_lines: Array[String] = []
+	for mod in stats.get("modules", []):
+		var part: ShipPartDefinition = catalog.resolve(mod.get("part_id", &"") as StringName)
+		var name: String = part.display_name if part != null else String(mod.get("part_id", ""))
+		influence_lines.append("%s %s" % [name, ModuleInfluence.percent(float(mod.get("weight", 0.0)))])
+	if not influence_lines.is_empty():
+		lines.append("Einfluss: " + " · ".join(influence_lines))
 	return "\\n".join(lines)
 
 func get_planets() -> Array[Planet]:

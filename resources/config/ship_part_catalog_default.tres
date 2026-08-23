@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ShipPartCatalog" load_steps=90 format=3]
+[gd_resource type="Resource" script_class="ShipPartCatalog" load_steps=115 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/ship_part_catalog.gd" id="1_catalog"]
 [ext_resource type="Script" path="res://scripts/config/ship_part_definition.gd" id="2_part"]
@@ -58,6 +58,16 @@
 [ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_repair.svg" id="56_module_repair"]
 [ext_resource type="Texture2D" path="res://assets/objects/ships/components/drive_t1_ion_blue.svg" id="57_drive_t1_blue"]
 [ext_resource type="Texture2D" path="res://assets/objects/ships/components/drive_t2_grav_blue.svg" id="58_drive_t2_blue"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/repair_drone_t1.svg" id="59_repair_t1"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/repair_drone_t2.svg" id="60_repair_t2"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/repair_drone_t3.svg" id="61_repair_t3"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/combat_drone_t1.svg" id="62_combat_t1"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/combat_drone_t2.svg" id="63_combat_t2"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scan_drone_t1.svg" id="64_scan_t1"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scan_drone_t2.svg" id="65_scan_t2"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drone_vision.svg" id="66_vision"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drone_booster_t1.svg" id="67_booster_t1"]
+[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drone_booster_t2.svg" id="68_booster_t2"]
 
 [sub_resource type="Resource" id="Trait_drive_t1"]
 script = ExtResource("3_trait")
@@ -267,6 +277,7 @@ tier = 1
 visual_asset = ExtResource("20_hull_t1_scout")
 required_tech_id = &"shipyard_construction"
 build_time = 63.0
+slot_schema = [{"type": &"drive", "count": 1}, {"type": &"weapon", "count": 1}, {"type": &"shield", "count": 1}, {"type": &"scanner", "count": 1}, {"type": &"utility", "count": 1}]
 
 [sub_resource type="Resource" id="Part_hull_t2"]
 script = ExtResource("2_part")
@@ -280,6 +291,7 @@ tier = 2
 visual_asset = ExtResource("23_hull_t2_multirole")
 required_tech_id = &"weapon_systems"
 build_time = 123.0
+slot_schema = [{"type": &"drive", "count": 2}, {"type": &"weapon", "count": 1}, {"type": &"shield", "count": 1}, {"type": &"scanner", "count": 1}, {"type": &"utility", "count": 2}]
 
 [sub_resource type="Resource" id="Part_hull_t3"]
 script = ExtResource("2_part")
@@ -293,6 +305,7 @@ tier = 3
 visual_asset = ExtResource("26_hull_t3_expansion")
 required_tech_id = &"weapon_systems"
 build_time = 183.0
+slot_schema = [{"type": &"drive", "count": 2}, {"type": &"weapon", "count": 2}, {"type": &"shield", "count": 1}, {"type": &"scanner", "count": 1}, {"type": &"utility", "count": 3}]
 
 [sub_resource type="Resource" id="Part_hull_t1_interceptor"]
 script = ExtResource("2_part")
@@ -306,6 +319,7 @@ tier = 1
 visual_asset = ExtResource("21_hull_t1_interceptor")
 required_tech_id = &"shipyard_construction"
 build_time = 63.0
+slot_schema = [{"type": &"drive", "count": 1}, {"type": &"weapon", "count": 2}, {"type": &"shield", "count": 1}, {"type": &"scanner", "count": 1}, {"type": &"utility", "count": 1}]
 
 [sub_resource type="Resource" id="Part_hull_t1_courier"]
 script = ExtResource("2_part")
@@ -319,6 +333,7 @@ tier = 1
 visual_asset = ExtResource("22_hull_t1_courier")
 required_tech_id = &"shipyard_construction"
 build_time = 63.0
+slot_schema = [{"type": &"drive", "count": 1}, {"type": &"weapon", "count": 1}, {"type": &"shield", "count": 1}, {"type": &"scanner", "count": 1}, {"type": &"utility", "count": 2}]
 
 [sub_resource type="Resource" id="Part_hull_t2_carrier"]
 script = ExtResource("2_part")
@@ -332,6 +347,7 @@ tier = 2
 visual_asset = ExtResource("24_hull_t2_carrier")
 required_tech_id = &"weapon_systems"
 build_time = 123.0
+slot_schema = [{"type": &"drive", "count": 1}, {"type": &"weapon", "count": 1}, {"type": &"shield", "count": 1}, {"type": &"scanner", "count": 1}, {"type": &"utility", "count": 4}]
 
 [sub_resource type="Resource" id="Part_hull_t2_destroyer"]
 script = ExtResource("2_part")
@@ -345,6 +361,7 @@ tier = 2
 visual_asset = ExtResource("25_hull_t2_destroyer")
 required_tech_id = &"weapon_systems"
 build_time = 123.0
+slot_schema = [{"type": &"drive", "count": 1}, {"type": &"weapon", "count": 2}, {"type": &"shield", "count": 1}, {"type": &"scanner", "count": 1}, {"type": &"utility", "count": 2}]
 
 [sub_resource type="Resource" id="Part_hull_t3_colony"]
 script = ExtResource("2_part")
@@ -358,6 +375,7 @@ tier = 3
 visual_asset = ExtResource("28_hull_t3_colony")
 required_tech_id = &"weapon_systems"
 build_time = 183.0
+slot_schema = [{"type": &"drive", "count": 2}, {"type": &"weapon", "count": 1}, {"type": &"shield", "count": 2}, {"type": &"scanner", "count": 1}, {"type": &"utility", "count": 4}]
 
 [sub_resource type="Resource" id="Part_hull_t3_dreadnought"]
 script = ExtResource("2_part")
@@ -371,6 +389,7 @@ tier = 3
 visual_asset = ExtResource("27_hull_t3_dreadnought")
 required_tech_id = &"weapon_systems"
 build_time = 183.0
+slot_schema = [{"type": &"drive", "count": 2}, {"type": &"weapon", "count": 2}, {"type": &"shield", "count": 2}, {"type": &"scanner", "count": 1}, {"type": &"utility", "count": 3}]
 
 [sub_resource type="Resource" id="Part_scanner_t1"]
 script = ExtResource("2_part")
@@ -679,8 +698,188 @@ visual_asset = ExtResource("56_module_repair")
 required_tech_id = &"scanner_drone"
 build_time = 10.0
 
+[sub_resource type="Resource" id="Trait_combat_drone_t1"]
+script = ExtResource("3_trait")
+id = &"trait_combat_drone_t1"
+display_name = "Kampf-Drohnenschwarm T1"
+description = "+6 DPS als Schwarm"
+dps_bonus = 6.0
+
+[sub_resource type="Resource" id="Trait_combat_drone_t2"]
+script = ExtResource("3_trait")
+id = &"trait_combat_drone_t2"
+display_name = "Kampf-Drohnenschwarm T2"
+description = "+12 DPS als Schwarm"
+dps_bonus = 12.0
+
+[sub_resource type="Resource" id="Trait_scan_drone_t1"]
+script = ExtResource("3_trait")
+id = &"trait_scan_drone_t1"
+display_name = "Scan-Schwarm T1"
+description = "+40 px Reichweite"
+range_bonus = 40.0
+
+[sub_resource type="Resource" id="Trait_scan_drone_t2"]
+script = ExtResource("3_trait")
+id = &"trait_scan_drone_t2"
+display_name = "Scan-Schwarm T2"
+description = "+80 px Reichweite"
+range_bonus = 80.0
+
+[sub_resource type="Resource" id="Trait_drone_vision"]
+script = ExtResource("3_trait")
+id = &"trait_drone_vision"
+display_name = "Optische Schwarm-Vision"
+description = "+60 px Reichweite"
+range_bonus = 60.0
+
+[sub_resource type="Resource" id="Part_repair_drone_t1"]
+script = ExtResource("2_part")
+id = &"repair_drone_t1"
+slot_type = &"utility"
+display_name = "Reparatur-Drohne T1"
+module_role = "drone"
+description = "Repariert Schiffe in der Tower-Defense bis zum funktionsfähigen Zustand (~35 %), nie vollständig."
+cost_resource = &"energy"
+cost_amount = 10
+tier = 1
+visual_asset = ExtResource("59_repair_t1")
+required_tech_id = &"repair_drone_t1"
+build_time = 8.0
+
+[sub_resource type="Resource" id="Part_repair_drone_t2"]
+script = ExtResource("2_part")
+id = &"repair_drone_t2"
+slot_type = &"utility"
+display_name = "Reparatur-Drohne T2"
+module_role = "drone"
+description = "Repariert bis 50 % der Modul-HP, hohe Aufladezeit (langsame Regeneration)."
+cost_resource = &"energy"
+cost_amount = 16
+tier = 2
+visual_asset = ExtResource("60_repair_t2")
+required_tech_id = &"repair_drone_t2"
+build_time = 12.0
+
+[sub_resource type="Resource" id="Part_repair_drone_t3"]
+script = ExtResource("2_part")
+id = &"repair_drone_t3"
+slot_type = &"utility"
+display_name = "Reparatur-Drohne T3"
+module_role = "drone"
+description = "Repariert bis 60 % der Modul-HP mit mittlerer Aufladung."
+cost_resource = &"energy"
+cost_amount = 24
+tier = 3
+visual_asset = ExtResource("61_repair_t3")
+required_tech_id = &"repair_drone_t3"
+build_time = 16.0
+
+[sub_resource type="Resource" id="Part_combat_drone_t1"]
+script = ExtResource("2_part")
+id = &"combat_drone_t1"
+slot_type = &"utility"
+display_name = "Kampf-Drohne T1"
+module_role = "drone"
+description = "Bewaffnete Begleitdrohnen, die zusätzlichen Schwarm-Schaden beitragen."
+cost_resource = &"volatile"
+cost_amount = 12
+tier = 1
+visual_asset = ExtResource("62_combat_t1")
+trait_definition = SubResource("Trait_combat_drone_t1")
+required_tech_id = &"combat_drone_t1"
+build_time = 10.0
+
+[sub_resource type="Resource" id="Part_combat_drone_t2"]
+script = ExtResource("2_part")
+id = &"combat_drone_t2"
+slot_type = &"utility"
+display_name = "Kampf-Drohne T2"
+module_role = "drone"
+description = "Schwerere Kampf-Drohnen mit deutlich mehr Schwarm-Schaden."
+cost_resource = &"volatile"
+cost_amount = 22
+tier = 2
+visual_asset = ExtResource("63_combat_t2")
+trait_definition = SubResource("Trait_combat_drone_t2")
+required_tech_id = &"combat_drone_t2"
+build_time = 16.0
+
+[sub_resource type="Resource" id="Part_scan_drone_t1"]
+script = ExtResource("2_part")
+id = &"scan_drone_t1"
+slot_type = &"utility"
+display_name = "Scan-Drohne T1"
+module_role = "drone"
+description = "Schwarm-Sensoren erweitern die effektive Reichweite."
+cost_resource = &"energy"
+cost_amount = 10
+tier = 1
+visual_asset = ExtResource("64_scan_t1")
+trait_definition = SubResource("Trait_scan_drone_t1")
+required_tech_id = &"scan_drone_t1"
+build_time = 10.0
+
+[sub_resource type="Resource" id="Part_scan_drone_t2"]
+script = ExtResource("2_part")
+id = &"scan_drone_t2"
+slot_type = &"utility"
+display_name = "Scan-Drohne T2"
+module_role = "drone"
+description = "Hochauflösende Schwarm-Sensoren mit großem Reichweiten-Bonus."
+cost_resource = &"energy"
+cost_amount = 18
+tier = 2
+visual_asset = ExtResource("65_scan_t2")
+trait_definition = SubResource("Trait_scan_drone_t2")
+required_tech_id = &"scan_drone_t2"
+build_time = 14.0
+
+[sub_resource type="Resource" id="Part_drone_vision"]
+script = ExtResource("2_part")
+id = &"drone_vision"
+slot_type = &"utility"
+display_name = "Drohnen-Vision"
+module_role = "drone"
+description = "Optisches Schwarm-Netzwerk mit großer Sensorreichweite."
+cost_resource = &"energy"
+cost_amount = 12
+tier = 1
+visual_asset = ExtResource("66_vision")
+trait_definition = SubResource("Trait_drone_vision")
+required_tech_id = &"drone_vision"
+build_time = 12.0
+
+[sub_resource type="Resource" id="Part_drone_booster_t1"]
+script = ExtResource("2_part")
+id = &"drone_booster_t1"
+slot_type = &"utility"
+display_name = "Drohnen-Booster T1"
+module_role = "booster"
+description = "Verstärkt alle montierten Drohnen-Module um 25 %."
+cost_resource = &"rare"
+cost_amount = 14
+tier = 1
+visual_asset = ExtResource("67_booster_t1")
+required_tech_id = &"drone_booster_t1"
+build_time = 10.0
+
+[sub_resource type="Resource" id="Part_drone_booster_t2"]
+script = ExtResource("2_part")
+id = &"drone_booster_t2"
+slot_type = &"utility"
+display_name = "Drohnen-Booster T2"
+module_role = "booster"
+description = "Verstärkt alle montierten Drohnen-Module um 50 %."
+cost_resource = &"rare"
+cost_amount = 24
+tier = 2
+visual_asset = ExtResource("68_booster_t2")
+required_tech_id = &"drone_booster_t2"
+build_time = 14.0
+
 [resource]
 script = ExtResource("1_catalog")
 max_module_slots = 2
 blueprints = [SubResource("Blueprint_standard")]
-parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t1_interceptor"), SubResource("Part_hull_t1_courier"), SubResource("Part_hull_t2"), SubResource("Part_hull_t2_carrier"), SubResource("Part_hull_t2_destroyer"), SubResource("Part_hull_t3"), SubResource("Part_hull_t3_colony"), SubResource("Part_hull_t3_dreadnought"), SubResource("Part_scanner_t1"), SubResource("Part_scanner_t2"), SubResource("Part_drive_t1"), SubResource("Part_drive_t2"), SubResource("Part_weapon_t1"), SubResource("Part_weapon_t2"), SubResource("Part_shield_t1"), SubResource("Part_shield_t2"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo"), SubResource("Part_module_science"), SubResource("Part_module_reactor"), SubResource("Part_module_reinforced"), SubResource("Part_module_sensor_array"), SubResource("Part_module_ecm"), SubResource("Part_module_repair")]
+parts = [SubResource("Part_hull_t1"), SubResource("Part_hull_t1_interceptor"), SubResource("Part_hull_t1_courier"), SubResource("Part_hull_t2"), SubResource("Part_hull_t2_carrier"), SubResource("Part_hull_t2_destroyer"), SubResource("Part_hull_t3"), SubResource("Part_hull_t3_colony"), SubResource("Part_hull_t3_dreadnought"), SubResource("Part_scanner_t1"), SubResource("Part_scanner_t2"), SubResource("Part_drive_t1"), SubResource("Part_drive_t2"), SubResource("Part_weapon_t1"), SubResource("Part_weapon_t2"), SubResource("Part_shield_t1"), SubResource("Part_shield_t2"), SubResource("Part_module_armor"), SubResource("Part_module_fuel"), SubResource("Part_module_cargo"), SubResource("Part_module_science"), SubResource("Part_module_reactor"), SubResource("Part_module_reinforced"), SubResource("Part_module_sensor_array"), SubResource("Part_module_ecm"), SubResource("Part_module_repair"), SubResource("Part_repair_drone_t1"), SubResource("Part_repair_drone_t2"), SubResource("Part_repair_drone_t3"), SubResource("Part_combat_drone_t1"), SubResource("Part_combat_drone_t2"), SubResource("Part_scan_drone_t1"), SubResource("Part_scan_drone_t2"), SubResource("Part_drone_vision"), SubResource("Part_drone_booster_t1"), SubResource("Part_drone_booster_t2")]

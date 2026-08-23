@@ -22,6 +22,12 @@ const CONSTRAINT_REGISTRY: Array[Dictionary] = [
 		"requires_scene": false,
 	},
 	{
+		"id": "module_damage_model",
+		"script": preload("res://scripts/preflight/constraint_module_damage_model.gd"),
+		"desc": "Module influence math, HP distribution, immobility & repair caps",
+		"requires_scene": false,
+	},
+	{
 		"id": "flight_and_dispatch",
 		"script": preload("res://scripts/preflight/constraint_flight_and_dispatch.gd"),
 		"desc": "Flight duration & cluster dispatch",
