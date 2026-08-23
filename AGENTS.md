@@ -8,6 +8,9 @@
 - Full-Suite: `ERROR: user://saves/run_2.tres Parse Error: Expected '['` aus `constraint_save_game_slots` ist erwartetes Rauschen (liest Test-Slots), die Constraint besteht trotzdem.
 - Ad-hoc-`--script`-Harnesse (eigene `.tmp_*.gd`), die `.tres` direkt preloaden, melden irreführend `Parse Error: Cannot assign a value of type Resource to constant … ShipPartCatalog` (game_state.gd) plus `Failed to instantiate an autoload … does not inherit from 'Node'` — Preload-Reihenfolge-Artefakte des Harness-Modus, kein echter Spiel-Defekt; verbindlich sind Smoke-Test + Preflight.
 - Der Headless-Modus nutzt den Dummy-Renderer, daher ist `Window.get_texture()` null; visuelle Screenshots/Captures benötigen den Desktop Compatibility/OpenGL-Renderer, und `Window.size` muss nach Szenen-Initialisierung explizit gesetzt werden.
+- **Achtung:** Die Godot-4.7-Console-Binary (`*_win64_console.exe`) setzt `OS.has_feature("headless")` **nicht** auf `true`, selbst bei `--headless`-Start. Der Dummy-Renderer ist trotzdem aktiv — `Window.get_texture()` liefert ein non-null Texture2D-Objekt mit gültigen Dimensionen, aber dessen interner RID ist null → `get_image()` crasht mit "Parameter t is null". Headless-Erkennung für Captures muss zusätzlich `"--headless" in OS.get_cmdline_args()` prüfen oder einen try/catch um `get_image()` legen.
+- `Image`-Decodierung aus beliebigen Bytes erzeugt Godot-interne ERROR-Traces ("read beyond end of data", "ERR_FILE_CORRUPT") auf stdout, auch wenn der Returnwert korrekt `ERR_PARSE_ERROR` ist. Vor `load_png_from_buffer()`/`load_jpg_from_buffer()` die Magic-Bytes validieren: PNG = `\x89PNG`, JPEG = `\xFF\xD8`. Verhindert Rausch-Logs bei Base64-Validierung.
+- `InputEventKey` benötigt sowohl `keycode` als auch `physical_keycode` — Spiele die auf Scancode-Konstanten (`KEY_W` etc.) prüfen, reagieren sonst nicht auf simulierte Eingaben via `push_input()`. Beide Felder auf denselben Wert setzen.
 - Ein Headless-Editor-Scan kann mit Exit-Code 0 enden, selbst wenn ein `EditorFileServer` Port-6010-Konflikt den Scan-Thread abbricht. Verlässlicher Maßstab sind Preflight + Smoke-Test. Render-Budget-Assertions schätzen CanvasItem-Submissions, nicht GPU-Framezeiten.
 
 ## Preflight-Suite Architektur & Verträge
@@ -69,7 +72,20 @@
   - Wird aktiviert, wenn `WorldConfig.chunk_size > 0`. Beide Shipped-Szenarien sind bereits unendlich: `world_default.tres` (`chunk_size = 3`), `world_wide.tres` (`chunk_size = 4`); `chunk_size = 0` wäre der endliche Pfad.
   - Verwaltet durch `ChunkCoordinator` (Lazy-Generierung, Cache, sicheres Cycling) und getestet in Constraint `chunk_expansion`.
   - `SeededLayout.set_layout_seed()` ist im unendlichen Pfad kein billiger Setter, sondern ein Voll-Reset: ruft `GameState.reset_for_infinite_world()` + `reset_for_layout_seed` (leert Chunk-Cache) und deferred `_refresh_chunks` — regeneriert die ganze Chunk-Welt. `constraint_resources_and_seed` ruft das zweimal auf (Seed ±1, dann zurück) und ist deshalb der langsamste Szenen-Constraint (~9–10 s).
-- **EventLog:** Autoload `/root/EventLog`. `push()` sendet sichtbare Toasts an das `MessageFeed`, `log_silent()` protokolliert geräuschlos. Export nach `user://player.log` erfolgt erst bei Anwendungsbeendigung (`NOTIFICATION_WM_CLOSE_REQUEST`).
+- **EventLog:** `EventLog` sendet sichtbare Toasts an das `MessageFeed`, `log_silent()` protokolliert geräuschlos. Export nach `user://player.log` erst bei Anwendungsbeendigung.
+
+## MCP-Addon (Remote-Testing, Scope)
+- **Physikalische Ordnerstruktur:** `addons/gdscript_mcp/` ist nach Rollen gruppiert: `runtime/` (core/Registry, host/Server+Autoload, lifecycle/, protocol/, context/, tools/{runtime,vision,debug,ux,e2e}), `client/` (Python/Node: mcp_client, remote_playout, mcp_stresstest), `editor/` (Plugin+Dock), `testing/` (mcp_test_runner + Szenarien + `e2e/mcp_playthrough_driver.gd`). Neue Dateien dort einordnen, `.uid`-Sidecars mitcommitten.
+- **Eigener Lifecycle:** `GdscriptMcpServer` + `McpRuntime`-Autoload laufen mit `PROCESS_MODE_ALWAYS` — Transport-Polling, Async-Queue und UX-Watch ticken auch bei `get_tree().paused = true` (Pause-Menü) weiter. `runtime_mcp_status` (Host-Tool, immer verfügbar) zeigt state/uptime/latency/watch/context.
+- **Scope: Remote-Testing des laufenden Spiels.** Alle `runtime_*`-Tools ändern nie Editor-Projektdateien.
+- **Sichtbarkeit:** E2E-Playthroughs laufen im echten Spiel (full renderer, windowed): `$GODOT_BIN --path . --script res://addons/gdscript_mcp/testing/e2e/mcp_playthrough_driver.gd [--mcp-e2e=<scenario>|--mcp-e2e-list]` — setzt die exact gleichen Tool-Calls ein wie ein externer Agent; `runtime_e2e_run` (async, über TCP/stdio gleiche Szenen).
+- **Klicks:** `runtime_click` sendet Motion (1 Frame vorher) + Press + Release über `Viewport.push_input` (default `inject_mode=push`, Viewport-Koordinaten) bzw. `Input.parse_input_event` (`parse`-Mode, Screen-Transform für skalierte Viewports). Release wird um `hold_frames` verzögert; KEIN Windows-API-Click, funktioniert unfokussiert.
+- **Bilder:** MCP-Image-Content (Standard: `{type:"image",data,mimeType}`) + lokaler Kontext-Pfad (`user://mcp_context`, TTL 45s, max 6). Externe Worker (Python, Node) lesen **lokal von Disk** (`vision_worker.py`), kein Base64-Roundtrip nötig.
+- **Screenshots:** Nach dem Konsum löschen/ablaufen (TTL, `runtime_context_release`, `runtime_context_cleanup`); Server räumt beim Lifecycle-Tick selbst auf.
+- **Watch-Clock:** `runtime_ux_watch_start` ist ereignisgesteuert (Signatur-Delta der sichtbaren Controls) — keine Continuous-Full-Analyse, minimaler Overhead.
+- **Playability-Tests:** `McpE2E`-Szenarien sammeln `anomalies[]` aus EventLog (Fehler/Warnungen) — Auffälligkeiten werden während des Laufs lokalisiert. Szenarien triggern echte Spielmechaniken (z.B. `research_start`: FORSCHUNG → FORSCHEN → `GameState.research_technology`) und persistieren erfolgreiche Läufe in der Playthrough-Archiv-DB (`user://mcp_playthrough/`, JSONL + Frame-PNGs + `.tres`-Presets).
+- **Playthrough-Archiv (`runtime/context/mcp_playthrough_archive.gd`):** lokale Erfolgs-/Kontextspeicherung für autonomes Weiterspielen über Sessions. Jede erfolgreiche Aktion (explizit via `runtime_playthrough_success` oder automatisch nach E2E-Szenario-PASS) wird mit Snapshot-Bild und `GameState.snapshot_run()`-Preset (`.tres`) abgelegt; `runtime_playthrough_search/latest/stats/frames` lesen sie aus, `runtime_playthrough_preset_load` stellt reproduzierbare Situationen via `restore_run()` wieder her (World reconnect beim nächsten Boot). Alle Daten lokal unter `user://mcp_playthrough/`.
+- **Fallstricke:** Headless-Dummy-Renderer liefert keine echten Screenshots (`get_image()` crasht bei null RID); `runtime_wait_ms` nutzt Pause-ignorante Engine-Timer; Klick-Positionen bei skalierten Viewports rechnen über die Screen-Transform.
 
 ## Atomare Commit-Gruppen (Change Together)
 - **Transit & Dispatch:** `flight_time.gd`, `dispatch.gd`, Transit-/Tier-Configs, `planet_network.gd`, `planet_network_ui.gd`, `ui_theme_config.gd`, `worker_cluster.*`, `worker_manager.gd`, `planet.gd`, `game_state.gd`, `preflight.gd`.
@@ -104,6 +120,12 @@
 - GDScript kennt kein `sqrtf`/`powf` (C-Namen); Fließkomma-Mathe nutzt `sqrt()`/`pow()` — `sqrtf` erzeugt einen Lookup-/Parse-Fehler.
 - Prozedural generierte Texture-Maps: `Image.create()` + `Image.set_pixel()` + `ImageTexture.create_from_image()` funktionieren zum Erzeugen von Selektionsringen, Markern etc. ohne externe Asset-Dateien.
 - `get_tree()` ist null bevor ein Node via `add_child()` in den Baum gehängt wurde. `setup()`/`_init()`-Methoden, die `get_tree().root` abfragen, müssen **nach** `add_child()` laufen — bei CanvasLayer-Wrappern also erst `layer.add_child(node)`, dann `node.setup()`.
+- GDScript `class_name` als Funktionsparameter bricht den Parser: `func get_class_info(class_name: String)` erzeugt in Godot 4.7 `Parse Error: Expected parameter name.` — den Parameter umbenennen (z.B. `cls_name`).
+- GDScript-Schlüsselwörter als Parameternamen: `class_name` ist belegt, `method`/`signal`/`enum`/`tool`/`static` vermutlich ebenfalls — vorsorglich descriptive Namen wählen.
+- `is_instance_valid()` ist in Godot 4.7 nicht zuverlässig bei soeben via `free()` gelöschten Nodes: `v.get_class()` auf einem gefreeden Node crasht selbst wenn `is_instance_valid(v)` noch `true` returniert. Serialisierer/Reflektoren dürfen auf Object-Methoden im Fallback-Pfad niemals blind aufrufen.
+- `StreamPeerTCP.get_data(int)` gibt `Array` zurück, nicht `PackedByteArray`: Element 0 = Error-Code, Element 1 = Daten. Direktes `.get_string_from_utf8()` auf den Returnwert erzeugt `Parse Error: Function "get_string_from_utf8()" not found in base Array`.
+- `RefCounted`-Objekte haben kein `get_node_or_null()` — es gibt keinen impliziten Scene-Tree-Zugriff. Stattdessen `Engine.get_main_loop()` → `(SceneTree).root.get_node_or_null()`. Im Editor-Modus `EditorInterface.get_edited_scene_root()` verwenden.
+- `SceneTree`-Ad-hoc-Testskripte (`extends SceneTree`) müssen `_process(float) -> bool` implementieren, nicht `-> void`. Godot 4.7 ist strikt: falsche Signatur erzeugt `Parse Error: The function signature doesn't match the parent.`
 
 ## Git-Hooks & Commit-Workflow
 - `core.hooksPath` ist auf `.githooks` konfiguriert (aktiv und verbindlich):
@@ -118,3 +140,29 @@
   2. Nur relevante geänderte Dateien stagen via `git add <dateien>` (niemals `git add -A` oder `git add .`).
   3. `git commit` mit Datei-Begründungszeilen ausführen (`- datei: Begründung.`).
   4. Bei Preflight-Fehlern: Ursache beheben, korrigierte Dateien stagen und Commit wiederholen.
+
+## ConceptIndex — Code-Suche & Wartung
+Der `ConceptIndex` (`scripts/concept_index.gd`) ist das zentrale Suchwerkzeug für Agenten und Entwickler, um Klassen, Methoden und Domänen im Codebase zu finden — **Ersatz für `grep`/`rg`**.
+
+### Nutzung (Headless, per Preflight)
+```bash
+# Alle Konzepte auflisten
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd --filter=concept_index -v
+
+# Im Code: ConceptIndex.new().search("fleet") → Array[ConceptEntry]
+# Im Code: ConceptIndex.new().expand("economy") → alle Economy-Konzepte
+# Im Code: ConceptIndex.new().class_concept("ShipManager") → ConceptEntry
+# Im Code: ConceptIndex.new().by_domain("ships") → Array[ConceptEntry]
+```
+
+### Wartung (bei neuen `class_name`-Skripten)
+1. **Neue Klasse hinzufügen:** In `_build_concepts()` im passenden Konzept unter `class_names` eintragen
+2. **Datei-Mapping ist automatisch:** `_collect_class_files()` scannt `res://scripts` nach `class_name` — neue Skripte werden beim nächsten Preflight-Lauf erkannt
+3. **Synonyme pflegen:** Für deutsche/englische Suchbegriffe im `synonyms`-Array ergänzen
+4. **Preflight prüft:** `constraint_concept_index.gd` validiert:
+   - Alle entdeckten Klassen sind gemappt (Warning wenn nicht)
+   - Keine stale References (Klassen im Index, die es nicht mehr gibt → **FAIL**)
+   - `search()`/`expand()` liefern Ergebnisse für Kern-Domänen
+
+### Atomare Commit-Gruppe (Change Together)
+- **ConceptIndex & Suche:** `scripts/concept_index.gd`, `scripts/preflight/constraint_concept_index.gd`, `scripts/testing/mechanic_registry.gd`, `scripts/testing/scenario_loader.gd`, `scripts/testing/scenario_snapshot.gd`, `preflight.gd`.

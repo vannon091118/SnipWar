@@ -19,7 +19,7 @@ STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 34 PREFLIGHT-CONSTRAINTS · 0 SICH
 
 [![Engine: Godot 4.7](https://img.shields.io/badge/Engine-Godot%204.7-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/)
 [![Status: Frontier-Kern](https://img.shields.io/badge/Status-Frontier--Kern%20aktiv-f0b429?style=for-the-badge)](#-lagezentrum--frontbericht)
-[![Preflight](https://img.shields.io/badge/Preflight-34%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
+[![Preflight](https://img.shields.io/badge/Preflight-36%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
 [![Sprache: GDScript](https://img.shields.io/badge/GDScript-4.7-blue?style=for-the-badge)](#-architektur--vom-katalog-zum-spielstand)
 [![Treibstoff](https://img.shields.io/badge/Fuel-Koffein%20%26%20Größenwahn-6f4e37?style=for-the-badge)](#)
 
@@ -93,7 +93,7 @@ cd snip-war
 # Smoke-Test: Bootet die Hauptszene, wartet 2 Sekunden, beendet sich
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Vollständige Preflight-Suite (34 Constraints)
+# Vollständige Preflight-Suite (36 Constraints)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
@@ -527,12 +527,12 @@ Die Preflight-Suite (`scripts/preflight.gd`) ist der einzige autoritative Verifi
 # Smoke-Test: Hauptszene bootet durch
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Alle 34 Constraints
+# Alle 36 Constraints
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
 <details>
-<summary>📋 <b>Die 34 Preflight-Constraints</b></summary>
+<summary>📋 <b>Die 36 Preflight-Constraints</b></summary>
 
 | # | Constraint | Prüft |
 |:---:|:---|:---|
@@ -568,7 +568,9 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 | 30 | `main_menu_and_flow` | Hauptmenü, SceneDirector-Registry & Continue-Gating |
 | 31 | `context_handover` | World→Battle→World-Szenenwechsel über den SceneDirector |
 | 32 | `save_game_roundtrip` | Verlustfreier Save/Load-Roundtrip eines mutierten Runs |
-| 33 | `save_game_slots` | Save-Slot-Write/Read/Overwrite/Corruption/Delete |
+|| 33 | `save_game_slots` | Save-Slot-Write/Read/Overwrite/Corruption/Delete |
+|| 34 | `mechanic_coverage` | Mechanic-Entdeckung, Test-Modell-Integrität & Szenario-Validierung |
+|| 35 | `concept_index` | Konzept-Index-Abdeckung, Klassen-Mapping & Fuzzy-Search |
 
 </details>
 
