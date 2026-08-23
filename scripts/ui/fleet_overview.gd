@@ -271,7 +271,7 @@ func _ship_label(ship: ShipBase) -> String:
 
 func _planet_label(planet: Node2D) -> String:
 	if _state == null:
-		_state = get_tree().root.get_node_or_null("GameState")
+		_state = GameStateAccess.autoload(self)
 	var state: Node = _state
 	var planet_id: StringName = planet.get("planet_id") if planet.get("planet_id") != null else &""
 	var faction_id: StringName = GameState.FACTION_NEUTRAL

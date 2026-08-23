@@ -90,7 +90,7 @@ signal clear_selection_requested()
 signal economy_overview_requested()
 
 func _connect_game_state_signals() -> void:
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	if state == null:
 		return
 	if not state.faction_resources_changed.is_connected(_on_faction_resources_changed):
@@ -121,7 +121,7 @@ func _on_transport_changed(_transport_id: StringName, _phase: StringName) -> voi
 	_refresh_vault()
 
 func _on_resource_generated(planet_id: StringName, resource_id: StringName, amount: int) -> void:
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	if state == null or state.faction_of(planet_id) != GameState.FACTION_PLAYER:
 		return
 	_queue_income(resource_id, amount)
@@ -162,7 +162,7 @@ func _on_economy_requested() -> void:
 func _refresh_vault() -> void:
 	if _vault_bar == null:
 		return
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	_vault_bar.refresh(state)
 
 # --- delegated panel API (kept identical for PlanetNetwork and preflight) ---
@@ -375,7 +375,7 @@ func _build_tooltip() -> void:
 	_tooltip_panel.add_child(_tooltip_label)
 
 func _is_planet_known(planet: Node2D) -> bool:
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	if state == null:
 		return true
 	return state.is_known(planet.get("planet_id"), GameState.FACTION_PLAYER)

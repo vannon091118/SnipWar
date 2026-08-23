@@ -226,7 +226,7 @@ func _assign_size_classes(items: Array[Planet], rng: RandomNumberGenerator, conf
 func _seed_initial_workers(items: Array[Planet]) -> void:
 	if Engine.is_editor_hint() or not is_inside_tree():
 		return
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	if state == null:
 		return
 	for item in items:
@@ -344,7 +344,7 @@ func _setup_chunk_coordinator() -> void:
 		world_config.layout_seed if world_config != null else 0
 	)
 	add_child(_chunk_coordinator)
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	if state != null and not state.faction_changed.is_connected(_chunk_coordinator._on_faction_changed):
 		state.faction_changed.connect(_chunk_coordinator._on_faction_changed)
 

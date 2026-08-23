@@ -132,7 +132,7 @@ func _setup_missions() -> void:
 	_mission_option.select(0)
 
 func _connect_game_state_signals() -> void:
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	if state == null:
 		return
 	if not state.faction_resources_changed.is_connected(_on_faction_resources_changed):
@@ -264,7 +264,7 @@ func set_destinations(destinations: Array[Node2D], default_destination: Node2D) 
 	_destination_option.disabled = destinations.is_empty()
 	if _route_legend_label != null:
 		_route_legend_label.visible = not destinations.is_empty()
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	var idx := 0
 	for destination in destinations:
 		var d_name: String = UIBaseUtils.planet_display_name(destination)
@@ -286,7 +286,7 @@ func show_planet(planet: Node2D, destinations: Array[Node2D], default_destinatio
 	_ensure_node_references()
 	_current_active_planet = planet
 
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	var planet_id: StringName = planet.get("planet_id") if planet.get("planet_id") != null else &""
 	var is_known: bool = state != null and state.is_known(planet_id, GameState.FACTION_PLAYER)
 
@@ -335,7 +335,7 @@ func _refresh_upgrade_list(planet: Node2D) -> void:
 		_upgrade_list.remove_child(child)
 		child.queue_free()
 
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	if state == null or _upgrade_catalog == null or not is_instance_valid(planet):
 		return
 
@@ -438,7 +438,7 @@ func _create_upgrade_row(planet_id: StringName, upgrade: PlanetUpgradeDefinition
 func _upgrade_cost_text(upgrade: PlanetUpgradeDefinition, is_unlocked: bool, planet_id: StringName = &"") -> String:
 	if is_unlocked:
 		return "FREIGESCHALTET"
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	var resource_amount: int = state.get_faction_resource(GameState.FACTION_PLAYER, upgrade.cost_resource) if state != null else 0
 	var credit_amount: int = state.get_faction_credits(GameState.FACTION_PLAYER) if state != null else 0
 	var result: String = "%d/%d %s" % [resource_amount, upgrade.cost_amount, UIBaseUtils.resource_display_name(upgrade.cost_resource)]
@@ -472,7 +472,7 @@ func _upgrade_trait_text(upgrade: PlanetUpgradeDefinition) -> String:
 	return " · ".join(traits)
 
 func _on_buy_upgrade_pressed(planet_id: StringName, upgrade_id: StringName) -> void:
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	if state == null or not is_instance_valid(_current_active_planet):
 		return
 	var upgrade: PlanetUpgradeDefinition = _upgrade_catalog.resolve(upgrade_id)
@@ -504,7 +504,7 @@ func _refresh_local_resources(planet_id: StringName) -> void:
 	_ensure_local_resources_label()
 	if _local_resources_label == null:
 		return
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	if state == null or not state.has_method("get_local_resources"):
 		_local_resources_label.text = ""
 		return
@@ -578,7 +578,7 @@ func _rebuild_selection_overview(selection: Array) -> void:
 	var player_hits: int = 0
 	var cpu_hits: int = 0
 	var neutral_hits: int = 0
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	for planet in selection:
 		if planet == null or not is_instance_valid(planet):
 			continue

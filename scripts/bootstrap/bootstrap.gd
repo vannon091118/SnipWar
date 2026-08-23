@@ -6,7 +6,7 @@ func _ready() -> void:
 		return
 	var scenario: ScenarioDefinition = background.get("active_scenario") as ScenarioDefinition
 	var final_seed: int = background.get("active_layout_seed")
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	var deal_catalog: PlanetCatalog = background.get("active_catalog") as PlanetCatalog
 	if state != null and deal_catalog != null and scenario != null and scenario.map_definition != null:
 		var field: Node = background.get_node_or_null("PlanetField")

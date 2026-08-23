@@ -381,7 +381,7 @@ func _process(delta: float) -> void:
 		advance_builds(delta)
 		economy_domain.advance_upgrade_builds(delta)
 		economy_domain.advance_building_jobs(delta)
-		ship_domain.advance_research_ship_tasks(delta)
+		advance_research_ship_tasks(delta)
 
 # --- FACTION & OWNERSHIP DELEGATES ---
 func set_faction(planet_id: StringName, faction: StringName) -> void:

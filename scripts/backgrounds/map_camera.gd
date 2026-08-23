@@ -267,7 +267,7 @@ func planet_at_screen(screen_position: Vector2) -> Node2D:
 
 ## Moves the camera instantly to the player's homeworld planet.
 func _center_on_homeworld() -> void:
-	var state: Node = get_tree().root.get_node_or_null("GameState")
+	var state: Node = GameStateAccess.autoload(self)
 	if state == null:
 		return
 	var homeworld_id: StringName = state.homeworld_for(GameState.FACTION_PLAYER)

@@ -10,6 +10,8 @@ var _max_results: int
 var _context_lines: int
 var _regex_mode: bool = false
 var _freq_mode: bool = false
+var _defs_mode: bool = false
+var _definition_sources: Array[Dictionary] = []
 
 func constraint_name() -> String:
 	return "global_search"
@@ -61,7 +63,16 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(first_freq.has("count"), "Global Search frequency entries have count"):
 		return false
 
-	# Test 7: Regex mode (--regex)
+	# Test 7: Definitions mode (--defs) scans all GDScript sources.
+	var results_defs = _run_search_defs("assemble_ship")
+	if not ctx.check(results_defs.has("definitions"), "Global Search --defs returns definitions data"):
+		return false
+	if not ctx.check(results_defs.definitions.has("total_definitions"), "Global Search --defs reports total definitions"):
+		return false
+	if not ctx.check(results_defs.has("definition_files_scanned") and results_defs.definition_files_scanned > 0, "Global Search --defs scans GDScript sources"):
+		return false
+
+	# Test 8: Regex mode (--regex)
 	var results_regex = _run_search_regex("func")
 	if not ctx.check(results_regex.has("results"), "Global Search --regex returns results"):
 		return false
@@ -73,10 +84,10 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 
 	if ctx.verbose:
-		print("Global Search: basic=%d hits, gd-only=%d hits, freq=%d unique, regex=%d hits, LOC=%d, duration=%dms" % [
+		print("Global Search: basic=%d hits, gd-only=%d hits, freq=%d unique, defs=%d, regex=%d hits, LOC=%d, duration=%dms" % [
 			results_basic.total_hits, results_type.total_hits,
-			results_freq.frequency.size(), results_regex.total_hits,
-			results_basic.total_line_count, results_basic.duration_ms
+			results_freq.frequency.size(), results_defs.definitions.total_definitions,
+			results_regex.total_hits, results_basic.total_line_count, results_basic.duration_ms
 		])
 
 	return true
@@ -97,6 +108,7 @@ func _run_search(query: String, types: Array[String] = [], exclude: Array[String
 	_context_lines = 2
 	_regex_mode = false
 	_freq_mode = false
+	_defs_mode = false
 
 	return _search_all()
 
@@ -111,6 +123,18 @@ func _run_search_freq(query: String) -> Dictionary:
 
 	return _search_all()
 
+func _run_search_defs(query: String) -> Dictionary:
+	_query = query.to_lower()
+	_extensions = ["gd"]
+	_exclude_dirs = [".godot", ".git", ".import", "build", "dist", "node_modules"]
+	_max_results = 50
+	_context_lines = 0
+	_regex_mode = false
+	_freq_mode = false
+	_defs_mode = true
+
+	return _search_all()
+
 func _run_search_regex(query: String) -> Dictionary:
 	_query = query  # Keep original case for regex
 	_extensions = ["gd", "tres", "tscn", "json", "md"]
@@ -119,11 +143,13 @@ func _run_search_regex(query: String) -> Dictionary:
 	_context_lines = 2
 	_regex_mode = true
 	_freq_mode = false
+	_defs_mode = false
 
 	return _search_all()
 
 func _search_all() -> Dictionary:
 	var hits: Array[Dictionary] = []
+	_definition_sources.clear()
 	var total_files_scanned: int = 0
 	var total_line_count: int = 0
 	var start_time: float = Time.get_ticks_msec() / 1000.0
@@ -151,6 +177,9 @@ func _search_all() -> Dictionary:
 
 	if _freq_mode:
 		result_dict["frequency"] = _aggregate_frequency(hits)
+	if _defs_mode:
+		result_dict["definitions"] = _analyze_definitions()
+		result_dict["definition_files_scanned"] = _definition_sources.size()
 
 	return result_dict
 
@@ -193,6 +222,8 @@ func _scan_file(path: String, ext: String, hits: Array) -> int:
 	while not file.eof_reached():
 		lines.append(file.get_line())
 	file.close()
+	if _defs_mode and ext == "gd":
+		_definition_sources.append({"file": path, "lines": lines})
 
 	var matches: Array[Dictionary] = []
 	for i in range(lines.size()):
@@ -238,6 +269,55 @@ func _is_binary_file(path: String, ext: String) -> bool:
 			return true
 
 	return false
+
+func _analyze_definitions() -> Dictionary:
+	var definitions: Array[Dictionary] = []
+	var definition_regex := RegEx.new()
+	definition_regex.compile("^\\s*(?:static\\s+)?func\\s+(_?[a-zA-Z0-9_]+)")
+	for source in _definition_sources:
+		var lines: Array[String] = source.lines
+		for line_index in range(lines.size()):
+			var match: RegExMatch = definition_regex.search(lines[line_index])
+			if match == null:
+				continue
+			var name: String = match.get_string(1)
+			if _query == "func" or _query in name.to_lower() or _query in lines[line_index].to_lower():
+				definitions.append({"name": name, "file": source.file, "line": line_index + 1})
+
+	var call_counts: Dictionary = {}
+	var call_names: Dictionary = {}
+	for definition in definitions:
+		call_names[definition.name] = true
+	var call_regex := RegEx.new()
+	call_regex.compile("(^|[^A-Za-z0-9_])(_?[a-zA-Z0-9_]+)\\s*\\(")
+	for source in _definition_sources:
+		var lines: Array[String] = source.lines
+		for line in lines:
+			if definition_regex.search(line) != null:
+				continue
+			for call_match in call_regex.search_all(line):
+				var called_name: String = call_match.get_string(2)
+				if call_names.has(called_name):
+					call_counts[called_name] = call_counts.get(called_name, 0) + 1
+
+	var dead: Array[Dictionary] = []
+	var live: Array[Dictionary] = []
+	for definition in definitions:
+		var entry := {
+			"name": definition.name,
+			"file": definition.file,
+			"line": definition.line,
+			"call_sites": call_counts.get(definition.name, 0)
+		}
+		if entry.call_sites == 0:
+			dead.append(entry)
+		else:
+			live.append(entry)
+	return {
+		"total_definitions": definitions.size(),
+		"dead_code_candidates": dead,
+		"live_functions": live
+	}
 
 func _aggregate_frequency(hits: Array) -> Array[Dictionary]:
 	var freq: Dictionary = {}

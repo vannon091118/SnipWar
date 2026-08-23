@@ -35,6 +35,7 @@ var _json_output: bool = true
 var _freq_mode: bool = false  ## --freq: frequency aggregation
 var _defs_mode: bool = false  ## --defs: function definition vs. call-site analysis
 var _regex_mode: bool = false  ## --regex: regex matching with capture groups
+var _definition_sources: Array[Dictionary] = []  ## all scanned GDScript sources for --defs
 
 func _init() -> void:
 	_parse_args()
@@ -116,6 +117,7 @@ func _parse_args() -> void:
 
 func _search_all() -> Dictionary:
 	var hits: Array[Dictionary] = []
+	_definition_sources.clear()
 	var total_files_scanned: int = 0
 	var total_line_count: int = 0
 	var start_time: float = Time.get_ticks_msec() / 1000.0
@@ -148,7 +150,8 @@ func _search_all() -> Dictionary:
 
 	# Definitions analysis (--defs)
 	if _defs_mode:
-		result_dict["definitions"] = _analyze_definitions(hits)
+		result_dict["definitions"] = _analyze_definitions()
+		result_dict["definition_files_scanned"] = _definition_sources.size()
 
 	return result_dict
 
@@ -199,6 +202,8 @@ func _scan_file(path: String, ext: String, hits: Array) -> int:
 		lines.append(file.get_line())
 	file.close()
 
+	if _defs_mode and ext == "gd":
+		_definition_sources.append({"file": path, "lines": lines})
 
 	var matches: Array[Dictionary] = []
 	for i in range(lines.size()):
@@ -329,6 +334,9 @@ func _scan_file_regex(path: String, ext: String, hits: Array) -> int:
 		lines.append(file.get_line())
 	file.close()
 
+	if _defs_mode and ext == "gd":
+		_definition_sources.append({"file": path, "lines": lines})
+
 	# Compile regex from query
 	var regex: RegEx = RegEx.new()
 	var err: Error = regex.compile(_query)
@@ -420,65 +428,56 @@ func _aggregate_frequency(hits: Array) -> Array[Dictionary]:
 		result.append({"line": key, "count": freq[key]})
 	return result
 
-## Function definition analysis: find func definitions and count call sites.
-func _analyze_definitions(hits: Array) -> Dictionary:
-	var func_defs: Array[Dictionary] = []  ## [{name, file, line}]
-
-	# Step 1: Extract func definitions from .gd hits
+## Function definition analysis: scan all loaded GDScript sources, then count
+## syntactic call sites for the selected definitions. Query filtering happens
+## after source collection so a query cannot hide callers in other files.
+func _analyze_definitions() -> Dictionary:
+	var all_defs: Array[Dictionary] = []  ## [{name, file, line}]
 	var regex_def: RegEx = RegEx.new()
 	regex_def.compile("^\\s*(?:static\\s+)?func\\s+(_?[a-zA-Z0-9_]+)")
-	for hit in hits:
-		if hit.type != "gd":
-			continue
-		for match in hit.matches:
-			var text: String = ""
-			if match.has("matched_text"):
-				text = match.matched_text
-			elif match.has("context"):
-				for ctx in match.context:
-					if ctx.is_match:
-						text = ctx.content
-						break
-			var def_result: RegExMatch = regex_def.search(text)
-			if def_result != null:
-				func_defs.append({
-					"name": def_result.get_string(1),
-					"file": hit.file,
-					"line": match.match_line
+
+	for source in _definition_sources:
+		var lines: Array[String] = source.lines
+		for line_index in range(lines.size()):
+			var def_result: RegExMatch = regex_def.search(lines[line_index])
+			if def_result == null:
+				continue
+			var name: String = def_result.get_string(1)
+			if _definition_matches_query(name, lines[line_index]):
+				all_defs.append({
+					"name": name,
+					"file": source.file,
+					"line": line_index + 1
 				})
 
-	# Step 2: Count call sites per function name across ALL hits
-	var call_counts: Dictionary = {}  ## func_name -> count of non-definition lines
-	for hit in hits:
-		if hit.type != "gd":
-			continue
-		for match in hit.matches:
-			var text: String = ""
-			if match.has("matched_text"):
-				text = match.matched_text
-			elif match.has("context"):
-				for ctx in match.context:
-					if ctx.is_match:
-						text = ctx.content
-						break
-			# Skip definition lines themselves
-			var def_check: RegExMatch = regex_def.search(text)
-			if def_check != null:
+	var call_counts: Dictionary = {}
+	var call_names: Dictionary = {}
+	for definition in all_defs:
+		call_names[definition.name] = true
+
+	# Index call-shaped identifiers once per line instead of rescanning every
+	# line once for every definition. This keeps --defs linear in repository LOC.
+	var call_regex: RegEx = RegEx.new()
+	call_regex.compile("(^|[^A-Za-z0-9_])(_?[a-zA-Z0-9_]+)\\s*\\(")
+	for source in _definition_sources:
+		var lines: Array[String] = source.lines
+		for line_index in range(lines.size()):
+			var line: String = lines[line_index]
+			if regex_def.search(line) != null:
 				continue
-			# Count each func name that appears as a call
-			for fd in func_defs:
-				var fname: String = fd.name
-				if fname in text:
-					call_counts[fname] = call_counts.get(fname, 0) + 1
+			for call_match in call_regex.search_all(line):
+				var called_name: String = call_match.get_string(2)
+				if call_names.has(called_name):
+					call_counts[called_name] = call_counts.get(called_name, 0) + 1
 
 	var dead_candidates: Array[Dictionary] = []
 	var live_funcs: Array[Dictionary] = []
-	for fd in func_defs:
-		var calls: int = call_counts.get(fd.name, 0)
+	for definition in all_defs:
+		var calls: int = call_counts.get(definition.name, 0)
 		var entry: Dictionary = {
-			"name": fd.name,
-			"file": fd.file,
-			"line": fd.line,
+			"name": definition.name,
+			"file": definition.file,
+			"line": definition.line,
 			"call_sites": calls
 		}
 		if calls == 0:
@@ -487,10 +486,18 @@ func _analyze_definitions(hits: Array) -> Dictionary:
 			live_funcs.append(entry)
 
 	return {
-		"total_definitions": func_defs.size(),
+		"total_definitions": all_defs.size(),
 		"dead_code_candidates": dead_candidates,
 		"live_functions": live_funcs
 	}
+
+func _definition_matches_query(name: String, definition_line: String) -> bool:
+	if _query_alternatives.is_empty():
+		return true
+	for alternative in _query_alternatives:
+		if alternative == "func" or alternative in name.to_lower() or alternative in definition_line.to_lower():
+			return true
+	return false
 
 func _print_freq(results: Dictionary) -> void:
 	var label: String = results.query

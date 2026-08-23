@@ -45,7 +45,7 @@ func toggle() -> void:
 func open() -> void:
 	if _visible:
 		return
-	_state = get_tree().root.get_node_or_null("GameState")
+	_state = GameStateAccess.autoload(self)
 	_economy_manager = _find_economy_manager()
 	_build_content()
 	_bind_signals()
@@ -167,7 +167,7 @@ func refresh() -> void:
 	"""Re-read GameState and rebuild the content tree."""
 	if not _visible or not _content_built:
 		return
-	_state = get_tree().root.get_node_or_null("GameState")
+	_state = GameStateAccess.autoload(self)
 	_economy_manager = _find_economy_manager()
 	_build_content()
 
