@@ -23,6 +23,9 @@ var _touches: Dictionary = {}
 var _pinch_distance: float = 0.0
 var _pinch_zoom_start: float = 1.0
 var _input_blocked := false
+var _home_tween: Tween
+var _home_center_done := false
+var _home_center_retries := 0
 
 func _ready() -> void:
 	var background: Node = get_parent()
@@ -33,6 +36,14 @@ func _ready() -> void:
 	position = _map_bounds.get_center()
 	zoom = Vector2.ONE
 	_sync_infinite_world()
+	# On world start the camera should glide to the player's homeworld at a
+	# zoom that frames the first few neighbours — not sit on empty space.
+	if _planet_field != null and _planet_field.has_signal("layout_completed") and not _planet_field.layout_completed.is_connected(_try_home_center):
+		_planet_field.layout_completed.connect(_try_home_center)
+	var coordinator: ChunkCoordinator = _planet_field.get_chunk_coordinator() if _planet_field != null else null
+	if coordinator != null and coordinator.has_signal("planet_added") and not coordinator.planet_added.is_connected(_try_home_center):
+		coordinator.planet_added.connect(_try_home_center)
+	_try_home_center()
 
 func _read_world_bounds() -> void:
 	# In infinite world mode, query the field-owned ChunkCoordinator for active bounds.
@@ -267,18 +278,79 @@ func planet_at_screen(screen_position: Vector2) -> Node2D:
 
 ## Moves the camera instantly to the player's homeworld planet.
 func _center_on_homeworld() -> void:
+	var target := _homeworld_node()
+	if target == null:
+		return
+	position = target.global_position
+	_sync_infinite_world()
+
+func _homeworld_node() -> Node2D:
 	var state: Node = GameStateAccess.autoload(self)
 	if state == null:
-		return
+		return null
 	var homeworld_id: StringName = state.homeworld_for(GameState.FACTION_PLAYER)
 	if String(homeworld_id).is_empty():
-		return
+		return null
 	for planet in get_tree().get_nodes_in_group("planets"):
-		var planet_node: Planet = planet as Planet
-		if planet_node != null and planet_node.planet_id == homeworld_id:
-			position = planet_node.global_position
-			_sync_infinite_world()
-			return
+		var planet_node: Node2D = planet as Node2D
+		if planet_node != null and planet_node.get("planet_id") == homeworld_id:
+			return planet_node
+	return null
+
+## Glides the camera to the player's homeworld (1.5s ease) and picks a zoom
+## where the homeworld plus its nearest neighbours are visible.
+func center_on_homeworld_animated(duration: float = 1.5) -> void:
+	var target := _homeworld_node()
+	if target == null:
+		return
+	var target_zoom := _zoom_for_framing(target.global_position, 5)
+	if _home_tween != null and _home_tween.is_valid():
+		_home_tween.kill()
+	_home_tween = create_tween().set_parallel(true)
+	_home_tween.tween_property(self, "position", target.global_position, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	_home_tween.tween_property(self, "zoom", Vector2(target_zoom, target_zoom), duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	_home_tween.chain().tween_callback(_sync_infinite_world)
+
+
+## Computes a zoom factor that frames `center` plus its `count` nearest
+## neighbours in the current viewport (clamped to min_zoom/max_zoom).
+func _zoom_for_framing(center: Vector2, count: int = 5) -> float:
+	var planets := get_tree().get_nodes_in_group("planets")
+	var distances: Array[Dictionary] = []
+	for planet in planets:
+		var p: Node2D = planet as Node2D
+		if p == null:
+			continue
+		distances.append({"d": p.global_position.distance_to(center), "p": p})
+	distances.sort_custom(func(a, b): return float(a.get("d")) < float(b.get("d")))
+	var max_distance: float = 0.0
+	for index in mini(count, distances.size()):
+		max_distance = maxf(max_distance, float(distances[index].get("d")))
+	var viewport_size := get_viewport().get_visible_rect().size
+	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0 or max_distance <= 0.0:
+		return max_zoom
+	# Visible world span at zoom Z is viewport/Z; require 2*max_distance to fit.
+	var target_zoom := minf(viewport_size.x, viewport_size.y) * 0.85 / (max_distance * 2.0)
+	return clampf(target_zoom, min_zoom, max_zoom)
+
+## Deferred entry point (may also be invoked by layout_completed/planet_added
+## signals): waits (with a frame budget) until the homeworld planet node
+## exists, then runs the smooth centering once per run. Headless runs
+## (preflight/E2E) keep the map-center framing so fixtures stay deterministic.
+func _try_home_center(_planet: Node = null) -> void:
+	if _home_center_done:
+		return
+	if DisplayServer.get_name() == "headless":
+		_home_center_done = true
+		return
+	if _homeworld_node() != null:
+		_home_center_done = true
+		center_on_homeworld_animated()
+		return
+	if _home_center_retries < 60:
+		_home_center_retries += 1
+		call_deferred("_try_home_center")
+
 
 func _planet_at(screen_position: Vector2) -> Node2D:
 	var world_position: Vector2 = _screen_to_world(screen_position)
