@@ -333,7 +333,11 @@ func _create_modal_coordinator() -> void:
 func _create_dossier_launcher() -> void:
 	var layer := CanvasLayer.new()
 	layer.name = "DossierLauncher"
-	layer.layer = 40
+	# Sits ABOVE the PaperDossier modal (layer 80) so the PLANET/WERKSTATT/
+	# FORSCHUNG/ECONOMY buttons stay clickable while a dossier is open — the
+	# modal's fullscreen dim would otherwise swallow every click and make
+	# sub-tab switching impossible until the dossier is closed first.
+	layer.layer = 85
 	add_child(layer)
 	var box := VBoxContainer.new()
 	box.name = "LauncherBox"

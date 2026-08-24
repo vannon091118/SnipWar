@@ -128,7 +128,10 @@ func _apply_sheet_layout() -> void:
 	_sheet.position = (viewport_size - sheet_size) * 0.5
 	_sheet.size = sheet_size
 	_sheet.pivot_offset = sheet_size * 0.5
-	_sheet.rotation = deg_to_rad(-1.1)
+	# Keep the sheet unrotated: the -1.1° tilt shifted the CloseButton's
+	# transformed position away from its visual spot, so mouse clicks on
+	# SCHLIESSEN went missing (~40% fail rate in the UX audit).
+	_sheet.rotation = 0.0
 
 func _set_open(open_value: bool, animate: bool) -> void:
 	_open = open_value
