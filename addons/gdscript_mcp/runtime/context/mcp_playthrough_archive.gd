@@ -18,9 +18,13 @@ class_name McpPlaythroughArchive
 const ROOT_PATH := "user://mcp_playthrough"
 const FRAME_DIR := "user://mcp_playthrough/frames"
 const SNAPSHOT_DIR := "user://mcp_playthrough/snapshots"
+const SCRIPT_DIR := "user://mcp_playthrough/scripts"
 const LOG_FILE := "user://mcp_playthrough/playthrough.jsonl"
 const LOG_FILE_TMP := "user://mcp_playthrough/playthrough.jsonl.tmp"
+const SCRIPT_INDEX_FILE := "user://mcp_playthrough/scripts/index.jsonl"
+const SCRIPT_INDEX_TMP := "user://mcp_playthrough/scripts/index.jsonl.tmp"
 const MAX_LOG_ENTRIES := 2048
+const MAX_SCRIPT_ENTRIES := 512
 
 ## Monotonic within a process; unix-time based so ids stay unique across runs
 ## (get_ticks_msec() restarts at 0 each process and would collide/overwrite
@@ -98,6 +102,133 @@ func stats() -> Dictionary:
 		"root": ProjectSettings.globalize_path(ROOT_PATH),
 		"actions": _count_by_action(records),
 	}
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Script Archive — Agent-Scripts kategorisieren und zuweisen
+# ═══════════════════════════════════════════════════════════════════════════
+
+## Archiviere ein funktionierendes Agent-Script in index.jsonl.
+## name: eindeutiger Name (z.B. "camera_move_to")
+## category: Kategorie (runtime, gameplay, e2e, ux, fix)
+## path: user://-Pfad zum Script (z.B. "user://mcp_playthrough/scripts/camera_move_to.gd")
+## verdict: PASS oder FAIL
+## tested_with: Array von E2E-Szenarien die das Script bestanden haben
+## description: Kurzbeschreibung
+func log_script(name: String, category: String, path: String, verdict: String, tested_with: Array = [], description: String = "") -> Dictionary:
+	_ensure_dirs()
+	var record := {
+		"name": name,
+		"category": category,
+		"path": path,
+		"verdict": verdict,
+		"tested_with": tested_with,
+		"description": description,
+		"session": Time.get_datetime_string_from_system().left(10),
+		"ts": Time.get_unix_time_from_system(),
+	}
+	_append_script_record(record)
+	return record.duplicate(true)
+
+
+## Suche Scripts nach Kategorie oder Name.
+## query: Suchbegriff ( leer = alle )
+## category: Nur diese Kategorie ( leer = alle )
+## limit: Maximale Ergebnisse
+func search_scripts(query: String = "", category: String = "", limit: int = 20) -> Dictionary:
+	var safe_limit := maxi(0, limit)
+	var records := _read_script_records()
+	var q := query.to_lower().strip_edges()
+	var cat := category.to_lower().strip_edges()
+	var hits: Array = []
+	for record in records:
+		if cat != "" and String(record.get("category", "")).to_lower() != cat:
+			continue
+		if q != "" and q not in String(record.get("name", "")).to_lower() \
+				and q not in String(record.get("description", "")).to_lower():
+			continue
+		hits.append(record)
+	hits.reverse()
+	if hits.size() > safe_limit:
+		hits = hits.slice(0, safe_limit)
+	return {"count": hits.size(), "entries": hits}
+
+
+## Die neuesten N Scripts (neueste zuerst) — für den nächsten Agenten.
+func latest_scripts(limit: int = 10) -> Dictionary:
+	var safe_limit := maxi(0, limit)
+	var records := _read_script_records()
+	records.reverse()
+	if records.size() > safe_limit:
+		records = records.slice(0, safe_limit)
+	return {"count": records.size(), "entries": records}
+
+
+## Statistiken über archivierte Scripts.
+func script_stats() -> Dictionary:
+	var records := _read_script_records()
+	var by_category: Dictionary = {}
+	var by_verdict: Dictionary = {}
+	for record in records:
+		var cat := str(record.get("category", "unknown"))
+		by_category[cat] = by_category.get(cat, 0) + 1
+		var ver := str(record.get("verdict", "unknown"))
+		by_verdict[ver] = by_verdict.get(ver, 0) + 1
+	return {
+		"total": records.size(),
+		"by_category": by_category,
+		"by_verdict": by_verdict,
+	}
+
+
+func _append_script_record(record: Dictionary) -> void:
+	var records := _read_script_records()
+	# Update existing entry with same name, or append new
+	var found := false
+	for i in range(records.size()):
+		if str(records[i].get("name", "")) == str(record.get("name", "")):
+			records[i] = record
+			found = true
+			break
+	if not found:
+		records.append(record)
+	if records.size() > MAX_SCRIPT_ENTRIES:
+		records = records.slice(records.size() - MAX_SCRIPT_ENTRIES)
+	var lines: Array[String] = []
+	for r in records:
+		lines.append(JSON.stringify(r))
+	var tmp_path := ProjectSettings.globalize_path(SCRIPT_INDEX_TMP)
+	var path := ProjectSettings.globalize_path(SCRIPT_INDEX_FILE)
+	var file := FileAccess.open(tmp_path, FileAccess.WRITE)
+	if file == null:
+		return
+	file.store_string("\n".join(lines) + "\n")
+	file.close()
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(path)
+	var rename_error := DirAccess.rename_absolute(tmp_path, path)
+	if rename_error != OK:
+		DirAccess.remove_absolute(tmp_path)
+
+
+func _read_script_records() -> Array:
+	var path := ProjectSettings.globalize_path(SCRIPT_INDEX_FILE)
+	if not FileAccess.file_exists(path):
+		return []
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return []
+	var records: Array = []
+	var text := file.get_as_text()
+	file.close()
+	for line in text.split("\n"):
+		var line_clean := line.strip_edges()
+		if line_clean == "":
+			continue
+		var parsed: Variant = JSON.parse_string(line_clean)
+		if parsed is Dictionary:
+			records.append(parsed)
+	return records
 
 
 ## Read all frames referenced by records (for image-based play). Keys are ids.
@@ -205,6 +336,7 @@ func _ensure_dirs() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(ROOT_PATH))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(FRAME_DIR))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SNAPSHOT_DIR))
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SCRIPT_DIR))
 
 
 func _append_record(record: Dictionary) -> void:

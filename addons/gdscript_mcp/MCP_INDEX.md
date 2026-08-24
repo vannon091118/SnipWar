@@ -48,6 +48,9 @@ sichtbare Playability-Szenarien (MainMenu → World → TechMenu → Pause/Save/
 Freeze/Step → Goal/Code-Analyze), konsumieren dieselben Tool-Calls wie ein
 externer Agent, sammeln EventLog-Anomalien.
 
+**Agent-Workflow (`AGENT_WORKFLOW.md`)**:
+6-Schritte-Loop für autonome Agents: Archiv lesen → Projekt analysieren → Scripts schreiben → testen → archivieren → nächste Session.
+
 **Client (`client/`)**:
 - `mcp_client.py` — Referenz-TCP-Client für Metadaten, Artefakte und Worker-Aufträge (interaktiv/auto/one-shot)
 - `vision_worker.py` + `vision_worker.js` — lokale Bildanalyse-Instanzen (ohne Base64-Roundtrip; lesen
@@ -94,6 +97,7 @@ externer Agent, sammeln EventLog-Anomalien.
 | `runtime_step_frame` | Genau 1 Frame im Freeze-Modus, dann re-freeze |
 | `runtime_step_frames` | N zusammenhängende Frames (Tweens/Scene-Transitions laufen durch), dann re-freeze |
 | `runtime_freeze_status` | Freeze-Zustand, geframte Schritte, pending Inputs |
+| `runtime_camera_move_to` | MapCamera per Tween zu x,y bewegen (optionale zoom/duration) |
 
 **Klick-Koordinaten**: `runtime_click` reicht Positionen in Viewport-Koordinaten.
 `path`≠"" und x/y=-1: Zentrum des Controls wird per `get_global_rect()` aufgelöst.
@@ -246,6 +250,7 @@ addons/gdscript_mcp/
 │       ├── debug/     ...
 │       ├── ux/        ...  mcp_ux_live, mcp_ux_pipeline, mcp_ux_*,
 │       ├── e2e/       mcp_e2e.gd, mcp_goal_player.gd, mcp_code_analyzer.gd, mcp_playthrough_tools.gd
+├── AGENT_WORKFLOW.md                  Agent-Workflow-Doku (6-Schritte-Loop)
 │       └── systems/   mcp_audio_tools.gd  (Audio, Animation, Network, Gamepad, Shader, Partikel)
 ├── client/  (mcp_client.py, vision_worker.py, vision_worker.js, remote_playout.py, agent_store.py, agent_playthrough.py, mcp_stresstest.js)
 ├── editor/  (Plugin + Dock)

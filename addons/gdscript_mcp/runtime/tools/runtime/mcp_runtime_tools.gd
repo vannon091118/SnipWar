@@ -59,6 +59,10 @@ static func _basic_tools() -> Array:
 		_make("runtime_step_frames", "Advance N consecutive frames in freeze mode (for tweens/transitions), then re-freeze",
 			{"count": {"type": "integer", "default": 30}}, ["count"]),
 		_make("runtime_freeze_status", "Read freeze mode state, frames stepped, pending inputs"),
+		_make("runtime_camera_move_to", "Move MapCamera to x,y via tween (optional zoom, duration)",
+			{"x": {"type": "number"}, "y": {"type": "number"},
+			 "zoom": {"type": "number", "default": -1.0, "description": "Target zoom (skip if -1)"},
+			 "duration": {"type": "number", "default": 0.5, "description": "Tween duration in seconds (0=instant)"}}, ["x", "y"]),
 	]
 
 
@@ -115,6 +119,8 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 			return _rt_step_frames(int(args.get("count", 30)))
 		"runtime_freeze_status":
 			return _rt_freeze_status()
+		"runtime_camera_move_to":
+			return _rt_camera_move_to(args)
 		_:
 			return {"error": "Unknown runtime tool: " + tool_name}
 
@@ -795,6 +801,34 @@ func _rt_step_frames(count: int) -> Dictionary:
 	if scheduler == null or not scheduler.has_method("step_frames"):
 		return {"ok": false, "error": "input scheduler not available"}
 	return scheduler.call("step_frames", count)
+
+
+func _rt_camera_move_to(args: Dictionary) -> Dictionary:
+	var x: float = float(args.get("x", 0))
+	var y: float = float(args.get("y", 0))
+	var zoom: float = float(args.get("zoom", -1.0))
+	var duration: float = float(args.get("duration", 0.5))
+	var tree := Engine.get_main_loop()
+	if not (tree is SceneTree):
+		return {"error": "No scene tree"}
+	var root := (tree as SceneTree).root
+	if root == null:
+		return {"error": "No root node"}
+	var camera := root.find_child("MapCamera", true, false)
+	if camera == null:
+		return {"error": "MapCamera not found"}
+	var target_pos := Vector2(x, y)
+	if duration <= 0.0:
+		camera.position = target_pos
+		if zoom > 0.0:
+			camera.zoom = Vector2(zoom, zoom)
+		return {"ok": true, "instant": true, "position": {"x": camera.position.x, "y": camera.position.y}}
+	var tween := (tree as SceneTree).create_tween()
+	tween.tween_property(camera, "position", target_pos, duration)
+	if zoom > 0.0:
+		tween.parallel().tween_property(camera, "zoom", Vector2(zoom, zoom), duration)
+	await tween.finished
+	return {"ok": true, "position": {"x": camera.position.x, "y": camera.position.y}, "zoom": {"x": camera.zoom.x, "y": camera.zoom.y}}
 
 
 func _rt_freeze_status() -> Dictionary:
