@@ -1,0 +1,5231 @@
+{
+  "agent_context": "scene=game_view size=1280x720\ninteractables:\n  - ‹  SCHLIESSEN @(818,16,126x36)\n  - Militär — Angriff / Verstärkung @(570,368,342x38)\n  - TECHNOLOGIE › @(818,58,126x36)\n  - PLANET @(12,72,88x36)\n  - WERKSTATT @(12,114,88x36)\n  - FORSCHUNG @(12,156,88x36)\n  - ECONOMY @(12,198,88x36)\n  - ◂ @(145,220,24x24)",
+  "artifact": {
+    "context": {
+      "absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_616185_8.png",
+      "context_id": "frame_616185_8",
+      "created_at": 1787532256.809,
+      "expires_at": 1787532301.809,
+      "format": "png",
+      "height": 720,
+      "metadata": {
+        "pipeline": "vision",
+        "source": "godot_viewport"
+      },
+      "mime_type": "image/png",
+      "path": "user://mcp_context/runtime_runtime_8585/frame_616185_8.png",
+      "size_bytes": 197815,
+      "width": 1280,
+      "worker_absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_616185_8.png",
+      "worker_format": "png",
+      "worker_path": "user://mcp_context/runtime_runtime_8585/frame_616185_8.png",
+      "worker_size_bytes": 0
+    },
+    "context_id": "frame_616185_8",
+    "format": "png",
+    "height": 720,
+    "mime_type": "image/png",
+    "size_bytes": 197815,
+    "width": 1280
+  },
+  "context": {
+    "absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_616185_8.png",
+    "context_id": "frame_616185_8",
+    "created_at": 1787532256.809,
+    "expires_at": 1787532301.809,
+    "format": "png",
+    "height": 720,
+    "metadata": {
+      "pipeline": "vision",
+      "source": "godot_viewport"
+    },
+    "mime_type": "image/png",
+    "path": "user://mcp_context/runtime_runtime_8585/frame_616185_8.png",
+    "size_bytes": 197815,
+    "width": 1280,
+    "worker_absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_616185_8.png",
+    "worker_format": "png",
+    "worker_path": "user://mcp_context/runtime_runtime_8585/frame_616185_8.png",
+    "worker_size_bytes": 0
+  },
+  "controls": [
+    {
+      "center": {
+        "x": 881,
+        "y": 34
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "PlanetTab",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+      "pressed": true,
+      "rect": {
+        "h": 36,
+        "w": 126,
+        "x": 818,
+        "y": 16
+      },
+      "source": "scene_tree",
+      "text": "‹  SCHLIESSEN",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 88
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "HeadingLabel",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/HeadingLabel",
+      "rect": {
+        "h": 16,
+        "w": 342,
+        "x": 570,
+        "y": 80
+      },
+      "source": "scene_tree",
+      "text": "PLANET",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 112
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "RouteLegendLabel",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/RouteLegendLabel",
+      "rect": {
+        "h": 16,
+        "w": 342,
+        "x": 570,
+        "y": 104
+      },
+      "source": "scene_tree",
+      "text": "Gelb: aktive Route · Netz: Navigation",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 142
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "SelectedPlanetLabel",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/SelectedPlanetLabel",
+      "rect": {
+        "h": 28,
+        "w": 342,
+        "x": 570,
+        "y": 128
+      },
+      "source": "scene_tree",
+      "text": "KEIN PLANET AUSGEWÄHLT",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 173
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "FactionLabel",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/FactionLabel",
+      "rect": {
+        "h": 18,
+        "w": 342,
+        "x": 570,
+        "y": 164
+      },
+      "source": "scene_tree",
+      "text": "Status: Unbekannt",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 199
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "ResourceLabel",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ResourceLabel",
+      "rect": {
+        "h": 18,
+        "w": 342,
+        "x": 570,
+        "y": 190
+      },
+      "source": "scene_tree",
+      "text": "Produktion: Keine",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 225
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "SelectedCountLabel",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/SelectedCountLabel",
+      "rect": {
+        "h": 18,
+        "w": 342,
+        "x": 570,
+        "y": 216
+      },
+      "source": "scene_tree",
+      "text": "Verfügbare Einheiten: 0",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 250
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "BuildSpaceLabel",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/BuildSpaceLabel",
+      "rect": {
+        "h": 16,
+        "w": 342,
+        "x": 570,
+        "y": 242
+      },
+      "source": "scene_tree",
+      "text": "Bauplätze: 0",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 286.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "DestinationHeading",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/DestinationHeading",
+      "rect": {
+        "h": 17,
+        "w": 342,
+        "x": 570,
+        "y": 278
+      },
+      "source": "scene_tree",
+      "text": "AUFTRAG · ZIEL",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 319
+      },
+      "disabled": true,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "DestinationSelect",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/DestinationSelect",
+      "pressed": false,
+      "rect": {
+        "h": 32,
+        "w": 342,
+        "x": 570,
+        "y": 303
+      },
+      "source": "scene_tree",
+      "text": "Ziel auswählen",
+      "type": "OptionButton",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 351.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "MissionHeading",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/MissionHeading",
+      "rect": {
+        "h": 17,
+        "w": 342,
+        "x": 570,
+        "y": 343
+      },
+      "source": "scene_tree",
+      "text": "MISSION",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 387
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "MissionSelect",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/MissionSelect",
+      "pressed": false,
+      "rect": {
+        "h": 38,
+        "w": 342,
+        "x": 570,
+        "y": 368
+      },
+      "source": "scene_tree",
+      "text": "Militär — Angriff / Verstärkung",
+      "type": "OptionButton",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 422
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "MissionDescriptionLabel",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/MissionDescriptionLabel",
+      "rect": {
+        "h": 16,
+        "w": 342,
+        "x": 570,
+        "y": 414
+      },
+      "source": "scene_tree",
+      "text": "Angriff oder Verstärkung — ein Konflikt ist möglich.",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 446.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "SendHeading",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/SendHeading",
+      "rect": {
+        "h": 17,
+        "w": 342,
+        "x": 570,
+        "y": 438
+      },
+      "source": "scene_tree",
+      "text": "EINHEITEN SENDEN",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 472
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "AmountValueLabel",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/AmountValueLabel",
+      "rect": {
+        "h": 18,
+        "w": 342,
+        "x": 570,
+        "y": 463
+      },
+      "source": "scene_tree",
+      "text": "0 / 0 Einheiten",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 521
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "PreviewLabel",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/PreviewLabel",
+      "rect": {
+        "h": 16,
+        "w": 342,
+        "x": 570,
+        "y": 513
+      },
+      "source": "scene_tree",
+      "text": "Noch kein Auftrag konfiguriert.",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 557.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "UpgradeHeading",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/UpgradeHeading",
+      "rect": {
+        "h": 17,
+        "w": 342,
+        "x": 570,
+        "y": 549
+      },
+      "source": "scene_tree",
+      "text": "PLANETEN-AUSBAU",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 602.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "UnitsHeading",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/UnitsHeading",
+      "rect": {
+        "h": 17,
+        "w": 342,
+        "x": 570,
+        "y": 594
+      },
+      "source": "scene_tree",
+      "text": "GARNISONEN",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 630.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@648",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@648",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 619
+      },
+      "source": "scene_tree",
+      "text": "Wild Spire: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 657.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@649",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@649",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 646
+      },
+      "source": "scene_tree",
+      "text": "Deep Bastion: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 684.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@650",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@650",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 673
+      },
+      "source": "scene_tree",
+      "text": "Cold Forge: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 711.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@651",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@651",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 700
+      },
+      "source": "scene_tree",
+      "text": "Ash Echo: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 738.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@652",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@652",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 727
+      },
+      "source": "scene_tree",
+      "text": "Rusted Node: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 765.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@653",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@653",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 754
+      },
+      "source": "scene_tree",
+      "text": "Wandering Pulse: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 792.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@654",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@654",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 781
+      },
+      "source": "scene_tree",
+      "text": "Tranquil Forge: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 819.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@655",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@655",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 808
+      },
+      "source": "scene_tree",
+      "text": "Silent Cradle: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 846.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@656",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@656",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 835
+      },
+      "source": "scene_tree",
+      "text": "Iron Mire: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 873.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@657",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@657",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 862
+      },
+      "source": "scene_tree",
+      "text": "Harsh Crown: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 900.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@658",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@658",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 889
+      },
+      "source": "scene_tree",
+      "text": "Crimson Node: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 927.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@659",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@659",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 916
+      },
+      "source": "scene_tree",
+      "text": "Blessed Post: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 954.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@660",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@660",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 943
+      },
+      "source": "scene_tree",
+      "text": "Bitter Ridge: 4",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 981.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@661",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@661",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 970
+      },
+      "source": "scene_tree",
+      "text": "Wild Forge: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1008.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@662",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@662",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 997
+      },
+      "source": "scene_tree",
+      "text": "Lost Haven: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1035.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@663",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@663",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1024
+      },
+      "source": "scene_tree",
+      "text": "Bright Crossing: 4",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1062.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@664",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@664",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1051
+      },
+      "source": "scene_tree",
+      "text": "Lost Rift: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1089.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@665",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@665",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1078
+      },
+      "source": "scene_tree",
+      "text": "Lost Drop: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1116.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@666",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@666",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1105
+      },
+      "source": "scene_tree",
+      "text": "Hollow Bastion: 4",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1143.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@667",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@667",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1132
+      },
+      "source": "scene_tree",
+      "text": "Ember Reach: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1170.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@668",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@668",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1159
+      },
+      "source": "scene_tree",
+      "text": "Ancient Drop: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1197.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@669",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@669",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1186
+      },
+      "source": "scene_tree",
+      "text": "Sacred Tide: 4",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1224.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@670",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@670",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1213
+      },
+      "source": "scene_tree",
+      "text": "Radiant Spire: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1251.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@671",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@671",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1240
+      },
+      "source": "scene_tree",
+      "text": "Broken Tide: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1278.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@672",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@672",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1267
+      },
+      "source": "scene_tree",
+      "text": "Lost Drifter: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1305.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@673",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@673",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1294
+      },
+      "source": "scene_tree",
+      "text": "Burning Ledge: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1332.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@674",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@674",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1321
+      },
+      "source": "scene_tree",
+      "text": "Player Homeworld: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1359.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@675",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@675",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1348
+      },
+      "source": "scene_tree",
+      "text": "Lost Anchor: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1386.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@676",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@676",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1375
+      },
+      "source": "scene_tree",
+      "text": "Golden Sanctum: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1413.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@677",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@677",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1402
+      },
+      "source": "scene_tree",
+      "text": "Ash Wastes: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1440.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@678",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@678",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1429
+      },
+      "source": "scene_tree",
+      "text": "Bitter Hinge: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1467.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@679",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@679",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1456
+      },
+      "source": "scene_tree",
+      "text": "Still Dusk: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1494.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@680",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@680",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1483
+      },
+      "source": "scene_tree",
+      "text": "Tranquil Reef: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1521.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@681",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@681",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1510
+      },
+      "source": "scene_tree",
+      "text": "Azure Wellspring: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1548.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@682",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@682",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1537
+      },
+      "source": "scene_tree",
+      "text": "Golden Mark: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1575.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@683",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@683",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1564
+      },
+      "source": "scene_tree",
+      "text": "Dark Wellspring: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1602.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@684",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@684",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1591
+      },
+      "source": "scene_tree",
+      "text": "Radiant Throne: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1629.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@685",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@685",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1618
+      },
+      "source": "scene_tree",
+      "text": "Bright Bastion: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1656.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@686",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@686",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1645
+      },
+      "source": "scene_tree",
+      "text": "Still Tide: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1683.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@687",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@687",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1672
+      },
+      "source": "scene_tree",
+      "text": "Verdant Marrow: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1710.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@688",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@688",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1699
+      },
+      "source": "scene_tree",
+      "text": "Silent Drifter: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1737.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@689",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@689",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1726
+      },
+      "source": "scene_tree",
+      "text": "Deep Hinge: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1764.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@690",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@690",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1753
+      },
+      "source": "scene_tree",
+      "text": "Crimson Tide: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1791.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@691",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@691",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1780
+      },
+      "source": "scene_tree",
+      "text": "Mist Crown: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1818.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@692",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@692",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1807
+      },
+      "source": "scene_tree",
+      "text": "Solar Drop: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1845.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@693",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@693",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1834
+      },
+      "source": "scene_tree",
+      "text": "Ancient Shoal: 4",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1872.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@694",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@694",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1861
+      },
+      "source": "scene_tree",
+      "text": "Cold Flare: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1899.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@695",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@695",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1888
+      },
+      "source": "scene_tree",
+      "text": "Wild Expanse: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1926.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@696",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@696",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1915
+      },
+      "source": "scene_tree",
+      "text": "Crimson Pylon: 4",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1953.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@697",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@697",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1942
+      },
+      "source": "scene_tree",
+      "text": "Golden Mark: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 1980.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@698",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@698",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1969
+      },
+      "source": "scene_tree",
+      "text": "CPU Homeworld: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2007.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@699",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@699",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 1996
+      },
+      "source": "scene_tree",
+      "text": "Harsh Bastion: 4",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2034.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@700",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@700",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2023
+      },
+      "source": "scene_tree",
+      "text": "Hidden Pylon: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2061.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@701",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@701",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2050
+      },
+      "source": "scene_tree",
+      "text": "Shadow Drifter: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2088.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@702",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@702",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2077
+      },
+      "source": "scene_tree",
+      "text": "Lone Maw: 4",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2115.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@703",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@703",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2104
+      },
+      "source": "scene_tree",
+      "text": "Cursed Threshold: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2142.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@704",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@704",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2131
+      },
+      "source": "scene_tree",
+      "text": "Dust Ridge: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2169.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@705",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@705",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2158
+      },
+      "source": "scene_tree",
+      "text": "Lunar Veil: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2196.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@706",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@706",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2185
+      },
+      "source": "scene_tree",
+      "text": "Neon Drifter: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2223.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@707",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@707",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2212
+      },
+      "source": "scene_tree",
+      "text": "Broken Wreck: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2250.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@708",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@708",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2239
+      },
+      "source": "scene_tree",
+      "text": "Drifting Shoal: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2277.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@709",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@709",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2266
+      },
+      "source": "scene_tree",
+      "text": "Shattered Throne: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2304.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@710",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@710",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2293
+      },
+      "source": "scene_tree",
+      "text": "Crystal Wellspring: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2331.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@711",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@711",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2320
+      },
+      "source": "scene_tree",
+      "text": "Tranquil Marrow: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2358.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@712",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@712",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2347
+      },
+      "source": "scene_tree",
+      "text": "Dark Gate: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2385.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@713",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@713",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2374
+      },
+      "source": "scene_tree",
+      "text": "Crystal Rift: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2412.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@714",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@714",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2401
+      },
+      "source": "scene_tree",
+      "text": "Broken Reef: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2439.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@715",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@715",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2428
+      },
+      "source": "scene_tree",
+      "text": "Astral Maw: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2466.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@716",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@716",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2455
+      },
+      "source": "scene_tree",
+      "text": "Bright Ridge: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2493.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@717",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@717",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2482
+      },
+      "source": "scene_tree",
+      "text": "Lost Garden: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2520.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@718",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@718",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2509
+      },
+      "source": "scene_tree",
+      "text": "Neon Ridge: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2547.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@719",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@719",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2536
+      },
+      "source": "scene_tree",
+      "text": "Lone Garden: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2574.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@720",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@720",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2563
+      },
+      "source": "scene_tree",
+      "text": "Crystal Veil: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2601.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@721",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@721",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2590
+      },
+      "source": "scene_tree",
+      "text": "Bright Husk: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2628.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@722",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@722",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2617
+      },
+      "source": "scene_tree",
+      "text": "Azure Post: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2655.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@723",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@723",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2644
+      },
+      "source": "scene_tree",
+      "text": "Broken Node: 2",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 2682.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@724",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@724",
+      "rect": {
+        "h": 23,
+        "w": 342,
+        "x": 570,
+        "y": 2671
+      },
+      "source": "scene_tree",
+      "text": "Astral Shoal: 6",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 745,
+        "y": 442
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "DispatchSummaryLabel",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/ActionFooter/FooterContent/DispatchSummaryLabel",
+      "rect": {
+        "h": 16,
+        "w": 330,
+        "x": 580,
+        "y": 434
+      },
+      "source": "scene_tree",
+      "text": "Auftrag auswählen, um die Konsequenzen zu sehen.",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 745,
+        "y": 473
+      },
+      "disabled": true,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "SendButton",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/ActionFooter/FooterContent/SendButton",
+      "pressed": false,
+      "rect": {
+        "h": 38,
+        "w": 330,
+        "x": 580,
+        "y": 454
+      },
+      "source": "scene_tree",
+      "text": "MISSION STARTEN",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 881,
+        "y": 76
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "TechTab",
+      "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 126,
+        "x": 818,
+        "y": 58
+      },
+      "source": "scene_tree",
+      "text": "TECHNOLOGIE ›",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 90
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@900",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 72
+      },
+      "source": "scene_tree",
+      "text": "PLANET",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 132
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@901",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 114
+      },
+      "source": "scene_tree",
+      "text": "WERKSTATT",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 174
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@902",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 156
+      },
+      "source": "scene_tree",
+      "text": "FORSCHUNG",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 216
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@903",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 198
+      },
+      "source": "scene_tree",
+      "text": "ECONOMY",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 76.5,
+        "y": 231.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@905",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Label@905",
+      "rect": {
+        "h": 17,
+        "w": 129,
+        "x": 12,
+        "y": 223
+      },
+      "source": "scene_tree",
+      "text": "FLOTTENÜBERSICHT",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 157,
+        "y": 232
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@906",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906",
+      "pressed": false,
+      "rect": {
+        "h": 24,
+        "w": 24,
+        "x": 145,
+        "y": 220
+      },
+      "source": "scene_tree",
+      "text": "◂",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 90.5,
+        "y": 256
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@907",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@907",
+      "rect": {
+        "h": 16,
+        "w": 157,
+        "x": 12,
+        "y": 248
+      },
+      "source": "scene_tree",
+      "text": "UNTERWEGS:",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 90.5,
+        "y": 276
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@908",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@908",
+      "rect": {
+        "h": 16,
+        "w": 157,
+        "x": 12,
+        "y": 268
+      },
+      "source": "scene_tree",
+      "text": "Keine aktiven Schiffe",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 90.5,
+        "y": 300
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@909",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@909",
+      "rect": {
+        "h": 16,
+        "w": 157,
+        "x": 12,
+        "y": 292
+      },
+      "source": "scene_tree",
+      "text": "PLANETEN:",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 90.5,
+        "y": 320
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@910",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@910",
+      "rect": {
+        "h": 16,
+        "w": 157,
+        "x": 12,
+        "y": 312
+      },
+      "source": "scene_tree",
+      "text": "Keine ausgewählten Planeten",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 187.940002441406,
+        "y": 131.451499938965
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "StrengthLabel",
+      "path": "/root/World/PlanetField/Player Homeworld/StrengthLabel",
+      "rect": {
+        "h": 22,
+        "w": 80,
+        "x": 147.940002441406,
+        "y": 120.451499938965
+      },
+      "source": "scene_tree",
+      "text": "6",
+      "type": "Label",
+      "visible": true
+    }
+  ],
+  "elements": [],
+  "groups": [],
+  "height": 720,
+  "interactables": [
+    {
+      "center": {
+        "x": 881,
+        "y": 34
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "PlanetTab",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+      "pressed": true,
+      "rect": {
+        "h": 36,
+        "w": 126,
+        "x": 818,
+        "y": 16
+      },
+      "source": "scene_tree",
+      "text": "‹  SCHLIESSEN",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 741,
+        "y": 387
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "MissionSelect",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/MissionSelect",
+      "pressed": false,
+      "rect": {
+        "h": 38,
+        "w": 342,
+        "x": 570,
+        "y": 368
+      },
+      "source": "scene_tree",
+      "text": "Militär — Angriff / Verstärkung",
+      "type": "OptionButton",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 881,
+        "y": 76
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "TechTab",
+      "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 126,
+        "x": 818,
+        "y": 58
+      },
+      "source": "scene_tree",
+      "text": "TECHNOLOGIE ›",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 90
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@900",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 72
+      },
+      "source": "scene_tree",
+      "text": "PLANET",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 132
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@901",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 114
+      },
+      "source": "scene_tree",
+      "text": "WERKSTATT",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 174
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@902",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 156
+      },
+      "source": "scene_tree",
+      "text": "FORSCHUNG",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 216
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@903",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 198
+      },
+      "source": "scene_tree",
+      "text": "ECONOMY",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 157,
+        "y": 232
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@906",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906",
+      "pressed": false,
+      "rect": {
+        "h": 24,
+        "w": 24,
+        "x": 145,
+        "y": 220
+      },
+      "source": "scene_tree",
+      "text": "◂",
+      "type": "Button",
+      "visible": true
+    }
+  ],
+  "layout_grid": [
+    [
+      "#060b19",
+      "#060a17",
+      "#060b19",
+      "#060b19",
+      "#060b18",
+      "#0d0b25",
+      "#07090f",
+      "#07090f",
+      "#07090f",
+      "#07090f",
+      "#07090f",
+      "#070a13"
+    ],
+    [
+      "#080b17",
+      "#0a0c1a",
+      "#0a0c1a",
+      "#090c18",
+      "#090b16",
+      "#0c0c18",
+      "#07090f",
+      "#07090f",
+      "#07090f",
+      "#07090f",
+      "#07090f",
+      "#070a13"
+    ],
+    [
+      "#103846",
+      "#0a0c1a",
+      "#0a0c1a",
+      "#080b17",
+      "#070a14",
+      "#080a15",
+      "#07090f",
+      "#18191f",
+      "#07090f",
+      "#07090f",
+      "#07090f",
+      "#070b14"
+    ],
+    [
+      "#090c18",
+      "#1d1f29",
+      "#090c18",
+      "#080b15",
+      "#070a13",
+      "#0a0f19",
+      "#07090f",
+      "#07090f",
+      "#07090f",
+      "#07090f",
+      "#07090f",
+      "#070b15"
+    ],
+    [
+      "#080b15",
+      "#080b17",
+      "#070a15",
+      "#070a14",
+      "#070a13",
+      "#070b14",
+      "#07090f",
+      "#0d0e12",
+      "#0d0e12",
+      "#0d0e12",
+      "#0d0e12",
+      "#070c16"
+    ],
+    [
+      "#070a13",
+      "#070a14",
+      "#070a13",
+      "#0b0e19",
+      "#070a13",
+      "#070b14",
+      "#07090f",
+      "#060a14",
+      "#060a14",
+      "#060a14",
+      "#060a14",
+      "#070c16"
+    ],
+    [
+      "#070a13",
+      "#090f19",
+      "#070a13",
+      "#070a13",
+      "#070a13",
+      "#0c111c",
+      "#07090f",
+      "#131721",
+      "#131721",
+      "#131721",
+      "#131721",
+      "#070b15"
+    ],
+    [
+      "#070a13",
+      "#070a13",
+      "#070a13",
+      "#070a13",
+      "#070a13",
+      "#070a13",
+      "#070b15",
+      "#070c16",
+      "#080d18",
+      "#070d17",
+      "#070c16",
+      "#070a13"
+    ]
+  ],
+  "live": {
+    "control_count": 109,
+    "controls": [
+      {
+        "center": {
+          "x": 881,
+          "y": 34
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "PlanetTab",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+        "pressed": true,
+        "rect": {
+          "h": 36,
+          "w": 126,
+          "x": 818,
+          "y": 16
+        },
+        "source": "scene_tree",
+        "text": "‹  SCHLIESSEN",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 88
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "HeadingLabel",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/HeadingLabel",
+        "rect": {
+          "h": 16,
+          "w": 342,
+          "x": 570,
+          "y": 80
+        },
+        "source": "scene_tree",
+        "text": "PLANET",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 112
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "RouteLegendLabel",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/RouteLegendLabel",
+        "rect": {
+          "h": 16,
+          "w": 342,
+          "x": 570,
+          "y": 104
+        },
+        "source": "scene_tree",
+        "text": "Gelb: aktive Route · Netz: Navigation",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 142
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "SelectedPlanetLabel",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/SelectedPlanetLabel",
+        "rect": {
+          "h": 28,
+          "w": 342,
+          "x": 570,
+          "y": 128
+        },
+        "source": "scene_tree",
+        "text": "KEIN PLANET AUSGEWÄHLT",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 173
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "FactionLabel",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/FactionLabel",
+        "rect": {
+          "h": 18,
+          "w": 342,
+          "x": 570,
+          "y": 164
+        },
+        "source": "scene_tree",
+        "text": "Status: Unbekannt",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 199
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "ResourceLabel",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ResourceLabel",
+        "rect": {
+          "h": 18,
+          "w": 342,
+          "x": 570,
+          "y": 190
+        },
+        "source": "scene_tree",
+        "text": "Produktion: Keine",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 225
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "SelectedCountLabel",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/SelectedCountLabel",
+        "rect": {
+          "h": 18,
+          "w": 342,
+          "x": 570,
+          "y": 216
+        },
+        "source": "scene_tree",
+        "text": "Verfügbare Einheiten: 0",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 250
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "BuildSpaceLabel",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/BuildSpaceLabel",
+        "rect": {
+          "h": 16,
+          "w": 342,
+          "x": 570,
+          "y": 242
+        },
+        "source": "scene_tree",
+        "text": "Bauplätze: 0",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 286.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "DestinationHeading",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/DestinationHeading",
+        "rect": {
+          "h": 17,
+          "w": 342,
+          "x": 570,
+          "y": 278
+        },
+        "source": "scene_tree",
+        "text": "AUFTRAG · ZIEL",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 319
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "DestinationSelect",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/DestinationSelect",
+        "pressed": false,
+        "rect": {
+          "h": 32,
+          "w": 342,
+          "x": 570,
+          "y": 303
+        },
+        "source": "scene_tree",
+        "text": "Ziel auswählen",
+        "type": "OptionButton",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 351.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "MissionHeading",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/MissionHeading",
+        "rect": {
+          "h": 17,
+          "w": 342,
+          "x": 570,
+          "y": 343
+        },
+        "source": "scene_tree",
+        "text": "MISSION",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 387
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "MissionSelect",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/MissionSelect",
+        "pressed": false,
+        "rect": {
+          "h": 38,
+          "w": 342,
+          "x": 570,
+          "y": 368
+        },
+        "source": "scene_tree",
+        "text": "Militär — Angriff / Verstärkung",
+        "type": "OptionButton",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 422
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "MissionDescriptionLabel",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/MissionDescriptionLabel",
+        "rect": {
+          "h": 16,
+          "w": 342,
+          "x": 570,
+          "y": 414
+        },
+        "source": "scene_tree",
+        "text": "Angriff oder Verstärkung — ein Konflikt ist möglich.",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 446.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "SendHeading",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/SendHeading",
+        "rect": {
+          "h": 17,
+          "w": 342,
+          "x": 570,
+          "y": 438
+        },
+        "source": "scene_tree",
+        "text": "EINHEITEN SENDEN",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 472
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "AmountValueLabel",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/AmountValueLabel",
+        "rect": {
+          "h": 18,
+          "w": 342,
+          "x": 570,
+          "y": 463
+        },
+        "source": "scene_tree",
+        "text": "0 / 0 Einheiten",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 521
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "PreviewLabel",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/PreviewLabel",
+        "rect": {
+          "h": 16,
+          "w": 342,
+          "x": 570,
+          "y": 513
+        },
+        "source": "scene_tree",
+        "text": "Noch kein Auftrag konfiguriert.",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 557.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "UpgradeHeading",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/UpgradeHeading",
+        "rect": {
+          "h": 17,
+          "w": 342,
+          "x": 570,
+          "y": 549
+        },
+        "source": "scene_tree",
+        "text": "PLANETEN-AUSBAU",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 602.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "UnitsHeading",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/UnitsHeading",
+        "rect": {
+          "h": 17,
+          "w": 342,
+          "x": 570,
+          "y": 594
+        },
+        "source": "scene_tree",
+        "text": "GARNISONEN",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 630.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@648",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@648",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 619
+        },
+        "source": "scene_tree",
+        "text": "Wild Spire: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 657.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@649",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@649",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 646
+        },
+        "source": "scene_tree",
+        "text": "Deep Bastion: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 684.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@650",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@650",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 673
+        },
+        "source": "scene_tree",
+        "text": "Cold Forge: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 711.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@651",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@651",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 700
+        },
+        "source": "scene_tree",
+        "text": "Ash Echo: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 738.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@652",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@652",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 727
+        },
+        "source": "scene_tree",
+        "text": "Rusted Node: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 765.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@653",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@653",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 754
+        },
+        "source": "scene_tree",
+        "text": "Wandering Pulse: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 792.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@654",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@654",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 781
+        },
+        "source": "scene_tree",
+        "text": "Tranquil Forge: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 819.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@655",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@655",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 808
+        },
+        "source": "scene_tree",
+        "text": "Silent Cradle: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 846.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@656",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@656",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 835
+        },
+        "source": "scene_tree",
+        "text": "Iron Mire: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 873.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@657",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@657",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 862
+        },
+        "source": "scene_tree",
+        "text": "Harsh Crown: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 900.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@658",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@658",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 889
+        },
+        "source": "scene_tree",
+        "text": "Crimson Node: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 927.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@659",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@659",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 916
+        },
+        "source": "scene_tree",
+        "text": "Blessed Post: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 954.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@660",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@660",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 943
+        },
+        "source": "scene_tree",
+        "text": "Bitter Ridge: 4",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 981.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@661",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@661",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 970
+        },
+        "source": "scene_tree",
+        "text": "Wild Forge: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1008.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@662",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@662",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 997
+        },
+        "source": "scene_tree",
+        "text": "Lost Haven: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1035.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@663",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@663",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1024
+        },
+        "source": "scene_tree",
+        "text": "Bright Crossing: 4",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1062.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@664",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@664",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1051
+        },
+        "source": "scene_tree",
+        "text": "Lost Rift: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1089.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@665",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@665",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1078
+        },
+        "source": "scene_tree",
+        "text": "Lost Drop: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1116.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@666",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@666",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1105
+        },
+        "source": "scene_tree",
+        "text": "Hollow Bastion: 4",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1143.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@667",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@667",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1132
+        },
+        "source": "scene_tree",
+        "text": "Ember Reach: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1170.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@668",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@668",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1159
+        },
+        "source": "scene_tree",
+        "text": "Ancient Drop: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1197.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@669",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@669",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1186
+        },
+        "source": "scene_tree",
+        "text": "Sacred Tide: 4",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1224.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@670",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@670",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1213
+        },
+        "source": "scene_tree",
+        "text": "Radiant Spire: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1251.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@671",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@671",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1240
+        },
+        "source": "scene_tree",
+        "text": "Broken Tide: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1278.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@672",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@672",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1267
+        },
+        "source": "scene_tree",
+        "text": "Lost Drifter: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1305.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@673",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@673",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1294
+        },
+        "source": "scene_tree",
+        "text": "Burning Ledge: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1332.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@674",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@674",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1321
+        },
+        "source": "scene_tree",
+        "text": "Player Homeworld: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1359.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@675",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@675",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1348
+        },
+        "source": "scene_tree",
+        "text": "Lost Anchor: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1386.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@676",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@676",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1375
+        },
+        "source": "scene_tree",
+        "text": "Golden Sanctum: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1413.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@677",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@677",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1402
+        },
+        "source": "scene_tree",
+        "text": "Ash Wastes: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1440.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@678",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@678",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1429
+        },
+        "source": "scene_tree",
+        "text": "Bitter Hinge: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1467.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@679",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@679",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1456
+        },
+        "source": "scene_tree",
+        "text": "Still Dusk: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1494.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@680",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@680",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1483
+        },
+        "source": "scene_tree",
+        "text": "Tranquil Reef: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1521.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@681",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@681",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1510
+        },
+        "source": "scene_tree",
+        "text": "Azure Wellspring: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1548.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@682",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@682",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1537
+        },
+        "source": "scene_tree",
+        "text": "Golden Mark: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1575.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@683",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@683",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1564
+        },
+        "source": "scene_tree",
+        "text": "Dark Wellspring: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1602.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@684",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@684",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1591
+        },
+        "source": "scene_tree",
+        "text": "Radiant Throne: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1629.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@685",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@685",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1618
+        },
+        "source": "scene_tree",
+        "text": "Bright Bastion: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1656.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@686",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@686",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1645
+        },
+        "source": "scene_tree",
+        "text": "Still Tide: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1683.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@687",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@687",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1672
+        },
+        "source": "scene_tree",
+        "text": "Verdant Marrow: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1710.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@688",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@688",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1699
+        },
+        "source": "scene_tree",
+        "text": "Silent Drifter: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1737.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@689",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@689",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1726
+        },
+        "source": "scene_tree",
+        "text": "Deep Hinge: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1764.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@690",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@690",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1753
+        },
+        "source": "scene_tree",
+        "text": "Crimson Tide: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1791.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@691",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@691",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1780
+        },
+        "source": "scene_tree",
+        "text": "Mist Crown: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1818.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@692",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@692",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1807
+        },
+        "source": "scene_tree",
+        "text": "Solar Drop: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1845.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@693",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@693",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1834
+        },
+        "source": "scene_tree",
+        "text": "Ancient Shoal: 4",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1872.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@694",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@694",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1861
+        },
+        "source": "scene_tree",
+        "text": "Cold Flare: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1899.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@695",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@695",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1888
+        },
+        "source": "scene_tree",
+        "text": "Wild Expanse: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1926.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@696",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@696",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1915
+        },
+        "source": "scene_tree",
+        "text": "Crimson Pylon: 4",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1953.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@697",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@697",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1942
+        },
+        "source": "scene_tree",
+        "text": "Golden Mark: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 1980.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@698",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@698",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1969
+        },
+        "source": "scene_tree",
+        "text": "CPU Homeworld: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2007.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@699",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@699",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 1996
+        },
+        "source": "scene_tree",
+        "text": "Harsh Bastion: 4",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2034.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@700",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@700",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2023
+        },
+        "source": "scene_tree",
+        "text": "Hidden Pylon: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2061.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@701",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@701",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2050
+        },
+        "source": "scene_tree",
+        "text": "Shadow Drifter: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2088.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@702",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@702",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2077
+        },
+        "source": "scene_tree",
+        "text": "Lone Maw: 4",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2115.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@703",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@703",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2104
+        },
+        "source": "scene_tree",
+        "text": "Cursed Threshold: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2142.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@704",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@704",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2131
+        },
+        "source": "scene_tree",
+        "text": "Dust Ridge: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2169.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@705",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@705",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2158
+        },
+        "source": "scene_tree",
+        "text": "Lunar Veil: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2196.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@706",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@706",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2185
+        },
+        "source": "scene_tree",
+        "text": "Neon Drifter: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2223.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@707",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@707",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2212
+        },
+        "source": "scene_tree",
+        "text": "Broken Wreck: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2250.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@708",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@708",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2239
+        },
+        "source": "scene_tree",
+        "text": "Drifting Shoal: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2277.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@709",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@709",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2266
+        },
+        "source": "scene_tree",
+        "text": "Shattered Throne: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2304.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@710",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@710",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2293
+        },
+        "source": "scene_tree",
+        "text": "Crystal Wellspring: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2331.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@711",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@711",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2320
+        },
+        "source": "scene_tree",
+        "text": "Tranquil Marrow: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2358.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@712",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@712",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2347
+        },
+        "source": "scene_tree",
+        "text": "Dark Gate: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2385.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@713",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@713",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2374
+        },
+        "source": "scene_tree",
+        "text": "Crystal Rift: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2412.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@714",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@714",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2401
+        },
+        "source": "scene_tree",
+        "text": "Broken Reef: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2439.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@715",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@715",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2428
+        },
+        "source": "scene_tree",
+        "text": "Astral Maw: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2466.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@716",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@716",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2455
+        },
+        "source": "scene_tree",
+        "text": "Bright Ridge: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2493.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@717",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@717",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2482
+        },
+        "source": "scene_tree",
+        "text": "Lost Garden: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2520.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@718",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@718",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2509
+        },
+        "source": "scene_tree",
+        "text": "Neon Ridge: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2547.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@719",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@719",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2536
+        },
+        "source": "scene_tree",
+        "text": "Lone Garden: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2574.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@720",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@720",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2563
+        },
+        "source": "scene_tree",
+        "text": "Crystal Veil: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2601.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@721",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@721",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2590
+        },
+        "source": "scene_tree",
+        "text": "Bright Husk: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2628.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@722",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@722",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2617
+        },
+        "source": "scene_tree",
+        "text": "Azure Post: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2655.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@723",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@723",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2644
+        },
+        "source": "scene_tree",
+        "text": "Broken Node: 2",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 741,
+          "y": 2682.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@724",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList/@Label@724",
+        "rect": {
+          "h": 23,
+          "w": 342,
+          "x": 570,
+          "y": 2671
+        },
+        "source": "scene_tree",
+        "text": "Astral Shoal: 6",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 745,
+          "y": 442
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "DispatchSummaryLabel",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/ActionFooter/FooterContent/DispatchSummaryLabel",
+        "rect": {
+          "h": 16,
+          "w": 330,
+          "x": 580,
+          "y": 434
+        },
+        "source": "scene_tree",
+        "text": "Auftrag auswählen, um die Konsequenzen zu sehen.",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 745,
+          "y": 473
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "SendButton",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetPanel/MarginContainer/PanelLayout/ActionFooter/FooterContent/SendButton",
+        "pressed": false,
+        "rect": {
+          "h": 38,
+          "w": 330,
+          "x": 580,
+          "y": 454
+        },
+        "source": "scene_tree",
+        "text": "MISSION STARTEN",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 881,
+          "y": 76
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechTab",
+        "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 126,
+          "x": 818,
+          "y": 58
+        },
+        "source": "scene_tree",
+        "text": "TECHNOLOGIE ›",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 90
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@900",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 72
+        },
+        "source": "scene_tree",
+        "text": "PLANET",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 132
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@901",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 114
+        },
+        "source": "scene_tree",
+        "text": "WERKSTATT",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 174
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@902",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 156
+        },
+        "source": "scene_tree",
+        "text": "FORSCHUNG",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 216
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@903",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 198
+        },
+        "source": "scene_tree",
+        "text": "ECONOMY",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 76.5,
+          "y": 231.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@905",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Label@905",
+        "rect": {
+          "h": 17,
+          "w": 129,
+          "x": 12,
+          "y": 223
+        },
+        "source": "scene_tree",
+        "text": "FLOTTENÜBERSICHT",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 157,
+          "y": 232
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@906",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906",
+        "pressed": false,
+        "rect": {
+          "h": 24,
+          "w": 24,
+          "x": 145,
+          "y": 220
+        },
+        "source": "scene_tree",
+        "text": "◂",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 256
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@907",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@907",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 248
+        },
+        "source": "scene_tree",
+        "text": "UNTERWEGS:",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 276
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@908",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@908",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 268
+        },
+        "source": "scene_tree",
+        "text": "Keine aktiven Schiffe",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 300
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@909",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@909",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 292
+        },
+        "source": "scene_tree",
+        "text": "PLANETEN:",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 320
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@910",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@910",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 312
+        },
+        "source": "scene_tree",
+        "text": "Keine ausgewählten Planeten",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 187.940002441406,
+          "y": 131.451499938965
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "StrengthLabel",
+        "path": "/root/World/PlanetField/Player Homeworld/StrengthLabel",
+        "rect": {
+          "h": 22,
+          "w": 80,
+          "x": 147.940002441406,
+          "y": 120.451499938965
+        },
+        "source": "scene_tree",
+        "text": "6",
+        "type": "Label",
+        "visible": true
+      }
+    ],
+    "scene": "game_view",
+    "scene_name": "World",
+    "scene_path": "/root/World",
+    "timestamp_ms": 616163
+  },
+  "palette": [
+    "#07090f",
+    "#070a13",
+    "#060b19",
+    "#070a14",
+    "#0a0c1a",
+    "#060a14",
+    "#080b15",
+    "#080b17"
+  ],
+  "perf": {
+    "draw_calls": 130,
+    "fps": 55,
+    "nodes": 1925,
+    "objects": 4946,
+    "process_ms": 0.016665
+  },
+  "scene": "game_view",
+  "scene_path": "/root/World",
+  "text_regions": [],
+  "watch_sequence": 0,
+  "width": 1280
+}

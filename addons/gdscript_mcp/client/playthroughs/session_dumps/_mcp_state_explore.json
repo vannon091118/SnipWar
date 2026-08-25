@@ -1,0 +1,2846 @@
+{
+  "ships": {
+    "count": 0,
+    "faction": "a",
+    "ships": []
+  },
+  "research": {
+    "faction": "a",
+    "research": {
+      "active": [],
+      "completed": []
+    }
+  },
+  "upgrades": {
+    "error": true,
+    "content": [
+      {
+        "text": "{\"error\":\"Planet not found: \"}",
+        "type": "text"
+      }
+    ]
+  },
+  "resources": {
+    "faction": "a",
+    "resources": {
+      "biomass": 50,
+      "credits": 100,
+      "energy": 50,
+      "material": 30,
+      "rare": 30,
+      "volatile": 30
+    }
+  },
+  "factions": {
+    "count": 0,
+    "planets": []
+  },
+  "dispatch": {
+    "dispatch": {
+      "active": [],
+      "pending": []
+    },
+    "faction": "a"
+  },
+  "planets": {
+    "error": true,
+    "content": [
+      {
+        "text": "{\"error\":\"Planet not found: \"}",
+        "type": "text"
+      }
+    ]
+  },
+  "gsApi": {
+    "files_scanned": 5,
+    "method_count": 303,
+    "public_methods": [
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "reset_from_catalog"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "reset_for_infinite_world"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "begin_new_game"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "reconnect_world"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "request_world_reconnect"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "consume_world_reconnect_request"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "has_active_run"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "run_id"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "session"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "request_new_run"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "world_session_context"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "set_pending_battle_context"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "pending_battle_context"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "clear_pending_battle_context"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "register_transit"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "update_transit"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "remove_transit"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_transit"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_transit_records"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "next_transit_id"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "set_jobs_auto_advance"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "advance_upgrade_builds"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "upgrade_build_in_progress"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "upgrade_build_remaining"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "abort_upgrade_build"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "advance_building_jobs"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "building_job_in_progress"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "abort_building_job"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "advance_research"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "advance_research_faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "advance_builds"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "advance_research_ship_tasks"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "set_faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "register_planet"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "register_homeworld"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "seed_starting_workers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "faction_of"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "is_owned_by"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "homeworld_for"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_ownership_count"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "all_owned_planets"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "starting_workers_of"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "add_starting_workers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "discover_planet"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "scan_planet"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "is_known"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "has_scanned_planet"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "scan_info_for"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "known_planets_of"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "mark_milestone"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "has_milestone"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_milestones"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "credit_transport_resources"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_faction_credits"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "add_faction_credits"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "spend_faction_credits"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_spend_faction_credits"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_spend_faction_cost"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "begin_worker_transport"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "update_worker_transport"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "set_worker_transport_escorted"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_worker_transport_records"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "complete_worker_transport"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_market_price"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "market_snapshot"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "spend_faction_cost"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_faction_resource"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_faction_vault_snapshot"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "add_faction_resource"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "spend_faction_resource"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_spend_faction_resource"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "set_planet_resource"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "resource_of"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "deal_resources"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "deal_resources_for_planets"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "resource_snapshot"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "validate_resources"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "generate_resources_for_planet"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "convert_refinery_resources"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "has_planet_upgrade"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_planet_upgrades"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_purchase_upgrade"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "purchase_upgrade"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "add_planet_upgrade"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "has_worker_factory"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_build_worker_factory"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "build_worker_factory"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "register_gathering_workers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_available_workers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "reserve_workers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "release_workers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_gathering_workers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_gathering_source"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "withdraw_gathering_workers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "gathering_workers_on"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "gather_income_tick"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "has_technology"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_researched_technologies"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_research_technology"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "research_technology"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "research_in_progress"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "research_remaining"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "has_planet_technology"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_planet_technologies"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_research_planet_technology"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "research_planet_technology"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "ensure_starter_research_ship"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "mark_research_ship_departed"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "mark_research_ship_arrived"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_research_ship_records"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "register_persistent_fleet"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_persistent_ship_records"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "mark_persistent_ship_arrived"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "mark_persistent_ship_lost"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_research_missions"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "queue_research_mission"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "cancel_research_mission"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_persistent_ship"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_ship_part_inventory"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_ship_part_count"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "add_ship_part"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "spend_ship_part"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_buy_ship_part"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "buy_ship_part"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_ship_assemblies"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "has_ship_assembly"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_ship_assembly"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_assemble_ship"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "assemble_ship"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "disassemble_ship"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "launch_ship"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_ship_build_jobs"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "ship_build_in_progress"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "ship_build_remaining"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "create_fleet_from_planet"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "preview_fleet_from_planet"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "disband_fleet_to_planet"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "reconcile_defender_fleet"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_place_planet_building"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "place_planet_building"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "remove_planet_building"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "planet_building_at"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_local_resource"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "get_local_resources"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "add_local_resource"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "spend_local_resource"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_spend_local_resource"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "transfer_local_resources"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "deal_local_resources"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "can_register_trade_route"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "register_trade_route"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "tick_trade_routes"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "trade_routes_snapshot"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "capture_planet"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "steal_resources"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "snapshot_run"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "restore_run"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "pending_chunk_data"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "consume_pending_chunk_data"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "pending_timers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "consume_pending_timers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "validate"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "method": "validate_starting_setup"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "reset_vaults"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "reset"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "credit_transport_resources"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "get_faction_credits"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "begin_worker_transport"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "update_worker_transport"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "set_worker_transport_escorted"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "get_worker_transport_records"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "complete_worker_transport"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "add_faction_credits"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "can_spend_faction_credits"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "spend_faction_credits"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "can_spend_cost"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "spend_cost"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "get_faction_resource"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "get_faction_vault_snapshot"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "add_faction_resource"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "can_spend_faction_resource"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "spend_faction_resource"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "set_planet_resource"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "resource_of"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "deal_resources"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "resource_snapshot"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "deal_resources_for_planets"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "validate_resources"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "has_planet_upgrade"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "get_planet_upgrades"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "available_workers"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "reserve_workers"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "release_workers"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "can_purchase_upgrade"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "purchase_upgrade"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "upgrade_build_in_progress"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "upgrade_build_remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "advance_upgrade_builds"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "abort_upgrade_build"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "add_planet_upgrade"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "has_worker_factory"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "can_build_worker_factory"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "build_worker_factory"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "register_gathering_workers"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "get_gathering_source"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "withdraw_gathering_workers"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "gathering_workers_on"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "gather_income_tick"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "generate_resources_for_planet"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "convert_refinery_resources"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "local_vault"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "get_local_resource"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "add_local_resource"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "spend_local_resource"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "transfer_resources"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "seed_local_resources"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "can_spend_building_cost"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "spend_building_cost"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "queue_planet_building"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "building_job_in_progress"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "advance_building_jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "abort_building_job"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "record_planet_building"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "remove_planet_building"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "planet_building_at"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "planet_buildings_of"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "can_register_trade_route"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "register_trade_route"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "market_price"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "get_market_price"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "trade_routes_snapshot"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "tick_trade_routes"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "method": "market_snapshot"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "reset"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "reset_infinite"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "remember_planet"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "register_homeworld"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "set_faction"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "register_planet"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "seed_starting_workers"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "add_starting_workers"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "faction_of"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "is_owned_by"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "homeworld_for"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "get_ownership_count"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "all_owned_planets"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "discover_planet"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "scan_planet"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "is_known"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "has_scanned_planet"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "scan_info_for"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "known_planets_of"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "record_milestone"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "mark_milestone"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "has_milestone"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "method": "get_milestones"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "reset"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "ensure_starter_research_ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "get_research_ship_records"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "get_persistent_ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "register_persistent_fleet"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "get_persistent_ship_records"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "mark_persistent_ship_arrived"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "mark_persistent_ship_lost"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "queue_research_mission"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "get_research_missions"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "cancel_research_mission"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "mark_research_ship_departed"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "mark_research_ship_arrived"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "advance_research_ship_tasks"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "get_ship_part_inventory"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "add_ship_part"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "spend_ship_part"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "can_buy_ship_part"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "buy_ship_part"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "get_ship_assemblies"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "has_ship_assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "get_ship_assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "can_assemble_ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "assemble_ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "disassemble_ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "launch_ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "get_ship_build_jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "ship_build_in_progress"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "ship_build_remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "advance_builds"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "create_fleet_from_planet"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "preview_fleet_from_planet"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "disband_fleet_to_planet"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "method": "reconcile_defender_fleet"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "reset"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "has_technology"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "get_researched_technologies"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "can_research_technology"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "research_technology"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "research_in_progress"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "research_remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "advance_research"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "advance_research_faction"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "has_planet_technology"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "get_planet_technologies"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "can_research_planet_technology"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "method": "research_planet_technology"
+      }
+    ],
+    "public_variables": [
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction_domain"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "economy_domain"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "tech_domain"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "ship_domain"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "player_homeworld"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "requested"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "newly_scanned"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "credited"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "transport_id"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "updated"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "completed"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "effective_catalog"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "upgrade"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "workforce"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "effective_catalog"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "workforce"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "built"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "building"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "cat"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "building"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "job_id"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "total_workers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "queued"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "stolen"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "vault"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "amount"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "take"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "data"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "data"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "timers"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "coordinator"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "economy_manager"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "scene"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "scene"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "script"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "found"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "ship_id"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "entry"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "entry"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "mission"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "new_key"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "value"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "errors"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/game_state.gd",
+        "variable": "errors"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "economy_config"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "market_prices"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "trade_volumes"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "worker_transport_records"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "faction_vaults"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "faction_credits"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "worker_reservations"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "upgrade_build_jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "planet_resources"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "planet_upgrades"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "worker_factories"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "gathering_workers"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "gathering_sources"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "local_vaults"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "trade_routes"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "planet_buildings"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "building_jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "config"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "transport_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "new_amount"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "current"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "new_val"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "current"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "new_val"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "effective_pool"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "resource_ids"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "rng"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "homeworld_defs"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "other_defs"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "all_defs"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "pool_size"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "base_count"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "extra_count"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "available_counts"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "resource_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "used_homeworld_resources"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "chosen_resource"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "is_homeworld"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "signature"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "signature_blocked"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "best_count"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "best_count"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "effective_pool"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "resource_ids"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "rng"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "counts"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "homeworld_data"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "neutral_data"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "p_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "home_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "signature"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "chosen"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "signature_used"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "best_count"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "already_used"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "p_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "signature"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "chosen"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "resource_ids"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "rng"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "j"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "tmp"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "best"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "best_count"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "c"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "errors"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "effective_pool"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "counts"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "resource_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "homeworld_resources"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "planet_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "resource_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "min_count"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "max_count"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "swap_index"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "value"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "list"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "typed_list"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "reserved"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "amount"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "effective_catalog"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "upgrade"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "effective_catalog"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "upgrade"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "reservation_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "planet_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "upgrade_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "job"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "job"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "list"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "current"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "current"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "count"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "source_planet_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "effective_catalog"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "total_earned"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "faction_name"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "planets"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "planet_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "count"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "res_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "base_amt"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "gather_multiplier"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "upgrade"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "earned"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "resource_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "multiplier"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "def"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "maintenance_resource"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "planet_technology"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "final_amount"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "material"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "energy"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "produced_resource"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "consumed"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "produced"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "vault"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "new_val"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "vault"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "new_val"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "effective_pool"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "rng"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "planet_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "res_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "vault"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "starting"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "amount"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "amount"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "key"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "planet_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "job"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "key"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "job"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "costs"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "key"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "removed"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "owner"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "route_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "source_stock"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "destination_stock"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "scarcity"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "price"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "key"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "snapshot"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "moved"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "config"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "route"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "resource_id"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "amount"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "from_planet"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "to_planet"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "price"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "volume"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "toll"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "owner"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "tree"
+      },
+      {
+        "file": "res://scripts/state/domains/economy_domain.gd",
+        "variable": "state"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "ownership"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "starting_workers"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "homeworlds"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "known_planets"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "scanned_planets"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "scan_intel"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "milestones"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "known_list"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "old_faction"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "count"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "known_list"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "scanned_list"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "was_scanned"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "intel"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "list"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "list"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "intel"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "faction_milestones"
+      },
+      {
+        "file": "res://scripts/state/domains/faction_domain.gd",
+        "variable": "faction_milestones"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "mission_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "target_planet_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "task_type"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "duration"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "status"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "mission_role"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "current_planet_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "status"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "fleet"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "active_mission_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship_part_inventory"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship_assemblies"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "next_ship_index"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship_build_jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "persistent_ships"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "research_missions"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "next_research_mission_index"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "existing"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "record"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "candidate"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "mission"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "mission"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "current"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "current"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "part"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "part"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assemblies"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "hull"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "layout"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "inv"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "needed"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "tally"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "drive"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "weapon"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "shield"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "scanner"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "mod_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "mod_part"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "slot_key"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "p_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "mod_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "instance_seed"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "blueprint"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "utility_variant_ids"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "total_build_time"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "p"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "mp"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "result"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "job"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "planet_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "job"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "fleet"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "gathered_ships"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "fleets_root"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "fleet"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "previewed"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assembly"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assemblies"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "restored"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "ship_id"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "assemblies"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "survivor_ids"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "kept"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "part"
+      },
+      {
+        "file": "res://scripts/state/domains/ship_domain.gd",
+        "variable": "variant"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "researched_techs"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "planet_technologies"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "research_jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "list"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "typed_list"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "tech"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "tech"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "faction"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "jobs"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "technology_id"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "remaining"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "list"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "list"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "typed_list"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "tech"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "tech"
+      },
+      {
+        "file": "res://scripts/state/domains/tech_domain.gd",
+        "variable": "list"
+      }
+    ]
+  }
+}

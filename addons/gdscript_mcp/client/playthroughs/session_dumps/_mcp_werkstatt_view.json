@@ -1,0 +1,1399 @@
+{
+  "agent_context": "scene=game_view size=1280x720\ninteractables:\n  - PLANETEN  › @(818,16,126x36)\n  - TECHNOLOGIE › @(818,58,126x36)\n  - ✕  SCHLIESSEN @(794,53,99x36)\n  - PLANET @(12,72,88x36)\n  - WERKSTATT @(12,114,88x36)\n  - FORSCHUNG @(12,156,88x36)\n  - ECONOMY @(12,198,88x36)\n  - ◂ @(145,220,24x24)",
+  "artifact": {
+    "context": {
+      "absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_901546_18.png",
+      "context_id": "frame_901546_18",
+      "created_at": 1787532542.169,
+      "expires_at": 1787532587.169,
+      "format": "png",
+      "height": 720,
+      "metadata": {
+        "pipeline": "vision",
+        "source": "godot_viewport"
+      },
+      "mime_type": "image/png",
+      "path": "user://mcp_context/runtime_runtime_8585/frame_901546_18.png",
+      "size_bytes": 227301,
+      "width": 1280,
+      "worker_absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_901546_18.png",
+      "worker_format": "png",
+      "worker_path": "user://mcp_context/runtime_runtime_8585/frame_901546_18.png",
+      "worker_size_bytes": 0
+    },
+    "context_id": "frame_901546_18",
+    "format": "png",
+    "height": 720,
+    "mime_type": "image/png",
+    "size_bytes": 227301,
+    "width": 1280
+  },
+  "context": {
+    "absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_901546_18.png",
+    "context_id": "frame_901546_18",
+    "created_at": 1787532542.169,
+    "expires_at": 1787532587.169,
+    "format": "png",
+    "height": 720,
+    "metadata": {
+      "pipeline": "vision",
+      "source": "godot_viewport"
+    },
+    "mime_type": "image/png",
+    "path": "user://mcp_context/runtime_runtime_8585/frame_901546_18.png",
+    "size_bytes": 227301,
+    "width": 1280,
+    "worker_absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_901546_18.png",
+    "worker_format": "png",
+    "worker_path": "user://mcp_context/runtime_runtime_8585/frame_901546_18.png",
+    "worker_size_bytes": 0
+  },
+  "controls": [
+    {
+      "center": {
+        "x": 881,
+        "y": 34
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "PlanetTab",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 126,
+        "x": 818,
+        "y": 16
+      },
+      "source": "scene_tree",
+      "text": "PLANETEN  ›",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 881,
+        "y": 76
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "TechTab",
+      "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 126,
+        "x": 818,
+        "y": 58
+      },
+      "source": "scene_tree",
+      "text": "TECHNOLOGIE ›",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 421.518455505371,
+        "y": 85.8548583984375
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "Title",
+      "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/Title",
+      "rect": {
+        "h": 28,
+        "w": 726,
+        "x": 58.5184555053711,
+        "y": 71.8548583984375
+      },
+      "source": "scene_tree",
+      "text": "WERKSTATT / HANGAR",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 843.806030273438,
+        "y": 71.7262802124023
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "CloseButton",
+      "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/CloseButton",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 99,
+        "x": 794.306030273438,
+        "y": 53.7262802124023
+      },
+      "source": "scene_tree",
+      "text": "✕  SCHLIESSEN",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 477.206855773926,
+        "y": 142.151458740234
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@928",
+      "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@Label@928",
+      "rect": {
+        "h": 17,
+        "w": 815,
+        "x": 69.7068557739258,
+        "y": 133.651458740234
+      },
+      "source": "scene_tree",
+      "text": "WERKBANK — SCHIFFSMONTAGE",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 477.686790466309,
+        "y": 166.646850585938
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@929",
+      "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@Label@929",
+      "rect": {
+        "h": 16,
+        "w": 815,
+        "x": 70.1867904663086,
+        "y": 158.646850585938
+      },
+      "source": "scene_tree",
+      "text": "Teile kaufen, im Hangar montieren, starten oder wieder zerlegen.",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 478.377899169922,
+        "y": 203.140213012695
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@931",
+      "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@Label@931",
+      "rect": {
+        "h": 17,
+        "w": 815,
+        "x": 70.8778991699219,
+        "y": 194.640213012695
+      },
+      "source": "scene_tree",
+      "text": "SCHIFFSWERFT — SHOP",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 478.857833862305,
+        "y": 227.635620117188
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@932",
+      "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@Label@932",
+      "rect": {
+        "h": 16,
+        "w": 815,
+        "x": 71.3578338623047,
+        "y": 219.635620117188
+      },
+      "source": "scene_tree",
+      "text": "Teile kaufen, im Hangar montieren und bei Bedarf wieder zerlegen.",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 479.318572998047,
+        "y": 251.631195068359
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@933",
+      "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@Label@933",
+      "rect": {
+        "h": 16,
+        "w": 815,
+        "x": 71.8185729980469,
+        "y": 243.631195068359
+      },
+      "source": "scene_tree",
+      "text": "Startplanet (eigene Werft)",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 479.779312133789,
+        "y": 277.626770019531
+      },
+      "disabled": true,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@OptionButton@944",
+      "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@OptionButton@944",
+      "pressed": false,
+      "rect": {
+        "h": 20,
+        "w": 815,
+        "x": 72.2793121337891,
+        "y": 267.626770019531
+      },
+      "source": "scene_tree",
+      "text": "",
+      "type": "OptionButton",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 481.775848388672,
+        "y": 379.607574462891
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@946",
+      "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@VBoxContainer@945/@Label@946",
+      "rect": {
+        "h": 16,
+        "w": 815,
+        "x": 74.2758483886719,
+        "y": 371.607574462891
+      },
+      "source": "scene_tree",
+      "text": "Keine eigene Werft vorhanden — zuerst Orbitale Werft bauen.",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 90
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@900",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 72
+      },
+      "source": "scene_tree",
+      "text": "PLANET",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 132
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@901",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 114
+      },
+      "source": "scene_tree",
+      "text": "WERKSTATT",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 174
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@902",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 156
+      },
+      "source": "scene_tree",
+      "text": "FORSCHUNG",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 216
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@903",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 198
+      },
+      "source": "scene_tree",
+      "text": "ECONOMY",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 76.5,
+        "y": 231.5
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@905",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Label@905",
+      "rect": {
+        "h": 17,
+        "w": 129,
+        "x": 12,
+        "y": 223
+      },
+      "source": "scene_tree",
+      "text": "FLOTTENÜBERSICHT",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 157,
+        "y": 232
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@906",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906",
+      "pressed": false,
+      "rect": {
+        "h": 24,
+        "w": 24,
+        "x": 145,
+        "y": 220
+      },
+      "source": "scene_tree",
+      "text": "◂",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 90.5,
+        "y": 256
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@907",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@907",
+      "rect": {
+        "h": 16,
+        "w": 157,
+        "x": 12,
+        "y": 248
+      },
+      "source": "scene_tree",
+      "text": "UNTERWEGS:",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 90.5,
+        "y": 276
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@908",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@908",
+      "rect": {
+        "h": 16,
+        "w": 157,
+        "x": 12,
+        "y": 268
+      },
+      "source": "scene_tree",
+      "text": "Keine aktiven Schiffe",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 90.5,
+        "y": 300
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@909",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@909",
+      "rect": {
+        "h": 16,
+        "w": 157,
+        "x": 12,
+        "y": 292
+      },
+      "source": "scene_tree",
+      "text": "PLANETEN:",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 90.5,
+        "y": 320
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "@Label@910",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@910",
+      "rect": {
+        "h": 16,
+        "w": 157,
+        "x": 12,
+        "y": 312
+      },
+      "source": "scene_tree",
+      "text": "Keine ausgewählten Planeten",
+      "type": "Label",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 187.940002441406,
+        "y": 131.451499938965
+      },
+      "has_focus": false,
+      "interactable": false,
+      "kind": "label",
+      "mouse_filter": 2,
+      "name": "StrengthLabel",
+      "path": "/root/World/PlanetField/Player Homeworld/StrengthLabel",
+      "rect": {
+        "h": 22,
+        "w": 80,
+        "x": 147.940002441406,
+        "y": 120.451499938965
+      },
+      "source": "scene_tree",
+      "text": "6",
+      "type": "Label",
+      "visible": true
+    }
+  ],
+  "elements": [],
+  "groups": [],
+  "height": 720,
+  "interactables": [
+    {
+      "center": {
+        "x": 881,
+        "y": 34
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "PlanetTab",
+      "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 126,
+        "x": 818,
+        "y": 16
+      },
+      "source": "scene_tree",
+      "text": "PLANETEN  ›",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 881,
+        "y": 76
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "TechTab",
+      "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 126,
+        "x": 818,
+        "y": 58
+      },
+      "source": "scene_tree",
+      "text": "TECHNOLOGIE ›",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 843.806030273438,
+        "y": 71.7262802124023
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "CloseButton",
+      "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/CloseButton",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 99,
+        "x": 794.306030273438,
+        "y": 53.7262802124023
+      },
+      "source": "scene_tree",
+      "text": "✕  SCHLIESSEN",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 90
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@900",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 72
+      },
+      "source": "scene_tree",
+      "text": "PLANET",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 132
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@901",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 114
+      },
+      "source": "scene_tree",
+      "text": "WERKSTATT",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 174
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@902",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 156
+      },
+      "source": "scene_tree",
+      "text": "FORSCHUNG",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 56,
+        "y": 216
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@903",
+      "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903",
+      "pressed": false,
+      "rect": {
+        "h": 36,
+        "w": 88,
+        "x": 12,
+        "y": 198
+      },
+      "source": "scene_tree",
+      "text": "ECONOMY",
+      "type": "Button",
+      "visible": true
+    },
+    {
+      "center": {
+        "x": 157,
+        "y": 232
+      },
+      "disabled": false,
+      "has_focus": false,
+      "interactable": true,
+      "kind": "button",
+      "mouse_filter": 0,
+      "name": "@Button@906",
+      "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906",
+      "pressed": false,
+      "rect": {
+        "h": 24,
+        "w": 24,
+        "x": 145,
+        "y": 220
+      },
+      "source": "scene_tree",
+      "text": "◂",
+      "type": "Button",
+      "visible": true
+    }
+  ],
+  "layout_grid": [
+    [
+      "#020408",
+      "#020407",
+      "#020408",
+      "#020408",
+      "#020408",
+      "#04040b",
+      "#040408",
+      "#030407",
+      "#030407",
+      "#030407",
+      "#0b2029",
+      "#06080f"
+    ],
+    [
+      "#061317",
+      "#030508",
+      "#030508",
+      "#030408",
+      "#030408",
+      "#040408",
+      "#06080d",
+      "#030407",
+      "#030407",
+      "#030508",
+      "#030407",
+      "#06080f"
+    ],
+    [
+      "#040509",
+      "#030508",
+      "#030508",
+      "#030408",
+      "#060b0f",
+      "#030407",
+      "#030407",
+      "#030508",
+      "#030508",
+      "#030508",
+      "#030407",
+      "#06090f"
+    ],
+    [
+      "#030408",
+      "#080e12",
+      "#05080c",
+      "#0a1014",
+      "#090a0c",
+      "#0b0e11",
+      "#090b0d",
+      "#0c0f12",
+      "#0b0e11",
+      "#0a0c0f",
+      "#090b0d",
+      "#060910"
+    ],
+    [
+      "#090c11",
+      "#090c11",
+      "#090c11",
+      "#090c11",
+      "#090c11",
+      "#090c11",
+      "#090c11",
+      "#090c11",
+      "#090c11",
+      "#090c11",
+      "#090c11",
+      "#060910"
+    ],
+    [
+      "#04080c",
+      "#030407",
+      "#030407",
+      "#030508",
+      "#030407",
+      "#030407",
+      "#030508",
+      "#030508",
+      "#030508",
+      "#030508",
+      "#030508",
+      "#060910"
+    ],
+    [
+      "#030407",
+      "#030508",
+      "#030407",
+      "#030407",
+      "#030407",
+      "#040609",
+      "#030508",
+      "#171f23",
+      "#030508",
+      "#04070a",
+      "#04070b",
+      "#060910"
+    ],
+    [
+      "#06080f",
+      "#06080f",
+      "#06080f",
+      "#06080f",
+      "#06080f",
+      "#06080f",
+      "#060910",
+      "#060910",
+      "#060a11",
+      "#060a10",
+      "#060910",
+      "#05080f"
+    ]
+  ],
+  "live": {
+    "control_count": 22,
+    "controls": [
+      {
+        "center": {
+          "x": 881,
+          "y": 34
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "PlanetTab",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 126,
+          "x": 818,
+          "y": 16
+        },
+        "source": "scene_tree",
+        "text": "PLANETEN  ›",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 881,
+          "y": 76
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechTab",
+        "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 126,
+          "x": 818,
+          "y": 58
+        },
+        "source": "scene_tree",
+        "text": "TECHNOLOGIE ›",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 421.518455505371,
+          "y": 85.8548583984375
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "Title",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/Title",
+        "rect": {
+          "h": 28,
+          "w": 726,
+          "x": 58.5184555053711,
+          "y": 71.8548583984375
+        },
+        "source": "scene_tree",
+        "text": "WERKSTATT / HANGAR",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 843.806030273438,
+          "y": 71.7262802124023
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "CloseButton",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/CloseButton",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 99,
+          "x": 794.306030273438,
+          "y": 53.7262802124023
+        },
+        "source": "scene_tree",
+        "text": "✕  SCHLIESSEN",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 477.206855773926,
+          "y": 142.151458740234
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@928",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@Label@928",
+        "rect": {
+          "h": 17,
+          "w": 815,
+          "x": 69.7068557739258,
+          "y": 133.651458740234
+        },
+        "source": "scene_tree",
+        "text": "WERKBANK — SCHIFFSMONTAGE",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 477.686790466309,
+          "y": 166.646850585938
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@929",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@Label@929",
+        "rect": {
+          "h": 16,
+          "w": 815,
+          "x": 70.1867904663086,
+          "y": 158.646850585938
+        },
+        "source": "scene_tree",
+        "text": "Teile kaufen, im Hangar montieren, starten oder wieder zerlegen.",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 478.377899169922,
+          "y": 203.140213012695
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@931",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@Label@931",
+        "rect": {
+          "h": 17,
+          "w": 815,
+          "x": 70.8778991699219,
+          "y": 194.640213012695
+        },
+        "source": "scene_tree",
+        "text": "SCHIFFSWERFT — SHOP",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 478.857833862305,
+          "y": 227.635620117188
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@932",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@Label@932",
+        "rect": {
+          "h": 16,
+          "w": 815,
+          "x": 71.3578338623047,
+          "y": 219.635620117188
+        },
+        "source": "scene_tree",
+        "text": "Teile kaufen, im Hangar montieren und bei Bedarf wieder zerlegen.",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 479.318572998047,
+          "y": 251.631195068359
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@933",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@Label@933",
+        "rect": {
+          "h": 16,
+          "w": 815,
+          "x": 71.8185729980469,
+          "y": 243.631195068359
+        },
+        "source": "scene_tree",
+        "text": "Startplanet (eigene Werft)",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 479.779312133789,
+          "y": 277.626770019531
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@OptionButton@944",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@OptionButton@944",
+        "pressed": false,
+        "rect": {
+          "h": 20,
+          "w": 815,
+          "x": 72.2793121337891,
+          "y": 267.626770019531
+        },
+        "source": "scene_tree",
+        "text": "",
+        "type": "OptionButton",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 481.775848388672,
+          "y": 379.607574462891
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@946",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@947/WorkshopScroll/WorkshopContent/@VBoxContainer@945/@Label@946",
+        "rect": {
+          "h": 16,
+          "w": 815,
+          "x": 74.2758483886719,
+          "y": 371.607574462891
+        },
+        "source": "scene_tree",
+        "text": "Keine eigene Werft vorhanden — zuerst Orbitale Werft bauen.",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 90
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@900",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 72
+        },
+        "source": "scene_tree",
+        "text": "PLANET",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 132
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@901",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 114
+        },
+        "source": "scene_tree",
+        "text": "WERKSTATT",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 174
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@902",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 156
+        },
+        "source": "scene_tree",
+        "text": "FORSCHUNG",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 216
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@903",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 198
+        },
+        "source": "scene_tree",
+        "text": "ECONOMY",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 76.5,
+          "y": 231.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@905",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Label@905",
+        "rect": {
+          "h": 17,
+          "w": 129,
+          "x": 12,
+          "y": 223
+        },
+        "source": "scene_tree",
+        "text": "FLOTTENÜBERSICHT",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 157,
+          "y": 232
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@906",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906",
+        "pressed": false,
+        "rect": {
+          "h": 24,
+          "w": 24,
+          "x": 145,
+          "y": 220
+        },
+        "source": "scene_tree",
+        "text": "◂",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 256
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@907",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@907",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 248
+        },
+        "source": "scene_tree",
+        "text": "UNTERWEGS:",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 276
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@908",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@908",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 268
+        },
+        "source": "scene_tree",
+        "text": "Keine aktiven Schiffe",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 300
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@909",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@909",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 292
+        },
+        "source": "scene_tree",
+        "text": "PLANETEN:",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 320
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@910",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@910",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 312
+        },
+        "source": "scene_tree",
+        "text": "Keine ausgewählten Planeten",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 187.940002441406,
+          "y": 131.451499938965
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "StrengthLabel",
+        "path": "/root/World/PlanetField/Player Homeworld/StrengthLabel",
+        "rect": {
+          "h": 22,
+          "w": 80,
+          "x": 147.940002441406,
+          "y": 120.451499938965
+        },
+        "source": "scene_tree",
+        "text": "6",
+        "type": "Label",
+        "visible": true
+      }
+    ],
+    "scene": "game_view",
+    "scene_name": "World",
+    "scene_path": "/root/World",
+    "timestamp_ms": 901526
+  },
+  "palette": [
+    "#030407",
+    "#030508",
+    "#090c11",
+    "#030408",
+    "#06080f",
+    "#060910",
+    "#020408",
+    "#050810"
+  ],
+  "perf": {
+    "draw_calls": 119,
+    "fps": 60,
+    "nodes": 1956,
+    "objects": 5013,
+    "process_ms": 0.016848
+  },
+  "scene": "game_view",
+  "scene_path": "/root/World",
+  "text_regions": [],
+  "watch_sequence": 0,
+  "width": 1280
+}

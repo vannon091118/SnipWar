@@ -1,0 +1,19 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "mcp": {
+    "godot-snipwar": {
+      "type": "local",
+      "command": [
+        "C:/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        ".",
+        "--",
+        "--mcp",
+        "--mcp-transport",
+        "stdio"
+      ],
+      "enabled": true,
+      "timeout": 10000
+    }
+  }
+}

@@ -1,0 +1,3346 @@
+{
+  "found": {
+    "center": {
+      "x": 223.619491577148,
+      "y": 230.721130371094
+    },
+    "disabled": false,
+    "found": true,
+    "has_focus": false,
+    "interactable": true,
+    "kind": "button",
+    "match_score": 0.75,
+    "mouse_filter": 0,
+    "name": "TechNode_shipyard_construction",
+    "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_shipyard_construction",
+    "pressed": false,
+    "rect": {
+      "h": 100,
+      "w": 210,
+      "x": 118.619491577148,
+      "y": 180.721130371094
+    },
+    "source": "scene_tree",
+    "text": "Orbitales Werft-Design\n10 energy",
+    "type": "Button",
+    "visible": true
+  },
+  "clicked": {
+    "clicked": true,
+    "found": true,
+    "hold_frames": 1,
+    "mode": "parse",
+    "receipt": {
+      "after_live": {
+        "control_count": 40,
+        "controls": [
+          {
+            "center": {
+              "x": 881,
+              "y": 34
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "PlanetTab",
+            "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 126,
+              "x": 818,
+              "y": 16
+            },
+            "source": "scene_tree",
+            "text": "PLANETEN  ›",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 881,
+              "y": 76
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechTab",
+            "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 126,
+              "x": 818,
+              "y": 58
+            },
+            "source": "scene_tree",
+            "text": "TECHNOLOGIE ›",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 421.518455505371,
+              "y": 85.8548583984375
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "Title",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/Title",
+            "rect": {
+              "h": 28,
+              "w": 726,
+              "x": 58.5184555053711,
+              "y": 71.8548583984375
+            },
+            "source": "scene_tree",
+            "text": "FORSCHUNGSBAUM",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 843.806030273438,
+              "y": 71.7262802124023
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "CloseButton",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/CloseButton",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 99,
+              "x": 794.306030273438,
+              "y": 53.7262802124023
+            },
+            "source": "scene_tree",
+            "text": "✕  SCHLIESSEN",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 223.619491577148,
+              "y": 230.721130371094
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_shipyard_construction",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_shipyard_construction",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 118.619491577148,
+              "y": 180.721130371094
+            },
+            "source": "scene_tree",
+            "text": "Orbitales Werft-Design\n10 energy",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 503.56787109375,
+              "y": 225.345855712891
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_scout_hull",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scout_hull",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 398.56787109375,
+              "y": 175.345855712891
+            },
+            "source": "scene_tree",
+            "text": "Aufklärungsrumpf T1\n15 material",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 783.516235351563,
+              "y": 219.970565795898
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_scanner_drone",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scanner_drone",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 678.516235351563,
+              "y": 169.970565795898
+            },
+            "source": "scene_tree",
+            "text": "Scanner-Drohne T1\n10 energy",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 506.639465332031,
+              "y": 385.316345214844
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_weapon_systems",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_weapon_systems",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 401.639465332031,
+              "y": 335.316345214844
+            },
+            "source": "scene_tree",
+            "text": "Waffensysteme T1\n12 volatile",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 1063.46466064453,
+              "y": 214.595275878906
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_worker_automation",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_worker_automation",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 958.464660644531,
+              "y": 164.595275878906
+            },
+            "source": "scene_tree",
+            "text": "Werft-Arbeiterautomatik\n15 biomass",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 226.691078186035,
+              "y": 390.691650390625
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_mech_frame",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_mech_frame",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 121.691078186035,
+              "y": 340.691650390625
+            },
+            "source": "scene_tree",
+            "text": "Mech-Chassis T1\n25 volatile",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 229.762664794922,
+              "y": 550.662170410156
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_planetary_survey",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_planetary_survey",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 124.762664794922,
+              "y": 500.662170410156
+            },
+            "source": "scene_tree",
+            "text": "Planetare Vermessung\n10 rare",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 509.711059570313,
+              "y": 545.286895751953
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_planetary_extraction",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_planetary_extraction",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 404.711059570313,
+              "y": 495.286895751953
+            },
+            "source": "scene_tree",
+            "text": "Planetare Extraktion\n20 material",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 786.587829589844,
+              "y": 379.941101074219
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_advanced_propulsion",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_advanced_propulsion",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 681.587829589844,
+              "y": 329.941101074219
+            },
+            "source": "scene_tree",
+            "text": "Fortschrittlicher Antrieb\n20 volatile",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 789.659423828125,
+              "y": 539.911590576172
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_heavy_armor_plating",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_heavy_armor_plating",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 684.659423828125,
+              "y": 489.911590576172
+            },
+            "source": "scene_tree",
+            "text": "Schwere Panzerplatten\n20 material",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 1066.53625488281,
+              "y": 374.565795898438
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_deep_scan",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_deep_scan",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 961.536254882813,
+              "y": 324.565795898438
+            },
+            "source": "scene_tree",
+            "text": "Tiefenscan\n15 energy",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 1069.60784912109,
+              "y": 534.536315917969
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_long_range_sensors",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_long_range_sensors",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 964.607849121094,
+              "y": 484.536315917969
+            },
+            "source": "scene_tree",
+            "text": "Langstreckensensoren\n15 rare",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 1343.41320800781,
+              "y": 209.220001220703
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_automated_refinery",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_automated_refinery",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 1238.41320800781,
+              "y": 159.220001220703
+            },
+            "source": "scene_tree",
+            "text": "Automatisierte Raffinerie\n25 rare",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 1346.48474121094,
+              "y": 369.190521240234
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_bulk_processing",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_bulk_processing",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 1241.48474121094,
+              "y": 319.190521240234
+            },
+            "source": "scene_tree",
+            "text": "Massenverarbeitung\n25 biomass",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 232.834259033203,
+              "y": 710.632690429688
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_drone_swarm",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_swarm",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 127.834259033203,
+              "y": 660.632690429688
+            },
+            "source": "scene_tree",
+            "text": "Drohnenschwarm T1\n25 volatile",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 512.782653808594,
+              "y": 705.257446289063
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_repair_drone_t1",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t1",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 407.782653808594,
+              "y": 655.257446289063
+            },
+            "source": "scene_tree",
+            "text": "Reparatur-Drohne T1\n15 energy",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 792.731018066406,
+              "y": 699.882080078125
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_repair_drone_t2",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t2",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 687.731018066406,
+              "y": 649.882080078125
+            },
+            "source": "scene_tree",
+            "text": "Reparatur-Drohne T2\n25 energy",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 1072.67944335938,
+              "y": 694.5068359375
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_repair_drone_t3",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t3",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 967.679443359375,
+              "y": 644.5068359375
+            },
+            "source": "scene_tree",
+            "text": "Reparatur-Drohne T3\n35 energy",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 515.854248046875,
+              "y": 865.227905273438
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_combat_drone_t1",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_combat_drone_t1",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 410.854248046875,
+              "y": 815.227905273438
+            },
+            "source": "scene_tree",
+            "text": "Kampf-Drohne T1\n20 volatile",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 795.802612304688,
+              "y": 859.852661132813
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_combat_drone_t2",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_combat_drone_t2",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 690.802612304688,
+              "y": 809.852661132813
+            },
+            "source": "scene_tree",
+            "text": "Kampf-Drohne T2\n30 volatile",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 518.925811767578,
+              "y": 1025.19836425781
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_scan_drone_t1",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scan_drone_t1",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 413.925811767578,
+              "y": 975.198364257813
+            },
+            "source": "scene_tree",
+            "text": "Scan-Drohne T1\n15 rare",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 798.874206542969,
+              "y": 1019.82312011719
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_scan_drone_t2",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scan_drone_t2",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 693.874206542969,
+              "y": 969.823120117188
+            },
+            "source": "scene_tree",
+            "text": "Scan-Drohne T2\n25 rare",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 521.997406005859,
+              "y": 1185.1689453125
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_drone_vision",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_vision",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 416.997406005859,
+              "y": 1135.1689453125
+            },
+            "source": "scene_tree",
+            "text": "Drohnen-Vision\n20 energy",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 525.069000244141,
+              "y": 1345.13952636719
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_drone_booster_t1",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_booster_t1",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 420.069000244141,
+              "y": 1295.13952636719
+            },
+            "source": "scene_tree",
+            "text": "Drohnen-Booster T1\n20 rare",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 801.94580078125,
+              "y": 1179.79357910156
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechNode_drone_booster_t2",
+            "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_booster_t2",
+            "pressed": false,
+            "rect": {
+              "h": 100,
+              "w": 210,
+              "x": 696.94580078125,
+              "y": 1129.79357910156
+            },
+            "source": "scene_tree",
+            "text": "Drohnen-Booster T2\n30 rare",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 90
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@900",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 72
+            },
+            "source": "scene_tree",
+            "text": "PLANET",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 132
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@901",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 114
+            },
+            "source": "scene_tree",
+            "text": "WERKSTATT",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 174
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@902",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 156
+            },
+            "source": "scene_tree",
+            "text": "FORSCHUNG",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 216
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@903",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 198
+            },
+            "source": "scene_tree",
+            "text": "ECONOMY",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 76.5,
+              "y": 231.5
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@905",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Label@905",
+            "rect": {
+              "h": 17,
+              "w": 129,
+              "x": 12,
+              "y": 223
+            },
+            "source": "scene_tree",
+            "text": "FLOTTENÜBERSICHT",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 157,
+              "y": 232
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@906",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906",
+            "pressed": false,
+            "rect": {
+              "h": 24,
+              "w": 24,
+              "x": 145,
+              "y": 220
+            },
+            "source": "scene_tree",
+            "text": "◂",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 90.5,
+              "y": 256
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@907",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@907",
+            "rect": {
+              "h": 16,
+              "w": 157,
+              "x": 12,
+              "y": 248
+            },
+            "source": "scene_tree",
+            "text": "UNTERWEGS:",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 90.5,
+              "y": 276
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@908",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@908",
+            "rect": {
+              "h": 16,
+              "w": 157,
+              "x": 12,
+              "y": 268
+            },
+            "source": "scene_tree",
+            "text": "Keine aktiven Schiffe",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 90.5,
+              "y": 300
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@909",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@909",
+            "rect": {
+              "h": 16,
+              "w": 157,
+              "x": 12,
+              "y": 292
+            },
+            "source": "scene_tree",
+            "text": "PLANETEN:",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 90.5,
+              "y": 320
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@910",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@910",
+            "rect": {
+              "h": 16,
+              "w": 157,
+              "x": 12,
+              "y": 312
+            },
+            "source": "scene_tree",
+            "text": "Keine ausgewählten Planeten",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 187.940002441406,
+              "y": 131.451499938965
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "StrengthLabel",
+            "path": "/root/World/PlanetField/Player Homeworld/StrengthLabel",
+            "rect": {
+              "h": 22,
+              "w": 80,
+              "x": 147.940002441406,
+              "y": 120.451499938965
+            },
+            "source": "scene_tree",
+            "text": "6",
+            "type": "Label",
+            "visible": true
+          }
+        ],
+        "scene": "game_view",
+        "scene_name": "World",
+        "scene_path": "/root/World",
+        "timestamp_ms": 809493
+      },
+      "after_live_signature": "game_view#button:/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900:planet:12,72,88,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901:werkstatt:12,114,88,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902:forschung:12,156,88,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903:economy:12,198,88,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906:◂:145,220,24,24:0:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_advanced_propulsion:fortschrittlicher antrieb\n20 volatile:681,329,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_automated_refinery:automatisierte raffinerie\n25 rare:1238,159,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_bulk_processing:massenverarbeitung\n25 biomass:1241,319,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_combat_drone_t1:kampf-drohne t1\n20 volatile:410,815,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_combat_drone_t2:kampf-drohne t2\n30 volatile:690,809,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_deep_scan:tiefenscan\n15 energy:961,324,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_booster_t1:drohnen-booster t1\n20 rare:420,1295,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_booster_t2:drohnen-booster t2\n30 rare:696,1129,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_swarm:drohnenschwarm t1\n25 volatile:127,660,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_vision:drohnen-vision\n20 energy:416,1135,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_heavy_armor_plating:schwere panzerplatten\n20 material:684,489,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_long_range_sensors:langstreckensensoren\n15 rare:964,484,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_mech_frame:mech-chassis t1\n25 volatile:121,340,210,100:0:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_planetary_extraction:planetare extraktion\n20 material:404,495,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_planetary_survey:planetare vermessung\n10 rare:124,500,210,100:0:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t1:reparatur-drohne t1\n15 energy:407,655,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t2:reparatur-drohne t2\n25 energy:687,649,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t3:reparatur-drohne t3\n35 energy:967,644,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scan_drone_t1:scan-drohne t1\n15 rare:413,975,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scan_drone_t2:scan-drohne t2\n25 rare:693,969,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scanner_drone:scanner-drohne t1\n10 energy:678,169,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scout_hull:aufklärungsrumpf t1\n15 material:398,175,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_shipyard_construction:orbitales werft-design\n10 energy:118,180,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_weapon_systems:waffensysteme t1\n12 volatile:401,335,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_worker_automation:werft-arbeiterautomatik\n15 biomass:958,164,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/CloseButton:✕  schliessen:794,53,99,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab:planeten  ›:818,16,126,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab:technologie ›:818,58,126,36:0:0:0|label:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Label@905:flottenübersicht:12,223,129,17:0:0:0|label:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@907:unterwegs::12,248,157,16:0:0:0|label:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@908:keine aktiven schiffe:12,268,157,16:0:0:0|label:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@909:planeten::12,292,157,16:0:0:0|label:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@910:keine ausgewählten planeten:12,312,157,16:0:0:0|label:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/Title:forschungsbaum:58,71,726,28:0:0:0|label:/root/World/PlanetField/Player Homeworld/StrengthLabel:6:147,120,80,22:0:0:0",
+      "artifact_released": true,
+      "artifact_retained": false,
+      "before_live_signature": "game_view#button:/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900:planet:12,72,88,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901:werkstatt:12,114,88,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902:forschung:12,156,88,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903:economy:12,198,88,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906:◂:145,220,24,24:0:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_advanced_propulsion:fortschrittlicher antrieb\n20 volatile:681,329,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_automated_refinery:automatisierte raffinerie\n25 rare:1238,159,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_bulk_processing:massenverarbeitung\n25 biomass:1241,319,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_combat_drone_t1:kampf-drohne t1\n20 volatile:410,815,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_combat_drone_t2:kampf-drohne t2\n30 volatile:690,809,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_deep_scan:tiefenscan\n15 energy:961,324,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_booster_t1:drohnen-booster t1\n20 rare:420,1295,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_booster_t2:drohnen-booster t2\n30 rare:696,1129,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_swarm:drohnenschwarm t1\n25 volatile:127,660,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_vision:drohnen-vision\n20 energy:416,1135,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_heavy_armor_plating:schwere panzerplatten\n20 material:684,489,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_long_range_sensors:langstreckensensoren\n15 rare:964,484,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_mech_frame:mech-chassis t1\n25 volatile:121,340,210,100:0:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_planetary_extraction:planetare extraktion\n20 material:404,495,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_planetary_survey:planetare vermessung\n10 rare:124,500,210,100:0:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t1:reparatur-drohne t1\n15 energy:407,655,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t2:reparatur-drohne t2\n25 energy:687,649,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t3:reparatur-drohne t3\n35 energy:967,644,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scan_drone_t1:scan-drohne t1\n15 rare:413,975,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scan_drone_t2:scan-drohne t2\n25 rare:693,969,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scanner_drone:scanner-drohne t1\n10 energy:678,169,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scout_hull:aufklärungsrumpf t1\n15 material:398,175,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_shipyard_construction:orbitales werft-design\n10 energy:118,180,210,100:0:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_weapon_systems:waffensysteme t1\n12 volatile:401,335,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_worker_automation:werft-arbeiterautomatik\n15 biomass:958,164,210,100:1:0:0|button:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/CloseButton:✕  schliessen:794,53,99,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab:planeten  ›:818,16,126,36:0:0:0|button:/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab:technologie ›:818,58,126,36:0:0:0|label:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Label@905:flottenübersicht:12,223,129,17:0:0:0|label:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@907:unterwegs::12,248,157,16:0:0:0|label:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@908:keine aktiven schiffe:12,268,157,16:0:0:0|label:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@909:planeten::12,292,157,16:0:0:0|label:/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@910:keine ausgewählten planeten:12,312,157,16:0:0:0|label:/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/Title:forschungsbaum:58,71,726,28:0:0:0|label:/root/World/PlanetField/Player Homeworld/StrengthLabel:6:147,120,80,22:0:0:0",
+      "context_id": "frame_809378_14",
+      "frame_hash": "1280x720:1511108763",
+      "frame_id": 809496,
+      "height": 720,
+      "live_changed": true,
+      "width": 1280
+    },
+    "resolved_from_path": true,
+    "scale": {
+      "x": 1.33333333333333,
+      "y": 1.33333333333333
+    },
+    "verdict": "TO_CHECK",
+    "verdict_reason": "Live state changed, screenshot captured. Awaiting agent confirmation.",
+    "viewport_size": "(960.0, 540.0)",
+    "x": 297,
+    "y": 306
+  },
+  "analysis": {
+    "agent_context": "scene=game_view size=1280x720\ninteractables:\n  - PLANETEN  › @(818,16,126x36)\n  - TECHNOLOGIE › @(818,58,126x36)\n  - ✕  SCHLIESSEN @(794,53,99x36)\n  - Mech-Chassis T1\n25 volatile @(121,340,210x100)\n  - Planetare Vermessung\n10 rare @(124,500,210x100)\n  - PLANET @(12,72,88x36)\n  - WERKSTATT @(12,114,88x36)\n  - FORSCHUNG @(12,156,88x36)\n  - ECONOMY @(12,198,88x36)\n  - ◂ @(145,220,24x24)",
+    "artifact": {
+      "context": {
+        "absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_810578_15.png",
+        "context_id": "frame_810578_15",
+        "created_at": 1787532451.202,
+        "expires_at": 1787532496.202,
+        "format": "png",
+        "height": 720,
+        "metadata": {
+          "pipeline": "vision",
+          "source": "godot_viewport"
+        },
+        "mime_type": "image/png",
+        "path": "user://mcp_context/runtime_runtime_8585/frame_810578_15.png",
+        "size_bytes": 160160,
+        "width": 1280,
+        "worker_absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_810578_15.png",
+        "worker_format": "png",
+        "worker_path": "user://mcp_context/runtime_runtime_8585/frame_810578_15.png",
+        "worker_size_bytes": 0
+      },
+      "context_id": "frame_810578_15",
+      "format": "png",
+      "height": 720,
+      "mime_type": "image/png",
+      "size_bytes": 160160,
+      "width": 1280
+    },
+    "context": {
+      "absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_810578_15.png",
+      "context_id": "frame_810578_15",
+      "created_at": 1787532451.202,
+      "expires_at": 1787532496.202,
+      "format": "png",
+      "height": 720,
+      "metadata": {
+        "pipeline": "vision",
+        "source": "godot_viewport"
+      },
+      "mime_type": "image/png",
+      "path": "user://mcp_context/runtime_runtime_8585/frame_810578_15.png",
+      "size_bytes": 160160,
+      "width": 1280,
+      "worker_absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_8585/frame_810578_15.png",
+      "worker_format": "png",
+      "worker_path": "user://mcp_context/runtime_runtime_8585/frame_810578_15.png",
+      "worker_size_bytes": 0
+    },
+    "controls": [
+      {
+        "center": {
+          "x": 881,
+          "y": 34
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "PlanetTab",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 126,
+          "x": 818,
+          "y": 16
+        },
+        "source": "scene_tree",
+        "text": "PLANETEN  ›",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 881,
+          "y": 76
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechTab",
+        "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 126,
+          "x": 818,
+          "y": 58
+        },
+        "source": "scene_tree",
+        "text": "TECHNOLOGIE ›",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 421.518455505371,
+          "y": 85.8548583984375
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "Title",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/Title",
+        "rect": {
+          "h": 28,
+          "w": 726,
+          "x": 58.5184555053711,
+          "y": 71.8548583984375
+        },
+        "source": "scene_tree",
+        "text": "FORSCHUNGSBAUM",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 843.806030273438,
+          "y": 71.7262802124023
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "CloseButton",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/CloseButton",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 99,
+          "x": 794.306030273438,
+          "y": 53.7262802124023
+        },
+        "source": "scene_tree",
+        "text": "✕  SCHLIESSEN",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 223.619491577148,
+          "y": 230.721130371094
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_shipyard_construction",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_shipyard_construction",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 118.619491577148,
+          "y": 180.721130371094
+        },
+        "source": "scene_tree",
+        "text": "Orbitales Werft-Design\n10 energy",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 503.56787109375,
+          "y": 225.345855712891
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_scout_hull",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scout_hull",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 398.56787109375,
+          "y": 175.345855712891
+        },
+        "source": "scene_tree",
+        "text": "Aufklärungsrumpf T1\n15 material",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 783.516235351563,
+          "y": 219.970565795898
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_scanner_drone",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scanner_drone",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 678.516235351563,
+          "y": 169.970565795898
+        },
+        "source": "scene_tree",
+        "text": "Scanner-Drohne T1\n10 energy",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 506.639465332031,
+          "y": 385.316345214844
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_weapon_systems",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_weapon_systems",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 401.639465332031,
+          "y": 335.316345214844
+        },
+        "source": "scene_tree",
+        "text": "Waffensysteme T1\n12 volatile",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 1063.46466064453,
+          "y": 214.595275878906
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_worker_automation",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_worker_automation",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 958.464660644531,
+          "y": 164.595275878906
+        },
+        "source": "scene_tree",
+        "text": "Werft-Arbeiterautomatik\n15 biomass",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 226.691078186035,
+          "y": 390.691650390625
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_mech_frame",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_mech_frame",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 121.691078186035,
+          "y": 340.691650390625
+        },
+        "source": "scene_tree",
+        "text": "Mech-Chassis T1\n25 volatile",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 229.762664794922,
+          "y": 550.662170410156
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_planetary_survey",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_planetary_survey",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 124.762664794922,
+          "y": 500.662170410156
+        },
+        "source": "scene_tree",
+        "text": "Planetare Vermessung\n10 rare",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 509.711059570313,
+          "y": 545.286895751953
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_planetary_extraction",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_planetary_extraction",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 404.711059570313,
+          "y": 495.286895751953
+        },
+        "source": "scene_tree",
+        "text": "Planetare Extraktion\n20 material",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 786.587829589844,
+          "y": 379.941101074219
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_advanced_propulsion",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_advanced_propulsion",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 681.587829589844,
+          "y": 329.941101074219
+        },
+        "source": "scene_tree",
+        "text": "Fortschrittlicher Antrieb\n20 volatile",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 789.659423828125,
+          "y": 539.911590576172
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_heavy_armor_plating",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_heavy_armor_plating",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 684.659423828125,
+          "y": 489.911590576172
+        },
+        "source": "scene_tree",
+        "text": "Schwere Panzerplatten\n20 material",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 1066.53625488281,
+          "y": 374.565795898438
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_deep_scan",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_deep_scan",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 961.536254882813,
+          "y": 324.565795898438
+        },
+        "source": "scene_tree",
+        "text": "Tiefenscan\n15 energy",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 1069.60784912109,
+          "y": 534.536315917969
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_long_range_sensors",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_long_range_sensors",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 964.607849121094,
+          "y": 484.536315917969
+        },
+        "source": "scene_tree",
+        "text": "Langstreckensensoren\n15 rare",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 1343.41320800781,
+          "y": 209.220001220703
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_automated_refinery",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_automated_refinery",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 1238.41320800781,
+          "y": 159.220001220703
+        },
+        "source": "scene_tree",
+        "text": "Automatisierte Raffinerie\n25 rare",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 1346.48474121094,
+          "y": 369.190521240234
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_bulk_processing",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_bulk_processing",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 1241.48474121094,
+          "y": 319.190521240234
+        },
+        "source": "scene_tree",
+        "text": "Massenverarbeitung\n25 biomass",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 232.834259033203,
+          "y": 710.632690429688
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_drone_swarm",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_swarm",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 127.834259033203,
+          "y": 660.632690429688
+        },
+        "source": "scene_tree",
+        "text": "Drohnenschwarm T1\n25 volatile",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 512.782653808594,
+          "y": 705.257446289063
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_repair_drone_t1",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t1",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 407.782653808594,
+          "y": 655.257446289063
+        },
+        "source": "scene_tree",
+        "text": "Reparatur-Drohne T1\n15 energy",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 792.731018066406,
+          "y": 699.882080078125
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_repair_drone_t2",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t2",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 687.731018066406,
+          "y": 649.882080078125
+        },
+        "source": "scene_tree",
+        "text": "Reparatur-Drohne T2\n25 energy",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 1072.67944335938,
+          "y": 694.5068359375
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_repair_drone_t3",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t3",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 967.679443359375,
+          "y": 644.5068359375
+        },
+        "source": "scene_tree",
+        "text": "Reparatur-Drohne T3\n35 energy",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 515.854248046875,
+          "y": 865.227905273438
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_combat_drone_t1",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_combat_drone_t1",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 410.854248046875,
+          "y": 815.227905273438
+        },
+        "source": "scene_tree",
+        "text": "Kampf-Drohne T1\n20 volatile",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 795.802612304688,
+          "y": 859.852661132813
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_combat_drone_t2",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_combat_drone_t2",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 690.802612304688,
+          "y": 809.852661132813
+        },
+        "source": "scene_tree",
+        "text": "Kampf-Drohne T2\n30 volatile",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 518.925811767578,
+          "y": 1025.19836425781
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_scan_drone_t1",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scan_drone_t1",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 413.925811767578,
+          "y": 975.198364257813
+        },
+        "source": "scene_tree",
+        "text": "Scan-Drohne T1\n15 rare",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 798.874206542969,
+          "y": 1019.82312011719
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_scan_drone_t2",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scan_drone_t2",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 693.874206542969,
+          "y": 969.823120117188
+        },
+        "source": "scene_tree",
+        "text": "Scan-Drohne T2\n25 rare",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 521.997406005859,
+          "y": 1185.1689453125
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_drone_vision",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_vision",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 416.997406005859,
+          "y": 1135.1689453125
+        },
+        "source": "scene_tree",
+        "text": "Drohnen-Vision\n20 energy",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 525.069000244141,
+          "y": 1345.13952636719
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_drone_booster_t1",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_booster_t1",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 420.069000244141,
+          "y": 1295.13952636719
+        },
+        "source": "scene_tree",
+        "text": "Drohnen-Booster T1\n20 rare",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 801.94580078125,
+          "y": 1179.79357910156
+        },
+        "disabled": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_drone_booster_t2",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_booster_t2",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 696.94580078125,
+          "y": 1129.79357910156
+        },
+        "source": "scene_tree",
+        "text": "Drohnen-Booster T2\n30 rare",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 90
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@900",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 72
+        },
+        "source": "scene_tree",
+        "text": "PLANET",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 132
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@901",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 114
+        },
+        "source": "scene_tree",
+        "text": "WERKSTATT",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 174
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@902",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 156
+        },
+        "source": "scene_tree",
+        "text": "FORSCHUNG",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 216
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@903",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 198
+        },
+        "source": "scene_tree",
+        "text": "ECONOMY",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 76.5,
+          "y": 231.5
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@905",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Label@905",
+        "rect": {
+          "h": 17,
+          "w": 129,
+          "x": 12,
+          "y": 223
+        },
+        "source": "scene_tree",
+        "text": "FLOTTENÜBERSICHT",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 157,
+          "y": 232
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@906",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906",
+        "pressed": false,
+        "rect": {
+          "h": 24,
+          "w": 24,
+          "x": 145,
+          "y": 220
+        },
+        "source": "scene_tree",
+        "text": "◂",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 256
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@907",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@907",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 248
+        },
+        "source": "scene_tree",
+        "text": "UNTERWEGS:",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 276
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@908",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@908",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 268
+        },
+        "source": "scene_tree",
+        "text": "Keine aktiven Schiffe",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 300
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@909",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@909",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 292
+        },
+        "source": "scene_tree",
+        "text": "PLANETEN:",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 90.5,
+          "y": 320
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "@Label@910",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@910",
+        "rect": {
+          "h": 16,
+          "w": 157,
+          "x": 12,
+          "y": 312
+        },
+        "source": "scene_tree",
+        "text": "Keine ausgewählten Planeten",
+        "type": "Label",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 187.940002441406,
+          "y": 131.451499938965
+        },
+        "has_focus": false,
+        "interactable": false,
+        "kind": "label",
+        "mouse_filter": 2,
+        "name": "StrengthLabel",
+        "path": "/root/World/PlanetField/Player Homeworld/StrengthLabel",
+        "rect": {
+          "h": 22,
+          "w": 80,
+          "x": 147.940002441406,
+          "y": 120.451499938965
+        },
+        "source": "scene_tree",
+        "text": "6",
+        "type": "Label",
+        "visible": true
+      }
+    ],
+    "elements": [],
+    "groups": [],
+    "height": 720,
+    "interactables": [
+      {
+        "center": {
+          "x": 881,
+          "y": 34
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "PlanetTab",
+        "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 126,
+          "x": 818,
+          "y": 16
+        },
+        "source": "scene_tree",
+        "text": "PLANETEN  ›",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 881,
+          "y": 76
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechTab",
+        "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 126,
+          "x": 818,
+          "y": 58
+        },
+        "source": "scene_tree",
+        "text": "TECHNOLOGIE ›",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 843.806030273438,
+          "y": 71.7262802124023
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "CloseButton",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/CloseButton",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 99,
+          "x": 794.306030273438,
+          "y": 53.7262802124023
+        },
+        "source": "scene_tree",
+        "text": "✕  SCHLIESSEN",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 226.691078186035,
+          "y": 390.691650390625
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_mech_frame",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_mech_frame",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 121.691078186035,
+          "y": 340.691650390625
+        },
+        "source": "scene_tree",
+        "text": "Mech-Chassis T1\n25 volatile",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 229.762664794922,
+          "y": 550.662170410156
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "TechNode_planetary_survey",
+        "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_planetary_survey",
+        "pressed": false,
+        "rect": {
+          "h": 100,
+          "w": 210,
+          "x": 124.762664794922,
+          "y": 500.662170410156
+        },
+        "source": "scene_tree",
+        "text": "Planetare Vermessung\n10 rare",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 90
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@900",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 72
+        },
+        "source": "scene_tree",
+        "text": "PLANET",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 132
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@901",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 114
+        },
+        "source": "scene_tree",
+        "text": "WERKSTATT",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 174
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@902",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 156
+        },
+        "source": "scene_tree",
+        "text": "FORSCHUNG",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 56,
+          "y": 216
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@903",
+        "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903",
+        "pressed": false,
+        "rect": {
+          "h": 36,
+          "w": 88,
+          "x": 12,
+          "y": 198
+        },
+        "source": "scene_tree",
+        "text": "ECONOMY",
+        "type": "Button",
+        "visible": true
+      },
+      {
+        "center": {
+          "x": 157,
+          "y": 232
+        },
+        "disabled": false,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "mouse_filter": 0,
+        "name": "@Button@906",
+        "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906",
+        "pressed": false,
+        "rect": {
+          "h": 24,
+          "w": 24,
+          "x": 145,
+          "y": 220
+        },
+        "source": "scene_tree",
+        "text": "◂",
+        "type": "Button",
+        "visible": true
+      }
+    ],
+    "layout_grid": [
+      [
+        "#020408",
+        "#020407",
+        "#020408",
+        "#020408",
+        "#020408",
+        "#04040b",
+        "#040408",
+        "#030407",
+        "#030407",
+        "#030407",
+        "#0b2029",
+        "#06080f"
+      ],
+      [
+        "#040d11",
+        "#030508",
+        "#030508",
+        "#030408",
+        "#030408",
+        "#040408",
+        "#040408",
+        "#030407",
+        "#030407",
+        "#030508",
+        "#030407",
+        "#06080f"
+      ],
+      [
+        "#040509",
+        "#121720",
+        "#121720",
+        "#121720",
+        "#030407",
+        "#121720",
+        "#121720",
+        "#030508",
+        "#121720",
+        "#121720",
+        "#121720",
+        "#06090f"
+      ],
+      [
+        "#030408",
+        "#131821",
+        "#121720",
+        "#121720",
+        "#030407",
+        "#121720",
+        "#121720",
+        "#060a0f",
+        "#121720",
+        "#121721",
+        "#14181e",
+        "#060910"
+      ],
+      [
+        "#030407",
+        "#030408",
+        "#030407",
+        "#030407",
+        "#030407",
+        "#030407",
+        "#030508",
+        "#030508",
+        "#040a0f",
+        "#0a1f27",
+        "#121720",
+        "#060910"
+      ],
+      [
+        "#030407",
+        "#0b111f",
+        "#151b29",
+        "#0b111f",
+        "#030407",
+        "#121720",
+        "#121720",
+        "#030508",
+        "#121720",
+        "#121720",
+        "#121720",
+        "#060910"
+      ],
+      [
+        "#030407",
+        "#030508",
+        "#030407",
+        "#030407",
+        "#030407",
+        "#040609",
+        "#101112",
+        "#181b1d",
+        "#101112",
+        "#101112",
+        "#101112",
+        "#060910"
+      ],
+      [
+        "#06080f",
+        "#06080f",
+        "#06080f",
+        "#06080f",
+        "#06080f",
+        "#06080f",
+        "#060910",
+        "#060910",
+        "#060a11",
+        "#060a10",
+        "#060910",
+        "#05080f"
+      ]
+    ],
+    "live": {
+      "control_count": 40,
+      "controls": [
+        {
+          "center": {
+            "x": 881,
+            "y": 34
+          },
+          "disabled": false,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "PlanetTab",
+          "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+          "pressed": false,
+          "rect": {
+            "h": 36,
+            "w": 126,
+            "x": 818,
+            "y": 16
+          },
+          "source": "scene_tree",
+          "text": "PLANETEN  ›",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 881,
+            "y": 76
+          },
+          "disabled": false,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechTab",
+          "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+          "pressed": false,
+          "rect": {
+            "h": 36,
+            "w": 126,
+            "x": 818,
+            "y": 58
+          },
+          "source": "scene_tree",
+          "text": "TECHNOLOGIE ›",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 421.518455505371,
+            "y": 85.8548583984375
+          },
+          "has_focus": false,
+          "interactable": false,
+          "kind": "label",
+          "mouse_filter": 2,
+          "name": "Title",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/Title",
+          "rect": {
+            "h": 28,
+            "w": 726,
+            "x": 58.5184555053711,
+            "y": 71.8548583984375
+          },
+          "source": "scene_tree",
+          "text": "FORSCHUNGSBAUM",
+          "type": "Label",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 843.806030273438,
+            "y": 71.7262802124023
+          },
+          "disabled": false,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "CloseButton",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/SheetHeader/CloseButton",
+          "pressed": false,
+          "rect": {
+            "h": 36,
+            "w": 99,
+            "x": 794.306030273438,
+            "y": 53.7262802124023
+          },
+          "source": "scene_tree",
+          "text": "✕  SCHLIESSEN",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 223.619491577148,
+            "y": 230.721130371094
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_shipyard_construction",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_shipyard_construction",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 118.619491577148,
+            "y": 180.721130371094
+          },
+          "source": "scene_tree",
+          "text": "Orbitales Werft-Design\n10 energy",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 503.56787109375,
+            "y": 225.345855712891
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_scout_hull",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scout_hull",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 398.56787109375,
+            "y": 175.345855712891
+          },
+          "source": "scene_tree",
+          "text": "Aufklärungsrumpf T1\n15 material",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 783.516235351563,
+            "y": 219.970565795898
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_scanner_drone",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scanner_drone",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 678.516235351563,
+            "y": 169.970565795898
+          },
+          "source": "scene_tree",
+          "text": "Scanner-Drohne T1\n10 energy",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 506.639465332031,
+            "y": 385.316345214844
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_weapon_systems",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_weapon_systems",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 401.639465332031,
+            "y": 335.316345214844
+          },
+          "source": "scene_tree",
+          "text": "Waffensysteme T1\n12 volatile",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 1063.46466064453,
+            "y": 214.595275878906
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_worker_automation",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_worker_automation",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 958.464660644531,
+            "y": 164.595275878906
+          },
+          "source": "scene_tree",
+          "text": "Werft-Arbeiterautomatik\n15 biomass",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 226.691078186035,
+            "y": 390.691650390625
+          },
+          "disabled": false,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_mech_frame",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_mech_frame",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 121.691078186035,
+            "y": 340.691650390625
+          },
+          "source": "scene_tree",
+          "text": "Mech-Chassis T1\n25 volatile",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 229.762664794922,
+            "y": 550.662170410156
+          },
+          "disabled": false,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_planetary_survey",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_planetary_survey",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 124.762664794922,
+            "y": 500.662170410156
+          },
+          "source": "scene_tree",
+          "text": "Planetare Vermessung\n10 rare",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 509.711059570313,
+            "y": 545.286895751953
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_planetary_extraction",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_planetary_extraction",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 404.711059570313,
+            "y": 495.286895751953
+          },
+          "source": "scene_tree",
+          "text": "Planetare Extraktion\n20 material",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 786.587829589844,
+            "y": 379.941101074219
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_advanced_propulsion",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_advanced_propulsion",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 681.587829589844,
+            "y": 329.941101074219
+          },
+          "source": "scene_tree",
+          "text": "Fortschrittlicher Antrieb\n20 volatile",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 789.659423828125,
+            "y": 539.911590576172
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_heavy_armor_plating",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_heavy_armor_plating",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 684.659423828125,
+            "y": 489.911590576172
+          },
+          "source": "scene_tree",
+          "text": "Schwere Panzerplatten\n20 material",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 1066.53625488281,
+            "y": 374.565795898438
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_deep_scan",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_deep_scan",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 961.536254882813,
+            "y": 324.565795898438
+          },
+          "source": "scene_tree",
+          "text": "Tiefenscan\n15 energy",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 1069.60784912109,
+            "y": 534.536315917969
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_long_range_sensors",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_long_range_sensors",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 964.607849121094,
+            "y": 484.536315917969
+          },
+          "source": "scene_tree",
+          "text": "Langstreckensensoren\n15 rare",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 1343.41320800781,
+            "y": 209.220001220703
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_automated_refinery",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_automated_refinery",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 1238.41320800781,
+            "y": 159.220001220703
+          },
+          "source": "scene_tree",
+          "text": "Automatisierte Raffinerie\n25 rare",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 1346.48474121094,
+            "y": 369.190521240234
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_bulk_processing",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_bulk_processing",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 1241.48474121094,
+            "y": 319.190521240234
+          },
+          "source": "scene_tree",
+          "text": "Massenverarbeitung\n25 biomass",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 232.834259033203,
+            "y": 710.632690429688
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_drone_swarm",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_swarm",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 127.834259033203,
+            "y": 660.632690429688
+          },
+          "source": "scene_tree",
+          "text": "Drohnenschwarm T1\n25 volatile",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 512.782653808594,
+            "y": 705.257446289063
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_repair_drone_t1",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t1",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 407.782653808594,
+            "y": 655.257446289063
+          },
+          "source": "scene_tree",
+          "text": "Reparatur-Drohne T1\n15 energy",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 792.731018066406,
+            "y": 699.882080078125
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_repair_drone_t2",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t2",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 687.731018066406,
+            "y": 649.882080078125
+          },
+          "source": "scene_tree",
+          "text": "Reparatur-Drohne T2\n25 energy",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 1072.67944335938,
+            "y": 694.5068359375
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_repair_drone_t3",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_repair_drone_t3",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 967.679443359375,
+            "y": 644.5068359375
+          },
+          "source": "scene_tree",
+          "text": "Reparatur-Drohne T3\n35 energy",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 515.854248046875,
+            "y": 865.227905273438
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_combat_drone_t1",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_combat_drone_t1",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 410.854248046875,
+            "y": 815.227905273438
+          },
+          "source": "scene_tree",
+          "text": "Kampf-Drohne T1\n20 volatile",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 795.802612304688,
+            "y": 859.852661132813
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_combat_drone_t2",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_combat_drone_t2",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 690.802612304688,
+            "y": 809.852661132813
+          },
+          "source": "scene_tree",
+          "text": "Kampf-Drohne T2\n30 volatile",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 518.925811767578,
+            "y": 1025.19836425781
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_scan_drone_t1",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scan_drone_t1",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 413.925811767578,
+            "y": 975.198364257813
+          },
+          "source": "scene_tree",
+          "text": "Scan-Drohne T1\n15 rare",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 798.874206542969,
+            "y": 1019.82312011719
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_scan_drone_t2",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_scan_drone_t2",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 693.874206542969,
+            "y": 969.823120117188
+          },
+          "source": "scene_tree",
+          "text": "Scan-Drohne T2\n25 rare",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 521.997406005859,
+            "y": 1185.1689453125
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_drone_vision",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_vision",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 416.997406005859,
+            "y": 1135.1689453125
+          },
+          "source": "scene_tree",
+          "text": "Drohnen-Vision\n20 energy",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 525.069000244141,
+            "y": 1345.13952636719
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_drone_booster_t1",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_booster_t1",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 420.069000244141,
+            "y": 1295.13952636719
+          },
+          "source": "scene_tree",
+          "text": "Drohnen-Booster T1\n20 rare",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 801.94580078125,
+            "y": 1179.79357910156
+          },
+          "disabled": true,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "TechNode_drone_booster_t2",
+          "path": "/root/World/PlanetField/PlanetNetwork/ModalCoordinator/PaperDossier/Sheet/SheetMargin/SheetColumn/ContentHost/@Control@923/TreeScroll/TreeCanvas/TechNode_drone_booster_t2",
+          "pressed": false,
+          "rect": {
+            "h": 100,
+            "w": 210,
+            "x": 696.94580078125,
+            "y": 1129.79357910156
+          },
+          "source": "scene_tree",
+          "text": "Drohnen-Booster T2\n30 rare",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 56,
+            "y": 90
+          },
+          "disabled": false,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "@Button@900",
+          "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@900",
+          "pressed": false,
+          "rect": {
+            "h": 36,
+            "w": 88,
+            "x": 12,
+            "y": 72
+          },
+          "source": "scene_tree",
+          "text": "PLANET",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 56,
+            "y": 132
+          },
+          "disabled": false,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "@Button@901",
+          "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@901",
+          "pressed": false,
+          "rect": {
+            "h": 36,
+            "w": 88,
+            "x": 12,
+            "y": 114
+          },
+          "source": "scene_tree",
+          "text": "WERKSTATT",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 56,
+            "y": 174
+          },
+          "disabled": false,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "@Button@902",
+          "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@902",
+          "pressed": false,
+          "rect": {
+            "h": 36,
+            "w": 88,
+            "x": 12,
+            "y": 156
+          },
+          "source": "scene_tree",
+          "text": "FORSCHUNG",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 56,
+            "y": 216
+          },
+          "disabled": false,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "@Button@903",
+          "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@903",
+          "pressed": false,
+          "rect": {
+            "h": 36,
+            "w": 88,
+            "x": 12,
+            "y": 198
+          },
+          "source": "scene_tree",
+          "text": "ECONOMY",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 76.5,
+            "y": 231.5
+          },
+          "has_focus": false,
+          "interactable": false,
+          "kind": "label",
+          "mouse_filter": 2,
+          "name": "@Label@905",
+          "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Label@905",
+          "rect": {
+            "h": 17,
+            "w": 129,
+            "x": 12,
+            "y": 223
+          },
+          "source": "scene_tree",
+          "text": "FLOTTENÜBERSICHT",
+          "type": "Label",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 157,
+            "y": 232
+          },
+          "disabled": false,
+          "has_focus": false,
+          "interactable": true,
+          "kind": "button",
+          "mouse_filter": 0,
+          "name": "@Button@906",
+          "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@HBoxContainer@904/@Button@906",
+          "pressed": false,
+          "rect": {
+            "h": 24,
+            "w": 24,
+            "x": 145,
+            "y": 220
+          },
+          "source": "scene_tree",
+          "text": "◂",
+          "type": "Button",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 90.5,
+            "y": 256
+          },
+          "has_focus": false,
+          "interactable": false,
+          "kind": "label",
+          "mouse_filter": 2,
+          "name": "@Label@907",
+          "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@907",
+          "rect": {
+            "h": 16,
+            "w": 157,
+            "x": 12,
+            "y": 248
+          },
+          "source": "scene_tree",
+          "text": "UNTERWEGS:",
+          "type": "Label",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 90.5,
+            "y": 276
+          },
+          "has_focus": false,
+          "interactable": false,
+          "kind": "label",
+          "mouse_filter": 2,
+          "name": "@Label@908",
+          "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@908",
+          "rect": {
+            "h": 16,
+            "w": 157,
+            "x": 12,
+            "y": 268
+          },
+          "source": "scene_tree",
+          "text": "Keine aktiven Schiffe",
+          "type": "Label",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 90.5,
+            "y": 300
+          },
+          "has_focus": false,
+          "interactable": false,
+          "kind": "label",
+          "mouse_filter": 2,
+          "name": "@Label@909",
+          "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@909",
+          "rect": {
+            "h": 16,
+            "w": 157,
+            "x": 12,
+            "y": 292
+          },
+          "source": "scene_tree",
+          "text": "PLANETEN:",
+          "type": "Label",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 90.5,
+            "y": 320
+          },
+          "has_focus": false,
+          "interactable": false,
+          "kind": "label",
+          "mouse_filter": 2,
+          "name": "@Label@910",
+          "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FleetOverview/Content/@Label@910",
+          "rect": {
+            "h": 16,
+            "w": 157,
+            "x": 12,
+            "y": 312
+          },
+          "source": "scene_tree",
+          "text": "Keine ausgewählten Planeten",
+          "type": "Label",
+          "visible": true
+        },
+        {
+          "center": {
+            "x": 187.940002441406,
+            "y": 131.451499938965
+          },
+          "has_focus": false,
+          "interactable": false,
+          "kind": "label",
+          "mouse_filter": 2,
+          "name": "StrengthLabel",
+          "path": "/root/World/PlanetField/Player Homeworld/StrengthLabel",
+          "rect": {
+            "h": 22,
+            "w": 80,
+            "x": 147.940002441406,
+            "y": 120.451499938965
+          },
+          "source": "scene_tree",
+          "text": "6",
+          "type": "Label",
+          "visible": true
+        }
+      ],
+      "scene": "game_view",
+      "scene_name": "World",
+      "scene_path": "/root/World",
+      "timestamp_ms": 810560
+    },
+    "palette": [
+      "#030407",
+      "#121720",
+      "#030508",
+      "#06080f",
+      "#030408",
+      "#060910",
+      "#020408",
+      "#0b111f"
+    ],
+    "perf": {
+      "draw_calls": 135,
+      "fps": 52,
+      "nodes": 1958,
+      "objects": 5114,
+      "process_ms": 0.143263
+    },
+    "scene": "game_view",
+    "scene_path": "/root/World",
+    "text_regions": [],
+    "watch_sequence": 0,
+    "width": 1280
+  }
+}
