@@ -84,10 +84,15 @@ static func _pick_hull(catalog: ShipPartCatalog, researched_techs: Array, rng: R
 	for candidate in candidates:
 		var layout: Dictionary = catalog.slot_layout_for(candidate)
 		var drive_cap := int(layout.get(ShipPartDefinition.SLOT_DRIVE, 1))
+		var weapon_cap := int(layout.get(ShipPartDefinition.SLOT_WEAPON, 0))
 		var utility_cap := int(layout.get(ShipPartDefinition.SLOT_UTILITY, 0))
+		# Military loadouts must fit at least one weapon — civilian hulls
+		# (e.g. hull_t3_colony) have weapon_cap 0 and would fail assembly.
+		if military and weapon_cap < 1:
+			continue
 		var score := float(candidate.tier) * 10.0
 		if military:
-			score += float(drive_cap) * 4.0 + float(utility_cap) * 0.5
+			score += float(drive_cap) * 4.0 + float(utility_cap) * 0.5 + float(weapon_cap) * 2.0
 		if score > best_score:
 			best = candidate
 			best_score = score

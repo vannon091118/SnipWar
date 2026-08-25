@@ -38,7 +38,7 @@ effect_id = &"shipyard_construction"
 strategic_role = &"infrastructure"
 mechanic_description = "Mechanik: Der Ausbau Orbitale Werft wird im Planetennetz freigeschaltet."
 production_multiplier = 1.0
-research_time = 2.0
+research_time = 15.0
 
 [sub_resource type="Resource" id="Tech_scout_hull"]
 script = ExtResource("2_definition")
@@ -54,7 +54,7 @@ effect_id = &"scout_hull"
 strategic_role = &"exploration"
 mechanic_description = "Mechanik: ShipManager erlaubt danach den Bau eines Tier-1-Scout-Schiffs."
 production_multiplier = 1.0
-research_time = 3.0
+research_time = 16.0
 
 [sub_resource type="Resource" id="Tech_scanner_drone"]
 script = ExtResource("2_definition")
@@ -70,7 +70,7 @@ effect_id = &"scanner_drone"
 strategic_role = &"exploration"
 mechanic_description = "Mechanik: Das persistente Forschungsschiff scannt bei Abschluss einer Forschungsmission den Zielplaneten."
 production_multiplier = 1.0
-research_time = 2.0
+research_time = 15.0
 
 [sub_resource type="Resource" id="Tech_weapon_systems"]
 script = ExtResource("2_definition")
@@ -86,7 +86,7 @@ effect_id = &"weapon_systems"
 strategic_role = &"combat"
 mechanic_description = "Mechanik: Waffenbauteile und der Tier-2-Mehrzweckrumpf werden in der Schiffswerft kaufbar."
 production_multiplier = 1.0
-research_time = 4.0
+research_time = 18.0
 
 [sub_resource type="Resource" id="Tech_worker_automation"]
 script = ExtResource("2_definition")
@@ -103,7 +103,7 @@ effect_id = &"worker_automation"
 strategic_role = &"economy"
 mechanic_description = "Mechanik: Die erste Worker-Fabrik wird baubar und startet langsamen automatischen Nachschub."
 production_multiplier = 1.0
-research_time = 3.0
+research_time = 16.0
 
 [sub_resource type="Resource" id="Tech_mech_frame"]
 script = ExtResource("2_definition")
@@ -118,7 +118,7 @@ effect_id = &"mech_frame_layer3"
 strategic_role = &"combat"
 mechanic_description = "Mechanik: Layer-3-Chassis wird registriert; der taktische Mech-Kampf bleibt bis Layer 3 inert."
 production_multiplier = 1.0
-research_time = 5.0
+research_time = 20.0
 
 [sub_resource type="Resource" id="Tech_planetary_survey"]
 script = ExtResource("2_definition")
@@ -133,6 +133,7 @@ effect_id = &"planet_production_survey"
 strategic_role = &"exploration"
 mechanic_description = "Mechanik: Die Ressourcenproduktion dieses Planeten steigt auf 125 %."
 production_multiplier = 1.25
+research_time = 15.0
 
 [sub_resource type="Resource" id="Tech_planetary_extraction"]
 script = ExtResource("2_definition")
@@ -148,6 +149,7 @@ effect_id = &"planet_production_extraction"
 strategic_role = &"economy"
 mechanic_description = "Mechanik: Die Ressourcenproduktion dieses Planeten steigt zusätzlich auf 150 %."
 production_multiplier = 1.5
+research_time = 30.0
 
 [sub_resource type="Resource" id="Tech_advanced_propulsion"]
 script = ExtResource("2_definition")
@@ -163,7 +165,7 @@ visual_asset = ExtResource("9_advanced_drive")
 effect_id = &"advanced_propulsion"
 strategic_role = &"mobility"
 mechanic_description = "Mechanik: +15 % Schiffsfahrt; das Reaktor-Modul wird in der Werft verfügbar."
-research_time = 5.0
+research_time = 30.0
 
 [sub_resource type="Resource" id="Tech_heavy_armor_plating"]
 script = ExtResource("2_definition")
@@ -179,7 +181,7 @@ visual_asset = ExtResource("10_heavy_armor")
 effect_id = &"heavy_armor_plating"
 strategic_role = &"defense"
 mechanic_description = "Mechanik: +30 Hüllenbonus; das verstärkte Panzerungsmodul wird in der Werft verfügbar."
-research_time = 5.0
+research_time = 30.0
 
 [sub_resource type="Resource" id="Tech_deep_scan"]
 script = ExtResource("2_definition")
@@ -195,7 +197,7 @@ visual_asset = ExtResource("11_scanner_t2")
 effect_id = &"deep_scan"
 strategic_role = &"exploration"
 mechanic_description = "Mechanik: Scanner T2 liefert detailliertere Planeten-Intel."
-research_time = 4.0
+research_time = 25.0
 
 [sub_resource type="Resource" id="Tech_long_range_sensors"]
 script = ExtResource("2_definition")
@@ -211,7 +213,7 @@ visual_asset = ExtResource("12_sensor_array")
 effect_id = &"long_range_sensors"
 strategic_role = &"exploration"
 mechanic_description = "Mechanik: Sensor-Array-Modul erhöht die Reichweite um 40 px."
-research_time = 4.0
+research_time = 25.0
 
 [sub_resource type="Resource" id="Tech_automated_refinery"]
 script = ExtResource("2_definition")
@@ -227,7 +229,7 @@ visual_asset = ExtResource("13_automated_mine")
 effect_id = &"automated_refinery"
 strategic_role = &"economy"
 mechanic_description = "Mechanik: Das Upgrade Automatisiertes Bergwerk wird baubar."
-research_time = 5.0
+research_time = 30.0
 
 [sub_resource type="Resource" id="Tech_bulk_processing"]
 script = ExtResource("2_definition")
@@ -243,7 +245,7 @@ visual_asset = ExtResource("14_trade_hub")
 effect_id = &"bulk_processing"
 strategic_role = &"economy"
 mechanic_description = "Mechanik: Das Upgrade Handelszentrum wird baubar."
-research_time = 5.0
+research_time = 30.0
 
 [sub_resource type="Resource" id="Tech_drone_swarm"]
 script = ExtResource("2_definition")
@@ -259,7 +261,7 @@ effect_id = &"drone_swarm"
 strategic_role = &"drones"
 mechanic_description = "Mechanik: Drohnen-Module (Reparatur/Kampf/Scan/Vision/Booster) werden in der Werft kaufbar."
 production_multiplier = 1.0
-research_time = 6.0
+research_time = 35.0
 
 [sub_resource type="Resource" id="Tech_repair_drone_t1"]
 script = ExtResource("2_definition")
@@ -275,7 +277,7 @@ effect_id = &"repair_drone_t1"
 strategic_role = &"repair"
 mechanic_description = "Mechanik: Reparatur-Drohnen-Modul T1 regeneriert Modul-HP in der Grid-Conquest bis 35 %."
 production_multiplier = 1.0
-research_time = 4.0
+research_time = 25.0
 
 [sub_resource type="Resource" id="Tech_repair_drone_t2"]
 script = ExtResource("2_definition")
@@ -291,7 +293,7 @@ effect_id = &"repair_drone_t2"
 strategic_role = &"repair"
 mechanic_description = "Mechanik: Reparatur-Drohnen-Modul T2 regeneriert Modul-HP bis 50 % (langsamer)."
 production_multiplier = 1.0
-research_time = 6.0
+research_time = 35.0
 
 [sub_resource type="Resource" id="Tech_repair_drone_t3"]
 script = ExtResource("2_definition")
@@ -307,7 +309,7 @@ effect_id = &"repair_drone_t3"
 strategic_role = &"repair"
 mechanic_description = "Mechanik: Reparatur-Drohnen-Modul T3 regeneriert Modul-HP bis 60 % (mittlere Aufladung)."
 production_multiplier = 1.0
-research_time = 8.0
+research_time = 55.0
 
 [sub_resource type="Resource" id="Tech_combat_drone_t1"]
 script = ExtResource("2_definition")
@@ -323,7 +325,7 @@ effect_id = &"combat_drone_t1"
 strategic_role = &"combat"
 mechanic_description = "Mechanik: Kampf-Drohnen-Modul T1 addiert +6 DPS (plus Tier-Basis) als Drohnenschwarm."
 production_multiplier = 1.0
-research_time = 4.0
+research_time = 25.0
 
 [sub_resource type="Resource" id="Tech_combat_drone_t2"]
 script = ExtResource("2_definition")
@@ -339,7 +341,7 @@ effect_id = &"combat_drone_t2"
 strategic_role = &"combat"
 mechanic_description = "Mechanik: Kampf-Drohnen-Modul T2 addiert +12 DPS (plus Tier-Basis)."
 production_multiplier = 1.0
-research_time = 6.0
+research_time = 35.0
 
 [sub_resource type="Resource" id="Tech_scan_drone_t1"]
 script = ExtResource("2_definition")
@@ -355,7 +357,7 @@ effect_id = &"scan_drone_t1"
 strategic_role = &"exploration"
 mechanic_description = "Mechanik: Scan-Drohnen-Modul T1 addiert +40 Reichweite."
 production_multiplier = 1.0
-research_time = 4.0
+research_time = 25.0
 
 [sub_resource type="Resource" id="Tech_scan_drone_t2"]
 script = ExtResource("2_definition")
@@ -371,7 +373,7 @@ effect_id = &"scan_drone_t2"
 strategic_role = &"exploration"
 mechanic_description = "Mechanik: Scan-Drohnen-Modul T2 addiert +80 Reichweite."
 production_multiplier = 1.0
-research_time = 6.0
+research_time = 35.0
 
 [sub_resource type="Resource" id="Tech_drone_vision"]
 script = ExtResource("2_definition")
@@ -387,7 +389,7 @@ effect_id = &"drone_vision"
 strategic_role = &"exploration"
 mechanic_description = "Mechanik: Vision-Modul addiert +60 Reichweite."
 production_multiplier = 1.0
-research_time = 5.0
+research_time = 30.0
 
 [sub_resource type="Resource" id="Tech_drone_booster_t1"]
 script = ExtResource("2_definition")
@@ -403,7 +405,7 @@ effect_id = &"drone_booster_t1"
 strategic_role = &"support"
 mechanic_description = "Mechanik: Booster-Modul T1 verstärkt montierte Drohnen-Module um +25 %."
 production_multiplier = 1.0
-research_time = 5.0
+research_time = 30.0
 
 [sub_resource type="Resource" id="Tech_drone_booster_t2"]
 script = ExtResource("2_definition")
@@ -419,7 +421,7 @@ effect_id = &"drone_booster_t2"
 strategic_role = &"support"
 mechanic_description = "Mechanik: Booster-Modul T2 verstärkt montierte Drohnen-Module um +50 %."
 production_multiplier = 1.0
-research_time = 7.0
+research_time = 45.0
 
 [resource]
 script = ExtResource("1_catalog")

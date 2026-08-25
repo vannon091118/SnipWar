@@ -113,9 +113,12 @@ func _advance_cpu_research(config: CpuDispatchConfig) -> void:
 		if state.can_research_technology(GameState.FACTION_CPU, tech_id, tech_catalog):
 			current = tech_id
 			break
-	if String(current).is_empty():
-		return
-	state.research_technology(GameState.FACTION_CPU, current, tech_catalog)
+	# Apply one decision interval to the faction's job EVERY tick — a running
+	# job must keep draining even while no new tech can start yet. Only starting
+	# research when `current` is non-empty means a multi-tick job deadlocks
+	# (the driver would return before advancing the running job).
+	if not String(current).is_empty():
+		state.research_technology(GameState.FACTION_CPU, current, tech_catalog)
 	state.advance_research_faction(GameState.FACTION_CPU, config.decision_interval)
 
 ## Builds one module-model-aware ship loadout (CpuLoadoutBuilder) on a CPU

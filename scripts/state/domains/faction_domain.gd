@@ -67,6 +67,15 @@ func set_faction(planet_id: StringName, faction: StringName) -> void:
 	remember_planet(faction, planet_id)
 	faction_changed.emit(planet_id, old_faction, faction)
 
+## Sprint 6 (S5): keeps an uninhabited planet from being silently re-owned by
+## a settlement so the special faction stays intact until a real colonizer
+## acts on it.
+func remain_uninhabited(planet_id: StringName) -> bool:
+	if String(planet_id).is_empty() or faction_of(planet_id) != GameState.FACTION_UNINHABITED:
+		return false
+	set_faction(planet_id, GameState.FACTION_UNINHABITED)
+	return true
+
 # Adds a planet to the ownership registry at runtime (callers: Planet._enter_tree).
 # Idempotent — re-registering keeps the existing faction so reset_from_catalog wins
 # later without surprise flips when the catalog was already seeded.

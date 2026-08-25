@@ -248,11 +248,11 @@ func _income_sources_text(resource_id: StringName) -> String:
 	if _state == null:
 		return ""
 	var parts: Array[String] = []
-	var field: Node = _find_seeded_layout()
-	if field == null:
-		return ""
-	var snapshot: Array = field.get_children().duplicate()
-	for child in snapshot:
+	# Iterate the "planets" group instead of SeededLayout's direct children:
+	# in chunked/infinite worlds the planets live inside ChunkCoordinator
+	# containers, so a flat child scan finds none and the economy panel shows
+	# "Keine laufende Produktion" even while production is active (UX-Bug G6).
+	for child in get_tree().get_nodes_in_group("planets"):
 		if not is_instance_valid(child):
 			continue
 		var planet: Planet = child as Planet

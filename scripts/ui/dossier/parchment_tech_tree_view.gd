@@ -101,13 +101,42 @@ func _tech_node(technology: TechnologyDefinition, state: Node, center: Vector2) 
 	button.size = Vector2(NODE_W, NODE_H)
 	button.focus_mode = Control.FOCUS_NONE
 	button.disabled = not state.can_research_technology(GameState.FACTION_PLAYER, technology.id, _catalog)
-	button.tooltip_text = technology.description + "\n" + technology.mechanic_description
+	button.tooltip_text = technology.description + "\n" + technology.mechanic_description + _disabled_reason(technology, state)
 	button.add_theme_font_size_override("font_size", _theme_config.small_font_size)
 	button.add_theme_stylebox_override("normal", UIBaseUtils.style_box(_theme_config, _theme_config.card_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
 	button.add_theme_stylebox_override("hover", UIBaseUtils.style_box(_theme_config, _theme_config.input_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
 	button.add_theme_stylebox_override("disabled", UIBaseUtils.style_box(_theme_config, _theme_config.button_disabled_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
 	button.pressed.connect(_research.bind(technology.id))
 	return button
+
+## Sprint 6 (G7): explains WHY a tech node is greyed out (missing prerequisite
+## or funds) instead of leaving the player to guess.
+func _disabled_reason(technology: TechnologyDefinition, state: Node) -> String:
+	if state == null or technology == null or state.can_research_technology(GameState.FACTION_PLAYER, technology.id, _catalog):
+		return ""
+	var lines := ""
+	if not String(technology.prerequisite_tech_id).is_empty() or not (technology.prerequisite_tech_ids as Array).is_empty():
+		var missing_prereq: StringName = &""
+		var candidates: Array[StringName] = []
+		if not String(technology.prerequisite_tech_id).is_empty():
+			candidates.append(technology.prerequisite_tech_id)
+		elif not (technology.prerequisite_tech_ids as Array).is_empty():
+			candidates.append_array(technology.prerequisite_tech_ids as Array)
+		for prereq_id in candidates:
+			if not state.has_technology(GameState.FACTION_PLAYER, prereq_id):
+				missing_prereq = prereq_id
+				break
+		if not String(missing_prereq).is_empty() and _catalog != null:
+			var prereq: TechnologyDefinition = _catalog.resolve(missing_prereq)
+			lines = "\nVoraussetzung fehlt: %s" % (prereq.display_name if prereq != null else String(missing_prereq))
+	var funds_ok := true
+	if state.has_method("get_faction_resource") and int(state.get_faction_resource(GameState.FACTION_PLAYER, technology.cost_resource)) < technology.cost_amount:
+		funds_ok = false
+	if technology.credit_cost > 0 and state.has_method("get_faction_credits") and int(state.get_faction_credits(GameState.FACTION_PLAYER)) < technology.credit_cost:
+		funds_ok = false
+	if not funds_ok:
+		lines += "\nRessourcen fehlen"
+	return lines
 
 func _research(technology_id: StringName) -> void:
 	if _state == null or _catalog == null:

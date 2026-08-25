@@ -7,6 +7,10 @@ extends Node
 const FACTION_PLAYER := &"a"
 const FACTION_CPU := &"b"
 const FACTION_NEUTRAL := &"neutral"
+## Uninhabited planets: no garrison, no workers, no buildings — colonizable
+## via MISSION_COLONY. Kept separate from neutral so the player can tell an
+## empty rock from a settled foreign world (Sprint 6, S5).
+const FACTION_UNINHABITED := &"uninhabited"
 
 const MISSION_MILITARY := &"military"
 const MISSION_CARGO := &"cargo"
@@ -398,6 +402,9 @@ func seed_starting_workers(planet_id: StringName, profile: PlanetSizeProfile) ->
 
 func faction_of(planet_id: StringName) -> StringName:
 	return faction_domain.faction_of(planet_id)
+
+func is_uninhabited(planet_id: StringName) -> bool:
+	return faction_of(planet_id) == FACTION_UNINHABITED
 
 func is_owned_by(planet_id: StringName, faction: StringName) -> bool:
 	return faction_domain.is_owned_by(planet_id, faction)

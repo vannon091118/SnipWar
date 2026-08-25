@@ -420,10 +420,19 @@ func _create_upgrade_row(planet_id: StringName, upgrade: PlanetUpgradeDefinition
 
 	if not is_unlocked:
 		var buy_button := Button.new()
-		buy_button.text = "BAUEN"
+		# Sprint 6 (G4): the upgrade list previously rendered one "BAUEN" per
+		# row, so clicks/by-path could not tell the upgrades apart. Embed the
+		# upgrade id in the label and name for unambiguous selection.
+		buy_button.text = "BAUEN: %s" % upgrade.display_name
+		buy_button.name = "Buy_" + String(upgrade.id)
+		buy_button.tooltip_text = upgrade.description
 		buy_button.disabled = not can_buy
 		buy_button.focus_mode = Control.FOCUS_NONE
-		buy_button.custom_minimum_size = Vector2(_theme_config.upgrade_button_width, 0.0)
+		# The full label stays unique (G4); clip it so a long display name can
+		# not push the panel past the configured responsive width range.
+		buy_button.clip_text = true
+		buy_button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		buy_button.custom_minimum_size = Vector2(maxf(_theme_config.upgrade_button_width, 120.0), 0.0)
 		buy_button.add_theme_font_size_override("font_size", _theme_config.small_font_size)
 		buy_button.add_theme_stylebox_override("normal", _style_box(_theme_config.button_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
 		buy_button.add_theme_stylebox_override("hover", _style_box(_theme_config.button_hover_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))

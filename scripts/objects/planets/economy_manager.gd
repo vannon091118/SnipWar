@@ -128,6 +128,23 @@ func gather_now() -> int:
 func _on_tick() -> void:
 	if _enabled:
 		_tick_economy()
+	_tick_uninhabited_assignment()
+
+## Sprint 6 (S5): marks uninhabited planets (roughly every third neutral world,
+## deterministic per planet_id) as FACTION_UNINHABITED. Runs on the economy
+## tick so it no-ops for owned worlds and stays out of the fabrication path.
+func _tick_uninhabited_assignment() -> void:
+	var state: Node = _game_state()
+	if state == null or not state.has_method("set_faction") or not state.has_method("faction_of"):
+		return
+	for planet in get_tree().get_nodes_in_group("planets"):
+		var planet_node: Planet = planet as Planet
+		if planet_node == null or planet_node.get_faction() != GameState.FACTION_NEUTRAL:
+			continue
+		var pid: StringName = planet_node.planet_id
+		var hash_value: int = absi(String(pid).hash())
+		if hash_value % 3 == 0:
+			state.set_faction(pid, GameState.FACTION_UNINHABITED)
 
 func _on_gather_tick() -> void:
 	if _gathering_enabled:

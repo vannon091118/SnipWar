@@ -79,6 +79,20 @@ func _spawn_clusters(source: Planet, amount: int) -> void:
 func dispatch_mission(source: Planet, destination: Planet, amount: int, route_path: Array[Vector2] = [], mission_type: StringName = &"military") -> void:
 	_dispatch_clusters(source, destination, amount, route_path, mission_type)
 
+## True when the player already has an active transport targeting `planet_id`.
+## Sprint 6 (S9): at most one dispatch order per destination planet — the UI
+## disables the send button while a mission is in flight.
+func has_active_order(planet_id: StringName) -> bool:
+	if String(planet_id).is_empty():
+		return false
+	var state: Node = _game_state()
+	if state == null or not state.has_method("get_worker_transport_records"):
+		return false
+	for record in state.get_worker_transport_records(GameState.FACTION_PLAYER):
+		if (record.get("destination_planet_id", &"") as StringName) == planet_id:
+			return true
+	return false
+
 func can_dispatch_mission(source: Planet, destination: Planet, mission_type: StringName = &"military") -> bool:
 	if source == null or destination == null or source == destination:
 		return false
@@ -86,6 +100,10 @@ func can_dispatch_mission(source: Planet, destination: Planet, mission_type: Str
 		return true
 	var state: Node = _game_state()
 	if state == null or source.get_faction() == GameState.FACTION_NEUTRAL:
+		return false
+	# Sprint 6 (S5): uninhabited worlds have no stock to harvest — collecting
+	# from them is pointless until they are colonized.
+	if state.has_method("is_uninhabited") and state.is_uninhabited(destination.planet_id):
 		return false
 	return destination.get_faction() == GameState.FACTION_NEUTRAL and state.has_scanned_planet(source.get_faction(), destination.planet_id)
 

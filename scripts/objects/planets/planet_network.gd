@@ -12,6 +12,8 @@ const SELECTION_SERVICE_SCRIPT: Script = preload("res://scripts/objects/selectio
 const SELECTION_ACTION_TOOLTIP_SCRIPT: Script = preload("res://scripts/ui/selection_tooltip.gd")
 const FLEET_OVERVIEW_SCRIPT: Script = preload("res://scripts/ui/fleet_overview.gd")
 const ECONOMY_WINDOW_SCRIPT: Script = preload("res://scripts/ui/economy_window.gd")
+const LAYOUT_COORDINATOR_SCRIPT: Script = preload("res://scripts/ui/layout_coordinator.gd")
+const INPUT_HINT_OVERLAY_SCRIPT: Script = preload("res://scripts/ui/input_hint_overlay.gd")
 
 @export var transit_config: TransitConfig = DEFAULT_CONFIG
 @export var ui_theme_config: UIThemeConfig = DEFAULT_UI_THEME
@@ -38,6 +40,8 @@ var _action_tooltip: SelectionActionTooltip
 var _modal_coordinator: ModalCoordinator
 var _fleet_overview: FleetOverview
 var _economy_window: EconomyWindow
+var _layout_coordinator: LayoutCoordinator
+var _input_hints: InputHintOverlay
 var _selected_ship: ShipBase
 
 # Context-menu item IDs and stable names used by tests/replay scripts.
@@ -326,9 +330,33 @@ func _create_modal_coordinator() -> void:
 	_modal_coordinator.name = "ModalCoordinator"
 	add_child(_modal_coordinator)
 	_modal_coordinator.setup(_map_camera, ui_theme_config)
+	_create_layout_coordinator()
+	_create_input_hints()
 	_create_dossier_launcher()
 	_create_fleet_overview.call_deferred()
 	_create_economy_module.call_deferred()
+
+## Sprint 6 (S6): fixed non-overlapping panel zones. The paper dossier stays a
+## full-screen modal (it intentionally dims and freezes the world), while the
+## persistent panels (fleet top-right, economy bottom-right) live inside their
+## ControlField so nothing ever overlaps the map or the vault.
+func _create_layout_coordinator() -> void:
+	_layout_coordinator = LAYOUT_COORDINATOR_SCRIPT.new() as LayoutCoordinator
+	_layout_coordinator.name = "LayoutCoordinator"
+	add_child(_layout_coordinator)
+	_layout_coordinator.setup()
+	var map_field := ControlField.new()
+	map_field.name = "FieldMap"
+	map_field.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_layout_coordinator.register_field(map_field, &"field_map")
+	var vault_field := ControlField.new()
+	vault_field.name = "FieldVaultTop"
+	vault_field.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_layout_coordinator.register_field(vault_field, &"field_vault_top")
+	var dossier_field := ControlField.new()
+	dossier_field.name = "FieldDossierLeft"
+	dossier_field.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_layout_coordinator.register_field(dossier_field, &"field_dossier_left")
 
 func _create_dossier_launcher() -> void:
 	var layer := CanvasLayer.new()
@@ -356,12 +384,21 @@ func _create_fleet_overview() -> void:
 	layer.name = "FleetOverviewLayer"
 	layer.layer = 38
 	add_child(layer)
-	_fleet_overview.position = Vector2(12.0, 220.0)
-	_fleet_overview.custom_minimum_size = Vector2(190.0, 0.0)
-	layer.add_child(_fleet_overview)
 	_fleet_overview.setup(ui_theme_config, _map_camera)
 	_fleet_overview.focus_requested.connect(_on_fleet_overview_focus)
 	_fleet_overview.ship_drop_requested.connect(_on_ship_drop_requested)
+	# Dock the overview into its ControlField zone (no manual offset anymore).
+	if _layout_coordinator != null:
+		var fleet_field := ControlField.new()
+		fleet_field.name = "FieldFleetRightTop"
+		fleet_field.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		layer.add_child(fleet_field)
+		fleet_field.add_child(_fleet_overview)
+		_layout_coordinator.register_field(fleet_field, &"field_fleet_right_top")
+	else:
+		_fleet_overview.position = Vector2(12.0, 220.0)
+		_fleet_overview.custom_minimum_size = Vector2(190.0, 0.0)
+		layer.add_child(_fleet_overview)
 
 func _create_economy_module() -> void:
 	_economy_window = ECONOMY_WINDOW_SCRIPT.new() as EconomyWindow
@@ -371,7 +408,17 @@ func _create_economy_module() -> void:
 	layer.layer = 65
 	add_child(layer)
 	_economy_window.setup(ui_theme_config)
-	layer.add_child(_economy_window)
+	# Economy lives in its own zone bottom-right; the standard floating window
+	# keeps its own positioning when the coordinator is unavailable.
+	if _layout_coordinator != null:
+		var economy_field := ControlField.new()
+		economy_field.name = "FieldEconomyRightBottom"
+		economy_field.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		layer.add_child(economy_field)
+		economy_field.add_child(_economy_window)
+		_layout_coordinator.register_field(economy_field, &"field_economy_right_bottom")
+	else:
+		layer.add_child(_economy_window)
 
 func _toggle_economy_module() -> void:
 	if _economy_window != null and is_instance_valid(_economy_window):
@@ -473,6 +520,30 @@ func _on_fleet_overview_focus(target: Node2D) -> void:
 			_selection_service.clear()
 		target.set_selected(true)
 		_selected_ship = target as ShipBase
+
+## Sprint 6 (S2): direct Dossier hotkeys (P/W/F/R, ESC handled by ui_cancel).
+## Kept in _unhandled_input so the world view reacts without stealing focus.
+func _unhandled_input(event: InputEvent) -> void:
+	if _modal_coordinator != null and is_instance_valid(_modal_coordinator) and _modal_coordinator.is_open():
+		return
+	if event.is_action_pressed(&"open_planet"):
+		_open_planet_dossier()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed(&"open_workshop"):
+		_open_workshop_dossier()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed(&"open_research"):
+		_open_tech_tree_dossier()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed(&"open_economy"):
+		_toggle_economy_module()
+		get_viewport().set_input_as_handled()
+
+func _create_input_hints() -> void:
+	_input_hints = INPUT_HINT_OVERLAY_SCRIPT.new() as InputHintOverlay
+	_input_hints.name = "InputHintOverlay"
+	add_child(_input_hints)
+	_input_hints.setup(ui_theme_config)
 
 func _add_dossier_button(box: VBoxContainer, text: String, pressed: Callable) -> void:
 	var button := Button.new()
@@ -590,6 +661,9 @@ func _on_planet_selected(planet: Node2D) -> void:
 	_ui.show_planet(planet, _destination_planets, default_destination)
 	_update_selected_count()
 	_refresh_slider_bounds()
+	_refresh_dispatch_lock()
+	if _input_hints != null:
+		_input_hints.show_context(&"planet")
 	if _ui.has_selectable_amount():
 		_ui.reset_amount()
 		_update_preview()
@@ -642,6 +716,7 @@ func _on_destination_selected(index: int) -> void:
 		return
 	_routes[_active_planet] = _destination_planets[index]
 	_update_preview()
+	_refresh_dispatch_lock()
 	queue_redraw()
 
 func _on_mission_selected(mission_type: StringName) -> void:
@@ -651,6 +726,7 @@ func _on_mission_selected(mission_type: StringName) -> void:
 	var current_destination := get_destination(_active_planet)
 	_ui.set_destinations(_destination_planets, current_destination)
 	_update_preview()
+	_refresh_dispatch_lock()
 	queue_redraw()
 
 func _on_worker_count_changed(planet: Node2D, _count: int) -> void:
@@ -748,9 +824,40 @@ func _refresh_slider_bounds() -> void:
 func _on_send_pressed() -> void:
 	if _active_planet == null or not is_instance_valid(_ui):
 		return
+	if _dispatch_locked_for_destination():
+		return
 	var destination := get_destination(_active_planet)
 	if destination != null:
 		_worker_manager.call("_dispatch_clusters", _active_planet, destination, _ui.selected_amount(), get_route_path(_active_planet, destination), _ui.selected_mission_type())
+		_refresh_dispatch_lock.call_deferred()
+
+## Sprint 6 (S9): max one active dispatch order per planet. Disables the send
+## button (and preview) while the selected destination already has a mission.
+func _dispatch_locked_for_destination() -> bool:
+	if _active_planet == null or not is_instance_valid(_ui) or _worker_manager == null:
+		return false
+	if not _worker_manager.has_method("has_active_order"):
+		return false
+	var destination := get_destination(_active_planet)
+	if destination == null:
+		return false
+	var planet: Planet = destination as Planet
+	if planet == null:
+		return false
+	return _worker_manager.has_active_order(planet.planet_id)
+
+func _refresh_dispatch_lock() -> void:
+	if _ui == null or not is_instance_valid(_ui) or _worker_manager == null:
+		return
+	var locked := _dispatch_locked_for_destination()
+	var send_button: Button = _ui.get_send_button()
+	if send_button != null:
+		if locked and send_button.disabled == false:
+			send_button.disabled = true
+		elif not locked and send_button.disabled and _ui.has_selectable_amount():
+			send_button.disabled = false
+	if locked and _ui.has_method("set_preview"):
+		_ui.set_preview("Ziel bereits unter Auftrag — warte auf Ankunft")
 
 func transit_config_identity_valid() -> bool:
 	if _worker_manager == null or transit_config == null:

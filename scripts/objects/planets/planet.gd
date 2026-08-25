@@ -118,6 +118,8 @@ func _ready() -> void:
 				state.planet_upgraded.connect(_on_planet_upgraded)
 			if not state.technology_researched.is_connected(_on_technology_researched):
 				state.technology_researched.connect(_on_technology_researched)
+			if state.has_signal("research_started") and not state.research_started.is_connected(_on_research_started):
+				state.research_started.connect(_on_research_started)
 			if not state.worker_factory_built.is_connected(_on_worker_factory_built):
 				state.worker_factory_built.connect(_on_worker_factory_built)
 			if not state.resource_generated.is_connected(_on_resource_generated):
@@ -449,9 +451,34 @@ func _sync_groups() -> void:
 	add_to_group(_faction_group(get_faction()))
 	add_to_group(_role_group(planet_role))
 
-func _on_technology_researched(changed_faction: StringName, _technology_id: StringName) -> void:
+func _on_technology_researched(changed_faction: StringName, technology_id: StringName) -> void:
 	if changed_faction == get_faction():
+		for child in get_children():
+			if child is ResearchIndicator and (child as ResearchIndicator).tech_id == technology_id:
+				child.queue_free()
 		_refresh_shipyard_hangar()
+
+## Forschung ist fraktionsweit; der sichtbare Ring gehört auf die Homeworld,
+## damit der Spieler einen festen Ankerpunkt für laufende Jobs hat.
+func _on_research_started(research_faction: StringName, technology_id: StringName, total_time: float) -> void:
+	if research_faction != GameState.FACTION_PLAYER or get_faction() != research_faction:
+		return
+	var state := _game_state()
+	if state == null or state.homeworld_for(research_faction) != planet_id:
+		return
+	add_research_indicator(technology_id, total_time)
+
+func add_research_indicator(tech_id: StringName, total_time: float) -> void:
+	for child in get_children():
+		if child is ResearchIndicator:
+			child.queue_free()
+	var indicator := ResearchIndicator.new()
+	indicator.name = "ResearchIndicator"
+	indicator.faction = GameState.FACTION_PLAYER
+	indicator.tech_id = tech_id
+	indicator.total_time = total_time
+	indicator.position = Vector2(0.0, -30.0 * visual_scale - 22.0)
+	add_child(indicator)
 
 func _on_worker_factory_built(changed_planet_id: StringName) -> void:
 	if changed_planet_id != planet_id:
