@@ -19,6 +19,7 @@ static func get_tool_defs() -> Array:
 		_make("game_research_status", "List active and completed research jobs", {"faction": {"type": "string", "default": "a"}}),
 		_make("game_upgrade_list", "List built upgrades on a planet", {"planet_id": {"type": "string"}}, ["planet_id"]),
 		_make("game_dispatch_info", "Read pending dispatch queue and active transits", {"faction": {"type": "string", "default": "a"}}),
+		_make("game_state_summary", "Compact one-shot overview for an agent: resources, credits, research, ships, planet census per faction, active dispatches. Prefer this over calling 5+ individual tools.", {"faction": {"type": "string", "default": "a"}}),
 	]
 
 
@@ -36,6 +37,7 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 		"game_research_status": return _research_status(str(args.get("faction", "a")))
 		"game_upgrade_list": return _upgrade_list(str(args.get("planet_id", "")))
 		"game_dispatch_info": return _dispatch_info(str(args.get("faction", "a")))
+		"game_state_summary": return _state_summary(str(args.get("faction", "a")))
 		_: return {"error": "Unknown gameplay tool: " + tool_name}
 
 
@@ -219,6 +221,89 @@ func _dispatch_info(faction: String) -> Dictionary:
 		if t is Dictionary and str(t.get("source_faction", "")) == faction:
 			result["active"].append(t)
 	return {"faction": faction, "dispatch": result}
+
+
+# ─── Compact State Summary ──────────────────────────────────
+
+## One-shot overview so agents do not need 5+ separate calls per decision.
+## Deliberately compact: counts + short lists only, no nested resource dumps.
+func _state_summary(faction: String) -> Dictionary:
+	var gs := _get_gs()
+	if gs == null:
+		return {"error": "GameState not available"}
+	var fid := StringName(faction)
+
+	# Resources + credits
+	var resources: Dictionary = {}
+	for rid in ["energy", "biomass", "rare", "volatile", "material"]:
+		if gs.has_method("get_faction_resource"):
+			resources[rid] = int(gs.call("get_faction_resource", fid, StringName(rid)))
+	if gs.has_method("get_faction_credits"):
+		resources["credits"] = int(gs.call("get_faction_credits", fid))
+
+	# Research: active jobs with remaining time + completed list
+	var research := {"active": [], "completed": []}
+	var tech_domain: Object = gs.get("tech_domain") if gs.get("tech_domain") != null else null
+	if tech_domain != null:
+		var jobs: Dictionary = tech_domain.get("research_jobs") if tech_domain.get("research_jobs") != null else {}
+		var researched: Dictionary = tech_domain.get("researched_techs") if tech_domain.get("researched_techs") != null else {}
+		var faction_jobs: Dictionary = jobs.get(fid, {}) as Dictionary
+		for tech_value in faction_jobs.keys():
+			research["active"].append({"tech": String(tech_value), "remaining_s": snappedf(float(faction_jobs[tech_value]), 0.1)})
+		var faction_done: Array = researched.get(fid, []) as Array
+		for tech_value in faction_done:
+			research["completed"].append(String(tech_value))
+
+	# Ships: count by status instead of dumping every assembly
+	var ships := {"total": 0, "by_status": {}}
+	var assemblies: Array = gs.get("assemblies") if gs.get("assemblies") != null else []
+	for asm in assemblies:
+		if not (asm is Dictionary):
+			continue
+		if str((asm as Dictionary).get("faction", "")) != faction:
+			continue
+		ships["total"] += 1
+		var status := str((asm as Dictionary).get("status", "unknown"))
+		ships["by_status"][status] = int(ships["by_status"].get(status, 0)) + 1
+
+	# Planet census per faction (group lookup — chunk-world safe)
+	var census: Dictionary = {}
+	var homeworld := ""
+	var homeworld_id := ""
+	if gs.has_method("homeworld_for"):
+		homeworld_id = String(gs.homeworld_for(fid))
+	var ml: Object = Engine.get_main_loop()
+	if ml is SceneTree:
+		for node in (ml as SceneTree).get_nodes_in_group("planets"):
+			var p := node as Node2D
+			if p == null:
+				continue
+			var pf := String(p.call("get_faction")) if p.has_method("get_faction") else "?"
+			census[pf] = int(census.get(pf, 0)) + 1
+			if pf == faction and String(p.get("planet_id")) == homeworld_id:
+				homeworld = String(p.get("planet_id"))
+
+	# Dispatch: pending/active counts only
+	var dispatch := {"pending": 0, "active": 0}
+	if ml is SceneTree:
+		var wm: Node = (ml as SceneTree).root.get_node_or_null("/root/World/PlanetField/WorkerManager")
+		if wm != null:
+			for d in (wm.get("pending_dispatches") if wm.get("pending_dispatches") != null else []):
+				if d is Dictionary and str((d as Dictionary).get("faction", "")) == faction:
+					dispatch["pending"] += 1
+			for t in (wm.get("active_transits") if wm.get("active_transits") != null else []):
+				if t is Dictionary and str((t as Dictionary).get("source_faction", "")) == faction:
+					dispatch["active"] += 1
+
+	return {
+		"faction": faction,
+		"resources": resources,
+		"research": research,
+		"ships": ships,
+		"planet_census": census,
+		"homeworld": homeworld,
+		"dispatch": dispatch,
+	}
 
 
 # ─── Helpers ────────────────────────────────────────────────────

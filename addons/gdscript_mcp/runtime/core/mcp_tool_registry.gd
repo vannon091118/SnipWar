@@ -17,6 +17,7 @@ const UX_PATH := "res://addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd"
 const E2E_PATH := "res://addons/gdscript_mcp/runtime/tools/e2e/mcp_e2e.gd"
 const PLAYTHROUGH_PATH := "res://addons/gdscript_mcp/runtime/tools/e2e/mcp_playthrough_tools.gd"
 const GAME_SYSTEMS_PATH := "res://addons/gdscript_mcp/runtime/tools/systems/mcp_audio_tools.gd"
+const GAMEPLAY_TOOLS_PATH := "res://addons/gdscript_mcp/runtime/tools/gameplay/mcp_gameplay_tools.gd"
 const CUSTOM_LOADER_PATH := "res://addons/gdscript_mcp/runtime/core/mcp_custom_tool_loader.gd"
 const CODE_ANALYZER_PATH := "res://addons/gdscript_mcp/runtime/tools/e2e/mcp_code_analyzer.gd"
 const GOAL_PLAYER_PATH := "res://addons/gdscript_mcp/runtime/tools/e2e/mcp_goal_player.gd"
@@ -30,6 +31,7 @@ var _ux: RefCounted = null
 var _e2e: RefCounted = null
 var _playthrough: RefCounted = null
 var _game_systems: RefCounted = null
+var _gameplay: RefCounted = null
 var _custom_loader: RefCounted = null
 var _code_analyzer: RefCounted = null
 var _goal_player: RefCounted = null
@@ -126,6 +128,10 @@ func dispatch(tool_name: String, args: Dictionary) -> Variant:
 	if _is_game_system_tool(name) and _game_systems:
 		return _game_systems.dispatch_tool(name, args)
 
+	# Gameplay domain bridge (GameState query/steer: game_*)
+	if _is_gameplay_tool(name) and _gameplay:
+		return _gameplay.dispatch_tool(name, args)
+
 	# Custom tools (hot-reload from res://mcp_tools/)
 	if name.begins_with("custom_") and _custom_loader:
 		return McpCustomToolLoader.dispatch(name, args)
@@ -172,6 +178,11 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 	if _is_goal_player_tool(name) and _goal_player:
 		return await _goal_player.dispatch_async(name, args)
 
+	# Gameplay tools are synchronous; serve them on the async path too so
+	# clients that always await never see "Unknown async tool".
+	if _is_gameplay_tool(name) and _gameplay:
+		return _gameplay.dispatch_tool(name, args)
+
 	return {"error": "Unknown async tool: " + tool_name}
 
 
@@ -187,6 +198,7 @@ static func _is_runtime_tool(name: String) -> bool:
 		"runtime_eval", "runtime_inspect_node", "runtime_find_nodes_by_type",
 		"runtime_node_ancestry",
 		"runtime_freeze", "runtime_unfreeze", "runtime_step_frame", "runtime_step_frames", "runtime_freeze_status",
+		"runtime_camera_move_to",
 	]
 
 
@@ -227,6 +239,10 @@ static func _is_e2e_tool(name: String) -> bool:
 
 static func _is_playthrough_tool(name: String) -> bool:
 	return name.begins_with("runtime_playthrough_")
+
+
+static func _is_gameplay_tool(name: String) -> bool:
+	return name.begins_with("game_")
 
 
 static func _is_game_system_tool(name: String) -> bool:
@@ -284,10 +300,15 @@ func _load_all() -> void:
 
 	if ResourceLoader.exists(RUNTIME_TOOLS_PATH):
 		var rs = load(RUNTIME_TOOLS_PATH)
-		if rs:
+		# can_instantiate() is false for scripts with parse errors — calling
+		# new() on those raises and ABORTS _load_all, silently unregistering
+		# every module loaded after the broken one.
+		if rs != null and rs.can_instantiate():
 			_runtime_tools = rs.new()
 			var td = rs.get_tool_defs()
 			if td is Array: _tools.append_array(td)
+		elif rs != null:
+			push_warning("McpToolRegistry: %s failed to parse — runtime tools unavailable" % RUNTIME_TOOLS_PATH)
 
 	if ResourceLoader.exists(UX_PATH):
 		var us = load(UX_PATH)
@@ -326,6 +347,14 @@ func _load_all() -> void:
 				var td = gs.get_tool_defs()
 				if td is Array:
 					_tools.append_array(td)
+
+	if ResourceLoader.exists(GAMEPLAY_TOOLS_PATH):
+		var gp_tools = load(GAMEPLAY_TOOLS_PATH)
+		if gp_tools:
+			_gameplay = gp_tools.new()
+			var td = gp_tools.get_tool_defs()
+			if td is Array:
+				_tools.append_array(td)
 
 	if ResourceLoader.exists(CUSTOM_LOADER_PATH):
 		var cs = load(CUSTOM_LOADER_PATH)

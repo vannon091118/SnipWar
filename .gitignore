@@ -8,3 +8,7 @@ godot/
 
 # Freebuff/local agent workspace (never publish)
 .agents/
+
+# Ad-hoc MCP client dumps in project root (belong in addons/gdscript_mcp/client/playthroughs/)
+/_mcp_*
+/_ux_report_*

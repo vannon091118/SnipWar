@@ -62,7 +62,7 @@ static func _basic_tools() -> Array:
 		_make("runtime_camera_move_to", "Move MapCamera to x,y via tween (optional zoom, duration)",
 			{"x": {"type": "number"}, "y": {"type": "number"},
 			 "zoom": {"type": "number", "default": -1.0, "description": "Target zoom (skip if -1)"},
-			 "duration": {"type": "number", "default": 0.5, "description": "Tween duration in seconds (0=instant)"}}, ["x", "y"]),
+			 "duration": {"type": "number", "default": 0.5, "description": "Tween duration in seconds (0=instant)"}}, ["x", "y"], true),
 	]
 
 
@@ -119,8 +119,6 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 			return _rt_step_frames(int(args.get("count", 30)))
 		"runtime_freeze_status":
 			return _rt_freeze_status()
-		"runtime_camera_move_to":
-			return _rt_camera_move_to(args)
 		_:
 			return {"error": "Unknown runtime tool: " + tool_name}
 
@@ -132,6 +130,9 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 			return await _rt_wait_frames(args.get("frames", 1))
 		"runtime_wait_ms":
 			return await _rt_wait_ms(int(args.get("ms", 300)))
+		"runtime_camera_move_to":
+			# Coroutine (await tween.finished) — must run on the async path.
+			return await _rt_camera_move_to(args)
 		_:
 			return {"error": "Unknown async runtime tool: " + tool_name}
 

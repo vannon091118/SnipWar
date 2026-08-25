@@ -24,6 +24,11 @@ var _vision: RefCounted
 var _debug: RefCounted
 var _context_store: RefCounted
 var _last_analysis: Dictionary = {}
+
+## Response-size guard: full control dumps regularly exceed 100 KB (Anomalie M1).
+## The agent needs visible, interactive controls first — everything beyond the
+## cap is summarized as a count instead of dumped raw.
+const MAX_CONTROLS_IN_RESPONSE: int = 60
 var _latest_snapshot: Dictionary = {}
 var _watch_enabled := false
 var _watch_visual := false
@@ -170,6 +175,11 @@ func _build_analysis_result(live: Dictionary, visual: Dictionary, image_context:
 			var viewport_size := (main_loop as SceneTree).root.get_visible_rect().size
 			width = int(viewport_size.x)
 			height = int(viewport_size.y)
+	var all_controls: Array = live.get("controls", [])
+	# Truncation info lives in a separate key (NOT as a fake entry inside the
+	# controls array) so control_signature/interactables consumers never see a
+	# synthetic control.
+	var capped_controls: Array = all_controls.slice(0, MAX_CONTROLS_IN_RESPONSE)
 	var result := {
 		"width": width,
 		"height": height,
@@ -178,7 +188,8 @@ func _build_analysis_result(live: Dictionary, visual: Dictionary, image_context:
 		"perf": _compact_perf(),
 		"agent_context": _build_agent_context(scene_hint, interactables, elements, width, height),
 		"live": live,
-		"controls": live.get("controls", []),
+		"controls": capped_controls,
+		"controls_total": all_controls.size(),
 		"elements": elements,
 		"groups": visual.get("groups", []),
 		"interactables": interactables,
