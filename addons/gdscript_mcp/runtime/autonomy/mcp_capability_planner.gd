@@ -235,6 +235,10 @@ func _refresh_catalog() -> void:
 
 func _available_capabilities() -> Array:
 	var available: Array = ["mcp_session", "lifecycle", "project_files", "code_analysis"]
+	if _registry != null:
+		available.append("input_scheduler")
+		available.append("freeze_step")
+		available.append("vision")
 	if _lifecycle != null:
 		available.append("lifecycle")
 	if _context_store != null:
@@ -245,12 +249,6 @@ func _available_capabilities() -> Array:
 		available.append("visible_renderer")
 		if _is_game_running():
 			available.append("game_running")
-	if _has_capability("input_scheduler"):
-		available.append("input_scheduler")
-	if _has_capability("freeze_step"):
-		available.append("freeze_step")
-	if _has_capability("vision"):
-		available.append("vision")
 	return _unique(available)
 
 
@@ -307,8 +305,8 @@ func _check_postconditions(tool: Dictionary, result: Variant) -> Dictionary:
 		var ok := is_dict and not (result as Dictionary).has("error")
 		if text.contains("scene is present"):
 			ok = ok and str((result as Dictionary).get("scene", "")) != ""
-		elif text.contains("control_count"):
-			ok = ok and int((result as Dictionary).get("control_count", -1)) >= 0
+		elif text.contains("count is non-negative"):
+			ok = ok and int((result as Dictionary).get("count", -1)) >= 0
 		elif text.contains("tree_paused"):
 			ok = ok and (result as Dictionary).has("tree_paused") and (result as Dictionary).has("frames_stepped")
 		elif text.contains("active and bounds"):

@@ -151,8 +151,32 @@ static func _infer_metadata(name: String, tool: Dictionary) -> Dictionary:
 static func _looks_mutating(name: String, tool: Dictionary) -> bool:
 	if bool(tool.get("mutates", false)):
 		return true
-	for verb in ["click", "key", "drag", "move", "play", "stop", "set_", "create", "delete", "save", "apply", "undo", "redo", "run"]:
-		if name.contains(verb) and not name in ["runtime_goal_check", "runtime_e2e_list", "runtime_playthrough_search", "runtime_playthrough_latest", "runtime_playthrough_stats", "runtime_playthrough_frames", "runtime_playthrough_compare"]:
+	var operation := name
+	if operation.begins_with("runtime_"):
+		operation = operation.trim_prefix("runtime_")
+	elif operation.begins_with("editor_"):
+		operation = operation.trim_prefix("editor_")
+	var read_only_operations := [
+		"screenshot", "get_pixel", "get_pixel_region", "find_color", "find_all_colors",
+		"count_color_pixels", "image_diff", "wait_for_stable", "frame_changed",
+		"find_template", "find_template_all", "detect_rects", "detect_text_regions",
+		"sample_grid", "dominant_color", "context_list", "context_release",
+		"context_cleanup", "vision_worker_status", "vision_worker_analyze",
+		"vision_worker_ocr", "vision_worker_compare", "mcp_status", "mcp_events",
+		"ux_scan", "ux_find", "ux_read", "ux_watch_start", "ux_watch_stop",
+		"ux_watch_state", "ux_snapshot", "ux_logs", "goal_check", "goal_history",
+		"e2e_list", "playthrough_search", "playthrough_latest", "playthrough_stats",
+		"playthrough_frames", "playthrough_compare", "analyze_project", "analyze_input",
+		"analyze_signals", "analyze_game_state", "inspect_node", "find_node",
+		"find_nodes_by_type", "node_ancestry", "get_scene_tree", "get_ui_state",
+		"virtual_mouse_status", "freeze_status", "engine_info", "perf_metrics",
+		"rendering_stats", "frame_timing", "project_config", "list_files", "class_info",
+		"resource_uid", "event_log", "object_counts", "memory_info", "profile",
+	]
+	if operation in read_only_operations:
+		return false
+	for verb in ["click", "key", "drag", "mouse_move", "camera_move", "play", "stop", "set_", "create", "delete", "save", "apply", "undo", "redo", "run", "freeze", "unfreeze", "step_frame", "step_frames"]:
+		if operation == verb or operation.begins_with(verb + "_"):
 			return true
 	return false
 
@@ -205,7 +229,7 @@ static func _default_produces(name: String) -> Array:
 
 static func _default_postconditions(name: String) -> Array:
 	if name == "runtime_ux_scan":
-		return ["result.scene is present", "result.control_count is non-negative"]
+		return ["result.scene is present", "result.count is non-negative"]
 	if name == "runtime_freeze_status":
 		return ["result contains tree_paused and frames_stepped"]
 	if name == "runtime_virtual_mouse_status":
