@@ -103,6 +103,8 @@ func start_server(port: int = DEFAULT_PORT, transport: String = "tcp", config: D
 		_registry.set_role(_role)
 	if _registry.has_method("set_lifecycle"):
 		_registry.set_lifecycle(_lifecycle)
+	if _registry.has_method("set_autonomy_writes"):
+		_registry.set_autonomy_writes(bool(config.get("autonomy_writes", false)))
 	if _role == "runtime":
 		_create_vision_worker(config)
 		if _registry.has_method("set_worker"):
@@ -223,6 +225,7 @@ func get_lifecycle_state() -> Dictionary:
 		"async_pending": _pending_async.size(),
 		"process_mode": "ALWAYS",
 		"editor_write_enabled": _editor_write_enabled,
+		"autonomy_writes": _registry.get_autonomy_writes() if _registry != null and _registry.has_method("get_autonomy_writes") else false,
 		"context_root": _context_store.get_root_path() if _context_store != null else "",
 		"context_cache": _context_store.get_stats() if _context_store != null else {},
 		"runtime": _registry.get_runtime_status() if _registry != null and _registry.has_method("get_runtime_status") else {},

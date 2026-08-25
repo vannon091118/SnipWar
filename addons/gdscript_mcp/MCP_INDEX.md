@@ -150,6 +150,27 @@ Shader, Partikel):
 | Shader/Particles (2) | `runtime_shader_set_param`, `runtime_particles_config` |
 | Network (5) | `runtime_network_create_server`, `_create_client`, `_disconnect`, `_get_peers`, `_send_rpc` |
 
+### Autonomy Workspace (Slice D) — `runtime/autonomy/mcp_capability_planner.gd`
+Journaled edit-workspace tools for autonomous repair. **Write-gated**: all mutating
+tools stay blocked until the host enables them (`--mcp-autonomy-writes`); every write
+lands in an isolated `user://mcp_workspaces/run_*` sandbox with preimage/hash journaling
+and explicit rollback. Probes remain read-only regardless of the gate.
+
+| Tool | Access | Beschreibung |
+|---|---|---|
+| `runtime_autonomy_workspace_begin` | write | Journaled run workspace starten (Sandbox + Baseline-Fingerprint) |
+| `runtime_autonomy_workspace_status` | read | Zustand, Baseline- und Transaktionszahlen |
+| `runtime_autonomy_workspace_files` | read | Dateien im Workspace auflisten |
+| `runtime_autonomy_workspace_baseline` | read | Workspace gegen Start-Baseline prüfen |
+| `runtime_autonomy_workspace_end` | read | Run abschließen (verweigert offene Transaktionen) |
+| `runtime_autonomy_read` | read | res://-/user://-Datei mit Hash + Bytecount lesen |
+| `runtime_autonomy_write` | write | Journaled Write, nur innerhalb Workspace-Root |
+| `runtime_autonomy_patch` | write | Fail-closed Single-Occurrence-Patch |
+| `runtime_autonomy_search` | read | Textsuche über Workspace-Dateien |
+| `runtime_autonomy_symbols` | read | GDScript-Klassen/Funcs/Vars/Consts erkennen |
+| `runtime_autonomy_rollback` | write | Einzelne Transaktion zurücksetzen |
+| `runtime_autonomy_rollback_all` | write | Alle Transaktionen zur Baseline zurücksetzen |
+
 ### Custom Tools API — `runtime/core/mcp_custom_tool_loader.gd`
 Jede `.gd` in `res://mcp_tools/` wird beim Laden automatisch registriert:
 `get_tool_defs()` + `dispatch_tool()` implementieren, erscheint als `custom_*`-Tool,

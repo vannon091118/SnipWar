@@ -1,12 +1,16 @@
 extends RefCounted
 class_name McpCapabilityPlanner
 
-## Slice A planner: discovery and visible read-only probes only.
-## It never writes project files, editor state, or GameState.
+## Slice A planner: discovery and visible read-only probes.
+## Slice D: journaled edit-workspace tools (read/write/patch/rollback), gated
+## behind set_mutations_allowed — writes stay inside user://mcp_workspaces and
+## are preimaged + rollbackable. Probes always stay read-only.
 
 const CONTRACTS_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_autonomy_contracts.gd"
 const PROJECT_ADAPTER_PATH := "res://addons/gdscript_mcp/runtime/core/mcp_project_adapter.gd"
 const ARCHIVE_PATH := "res://addons/gdscript_mcp/runtime/context/mcp_playthrough_archive.gd"
+const WORKSPACE_JOURNAL_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_workspace_journal.gd"
+const PROJECT_TOOLS_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_project_tools.gd"
 
 var _contracts: RefCounted
 var _registry: RefCounted
@@ -18,6 +22,11 @@ var _catalog: Array = []
 var _statuses: Dictionary = {}
 var _last_receipt: Dictionary = {}
 var _run_sequence := 0
+var _workspace_journal: RefCounted = null
+var _workspace_tools: RefCounted = null
+var _mutations_allowed := false
+var _session_id := ""
+var _project_id := ""
 
 
 func setup(registry: RefCounted, lifecycle: RefCounted = null, context_store: RefCounted = null) -> void:
@@ -27,7 +36,15 @@ func setup(registry: RefCounted, lifecycle: RefCounted = null, context_store: Re
 	_contracts = load(CONTRACTS_PATH).new()
 	_archive = null
 	_project_adapter = _resolve_project_adapter()
+	_session_id = _resolve_session_id()
+	_project_id = _resolve_project_id()
 	_refresh_catalog()
+
+
+## Slice D write gate: mutating tools stay disabled unless the host enables
+## them explicitly (runtime_autonomy_* writes are journaled + rollbackable).
+func set_mutations_allowed(allowed: bool) -> void:
+	_mutations_allowed = allowed
 
 
 func get_tool_defs() -> Array:
@@ -49,6 +66,40 @@ func get_tool_defs() -> Array:
 		_make_tool("runtime_autonomy_receipt", "Read the last Slice-A capability receipt", {
 			"run_id": {"type": "string", "default": ""},
 		}),
+		_make_workspace_tool("runtime_autonomy_workspace_begin", "Begin an isolated journaled run workspace under user://mcp_workspaces", {
+			"project_id": {"type": "string", "default": ""},
+			"session_id": {"type": "string", "default": ""},
+			"renderer": {"type": "string", "enum": ["visible", "headless", "auto"], "default": "auto"},
+		}, "write"),
+		_make_workspace_tool("runtime_autonomy_workspace_status", "Read the bound workspace state, baseline and transaction counts", {}, "read"),
+		_make_workspace_tool("runtime_autonomy_workspace_files", "List files in the bound workspace", {}, "read"),
+		_make_workspace_tool("runtime_autonomy_workspace_baseline", "Verify the workspace against its run-start baseline fingerprint", {}, "read"),
+		_make_workspace_tool("runtime_autonomy_workspace_end", "Finish the run (refuses uncommitted transactions)", {}, "read"),
+		_make_workspace_tool("runtime_autonomy_read", "Read a res:// or user:// file with hash and byte count", {
+			"path": {"type": "string"},
+		}, "read", ["path"]),
+		_make_workspace_tool("runtime_autonomy_write", "Journaled write inside the workspace root only", {
+			"path": {"type": "string"},
+			"content": {"type": "string"},
+			"expected_hash": {"type": "string", "default": ""},
+		}, "write", ["path", "content"]),
+		_make_workspace_tool("runtime_autonomy_patch", "Fail-closed single-occurrence patch inside the workspace root", {
+			"path": {"type": "string"},
+			"old_text": {"type": "string"},
+			"new_text": {"type": "string"},
+			"expected_hash": {"type": "string", "default": ""},
+		}, "write", ["path", "old_text", "new_text"]),
+		_make_workspace_tool("runtime_autonomy_search", "Text search across workspace files", {
+			"needle": {"type": "string"},
+			"limit": {"type": "integer", "default": 50},
+		}, "read", ["needle"]),
+		_make_workspace_tool("runtime_autonomy_symbols", "Detect GDScript classes, funcs, vars and consts in a file", {
+			"path": {"type": "string"},
+		}, "read", ["path"]),
+		_make_workspace_tool("runtime_autonomy_rollback", "Roll back a single journaled transaction", {
+			"transaction_id": {"type": "string"},
+		}, "write", ["transaction_id"]),
+		_make_workspace_tool("runtime_autonomy_rollback_all", "Roll back all journaled transactions to the baseline", {}, "write"),
 	]
 
 
@@ -62,6 +113,30 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 			return receipt(str(args.get("run_id", "")))
 		"runtime_autonomy_probe":
 			return {"error": "runtime_autonomy_probe is async; use the async dispatch path"}
+		"runtime_autonomy_workspace_begin":
+			return workspace_begin(args)
+		"runtime_autonomy_workspace_status":
+			return workspace_status()
+		"runtime_autonomy_workspace_files":
+			return workspace_files()
+		"runtime_autonomy_workspace_baseline":
+			return workspace_baseline()
+		"runtime_autonomy_workspace_end":
+			return workspace_end()
+		"runtime_autonomy_read":
+			return workspace_read(str(args.get("path", "")))
+		"runtime_autonomy_write":
+			return workspace_write(str(args.get("path", "")), str(args.get("content", "")), str(args.get("expected_hash", "")))
+		"runtime_autonomy_patch":
+			return workspace_patch(str(args.get("path", "")), str(args.get("old_text", "")), str(args.get("new_text", "")), str(args.get("expected_hash", "")))
+		"runtime_autonomy_search":
+			return workspace_search(str(args.get("needle", "")), int(args.get("limit", 50)))
+		"runtime_autonomy_symbols":
+			return workspace_symbols(str(args.get("path", "")))
+		"runtime_autonomy_rollback":
+			return workspace_rollback(str(args.get("transaction_id", "")))
+		"runtime_autonomy_rollback_all":
+			return workspace_rollback_all()
 		_:
 			return {"error": "Unknown autonomy tool: " + tool_name}
 
@@ -85,7 +160,7 @@ func capabilities(include_invalid: bool = true, limit: int = 256) -> Dictionary:
 		"count": entries.size(),
 		"capabilities": entries,
 		"planner": "metadata_and_postcondition_based",
-		"mutations_allowed": false,
+		"mutations_allowed": _mutations_allowed,
 	}
 
 
@@ -111,7 +186,10 @@ func plan(intent: String, required_outputs: Array = [], mode: String = "any", al
 		if not metadata_errors.is_empty():
 			reasons.append_array(metadata_errors)
 		if bool(tool.get("mutates", false)):
-			reasons.append("Slice A is read-only; mutating tool")
+			if allow_probe:
+				reasons.append("probe is read-only")
+			elif not _mutations_allowed:
+				reasons.append("mutations not authorized")
 		if mode != "any" and str(tool.get("visibility", "")) != mode:
 			reasons.append("visibility mismatch")
 		var missing := _missing_requirements(tool, available)
@@ -218,6 +296,154 @@ func receipt(run_id: String = "") -> Dictionary:
 	return {"error": "Receipt not found", "run_id": run_id}
 
 
+## ────────────────────────────────────────────────────────────────────
+## Slice D: journaled edit workspace (gated behind mutations_allowed)
+## ────────────────────────────────────────────────────────────────────
+
+func workspace_begin(args: Dictionary) -> Dictionary:
+	if not _mutations_allowed:
+		return _blocked("writes are disabled for this session", "BLOCKED")
+	if _workspace_journal != null and _workspace_journal.is_bound():
+		return _blocked("workspace already bound; end or roll back first", "BLOCKED")
+	var journal_script: Resource = load(WORKSPACE_JOURNAL_PATH)
+	var tools_script: Resource = load(PROJECT_TOOLS_PATH)
+	if journal_script == null or tools_script == null:
+		return _blocked("workspace modules unavailable", "MCP_ISSUE")
+	_workspace_journal = journal_script.new()
+	_workspace_tools = tools_script.new()
+	var session_id := str(args.get("session_id", ""))
+	if session_id == "":
+		session_id = _session_id
+	var project_id := str(args.get("project_id", ""))
+	if project_id == "":
+		project_id = _project_id
+	var renderer := str(args.get("renderer", "auto"))
+	if renderer == "auto":
+		renderer = "visible" if _is_visible_renderer() else "headless"
+	_workspace_journal.begin_run(project_id, session_id, renderer, OS.get_process_id())
+	if not _workspace_journal.is_bound():
+		_workspace_journal = null
+		_workspace_tools = null
+		return _blocked("workspace begin failed", "MCP_ISSUE")
+	_workspace_tools.setup(str(_workspace_journal.root_path), session_id, _workspace_journal)
+	return {"ok": true, "workspace": _workspace_journal.status(), "session_id": session_id}
+
+
+func workspace_status() -> Dictionary:
+	if _workspace_journal == null or not _workspace_journal.is_bound():
+		return _blocked("no workspace bound", "BLOCKED")
+	return {"ok": true, "workspace": _workspace_journal.status()}
+
+
+func workspace_files() -> Dictionary:
+	if _workspace_journal == null or not _workspace_journal.is_bound():
+		return _blocked("no workspace bound", "BLOCKED")
+	var files: Array = _workspace_journal.list_workspace_files()
+	return {"ok": true, "files": files, "count": files.size()}
+
+
+func workspace_baseline() -> Dictionary:
+	if _workspace_journal == null or not _workspace_journal.is_bound():
+		return _blocked("no workspace bound", "BLOCKED")
+	var result: Dictionary = _workspace_journal.verify_baseline(_session_id)
+	result["ok"] = bool(result.get("clean", false))
+	return result
+
+
+func workspace_end() -> Dictionary:
+	if _workspace_journal == null or not _workspace_journal.is_bound():
+		return _blocked("no workspace bound", "BLOCKED")
+	var finish_result: Dictionary = _workspace_journal.finish(_session_id)
+	if not bool(finish_result.get("ok", false)):
+		return finish_result
+	var status_data: Dictionary = _workspace_journal.status()
+	_workspace_journal = null
+	_workspace_tools = null
+	return {"ok": true, "workspace": status_data, "ended": true}
+
+
+func workspace_read(path_string: String) -> Dictionary:
+	var tools := _ensure_tools()
+	if tools == null:
+		return _blocked("workspace tools unavailable", "MCP_ISSUE")
+	return tools.read(path_string)
+
+
+func workspace_write(path_string: String, content: String, expected_hash: String = "") -> Dictionary:
+	var gate := _write_gate()
+	if not bool(gate.get("ok", false)):
+		return gate
+	return _workspace_tools.write(path_string, content, expected_hash, _session_id)
+
+
+func workspace_patch(path_string: String, old_text: String, new_text: String, expected_hash: String = "") -> Dictionary:
+	var gate := _write_gate()
+	if not bool(gate.get("ok", false)):
+		return gate
+	return _workspace_tools.patch_content(path_string, old_text, new_text, expected_hash, _session_id)
+
+
+func workspace_search(needle: String, limit: int = 50) -> Dictionary:
+	if _workspace_tools == null or not _workspace_tools.is_workspace_bound():
+		return _blocked("no workspace bound; search is scoped to the workspace", "BLOCKED")
+	return _workspace_tools.search(needle, limit)
+
+
+func workspace_symbols(path_string: String) -> Dictionary:
+	var tools := _ensure_tools()
+	if tools == null:
+		return _blocked("workspace tools unavailable", "MCP_ISSUE")
+	return tools.find_symbols(path_string)
+
+
+func workspace_rollback(transaction_id: String) -> Dictionary:
+	var gate := _write_gate()
+	if not bool(gate.get("ok", false)):
+		return gate
+	return _workspace_tools.rollback_transaction(transaction_id, _session_id)
+
+
+func workspace_rollback_all() -> Dictionary:
+	if _workspace_journal == null or not _workspace_journal.is_bound():
+		return _blocked("no workspace bound", "BLOCKED")
+	return _workspace_journal.rollback_all(_session_id)
+
+
+func _write_gate() -> Dictionary:
+	if not _mutations_allowed:
+		return _blocked("writes are disabled for this session", "BLOCKED")
+	if _workspace_tools == null or not _workspace_tools.is_workspace_bound():
+		return _blocked("no workspace bound; begin a workspace first", "BLOCKED")
+	return {"ok": true}
+
+
+func _ensure_tools() -> RefCounted:
+	if _workspace_tools == null:
+		var tools_script: Resource = load(PROJECT_TOOLS_PATH)
+		if tools_script != null:
+			_workspace_tools = tools_script.new()
+	return _workspace_tools
+
+
+func _blocked(reason: String, error_class: String) -> Dictionary:
+	return {"ok": false, "error": reason, "error_class": error_class}
+
+
+func _resolve_session_id() -> String:
+	if _lifecycle != null and _lifecycle.has_method("status"):
+		var lifecycle_status: Dictionary = _lifecycle.status()
+		var sid := str(lifecycle_status.get("session_id", ""))
+		if sid != "":
+			return sid
+	return "autonomy_%d" % Time.get_ticks_msec()
+
+
+func _resolve_project_id() -> String:
+	if _project_adapter != null:
+		return str(_project_adapter.project_id)
+	return str(ProjectSettings.get_setting("application/config/name", "snipwar"))
+
+
 func _refresh_catalog() -> void:
 	_catalog.clear()
 	if _registry == null:
@@ -245,6 +471,8 @@ func _available_capabilities() -> Array:
 		available.append("context_store")
 	if _project_adapter != null:
 		available.append_array(["project_adapter", "scene_detection"])
+	if _workspace_tools != null and _workspace_tools.is_workspace_bound():
+		available.append("workspace_bound")
 	if _is_visible_renderer():
 		available.append("visible_renderer")
 		if _is_game_running():
@@ -431,4 +659,24 @@ static func _make_tool(name: String, description: String, properties: Dictionary
 	var tool := {"name": name, "description": description, "inputSchema": schema}
 	if async_tool:
 		tool["_async"] = true
+	return tool
+
+
+static func _make_workspace_tool(name: String, description: String, properties: Dictionary = {}, access: String = "read", required: Array = []) -> Dictionary:
+	var schema := {"type": "object", "properties": properties}
+	if not required.is_empty():
+		schema["required"] = required
+	var is_write := access == "write"
+	var tool := {"name": name, "description": description, "inputSchema": schema}
+	tool["access"] = access
+	tool["scope"] = "runtime"
+	tool["visibility"] = "visible"
+	tool["mode"] = "runtime_visible"
+	tool["mutates"] = is_write
+	tool["rollback"] = "journal_rollback" if is_write else "none"
+	tool["requires"] = ["mcp_session"] if not is_write else ["mcp_session", "workspace_bound"]
+	tool["produces"] = ["file_content"] if not is_write else ["file_change"]
+	tool["postconditions"] = ["result is a dictionary", "result.error is absent"] if not is_write else ["result.ok is present", "transaction journaled"]
+	tool["evidence"] = ["tool_response"]
+	tool["cost"] = 2
 	return tool

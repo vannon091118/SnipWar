@@ -42,6 +42,7 @@ var _autonomy_contracts: RefCounted = null
 var _tools: Array = []
 var _context_store: RefCounted = null
 var _loaded := false
+var _autonomy_writes := false
 var _lifecycle: RefCounted = null
 
 
@@ -59,6 +60,16 @@ func set_lifecycle(lifecycle: RefCounted) -> void:
 	_lifecycle = lifecycle
 	if _ux != null and _ux.has_method("set_lifecycle"):
 		_ux.set_lifecycle(lifecycle)
+
+
+func set_autonomy_writes(enabled: bool) -> void:
+	_autonomy_writes = enabled
+	if _autonomy_planner != null and _autonomy_planner.has_method("set_mutations_allowed"):
+		_autonomy_planner.set_mutations_allowed(enabled)
+
+
+func get_autonomy_writes() -> bool:
+	return _autonomy_writes
 
 
 func get_runtime_status() -> Dictionary:
@@ -446,5 +457,7 @@ func _load_all() -> void:
 	_loaded = true
 	if _autonomy_planner != null and _autonomy_planner.has_method("setup"):
 		_autonomy_planner.setup(self, _lifecycle, _context_store)
+	if _autonomy_planner != null and _autonomy_planner.has_method("set_mutations_allowed"):
+		_autonomy_planner.set_mutations_allowed(_autonomy_writes)
 	if _ux != null and _ux.has_method("set_lifecycle"):
 		_ux.set_lifecycle(_lifecycle)

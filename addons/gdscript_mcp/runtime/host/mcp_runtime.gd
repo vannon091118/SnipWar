@@ -41,6 +41,7 @@ func _ready() -> void:
 		"vision_worker_command": _parse_string_arg(user_args, "--mcp-vision-command", "node"),
 		"vision_worker_script": _parse_string_arg(user_args, "--mcp-vision-script", "res://addons/gdscript_mcp/client/vision_worker.js"),
 		"vision_worker_port": _parse_int_arg(user_args, "--mcp-vision-port", port + 37),
+		"autonomy_writes": "--mcp-autonomy-writes" in user_args,
 	}
 	# Defer BOTH the scheduler attach and the server boot: during autoload
 	# _ready() the SceneTree root is still setting up children, so a direct
