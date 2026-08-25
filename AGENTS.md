@@ -26,20 +26,17 @@ $GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --class 
 $GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --domain economy
 ```
 
-**Global Search CLI** (volltext, jetzt mit LOC, Regex, Frequenz, Defs):
+**Global Search CLI** (SearchCore-Engine, LLM-JSON-Output, immer mit Abhängigkeiten):
 ```bash
-# Basis-Suche (Output zeigt jetzt LOC pro Datei)
-$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "fleet" --no-json
-$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "assemble_ship" --context 5
+# Output ist IMMER ein kompaktes JSON (kein --no-json nötig):
+#   results[]            Treffer + Kontext
+#   classes_available    {ClassName: res://Pfad} — wer ist verfügbar
+#   dependency_graph     je Datei: class_name, extends, preloads[], loads[]
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "fleet"
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "assemble_ship" --type gd --context 5
 $GODOT_BIN --headless --path . --script res://scripts/global_search.gd "runtime_audio|runtime_animation"  # OR-Suche
-# Frequenz-Aggregation: unique count pro Treffer-Zeile
-$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "emit_signal" --freq --no-json
-# Dead-Code-Analyse: func definiert vs. aufgerufen
-$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "assemble_ship" --defs --no-json
-# Regex mit Capture-Groups
-$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "func (_?[a-z_]+)" --regex --no-json
-# Timeout-Schutz: max. 500 Dateien scannen
-$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "func" --max-files 500 --no-json
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "func (_?[a-z_]+)" --regex  # Capture-Groups
+# 2 Tool-Calls füralles: Klassen + Abhängigkeiten + Verfügbarkeit in EINEM Output
 ```
 
 ### 3. Preflight (Verbindlicher Qualitäts-Check)
