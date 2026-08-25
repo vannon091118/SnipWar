@@ -21,6 +21,8 @@ const GAMEPLAY_TOOLS_PATH := "res://addons/gdscript_mcp/runtime/tools/gameplay/m
 const CUSTOM_LOADER_PATH := "res://addons/gdscript_mcp/runtime/core/mcp_custom_tool_loader.gd"
 const CODE_ANALYZER_PATH := "res://addons/gdscript_mcp/runtime/tools/e2e/mcp_code_analyzer.gd"
 const GOAL_PLAYER_PATH := "res://addons/gdscript_mcp/runtime/tools/e2e/mcp_goal_player.gd"
+const AUTONOMY_PLANNER_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_capability_planner.gd"
+const AUTONOMY_CONTRACTS_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_autonomy_contracts.gd"
 
 var _role := "runtime"
 var _worker: Node = null
@@ -35,6 +37,8 @@ var _gameplay: RefCounted = null
 var _custom_loader: RefCounted = null
 var _code_analyzer: RefCounted = null
 var _goal_player: RefCounted = null
+var _autonomy_planner: RefCounted = null
+var _autonomy_contracts: RefCounted = null
 var _tools: Array = []
 var _context_store: RefCounted = null
 var _loaded := false
@@ -72,6 +76,12 @@ func set_context_store(store: RefCounted) -> void:
 		_vision.set_context_store(store)
 	if _ux != null and _ux.has_method("set_context_store"):
 		_ux.set_context_store(store)
+
+
+func get_autonomy_planner() -> RefCounted:
+	if not _loaded:
+		_load_all()
+	return _autonomy_planner
 
 
 func get_watch_status() -> Dictionary:
@@ -144,6 +154,10 @@ func dispatch(tool_name: String, args: Dictionary) -> Variant:
 	if _is_goal_player_tool(name) and _goal_player:
 		return _goal_player.dispatch_tool(name, args)
 
+	# Autonomy planner (Slice A, read-only capability contracts)
+	if _is_autonomy_tool(name) and _autonomy_planner:
+		return _autonomy_planner.dispatch_tool(name, args)
+
 	return {"error": "Unknown tool: " + tool_name}
 
 
@@ -177,6 +191,10 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 	# Goal Player async (runtime_goal_play)
 	if _is_goal_player_tool(name) and _goal_player:
 		return await _goal_player.dispatch_async(name, args)
+
+	# Autonomy planner async probe
+	if _is_autonomy_tool(name) and _autonomy_planner:
+		return await _autonomy_planner.dispatch_async(name, args)
 
 	# Gameplay tools are synchronous; serve them on the async path too so
 	# clients that always await never see "Unknown async tool".
@@ -268,6 +286,10 @@ static func _is_code_analyzer_tool(name: String) -> bool:
 	]
 
 
+static func _is_autonomy_tool(name: String) -> bool:
+	return name.begins_with("runtime_autonomy_")
+
+
 static func _is_goal_player_tool(name: String) -> bool:
 	return name in [
 		"runtime_goal_play", "runtime_goal_check", "runtime_goal_history",
@@ -281,7 +303,22 @@ static func _is_goal_player_tool(name: String) -> bool:
 func _load_all() -> void:
 	_tools = []
 	if _role == "editor":
+		if ResourceLoader.exists(AUTONOMY_PLANNER_PATH):
+			var editor_planner_script = load(AUTONOMY_PLANNER_PATH)
+			if editor_planner_script != null:
+				_autonomy_planner = editor_planner_script.new()
+				var editor_autonomy_defs = _autonomy_planner.get_tool_defs() if _autonomy_planner != null else []
+				if editor_autonomy_defs is Array:
+					_tools.append_array(editor_autonomy_defs)
+		var editor_contracts_script: Resource = load(AUTONOMY_CONTRACTS_PATH)
+		if editor_contracts_script != null:
+			_autonomy_contracts = editor_contracts_script.new()
+			for editor_index in range(_tools.size()):
+				if _tools[editor_index] is Dictionary:
+					_tools[editor_index] = McpAutonomyContracts.normalize_tool(_tools[editor_index], "registry")
 		_loaded = true
+		if _autonomy_planner != null and _autonomy_planner.has_method("setup"):
+			_autonomy_planner.setup(self, _lifecycle, _context_store)
 		return
 
 	if ResourceLoader.exists(VISION_PATH):
@@ -374,6 +411,14 @@ func _load_all() -> void:
 			if td is Array:
 				_tools.append_array(td)
 
+	if ResourceLoader.exists(AUTONOMY_PLANNER_PATH):
+		var ap = load(AUTONOMY_PLANNER_PATH)
+		if ap:
+			_autonomy_planner = ap.new()
+			var autonomy_defs = _autonomy_planner.get_tool_defs() if _autonomy_planner != null else []
+			if autonomy_defs is Array:
+				_tools.append_array(autonomy_defs)
+
 	if ResourceLoader.exists(GOAL_PLAYER_PATH):
 		var gp = load(GOAL_PLAYER_PATH)
 		if gp:
@@ -392,9 +437,14 @@ func _load_all() -> void:
 		_vision.set_worker(_worker)
 	if _ux != null and _ux.has_method("set_context_store"):
 		_ux.set_context_store(_context_store)
+	var contracts_script: Resource = load(AUTONOMY_CONTRACTS_PATH)
+	if contracts_script != null:
+		_autonomy_contracts = contracts_script.new()
+		for index in range(_tools.size()):
+			if _tools[index] is Dictionary:
+				_tools[index] = McpAutonomyContracts.normalize_tool(_tools[index], "registry")
+	_loaded = true
+	if _autonomy_planner != null and _autonomy_planner.has_method("setup"):
+		_autonomy_planner.setup(self, _lifecycle, _context_store)
 	if _ux != null and _ux.has_method("set_lifecycle"):
 		_ux.set_lifecycle(_lifecycle)
-	if _role == "editor":
-		# Editor sessions expose only editor tools registered by the host.
-		_tools.clear()
-	_loaded = true

@@ -281,16 +281,22 @@ func _load_registry() -> bool:
 
 
 func _register_host_tools() -> void:
-	_tools.append({
-		"name": "runtime_mcp_status",
-		"description": "Read MCP role, lifecycle, queue, performance and artifact status",
-		"inputSchema": {"type": "object", "properties": {}},
-	})
-	_tools.append({
-		"name": "runtime_mcp_events",
-		"description": "Read incremental MCP lifecycle events and budget drops",
-		"inputSchema": {"type": "object", "properties": {"cursor": {"type": "integer", "default": 0}, "limit": {"type": "integer", "default": 32}}},
-	})
+	var contracts = load("res://addons/gdscript_mcp/runtime/autonomy/mcp_autonomy_contracts.gd")
+	var host_tools := [
+		{
+			"name": "runtime_mcp_status",
+			"description": "Read MCP role, lifecycle, queue, performance and artifact status",
+			"inputSchema": {"type": "object", "properties": {}},
+		},
+		{
+			"name": "runtime_mcp_events",
+			"description": "Read incremental MCP lifecycle events and budget drops",
+			"inputSchema": {"type": "object", "properties": {"cursor": {"type": "integer", "default": 0}, "limit": {"type": "integer", "default": 32}}},
+		},
+	]
+	for host_tool in host_tools:
+		var normalized = McpAutonomyContracts.normalize_tool(host_tool, "host") if contracts != null else host_tool
+		_tools.append(normalized)
 	if _role == "editor":
 		_register_editor_tools()
 	_rebuild_tool_index()
