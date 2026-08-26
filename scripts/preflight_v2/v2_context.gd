@@ -24,6 +24,9 @@ var _snapshot_ownership: Dictionary = {}  # faction -> count
 var _snapshot_resources: Dictionary = {}  # faction -> {resource_id: amount}
 var _snapshot_techs: Dictionary = {}      # faction -> Array
 var _snapshot_upgrades: Dictionary = {}   # planet_id -> Array
+var _snapshot_node_count: int = 0         # field child count (scene-level drift)
+var _snapshot_transit_count: int = 0      # active transit count
+var _snapshot_worker_counts: Dictionary = {}  # planet_id -> int
 
 var checkpoint_count: int = 0
 var isolation_warnings: Array[Dictionary] = []
@@ -100,11 +103,16 @@ func take_checkpoint() -> void:
 		_snapshot_techs[faction] = state.get_researched_technologies(faction).duplicate()
 
 	_snapshot_upgrades = {}
+	_snapshot_worker_counts = {}
 	if field != null:
 		for child in field.get_children():
 			var planet: Planet = child as Planet
 			if planet != null:
 				_snapshot_upgrades[planet.planet_id] = state.get_planet_upgrades(planet.planet_id).duplicate()
+				_snapshot_worker_counts[planet.planet_id] = planet.worker_count
+		_snapshot_node_count = field.get_child_count()
+
+	_snapshot_transit_count = state.get_transit_records().size() if state.has_method("get_transit_records") else 0
 
 	checkpoint_count += 1
 
@@ -157,6 +165,47 @@ func verify_checkpoint() -> bool:
 				"expected_count": expected.size(),
 				"actual_count": current.size(),
 			})
+
+	# Scene-level drift: field child count
+	if field != null:
+		var current_count: int = field.get_child_count()
+		if current_count != _snapshot_node_count:
+			ok = false
+			isolation_warnings.append({
+				"constraint": active_constraint,
+				"type": "node_count_drift",
+				"expected": _snapshot_node_count,
+				"actual": current_count,
+			})
+
+	# Scene-level drift: active transit count
+	var current_transits: int = state.get_transit_records().size() if state.has_method("get_transit_records") else 0
+	if current_transits != _snapshot_transit_count:
+		ok = false
+		isolation_warnings.append({
+			"constraint": active_constraint,
+			"type": "transit_count_drift",
+			"expected": _snapshot_transit_count,
+			"actual": current_transits,
+		})
+
+	# Worker count drift
+	if field != null:
+		for pid in _snapshot_worker_counts:
+			var planet: Planet = find_planet_by_id(field, pid)
+			if planet == null:
+				continue
+			var current_workers: int = planet.worker_count
+			var expected_workers: int = _snapshot_worker_counts[pid]
+			if current_workers != expected_workers:
+				ok = false
+				isolation_warnings.append({
+					"constraint": active_constraint,
+					"type": "worker_count_drift",
+					"planet": String(pid),
+					"expected": expected_workers,
+					"actual": current_workers,
+				})
 
 	return ok
 

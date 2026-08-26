@@ -8,6 +8,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "mechanic_coverage"
 
+func requires_scene() -> bool:
+	return false
+
 func run(ctx: PreflightContext) -> bool:
 	var registry := MechanicRegistry.new()
 	var total := registry.count()

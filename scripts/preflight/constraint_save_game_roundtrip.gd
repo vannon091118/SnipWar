@@ -8,6 +8,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "save_game_roundtrip"
 
+func requires_scene() -> bool:
+	return true
+
 
 func run(ctx: PreflightContext) -> bool:
 	var state: Node = ctx.game_state

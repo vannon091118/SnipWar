@@ -7,6 +7,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "save_game_slots"
 
+func requires_scene() -> bool:
+	return false
+
 
 func run(ctx: PreflightContext) -> bool:
 	# Autoloads are only attached to the tree after the first processed frame.

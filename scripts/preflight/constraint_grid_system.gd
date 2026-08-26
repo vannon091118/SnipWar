@@ -8,6 +8,9 @@ const BUILDING_CATALOG: BuildingCatalog = preload("res://resources/config/buildi
 func constraint_name() -> String:
 	return "grid_system"
 
+func requires_scene() -> bool:
+	return true
+
 func run(ctx: PreflightContext) -> bool:
 	# Pure grid geometry: a radius-2 hex grid has 19 cells (1 + 6 + 12).
 	var config := PlanetGridConfig.new()

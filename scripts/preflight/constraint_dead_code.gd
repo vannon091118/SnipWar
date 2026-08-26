@@ -9,6 +9,9 @@ const EXCLUDE_DIRS: Array[String] = [".godot", ".git", ".import", "build", "dist
 func constraint_name() -> String:
 	return "dead_code"
 
+func requires_scene() -> bool:
+	return false
+
 func run(ctx: PreflightContext) -> bool:
 	var definitions: Array[Dictionary] = []
 	var sources: Array[Dictionary] = []

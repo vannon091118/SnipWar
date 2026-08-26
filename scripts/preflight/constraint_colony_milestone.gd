@@ -6,6 +6,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "colony_milestone"
 
+func requires_scene() -> bool:
+	return true
+
 
 func run(ctx: PreflightContext) -> bool:
 	var field: Node = ctx.field

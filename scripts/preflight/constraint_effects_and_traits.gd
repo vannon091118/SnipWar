@@ -6,6 +6,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "effects_and_traits"
 
+func requires_scene() -> bool:
+	return false
+
 
 func run(ctx: PreflightContext) -> bool:
 	var invalid_effect := EffectDefinition.new()

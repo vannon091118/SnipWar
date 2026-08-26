@@ -6,6 +6,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "world_generator_scaling"
 
+func requires_scene() -> bool:
+	return false
+
 
 func run(ctx: PreflightContext) -> bool:
 	var base_catalog: PlanetCatalog = preload("res://resources/config/planet_catalog.tres")
