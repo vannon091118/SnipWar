@@ -120,9 +120,11 @@ func check_3_storytelling(message: String) -> Dictionary:
 		problems.append("Zu viele Bullet-Points (>50%). Fließtext erzwungen.")
 	var re := RegEx.new()
 	re.compile(CAUSAL_CONNECTORS)
-	if re.search(message) == null:
+	# Konnektoren IM BODY suchen (nicht in Tokens/Reason-Lines) — sonst
+	# schlägt jeder Claim fehl, obwohl der Narrator „deshalb“ gesagt hat.
+	if re.search(body) == null:
 		ok = false
-		problems.append("Keine kausalen Konnektoren (weil/deshalb/daher/usw.) gefunden.")
+		problems.append("Keine kausalen Konnektoren im Body (weil/deshalb/daher/usw.).")
 	return _result("CHECK 3", false, ok, " ".join(problems))
 
 

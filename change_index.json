@@ -1,5 +1,25 @@
 {
 	"commits": {
+		"19c473c6f230b31256390456e629ae146eb53e4b": {
+			"c": 14.0,
+			"composite": "c14j34n6a1p7",
+			"entities": [
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"C--001"
+			],
+			"p_id": 14.0
+		},
 		"a95a7ee437c739b97ceb60b66f5f4beb92f2bce1": {
 			"c": 11.0,
 			"composite": "c11j46n7a1p5",
@@ -154,27 +174,27 @@
 	},
 	"entities": {
 		"C--001": {
-			"first_p": 14,
+			"first_p": 14.0,
 			"history": [
 				{
 					"lines": [
-						12
+						12.0
 					],
-					"p_id": 14
+					"p_id": 14.0
 				}
 			],
 			"id": "C--001",
-			"last_p": 14,
+			"last_p": 14.0,
 			"name": "MAIN_MENU_SCENE",
 			"path": "addons/gdscript_mcp/testing/e2e/mcp_playthrough_driver.gd",
 			"status": "modified",
 			"type": "component"
 		},
 		"F--001": {
-			"first_p": 14,
+			"first_p": 15,
 			"history": [],
 			"id": "F--001",
-			"last_p": 14,
+			"last_p": 15,
 			"name": "arcs.json",
 			"path": "scripts/doki/data/arcs.json",
 			"status": "created",

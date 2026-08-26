@@ -872,9 +872,9 @@
 			"summary": "Also erstmal — warte — der Verifier hat sich selbst ins Bein geschossen. Wortzahl zählt die ganzen Begründungszeilen mit, die wir selbst reingeschrieben haben, und dann meckert er, wir wären zu lan..."
 		},
 		{
-			"a": 2,
+			"a": 2.0,
 			"arc": "a2",
-			"c": 13,
+			"c": 13.0,
 			"composite": "c13j62n9a2p5",
 			"data_changes": [
 				{
@@ -900,17 +900,98 @@
 			],
 			"date": "2026-08-27 13:00:00",
 			"hash": "b2558f9c0bfa80ae63804e06736aae668802e38f",
-			"j": 62,
+			"j": 62.0,
 			"model_id": "claude-sonnet-4",
 			"mood": "erschöpft",
-			"n": 9,
+			"n": 9.0,
 			"narrator": "Spark",
-			"p": 5,
-			"p_id": 13,
+			"p": 5.0,
+			"p_id": 13.0,
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Flux",
-			"seq": 13,
+			"seq": 13.0,
 			"summary": "Moment — wieso war der Arc-State eigentlich nie mit dabei? Flux hat das Tor gebaut, Argos das Staffelfinale von „Der erste Stein\" gehalten, und ich frage mich: Wenn schon die Chain und der Index mi..."
+		},
+		{
+			"a": 1,
+			"arc": "a3",
+			"c": 14,
+			"composite": "c14j34n6a1p7",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/AGENT_WORKFLOW.md",
+					"insertions": 47.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "addons/gdscript_mcp/MCP_INDEX.md",
+					"insertions": 72.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+					"insertions": 54.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "addons/gdscript_mcp/testing/e2e/mcp_playthrough_driver.gd",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/testing/portable/run_portable_smoke.sh",
+					"insertions": 140.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/testing/portable/templates/bootstrap_button.tscn",
+					"insertions": 18.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/testing/portable/templates/project.godot",
+					"insertions": 21.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "narrative_chain.json",
+					"insertions": 48.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "project.godot",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 13.0
+				}
+			],
+			"date": "2026-08-27 14:00:00",
+			"hash": "19c473c6f230b31256390456e629ae146eb53e4b",
+			"j": 34,
+			"model_id": "claude-sonnet-4",
+			"mood": "selbstironisch",
+			"n": 6,
+			"narrator": "Devin",
+			"p": 7,
+			"p_id": 14,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Spark",
+			"seq": 14,
+			"summary": "Ich predige Schichtentrennung und extrahiere in die gleiche Datei. Heute zahle ich den Preis dafür: Der MCP-Plugin-Satz — Agent-Workflow, Chain-Controller, E2E-Testtreiber, das gesamte Plugin-Layou..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

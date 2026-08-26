@@ -168,3 +168,14 @@ MCP-Worktree-Sicherung: Agent-Workflow, Chain-Controller, E2E-Testtreiber, Plugi
 - narrative_chain.json: Test-Assets ergänzt (F--001).
 - project.godot: Test-Assets ergänzt (F--001).
 - scripts/doki/data/arcs.json: Test-Assets ergänzt (F--001).
+
+## 2026-08-27 15:00:00 — p15 · c15j38n3a2p11 · Thinker · trocken
+
+**Verifier-Fix: kausale Konnektoren nur im… [Analyse: Thinker]**
+
+Verifier-Fix: kausale Konnektoren nur im Narrator-Body prüfen, nicht in Tokens oder Reason-Lines
+
+- change_index.json: Fehler behoben (F--001).
+- narrative_chain.json: Fehler behoben (F--001).
+- scripts/doki/core/verifier.gd: Fehler behoben (F--001).
+- scripts/doki/data/arcs.json: Fehler behoben (F--001).
