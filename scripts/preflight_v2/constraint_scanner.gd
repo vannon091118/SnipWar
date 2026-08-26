@@ -4,7 +4,6 @@ extends RefCounted
 ## registry dynamically.  No manual CONSTRAINT_REGISTRY array needed.
 
 const CONSTRAINT_DIR := "res://scripts/preflight"
-const EXCLUDE_PREFIXES: Array[String] = ["preflight_context", "preflight_fixture"]
 
 
 ## Returns Array[Dictionary] — each entry has keys:
@@ -28,15 +27,6 @@ func scan() -> Array[Dictionary]:
 		if not entry.ends_with(".gd"):
 			continue
 
-		# Skip non-constraint files (preflight_context, preflight_fixture, etc.)
-		var skip := false
-		for prefix in EXCLUDE_PREFIXES:
-			if entry.begins_with(prefix):
-				skip = true
-				break
-		if skip:
-			continue
-
 		var file_path: String = CONSTRAINT_DIR.path_join(entry)
 		var script: Script = load(file_path) as Script
 		if script == null:
@@ -57,7 +47,9 @@ func scan() -> Array[Dictionary]:
 		var c_desc: String = ""
 		if instance.has_method("constraint_description"):
 			c_desc = String(instance.constraint_description())
-		var c_requires_scene: bool = false
+		# Safe default: scene required. Constraints must opt-in to pure
+		# by explicitly returning false from requires_scene().
+		var c_requires_scene: bool = true
 		if instance.has_method("requires_scene"):
 			c_requires_scene = bool(instance.requires_scene())
 

@@ -576,7 +576,7 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 
 </details>
 
-Preflight ist modular (V2 Architecture). `scripts/preflight.gd` ist der Orchestrator mit Auto-Discovery. Die Constraints liegen einzeln unter `scripts/preflight/constraint_*.gd`. Neue Coverage kommt als eigene `PreflightConstraintX`-Klasse mit `constraint_name()` + `run(ctx) -> bool` — wird automatisch vom Scanner entdeckt. Pure/Scene-Klassifikation in `scripts/preflight_v2/constraint_catalog.json` überschreibbar.
+Preflight ist modular (V2 Architecture). `scripts/preflight.gd` ist der Orchestrator mit Auto-Discovery. Die Constraints liegen einzeln unter `scripts/preflight/constraint_*.gd`. Neue Coverage kommt als eigene `PreflightConstraintX`-Klasse mit `constraint_name()` + `requires_scene()` + `run(ctx) -> bool` — wird automatisch vom Scanner entdeckt. Pure/Scene-Klassifikation wird aus `requires_scene()` jedes Constraints abgeleitet (Single Source of Truth).
 
 ---
 

@@ -9,6 +9,9 @@ const SEARCH_CORE := preload("res://scripts/search_core.gd")
 func constraint_name() -> String:
 	return "global_search"
 
+func requires_scene() -> bool:
+	return false
+
 func run(ctx: PreflightContext) -> bool:
 	var core: Object = SEARCH_CORE.new()
 

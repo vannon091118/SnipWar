@@ -8,6 +8,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "chunk_expansion"
 
+func requires_scene() -> bool:
+	return false
+
 func run(ctx: PreflightContext) -> bool:
 	# Chunk seed determinism: same layout_seed + chunk_coord = same seed.
 	var seed_a := WorldGenerator.chunk_seed(12345, 2, 3)

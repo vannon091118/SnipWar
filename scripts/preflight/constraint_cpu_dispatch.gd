@@ -7,6 +7,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "cpu_dispatch"
 
+func requires_scene() -> bool:
+	return true
+
 
 func run(ctx: PreflightContext) -> bool:
 	var field: Node = ctx.field

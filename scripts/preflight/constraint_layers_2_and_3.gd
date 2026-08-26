@@ -6,6 +6,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "layers_2_and_3"
 
+func requires_scene() -> bool:
+	return true
+
 
 func run(ctx: PreflightContext) -> bool:
 	# 1. Perimeter Slots & Defense Range

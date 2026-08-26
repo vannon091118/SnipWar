@@ -9,6 +9,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "navigation_growth"
 
+func requires_scene() -> bool:
+	return false
+
 
 func run(ctx: PreflightContext) -> bool:
 	var base_config: WorldConfig = preload("res://resources/config/world_default.tres")

@@ -8,6 +8,9 @@ const PAPER_STYLE: PaperStyleConfig = preload("res://resources/config/paper_styl
 func constraint_name() -> String:
 	return "paper_style"
 
+func requires_scene() -> bool:
+	return false
+
 func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(ResourceLoader.exists("res://assets/shaders/paper_cell_shading.gdshader"), "paper_cell_shading shader is missing"):
 		return false

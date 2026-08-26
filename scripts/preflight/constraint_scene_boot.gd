@@ -7,6 +7,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "scene_boot"
 
+func requires_scene() -> bool:
+	return true
+
 
 func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(ctx.fixture != null, "isolated preflight fixture is missing"):

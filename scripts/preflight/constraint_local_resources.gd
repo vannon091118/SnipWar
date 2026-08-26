@@ -8,6 +8,9 @@ const RESOURCE_POOL: ResourcePool = preload("res://resources/config/resource_poo
 func constraint_name() -> String:
 	return "local_resources"
 
+func requires_scene() -> bool:
+	return true
+
 func run(ctx: PreflightContext) -> bool:
 	var state: Node = ctx.game_state
 	if state == null:

@@ -12,7 +12,7 @@ func constraint_name() -> String:
 
 
 func requires_scene() -> bool:
-	return false
+	return true
 
 
 func run(ctx: PreflightContext) -> bool:

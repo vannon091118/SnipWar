@@ -6,6 +6,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "event_log"
 
+func requires_scene() -> bool:
+	return true
+
 
 func run(ctx: PreflightContext) -> bool:
 	var network: Node = ctx.network

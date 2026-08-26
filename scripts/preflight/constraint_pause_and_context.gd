@@ -6,6 +6,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "pause_and_context"
 
+func requires_scene() -> bool:
+	return true
+
 
 func run(ctx: PreflightContext) -> bool:
 	var background: Node = ctx.background
