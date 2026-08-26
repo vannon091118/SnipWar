@@ -64,8 +64,9 @@ func check_1_tokens(message: String, session: Dictionary) -> Dictionary:
 			missing.append(token)
 	var ok: bool = missing.is_empty()
 
-	# Wortzahl gegen verifier_rules (falls Narrator bekannt)
-	var word_count: int = _word_count(message)
+	# Wortzahl NUR des Narrator-Bodys (ohne Token-/Arc-/Begründungszeilen) —
+	# sonst blähen maschinengenerierte Reason-Lines die Zählung auf (vgl. großen Commit).
+	var word_count: int = _word_count(_body_only(message))
 	var narrator: Dictionary = _catalog.by_name(str(session.get("narrator", "")))
 	if not narrator.is_empty():
 		var rules: Dictionary = narrator.get("verifier_rules", {})
@@ -100,8 +101,11 @@ func check_2_impulse(message: String, session: Dictionary) -> Dictionary:
 
 ## ─── Check 3: Storytelling (weich) ──────────────────────────────────────
 func check_3_storytelling(message: String) -> Dictionary:
+	# Nur den Narrator-Body prüfen — die maschinengenerierten Begründungszeilen
+	# („- pfad: Grund.“) sind bewusst Bullets und dürfen die Ratio nicht kippen.
+	var body: String = _body_only(message)
 	var lines: Array = []
-	for l in message.split("\n"):
+	for l in body.split("\n"):
 		var lt: String = l.strip_edges()
 		if not lt.is_empty():
 			lines.append(lt)
@@ -300,6 +304,23 @@ func check_9_chain_audit(message: String, session: Dictionary, chain: Dictionary
 
 
 ## ─── Helfer ─────────────────────────────────────────────────────────────
+## Extrahiert den Narrator-Body aus der Message-Struktur:
+##   <subject> / [NARRATOR:X] / <body> / [MODEL:...] / [IMPULSE:...] / ... / Arc: ... / reason-lines
+static func _body_only(message: String) -> String:
+	var lines: PackedStringArray = message.split("\n")
+	var in_body: bool = false
+	var out: Array = []
+	for l in lines:
+		if l.begins_with("[NARRATOR:"):
+			in_body = true
+			continue
+		if l.begins_with("[MODEL:"):
+			break
+		if in_body:
+			out.append(l)
+	return "\n".join(out)
+
+
 static func _word_count(text: String) -> int:
 	if text.strip_edges().is_empty():
 		return 0

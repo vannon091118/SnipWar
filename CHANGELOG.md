@@ -128,3 +128,13 @@ DOKI CommitLayer als deterministisches Commit-Gate auf main (init --seed-last 10
 - scripts/doki/prompt/sideplot_engine.gd.uid: Dokumentation aktualisiert (F--001).
 - scripts/doki/prompt/voice_composer.gd: Dokumentation aktualisiert (F--001).
 - scripts/doki/prompt/voice_composer.gd.uid: Dokumentation aktualisiert (F--001).
+
+## 2026-08-27 12:00:00 — p12 · c12j11n13a1p1 · Flux · sarkastisch
+
+**Flux — also — Verifier-Fix: Wortzahl und Bullet-Ratio nur…**
+
+Verifier-Fix: Wortzahl und Bullet-Ratio nur noch auf Narrator-Body berechnen (Reason-Lines ausgenommen)
+
+- change_index.json: Fehler behoben (F--001).
+- narrative_chain.json: Fehler behoben (F--001).
+- scripts/doki/core/verifier.gd: Fehler behoben (F--001).

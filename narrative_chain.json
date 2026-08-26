@@ -6,203 +6,834 @@
 	},
 	"entries": [
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a1",
-			"c": 1,
+			"c": 1.0,
 			"composite": "c1j86n14a1p1",
 			"data_changes": [],
 			"date": "2026-08-26 21:05:59 +0200",
 			"hash": "2a4319479209fddf27a67de473e447564f8b3aa9",
-			"j": 86,
+			"j": 86.0,
 			"model_id": "history",
 			"mood": "müde-zufrieden",
-			"n": 14,
+			"n": 14.0,
 			"narrator": "Sage",
-			"p": 1,
-			"p_id": 1,
+			"p": 1.0,
+			"p_id": 1.0,
 			"seeded": true,
-			"seq": 1,
+			"seq": 1.0,
 			"summary": "feat: Layer-Separation â€” Kampf-/Eroberungs-Szenen ohne Autoload-AbhÃ¤ngigkeit"
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a1",
-			"c": 2,
+			"c": 2.0,
 			"composite": "c2j30n8a1p2",
 			"data_changes": [],
 			"date": "2026-08-26 21:07:29 +0200",
 			"hash": "ced4704fe26f41caed00a755e3faf3ae35909c0d",
-			"j": 30,
+			"j": 30.0,
 			"model_id": "history",
 			"mood": "sachlich",
-			"n": 8,
+			"n": 8.0,
 			"narrator": "Ghost",
-			"p": 2,
-			"p_id": 2,
+			"p": 2.0,
+			"p_id": 2.0,
 			"prev_narrator": "Sage",
 			"seeded": true,
-			"seq": 2,
+			"seq": 2.0,
 			"summary": "feat: MCP-In-Process-Runtime im Editor â€” Dock verbindet direkt, keine separaten Prozesse"
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a1",
-			"c": 3,
+			"c": 3.0,
 			"composite": "c3j70n14a1p2",
 			"data_changes": [],
 			"date": "2026-08-26 21:08:25 +0200",
 			"hash": "f26e7f3267f8ded0e6769e800e179892b8323717",
-			"j": 70,
+			"j": 70.0,
 			"model_id": "history",
 			"mood": "sarkastisch",
-			"n": 14,
+			"n": 14.0,
 			"narrator": "Sage",
-			"p": 2,
-			"p_id": 3,
+			"p": 2.0,
+			"p_id": 3.0,
 			"prev_narrator": "Ghost",
 			"seeded": true,
-			"seq": 3,
+			"seq": 3.0,
 			"summary": "merge: MCP-In-Process-Runtime (#3) in main Ã¼bernehmen"
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a1",
-			"c": 4,
+			"c": 4.0,
 			"composite": "c4j69n2a1p1",
 			"data_changes": [],
 			"date": "2026-08-26 21:54:30 +0200",
 			"hash": "257d6832ab3a99316f969f8e562e473590d41f16",
-			"j": 69,
+			"j": 69.0,
 			"model_id": "history",
 			"mood": "warm",
-			"n": 2,
+			"n": 2.0,
 			"narrator": "Basher",
-			"p": 1,
-			"p_id": 4,
+			"p": 1.0,
+			"p_id": 4.0,
 			"prev_narrator": "Sage",
 			"seeded": true,
-			"seq": 4,
+			"seq": 4.0,
 			"summary": "feat: decouple MCP bridge from project-specific assumptions"
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a1",
-			"c": 5,
+			"c": 5.0,
 			"composite": "c5j86n14a1p1",
 			"data_changes": [],
 			"date": "2026-08-26 22:00:52 +0200",
 			"hash": "54e367169698ace193fbacd85d85fb3e4d129e32",
-			"j": 86,
+			"j": 86.0,
 			"model_id": "history",
 			"mood": "müde-zufrieden",
-			"n": 14,
+			"n": 14.0,
 			"narrator": "Sage",
-			"p": 1,
-			"p_id": 5,
+			"p": 1.0,
+			"p_id": 5.0,
 			"prev_narrator": "Basher",
 			"seeded": true,
-			"seq": 5,
+			"seq": 5.0,
 			"summary": "fix: complete project-agnostic MCP wiring"
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a1",
-			"c": 6,
+			"c": 6.0,
 			"composite": "c6j48n13a1p2",
 			"data_changes": [],
 			"date": "2026-08-26 22:36:06 +0200",
 			"hash": "fa6f9fc9f89e21203ab50ebe862fb7989c300b2b",
-			"j": 48,
+			"j": 48.0,
 			"model_id": "history",
 			"mood": "trocken",
-			"n": 13,
+			"n": 13.0,
 			"narrator": "Flux",
-			"p": 2,
-			"p_id": 6,
+			"p": 2.0,
+			"p_id": 6.0,
 			"prev_narrator": "Sage",
 			"seeded": true,
-			"seq": 6,
+			"seq": 6.0,
 			"summary": "fix: Runtime-MCP-Auto-Boot Ã¼berlebt langsame Skriptserver-Kompilierung"
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a1",
-			"c": 7,
+			"c": 7.0,
 			"composite": "c7j97n3a1p1",
 			"data_changes": [],
 			"date": "2026-08-26 22:49:26 +0200",
 			"hash": "e883fb41b8dc8eac3cb7cd2ea527c89ea57cfe91",
-			"j": 97,
+			"j": 97.0,
 			"model_id": "history",
 			"mood": "alarmiert",
-			"n": 3,
+			"n": 3.0,
 			"narrator": "Thinker",
-			"p": 1,
-			"p_id": 7,
+			"p": 1.0,
+			"p_id": 7.0,
 			"prev_narrator": "Flux",
 			"seeded": true,
-			"seq": 7,
+			"seq": 7.0,
 			"summary": "fix: make preflight phase metadata authoritative"
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a1",
-			"c": 8,
+			"c": 8.0,
 			"composite": "c8j98n7a1p7",
 			"data_changes": [],
 			"date": "2026-08-26 23:05:39 +0200",
 			"hash": "6933ae940ecbdec3c75fce9ac7de7112edc18e4a",
-			"j": 98,
+			"j": 98.0,
 			"model_id": "history",
 			"mood": "trocken",
-			"n": 7,
+			"n": 7.0,
 			"narrator": "Argos",
-			"p": 7,
-			"p_id": 8,
+			"p": 7.0,
+			"p_id": 8.0,
 			"prev_narrator": "Thinker",
 			"seeded": true,
-			"seq": 8,
+			"seq": 8.0,
 			"summary": "fix: preflight SOT and repository boundaries"
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a1",
-			"c": 9,
+			"c": 9.0,
 			"composite": "c9j76n10a1p4",
 			"data_changes": [],
 			"date": "2026-08-26 23:08:17 +0200",
 			"hash": "a5f7a966ceb9712f01b97bdc8424bb0b6f01654c",
-			"j": 76,
+			"j": 76.0,
 			"model_id": "history",
 			"mood": "müde-zufrieden",
-			"n": 10,
+			"n": 10.0,
 			"narrator": "Glitch",
-			"p": 4,
-			"p_id": 9,
+			"p": 4.0,
+			"p_id": 9.0,
 			"prev_narrator": "Argos",
 			"seeded": true,
-			"seq": 9,
+			"seq": 9.0,
 			"summary": "chore: keep agent session data out of repository"
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a1",
-			"c": 10,
+			"c": 10.0,
 			"composite": "c10j63n11a1p9",
 			"data_changes": [],
 			"date": "2026-08-26 23:10:21 +0200",
 			"hash": "bbf8763ef955b92465ac981d415baba7afaa6e7d",
-			"j": 63,
+			"j": 63.0,
 			"model_id": "history",
 			"mood": "triumphierend",
-			"n": 11,
+			"n": 11.0,
 			"narrator": "Null",
-			"p": 9,
-			"p_id": 10,
+			"p": 9.0,
+			"p_id": 10.0,
 			"prev_narrator": "Glitch",
 			"seeded": true,
-			"seq": 10,
+			"seq": 10.0,
 			"summary": "Merge remote-tracking branch 'origin/main'"
+		},
+		{
+			"a": 1,
+			"arc": "a1",
+			"c": 11,
+			"composite": "c11j46n7a1p5",
+			"data_changes": [
+				{
+					"deletions": 27.0,
+					"file": ".githooks/commit-msg",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 1.0,
+					"file": ".githooks/post-commit",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".githooks/pre-commit",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".gitignore",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "AGENTS.md",
+					"insertions": 39.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "DESIGN.md",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "change_index.json",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 211.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/concept_index.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/README.md",
+					"insertions": 111.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/chain_store.gd",
+					"insertions": 200.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/chain_store.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/change_index_store.gd",
+					"insertions": 101.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/change_index_store.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/session_store.gd",
+					"insertions": 93.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/session_store.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/character/mood_overlay.gd",
+					"insertions": 34.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/character/mood_overlay.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/character/narrator_catalog.gd",
+					"insertions": 54.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/character/narrator_catalog.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/rng_engine.gd",
+					"insertions": 147.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/rng_engine.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/verifier.gd",
+					"insertions": 310.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/verifier.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/xorshift128.gd",
+					"insertions": 39.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/xorshift128.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/moods.json",
+					"insertions": 152.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/narrators.json",
+					"insertions": 440.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki.gd",
+					"insertions": 247.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/README.md",
+					"insertions": 111.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/chain_store.gd",
+					"insertions": 200.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/chain_store.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/change_index_store.gd",
+					"insertions": 101.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/change_index_store.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/session_store.gd",
+					"insertions": 93.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/session_store.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/character/mood_overlay.gd",
+					"insertions": 34.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/character/mood_overlay.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/character/narrator_catalog.gd",
+					"insertions": 54.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/character/narrator_catalog.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/rng_engine.gd",
+					"insertions": 147.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/rng_engine.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/verifier.gd",
+					"insertions": 310.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/verifier.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/xorshift128.gd",
+					"insertions": 39.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/xorshift128.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/data/arcs.json",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/data/moods.json",
+					"insertions": 152.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/data/narrators.json",
+					"insertions": 440.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki.gd",
+					"insertions": 247.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki_selfcheck.gd",
+					"insertions": 300.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki_selfcheck.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki_story_test.gd",
+					"insertions": 362.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki_story_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/artifact_writer.gd",
+					"insertions": 89.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/artifact_writer.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/change_index_engine.gd",
+					"insertions": 150.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/change_index_engine.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/commit_orchestrator.gd",
+					"insertions": 187.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/commit_orchestrator.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/finalize_flow.gd",
+					"insertions": 134.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/finalize_flow.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/finish_flow.gd",
+					"insertions": 86.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/finish_flow.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/gate_flow.gd",
+					"insertions": 67.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/gate_flow.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 139.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/prepare_flow.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/status_flow.gd",
+					"insertions": 31.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/status_flow.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/git_helper.gd",
+					"insertions": 141.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/git_helper.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/message_builder.gd",
+					"insertions": 95.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/message_builder.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/session_builder.gd",
+					"insertions": 104.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/session_builder.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/arc_engine.gd",
+					"insertions": 155.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/arc_engine.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/relationship_engine.gd",
+					"insertions": 115.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/relationship_engine.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/sideplot_engine.gd",
+					"insertions": 109.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/sideplot_engine.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/voice_composer.gd",
+					"insertions": 295.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/voice_composer.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_selfcheck.gd",
+					"insertions": 300.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_selfcheck.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_story_test.gd",
+					"insertions": 362.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_story_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/artifact_writer.gd",
+					"insertions": 89.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/artifact_writer.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/change_index_engine.gd",
+					"insertions": 150.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/change_index_engine.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/commit_orchestrator.gd",
+					"insertions": 187.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/commit_orchestrator.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/finalize_flow.gd",
+					"insertions": 134.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/finalize_flow.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/finish_flow.gd",
+					"insertions": 86.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/finish_flow.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/gate_flow.gd",
+					"insertions": 67.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/gate_flow.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 139.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/status_flow.gd",
+					"insertions": 31.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/status_flow.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/git_helper.gd",
+					"insertions": 141.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/git_helper.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/message_builder.gd",
+					"insertions": 95.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/message_builder.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/session_builder.gd",
+					"insertions": 104.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/session_builder.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/arc_engine.gd",
+					"insertions": 155.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/arc_engine.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/relationship_engine.gd",
+					"insertions": 115.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/relationship_engine.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/sideplot_engine.gd",
+					"insertions": 109.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/sideplot_engine.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/voice_composer.gd",
+					"insertions": 295.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/voice_composer.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 11:00:00",
+			"hash": "a95a7ee437c739b97ceb60b66f5f4beb92f2bce1",
+			"j": 46,
+			"model_id": "claude-sonnet-4",
+			"mood": "müde-zufrieden",
+			"n": 7,
+			"narrator": "Argos",
+			"p": 5,
+			"p_id": 11,
+			"prev_model": "history",
+			"prev_narrator": "Null",
+			"seq": 11,
+			"summary": "Hab ich doch gesagt: Irgendwann muss aus jedem Haufen Arbeit ein Tor werden, sonst weiß keiner mehr, warum irgendwas gebaut wurde. Deshalb lag heute der DOKI CommitLayer auf dem Tisch — ein determi..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
