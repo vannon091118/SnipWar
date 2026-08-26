@@ -68,6 +68,13 @@ extends Resource
 @export var branch_tech_color: Color = Color(0.42, 0.65, 1.0, 1.0)
 @export var branch_infrastructure_color: Color = Color(1.0, 0.72, 0.28, 1.0)
 
+# Forschungs-/Bau-Status (Grau ungelernt · Grün gelernt · Rot nicht lernbar · Gelb in Arbeit)
+@export_group("Status Colors")
+@export var status_learned_color: Color = Color(0.32, 0.88, 0.44, 1.0)
+@export var status_available_color: Color = Color(0.72, 0.76, 0.82, 1.0)
+@export var status_locked_color: Color = Color(1.0, 0.36, 0.31, 1.0)
+@export var status_in_progress_color: Color = Color(1.0, 0.78, 0.28, 1.0)
+
 # Ressourcen-Signatur-Farben (nie hardcoded im Code — immer via Config)
 @export var resource_color_energy: Color = Color(0.3, 0.9, 1.0)
 @export var resource_color_biomass: Color = Color(0.3, 0.9, 0.4)

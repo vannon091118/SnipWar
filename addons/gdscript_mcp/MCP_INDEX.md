@@ -217,8 +217,16 @@ Statische Projektanalyse über Dateisystem + FileAccess:
 
 ### E2E (2) — sichtbare Playability-Szenarien (`runtime/tools/e2e/mcp_e2e.gd`)
 `runtime_e2e_list`, `runtime_e2e_run` (async). Szenarien: `main_menu`,
-`new_game_to_world`, `tech_menu_open_close`, `pause_save_menu`, `research_start`,
-`virtual_mouse_edges`, `freeze_step`, `analyze_and_goal` (Goal-Player + Code-Analyzer).
+`new_game_to_world`, `pause_save_menu`, `virtual_mouse_edges`, `freeze_step`,
+`analyze_and_goal` (Goal-Player + Code-Analyzer).
+
+> **Doktrin:** Die Tech-Menü-Szenarien (`tech_menu_open_close`, `research_start`)
+> wurden entfernt, weil das Technologie-Seitenpanel durch den Dossier-Hub
+> (Planeten-Dossier [P], Werkstatt [W], Forschungsbaum [F]) ersetzt wurde. Neue
+> UI-Flows werden NICHT als vordefinierte E2E-Szenarien hartkodiert: MCP-Agenten
+> entdecken die Oberfläche von Grund auf über `runtime_ux_*`, verifizieren gegen
+> GameState-Signale und persistieren gewonnene Abläufe als erweiterte Bibliothek
+> ins Playthrough-Archiv (`runtime_playthrough_success`).
 
 ### Playthrough-Archiv (8) — `runtime/tools/e2e/mcp_playthrough_tools.gd`
 Lokale Erfolgs-/Kontext-DB (`user://mcp_playthrough/playthrough.jsonl`,

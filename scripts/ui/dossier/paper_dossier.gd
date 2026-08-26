@@ -3,8 +3,8 @@ extends CanvasLayer
 
 ## Full-screen "paper dossier" modal: dims and freezes the world, folds in a
 ## slightly rotated paper sheet with a scale/fade tween, and hosts one view.
-## Layer 80 sits above the HUD (50), TechnologyMenu (60) and PauseMenu (70),
-## but below CaptureDecisionOverlay (90) and the grain overlay (100).
+## Layer 80 sits above the HUD (50) and PauseMenu (70), but below
+## CaptureDecisionOverlay (90) and the grain overlay (100).
 
 signal opened()
 signal closed()

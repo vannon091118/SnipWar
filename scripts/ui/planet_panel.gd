@@ -2,9 +2,7 @@ class_name PlanetPanel
 extends PanelContainer
 
 const DEFAULT_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
-const DEFAULT_UPGRADE_CATALOG: PlanetUpgradeCatalog = preload("res://resources/config/planet_upgrade_catalog_default.tres")
 const DEFAULT_TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/transformer_default.tres")
-const DEFAULT_TECHNOLOGY_CATALOG: TechnologyCatalog = preload("res://resources/config/technology_catalog_default.tres")
 
 signal destination_selected(index: int)
 signal mission_selected(mission_type: StringName)
@@ -12,18 +10,12 @@ signal amount_changed(value: float)
 signal send_pressed()
 signal layout_requested()
 signal clear_selection_pressed()
+signal build_requested()
 
 var _theme_config: UIThemeConfig = DEFAULT_THEME
-var _upgrade_catalog: PlanetUpgradeCatalog = DEFAULT_UPGRADE_CATALOG
 var _count_labels: Dictionary = {}
 var _dispatch_preview: Dictionary = {}
 var _current_active_planet: Node2D
-var _branch_expanded: Dictionary = {
-	&"economy": true,
-	&"military": false,
-	&"tech": false,
-	&"infrastructure": false
-}
 
 @onready var _heading_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/HeadingLabel")
 @onready var _route_legend_label: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/RouteLegendLabel")
@@ -44,8 +36,6 @@ var _branch_expanded: Dictionary = {
 @onready var _action_footer: PanelContainer = get_node_or_null("MarginContainer/PanelLayout/ActionFooter")
 @onready var _dispatch_summary_label: Label = get_node_or_null("MarginContainer/PanelLayout/ActionFooter/FooterContent/DispatchSummaryLabel")
 @onready var _send_button: Button = get_node_or_null("MarginContainer/PanelLayout/ActionFooter/FooterContent/SendButton")
-@onready var _upgrade_heading: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UpgradeHeading")
-@onready var _upgrade_list: VBoxContainer = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UpgradeScroll/UpgradeList")
 @onready var _units_heading: Label = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UnitsHeading")
 @onready var _count_list: VBoxContainer = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/ScrollContainer/CountList")
 @onready var _margin: MarginContainer = get_node_or_null("MarginContainer")
@@ -104,10 +94,6 @@ func _ensure_node_references() -> void:
 		_dispatch_summary_label = get_node_or_null("MarginContainer/PanelLayout/ActionFooter/FooterContent/DispatchSummaryLabel")
 	if _send_button == null:
 		_send_button = get_node_or_null("MarginContainer/PanelLayout/ActionFooter/FooterContent/SendButton")
-	if _upgrade_heading == null:
-		_upgrade_heading = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UpgradeHeading")
-	if _upgrade_list == null:
-		_upgrade_list = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UpgradeScroll/UpgradeList")
 	if _units_heading == null:
 		_units_heading = get_node_or_null("MarginContainer/PanelLayout/PanelScroll/Content/UnitsHeading")
 	if _count_list == null:
@@ -143,20 +129,18 @@ func _connect_game_state_signals() -> void:
 		state.catalog_reset.connect(_on_catalog_reset)
 
 func _on_faction_resources_changed(faction: StringName, _resource_id: StringName, _new_amount: int) -> void:
-	# Affordability only concerns the player faction; skip CPU ticks and rebuild
-	# the (hidden) upgrade list only while the panel is open.
 	if faction != GameState.FACTION_PLAYER:
 		return
 	if is_instance_valid(_current_active_planet) and visible:
-		_refresh_upgrade_list(_current_active_planet)
+		_refresh_build_space(_current_active_planet)
 
 func _on_planet_upgraded(planet_id: StringName, _upgrade_id: StringName) -> void:
 	if is_instance_valid(_current_active_planet) and visible and _current_active_planet.get("planet_id") == planet_id:
-		_refresh_upgrade_list(_current_active_planet)
+		_refresh_build_space(_current_active_planet)
 
 func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 	if is_instance_valid(_current_active_planet) and visible:
-		_refresh_upgrade_list(_current_active_planet)
+		_refresh_build_space(_current_active_planet)
 
 func _apply_theme() -> void:
 	add_theme_stylebox_override(
@@ -194,7 +178,7 @@ func _apply_theme() -> void:
 	if _build_space_label != null:
 		_build_space_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
 		_build_space_label.add_theme_color_override("font_color", _theme_config.secondary_text_color)
-	var headings: Array[Label] = [_destination_heading, _mission_heading, _send_heading, _upgrade_heading, _units_heading]
+	var headings: Array[Label] = [_destination_heading, _mission_heading, _send_heading, _units_heading]
 	for heading in headings:
 		if heading != null:
 			heading.add_theme_font_size_override("font_size", _theme_config.section_font_size)
@@ -225,8 +209,6 @@ func _apply_theme() -> void:
 		_send_button.add_theme_stylebox_override("normal", _style_box(_theme_config.button_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
 		_send_button.add_theme_stylebox_override("hover", _style_box(_theme_config.button_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
 		_send_button.add_theme_stylebox_override("disabled", _style_box(_theme_config.button_disabled_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
-	if _upgrade_list != null:
-		_upgrade_list.add_theme_constant_override("separation", _theme_config.list_separation)
 	if _count_list != null:
 		_count_list.add_theme_constant_override("separation", _theme_config.list_separation)
 
@@ -318,181 +300,41 @@ func show_planet(planet: Node2D, destinations: Array[Node2D], default_destinatio
 	set_mission_description(selected_mission_type())
 
 	_refresh_local_resources(planet_id)
-	_refresh_upgrade_list(planet)
+	_refresh_build_space(planet)
+	_ensure_build_button()
 	layout_requested.emit()
 
-func _refresh_upgrade_list(planet: Node2D) -> void:
-	if _build_space_label != null and is_instance_valid(planet):
-		var selected_planet: Planet = planet as Planet
-		var build_slots: int = selected_planet.get_build_slot_count() if selected_planet != null else 0
-		var perimeter_slots: int = selected_planet.get_perimeter_slots() if selected_planet != null and selected_planet.has_method("get_perimeter_slots") else build_slots
-		var defense_range: float = selected_planet.get_defense_range() if selected_planet != null and selected_planet.has_method("get_defense_range") else 150.0
-		_build_space_label.text = "Bauplätze: %d  ·  Perimeter-Slots: %d  ·  Reichweite: %.0f px" % [build_slots, perimeter_slots, defense_range]
-
-	if _upgrade_list == null:
+func _refresh_build_space(planet: Node2D) -> void:
+	if _build_space_label == null or not is_instance_valid(planet):
 		return
-	for child in _upgrade_list.get_children():
-		_upgrade_list.remove_child(child)
-		child.queue_free()
-
+	var selected_planet: Planet = planet as Planet
+	var build_slots: int = selected_planet.get_build_slot_count() if selected_planet != null else 0
+	var perimeter_slots: int = selected_planet.get_perimeter_slots() if selected_planet != null and selected_planet.has_method("get_perimeter_slots") else build_slots
+	var defense_range: float = selected_planet.get_defense_range() if selected_planet != null and selected_planet.has_method("get_defense_range") else 150.0
+	var parts: Array[String] = ["Bauplätze: %d" % build_slots, "Perimeter: %d" % perimeter_slots, "Reichweite: %.0f px" % defense_range]
 	var state: Node = GameStateAccess.autoload(self)
-	if state == null or _upgrade_catalog == null or not is_instance_valid(planet):
+	if state != null and selected_planet != null and state.has_method("upgrade_build_in_progress") and state.upgrade_build_in_progress(selected_planet.planet_id):
+		parts.append("⟳ Bau läuft")
+	_build_space_label.text = " · ".join(parts)
+
+func _ensure_build_button() -> void:
+	if _content == null or _content.find_child("OpenBuildButton", true, false) != null:
 		return
+	var open_build := Button.new()
+	open_build.name = "OpenBuildButton"
+	open_build.text = "BAU & FORSCHUNG  [P]"
+	open_build.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	open_build.focus_mode = Control.FOCUS_NONE
+	open_build.tooltip_text = "Öffnet das Planeten-Dossier: Gebäude bauen, Baufortschritt, planetare Forschung."
+	open_build.add_theme_font_size_override("font_size", _theme_config.body_font_size)
+	open_build.add_theme_stylebox_override("normal", _style_box(_theme_config.button_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+	open_build.add_theme_stylebox_override("hover", _style_box(_theme_config.button_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+	if not open_build.pressed.is_connected(_on_build_pressed):
+		open_build.pressed.connect(_on_build_pressed)
+	_content.add_child(open_build)
 
-	var planet_id: StringName = planet.get("planet_id") if planet.get("planet_id") != null else &""
-	var unlocked_upgrades: Array[StringName] = state.get_planet_upgrades(planet_id)
-	var is_player_owned: bool = state.is_owned_by(planet_id, &"a")
-	var branch_order: Array[StringName] = [&"economy", &"military", &"tech", &"infrastructure"]
-	var branch_titles: Dictionary = {
-		&"economy": "WIRTSCHAFT",
-		&"military": "MILITÄR",
-		&"tech": "TECHNOLOGIE",
-		&"infrastructure": "INFRASTRUKTUR"
-	}
-
-	for branch in branch_order:
-		var branch_upgrades: Array[PlanetUpgradeDefinition] = _upgrade_catalog.get_upgrades_for_branch(branch)
-		if branch_upgrades.is_empty():
-			continue
-		var expanded: bool = bool(_branch_expanded.get(branch, false))
-		var branch_button := Button.new()
-		branch_button.text = ("▾  " if expanded else "▸  ") + String(branch_titles.get(branch, String(branch).capitalize()))
-		branch_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		branch_button.flat = true
-		branch_button.focus_mode = Control.FOCUS_NONE
-		branch_button.custom_minimum_size = Vector2(0.0, _theme_config.section_row_height)
-		branch_button.add_theme_font_size_override("font_size", _theme_config.section_font_size)
-		branch_button.add_theme_color_override("font_color", _theme_config.branch_color(branch))
-		branch_button.add_theme_color_override("font_hover_color", _theme_config.branch_color(branch).lightened(0.15))
-		branch_button.pressed.connect(Callable(self, "_on_branch_toggled").bind(branch))
-		_upgrade_list.add_child(branch_button)
-
-		if not expanded:
-			continue
-		for upgrade in branch_upgrades:
-			if upgrade == null:
-				continue
-			var is_unlocked: bool = unlocked_upgrades.has(upgrade.id)
-			var can_buy: bool = is_player_owned and state.can_purchase_upgrade(planet_id, upgrade.id, _upgrade_catalog, int(planet.get("worker_count")))
-			_upgrade_list.add_child(_create_upgrade_row(planet_id, upgrade, is_unlocked, can_buy))
-
-func _on_branch_toggled(branch: StringName) -> void:
-	_branch_expanded[branch] = not bool(_branch_expanded.get(branch, false))
-	if is_instance_valid(_current_active_planet):
-		_refresh_upgrade_list(_current_active_planet)
-		layout_requested.emit()
-
-func _create_upgrade_row(planet_id: StringName, upgrade: PlanetUpgradeDefinition, is_unlocked: bool, can_buy: bool) -> PanelContainer:
-	var row := PanelContainer.new()
-	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_theme_stylebox_override("panel", _style_box(_theme_config.card_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
-	row.tooltip_text = upgrade.description
-
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", _theme_config.card_padding)
-	margin.add_theme_constant_override("margin_top", _theme_config.card_padding)
-	margin.add_theme_constant_override("margin_right", _theme_config.card_padding)
-	margin.add_theme_constant_override("margin_bottom", _theme_config.card_padding)
-	var content := HBoxContainer.new()
-	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content.add_theme_constant_override("separation", _theme_config.content_separation)
-
-	var info := VBoxContainer.new()
-	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var name_label := Label.new()
-	name_label.text = upgrade.display_name
-	name_label.add_theme_font_size_override("font_size", _theme_config.body_font_size)
-	name_label.add_theme_color_override("font_color", _theme_config.selected_count_text_color if is_unlocked else _theme_config.accent_text_color)
-	info.add_child(name_label)
-	var detail_label := Label.new()
-	detail_label.text = _upgrade_cost_text(upgrade, is_unlocked, planet_id)
-	var trait_text := _upgrade_trait_text(upgrade)
-	if not trait_text.is_empty():
-		detail_label.text += "\n" + trait_text
-	if not String(upgrade.required_technology_id).is_empty():
-		var required_technology: TechnologyDefinition = DEFAULT_TECHNOLOGY_CATALOG.resolve(upgrade.required_technology_id)
-		detail_label.text += "\nForschung erforderlich: %s" % (required_technology.display_name if required_technology != null else String(upgrade.required_technology_id))
-	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	detail_label.add_theme_font_size_override("font_size", _theme_config.small_font_size)
-	detail_label.add_theme_color_override("font_color", _theme_config.muted_text_color)
-	info.add_child(detail_label)
-	content.add_child(info)
-
-	if not is_unlocked:
-		var buy_button := Button.new()
-		# Sprint 6 (G4): the upgrade list previously rendered one "BAUEN" per
-		# row, so clicks/by-path could not tell the upgrades apart. Embed the
-		# upgrade id in the label and name for unambiguous selection.
-		buy_button.text = "BAUEN: %s" % upgrade.display_name
-		buy_button.name = "Buy_" + String(upgrade.id)
-		buy_button.tooltip_text = upgrade.description
-		buy_button.disabled = not can_buy
-		buy_button.focus_mode = Control.FOCUS_NONE
-		# The full label stays unique (G4); clip it so a long display name can
-		# not push the panel past the configured responsive width range.
-		buy_button.clip_text = true
-		buy_button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		buy_button.custom_minimum_size = Vector2(maxf(_theme_config.upgrade_button_width, 120.0), 0.0)
-		buy_button.add_theme_font_size_override("font_size", _theme_config.small_font_size)
-		buy_button.add_theme_stylebox_override("normal", _style_box(_theme_config.button_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
-		buy_button.add_theme_stylebox_override("hover", _style_box(_theme_config.button_hover_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
-		buy_button.add_theme_stylebox_override("disabled", _style_box(_theme_config.button_disabled_background, Color.TRANSPARENT, 0, _theme_config.panel_corner_radius))
-		buy_button.pressed.connect(Callable(self, "_on_buy_upgrade_pressed").bind(planet_id, upgrade.id))
-		content.add_child(buy_button)
-
-	margin.add_child(content)
-	row.add_child(margin)
-	return row
-
-func _upgrade_cost_text(upgrade: PlanetUpgradeDefinition, is_unlocked: bool, planet_id: StringName = &"") -> String:
-	if is_unlocked:
-		return "FREIGESCHALTET"
-	var state: Node = GameStateAccess.autoload(self)
-	var resource_amount: int = state.get_faction_resource(GameState.FACTION_PLAYER, upgrade.cost_resource) if state != null else 0
-	var credit_amount: int = state.get_faction_credits(GameState.FACTION_PLAYER) if state != null else 0
-	var result: String = "%d/%d %s" % [resource_amount, upgrade.cost_amount, UIBaseUtils.resource_display_name(upgrade.cost_resource)]
-	result += "  ·  %d/%d Credits" % [credit_amount, upgrade.credit_cost]
-	if upgrade.workers_required > 0:
-		var worker_amount: int = int(_current_active_planet.get("worker_count")) if is_instance_valid(_current_active_planet) and _current_active_planet.get("planet_id") == planet_id else 0
-		result += "  ·  Arbeitskräfte: %d (%d verfügbar)" % [upgrade.workers_required, worker_amount]
-	return result
-
-func _upgrade_trait_text(upgrade: PlanetUpgradeDefinition) -> String:
-	if upgrade.trait_definition == null:
-		return ""
-	var traits: Array[String] = []
-	var trait_data: TraitDefinition = upgrade.trait_definition
-	if trait_data.production_boost > 0.0:
-		traits.append("Produktion +%d%%" % int(trait_data.production_boost * 100.0))
-	if trait_data.worker_spawn_bonus > 0:
-		traits.append("Nachschub +%d" % trait_data.worker_spawn_bonus)
-	if trait_data.cluster_tier_bonus > 0:
-		traits.append("Flotten-Tier +%d" % trait_data.cluster_tier_bonus)
-	if trait_data.defense_rating > 0:
-		traits.append("Verteidigung +%d" % trait_data.defense_rating)
-	if trait_data.perimeter_slots_bonus > 0:
-		traits.append("Perimeter-Slots +%d" % trait_data.perimeter_slots_bonus)
-	if trait_data.range_bonus > 0.0:
-		traits.append("Reichweite +%.0f" % trait_data.range_bonus)
-	if trait_data.transfer_speed_multiplier > 1.0:
-		traits.append("Transit x%.1f" % trait_data.transfer_speed_multiplier)
-	if not String(trait_data.maintenance_cost_resource).is_empty() and trait_data.maintenance_cost_amount > 0:
-		traits.append("Unterhalt %d %s" % [trait_data.maintenance_cost_amount, UIBaseUtils.resource_display_name(trait_data.maintenance_cost_resource)])
-	return " · ".join(traits)
-
-func _on_buy_upgrade_pressed(planet_id: StringName, upgrade_id: StringName) -> void:
-	var state: Node = GameStateAccess.autoload(self)
-	if state == null or not is_instance_valid(_current_active_planet):
-		return
-	var upgrade: PlanetUpgradeDefinition = _upgrade_catalog.resolve(upgrade_id)
-	if upgrade == null:
-		return
-	var available_workers: int = int(_current_active_planet.get("worker_count"))
-	if not state.purchase_upgrade(planet_id, upgrade_id, _upgrade_catalog, available_workers):
-		return
-	# Construction workers are reserved by the domain and are never consumed.
-	_refresh_upgrade_list(_current_active_planet)
-	layout_requested.emit()
+func _on_build_pressed() -> void:
+	build_requested.emit()
 
 func set_selected_count(count: int) -> void:
 	_ensure_node_references()

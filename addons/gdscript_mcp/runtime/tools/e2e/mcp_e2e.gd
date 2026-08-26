@@ -28,9 +28,7 @@ func list_scenarios() -> Array:
 	return [
 		{"id": "main_menu", "description": "MainMenu: buttons visible, NEUES SPIEL click", "steps": 3},
 		{"id": "new_game_to_world", "description": "NEUES SPIEL -> World: PlanetField boots", "steps": 4},
-		{"id": "tech_menu_open_close", "description": "World: TECHNOLOGIE opens/closes TechnologyMenu", "steps": 6},
 		{"id": "pause_save_menu", "description": "World: ESC -> PauseMenu, SPEICHERN, HAUPTMENU", "steps": 8},
-		{"id": "research_start", "description": "Mechanik: TECHNOLOGIE -> FORSCHEN startet research_technology", "steps": 8},
 		{"id": "virtual_mouse_edges", "description": "MCP input isolation: virtual mouse activation, bounds and invalid input", "steps": 6},
 		{"id": "freeze_step", "description": "Deterministic: freeze -> click -> step_frame -> verify paused again", "steps": 7},
 		{"id": "analyze_and_goal", "description": "Code Analyzer scans project + Goal Player evaluates expressions", "steps": 6},
@@ -50,12 +48,8 @@ func run_scenario(scenario_id: String) -> Dictionary:
 			ok = await _scenario_main_menu()
 		"new_game_to_world":
 			ok = await _scenario_new_game_to_world()
-		"tech_menu_open_close":
-			ok = await _scenario_tech_menu_open_close()
 		"pause_save_menu":
 			ok = await _scenario_pause_save_menu()
-		"research_start":
-			ok = await _scenario_research_start()
 		"virtual_mouse_edges":
 			ok = await _scenario_virtual_mouse_edges()
 		"freeze_step":
@@ -115,39 +109,6 @@ func _scenario_new_game_to_world() -> bool:
 	ok = _check("new_game", "PlanetField exists", _node_exists("PlanetField"), true) and ok
 	return ok
 
-func _scenario_tech_menu_open_close() -> bool:
-	if not await _ensure_main_menu():
-		return false
-	var world_ok := await _scenario_new_game_to_world()
-	if not world_ok:
-		return false
-	var ok := true
-	var find_btn := _find("TECHNOLOGIE")
-	if not bool(find_btn.get("found", false)):
-		return _check("tech_menu", "TECHNOLOGIE tab visible", false, true) and false
-	# The first click can land inside the world-transition settle window
-	# (SceneDirector 0.6s fade tween): the input is delivered but the tab's
-	# toggle never fires. Retry until the panel is actually observed open,
-	# exactly as a live agent would re-click when the UI does not respond.
-	var tech_open := false
-	for attempt in range(3):
-		var clicked: Variant = await _call_async("runtime_ux_click", {"description": "TECHNOLOGIE"})
-		ok = _check("tech_menu", "TECHNOLOGIE clicked", bool(clicked.get("clicked", false)), true) and ok
-		tech_open = await _wait_for("control", "SCHLIESSEN", 2.5)
-		if tech_open:
-			break
-		await _wait_ms(800)
-	if not tech_open:
-		_dir_texts("tech tab did not open after 3 clicks", {})
-	ok = _check("tech_menu", "tech menu open (close tab and panel visible)", tech_open, true) and ok
-	var esc: Variant = _call("runtime_key", {"keycode": KEY_ESCAPE, "pressed": true})
-	ok = _check("tech_menu", "ESC to close", bool(esc.get("sent", false)), true) and ok
-	_call("runtime_key", {"keycode": KEY_ESCAPE, "pressed": false})
-	var closed := await _close_tech_menu()
-	ok = _check("tech_menu", "tech menu closed (tab back to open state)", closed, true) and ok
-	return ok
-
-
 func _scenario_pause_save_menu() -> bool:
 	if not await _ensure_main_menu():
 		return false
@@ -201,10 +162,8 @@ func _is_tree_paused() -> bool:
 	return (tree as SceneTree).paused if tree is SceneTree else false
 
 
-## Triggers a real game mechanic: opens the TechnologyMenu, presses FORSCHEN
-## (calls GameState.research_technology) and confirms the research start via
-## the visible "IN FORSCHUNG" state. Success is archived as a reproducible
-## preset (snapshot + frame).
+## Input-isolation check: the MCP virtual mouse stays within viewport bounds,
+## rejects invalid keys/empty find-targets, and remains active afterwards.
 func _scenario_virtual_mouse_edges() -> bool:
 	var ok := true
 	var initial: Variant = _call("runtime_virtual_mouse_status", {})
@@ -325,42 +284,6 @@ func _scenario_analyze_and_goal() -> bool:
 	_info("  [ANALYZE DIAG] GameState public methods: " + str(method_count) + ", scenes: " + str(scenes.size()))
 	return ok
 
-func _scenario_research_start() -> bool:
-	if not await _ensure_main_menu():
-		return false
-	var world_ok := await _scenario_new_game_to_world()
-	if not world_ok:
-		return false
-	var ok := true
-	# FORSCHEN may appear as inline text in a compact tab; search all control
-	# texts (including labels) for the substring, then resolve to click target.
-	var forschen_hint := await _wait_for("text", "FORSCHEN", 5.0)
-	if forschen_hint:
-		var research_btn := _find("FORSCHEN")
-		if bool(research_btn.get("found", false)):
-			var research_clicked: Variant = await _call_async("runtime_ux_click", {"description": "FORSCHEN"})
-			ok = _check("research", "FORSCHEN clicked", bool(research_clicked.get("clicked", false)), true) and ok
-			var researching := await _wait_for("text", "IN FORSCHUNG", 8.0)
-			if not researching:
-				_dir_texts("after FORSCHEN click", research_clicked)
-			ok = _check("research", "research started (IN FORSCHUNG visible)", researching, true) and ok
-		else:
-			_info("  [INFO] FORSCHEN text visible but not a standalone interactable — compact tab layout")
-	else:
-		_info("  [INFO] FORSCHEN not visible in compact tech tab — checking for any research affordance")
-		var scan: Variant = _call("runtime_ux_scan", {})
-		var research_texts: Array = []
-		for ctrl in (scan.get("controls", []) if scan is Dictionary else []):
-			if ctrl is Dictionary and ("FORSCHEN" in String(ctrl.get("text", "")).to_upper() or "RESEARCH" in String(ctrl.get("text", "")).to_upper()):
-				research_texts.append(String(ctrl.get("text", "")))
-		_info("  [SCAN] research-related texts: " + str(research_texts))
-	_call("runtime_key", {"keycode": KEY_ESCAPE, "pressed": true})
-	_call("runtime_key", {"keycode": KEY_ESCAPE, "pressed": false})
-	var closed := await _close_tech_menu()
-	ok = _check("research", "tech menu closed after ESC", closed, true) and ok
-	return ok
-
-
 # ═══════════════════════════════════════════════════════════════════════════
 # Helpers
 # ═══════════════════════════════════════════════════════════════════════════
@@ -447,19 +370,6 @@ func _ensure_main_menu() -> bool:
 		scan = _call("runtime_ux_scan", {})
 		return str(scan.get("scene", "")) == "main_menu"
 	return false
-
-
-## Close the technology menu: ESC first (agent-real), fall back to clicking
-## the visible close tab „‹  SCHLIESSEN“ so the scenario cannot hang on an
-## ESC that never arrives in the test harness.
-func _close_tech_menu() -> bool:
-	if await _wait_for("text", "TECHNOLOGIE ›", 2.0):
-		return true
-	var close_btn := _find("SCHLIESSEN")
-	if not bool(close_btn.get("found", false)):
-		return false
-	await _call_async("runtime_ux_click", {"description": "SCHLIESSEN"})
-	return await _wait_for("text", "TECHNOLOGIE ›", 3.0)
 
 
 ## Failure diagnostics: click coordinates + all visible texts (first 30).

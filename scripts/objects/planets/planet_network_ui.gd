@@ -85,9 +85,12 @@ func _connect_panel_signals() -> void:
 		_panel.layout_requested.connect(_on_panel_layout_requested)
 	if not _panel.clear_selection_pressed.is_connected(_on_clear_selection_pressed):
 		_panel.clear_selection_pressed.connect(_on_clear_selection_pressed)
+	if _panel.has_signal("build_requested") and not _panel.build_requested.is_connected(_on_build_requested):
+		_panel.build_requested.connect(_on_build_requested)
 
 signal clear_selection_requested()
 signal economy_overview_requested()
+signal build_requested()
 
 func _connect_game_state_signals() -> void:
 	var state: Node = GameStateAccess.autoload(self)
@@ -298,6 +301,9 @@ func _on_panel_layout_requested() -> void:
 
 func _on_clear_selection_pressed() -> void:
 	clear_selection_requested.emit()
+
+func _on_build_requested() -> void:
+	build_requested.emit()
 
 func _on_viewport_size_changed() -> void:
 	_apply_responsive_layout()

@@ -6,7 +6,6 @@ const _Dispatch := preload("res://scripts/dispatch.gd")
 const DEFAULT_CONFIG: TransitConfig = preload("res://resources/config/transit_default.tres")
 const DEFAULT_UI_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
 const PLANET_NETWORK_UI_SCENE: PackedScene = preload("res://scenes/ui/planet_network_ui.tscn")
-const TECHNOLOGY_MENU_SCENE: PackedScene = preload("res://scenes/ui/technology_menu.tscn")
 const MESSAGE_FEED_SCENE: PackedScene = preload("res://scenes/ui/message_feed.tscn")
 const SELECTION_SERVICE_SCRIPT: Script = preload("res://scripts/objects/selection_service.gd")
 const SELECTION_ACTION_TOOLTIP_SCRIPT: Script = preload("res://scripts/ui/selection_tooltip.gd")
@@ -14,6 +13,7 @@ const FLEET_OVERVIEW_SCRIPT: Script = preload("res://scripts/ui/fleet_overview.g
 const ECONOMY_WINDOW_SCRIPT: Script = preload("res://scripts/ui/economy_window.gd")
 const LAYOUT_COORDINATOR_SCRIPT: Script = preload("res://scripts/ui/layout_coordinator.gd")
 const INPUT_HINT_OVERLAY_SCRIPT: Script = preload("res://scripts/ui/input_hint_overlay.gd")
+const TUTORIAL_DIRECTOR_SCRIPT: Script = preload("res://scripts/ui/tutorial/tutorial_director.gd")
 
 @export var transit_config: TransitConfig = DEFAULT_CONFIG
 @export var ui_theme_config: UIThemeConfig = DEFAULT_UI_THEME
@@ -26,7 +26,6 @@ var _routes: Dictionary = {}
 var _active_planet: Node2D
 var _destination_planets: Array[Node2D] = []
 var _ui: PlanetNetworkUI
-var _technology_menu: TechnologyMenu
 var _message_feed: MessageFeed
 var _chunk_coordinator: ChunkCoordinator
 var _map_camera: MapCamera
@@ -42,6 +41,8 @@ var _fleet_overview: FleetOverview
 var _economy_window: EconomyWindow
 var _layout_coordinator: LayoutCoordinator
 var _input_hints: InputHintOverlay
+var _tutorial: TutorialDirector
+var _tutorial_auto_started := false
 var _selected_ship: ShipBase
 
 # Context-menu item IDs and stable names used by tests/replay scripts.
@@ -146,8 +147,9 @@ func _create_ui() -> void:
 		_ui.clear_selection_requested.connect(_on_clear_selection_requested)
 	if not _ui.economy_overview_requested.is_connected(_on_economy_overview_requested):
 		_ui.economy_overview_requested.connect(_on_economy_overview_requested)
+	if _ui.has_signal("build_requested") and not _ui.build_requested.is_connected(_on_build_requested):
+		_ui.build_requested.connect(_on_build_requested)
 	_create_context_menu()
-	_create_technology_menu.call_deferred()
 	_create_message_feed.call_deferred()
 	_create_modal_coordinator.call_deferred()
 
@@ -304,19 +306,6 @@ func _center_camera_on(planet: Node2D) -> void:
 		return
 	_map_camera.position = planet.global_position
 
-func _create_technology_menu() -> void:
-	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
-	if ship_manager == null:
-		return
-	_technology_menu = TECHNOLOGY_MENU_SCENE.instantiate() as TechnologyMenu
-	add_child(_technology_menu)
-	_technology_menu.setup(ship_manager, ui_theme_config)
-	_technology_menu.opened.connect(_on_technology_opened)
-
-func _on_technology_opened() -> void:
-	if is_instance_valid(_ui):
-		_ui.close_panel()
-
 func _create_message_feed() -> void:
 	var event_log: Node = get_tree().root.get_node_or_null("EventLog")
 	if event_log == null:
@@ -332,6 +321,7 @@ func _create_modal_coordinator() -> void:
 	_modal_coordinator.setup(_map_camera, ui_theme_config)
 	_create_layout_coordinator()
 	_create_input_hints()
+	_create_tutorial()
 	_create_dossier_launcher()
 	_create_fleet_overview.call_deferred()
 	_create_economy_module.call_deferred()
@@ -376,6 +366,23 @@ func _create_dossier_launcher() -> void:
 	_add_dossier_button(box, "WERKSTATT", _open_workshop_dossier)
 	_add_dossier_button(box, "FORSCHUNG", _open_tech_tree_dossier)
 	_add_dossier_button(box, "ECONOMY", _toggle_economy_module)
+	_add_dossier_button(box, "TUTORIAL", _restart_tutorial)
+
+## Sprint 7: interaktives Onboarding. Auto-Start einmal pro Session; danach
+## über den TUTORIAL-Launcher-Button jederzeit neu startbar.
+func _create_tutorial() -> void:
+	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
+	_tutorial = TUTORIAL_DIRECTOR_SCRIPT.new() as TutorialDirector
+	_tutorial.name = "TutorialDirector"
+	add_child(_tutorial)
+	_tutorial.setup(ui_theme_config)
+	if not _tutorial_auto_started:
+		_tutorial_auto_started = true
+		_tutorial.start(self, ship_manager, _game_state(), _map_camera)
+
+func _restart_tutorial() -> void:
+	if _tutorial != null and is_instance_valid(_tutorial):
+		_tutorial.restart()
 
 func _create_fleet_overview() -> void:
 	_fleet_overview = FLEET_OVERVIEW_SCRIPT.new() as FleetOverview
@@ -556,8 +563,6 @@ func _add_dossier_button(box: VBoxContainer, text: String, pressed: Callable) ->
 func _close_overlay_panels() -> void:
 	if is_instance_valid(_ui):
 		_ui.close_panel()
-	if is_instance_valid(_technology_menu):
-		_technology_menu.close()
 
 func _open_planet_dossier() -> void:
 	if _modal_coordinator == null or not is_instance_valid(_modal_coordinator):
@@ -569,6 +574,9 @@ func _open_planet_dossier() -> void:
 	view.populate(_active_planet as Planet, _game_state())
 	_close_overlay_panels()
 	_modal_coordinator.open_view(view, "PLANETEN-DOSSIER")
+
+func _on_build_requested() -> void:
+	_open_planet_dossier()
 
 func _open_workshop_dossier() -> void:
 	if _modal_coordinator == null or not is_instance_valid(_modal_coordinator):
@@ -594,9 +602,6 @@ func _open_tech_tree_dossier() -> void:
 	_close_overlay_panels()
 	_modal_coordinator.open_view(view, "FORSCHUNGSBAUM")
 
-func get_technology_menu() -> TechnologyMenu:
-	return _technology_menu
-
 func get_fleet_overview() -> FleetOverview:
 	return _fleet_overview
 
@@ -607,8 +612,6 @@ func get_message_feed() -> MessageFeed:
 	return _message_feed
 
 func _on_panel_visibility_changed(panel_open: bool) -> void:
-	if panel_open and is_instance_valid(_technology_menu):
-		_technology_menu.close()
 	queue_redraw()
 
 func _on_workers_spawn_requested(source: Node2D, amount: int) -> void:

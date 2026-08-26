@@ -115,21 +115,6 @@ layout_mode = 2
 autowrap_mode = 2
 text = "Noch kein Auftrag konfiguriert."
 
-[node name="UpgradeSeparator" type="HSeparator" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
-layout_mode = 2
-
-[node name="UpgradeHeading" type="Label" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
-layout_mode = 2
-text = "PLANETEN-AUSBAU"
-
-[node name="UpgradeScroll" type="VBoxContainer" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="UpgradeList" type="VBoxContainer" parent="MarginContainer/PanelLayout/PanelScroll/Content/UpgradeScroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-
 [node name="UnitsSeparator" type="HSeparator" parent="MarginContainer/PanelLayout/PanelScroll/Content"]
 layout_mode = 2
 

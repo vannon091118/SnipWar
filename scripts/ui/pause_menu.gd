@@ -149,8 +149,5 @@ func _overlay_ui_open() -> bool:
 	var ui: PlanetNetworkUI = _planet_network.get_ui()
 	if ui != null and ui.is_panel_visible():
 		return true
-	var menu: TechnologyMenu = _planet_network.get_technology_menu()
-	if menu != null and menu.is_open():
-		return true
 	var coordinator: ModalCoordinator = _planet_network.get_modal_coordinator() if _planet_network.has_method("get_modal_coordinator") else null
 	return coordinator != null and coordinator.is_open()

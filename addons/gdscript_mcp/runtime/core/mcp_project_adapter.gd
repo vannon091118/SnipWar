@@ -75,9 +75,11 @@ func log_normalize_entry(source: String, raw: Variant) -> Dictionary:
 	return {}
 
 
-func postcondition_hints(mechanic: String) -> Dictionary:
-	if mechanic == "research_start":
-		return {"after_live_contains": "IN FORSCHUNG"}
+## Postcondition hints are intentionally NOT hardcoded for UI flows anymore:
+## MCP agents discover the current UI from scratch via runtime_ux_* and persist
+## what they learn into the playthrough archive. Removing the old
+## "IN FORSCHUNG" hint, which referenced the deleted TechnologyMenu.
+func postcondition_hints(_mechanic: String) -> Dictionary:
 	return {}
 
 

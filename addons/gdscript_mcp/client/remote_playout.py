@@ -155,9 +155,8 @@ def run_flow(client: McpClient, flow: str) -> int:
         mechanics = [
             ("MainMenu → NEUES SPIEL", "Neues Spiel", "world scene loaded", lambda r: r.get("clicked")),
             ("World → Planet selektieren", "PLANET", "PlanetPanel visible", lambda r: r.get("clicked")),
-            ("Dossier → FORSCHUNG", "FORSCHUNG", "TechnologyMenu open", lambda r: r.get("clicked")),
-            ("TechMenu → FORSCHEN", "FORSCHEN", "research started", lambda r: r.get("clicked")),
-            ("ESC → TechMenu close", None, "menu closed", None),
+            ("Dossier → FORSCHUNG", "FORSCHUNG", "Dossier open", lambda r: r.get("clicked")),
+            ("ESC → Dossier close", None, "menu closed", None),
             ("ESC → Pause", None, "PauseMenu open", None),
             ("Pause → SPEICHERN", "SPEICHERN", "game saved", lambda r: r.get("clicked")),
             ("Pause → HAUPTMENÜ", "HAUPTMENÜ", "main menu loaded", lambda r: r.get("clicked")),

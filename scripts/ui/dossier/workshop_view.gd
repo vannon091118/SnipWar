@@ -9,28 +9,59 @@ const DEFAULT_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_de
 
 var _theme_config: UIThemeConfig = DEFAULT_THEME
 var _ship_manager: ShipManager
+var _state: Node
 var _builder := TechShipBuilderView.new()
+var _research_ship_view := TechResearchShipView.new()
 var _content: VBoxContainer
+var _refresh_accumulator := 0.0
+const REFRESH_INTERVAL := 0.5
 
 func setup(ship_manager: ShipManager, theme_config: UIThemeConfig = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
 	_ship_manager = ship_manager
 	_builder.setup(ship_manager, _theme_config)
+	_research_ship_view.setup(ship_manager, _theme_config)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_ui()
 
 func refresh(state: Node, planets: Array[Planet]) -> void:
+	_state = state
 	if _content == null:
 		return
 	for child in _content.get_children():
 		_content.remove_child(child)
 		child.queue_free()
 	_builder.clear_state()
+	_research_ship_view.worker_source = null
+	_research_ship_view.worker_button = null
 	if state == null or _ship_manager == null:
 		return
 	_content.add_child(UIBaseUtils.make_label("WERKBANK — SCHIFFSMONTAGE", _theme_config.heading_text_color, _theme_config.section_font_size))
 	_content.add_child(UIBaseUtils.make_label("Teile kaufen, im Hangar montieren, starten oder wieder zerlegen.", _theme_config.muted_text_color, _theme_config.small_font_size))
 	_builder.build_ship_builder_section(_content, state, planets, Callable(self, "_refresh_from_builder").bind(state, planets))
+	_research_ship_view.build_research_ship_and_worker_section(_content, state, planets, Callable(self, "_refresh_from_builder").bind(state, planets))
+
+## Live-Countdowns für Forschungsaufträge (Scan/Explore) aktualisieren,
+## ohne die gesamte Werkstatt bei jedem Tick neu aufzubauen.
+func _process(delta: float) -> void:
+	_refresh_accumulator += delta
+	if _refresh_accumulator < REFRESH_INTERVAL:
+		return
+	_refresh_accumulator = 0.0
+	if _state == null or not is_visible_in_tree():
+		return
+	for progress in find_children("ResearchTaskProgress", "ProgressBar", true, false):
+		var bar: ProgressBar = progress as ProgressBar
+		if bar == null:
+			continue
+		var remaining: float = float(bar.get_meta("remaining", 0.0))
+		var duration: float = float(bar.get_meta("duration", 1.0))
+		remaining -= REFRESH_INTERVAL
+		bar.set_meta("remaining", remaining)
+		bar.value = clampf(duration - remaining, 0.0, duration)
+		if remaining <= 0.0:
+			_refresh_from_builder(_state, _ship_manager.get_planets() if _ship_manager != null else [])
+			return
 
 func _build_ui() -> void:
 	var scroll := ScrollContainer.new()
@@ -45,6 +76,7 @@ func _build_ui() -> void:
 	scroll.add_child(_content)
 
 func _refresh_from_builder(state: Node, planets: Array[Planet]) -> void:
+	_state = state
 	refresh(state, planets)
 
 func _draw() -> void:

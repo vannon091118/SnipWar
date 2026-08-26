@@ -211,7 +211,6 @@ def _mechanic_target(seq_id: str) -> str:
         "main_menu_quit": "BEENDEN",
         "world_planet_select": "PLANET",
         "world_tech_open": "FORSCHUNG",
-        "tech_research_start": "FORSCHEN",
         "pause_save": "SPEICHERN",
         "pause_main_menu": "HAUPTMENÜ",
     }

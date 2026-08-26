@@ -145,6 +145,8 @@ func _build_task_queue_section(container: VBoxContainer, state: Node, planets: A
 		progress.value = duration - remaining
 		progress.show_percentage = false
 		progress.tooltip_text = "%s · %s · %.1f s" % [UIBaseUtils.research_task_name(mission.get("task_type", &"task") as StringName), _planet_display_name(planets, mission.get("target_planet_id", &"") as StringName), remaining]
+		progress.set_meta("remaining", remaining)
+		progress.set_meta("duration", duration)
 		container.add_child(progress)
 	var idle_record: Dictionary = {}
 	for record in records:

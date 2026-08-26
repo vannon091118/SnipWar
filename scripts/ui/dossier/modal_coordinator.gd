@@ -23,6 +23,11 @@ func setup(map_camera: MapCamera, theme_config: UIThemeConfig = null) -> void:
 func is_open() -> bool:
 	return _dossier != null and is_instance_valid(_dossier) and _dossier.is_open()
 
+## Exposes the hosted dossier for test/constraint traversal (e.g. verifying
+## ship-build progress bars inside the workshop view).
+func get_dossier() -> PaperDossier:
+	return _dossier
+
 func open_view(content: Control, title: String) -> void:
 	if _dossier == null or not is_instance_valid(_dossier):
 		return

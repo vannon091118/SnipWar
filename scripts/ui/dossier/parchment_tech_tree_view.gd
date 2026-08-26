@@ -54,6 +54,37 @@ func _build_ui() -> void:
 	_canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_canvas.draw.connect(_draw_connectors)
 	scroll.add_child(_canvas)
+	_build_status_legend()
+
+## Farblegende: Grau ungelernt · Grün gelernt · Rot nicht lernbar · Gelb in Arbeit.
+func _build_status_legend() -> void:
+	var legend := PanelContainer.new()
+	legend.name = "StatusLegend"
+	legend.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	legend.add_theme_stylebox_override("panel", UIBaseUtils.style_box(_theme_config, Color(0.02, 0.03, 0.05, 0.85), _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+	legend.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	legend.offset_left = 12.0
+	legend.offset_top = 8.0
+	var box := HBoxContainer.new()
+	box.add_theme_constant_override("separation", 10)
+	for entry in [
+		[UIStatusUtils.STATE_LEARNED, "Gelernt"],
+		[UIStatusUtils.STATE_AVAILABLE, "Lernbar"],
+		[UIStatusUtils.STATE_IN_PROGRESS, "In Forschung"],
+		[UIStatusUtils.STATE_LOCKED, "Nicht lernbar"],
+	]:
+		var chip := HBoxContainer.new()
+		chip.add_theme_constant_override("separation", 4)
+		chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var dot := ColorRect.new()
+		dot.custom_minimum_size = Vector2(10, 10)
+		dot.color = UIStatusUtils.state_color(entry[0], _theme_config)
+		dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		chip.add_child(dot)
+		chip.add_child(UIBaseUtils.make_label(String(entry[1]), _theme_config.secondary_text_color, _theme_config.small_font_size, false))
+		box.add_child(chip)
+	legend.add_child(box)
+	add_child(legend)
 
 func _layout_tree(state: Node) -> void:
 	var depths: Dictionary = {}
@@ -95,48 +126,38 @@ func _depth_of(tech_id: StringName, memo: Dictionary) -> int:
 
 func _tech_node(technology: TechnologyDefinition, state: Node, center: Vector2) -> Control:
 	var button := Button.new()
+	var research_state_id: StringName = UIStatusUtils.research_state(GameState.FACTION_PLAYER, technology, state, _catalog)
+	var accent: Color = UIStatusUtils.state_color(research_state_id, _theme_config)
 	button.name = "TechNode_" + String(technology.id)
-	button.text = "%s\n%d %s" % [technology.display_name, technology.cost_amount, String(technology.cost_resource)]
+	var status_mark := ""
+	match research_state_id:
+		UIStatusUtils.STATE_LEARNED:
+			status_mark = "✓ "
+		UIStatusUtils.STATE_IN_PROGRESS:
+			status_mark = "⟳ "
+		UIStatusUtils.STATE_LOCKED:
+			status_mark = "✗ "
+	button.text = "%s%s\n%d %s" % [status_mark, technology.display_name, technology.cost_amount, String(technology.cost_resource)]
 	button.position = center - Vector2(NODE_W * 0.5, NODE_H * 0.5)
 	button.size = Vector2(NODE_W, NODE_H)
 	button.focus_mode = Control.FOCUS_NONE
-	button.disabled = not state.can_research_technology(GameState.FACTION_PLAYER, technology.id, _catalog)
-	button.tooltip_text = technology.description + "\n" + technology.mechanic_description + _disabled_reason(technology, state)
+	# Der Rahmen kommuniziert den Zustand farblich (Grau/Grün/Rot/Gelb).
+	button.add_theme_stylebox_override("normal", UIBaseUtils.style_box(_theme_config, _theme_config.card_background, accent, 2, _theme_config.panel_corner_radius))
+	button.add_theme_stylebox_override("hover", UIBaseUtils.style_box(_theme_config, _theme_config.input_hover_background, accent.lightened(0.2), 2, _theme_config.panel_corner_radius))
+	button.add_theme_stylebox_override("disabled", UIBaseUtils.style_box(_theme_config, _theme_config.button_disabled_background, accent.darkened(0.25), 2, _theme_config.panel_corner_radius))
 	button.add_theme_font_size_override("font_size", _theme_config.small_font_size)
-	button.add_theme_stylebox_override("normal", UIBaseUtils.style_box(_theme_config, _theme_config.card_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
-	button.add_theme_stylebox_override("hover", UIBaseUtils.style_box(_theme_config, _theme_config.input_hover_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
-	button.add_theme_stylebox_override("disabled", UIBaseUtils.style_box(_theme_config, _theme_config.button_disabled_background, _theme_config.panel_border, 1, _theme_config.panel_corner_radius))
+	button.add_theme_color_override("font_color", accent)
+	button.add_theme_color_override("font_hover_color", accent.lightened(0.2))
+	button.add_theme_color_override("font_pressed_color", accent)
+	button.add_theme_color_override("font_disabled_color", accent.darkened(0.1))
+	button.tooltip_text = technology.description + "\n" + technology.mechanic_description + _disabled_reason(technology, state)
 	button.pressed.connect(_research.bind(technology.id))
 	return button
 
-## Sprint 6 (G7): explains WHY a tech node is greyed out (missing prerequisite
-## or funds) instead of leaving the player to guess.
+## Sprint 6 (G7): explains WHY a tech node is greyed out. Logic is centralized
+## in UIStatusUtils.locked_reason so every view shares one implementation.
 func _disabled_reason(technology: TechnologyDefinition, state: Node) -> String:
-	if state == null or technology == null or state.can_research_technology(GameState.FACTION_PLAYER, technology.id, _catalog):
-		return ""
-	var lines := ""
-	if not String(technology.prerequisite_tech_id).is_empty() or not (technology.prerequisite_tech_ids as Array).is_empty():
-		var missing_prereq: StringName = &""
-		var candidates: Array[StringName] = []
-		if not String(technology.prerequisite_tech_id).is_empty():
-			candidates.append(technology.prerequisite_tech_id)
-		elif not (technology.prerequisite_tech_ids as Array).is_empty():
-			candidates.append_array(technology.prerequisite_tech_ids as Array)
-		for prereq_id in candidates:
-			if not state.has_technology(GameState.FACTION_PLAYER, prereq_id):
-				missing_prereq = prereq_id
-				break
-		if not String(missing_prereq).is_empty() and _catalog != null:
-			var prereq: TechnologyDefinition = _catalog.resolve(missing_prereq)
-			lines = "\nVoraussetzung fehlt: %s" % (prereq.display_name if prereq != null else String(missing_prereq))
-	var funds_ok := true
-	if state.has_method("get_faction_resource") and int(state.get_faction_resource(GameState.FACTION_PLAYER, technology.cost_resource)) < technology.cost_amount:
-		funds_ok = false
-	if technology.credit_cost > 0 and state.has_method("get_faction_credits") and int(state.get_faction_credits(GameState.FACTION_PLAYER)) < technology.credit_cost:
-		funds_ok = false
-	if not funds_ok:
-		lines += "\nRessourcen fehlen"
-	return lines
+	return UIStatusUtils.locked_reason(technology, state, _catalog)
 
 func _research(technology_id: StringName) -> void:
 	if _state == null or _catalog == null:

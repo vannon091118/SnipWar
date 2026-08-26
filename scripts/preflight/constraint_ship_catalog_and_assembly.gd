@@ -183,27 +183,34 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(game_state.call("ship_build_in_progress", source.planet_id, ship_id), "timed ship build was not queued"):
 		return false
 	var build_network: Node = field.get_node_or_null("PlanetNetwork")
-	var build_menu: TechnologyMenu = build_network.get_technology_menu() as TechnologyMenu if build_network != null and build_network.has_method("get_technology_menu") else null
-	if not ctx.check(build_menu != null, "technology menu is missing for ship-build progress feedback"):
+	if not ctx.check(build_network != null and build_network.has_method("_open_workshop_dossier") and build_network.has_method("get_modal_coordinator"), "workshop dossier launcher is missing for ship-build progress feedback"):
 		return false
-	build_menu.set("_category", TechnologyDefinition.CATEGORY_SHIPS)
-	build_menu.call("_set_open", true)
-	build_menu.call("_refresh")
+	build_network.call("_open_workshop_dossier")
 	await ctx.await_frame()
-	var build_list: VBoxContainer = build_menu.get_node_or_null("TechTabUI/TechPanel/TechMargin/TechVBox/TechScroll/TechList") as VBoxContainer
-	var hangar_backdrop: TextureRect = build_list.find_child("ShipHangarBackdrop", true, false) as TextureRect if build_list != null else null
+	var coordinator: Node = build_network.get_modal_coordinator()
+	var dossier: Node = coordinator.get_dossier() if coordinator != null and coordinator.has_method("get_dossier") else null
+	var build_list: VBoxContainer = null
+	if dossier != null:
+		var content_host: Control = dossier.get_node_or_null("Sheet/SheetMargin/SheetColumn/ContentHost") as Control
+		if content_host != null:
+			var workshop_scroll: ScrollContainer = content_host.find_child("WorkshopScroll", true, false) as ScrollContainer
+			if workshop_scroll != null:
+				build_list = workshop_scroll.get_node_or_null("WorkshopContent") as VBoxContainer
+	if not ctx.check(build_list != null, "workshop content was not built for ship-build progress feedback"):
+		return false
+	var hangar_backdrop: TextureRect = build_list.find_child("ShipHangarBackdrop", true, false) as TextureRect
 	if not ctx.check(hangar_backdrop != null and ui_theme_config != null and hangar_backdrop.texture == ui_theme_config.ship_hangar_background_texture, "ship hangar background asset was not retained during builder refresh"):
 		return false
 	var build_progress_visible := false
-	if build_list != null:
-		for progress_node in build_list.find_children("ShipBuildProgress", "ProgressBar", true, false):
-			var build_progress: ProgressBar = progress_node as ProgressBar
-			if build_progress != null and build_progress.visible and build_progress.max_value > 0.0 and build_progress.value < build_progress.max_value:
-				build_progress_visible = true
-				break
+	for progress_node in build_list.find_children("ShipBuildProgress", "ProgressBar", true, false):
+		var build_progress: ProgressBar = progress_node as ProgressBar
+		if build_progress != null and build_progress.visible and build_progress.max_value > 0.0 and build_progress.value < build_progress.max_value:
+			build_progress_visible = true
+			break
 	if not ctx.check(build_progress_visible, "active ship build did not render a visible progress bar"):
 		return false
-	build_menu.close()
+	if coordinator != null and coordinator.has_method("close"):
+		coordinator.call("close")
 	if not ctx.check(not game_state.has_ship_assembly(source.planet_id, ship_id), "ship build should not register before the timer completes"):
 		return false
 	var build_remaining: float = game_state.ship_build_remaining(source.planet_id, ship_id)
