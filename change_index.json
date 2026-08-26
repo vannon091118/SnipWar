@@ -11,6 +11,18 @@
 			],
 			"p_id": 15.0
 		},
+		"193aa9dc36209b96d263cdd3fdb00a5f7fe9a0e3": {
+			"c": 18.0,
+			"composite": "c18j4n7a4p11",
+			"entities": [
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"C--001"
+			],
+			"p_id": 18.0
+		},
 		"19c473c6f230b31256390456e629ae146eb53e4b": {
 			"c": 14.0,
 			"composite": "c14j34n6a1p7",
@@ -268,29 +280,29 @@
 	},
 	"entities": {
 		"C--001": {
-			"first_p": 18,
+			"first_p": 18.0,
 			"history": [
 				{
 					"lines": [
-						329
+						329.0
 					],
-					"p_id": 18
+					"p_id": 18.0
 				}
 			],
 			"id": "C--001",
-			"last_p": 18,
+			"last_p": 18.0,
 			"name": "_read_file",
 			"path": "scripts/doki/doki_analyze.gd",
 			"status": "modified",
 			"type": "component"
 		},
 		"F--001": {
-			"first_p": 18,
+			"first_p": 19,
 			"history": [],
 			"id": "F--001",
-			"last_p": 18,
-			"name": "doki_analyze.gd",
-			"path": "scripts/doki/doki_analyze.gd",
+			"last_p": 19,
+			"name": "arcs.json",
+			"path": "scripts/doki/data/arcs.json",
 			"status": "created",
 			"type": "file"
 		}

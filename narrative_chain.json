@@ -1351,9 +1351,9 @@
 			"summary": "Es geschah in der siebzehnten Epoche der Historia, als Thinker noch den Verifier feinjustiert hatte und der Echo-Resonanz-Test just ins Grüne gesprungen war, da bemerkten die Chronisten einen Schat..."
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a5",
-			"c": 17,
+			"c": 17.0,
 			"composite": "c17j48n14a1p1",
 			"data_changes": [
 				{
@@ -1404,17 +1404,58 @@
 			],
 			"date": "2026-08-27 17:00:00",
 			"hash": "2bc5533d6b8bb9fd26723d1048947df8561e89f6",
-			"j": 48,
+			"j": 48.0,
 			"model_id": "claude-sonnet-4",
 			"mood": "trocken",
-			"n": 14,
+			"n": 14.0,
 			"narrator": "Sage",
-			"p": 1,
-			"p_id": 17,
+			"p": 1.0,
+			"p_id": 17.0,
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Ghost",
-			"seq": 17,
+			"seq": 17.0,
 			"summary": "Stell dir vor, du hast einen Motor, der zählt, wie oft das Auto tankt. Jedes Mal, egal ob du 500 Kilometer Autobahn gefahren bist oder nur zum Bäcker um die Ecke — Zähler geht hoch. Irgendwann sagt..."
+		},
+		{
+			"a": 4,
+			"arc": "a5",
+			"c": 18,
+			"composite": "c18j4n7a4p11",
+			"data_changes": [
+				{
+					"deletions": 6.0,
+					"file": "change_index.json",
+					"insertions": 23.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 66.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_analyze.gd",
+					"insertions": 337.0
+				}
+			],
+			"date": "2026-08-27 18:00:00",
+			"hash": "193aa9dc36209b96d263cdd3fdb00a5f7fe9a0e3",
+			"j": 4,
+			"model_id": "claude-sonnet-4",
+			"mood": "selbstironisch",
+			"n": 7,
+			"narrator": "Argos",
+			"p": 11,
+			"p_id": 18,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Sage",
+			"seq": 18,
+			"summary": "Hab ich doch gesagt. Irgendwann muss man das eigene Geschwätz auch messen können, und Sage hatte recht gehabt, als er vor dem Motor-Gleichnis stand — deshalb ist heute ein Prüfstand entstanden, kei..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

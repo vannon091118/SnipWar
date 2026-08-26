@@ -287,3 +287,13 @@ Narrative-Qualitäts-Analyzer: prüft Kausalität, Mood-Regel, Composite-Monoton
 - narrative_chain.json: Dokumentation aktualisiert (F--001).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F--001).
 - scripts/doki/doki_analyze.gd: Dokumentation aktualisiert (F--001).
+
+## 2026-08-27 19:00:00 — p19 · c19j17n1a4p15 · Buffy · alarmiert
+
+**[Buffy] AGENTS.md: DOKI-Qualitäts-Analyzer dokumentiert**
+
+AGENTS.md: DOKI-Qualitäts-Analyzer dokumentiert
+
+- change_index.json: Tooling erweitert (F--001).
+- narrative_chain.json: Tooling erweitert (F--001).
+- scripts/doki/data/arcs.json: Tooling erweitert (F--001).
