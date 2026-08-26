@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "description": "Arcs als abstrakte ID-Map (a1..aN). Jeder Arc repräsentiert eine Projekt-Phase. Der aktive Arc ist über 'active' referenziert. 'weight' ist der akkumulierte narrative Druck (deterministisch aus Chain + Diff berechnet), 'climax_weight' die Schwelle für ARC_CLIMAX. Port aus lore_arcs.json, erweitert um Gewichtsmodell.",
+  "active": "a1",
+  "arcs": {
+    "a1": {
+      "id": "a1",
+      "name": "Der erste Stein",
+      "version": "v0.1.0",
+      "theme": "Genesis des CommitLayer in SnipWar — deterministisch, GDScript, Layered Monolith. Kein XBridge-Legacy-Code.",
+      "span": "2026-08-26 → heute",
+      "status": "active",
+      "weight": 0.0,
+      "climax_weight": 3.0
+    }
+  }
+}

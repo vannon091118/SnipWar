@@ -1,9 +1,25 @@
 #!/bin/sh
 set -eu
 
+repo_root=$(git rev-parse --show-toplevel)
 branch=$(git symbolic-ref --quiet --short HEAD) || {
 	printf 'Automatic push skipped: HEAD is detached.\n' >&2
 	exit 1
 }
+
+if [ -n "${GODOT_BIN:-}" ]; then
+	godot_bin=$GODOT_BIN
+else
+	godot_bin=$(command -v godot || command -v godot4 || true)
+fi
+
+# DOKI-Finalize MUSS vor dem Push laufen (Chain-Zustand aktuell).
+# Fehler hier = kein Push (Chain bleibt konsistent).
+if [ -f "$repo_root/scripts/doki/doki.gd" ] && [ -n "$godot_bin" ]; then
+	if ! "$godot_bin" --headless --path "$repo_root" --script res://scripts/doki/doki.gd -- finalize --repo "$repo_root"; then
+		printf 'DOKI-Finalize fehlgeschlagen — Push abgebrochen. Läufe `doki repair`.\n' >&2
+		exit 1
+	fi
+fi
 
 git push origin "HEAD:$branch"

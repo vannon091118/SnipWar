@@ -1,0 +1,33 @@
+{
+	"commits": {},
+	"entities": {
+		"C--001": {
+			"first_p": 11,
+			"history": [
+				{
+					"lines": [
+						182
+					],
+					"p_id": 11
+				}
+			],
+			"id": "C--001",
+			"last_p": 11,
+			"name": "build_subject",
+			"path": "scripts/doki/prompt/voice_composer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"F--001": {
+			"first_p": 11,
+			"history": [],
+			"id": "F--001",
+			"last_p": 11,
+			"name": "voice_composer.gd.uid",
+			"path": "scripts/doki/prompt/voice_composer.gd.uid",
+			"status": "created",
+			"type": "file"
+		}
+	},
+	"version": 2.0
+}

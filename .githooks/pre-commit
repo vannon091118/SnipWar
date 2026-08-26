@@ -16,4 +16,13 @@ if [ -z "$godot_bin" ] || [ ! -x "$godot_bin" ]; then
 	exit 1
 fi
 
+# 1) Bestehendes Preflight-Gate
 "$godot_bin" --headless --path "$repo_root" --script res://scripts/preflight.gd
+
+# 2) DOKI-Gate (nur wenn initialisiert)
+if [ -f "$repo_root/scripts/doki/doki.gd" ]; then
+	if ! "$godot_bin" --headless --path "$repo_root" --script res://scripts/doki/doki.gd -- gate --repo "$repo_root"; then
+		printf '\nDOKI-Gate blockiert den Commit — Ablauf: git add → doki prepare → doki finish → git commit -F .commit_msg.txt\n' >&2
+		exit 1
+	fi
+fi

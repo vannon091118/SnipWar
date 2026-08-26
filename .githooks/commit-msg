@@ -2,35 +2,25 @@
 set -eu
 
 message_file=$1
-missing=0
-files=$(git diff --cached --name-only --diff-filter=ACDMRTUXB)
+repo_root=$(git rev-parse --show-toplevel)
 
-if [ -z "$files" ]; then
+if [ -n "${GODOT_BIN:-}" ]; then
+	godot_bin=$GODOT_BIN
+else
+	godot_bin=$(command -v godot || command -v godot4 || true)
+fi
+
+# Der awk-Begründungszeilen-Check ist entfallen:
+# DOKI generiert die Begründungszeilen maschinell im .commit_msg.txt.
+
+if [ -z "$godot_bin" ] || [ ! -x "$godot_bin" ]; then
 	exit 0
 fi
 
-while IFS= read -r file; do
-	[ -z "$file" ] && continue
-	if ! awk -v file="$file" '
-		{
-			prefix = "- " file ":"
-			if (index($0, prefix) == 1) {
-				reason = substr($0, length(prefix) + 1)
-				if (reason ~ /[[:alpha:]]/ && reason ~ /[.!?][[:space:]]*$/)
-					found = 1
-			}
-		}
-		END { exit(found ? 0 : 1) }
-	' "$message_file"; then
-		printf 'Fehlende Dateibegründung: %s\n' "$file" >&2
-		missing=1
+# Erneute Verifikation der Message (Checks 1-9, keine Nebenwirkungen).
+if [ -f "$repo_root/scripts/doki/doki.gd" ]; then
+	if ! "$godot_bin" --headless --path "$repo_root" --script res://scripts/doki/doki.gd -- verify-only "$message_file" --repo "$repo_root"; then
+		printf '\nDOKI-Verify blockiert den Commit — die Message hat harte Fehler (Checks 7-9).\n' >&2
+		exit 1
 	fi
-done <<EOF
-$files
-EOF
-
-if [ "$missing" -ne 0 ]; then
-	printf '\nJede gestagte Datei braucht eine eigene Begründungszeile:\n' >&2
-	printf '%s\n' '- pfad/zur/datei: Dieser Satz begründet die Änderung.' >&2
-	exit 1
 fi

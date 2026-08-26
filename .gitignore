@@ -23,3 +23,7 @@ godot/
 *.zip.*
 /_mcp_*
 /_ux_report_*
+
+# DOKI CommitLayer — transiente Flow-Artefakte (nie committen)
+/.doki/
+/.commit_msg.txt

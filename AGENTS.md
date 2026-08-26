@@ -48,13 +48,41 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd --filter=conc
 **V2 Features:** Auto-Discovery, Phase-Split (Pure/Scene), Fail-Fast mit Summary, Isolation Warnings.
 **Legacy V1:** `scripts/legacy/preflight_v1.gd` — archiviert, nicht aktiv.
 
-### 4. Commit-Workflow (Hooks sind aktiv!)
+### 4. Commit-Workflow (Hooks aktiv, DOKI CommitLayer als Tor!)
 ```bash
-git add <datei1> <datei2> ...           # NIEMALS git add -A / .
-git commit -m "type: kurzer titel" \
-  -m "- pfad/datei1: Begründung." \
-  -m "- pfad/datei2: Begründung."
-# pre-commit führt Preflight aus → bei FAIL: fixen, neu stagen, commit wiederholen
+# JEDER Commit läuft durch den DOKI-Flow (sonst blockt pre-commit):
+git add <datei1> <datei2> ...                 # NIEMALS git add -A / .
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- prepare "<impuls>"
+#   → liest .doki/prompt.txt: Narrator + Mood + Composite (deterministisch)
+#   → Agent schreibt den Commit-Body in der Rolle des Narrators (Fließtext)
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- finish --body-file .doki/narrator_body.md
+#   → 9 Checks (1-6 weich, 7-9 HART), schreibt .commit_msg.txt + staged Doku-Artefakte
+git commit -F .commit_msg.txt                  # Hook re-verifiziert + finalize/push automatisch
+# Repair nach rebase/amend/Crash:  doki repair
+```
+**Begründungszeilen** (`- pfad/datei: Grund.`) erzeugt **DOKI maschinell** im `finish` — nicht mehr manuell schreiben.
+**Verbotene Direkt-Commits:** `git commit -m` ohne DOKI-Flow → pre-commit Hook blockt (Exit 1).
+**pre-commit führt zusätzlich Preflight aus** → bei FAIL: fixen, neu stagen, commit wiederholen.
+
+### 5. DOKI CommitLayer — Architektur (Separation of Concerns)
+- **Reines Commit-Gate:** DOKI ist eine eigenständige Komponente unter `scripts/doki/`.
+  Es hat **KEINEN Kontakt zu MCP, Nipper, Agent-Systemen oder Spiel-Logik** —
+  keine Imports, keine Autoloads, keine Signale. Einzige Schnittstellen: Git-Befehle
+  (`DOKI_GitHelper`) und eigene Dateien (`.doki/`, `narrative_chain.json`, `change_index.json`,
+  `CHANGELOG.md`, `.commit_msg.txt`, `.githooks/`).
+- **Schichten (inward-only):** `core` (Rng/Verifier) ← `chain` (Stores) ← `character` ← `prompt` ← `orchestration` (Flows)
+- **Determinismus:** Composite aus Djb2+XorShift128+SplitMix (Seed = Chain + TreeHash + DiffHash + Impuls).
+  Kein Zeit-/Zufalls-Input → gleicher Zustand + gleicher Impuls = gleicher Narrator/Mood.
+- **Zustandsmaschine:** `.doki/session.json` — `idle → prepared (prepare) → verified (finish) → idle (finalize)`.
+- **9 Checks:** 1-6 weich (Token, Impuls, Storytelling, Narrator, Composite, Cross-Narrator),
+  7-9 HARTER BLOCK (Kausalität, DocSync, ChainAudit inkl. RNG-Replay).
+- **Full-Ref:** `scripts/doki/README.md` | CLI: `doki init|prepare|finish|verify-only|finalize|repair|status|gate`
+- **Kernkommandos:**
+```bash
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- init --seed-last 10   # Genesis + letzte 10 Commits als Chain-Vorgeschichte
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- status
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki_selfcheck.gd                # 35 Regressionstests
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki_story_test.gd               # 5-Commits-E2E (NUR im Test-Worktree!)
 ```
 
 ---
@@ -152,6 +180,7 @@ ConceptIndex.new().by_domain("ships")
 | **Save/Load** | `save_game_service.gd`, `run_save_data.gd`, `game_state.gd`, `scripts/state/domains/*`, `seeded_layout.gd`, `pause_menu.gd`, `main_menu.gd`, `preflight.gd` |
 | **ConceptIndex & Suche** | `concept_index.gd`, `constraint_concept_index.gd`, `mechanic_registry.gd`, `scenario_loader.gd`, `scenario_snapshot.gd`, `preflight.gd` |
 | **Global Search** | `global_search.gd`, `AGENTS.md` |
+| **DOKI CommitLayer** | `scripts/doki/**`, `narrative_chain.json`, `change_index.json`, `CHANGELOG.md`, `.githooks/pre-commit`, `.githooks/commit-msg`, `.githooks/post-commit`, `AGENTS.md`, `scripts/concept_index.gd` |
 
 ---
 
@@ -166,6 +195,8 @@ ConceptIndex.new().by_domain("ships")
 - Neue `class_name` → Editor-Scan: `$GODOT_BIN --headless --path . --editor --quit`
 - `Node.name` = `StringName` → für String-Ops: `String(node.name)`
 - `class_name` als Parametername **verboten** (Parser-Fehler) → `cls_name` nutzen
+- Instanz-Methode `func load()` **verboten** (kollidiert mit globalem `load(path)`) → `read()` nutzen
+- `OS.is_stdin_connected()` existiert in 4.7 NICHT → stdin nur mit explizitem `--stdin` Flag
 - `is_instance_valid()` unzuverlässig bei gerade `free()` → `v.get_class()` crasht
 - `StreamPeerTCP.get_data()` → `Array[Error, Daten]`, nicht `PackedByteArray`
 - `RefCounted` hat **kein** `get_node_or_null()` → `Engine.get_main_loop().root.get_node_or_null()`
@@ -198,3 +229,4 @@ ConceptIndex.new().by_domain("ships")
 - `VISION.md` — Spielkreislauf, Layer-Details
 - `scripts/testing/SCENARIO_LOADER_SPEC.md` — ScenarioLoader API
 - `addons/gdscript_mcp/` — MCP-Remote-Testing (E2E, Playthrough-Archiv)
+- `scripts/doki/README.md` — DOKI CommitLayer (Commit-Gate, Flow, Checks, Recovery)
