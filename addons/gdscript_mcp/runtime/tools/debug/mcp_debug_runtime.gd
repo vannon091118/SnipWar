@@ -14,11 +14,11 @@ static func get_event_log(limit: int = 100, filter_str: String = "") -> Dictiona
 			# Delegate to adapter for normalized entries
 			return _get_event_log_via_adapter(adapter, limit, filter_str)
 
-	# Fallback: read raw entries from /root/EventLog (project-specific path).
+	# Fallback: discover a conventional EventLog node, or configure its path.
 	var rt: Window = _get_root()
 	if not rt:
 		return {"error": "No scene tree"}
-	var event_log: Object = rt.get_node_or_null(NodePath("/root/EventLog"))
+	var event_log: Object = _find_named_node(rt, "EventLog")
 	if not event_log:
 		return {"error": "EventLog autoload not found — register a McpProjectAdapter for cross-project support"}
 
@@ -47,7 +47,7 @@ static func _get_event_log_via_adapter(adapter, limit: int, filter_str: String) 
 	var rt: Window = _get_root()
 	if not rt:
 		return {"error": "No scene tree"}
-	var event_log: Object = rt.get_node_or_null(NodePath("/root/EventLog"))
+	var event_log: Object = _find_named_node(rt, "EventLog")
 	if event_log == null or not event_log.has_method("get_entries"):
 		return {"error": "EventLog not accessible"}
 	var raw: Array = event_log.get_entries()
@@ -65,11 +65,21 @@ static func _get_event_log_via_adapter(adapter, limit: int, filter_str: String) 
 	return {"entries": entries, "count": entries.size(), "truncated": entries.size() >= limit}
 
 
+static func _find_named_node(root: Node, node_name: String) -> Node:
+	var configured_path := str(ProjectSettings.get_setting("application/mcp/%s_node" % node_name.to_lower(), ""))
+	if configured_path.begins_with("/"):
+		var configured := root.get_node_or_null(NodePath(configured_path))
+		if configured != null:
+			return configured
+	return root.find_child(node_name, true, false)
+
+
 static func _get_project_adapter():
 	var rt: Window = _get_root()
 	if not rt:
 		return null
-	return rt.get_node_or_null("/root/McpProjectAdapter")
+	var configured_path := str(ProjectSettings.get_setting("application/mcp/project_adapter_node", "/root/McpProjectAdapter"))
+	return rt.get_node_or_null(NodePath(configured_path)) if configured_path.begins_with("/") else null
 
 
 static func get_object_counts() -> Dictionary:

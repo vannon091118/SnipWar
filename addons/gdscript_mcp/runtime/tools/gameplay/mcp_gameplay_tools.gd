@@ -44,9 +44,24 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 # ─── Implementations ────────────────────────────────────────────
 
 func _get_gs() -> Node:
+	var root := _get_root()
+	if root == null:
+		return null
+	var configured_path := str(ProjectSettings.get_setting("application/mcp/game_state_node", ""))
+	if configured_path.begins_with("/"):
+		var configured := root.get_node_or_null(NodePath(configured_path))
+		if configured != null:
+			return configured
+	var direct := root.get_node_or_null("/root/GameState")
+	if direct != null:
+		return direct
+	return root.find_child("GameState", true, false)
+
+
+func _get_root() -> Window:
 	var ml: Object = Engine.get_main_loop()
 	if ml is SceneTree:
-		return (ml as SceneTree).root.get_node_or_null("/root/GameState")
+		return (ml as SceneTree).root
 	return null
 
 
@@ -80,10 +95,7 @@ func _get_planet_field() -> Node:
 	var root: Window = (ml as SceneTree).root
 	if root == null:
 		return null
-	var pf: Node = root.get_node_or_null("/root/World/PlanetField")
-	if pf != null:
-		return pf
-	return root.find_child("PlanetField", true, false)
+	return _find_named_node(root, "PlanetField")
 
 
 func _get_worker_manager() -> Node:
@@ -93,10 +105,7 @@ func _get_worker_manager() -> Node:
 	var root: Window = (ml as SceneTree).root
 	if root == null:
 		return null
-	var wm: Node = root.get_node_or_null("/root/World/PlanetField/WorkerManager")
-	if wm != null:
-		return wm
-	return root.find_child("WorkerManager", true, false)
+	return _find_named_node(root, "WorkerManager")
 
 
 func _faction_query(planet_id: String) -> Dictionary:
@@ -150,7 +159,7 @@ func _planet_info(planet_id: String) -> Dictionary:
 	var ml: Object = Engine.get_main_loop()
 	if not (ml is SceneTree):
 		return {"error": "No scene tree"}
-	var pf: Node = (ml as SceneTree).root.get_node_or_null("/root/World/PlanetField")
+	var pf: Node = _find_named_node((ml as SceneTree).root, "PlanetField")
 	if pf == null:
 		return {"error": "PlanetField not found"}
 	var all_planets: Array = []
@@ -324,6 +333,15 @@ func _state_summary(faction: String) -> Dictionary:
 
 
 # ─── Helpers ────────────────────────────────────────────────────
+
+func _find_named_node(root: Node, node_name: String) -> Node:
+	var configured_path := str(ProjectSettings.get_setting("application/mcp/%s_node" % node_name.to_lower(), ""))
+	if configured_path.begins_with("/"):
+		var configured := root.get_node_or_null(NodePath(configured_path))
+		if configured != null:
+			return configured
+	return root.find_child(node_name, true, false)
+
 
 ## Rekursive Suche nach Planet-Objekten im Szenenbaum.
 ## Planeten sind Node2D-Container, die eigentlichen Planet-Objekte

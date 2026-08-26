@@ -1,7 +1,7 @@
 # MCP Agent Workflow — Autonome Playtesting-Umgebung
 
 **Stand:** 2026-08-26
-**Ziel:** Unkomplizierte, umfassende Autonomie für Agents, die mit jeder Benutzung schneller und präziser wird.
+**Ziel:** Unkomplizierte, umfassende Autonomie für Agents, die mit jeder Benutzung schneller und präziser wird — unabhängig vom konkreten Godot-Projekt.
 
 > **LIVE-SPIELERREGEL:** Sichtbares Gameplay wird ausschließlich als einzelne MCP-Atome ausgeführt. Ein Atom-Script macht genau einen MCP-Tool-Call. Der Agent liest nach jedem Call die Live-Oberfläche und entscheidet den nächsten Zug erst danach. Keine direkte GameState-Mutation, kein `runtime_goal_sequence`, kein `runtime_goal_play`, kein `runtime_chain_run` und kein vorgeplanter Gesamt-Runner für sichtbare Spielerläufe. Der vollständige Vertrag, die Atom-Registry und die Handoff-Findings stehen in `PLAYTEST_HANDOFF.md`.
 
@@ -34,9 +34,9 @@ Jeder Agent speichert seine funktionierenden Scripts atomar, kategorisiert sie u
 
 ### Schritt 2: Projekt analysieren (30 Sekunden)
 ```
-runtime_analyze_project   → Szenen, Autoloads, GameState-API
+runtime_analyze_project   → Szenen, Autoloads und verfügbare MCP-/State-APIs
 runtime_analyze_input     → _input/_unhandled_input Treffer
-runtime_analyze_game_state → Öffentliche GameState-Methoden
+runtime_analyze_game_state → konfigurierte oder erkannte State-Skripte/öffentliche Methoden
 ```
 **Frage:** "Welche Lücken gibt es die mein Archiv nicht abdeckt?"
 

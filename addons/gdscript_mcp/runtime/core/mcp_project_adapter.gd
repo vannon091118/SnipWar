@@ -100,23 +100,21 @@ func _get_root() -> Window:
 
 
 func _get_game_state() -> Node:
-	var root := _get_root()
-	if root == null:
-		return null
-	var state := root.get_node_or_null("/root/GameState")
-	if state != null:
-		return state
-	return root.find_child("GameState", true, false)
+	return _find_autoload_or_named_node("GameState")
 
 
 func _get_event_log() -> Node:
+	return _find_autoload_or_named_node("EventLog")
+
+
+func _find_autoload_or_named_node(node_name: String) -> Node:
 	var root := _get_root()
 	if root == null:
 		return null
-	var event_log := root.get_node_or_null("/root/EventLog")
-	if event_log != null:
-		return event_log
-	return root.find_child("EventLog", true, false)
+	var direct := root.get_node_or_null("/root/" + node_name)
+	if direct != null:
+		return direct
+	return root.find_child(node_name, true, false)
 
 
 func _canonical(value: Variant) -> Variant:

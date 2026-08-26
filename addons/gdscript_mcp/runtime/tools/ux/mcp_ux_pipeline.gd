@@ -493,7 +493,8 @@ func _read_project_event_log(adapter) -> Array:
 	var root := (main_loop as SceneTree).root
 	if root == null:
 		return []
-	var event_log: Node = root.get_node_or_null("/root/EventLog")
+	var configured_path := str(ProjectSettings.get_setting("application/mcp/event_log_node", ""))
+	var event_log: Node = root.get_node_or_null(NodePath(configured_path)) if configured_path.begins_with("/") else root.find_child("EventLog", true, false)
 	if event_log == null:
 		return []
 	if event_log.has_method("get_entries"):
@@ -510,7 +511,8 @@ func _get_project_adapter():
 	var root := (main_loop as SceneTree).root
 	if root == null:
 		return null
-	return root.get_node_or_null("/root/McpProjectAdapter")
+	var configured_path := str(ProjectSettings.get_setting("application/mcp/project_adapter_node", "/root/McpProjectAdapter"))
+	return root.get_node_or_null(NodePath(configured_path)) if configured_path.begins_with("/") else null
 
 
 func _analyze_pixels(image: Image) -> Dictionary:

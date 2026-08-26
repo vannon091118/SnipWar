@@ -111,17 +111,17 @@ static func _list_autoloads() -> Array:
 # ─── GameState API ──────────────────────────────────────────────
 
 static func _analyze_game_state() -> Dictionary:
-	var gs_files := ["res://scripts/state/game_state.gd"] as Array
-	# Also check domains
-	var da := DirAccess.open("res://scripts/state/domains")
-	if da != null:
-		da.list_dir_begin()
-		var entry := da.get_next()
-		while entry != "":
-			if entry.ends_with(".gd"):
-				gs_files.append("res://scripts/state/domains/" + entry)
-			entry = da.get_next()
-		da.list_dir_end()
+	var gs_files: Array = []
+	var configured_state_path := str(ProjectSettings.get_setting("application/mcp/game_state_script", ""))
+	if configured_state_path.begins_with("res://") and configured_state_path.ends_with(".gd"):
+		gs_files.append(configured_state_path)
+	var autoloads := _list_autoloads()
+	for autoload in autoloads:
+		var autoload_path := str(autoload.get("path", ""))
+		if autoload_path.ends_with(".gd") and autoload_path not in gs_files:
+			gs_files.append(autoload_path)
+	if gs_files.is_empty():
+		gs_files.append_array(_find_named_scripts("game_state"))
 
 	var public_methods: Array = []
 	var public_vars: Array = []
@@ -151,6 +151,14 @@ static func _analyze_game_state() -> Dictionary:
 
 
 # ─── Custom MCP Tools ───────────────────────────────────────────
+
+static func _find_named_scripts(fragment: String) -> Array:
+	var matches: Array = []
+	for file in _list_gd_files():
+		if str(file).get_file().to_lower().contains(fragment.to_lower()):
+			matches.append(file)
+	return matches
+
 
 static func _list_custom_mcp_tools() -> Array:
 	var tools: Array = []
@@ -192,7 +200,7 @@ static func _find_files_recursive(da: DirAccess, result: Array, depth: int, max_
 			continue
 		var full := da.get_current_dir().path_join(entry)
 		if da.current_is_dir():
-			if entry.begins_with(".") or entry in ["addons", "test"]:
+			if entry.begins_with(".") or entry in [".godot", "addons", "test", "tests", "user_data"]:
 				entry = da.get_next()
 				continue
 			var sub := DirAccess.open(full)

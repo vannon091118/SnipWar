@@ -374,12 +374,12 @@ func _load_runtime_modules() -> void:
 		else:
 			# Editor-Start-Race: load() liefert das Skript ggf. vor Abschluss des
 			# asynchronen Skriptserver-Compiles (Cache-Eintrag vergeben, aber noch
-			# nicht kompilierbar). Frisch aus dem Quelltext kompilieren —
-			# cache-unabhängig und deterministisch.
-			var fresh := GDScript.new()
-			fresh.source_code = FileAccess.get_file_as_string(RUNTIME_TOOLS_PATH)
-			fresh.resource_path = RUNTIME_TOOLS_PATH
-			if fresh.reload() == OK and fresh.can_instantiate():
+			# nicht kompilierbar). CACHE_MODE_IGNORE lädt frisch aus dem Quelltext —
+			# deterministisch und ohne die "Another resource is loaded"-Kollision,
+			# die GDScript.new() + manuelles resource_path erzeugt (das Skript ist
+			# über class_name McpRuntimeTools bereits im ResourceCache registriert).
+			var fresh: Resource = ResourceLoader.load(RUNTIME_TOOLS_PATH, "", ResourceLoader.CACHE_MODE_IGNORE)
+			if fresh != null and fresh.can_instantiate():
 				_runtime_tools = fresh.new()
 				var fresh_defs = fresh.get_tool_defs()
 				if fresh_defs is Array:

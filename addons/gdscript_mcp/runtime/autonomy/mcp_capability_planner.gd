@@ -481,7 +481,8 @@ func _resolve_session_id() -> String:
 func _resolve_project_id() -> String:
 	if _project_adapter != null:
 		return str(_project_adapter.project_id)
-	return str(ProjectSettings.get_setting("application/config/name", "snipwar"))
+	var configured_name := str(ProjectSettings.get_setting("application/config/name", "godot_project"))
+	return configured_name.strip_edges().to_lower().replace(" ", "_") if configured_name != "" else "godot_project"
 
 
 func _refresh_catalog() -> void:
@@ -625,9 +626,15 @@ func _tool_by_name(name: String) -> Dictionary:
 
 func _resolve_project_adapter() -> Node:
 	var tree := Engine.get_main_loop()
-	if tree is SceneTree:
-		return (tree as SceneTree).root.get_node_or_null("/root/McpProjectAdapter")
-	return null
+	if not (tree is SceneTree):
+		return null
+	var root := (tree as SceneTree).root
+	var configured_path := str(ProjectSettings.get_setting("application/mcp/project_adapter_node", "/root/McpProjectAdapter"))
+	if configured_path.begins_with("/"):
+		var configured := root.get_node_or_null(NodePath(configured_path))
+		if configured != null:
+			return configured
+	return root.find_child("McpProjectAdapter", true, false)
 
 
 func _is_game_running() -> bool:
@@ -659,7 +666,7 @@ func _observe_environment() -> Dictionary:
 		"renderer": "visible" if _is_visible_renderer() else "unavailable",
 		"game_running": _is_game_running(),
 		"session_id": _lifecycle.status().get("session_id", "") if _lifecycle != null else "",
-		"project_id": _project_adapter.project_id if _project_adapter != null else "",
+		"project_id": str(_project_adapter.get("project_id")) if _project_adapter != null and _project_adapter.get("project_id") != null else _project_id,
 	}
 
 

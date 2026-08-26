@@ -1,9 +1,11 @@
 # GDScript MCP Bridge — Index & Dokumentation
 
 **MCP-Protokoll** (Model Context Protocol, JSON-RPC 2.0) über stdio/TCP.
-Macht dein laufendes Godot-Projekt für externe Tools (KI-Agents, Test-Frameworks)
-fernsteuerbar — **Scope: Remote-Testing des laufenden Spiels** (Live-Playthrough,
-UI/UX-Vision, Playability-Tests mit sichtbaren Aktionen).
+Macht jedes Godot-4.x-Projekt für externe Tools (KI-Agents, Test-Frameworks)
+fernsteuerbar — **Scope: Editor-Inspektion sowie Remote-Testing eines sichtbaren
+laufenden Spiels** (Live-Playthrough, UI/UX-Vision, Playability-Tests). Das Add-on
+enthält keine Spiel- oder SnipWar-Logik; projektspezifische State-/Log-Brücken sind
+optional und werden über `application/mcp/*` konfiguriert oder automatisch entdeckt.
 
 ---
 
@@ -102,11 +104,32 @@ Verstöße werden als `contract_violations` in `runtime_mcp_status` gezählt und
 Lifecycle-Event (Kategorie `contract`) protokolliert — kein Endlos-Contract-Bruch.
 **Headless** verweigert der Server weiterhin absolut (kein Renderer → kein MCP).
 
+## Projektagnostische Integration
+
+Das Add-on funktioniert ohne fest verdrahtete Projekt-ID, Szenenpfade oder
+`GameState`-Implementierung. Optional können Projekte in `project.godot` folgende
+Settings setzen:
+
+```ini
+[application]
+mcp/game_state_node="/root/MyGameState"
+mcp/event_log_node="/root/MyEventLog"
+mcp/project_adapter_node="/root/MyMcpProjectAdapter"
+mcp/game_state_script="res://scripts/my_game_state.gd"
+```
+
+Ohne diese Settings verwendet MCP nur generische Godot-Funktionen und sucht
+konventionelle Node-Namen (`GameState`, `EventLog`, `PlanetField`,
+`WorkerManager`) als best-effort Fallback. Die Projekt-ID wird aus
+`application/config/name` abgeleitet; es gibt keinen Default auf einen konkreten
+Spielnamen.
+
 ## Editor ↔ Ingame-Wechsel
 
 - `editor_run_project` — startet das Projekt aus dem Editor; `with_mcp=true`
-  öffnet das Spiel als separaten Prozess mit Runtime-MCP (Port 9090). Damit
-  wechselt ein Agent per Tool-Call von Edit- zu Ingame-Session.
+  aktiviert Runtime-MCP im selben Godot-Prozess (in-process). Ein eigenständiger
+  Spielstart kann alternativ über `-- --mcp` erfolgen; Ports sind konfigurierbar
+  und nur Defaults, keine Projektannahmen.
 - `editor_logs_read` — Editor-Session-Logs (Lifecycle-Cursor) + optionaler
   Engine-Log-Tail (`--log-file` beim Editor-Start), analog zu HiGodots `logs_read`.
 - Schreib-Gate vereinheitlicht: „Allow editor write actions" im Dock aktiviert

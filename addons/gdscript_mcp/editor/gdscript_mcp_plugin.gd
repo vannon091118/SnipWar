@@ -675,12 +675,14 @@ func _boot_runtime_server_retry(attempt: int) -> void:
 
 
 func _runtime_tools_ready() -> bool:
-	# Frisch aus Quelltext kompilieren: unabhängig vom Editor-Skriptserver-Cache
-	# und liefert den echten Compile-Status des Skripts.
-	var script := GDScript.new()
-	script.source_code = FileAccess.get_file_as_string(RUNTIME_TOOLS_PATH)
-	script.resource_path = RUNTIME_TOOLS_PATH
-	return script.reload() == OK and script.can_instantiate()
+	# Frisch aus dem Quelltext laden und kompilieren: CACHE_MODE_IGNORE umgeht
+	# den Editor-Skriptserver-Cache und liefert den echten Compile-Status.
+	# Kein GDScript.new() + manuelles resource_path setzen: sobald das Skript
+	# bereits im ResourceCache registriert ist (class_name McpRuntimeTools),
+	# kollidiert das bei jedem Editor-Start mit "Another resource is loaded
+	# from path ... (possible cyclic resource inclusion)".
+	var script: Resource = ResourceLoader.load(RUNTIME_TOOLS_PATH, "", ResourceLoader.CACHE_MODE_IGNORE)
+	return script != null and script.can_instantiate()
 
 
 func _read_dock_profile() -> String:
