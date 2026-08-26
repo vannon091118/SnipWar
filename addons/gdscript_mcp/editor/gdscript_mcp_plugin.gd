@@ -13,6 +13,18 @@ const RUNTIME_TOOLS_PATH := "res://addons/gdscript_mcp/runtime/tools/runtime/mcp
 const DEFAULT_PORT = 9091
 
 const RUNTIME_PORT := 9090
+const MCP_REGISTRY_SCRIPT := "res://addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd"
+
+# Runtime-Auto-Boot in zwei Phasen: schnell (0,5 s) für normale Starts, danach
+# langsame Hintergrund-Retries (5 s) OHNE hartes Aufgeben. Ein kalter
+# Editor-Start nach einem großen Addon-/Script-Change kann die asynchrone
+# Skriptserver-Kompilierung locker über 20 s hinziehen — mcp_runtime_tools.gd
+# ist bis dahin nicht instantierbar. Das alte 40-Versuche-Aufgeben ließ den
+# Runtime-Server dann für die gesamte Editor-Session tot, obwohl der Code
+# längst kompiliert war (beobachtet: 9090 nach Editor-Neustart nie gebootet).
+const RUNTIME_BOOT_FAST_INTERVAL := 0.5
+const RUNTIME_BOOT_FAST_MAX_ATTEMPTS := 40
+const RUNTIME_BOOT_SLOW_INTERVAL := 5.0
 
 var _server_instance = null
 var _runtime_server_instance = null
@@ -83,13 +95,21 @@ func _on_config_changed(config: Dictionary) -> void:
 	if _is_running and config.get("auto_restart", true):
 		_stop_server()
 		call_deferred("_start_server_internal", config)
+	elif not _is_running and config.get("auto_start", false):
+		# Auto-Start wird sonst nur beim Editor-Start ausgewertet — ein mitten
+		# in der Session aktivierter Auto-Start startet den Editor-Server sofort.
+		call_deferred("_start_server_internal", config)
 	# In-process-Runtime-Server: Das Schreib-Gate (AllowWrites im Dock) soll
 	# ohne Editor-Neustart greifen — bei Änderung Server neu konfigurieren.
 	# Der Dock verbindet sich selbsttätig neu (_process-Reconnect).
 	var allow_writes := bool(config.get("editor_write_enabled", false))
 	if _runtime_server_running and allow_writes != _runtime_write_enabled:
 		_stop_runtime_server_internal()
-		call_deferred("_boot_runtime_server_retry", 0)
+	# Boot immer anstoßen (idempotent, frühzeitiger Return wenn läuft): deckt
+	# auch den Fall ab, dass die schnelle Boot-Phase ablief, bevor der Editor
+	# die Skripte fertig kompiliert hatte — jede Dock-Interaktion gibt dem
+	# Runtime-Boot eine neue Chance, statt bis zum Editor-Neustart zu warten.
+	call_deferred("_boot_runtime_server_retry", 0)
 
 func _start_server_internal(config: Dictionary) -> void:
 	if _is_running:
@@ -656,18 +676,31 @@ func _on_runtime_server_log(message: String, is_error: bool = false) -> void:
 
 
 func _boot_runtime_server_retry(attempt: int) -> void:
+	# Headless ist im MCP absolut verpönt: Der Runtime-Server verweigert jeden
+	# Start ohne sichtbaren Renderer (start_server → "requires a visible
+	# renderer"). Ohne diesen Guard würde der Hintergrund-Retry in einer
+	# Headless-Session endlos laufen und nie Erfolg haben können.
+	if OS.has_feature("headless"):
+		return
+	# Stale-State-Guard: Nur wenn die Instanz wirklich lebt, gilt der Server als
+	# gestartet — sonst Flag zurücksetzen und weiter booten.
 	if _runtime_server_running:
-		return
-	if attempt >= 40:
-		_push_error("Runtime-MCP (in-process) konnte nach mehreren Versuchen nicht starten")
-		return
+		if _runtime_server_instance != null and is_instance_valid(_runtime_server_instance) and _runtime_server_instance.has_method("is_running") and bool(_runtime_server_instance.is_running()):
+			return
+		_runtime_server_running = false
 	# Der load()-Cache des Editors kann mcp_runtime_tools.gd transient als
 	# "nicht instanziierbar" liefern (asynchroner Skriptserver-Compile). Der
 	# Check kompiliert deshalb frisch aus dem Quelltext — cache-unabhängig.
 	# Erst wenn das Skript wirklich parse-bar ist, startet der Server (sonst
-	# fehlen runtime_* Tools still).
+	# fehlen runtime_* Tools still). Zwei Phasen: 0,5 s für den Normalfall,
+	# danach 5 s im Hintergrund — ohne permanentes Aufgeben.
+	var interval := RUNTIME_BOOT_FAST_INTERVAL
+	if attempt >= RUNTIME_BOOT_FAST_MAX_ATTEMPTS:
+		interval = RUNTIME_BOOT_SLOW_INTERVAL
+	if attempt == RUNTIME_BOOT_FAST_MAX_ATTEMPTS:
+		_push_log("Runtime-MCP: Skriptserver kompiliert noch — Hintergrund-Retry alle %d s läuft weiter." % int(RUNTIME_BOOT_SLOW_INTERVAL))
 	if attempt > 0:
-		await get_tree().create_timer(0.5, true).timeout
+		await get_tree().create_timer(interval, true).timeout
 	if _runtime_tools_ready():
 		if _start_runtime_server_internal():
 			return
@@ -682,7 +715,13 @@ func _runtime_tools_ready() -> bool:
 	# kollidiert das bei jedem Editor-Start mit "Another resource is loaded
 	# from path ... (possible cyclic resource inclusion)".
 	var script: Resource = ResourceLoader.load(RUNTIME_TOOLS_PATH, "", ResourceLoader.CACHE_MODE_IGNORE)
-	return script != null and script.can_instantiate()
+	if script == null or not script.can_instantiate():
+		return false
+	# Auch die Registry selbst muss kompilierbar sein: start_server lädt sie
+	# (get_all_tools → _load_all) — ist sie nicht instantierbar, startet der
+	# Server mit still fehlenden Tools (new() bricht _load_all ab).
+	var registry: Resource = ResourceLoader.load(MCP_REGISTRY_SCRIPT, "", ResourceLoader.CACHE_MODE_IGNORE)
+	return registry != null and registry.can_instantiate()
 
 
 func _read_dock_profile() -> String:

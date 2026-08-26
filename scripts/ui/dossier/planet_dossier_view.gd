@@ -404,7 +404,7 @@ func _locked_reason(upgrade: PlanetUpgradeDefinition) -> String:
 		return "Forschung fehlt"
 	return "Ressourcen fehlen"
 
-func _buy_tooltip(upgrade: PlanetUpgradeDefinition, is_owned: bool, can_buy: bool, state_id: StringName) -> String:
+func _buy_tooltip(upgrade: PlanetUpgradeDefinition, is_owned: bool, _can_buy: bool, state_id: StringName) -> String:
 	if not is_owned:
 		return "Bauen erfordert einen eigenen Planeten."
 	if state_id == UIStatusUtils.STATE_LOCKED:
