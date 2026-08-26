@@ -14,13 +14,12 @@ static func is_allowed_path(path: String, allowed_prefixes: Array = []) -> Dicti
 	var normalized := normalize(path)
 	if normalized == "":
 		return {"ok": false, "reason": "empty path"}
+	if _contains_control_character(normalized):
+		return {"ok": false, "reason": "control characters in path"}
 	if not (normalized.begins_with("res://") or normalized.begins_with("user://")):
 		return {"ok": false, "reason": "only res:// and user:// paths are supported"}
 	if normalized.contains(".."):
 		return {"ok": false, "reason": "path traversal (..) is not allowed"}
-	for part in normalized.split("/"):
-		if part.contains(char(0)) or part.contains("\n") or part.contains("\r"):
-			return {"ok": false, "reason": "control characters in path"}
 	if allowed_prefixes.size() > 0:
 		var allowed := false
 		for prefix in allowed_prefixes:
@@ -31,6 +30,14 @@ static func is_allowed_path(path: String, allowed_prefixes: Array = []) -> Dicti
 		if not allowed:
 			return {"ok": false, "reason": "path outside allowed prefixes: " + str(allowed_prefixes)}
 	return {"ok": true, "path": normalized}
+
+
+static func _contains_control_character(value: String) -> bool:
+	for index in value.length():
+		var codepoint := value.unicode_at(index)
+		if codepoint < 32 or codepoint == 127:
+			return true
+	return false
 
 
 static func is_within_root(path: String, root: String) -> Dictionary:

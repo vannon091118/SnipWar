@@ -16,24 +16,39 @@ static var _cached_snapshot: Dictionary = {}
 static var _cached_frame: int = -1
 
 
-static func build_snapshot() -> Dictionary:
-	# Always build a fresh snapshot — correctness over cache.
+static func build_snapshot(root_path: String = "/root", max_controls: int = 300, max_depth: int = 32, max_nodes: int = 1000) -> Dictionary:
+	# Always build a fresh snapshot — correctness over cache. The caller can
+	# request a bounded scene scope so large games do not flood MCP context.
 	var main_loop := Engine.get_main_loop()
 	if not (main_loop is SceneTree):
 		return {"scene": "unknown", "scene_name": "", "scene_path": "", "controls": [], "control_count": 0}
 	var tree := main_loop as SceneTree
 	var root := tree.root
 	var current := tree.current_scene
+	var scoped_root: Node = root if root_path in ["", ".", "/root"] else root.get_node_or_null(NodePath(root_path))
 	var controls: Array = []
-	if root != null:
-		collect_controls(root, controls, 0)
+	var scroll_containers: Array = []
+	var safe_max_controls := clampi(max_controls, 1, 1000)
+	var safe_max_depth := clampi(max_depth, 1, 48)
+	var safe_max_nodes := clampi(max_nodes, 100, 10000)
+	var traversal_budget := {"nodes": 0}
+	if scoped_root != null:
+		collect_controls(scoped_root, controls, 0, safe_max_depth, safe_max_controls, safe_max_nodes, traversal_budget)
+		collect_scroll_containers(scoped_root, scroll_containers, 0, safe_max_depth, 32, {"nodes": 0}, safe_max_nodes)
 	var scene_name := String(current.name) if current != null else "unknown"
 	var snapshot := {
 		"scene": scene_name_hint(scene_name, controls),
 		"scene_name": scene_name,
 		"scene_path": String(current.get_path()) if current != null else "",
+		"scope_root": String(scoped_root.get_path()) if scoped_root != null else root_path,
 		"controls": controls,
 		"control_count": controls.size(),
+		"scroll_containers": scroll_containers,
+		"truncated": controls.size() >= safe_max_controls,
+		"max_controls": safe_max_controls,
+		"max_depth": safe_max_depth,
+		"nodes_visited": int(traversal_budget.get("nodes", 0)),
+		"max_nodes": safe_max_nodes,
 		"timestamp_ms": Time.get_ticks_msec(),
 	}
 	_cached_frame = Engine.get_process_frames()
@@ -41,9 +56,31 @@ static func build_snapshot() -> Dictionary:
 	return snapshot
 
 
-static func collect_controls(node: Node, controls: Array, depth: int) -> void:
-	if depth > MAX_DEPTH or controls.size() >= MAX_CONTROLS:
+static func collect_scroll_containers(node: Node, result: Array, depth: int, max_depth: int, max_results: int, budget: Dictionary, max_nodes: int) -> void:
+	if depth > max_depth or result.size() >= max_results or int(budget.get("nodes", 0)) >= max_nodes:
 		return
+	budget["nodes"] = int(budget.get("nodes", 0)) + 1
+	if node is ScrollContainer and (node as Control).is_visible_in_tree():
+		var scroll := node as ScrollContainer
+		var rect := scroll.get_global_rect()
+		result.append({
+			"path": String(node.get_path()),
+			"rect": {"x": rect.position.x, "y": rect.position.y, "w": rect.size.x, "h": rect.size.y},
+			"vertical": scroll.vertical_scroll_mode != ScrollContainer.SCROLL_MODE_DISABLED,
+			"horizontal": scroll.horizontal_scroll_mode != ScrollContainer.SCROLL_MODE_DISABLED,
+			"scroll": {"x": scroll.scroll_horizontal, "y": scroll.scroll_vertical},
+			"max_scroll": {"x": scroll.get_h_scroll_bar().max_value if scroll.get_h_scroll_bar() != null else 0.0, "y": scroll.get_v_scroll_bar().max_value if scroll.get_v_scroll_bar() != null else 0.0},
+		})
+	for child in node.get_children():
+		if result.size() >= max_results:
+			break
+		collect_scroll_containers(child, result, depth + 1, max_depth, max_results, budget, max_nodes)
+
+
+static func collect_controls(node: Node, controls: Array, depth: int, max_depth: int, max_controls: int, max_nodes: int, budget: Dictionary) -> void:
+	if depth > max_depth or controls.size() >= max_controls or int(budget.get("nodes", 0)) >= max_nodes:
+		return
+	budget["nodes"] = int(budget.get("nodes", 0)) + 1
 	# CanvasLayer nodes hold their children on a separate visual layer, but
 	# get_children() still returns them — explicit visibility guard ensures
 	# we only collect them when the layer itself is visible.
@@ -85,7 +122,9 @@ static func collect_controls(node: Node, controls: Array, depth: int) -> void:
 	# Always recurse into children — CanvasLayer children are regular Node
 	# children and must be traversed regardless of the parent type.
 	for child in node.get_children():
-		collect_controls(child, controls, depth + 1)
+		if controls.size() >= max_controls:
+			break
+		collect_controls(child, controls, depth + 1, max_depth, max_controls, max_nodes, budget)
 
 
 ## Compact, order-independent fingerprint of the visible control set.

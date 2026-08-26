@@ -211,6 +211,7 @@ func export_file(path_string: String, apply: bool = false, force: bool = false) 
 	var after_hash := PATH_VALIDATOR_SCRIPT.sha256_of_file(normalized)
 	_journal.call("commit", tx_id, after_hash, _session_id)
 	_imports[normalized]["last_export_hash"] = after_hash
+	var barrier: Dictionary = await resource_barrier(normalized)
 	return {
 		"ok": true,
 		"applied": true,
@@ -219,6 +220,7 @@ func export_file(path_string: String, apply: bool = false, force: bool = false) 
 		"before_hash": str(entry.get("origin_hash", "")),
 		"after_hash": after_hash,
 		"validation": validation,
+		"resource_barrier": barrier,
 		"rollback_available": true,
 	}
 
@@ -227,19 +229,95 @@ func export_file(path_string: String, apply: bool = false, force: bool = false) 
 ## (Datei wird nur auf Hash-Ebene geprüft). Fail-closed bei Parse-Fehlern.
 static func validate_text(path: String, content: String) -> Dictionary:
 	var ext := path.get_extension().to_lower()
+	var diagnostics: Array = []
 	if ext == "gd":
 		var script := GDScript.new()
 		script.source_code = content
 		var err := script.reload()
 		if err != OK:
-			return {"ok": false, "error": error_string(err), "check": "gd_parse"}
-		return {"ok": true, "check": "gd_parse"}
+			var err_msg := error_string(err)
+			diagnostics.append({
+				"file": path,
+				"line": 1,
+				"column": 0,
+				"severity": "error",
+				"message": err_msg,
+			})
+			return {
+				"ok": false,
+				"error": err_msg,
+				"check": "gd_parse",
+				"status": "error",
+				"diagnostics": diagnostics,
+			}
+		return {
+			"ok": true,
+			"check": "gd_parse",
+			"status": "complete",
+			"diagnostics": [],
+		}
 	if ext == "json":
-		var parsed = JSON.parse_string(content)
-		if parsed == null:
-			return {"ok": false, "error": "invalid JSON", "check": "json_parse"}
-		return {"ok": true, "check": "json_parse"}
-	return {"ok": true, "check": "none", "skipped": true}
+		var json := JSON.new()
+		var err := json.parse(content)
+		if err != OK:
+			diagnostics.append({
+				"file": path,
+				"line": json.get_error_line(),
+				"column": 0,
+				"severity": "error",
+				"message": json.get_error_message(),
+			})
+			return {
+				"ok": false,
+				"error": json.get_error_message(),
+				"check": "json_parse",
+				"status": "error",
+				"diagnostics": diagnostics,
+			}
+		return {
+			"ok": true,
+			"check": "json_parse",
+			"status": "complete",
+			"diagnostics": [],
+		}
+	return {"ok": true, "check": "none", "status": "skipped", "diagnostics": [], "skipped": true}
+
+
+## Wartet frameweise darauf, dass eine exportierte Ressource / Script
+## im ResourceLoader und Dateisystem ohne Race-Condition bereitsteht.
+static func resource_barrier(path: String, timeout_ms: int = 1500) -> Dictionary:
+	var normalized: String = PATH_VALIDATOR_SCRIPT.normalize(path)
+	var start_ms := Time.get_ticks_msec()
+	var tree := Engine.get_main_loop()
+
+	while Time.get_ticks_msec() - start_ms < timeout_ms:
+		if FileAccess.file_exists(normalized):
+			if normalized.begins_with("res://"):
+				if ResourceLoader.exists(normalized):
+					return {
+						"ok": true,
+						"path": normalized,
+						"settled": true,
+						"duration_ms": Time.get_ticks_msec() - start_ms,
+					}
+			else:
+				return {
+					"ok": true,
+					"path": normalized,
+					"settled": true,
+					"duration_ms": Time.get_ticks_msec() - start_ms,
+				}
+		if tree is SceneTree:
+			await (tree as SceneTree).process_frame
+		else:
+			OS.delay_msec(16)
+
+	return {
+		"ok": false,
+		"path": normalized,
+		"settled": false,
+		"error": "resource_barrier timeout after %d ms" % timeout_ms,
+	}
 
 
 ## PATCH - fail-closed: kein old_text bei 0 oder mehreren Treffern.

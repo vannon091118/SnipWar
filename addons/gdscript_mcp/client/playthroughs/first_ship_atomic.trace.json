@@ -1,0 +1,1246 @@
+{
+  "goal": "erstes schiff bauen",
+  "trace": [
+    {
+      "sequence_index": 0,
+      "action": "baseline: scan",
+      "result": {
+        "controls": [
+          {
+            "center": {
+              "x": 480,
+              "y": 105
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@2",
+            "path": "/root/MainMenu/Content/@Label@2",
+            "rect": {
+              "h": 64,
+              "w": 960,
+              "x": 0,
+              "y": 73
+            },
+            "source": "scene_tree",
+            "text": "SNIPWAR",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 164
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@3",
+            "path": "/root/MainMenu/Content/@Label@3",
+            "rect": {
+              "h": 26,
+              "w": 960,
+              "x": 0,
+              "y": 151
+            },
+            "source": "scene_tree",
+            "text": "EISEN-GRENZE",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 251
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "NewGameButton",
+            "path": "/root/MainMenu/Content/NewGameButton",
+            "pressed": false,
+            "rect": {
+              "h": 48,
+              "w": 240,
+              "x": 360,
+              "y": 227
+            },
+            "source": "scene_tree",
+            "text": "NEUES SPIEL",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 313
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "ContinueButton",
+            "path": "/root/MainMenu/Content/ContinueButton",
+            "pressed": false,
+            "rect": {
+              "h": 48,
+              "w": 240,
+              "x": 360,
+              "y": 289
+            },
+            "source": "scene_tree",
+            "text": "WEITER",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 375
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "QuitButton",
+            "path": "/root/MainMenu/Content/QuitButton",
+            "pressed": false,
+            "rect": {
+              "h": 48,
+              "w": 240,
+              "x": 360,
+              "y": 351
+            },
+            "source": "scene_tree",
+            "text": "BEENDEN",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 458
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@6",
+            "path": "/root/MainMenu/Content/@Label@6",
+            "rect": {
+              "h": 18,
+              "w": 960,
+              "x": 0,
+              "y": 449
+            },
+            "source": "scene_tree",
+            "text": "Strategische Overworld · Flottengefechte · Planetare Eroberung",
+            "type": "Label",
+            "visible": true
+          }
+        ],
+        "count": 2,
+        "interactables": [
+          {
+            "center": {
+              "x": 480,
+              "y": 251
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "NewGameButton",
+            "path": "/root/MainMenu/Content/NewGameButton",
+            "pressed": false,
+            "rect": {
+              "h": 48,
+              "w": 240,
+              "x": 360,
+              "y": 227
+            },
+            "source": "scene_tree",
+            "text": "NEUES SPIEL",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 375
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "QuitButton",
+            "path": "/root/MainMenu/Content/QuitButton",
+            "pressed": false,
+            "rect": {
+              "h": 48,
+              "w": 240,
+              "x": 360,
+              "y": 351
+            },
+            "source": "scene_tree",
+            "text": "BEENDEN",
+            "type": "Button",
+            "visible": true
+          }
+        ],
+        "scene": "main_menu",
+        "scene_path": "/root/MainMenu",
+        "watch_sequence": 0
+      }
+    },
+    {
+      "sequence_index": 1,
+      "action": "baseline: visible text inventory",
+      "result": [
+        {
+          "text": "SNIPWAR",
+          "kind": "label",
+          "interactable": false,
+          "path": "/root/MainMenu/Content/@Label@2"
+        },
+        {
+          "text": "EISEN-GRENZE",
+          "kind": "label",
+          "interactable": false,
+          "path": "/root/MainMenu/Content/@Label@3"
+        },
+        {
+          "text": "NEUES SPIEL",
+          "kind": "button",
+          "interactable": true,
+          "disabled": false,
+          "path": "/root/MainMenu/Content/NewGameButton"
+        },
+        {
+          "text": "WEITER",
+          "kind": "button",
+          "interactable": true,
+          "disabled": true,
+          "path": "/root/MainMenu/Content/ContinueButton"
+        },
+        {
+          "text": "BEENDEN",
+          "kind": "button",
+          "interactable": true,
+          "disabled": false,
+          "path": "/root/MainMenu/Content/QuitButton"
+        },
+        {
+          "text": "Strategische Overworld · Flottengefechte · Planetare Eroberung",
+          "kind": "label",
+          "interactable": false,
+          "path": "/root/MainMenu/Content/@Label@6"
+        }
+      ]
+    },
+    {
+      "sequence_index": 2,
+      "action": "baseline: game state",
+      "result": {
+        "dispatch": {
+          "active": 0,
+          "pending": 0
+        },
+        "faction": "a",
+        "homeworld": "",
+        "planet_census": {},
+        "research": {
+          "active": [],
+          "completed": []
+        },
+        "resources": {
+          "biomass": 50,
+          "credits": 100,
+          "energy": 50,
+          "material": 30,
+          "rare": 30,
+          "volatile": 30
+        },
+        "ships": {
+          "by_status": {},
+          "total": 0
+        }
+      }
+    },
+    {
+      "sequence_index": 3,
+      "action": "start new game: resolve target",
+      "result": {
+        "center": {
+          "x": 480,
+          "y": 251
+        },
+        "disabled": false,
+        "found": true,
+        "has_focus": false,
+        "interactable": true,
+        "kind": "button",
+        "match_score": 1,
+        "mouse_filter": 0,
+        "name": "NewGameButton",
+        "path": "/root/MainMenu/Content/NewGameButton",
+        "pressed": false,
+        "rect": {
+          "h": 48,
+          "w": 240,
+          "x": 360,
+          "y": 227
+        },
+        "source": "scene_tree",
+        "text": "NEUES SPIEL",
+        "type": "Button",
+        "visible": true
+      }
+    },
+    {
+      "sequence_index": 4,
+      "action": "start new game: move mouse",
+      "result": {
+        "mode": "parse",
+        "moved": true,
+        "position": {
+          "x": 480,
+          "y": 251
+        },
+        "requested": {
+          "x": 480,
+          "y": 251
+        },
+        "virtual_mouse": {
+          "active": true,
+          "blocked_physical_events": 235,
+          "bounds": {
+            "x": 960,
+            "y": 540
+          },
+          "cursor_visible": true,
+          "last_action": "move",
+          "physical_mouse_blocked": true,
+          "position": {
+            "x": 480,
+            "y": 251
+          },
+          "session": "runtime_6371"
+        }
+      }
+    },
+    {
+      "sequence_index": 5,
+      "action": "start new game: hover observation",
+      "result": {
+        "controls": [
+          {
+            "center": {
+              "x": 480,
+              "y": 105
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@2",
+            "path": "/root/MainMenu/Content/@Label@2",
+            "rect": {
+              "h": 64,
+              "w": 960,
+              "x": 0,
+              "y": 73
+            },
+            "source": "scene_tree",
+            "text": "SNIPWAR",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 164
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@3",
+            "path": "/root/MainMenu/Content/@Label@3",
+            "rect": {
+              "h": 26,
+              "w": 960,
+              "x": 0,
+              "y": 151
+            },
+            "source": "scene_tree",
+            "text": "EISEN-GRENZE",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 251
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "NewGameButton",
+            "path": "/root/MainMenu/Content/NewGameButton",
+            "pressed": false,
+            "rect": {
+              "h": 48,
+              "w": 240,
+              "x": 360,
+              "y": 227
+            },
+            "source": "scene_tree",
+            "text": "NEUES SPIEL",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 313
+            },
+            "disabled": true,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "ContinueButton",
+            "path": "/root/MainMenu/Content/ContinueButton",
+            "pressed": false,
+            "rect": {
+              "h": 48,
+              "w": 240,
+              "x": 360,
+              "y": 289
+            },
+            "source": "scene_tree",
+            "text": "WEITER",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 375
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "QuitButton",
+            "path": "/root/MainMenu/Content/QuitButton",
+            "pressed": false,
+            "rect": {
+              "h": 48,
+              "w": 240,
+              "x": 360,
+              "y": 351
+            },
+            "source": "scene_tree",
+            "text": "BEENDEN",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 458
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@6",
+            "path": "/root/MainMenu/Content/@Label@6",
+            "rect": {
+              "h": 18,
+              "w": 960,
+              "x": 0,
+              "y": 449
+            },
+            "source": "scene_tree",
+            "text": "Strategische Overworld · Flottengefechte · Planetare Eroberung",
+            "type": "Label",
+            "visible": true
+          }
+        ],
+        "count": 2,
+        "interactables": [
+          {
+            "center": {
+              "x": 480,
+              "y": 251
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "NewGameButton",
+            "path": "/root/MainMenu/Content/NewGameButton",
+            "pressed": false,
+            "rect": {
+              "h": 48,
+              "w": 240,
+              "x": 360,
+              "y": 227
+            },
+            "source": "scene_tree",
+            "text": "NEUES SPIEL",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 480,
+              "y": 375
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "QuitButton",
+            "path": "/root/MainMenu/Content/QuitButton",
+            "pressed": false,
+            "rect": {
+              "h": 48,
+              "w": 240,
+              "x": 360,
+              "y": 351
+            },
+            "source": "scene_tree",
+            "text": "BEENDEN",
+            "type": "Button",
+            "visible": true
+          }
+        ],
+        "scene": "main_menu",
+        "scene_path": "/root/MainMenu",
+        "watch_sequence": 0
+      }
+    },
+    {
+      "sequence_index": 6,
+      "action": "start new game: screenshot before click",
+      "result": {
+        "context": {
+          "absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_6371/frame_542088_1.png",
+          "context_id": "frame_542088_1",
+          "created_at": 1787705217.291,
+          "expires_at": 1787705262.291,
+          "format": "png",
+          "height": 720,
+          "metadata": {
+            "pipeline": "vision",
+            "source": "godot_viewport"
+          },
+          "mime_type": "image/png",
+          "path": "user://mcp_context/runtime_runtime_6371/frame_542088_1.png",
+          "size_bytes": 43350,
+          "width": 1280,
+          "worker_absolute_path": "C:/Users/Vannon/AppData/Roaming/Godot/app_userdata/SnipWar/mcp_context/runtime_runtime_6371/frame_542088_1.png",
+          "worker_format": "png",
+          "worker_path": "user://mcp_context/runtime_runtime_6371/frame_542088_1.png",
+          "worker_size_bytes": 0
+        },
+        "context_id": "frame_542088_1",
+        "format": "png",
+        "height": 720,
+        "mime_type": "image/png",
+        "screen_quality": {
+          "quality": "blank",
+          "unique_colors": 1,
+          "warning": "Screen appears blank/uniform — game may not be rendering"
+        },
+        "size_bytes": 43350,
+        "width": 1280
+      }
+    },
+    {
+      "sequence_index": 7,
+      "action": "start new game: one click",
+      "result": {
+        "clicked": true,
+        "hold_frames": 2,
+        "mode": "parse",
+        "resolved_from_path": true,
+        "scale": {
+          "x": 1.33333333333333,
+          "y": 1.33333333333333
+        },
+        "viewport_size": "(960.0, 540.0)",
+        "x": 640,
+        "y": 334
+      }
+    },
+    {
+      "sequence_index": 8,
+      "action": "start new game: wait for UI transition",
+      "result": {
+        "ms": 1800,
+        "waited": true
+      }
+    },
+    {
+      "sequence_index": 9,
+      "action": "start new game: visible result",
+      "result": {
+        "controls": [
+          {
+            "center": {
+              "x": 881,
+              "y": 34
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "PlanetTab",
+            "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 126,
+              "x": 818,
+              "y": 16
+            },
+            "source": "scene_tree",
+            "text": "PLANETEN  ›",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 881,
+              "y": 76
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechTab",
+            "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 126,
+              "x": 818,
+              "y": 58
+            },
+            "source": "scene_tree",
+            "text": "TECHNOLOGIE ›",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": -182,
+              "y": -87.5
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@911",
+            "path": "/root/World/PlanetField/PlanetNetwork/InputHintOverlay/InputHints/@Label@911",
+            "rect": {
+              "h": 17,
+              "w": 156,
+              "x": -260,
+              "y": -96
+            },
+            "source": "scene_tree",
+            "text": "[W A S D] Kamera",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": -182,
+              "y": -66.5
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@912",
+            "path": "/root/World/PlanetField/PlanetNetwork/InputHintOverlay/InputHints/@Label@912",
+            "rect": {
+              "h": 17,
+              "w": 156,
+              "x": -260,
+              "y": -75
+            },
+            "source": "scene_tree",
+            "text": "[Mausrad] Zoom",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": -182,
+              "y": -45.5
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@913",
+            "path": "/root/World/PlanetField/PlanetNetwork/InputHintOverlay/InputHints/@Label@913",
+            "rect": {
+              "h": 17,
+              "w": 156,
+              "x": -260,
+              "y": -54
+            },
+            "source": "scene_tree",
+            "text": "[Linksklick] Planet wählen",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": -182,
+              "y": -24.5
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@914",
+            "path": "/root/World/PlanetField/PlanetNetwork/InputHintOverlay/InputHints/@Label@914",
+            "rect": {
+              "h": 17,
+              "w": 156,
+              "x": -260,
+              "y": -33
+            },
+            "source": "scene_tree",
+            "text": "[Rechtsklick] Kontextmenü",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": -182,
+              "y": -3.5
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@915",
+            "path": "/root/World/PlanetField/PlanetNetwork/InputHintOverlay/InputHints/@Label@915",
+            "rect": {
+              "h": 17,
+              "w": 156,
+              "x": -260,
+              "y": -12
+            },
+            "source": "scene_tree",
+            "text": "[ESC] Menü",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 90
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@916",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@916",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 72
+            },
+            "source": "scene_tree",
+            "text": "PLANET",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 132
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@917",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@917",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 114
+            },
+            "source": "scene_tree",
+            "text": "WERKSTATT",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 174
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@918",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@918",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 156
+            },
+            "source": "scene_tree",
+            "text": "FORSCHUNG",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 216
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@919",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@919",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 198
+            },
+            "source": "scene_tree",
+            "text": "ECONOMY",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 796.5,
+              "y": 19.5
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@921",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FieldFleetRightTop/FleetOverview/Content/@HBoxContainer@920/@Label@921",
+            "rect": {
+              "h": 17,
+              "w": 129,
+              "x": 732,
+              "y": 11
+            },
+            "source": "scene_tree",
+            "text": "FLOTTENÜBERSICHT",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 877,
+              "y": 20
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@922",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FieldFleetRightTop/FleetOverview/Content/@HBoxContainer@920/@Button@922",
+            "pressed": false,
+            "rect": {
+              "h": 24,
+              "w": 24,
+              "x": 865,
+              "y": 8
+            },
+            "source": "scene_tree",
+            "text": "◂",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 810.5,
+              "y": 44
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@923",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FieldFleetRightTop/FleetOverview/Content/@Label@923",
+            "rect": {
+              "h": 16,
+              "w": 157,
+              "x": 732,
+              "y": 36
+            },
+            "source": "scene_tree",
+            "text": "UNTERWEGS:",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 810.5,
+              "y": 64
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@924",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FieldFleetRightTop/FleetOverview/Content/@Label@924",
+            "rect": {
+              "h": 16,
+              "w": 157,
+              "x": 732,
+              "y": 56
+            },
+            "source": "scene_tree",
+            "text": "Keine aktiven Schiffe",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 810.5,
+              "y": 88
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@925",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FieldFleetRightTop/FleetOverview/Content/@Label@925",
+            "rect": {
+              "h": 16,
+              "w": 157,
+              "x": 732,
+              "y": 80
+            },
+            "source": "scene_tree",
+            "text": "PLANETEN:",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 810.5,
+              "y": 108
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "@Label@926",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FieldFleetRightTop/FleetOverview/Content/@Label@926",
+            "rect": {
+              "h": 16,
+              "w": 157,
+              "x": 732,
+              "y": 100
+            },
+            "source": "scene_tree",
+            "text": "Keine ausgewählten Planeten",
+            "type": "Label",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 187.940002441406,
+              "y": 131.451499938965
+            },
+            "has_focus": false,
+            "interactable": false,
+            "kind": "label",
+            "mouse_filter": 2,
+            "name": "StrengthLabel",
+            "path": "/root/World/PlanetField/Player Homeworld/StrengthLabel",
+            "rect": {
+              "h": 22,
+              "w": 80,
+              "x": 147.940002441406,
+              "y": 120.451499938965
+            },
+            "source": "scene_tree",
+            "text": "6",
+            "type": "Label",
+            "visible": true
+          }
+        ],
+        "count": 7,
+        "interactables": [
+          {
+            "center": {
+              "x": 881,
+              "y": 34
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "PlanetTab",
+            "path": "/root/World/PlanetField/PlanetNetwork/PlanetNetworkUI/PlanetTabUI/PlanetTab",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 126,
+              "x": 818,
+              "y": 16
+            },
+            "source": "scene_tree",
+            "text": "PLANETEN  ›",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 881,
+              "y": 76
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "TechTab",
+            "path": "/root/World/PlanetField/PlanetNetwork/TechnologyMenu/TechTabUI/TechTab",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 126,
+              "x": 818,
+              "y": 58
+            },
+            "source": "scene_tree",
+            "text": "TECHNOLOGIE ›",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 90
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@916",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@916",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 72
+            },
+            "source": "scene_tree",
+            "text": "PLANET",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 132
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@917",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@917",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 114
+            },
+            "source": "scene_tree",
+            "text": "WERKSTATT",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 174
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@918",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@918",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 156
+            },
+            "source": "scene_tree",
+            "text": "FORSCHUNG",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 56,
+              "y": 216
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@919",
+            "path": "/root/World/PlanetField/PlanetNetwork/DossierLauncher/LauncherBox/@Button@919",
+            "pressed": false,
+            "rect": {
+              "h": 36,
+              "w": 88,
+              "x": 12,
+              "y": 198
+            },
+            "source": "scene_tree",
+            "text": "ECONOMY",
+            "type": "Button",
+            "visible": true
+          },
+          {
+            "center": {
+              "x": 877,
+              "y": 20
+            },
+            "disabled": false,
+            "has_focus": false,
+            "interactable": true,
+            "kind": "button",
+            "mouse_filter": 0,
+            "name": "@Button@922",
+            "path": "/root/World/PlanetField/PlanetNetwork/FleetOverviewLayer/FieldFleetRightTop/FleetOverview/Content/@HBoxContainer@920/@Button@922",
+            "pressed": false,
+            "rect": {
+              "h": 24,
+              "w": 24,
+              "x": 865,
+              "y": 8
+            },
+            "source": "scene_tree",
+            "text": "◂",
+            "type": "Button",
+            "visible": true
+          }
+        ],
+        "scene": "game_view",
+        "scene_path": "/root/World",
+        "watch_sequence": 0
+      }
+    },
+    {
+      "sequence_index": 10,
+      "action": "start new game: state result",
+      "result": {
+        "dispatch": {
+          "active": 0,
+          "pending": 0
+        },
+        "faction": "a",
+        "homeworld": "p0",
+        "planet_census": {
+          "a": 1,
+          "b": 1,
+          "neutral": 75
+        },
+        "research": {
+          "active": [],
+          "completed": []
+        },
+        "resources": {
+          "biomass": 50,
+          "credits": 100,
+          "energy": 50,
+          "material": 30,
+          "rare": 30,
+          "volatile": 30
+        },
+        "ships": {
+          "by_status": {},
+          "total": 0
+        }
+      }
+    },
+    {
+      "sequence_index": 11,
+      "action": "FINAL VERDICT",
+      "result": {
+        "ok": false,
+        "verdict": "FAIL",
+        "goal": "erstes schiff bauen",
+        "error": "Error: start new game: log result failed: connect ECONNREFUSED 127.0.0.1:9090\n    at runAtomic (C:\\Users\\Vannon\\Documents\\snippet-empire\\snip-war\\addons\\gdscript_mcp\\client\\playthroughs\\first_ship_atomic.js:53:11)\n    at logs (C:\\Users\\Vannon\\Documents\\snippet-empire\\snip-war\\addons\\gdscript_mcp\\client\\playthroughs\\first_ship_atomic.js:111:18)\n    at clickDescription (C:\\Users\\Vannon\\Documents\\snippet-empire\\snip-war\\addons\\gdscript_mcp\\client\\playthroughs\\first_ship_atomic.js:139:3)\n    at buildFirstShip (C:\\Users\\Vannon\\Documents\\snippet-empire\\snip-war\\addons\\gdscript_mcp\\client\\playthroughs\\first_ship_atomic.js:168:3)\n    at Object.<anonymous> (C:\\Users\\Vannon\\Documents\\snippet-empire\\snip-war\\addons\\gdscript_mcp\\client\\playthroughs\\first_ship_atomic.js:229:13)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)",
+        "sequence_steps": 11
+      }
+    }
+  ],
+  "verdict": {
+    "ok": false,
+    "verdict": "FAIL",
+    "goal": "erstes schiff bauen",
+    "error": "Error: start new game: log result failed: connect ECONNREFUSED 127.0.0.1:9090\n    at runAtomic (C:\\Users\\Vannon\\Documents\\snippet-empire\\snip-war\\addons\\gdscript_mcp\\client\\playthroughs\\first_ship_atomic.js:53:11)\n    at logs (C:\\Users\\Vannon\\Documents\\snippet-empire\\snip-war\\addons\\gdscript_mcp\\client\\playthroughs\\first_ship_atomic.js:111:18)\n    at clickDescription (C:\\Users\\Vannon\\Documents\\snippet-empire\\snip-war\\addons\\gdscript_mcp\\client\\playthroughs\\first_ship_atomic.js:139:3)\n    at buildFirstShip (C:\\Users\\Vannon\\Documents\\snippet-empire\\snip-war\\addons\\gdscript_mcp\\client\\playthroughs\\first_ship_atomic.js:168:3)\n    at Object.<anonymous> (C:\\Users\\Vannon\\Documents\\snippet-empire\\snip-war\\addons\\gdscript_mcp\\client\\playthroughs\\first_ship_atomic.js:229:13)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)",
+    "sequence_steps": 11
+  }
+}

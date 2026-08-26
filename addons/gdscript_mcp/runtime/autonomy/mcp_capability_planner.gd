@@ -157,9 +157,13 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 
 
 func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
-	if tool_name != "runtime_autonomy_probe":
-		return {"error": "Unknown async autonomy tool: " + tool_name}
-	return await probe(str(args.get("intent", "")), args.get("required_outputs", []) as Array)
+	match tool_name:
+		"runtime_autonomy_probe":
+			return await probe(str(args.get("intent", "")), args.get("required_outputs", []) as Array)
+		"runtime_autonomy_export":
+			return await workspace_export(str(args.get("path", "")), bool(args.get("apply", false)), bool(args.get("force", false)))
+		_:
+			return dispatch_tool(tool_name, args)
 
 
 func capabilities(include_invalid: bool = true, limit: int = 256) -> Dictionary:

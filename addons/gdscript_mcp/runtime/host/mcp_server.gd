@@ -443,7 +443,10 @@ func _handle_request(id: Variant, method: String, params: Dictionary) -> void:
 			_protocol_ready = true
 			_send_response(id, {
 				"protocolVersion": _client_protocol_version,
-				"capabilities": {"tools": {"listChanged": false}},
+				"capabilities": {
+					"tools": {"listChanged": true},
+					"resources": {"listChanged": true}
+				},
 				"serverInfo": {"name": "gdscript-mcp-bridge", "version": "4.0.0", "role": _role},
 			}, "", 0)
 		"initialized":
@@ -452,10 +455,99 @@ func _handle_request(id: Variant, method: String, params: Dictionary) -> void:
 			_send_response(id, {"tools": _tools}, "", 0)
 		"tools/call":
 			_handle_tool_call(id, params)
+		"resources/list":
+			_handle_resources_list(id)
+		"resources/read":
+			_handle_resources_read(id, params)
 		"ping":
 			_send_response(id, {"lifecycle": get_lifecycle_state()}, "", 0)
 		_:
 			_send_response(id, null, "Method not found: " + method, -32601)
+
+
+func _handle_resources_list(id: Variant) -> void:
+	var resources: Array = [
+		{
+			"uri": "godot://scene/current",
+			"name": "Current Scene Tree",
+			"description": "Live authoritative scene hierarchy and controls",
+			"mimeType": "application/json"
+		},
+		{
+			"uri": "godot://logs/recent",
+			"name": "Recent Logs & Anomalies",
+			"description": "Recent MCP and engine logs",
+			"mimeType": "application/json"
+		},
+		{
+			"uri": "godot://gameState/summary",
+			"name": "Game State Summary",
+			"description": "Faction economy, research, fleet and planet census",
+			"mimeType": "application/json"
+		},
+		{
+			"uri": "godot://test/results",
+			"name": "Last Test Trace",
+			"description": "Evidence trace of the last executed chain or scenario",
+			"mimeType": "application/json"
+		}
+	]
+	_send_response(id, {"resources": resources}, "", 0)
+
+
+func _handle_resources_read(id: Variant, params: Dictionary) -> void:
+	var uri := str(params.get("uri", ""))
+	var data: Variant = null
+	match uri:
+		"godot://scene/current":
+			if _registry != null:
+				data = _registry.dispatch("runtime_get_scene_tree", {"root_path": "/root", "max_depth": 4, "max_nodes": 200})
+		"godot://logs/recent":
+			if _lifecycle != null:
+				data = _lifecycle.events_since(0, 50)
+			else:
+				data = {"logs": []}
+		"godot://gameState/summary":
+			if _registry != null:
+				data = _registry.dispatch("game_state_summary", {"faction": "a"})
+		"godot://test/results":
+			if _registry != null:
+				data = _registry.dispatch("runtime_chain_trace", {})
+		_:
+			_send_response(id, null, "Resource not found: " + uri, -32602)
+			return
+
+	if data == null:
+		data = {}
+	var text_payload := JSON.stringify(_sanitize_result(data))
+	_send_response(id, {
+		"contents": [
+			{
+				"uri": uri,
+				"mimeType": "application/json",
+				"text": text_payload
+			}
+		]
+	}, "", 0)
+
+
+func send_notification(method: String, params: Dictionary = {}) -> void:
+	var msg: Dictionary = {"jsonrpc": "2.0", "method": method}
+	if not params.is_empty():
+		msg["params"] = params
+	var encoded := JSON.stringify(msg) + "\n"
+	if _transport == "tcp" and _client != null:
+		_client.put_data(encoded.to_utf8_buffer())
+	elif _transport == "stdio":
+		print(encoded.strip_edges())
+
+
+func notify_tools_changed() -> void:
+	send_notification("notifications/tools/list_changed")
+
+
+func notify_resources_changed() -> void:
+	send_notification("notifications/resources/list_changed")
 
 
 func _handle_tool_call(id: Variant, params: Dictionary) -> void:

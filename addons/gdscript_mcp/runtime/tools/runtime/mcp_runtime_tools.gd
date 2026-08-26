@@ -25,8 +25,8 @@ static func get_tool_defs() -> Array:
 
 static func _basic_tools() -> Array:
 	return [
-		_make("runtime_get_scene_tree", "Get running game scene tree",
-			{"max_depth": {"type": "integer", "default": 10}}),
+		_make("runtime_get_scene_tree", "Get a bounded, scoped slice of the running game scene tree",
+			{"max_depth": {"type": "integer", "default": 4}, "root_path": {"type": "string", "default": "/root"}, "max_nodes": {"type": "integer", "default": 200}}),
 		_make("runtime_find_node", "Find node in running game by path",
 			{"path": {"type": "string"}}, ["path"]),
 		_make("runtime_click", "Click a UI element or screen position in running game (engine-level mouse press+release)",
@@ -40,6 +40,8 @@ static func _basic_tools() -> Array:
 			["keycode"]),
 		_make("runtime_mouse_move", "Move the MCP virtual mouse pointer to a position (hover)",
 			{"x": {"type": "integer"}, "y": {"type": "integer"}}, ["x", "y"]),
+		_make("runtime_scroll", "Perform one visible virtual mouse-wheel scroll gesture over a control or position",
+			{"path": {"type": "string", "default": ""}, "x": {"type": "integer", "default": -1}, "y": {"type": "integer", "default": -1}, "direction": {"type": "string", "enum": ["up", "down"], "default": "down"}, "steps": {"type": "integer", "default": 1}}, []),
 		_make("runtime_virtual_mouse_status", "Read MCP virtual mouse position, bounds and physical mouse isolation state"),
 		_make("runtime_drag", "Press, move over N steps, release (drag gesture)",
 			{"x": {"type": "integer"}, "y": {"type": "integer"}, "dx": {"type": "integer", "default": 0},
@@ -86,7 +88,7 @@ static func _inspector_tools() -> Array:
 func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 	match tool_name:
 		"runtime_get_scene_tree":
-			return _rt_get_scene_tree(int(args.get("max_depth", 10)))
+			return _rt_get_scene_tree(int(args.get("max_depth", 4)), str(args.get("root_path", "/root")), int(args.get("max_nodes", 200)))
 		"runtime_find_node":
 			return _rt_find_node(args.get("path", ""))
 		"runtime_click":
@@ -95,6 +97,8 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 			return _rt_key(_resolve_keycode(args.get("keycode", 0)), bool(args.get("pressed", true)))
 		"runtime_mouse_move":
 			return _rt_mouse_move(int(args.get("x", 0)), int(args.get("y", 0)))
+		"runtime_scroll":
+			return _rt_scroll(args)
 		"runtime_virtual_mouse_status":
 			return _virtual_mouse_status()
 		"runtime_drag":
@@ -141,21 +145,33 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 # Scene Tree
 # ═══════════════════════════════════════════════════════════════════════════
 
-static func _rt_get_scene_tree(max_depth: int) -> Dictionary:
-	var safe_depth := clampi(max_depth, 0, 64)
+static func _rt_get_scene_tree(max_depth: int, root_path: String = "/root", max_nodes: int = 200) -> Dictionary:
+	var safe_depth := clampi(max_depth, 0, 16)
+	var safe_max_nodes := clampi(max_nodes, 1, 1000)
 	var tree = Engine.get_main_loop()
 	if not (tree is SceneTree):
 		return {"error": "No scene tree"}
-	var rt = (tree as SceneTree).root
-	if not rt:
+	var root := (tree as SceneTree).root
+	if not root:
 		return {"error": "No root node"}
-	var result = []
-	_collect_nodes(rt, result, 0, safe_depth)
-	return {"tree": result}
+	var scoped_root: Node = root if root_path in ["", ".", "/root"] else root.get_node_or_null(NodePath(root_path))
+	if scoped_root == null:
+		return {"error": "Scene tree root path not found: " + root_path}
+	var result: Array = []
+	var budget := {"count": 0}
+	_collect_nodes(scoped_root, result, 0, safe_depth, safe_max_nodes, budget)
+	return {
+		"root_path": String(scoped_root.get_path()),
+		"tree": result,
+		"count": int(budget.get("count", 0)),
+		"truncated": int(budget.get("count", 0)) >= safe_max_nodes,
+		"max_depth": safe_depth,
+		"max_nodes": safe_max_nodes,
+	}
 
 
-static func _collect_nodes(node: Node, result: Array, depth: int, max_depth: int) -> void:
-	if depth > max_depth:
+static func _collect_nodes(node: Node, result: Array, depth: int, max_depth: int, max_nodes: int, budget: Dictionary) -> void:
+	if depth > max_depth or int(budget.get("count", 0)) >= max_nodes:
 		return
 	var children = []
 	var info = {
@@ -166,8 +182,11 @@ static func _collect_nodes(node: Node, result: Array, depth: int, max_depth: int
 		"children": children,
 	}
 	result.append(info)
+	budget["count"] = int(budget.get("count", 0)) + 1
 	for child in node.get_children():
-		_collect_nodes(child, children, depth + 1, max_depth)
+		if int(budget.get("count", 0)) >= max_nodes:
+			break
+		_collect_nodes(child, children, depth + 1, max_depth, max_nodes, budget)
 
 
 static func _rt_find_node(path: String) -> Dictionary:
@@ -228,8 +247,9 @@ func _rt_click(args: Dictionary) -> Dictionary:
 			resolved_from_path = true
 		elif nd is Node2D:
 			var n2d := nd as Node2D
-			x = int(n2d.get_global_position().x)
-			y = int(n2d.get_global_position().y)
+			var screen_pos := n2d.get_global_transform_with_canvas().origin
+			x = int(screen_pos.x)
+			y = int(screen_pos.y)
 			resolved_from_path = true
 		else:
 			return {"error": "Node type does not support click position resolution", "type": nd.get_class()}
@@ -278,6 +298,44 @@ func _rt_click(args: Dictionary) -> Dictionary:
 		"viewport_size": content_size, "scale": {"x": 1.0, "y": 1.0}}
 
 
+func _rt_scroll(args: Dictionary) -> Dictionary:
+	var path := str(args.get("path", ""))
+	var x := int(args.get("x", -1))
+	var y := int(args.get("y", -1))
+	var direction := str(args.get("direction", "down")).to_lower()
+	var steps := clampi(int(args.get("steps", 1)), 1, 12)
+	if direction not in ["up", "down"]:
+		return {"scrolled": false, "error": "direction must be up or down"}
+	var tree := Engine.get_main_loop()
+	if not tree is SceneTree:
+		return {"scrolled": false, "error": "No scene tree"}
+	var viewport: Window = (tree as SceneTree).root
+	if path != "" and (x < 0 or y < 0):
+		var node := _get_root().get_node_or_null(NodePath(path))
+		if node == null:
+			return {"scrolled": false, "error": "Node not found: " + path}
+		if not node is Control or not (node as Control).is_visible_in_tree():
+			return {"scrolled": false, "error": "Scroll target is not a visible Control", "path": path}
+		var rect := (node as Control).get_global_rect()
+		var center := rect.get_center()
+		x = int(center.x)
+		y = int(center.y)
+	if x < 0 or y < 0:
+		return {"scrolled": false, "error": "Scroll requires path or x/y"}
+	var virtual_pos := _set_virtual_mouse_position(Vector2(float(x), float(y)))
+	var parse_mode := _needs_parse_mode(viewport)
+	var event_pos := virtual_pos if not parse_mode else _viewport_to_window(viewport, virtual_pos)
+	var button := MOUSE_BUTTON_WHEEL_UP if direction == "up" else MOUSE_BUTTON_WHEEL_DOWN
+	if not _input_capacity_available(steps):
+		return {"scrolled": false, "error": "input queue full", "pending": get_input_status().get("status", {}).get("pending", 0)}
+	var scheduled := true
+	for index in range(steps):
+		scheduled = _schedule_mouse_move(false, _make_wheel_event(event_pos, button), 1 + index, parse_mode, virtual_pos) and scheduled
+	if not scheduled:
+		return {"scrolled": false, "error": "input queue full"}
+	return {"scrolled": true, "path": path, "position": _vector_dict(virtual_pos), "direction": direction, "steps": steps, "mode": "parse" if parse_mode else "push"}
+
+
 func _make_motion_event(pos: Vector2, button_mask: MouseButtonMask = 0) -> InputEventMouseMotion:
 	var e := InputEventMouseMotion.new()
 	e.position = pos
@@ -287,14 +345,20 @@ func _make_motion_event(pos: Vector2, button_mask: MouseButtonMask = 0) -> Input
 	return e
 
 
-func _make_button_event(pos: Vector2, pressed: bool) -> InputEventMouseButton:
+func _make_button_event(pos: Vector2, pressed: bool, button_index: int = MOUSE_BUTTON_LEFT) -> InputEventMouseButton:
 	var e := InputEventMouseButton.new()
-	e.button_index = MOUSE_BUTTON_LEFT
+	e.button_index = button_index
 	e.position = pos
 	e.global_position = pos
 	e.pressed = pressed
-	e.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0
+	e.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed and button_index == MOUSE_BUTTON_LEFT else 0
 	return e
+
+
+func _make_wheel_event(pos: Vector2, button_index: int) -> InputEventMouseButton:
+	var event := _make_button_event(pos, true, button_index)
+	event.factor = 1.0
+	return event
 
 
 func _rt_mouse_move(x: int, y: int) -> Dictionary:
@@ -606,7 +670,11 @@ static func _rt_wait_ms(ms: int) -> Dictionary:
 # ═══════════════════════════════════════════════════════════════════════════
 
 static func _is_developer_mode() -> bool:
-	return "--mcp-developer" in OS.get_cmdline_args() or "--mcp-developer" in OS.get_cmdline_user_args()
+	# Accept --mcp-developer cmdline flag OR MCP_DEVELOPER env-var (any non-empty value)
+	if "--mcp-developer" in OS.get_cmdline_args() or "--mcp-developer" in OS.get_cmdline_user_args():
+		return true
+	var env_val: String = OS.get_environment("MCP_DEVELOPER")
+	return env_val != "" and env_val != "0"
 
 
 static func _rt_eval(code: String) -> Variant:

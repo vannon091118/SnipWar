@@ -1,7 +1,17 @@
 # MCP Agent Workflow — Autonome Playtesting-Umgebung
 
-**Stand:** 2026-08-24
+**Stand:** 2026-08-26
 **Ziel:** Unkomplizierte, umfassende Autonomie für Agents, die mit jeder Benutzung schneller und präziser wird.
+
+> **LIVE-SPIELERREGEL:** Sichtbares Gameplay wird ausschließlich als einzelne MCP-Atome ausgeführt. Ein Atom-Script macht genau einen MCP-Tool-Call. Der Agent liest nach jedem Call die Live-Oberfläche und entscheidet den nächsten Zug erst danach. Keine direkte GameState-Mutation, kein `runtime_goal_sequence`, kein `runtime_goal_play`, kein `runtime_chain_run` und kein vorgeplanter Gesamt-Runner für sichtbare Spielerläufe. Der vollständige Vertrag, die Atom-Registry und die Handoff-Findings stehen in `PLAYTEST_HANDOFF.md`.
+
+## Modi strikt trennen
+
+- **Live-Spieler:** `runtime_ux_scan`/`runtime_ux_find` → `runtime_mouse_move` → optionaler Scan → `runtime_click`/`runtime_scroll` → separater Wait/Scan. Jeder Schritt ist ein eigener MCP-Call; für viele Schritte darf der Transport persistent bleiben.
+- **Autonomie-Repair:** Workspace, Write-Gate, Export und Rollback; kein Gameplay-Nachweis.
+- **Vertragstest:** Headless oder sichtbare Test-Suite; kein Spieler-PASS. Chains zuerst validieren, dann in begrenzten Segmenten ausführen.
+- **Editor-Tooling:** Editor-Port/Dock, Undo/Redo und Editor-Schreibrechte; kein Runtime-Gameplay-PASS.
+
 
 ---
 
@@ -33,7 +43,8 @@ runtime_analyze_game_state → Öffentliche GameState-Methoden
 ### Schritt 3: Scripts schreiben oder fixen (variabel)
 - **Neues Script:** In `user://mcp_playthrough/scripts/<name>.gd` schreiben
 - **Bestehendes Script fixen:** Kopie anlegen, fixen, altes Archivieren
-- **Atomar:** Jedes Script ist ein eigenständiges Modul mit `get_tool_defs()` + `dispatch_tool()`
+- **Atomar:** Jedes Live-Action-Script darf genau einen MCP-Tool-Call ausführen. Transport, Zielsuche, Hover, Klick, Wait, Scan, Screenshot, State- und Log-Lesen bleiben getrennte Scripts.
+- **Kein Composer:** Ein Script, das mehrere Live-Aktionen plant oder ausführt, ist kein Live-Spieler-Script und darf nicht als Playthrough-Erfolg archiviert werden.
 
 ### Schritt 4: Testen (30-120 Sekunden)
 ```
@@ -146,3 +157,39 @@ Agent 3 (Session 2026-08-26):
   5. Testet mit analyze_and_goal → PASS
   6. Archiviert: index.jsonl + scripts/goal_play_enhanced.gd
 ```
+
+---
+
+## 🔁 Der vollautonome 8-Schritte Repair- & Feature-Loop (`agent_repair_loop.py`)
+
+Für geschlossene, vollautomatische Reparatur- und Feature-Entwicklungsläufe:
+
+```
+[1. Handshake]        initialize → protocol negotiated
+       ↓
+[2. Baseline]         godot://gameState/summary & godot://scene/current
+       ↓
+[3. Sandbox Start]    runtime_autonomy_workspace_begin
+       ↓
+[4. Edit & Patch]     runtime_autonomy_workspace_import + runtime_autonomy_patch
+       ↓
+[5. Gated Export]     runtime_autonomy_export (apply=true) + resource_barrier Settle
+       ↓
+[6. Headless Chain]   runtime_chain_run (Preflight / Contract Assertions)
+       ↓
+[7. Visible Verification] einzelne MCP-Atome, jeweils nach Live-Beobachtung entschieden
+       ↓
+[8. Verdict & Close]  PASS: sichtbare Evidenz + getrennte Game-/MCP-Findings
+                      FAIL: runtime_autonomy_rollback_all nur für Workspace-Mutationen, nie als Gameplay-Ersatz
+```
+
+Ausführung via CLI:
+```bash
+python addons/gdscript_mcp/client/agent_repair_loop.py \
+  --file "res://scripts/..." \
+  --old "old_code" \
+  --new "new_code" \
+  --goal "Feature oder Bugfix Beschreibung"
+```
+
+Der Repair-Loop ist ein Code-/Workspace-Modus. Sein optionales `goal_sequence` darf nicht für sichtbares Spieler-Playtesting verwendet werden; Live-Gameplay folgt ausschließlich `PLAYTEST_HANDOFF.md`.

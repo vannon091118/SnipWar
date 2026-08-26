@@ -23,6 +23,7 @@ const CODE_ANALYZER_PATH := "res://addons/gdscript_mcp/runtime/tools/e2e/mcp_cod
 const GOAL_PLAYER_PATH := "res://addons/gdscript_mcp/runtime/tools/e2e/mcp_goal_player.gd"
 const AUTONOMY_PLANNER_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_capability_planner.gd"
 const AUTONOMY_CONTRACTS_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_autonomy_contracts.gd"
+const CHAIN_CONTROLLER_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd"
 
 var _role := "runtime"
 var _worker: Node = null
@@ -39,6 +40,7 @@ var _code_analyzer: RefCounted = null
 var _goal_player: RefCounted = null
 var _autonomy_planner: RefCounted = null
 var _autonomy_contracts: RefCounted = null
+var _chain_controller: RefCounted = null
 var _tools: Array = []
 var _context_store: RefCounted = null
 var _loaded := false
@@ -165,6 +167,10 @@ func dispatch(tool_name: String, args: Dictionary) -> Variant:
 	if _is_goal_player_tool(name) and _goal_player:
 		return _goal_player.dispatch_tool(name, args)
 
+	# Chain Controller (declarative test and feature chains)
+	if _is_chain_controller_tool(name) and _chain_controller:
+		return _chain_controller.dispatch_tool(name, args)
+
 	# Autonomy planner (Slice A, read-only capability contracts)
 	if _is_autonomy_tool(name) and _autonomy_planner:
 		return _autonomy_planner.dispatch_tool(name, args)
@@ -203,6 +209,10 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 	if _is_goal_player_tool(name) and _goal_player:
 		return await _goal_player.dispatch_async(name, args)
 
+	# Chain Controller async (runtime_chain_run)
+	if _is_chain_controller_tool(name) and _chain_controller:
+		return await _chain_controller.dispatch_async(name, args)
+
 	# Autonomy planner async probe
 	if _is_autonomy_tool(name) and _autonomy_planner:
 		return await _autonomy_planner.dispatch_async(name, args)
@@ -222,7 +232,7 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 static func _is_runtime_tool(name: String) -> bool:
 	return name in [
 		"runtime_get_scene_tree", "runtime_find_node", "runtime_click",
-		"runtime_drag", "runtime_key", "runtime_mouse_move", "runtime_virtual_mouse_status",
+		"runtime_drag", "runtime_key", "runtime_mouse_move", "runtime_scroll", "runtime_virtual_mouse_status",
 		"runtime_get_ui_state", "runtime_wait_frames", "runtime_wait_ms",
 		"runtime_eval", "runtime_inspect_node", "runtime_find_nodes_by_type",
 		"runtime_node_ancestry",
@@ -299,6 +309,10 @@ static func _is_code_analyzer_tool(name: String) -> bool:
 
 static func _is_autonomy_tool(name: String) -> bool:
 	return name.begins_with("runtime_autonomy_")
+
+
+static func _is_chain_controller_tool(name: String) -> bool:
+	return name in ["runtime_chain_run", "runtime_chain_trace", "runtime_chain_validate"]
 
 
 static func _is_goal_player_tool(name: String) -> bool:
@@ -439,6 +453,18 @@ func _load_all() -> void:
 				if _goal_player.has_method("setup"):
 					_goal_player.setup(self, _lifecycle)
 			var td = gp.get_tool_defs()
+			if td is Array:
+				_tools.append_array(td)
+
+	if ResourceLoader.exists(CHAIN_CONTROLLER_PATH):
+		var cc = load(CHAIN_CONTROLLER_PATH)
+		if cc:
+			var instance = cc.new()
+			if instance != null:
+				_chain_controller = instance
+				if _chain_controller.has_method("setup"):
+					_chain_controller.setup(self, _lifecycle)
+			var td = cc.get_tool_defs()
 			if td is Array:
 				_tools.append_array(td)
 

@@ -51,11 +51,21 @@ externer Agent, sammeln EventLog-Anomalien.
 **Agent-Workflow (`AGENT_WORKFLOW.md`)**:
 6-Schritte-Loop für autonome Agents: Archiv lesen → Projekt analysieren → Scripts schreiben → testen → archivieren → nächste Session.
 
+**Live-Spieler-Handoff (`PLAYTEST_HANDOFF.md`)**:
+Verbindlicher Vertrag für sichtbares Remote-Gameplay. Pro Ingame-Aktion genau ein separater MCP-Tool-Call; keine direkte GameState-Mutation und keine Goal-/Chain-Orchestrierung als Spielerersatz. Game-Mismatch, MCP-Mismatch und Diagnoseunsicherheit werden getrennt protokolliert.
+
 **Client (`client/`)**:
+- `agent_repair_loop.py` — Autonomer Repair- & Feature-Orchestrator für geschlossene Self-Healing-Läufe
 - `mcp_client.py` — Referenz-TCP-Client für Metadaten, Artefakte und Worker-Aufträge (interaktiv/auto/one-shot)
 - `vision_worker.py` + `vision_worker.js` — lokale Bildanalyse-Instanzen (ohne Base64-Roundtrip; lesen
   die Context-Artefakte aus `user://mcp_context`); JS-Worker enthält **echtes OCR via Tesseract.js**
 - `remote_playout.py` — Remote-Playthrough über `runtime_ux_*` (agentengleich)
+
+**MCP Resources (`resources/list`, `resources/read`)**:
+- `godot://scene/current` — Autoritative Live-Szenenhierarchie & Controls
+- `godot://logs/recent` — Letzte Engine- & MCP-Logs / Anomalien
+- `godot://gameState/summary` — Wirtschafts-, Forschungs- & Flottenübersicht
+- `godot://test/results` — Letzter ausgeführter Chain-Trace & Evidenz
 
 ---
 
@@ -80,7 +90,8 @@ externer Agent, sammeln EventLog-Anomalien.
 ### Runtime (19) — `runtime/tools/runtime/mcp_runtime_tools.gd`
 | Tool | Beschreibung |
 |---|---|
-| `runtime_get_scene_tree` | Szenenbaum (max_depth) |
+| `runtime_get_scene_tree` | begrenzter Szenenbaum mit `root_path`, `max_depth`, `max_nodes` |
+| `runtime_scroll` | eine sichtbare virtuelle Mausrad-Geste über Pfad oder Koordinate |
 | `runtime_find_node` | Node per Pfad |
 | `runtime_click` | Engine-Klick (press→release belegt, Motion 1 Frame davor; `inject_mode` auto/push/parse; Koordinaten = Viewport-Pixel/Absolute) |
 | `runtime_drag` | Drag-Geste (press→motion→release über virtuelle Mausposition) |
@@ -130,8 +141,8 @@ Resource-UID, EventLog, Object-Counts, Memory, Profiling.
 
 ### UX-Pipeline (10) — `runtime/tools/ux/`
 - `runtime_ux_analyze` — vollständige Analyse (Live + visuell) inkl. kompakter `perf`-Werte (FPS, Draw-Calls, Objekte, Nodes, Process-MS) für Reaktionsfähigkeits-Checks
-- `runtime_ux_scan` — nur Live (Fast-Path)
-- `runtime_ux_find` — Element per Text/Name/Typ (exakte Labels aus dem SceneTree)
+- `runtime_ux_scan` — nur Live (Fast-Path), standardmäßig begrenzter Scope mit `root_path`, `max_controls`, `max_depth`
+- `runtime_ux_find` — Element per Text/Name/Typ in begrenztem Scope (exakte Labels aus der sichtbaren UI)
 - `runtime_ux_read` — Text-Hint aus Region
 - `runtime_ux_click` — Find + Klick in einem Call
 - `runtime_ux_watch_start` / `stop` / `state` / `snapshot` — periodische
@@ -184,13 +195,18 @@ Jede `.gd` in `res://mcp_tools/` wird beim Laden automatisch registriert:
 `get_tool_defs()` + `dispatch_tool()` implementieren, erscheint als `custom_*`-Tool,
 Hot-Reload bei jedem `get_all_tools()`. `dispatch_async` wird unterstützt.
 
-### Goal Player (3) — `runtime/tools/e2e/mcp_goal_player.gd`
-Autonomes Goal-basiertes Spielen (frame-genau per Freeze/Step):
-- `runtime_goal_play` (async) — Loop: Screenshot/UX-Scan → Goal prüfen → Aktion
-  (erster klickbarer Interactable, sonst SPACE) → `runtime_step_frames` → wieder
-- `runtime_goal_check` — GDScript-Zielausdruck einmal auswerten (eigene
-  `Expression`-Evaluation, KEIN `--mcp-developer` nötig)
-- `runtime_goal_history` — letzte Spielschritte für Inspektion
+### Goal Player (4) — `runtime/tools/e2e/mcp_goal_player.gd`
+Diese Tools gehören zum automatisierten E2E-/Diagnosemodus und sind **kein** sichtbarer Spieler-Workflow. Für Live-Remote-Gameplay sind `runtime_goal_play`, `runtime_goal_sequence` und `runtime_chain_run` gesperrte Abkürzungen, weil sie mehrere Spielaktionen planen oder ausführen können.
+- `runtime_goal_play` (async) — automatisierter E2E-/Diagnose-Loop
+- `runtime_goal_sequence` (async) — automatisierte Folge; nicht als Spielerersatz verwenden
+- `runtime_goal_check` — read-only Zielausdruck einmal auswerten
+- `runtime_goal_history` — letzte automatisierte Schritte inspizieren
+
+### Chain Controller (3) — `runtime/autonomy/mcp_chain_controller.gd`
+Deklarative Kettenschritt-Orchestrierung für kombinierte Headless- und Visible-Testläufe:
+- `runtime_chain_validate` — Kette vor Ausführung auf Atomgrenzen, sichtbare Verbote, Screenshot-Gründe und Context-Limits prüfen
+- `runtime_chain_run` (async) — validierte Kette aus Preconditions, Tools, Assertions und Evidenzerfassung ausführen
+- `runtime_chain_trace` — Letzten Ausführungs-Trace und Teilschritt-Verdicts abfragen
 
 ### Code Analyzer (4) — `runtime/tools/e2e/mcp_code_analyzer.gd`
 Statische Projektanalyse über Dateisystem + FileAccess:
@@ -215,6 +231,8 @@ PNG-Frames `frames/`, Presets `snapshots/*.tres`) für autonomes Weiterspielen:
 
 ## E2E & Playability (Remote-Testing)
 
+Die sichtbare Spielererkundung ist kein Gesamt-E2E-Skript: Nach jedem einzelnen MCP-Atom wird neu beobachtet und entschieden. `mcp_playthrough_driver.gd`, `runtime_e2e_run`, `runtime_goal_sequence` und `runtime_chain_run` bleiben für Contract-/Diagnosemodi getrennt und dürfen keinen Live-Spieler-PASS begründen. Siehe `PLAYTEST_HANDOFF.md`.
+
 ```bash
 # Playthrough sichtbar im Spielfenster (voll Renderer, kein Headless):
 $GODOT_BIN --path . --script res://addons/gdscript_mcp/testing/e2e/mcp_playthrough_driver.gd
@@ -226,8 +244,12 @@ $GODOT_BIN --path . --script ... --mcp-e2e-list
 # Agent:   python client/remote_playout.py --port 9090 --flow full
 ```
 
-E2E-Ergebnis enthält `steps[]` + `anomalies[]`（EventLog-Fehler/Warnungen
-während des Laufs）— während der Tests sofort auf Auffälligkeiten prüfbar.
+E2E-Ergebnis enthält `steps[]` + `anomalies[]` (EventLog-Fehler/Warnungen
+während des Laufs) — während der Tests sofort auf Auffälligkeiten prüfbar.
+
+Ein sichtbarer Live-Run dokumentiert zusätzlich separat: `game_findings`, `mcp_findings`, `diagnostic_uncertainty` und den genauen Atom-Trace. Ein Transportfehler ist kein Game-Failure; ein sichtbarer UI-/State-Widerspruch ist kein MCP-Failure.
+
+**Performancevertrag:** Screenshots sind Evidenz bei Unklarheit, nicht der Standard vor jeder Aktion. Für viele atomare Aktionen wird eine persistente MCP-Verbindung empfohlen; sie spart neue Prozesse und Handshakes, ohne mehrere Ingame-Tools in einem Atom zu bündeln. Identische Live-Scans werden über Watch-/Snapshot-Zustände wiederverwendet. Chains müssen vor Ausführung `runtime_chain_validate` passieren und pro Schritt genau einen MCP-Tool-Call, bounded context, Postcondition und No-progress-Grenze enthalten.
 
 ## Schnellstart
 
@@ -237,6 +259,9 @@ $GODOT_BIN --path . -- --mcp --mcp-port 9090 --mcp-transport tcp
 
 # 2. Connecten (Python, Runtime-TCP):
 python addons/gdscript_mcp/client/mcp_client.py --port 9090 --one-shot
+# Für viele atomare Aktionen: einen persistenten Socket/Handshake nutzen
+node addons/gdscript_mcp/client/playthroughs/atomic/atomic_session.js
+# stdin: eine JSON-Zeile pro MCP-Call, z. B. {"tool":"runtime_ux_scan","args":{"max_controls":120}}
 
 # 3. Lifecycle abfragen:
 #    initialize → initialized → tools/call runtime_mcp_status

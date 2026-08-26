@@ -47,7 +47,7 @@ func _test_path_validator(validator: RefCounted) -> void:
 	_check(not bool(validator.is_allowed_path("/etc/passwd").get("ok", true)), "absolute unix path rejected")
 	_check(not bool(validator.is_allowed_path("res://../escape.gd").get("ok", true)), "path traversal rejected")
 	_check(not bool(validator.is_allowed_path("res://a/../b.gd").get("ok", true)), "embedded traversal rejected")
-	_check(not bool(validator.is_allowed_path("res://foo" + char(0) + "bar.gd").get("ok", true)), "control characters rejected")
+	_check(not bool(validator.is_allowed_path("res://foo" + char(1) + "bar.gd").get("ok", true)), "control characters rejected")
 	_check(not bool(validator.is_allowed_path("").get("ok", true)), "empty path rejected")
 	# Prefix restriction
 	var prefixed_ok: Dictionary = validator.is_allowed_path("res://mcp_tools/foo.gd", ["res://mcp_tools"])

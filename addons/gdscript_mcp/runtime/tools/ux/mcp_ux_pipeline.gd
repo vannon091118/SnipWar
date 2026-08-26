@@ -263,13 +263,14 @@ func _build_agent_context(scene_hint: String, interactables: Array, elements: Ar
 	return "\n".join(lines)
 
 
-func scan_interactables() -> Dictionary:
-	var live := McpUxLive.build_snapshot()
+func scan_interactables(root_path: String = "/root", max_controls: int = 300, max_depth: int = 32) -> Dictionary:
+	var live := McpUxLive.build_snapshot(root_path, max_controls, max_depth)
 	return {
 		"scene": live.get("scene", "unknown"),
 		"scene_path": live.get("scene_path", ""),
 		"interactables": McpUxLive.interactables(live.get("controls", [])),
 		"controls": live.get("controls", []),
+		"scroll_containers": live.get("scroll_containers", []),
 		"count": McpUxLive.interactables(live.get("controls", [])).size(),
 		"watch_sequence": _watch_sequence,
 	}
@@ -287,11 +288,11 @@ func _in_viewport(candidate_rect: Dictionary) -> bool:
 	return y + h > 0.0 and y < float(vs.y) + 200.0  # 200px overscan tolerance
 
 
-func find_element(description: String, search_rect: Dictionary = {}) -> Dictionary:
+func find_element(description: String, search_rect: Dictionary = {}, root_path: String = "/root", max_controls: int = 300, max_depth: int = 32) -> Dictionary:
 	var normalized_description := description.strip_edges()
 	if normalized_description.is_empty():
 		return {"found": false, "description": description, "error": "description must not be empty"}
-	var live := McpUxLive.build_snapshot()
+	var live := McpUxLive.build_snapshot(root_path, max_controls, max_depth)
 	var width := int(_latest_analysis_value("width", 0))
 	var height := int(_latest_analysis_value("height", 0))
 	var normalized := normalized_description.to_lower()
@@ -607,9 +608,9 @@ func _latest_analysis_value(key: String, default_value: Variant) -> Variant:
 func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 	match tool_name:
 		"runtime_ux_scan":
-			return scan_interactables()
+			return scan_interactables(str(args.get("root_path", "/root")), int(args.get("max_controls", 300)), int(args.get("max_depth", 32)))
 		"runtime_ux_find":
-			return find_element(str(args.get("description", "")), args.get("rect", {}))
+			return find_element(str(args.get("description", "")), args.get("rect", {}), str(args.get("root_path", "/root")), int(args.get("max_controls", 300)), int(args.get("max_depth", 32)))
 		"runtime_ux_watch_start":
 			return start_watch(int(args.get("interval_ms", 500)), bool(args.get("include_visual", false)))
 		"runtime_ux_watch_stop":
@@ -639,8 +640,8 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 static func get_tool_defs() -> Array:
 	return [
 		_make("runtime_ux_analyze", "Run the complete live-control plus visual UX pipeline", {"include_visual": {"type": "boolean", "default": true}}, [], true),
-		_make("runtime_ux_scan", "Fast live scene-tree scan of clickable controls and exact labels", {}),
-		_make("runtime_ux_find", "Find an interactable by exact text, node name, type, or position", {"description": {"type": "string"}, "rect": {"type": "object"}}, ["description"]),
+		_make("runtime_ux_scan", "Fast bounded live scan of clickable controls and exact labels", {"root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}),
+		_make("runtime_ux_find", "Find an interactable in a bounded visible scope by exact text, node name, type, or position", {"description": {"type": "string"}, "rect": {"type": "object"}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, ["description"]),
 		_make("runtime_ux_read", "Read a visual region and return local context metadata", {"rect": {"type": "object"}}, ["rect"], true),
 		_make("runtime_ux_click", "Click an element and observe with a compact receipt; the screenshot artifact is released unless retained", {"description": {"type": "string"}, "rect": {"type": "object"}, "retain_artifact": {"type": "boolean", "default": false}}, ["description"], true),
 		_make("runtime_ux_watch_start", "Start periodic, event-driven UX snapshots (signature-delta gated)", {"interval_ms": {"type": "integer", "default": 500}, "include_visual": {"type": "boolean", "default": false}}),

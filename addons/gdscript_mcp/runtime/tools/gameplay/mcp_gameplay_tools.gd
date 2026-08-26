@@ -73,26 +73,50 @@ func _state_restore(snapshot: Variant) -> Dictionary:
 	return {"error": "restore_run not available"}
 
 
+func _get_planet_field() -> Node:
+	var ml: Object = Engine.get_main_loop()
+	if not (ml is SceneTree):
+		return null
+	var root: Window = (ml as SceneTree).root
+	if root == null:
+		return null
+	var pf: Node = root.get_node_or_null("/root/World/PlanetField")
+	if pf != null:
+		return pf
+	return root.find_child("PlanetField", true, false)
+
+
+func _get_worker_manager() -> Node:
+	var ml: Object = Engine.get_main_loop()
+	if not (ml is SceneTree):
+		return null
+	var root: Window = (ml as SceneTree).root
+	if root == null:
+		return null
+	var wm: Node = root.get_node_or_null("/root/World/PlanetField/WorkerManager")
+	if wm != null:
+		return wm
+	return root.find_child("WorkerManager", true, false)
+
+
 func _faction_query(planet_id: String) -> Dictionary:
 	var gs := _get_gs()
 	if gs == null:
 		return {"error": "GameState not available"}
-	var ml: Object = Engine.get_main_loop()
-	if ml is SceneTree:
-		var pf: Node = (ml as SceneTree).root.get_node_or_null("/root/World/PlanetField")
-		if pf != null:
-			var all_planets: Array = []
-			_find_planets_recursive(pf, all_planets)
-			var planets: Array = []
-			for p in all_planets:
-				var id: String = String(p.call("get_id"))
-				if planet_id == "" or id == planet_id:
-					planets.append({
-						"id": id,
-						"faction": String(p.call("get_faction")),
-						"type": str(p.get("planet_type")) if p.get("planet_type") != null else "",
-					})
-			return {"planets": planets, "count": planets.size()}
+	var pf := _get_planet_field()
+	if pf != null:
+		var all_planets: Array = []
+		_find_planets_recursive(pf, all_planets)
+		var planets: Array = []
+		for p in all_planets:
+			var id: String = String(p.call("get_id"))
+			if planet_id == "" or id == planet_id:
+				planets.append({
+					"id": id,
+					"faction": String(p.call("get_faction")),
+					"type": str(p.get("planet_type")) if p.get("planet_type") != null else "",
+				})
+		return {"planets": planets, "count": planets.size()}
 	return {"error": "PlanetField not found"}
 
 
@@ -189,10 +213,7 @@ func _research_status(faction: String) -> Dictionary:
 
 
 func _upgrade_list(planet_id: String) -> Dictionary:
-	var ml: Object = Engine.get_main_loop()
-	if not (ml is SceneTree):
-		return {"error": "No scene tree"}
-	var pf: Node = (ml as SceneTree).root.get_node_or_null("/root/World/PlanetField")
+	var pf := _get_planet_field()
 	if pf == null:
 		return {"error": "PlanetField not found"}
 	var all_planets: Array = []
@@ -205,10 +226,7 @@ func _upgrade_list(planet_id: String) -> Dictionary:
 
 
 func _dispatch_info(faction: String) -> Dictionary:
-	var ml: Object = Engine.get_main_loop()
-	if not (ml is SceneTree):
-		return {"error": "No scene tree"}
-	var wm: Node = (ml as SceneTree).root.get_node_or_null("/root/World/PlanetField/WorkerManager")
+	var wm := _get_worker_manager()
 	if wm == null:
 		return {"error": "WorkerManager not found"}
 	var pending: Array = wm.get("pending_dispatches") if wm.get("pending_dispatches") != null else []
@@ -241,8 +259,8 @@ func _state_summary(faction: String) -> Dictionary:
 	if gs.has_method("get_faction_credits"):
 		resources["credits"] = int(gs.call("get_faction_credits", fid))
 
-	# Research: active jobs with remaining time + completed list
-	var research := {"active": [], "completed": []}
+	# Research: active list with remaining times + completed list
+	var research: Dictionary = {"active": [], "completed": []}
 	var tech_domain: Object = gs.get("tech_domain") if gs.get("tech_domain") != null else null
 	if tech_domain != null:
 		var jobs: Dictionary = tech_domain.get("research_jobs") if tech_domain.get("research_jobs") != null else {}
@@ -285,15 +303,14 @@ func _state_summary(faction: String) -> Dictionary:
 
 	# Dispatch: pending/active counts only
 	var dispatch := {"pending": 0, "active": 0}
-	if ml is SceneTree:
-		var wm: Node = (ml as SceneTree).root.get_node_or_null("/root/World/PlanetField/WorkerManager")
-		if wm != null:
-			for d in (wm.get("pending_dispatches") if wm.get("pending_dispatches") != null else []):
-				if d is Dictionary and str((d as Dictionary).get("faction", "")) == faction:
-					dispatch["pending"] += 1
-			for t in (wm.get("active_transits") if wm.get("active_transits") != null else []):
-				if t is Dictionary and str((t as Dictionary).get("source_faction", "")) == faction:
-					dispatch["active"] += 1
+	var wm := _get_worker_manager()
+	if wm != null:
+		for d in (wm.get("pending_dispatches") if wm.get("pending_dispatches") != null else []):
+			if d is Dictionary and str((d as Dictionary).get("faction", "")) == faction:
+				dispatch["pending"] += 1
+		for t in (wm.get("active_transits") if wm.get("active_transits") != null else []):
+			if t is Dictionary and str((t as Dictionary).get("source_faction", "")) == faction:
+				dispatch["active"] += 1
 
 	return {
 		"faction": faction,

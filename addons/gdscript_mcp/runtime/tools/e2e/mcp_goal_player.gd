@@ -181,11 +181,91 @@ func _verdict(outcome: String, goal: String, steps: Array, anomalies: Array, rea
 	}
 
 
+# ─── Sequence Player ─────────────────────────────────────────────
+
+## Execute a deterministic sequence of targeted actions (clicks, camera, keys, waits, assertions).
+func play_sequence(actions: Array, goal: String = "") -> Dictionary:
+	var steps: Array = []
+	var anomalies: Array = []
+
+	for i in range(actions.size()):
+		var raw_act = actions[i]
+		if not (raw_act is Dictionary):
+			continue
+		var act: Dictionary = raw_act
+		var type: String = str(act.get("type", ""))
+		var step_rec: Dictionary = {"step": i, "type": type}
+
+		match type:
+			"click_text", "click":
+				var text := str(act.get("text", ""))
+				if text != "":
+					var click_res = _call("runtime_ux_click", {"text": text})
+					step_rec["result"] = click_res
+				else:
+					var x: int = int(act.get("x", -1))
+					var y: int = int(act.get("y", -1))
+					var click_res = _call("runtime_click", {"x": x, "y": y})
+					step_rec["result"] = click_res
+			"camera_to":
+				var x: float = float(act.get("x", 0))
+				var y: float = float(act.get("y", 0))
+				var zoom: float = float(act.get("zoom", -1.0))
+				var duration: float = float(act.get("duration", 0.0))
+				if _registry != null:
+					var cam_res = await _registry.dispatch_async("runtime_camera_move_to", {"x": x, "y": y, "zoom": zoom, "duration": duration})
+					step_rec["result"] = cam_res
+			"key":
+				var keycode = act.get("keycode", act.get("key", KEY_SPACE))
+				var code: int = int(keycode) if keycode is int else _resolve_key_name(str(keycode))
+				_call("runtime_key", {"keycode": code, "pressed": true})
+				_call("runtime_key", {"keycode": code, "pressed": false})
+				step_rec["result"] = {"key": code}
+			"wait_frames":
+				var frames: int = int(act.get("count", 1))
+				var tree := Engine.get_main_loop()
+				if tree is SceneTree:
+					for _f in range(frames):
+						await (tree as SceneTree).process_frame
+				step_rec["result"] = {"frames": frames}
+			"assert":
+				var expr_str: String = str(act.get("code", act.get("expression", "")))
+				var eval_res := _eval_goal_expression(expr_str)
+				step_rec["assert_eval"] = eval_res
+				if not bool(eval_res.get("reached", false)):
+					steps.append(step_rec)
+					return _verdict("fail", goal if goal != "" else expr_str, steps, anomalies, "Assertion failed on step %d: %s" % [i, expr_str])
+
+		steps.append(step_rec)
+
+	if goal != "":
+		var final_eval := _eval_goal_expression(goal)
+		if not bool(final_eval.get("reached", false)):
+			return _verdict("fail", goal, steps, anomalies, "Final goal condition not reached: " + goal)
+
+	return _verdict("pass", goal, steps, anomalies, "All sequence actions completed successfully")
+
+
+func _resolve_key_name(s: String) -> int:
+	match s.to_upper():
+		"KEY_ESCAPE", "ESCAPE", "ESC": return KEY_ESCAPE
+		"KEY_ENTER", "ENTER": return KEY_ENTER
+		"KEY_SPACE", "SPACE": return KEY_SPACE
+		"KEY_TAB", "TAB": return KEY_TAB
+		"KEY_BACKSPACE", "BACKSPACE": return KEY_BACKSPACE
+		"KEY_W", "W": return KEY_W
+		"KEY_A", "A": return KEY_A
+		"KEY_S", "S": return KEY_S
+		"KEY_D", "D": return KEY_D
+		_: return KEY_SPACE
+
+
 # ─── Tool Definitions ───────────────────────────────────────────
 
 static func get_tool_defs() -> Array:
 	return [
 		_make("runtime_goal_play", "Autonomously play towards a GDScript-evaluable goal expression using freeze/step", {"goal": {"type": "string"}, "scene_path": {"type": "string", "default": ""}, "max_steps": {"type": "integer", "default": 500}}, ["goal"]),
+		_make("runtime_goal_sequence", "Execute a deterministic sequence of targeted actions and assertions", {"actions": {"type": "array", "items": {"type": "object"}}, "goal": {"type": "string", "default": ""}}, ["actions"], true),
 		_make("runtime_goal_check", "Evaluate a goal expression once without stepping", {"goal": {"type": "string"}}, ["goal"]),
 		_make("runtime_goal_history", "Return the last goal-play steps for inspection", {"limit": {"type": "integer", "default": 50}}),
 	]
@@ -227,6 +307,12 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 				str(args.get("scene_path", "")),
 				int(args.get("max_steps", MAX_STEPS)),
 			)
+			_last_steps = result.get("steps", [])
+			return result
+		"runtime_goal_sequence":
+			var actions: Array = args.get("actions", []) as Array
+			var goal: String = str(args.get("goal", ""))
+			var result := await play_sequence(actions, goal)
 			_last_steps = result.get("steps", [])
 			return result
 		_:
