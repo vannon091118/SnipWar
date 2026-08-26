@@ -54,6 +54,8 @@ const PLAYER_BLOCKED_TOOLS := [
 	"runtime_autonomy_rollback_all",
 	"runtime_autonomy_workspace_import",
 	"runtime_autonomy_export",
+	"runtime_playthrough_preset_load",
+	"runtime_playthrough_compare",
 ]
 
 var _profile := PROFILE_PLAYER

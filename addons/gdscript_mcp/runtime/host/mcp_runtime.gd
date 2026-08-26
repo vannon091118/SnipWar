@@ -21,6 +21,11 @@ func _init() -> void:
 
 
 func _ready() -> void:
+	# Im Editor läuft der Runtime-MCP-Server in-process über das Plugin
+	# (ein Godot-Prozess, kein separater Spielprozess). Der Autoload startet
+	# nur in eigenständigen Spiel-Läufen (godot -- --mcp ...).
+	if Engine.is_editor_hint():
+		return
 	var user_args := OS.get_cmdline_user_args()
 	if not "--mcp" in user_args:
 		return
@@ -145,6 +150,8 @@ func _parse_int_arg(args: PackedStringArray, flag: String, default_value: int) -
 	for i in args.size():
 		if args[i] == flag and i + 1 < args.size():
 			return int(args[i + 1])
+		if args[i].begins_with(flag + "="):
+			return int(args[i].trim_prefix(flag + "="))
 	return default_value
 
 
@@ -152,6 +159,8 @@ func _parse_string_arg(args: PackedStringArray, flag: String, default_value: Str
 	for i in args.size():
 		if args[i] == flag and i + 1 < args.size():
 			return args[i + 1]
+		if args[i].begins_with(flag + "="):
+			return args[i].trim_prefix(flag + "=")
 	return default_value
 
 
@@ -159,6 +168,8 @@ func _parse_float_arg(args: PackedStringArray, flag: String, default_value: floa
 	for i in args.size():
 		if args[i] == flag and i + 1 < args.size():
 			return float(args[i + 1])
+		if args[i].begins_with(flag + "="):
+			return float(args[i].trim_prefix(flag + "="))
 	return default_value
 
 
