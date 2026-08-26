@@ -297,3 +297,13 @@ AGENTS.md: DOKI-Qualitäts-Analyzer dokumentiert
 - change_index.json: Tooling erweitert (F--001).
 - narrative_chain.json: Tooling erweitert (F--001).
 - scripts/doki/data/arcs.json: Tooling erweitert (F--001).
+
+## 2026-08-27 20:00:00 — p20 · c20j45n5a5p16 · Squizzle · neugierig
+
+**Squizzles Fall: Doku nachgezogen: AGENTS.md erklärt Systemaufbau…**
+
+Doku nachgezogen: AGENTS.md erklärt Systemaufbau (14 Charaktere, Composite, Kategorie-Arc), README um Analyzer + Arc-Gewicht erweitert
+
+- change_index.json: Dokumentation aktualisiert (F--001).
+- narrative_chain.json: Dokumentation aktualisiert (F--001).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F--001).
