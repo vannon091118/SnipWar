@@ -129,6 +129,16 @@
 				"C--001"
 			],
 			"p_id": 11.0
+		},
+		"e186c98431e04aeca11e227c7459fc3daa695ff0": {
+			"c": 12.0,
+			"composite": "c12j11n13a1p1",
+			"entities": [
+				"F--001",
+				"F--001",
+				"F--001"
+			],
+			"p_id": 12.0
 		}
 	},
 	"entities": {
@@ -150,12 +160,12 @@
 			"type": "component"
 		},
 		"F--001": {
-			"first_p": 12,
+			"first_p": 13,
 			"history": [],
 			"id": "F--001",
-			"last_p": 12,
-			"name": "verifier.gd",
-			"path": "scripts/doki/core/verifier.gd",
+			"last_p": 13,
+			"name": "finalize_flow.gd",
+			"path": "scripts/doki/orchestration/flows/finalize_flow.gd",
 			"status": "created",
 			"type": "file"
 		}

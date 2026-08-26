@@ -205,9 +205,9 @@
 			"summary": "Merge remote-tracking branch 'origin/main'"
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a1",
-			"c": 11,
+			"c": 11.0,
 			"composite": "c11j46n7a1p5",
 			"data_changes": [
 				{
@@ -823,17 +823,53 @@
 			],
 			"date": "2026-08-27 11:00:00",
 			"hash": "a95a7ee437c739b97ceb60b66f5f4beb92f2bce1",
-			"j": 46,
+			"j": 46.0,
 			"model_id": "claude-sonnet-4",
 			"mood": "müde-zufrieden",
-			"n": 7,
+			"n": 7.0,
 			"narrator": "Argos",
-			"p": 5,
-			"p_id": 11,
+			"p": 5.0,
+			"p_id": 11.0,
 			"prev_model": "history",
 			"prev_narrator": "Null",
-			"seq": 11,
+			"seq": 11.0,
 			"summary": "Hab ich doch gesagt: Irgendwann muss aus jedem Haufen Arbeit ein Tor werden, sonst weiß keiner mehr, warum irgendwas gebaut wurde. Deshalb lag heute der DOKI CommitLayer auf dem Tisch — ein determi..."
+		},
+		{
+			"a": 1,
+			"arc": "a2",
+			"c": 12,
+			"composite": "c12j11n13a1p1",
+			"data_changes": [
+				{
+					"deletions": 7.0,
+					"file": "change_index.json",
+					"insertions": 138.0
+				},
+				{
+					"deletions": 70.0,
+					"file": "narrative_chain.json",
+					"insertions": 701.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/core/verifier.gd",
+					"insertions": 24.0
+				}
+			],
+			"date": "2026-08-27 12:00:00",
+			"hash": "e186c98431e04aeca11e227c7459fc3daa695ff0",
+			"j": 11,
+			"model_id": "claude-sonnet-4",
+			"mood": "sarkastisch",
+			"n": 13,
+			"narrator": "Flux",
+			"p": 1,
+			"p_id": 12,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Argos",
+			"seq": 12,
+			"summary": "Also erstmal — warte — der Verifier hat sich selbst ins Bein geschossen. Wortzahl zählt die ganzen Begründungszeilen mit, die wir selbst reingeschrieben haben, und dann meckert er, wir wären zu lan..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

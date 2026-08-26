@@ -80,13 +80,13 @@ func run() -> Dictionary:
 	)
 	_index_store.save(index)
 
-	# Arc-Advance
+	# Arc-Advance (schreibt arcs.json — Arc-State, z. B. completed + neuer aktiver Arc)
 	var arc_result: Dictionary = _arc_engine.advance(entity_ids, not (session.get("sideplot", {}) as Dictionary).is_empty())
 
-	# Chain + Index stagen — sie reisen mit dem NÄCHSTEN Commit (der aktuelle
-	# Commit ist bereits erstellt). Sonst bliebe der Repo-Zustand dirty und
-	# Check 8 (DocSync) blockte den nächsten Commit. Kein neuer Commit nötig.
-	var stage_res: Dictionary = _git.stage(["narrative_chain.json", "change_index.json"])
+	# Chain + Index + Arc-State stagen — sie reisen mit dem NÄCHSTEN Commit
+	# (der aktuelle Commit ist bereits erstellt). Sonst bliebe der Repo-Zustand
+	# dirty und Check 8 (DocSync) blockte den nächsten Commit.
+	var stage_res: Dictionary = _git.stage(["narrative_chain.json", "change_index.json", "scripts/doki/data/arcs.json"])
 	if not stage_res["ok"]:
 		return {"ok": false, "error": "finalize: narrative Dateien konnten nicht gestaged werden: %s" % str(stage_res.get("stderr", "?"))}
 

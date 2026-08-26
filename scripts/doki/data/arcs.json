@@ -1,17 +1,35 @@
 {
-  "version": 2,
-  "description": "Arcs als abstrakte ID-Map (a1..aN). Jeder Arc repräsentiert eine Projekt-Phase. Der aktive Arc ist über 'active' referenziert. 'weight' ist der akkumulierte narrative Druck (deterministisch aus Chain + Diff berechnet), 'climax_weight' die Schwelle für ARC_CLIMAX. Port aus lore_arcs.json, erweitert um Gewichtsmodell.",
-  "active": "a1",
-  "arcs": {
-    "a1": {
-      "id": "a1",
-      "name": "Der erste Stein",
-      "version": "v0.1.0",
-      "theme": "Genesis des CommitLayer in SnipWar — deterministisch, GDScript, Layered Monolith. Kein XBridge-Legacy-Code.",
-      "span": "2026-08-26 → heute",
-      "status": "active",
-      "weight": 0.0,
-      "climax_weight": 3.0
-    }
-  }
+	"active": "a2",
+	"arcs": {
+		"a1": {
+			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
+			"id": "a1",
+			"name": "Der erste Stein",
+			"seen_entities": [
+				"F--001",
+				"C--001"
+			],
+			"span": "2026-08-26 → heute",
+			"status": "completed",
+			"theme": "Genesis des CommitLayer in SnipWar — deterministisch, GDScript, Layered Monolith. Kein XBridge-Legacy-Code.",
+			"version": "v0.1.0",
+			"weight": 49.5
+		},
+		"a2": {
+			"climax_weight": 3.0,
+			"id": "a2",
+			"name": "Nächster Akt",
+			"seen_entities": [
+				"F--001"
+			],
+			"span": "heute → offen",
+			"status": "active",
+			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
+			"version": "",
+			"weight": 1.6
+		}
+	},
+	"description": "Arcs als abstrakte ID-Map (a1..aN). Jeder Arc repräsentiert eine Projekt-Phase. Der aktive Arc ist über 'active' referenziert. 'weight' ist der akkumulierte narrative Druck (deterministisch aus Chain + Diff berechnet), 'climax_weight' die Schwelle für ARC_CLIMAX. Port aus lore_arcs.json, erweitert um Gewichtsmodell.",
+	"version": 2.0
 }

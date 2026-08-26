@@ -138,3 +138,14 @@ Verifier-Fix: Wortzahl und Bullet-Ratio nur noch auf Narrator-Body berechnen (Re
 - change_index.json: Fehler behoben (F--001).
 - narrative_chain.json: Fehler behoben (F--001).
 - scripts/doki/core/verifier.gd: Fehler behoben (F--001).
+
+## 2026-08-27 13:00:00 — p13 · c13j62n9a2p5 · Spark · erschöpft
+
+**Spark entdeckt: finalize staged auch arcs.json — Arc-State…**
+
+finalize staged auch arcs.json — Arc-State (completed/neuer Arc) reist mit dem nächsten Commit statt dirty zu bleiben
+
+- change_index.json: Implementiert und integriert (F--001).
+- narrative_chain.json: Implementiert und integriert (F--001).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F--001).
+- scripts/doki/orchestration/flows/finalize_flow.gd: Implementiert und integriert (F--001).
