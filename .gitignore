@@ -11,8 +11,10 @@ godot/
 
 .freebuff/
 
-# Freebuff/local agent workspace (never publish)
+# Local agent workspaces and session artifacts (never publish).
 .agents/
+.hermes/
+.kilo/
 
 # Ad-hoc development artifacts never belong in the repository.
 /tmp_*
