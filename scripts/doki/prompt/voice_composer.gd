@@ -103,13 +103,19 @@ func _build_user_prompt(ctx: Dictionary) -> String:
 
 	# ARC_CLIMAX
 	if bool(ctx.get("is_arc_climax", false)):
-		prompt += "\n!!! ARC_CLIMAX — STAFFELFINALE !!!\n"
-		prompt += "Der aktuelle Arc '%s' erreicht heute seinen Höhepunkt.\n" % str(ctx.get("arc_name", "?"))
-		prompt += "Schreibe diesen Commit ALS STAFFELFINALE:\n"
-		prompt += "- Rückblick: Was wurde in diesem Arc erreicht? Welche Fragen wurden beantwortet?\n"
-		prompt += "- Abschluss: Der letzte Commit dieses Handlungsbogens. Mach ihn bedeutsam.\n"
-		prompt += "- AUSBLICK: Schlage am Ende des Epilogs EINEN Namen und EIN Thema für den NÄCHSTEN Arc vor (Format: 'NÄCHSTER ARC: <Name> — <Thema>').\n"
-		prompt += "Der neue Arc MUSS auf der realen Arbeit basieren, die in den letzten Commits passiert ist.\n\n"
+		var eligible: bool = bool(ctx.get("arc_climax_eligible", true))
+		if eligible:
+			prompt += "\n!!! ARC_CLIMAX — STAFFELFINALE !!!\n"
+			prompt += "Der aktuelle Arc '%s' erreicht heute seinen Höhepunkt.\n" % str(ctx.get("arc_name", "?"))
+			prompt += "Schreibe diesen Commit ALS STAFFELFINALE:\n"
+			prompt += "- Rückblick: Was wurde in diesem Arc erreicht? Welche Fragen wurden beantwortet?\n"
+			prompt += "- Abschluss: Der letzte Commit dieses Handlungsbogens. Mach ihn bedeutsam.\n"
+			prompt += "- AUSBLICK: Schlage am Ende des Epilogs EINEN Namen und EIN Thema für den NÄCHSTEN Arc vor (Format: 'NÄCHSTER ARC: <Name> — <Thema>').\n"
+			prompt += "Der neue Arc MUSS auf der realen Arbeit basieren, die in den letzten Commits passiert ist.\n\n"
+		else:
+			prompt += "\n!!! WARTUNGSABSCHNITT — Arc '%s' gewichtet sich, aber dieser Commit ist WARTUNG.\n" % str(ctx.get("arc_name", "?"))
+			prompt += "Der Arc geht weiter — dieser Fix/Doku/Trivial-Commit ist kein Höhepunkt.\n"
+			prompt += "Erzähle ihn als nötige Arbeit, die den Weg freimacht für das nächste große Thema.\n\n"
 
 	prompt += "IMPULS: %s\n" % str(ctx.get("impulse", ""))
 

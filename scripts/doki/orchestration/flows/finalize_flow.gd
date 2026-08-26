@@ -81,7 +81,8 @@ func run() -> Dictionary:
 	_index_store.save(index)
 
 	# Arc-Advance (schreibt arcs.json — Arc-State, z. B. completed + neuer aktiver Arc)
-	var arc_result: Dictionary = _arc_engine.advance(entity_ids, not (session.get("sideplot", {}) as Dictionary).is_empty())
+	var impulse_class: String = str(session.get("impulse_class", "CODE"))
+	var arc_result: Dictionary = _arc_engine.advance(entity_ids, not (session.get("sideplot", {}) as Dictionary).is_empty(), impulse_class)
 
 	# Chain + Index + Arc-State stagen — sie reisen mit dem NÄCHSTEN Commit
 	# (der aktuelle Commit ist bereits erstellt). Sonst bliebe der Repo-Zustand

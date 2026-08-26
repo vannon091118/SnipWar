@@ -172,6 +172,72 @@
 			],
 			"p_id": 13.0
 		},
+		"bf2cf55bb2aacf85e3f457695484541a3c72abbf": {
+			"c": 16.0,
+			"composite": "c16j24n8a2p12",
+			"entities": [
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001"
+			],
+			"p_id": 16.0
+		},
 		"e186c98431e04aeca11e227c7459fc3daa695ff0": {
 			"c": 12.0,
 			"composite": "c12j11n13a1p1",
@@ -185,29 +251,29 @@
 	},
 	"entities": {
 		"C--001": {
-			"first_p": 14.0,
+			"first_p": 17,
 			"history": [
 				{
 					"lines": [
-						12.0
+						93
 					],
-					"p_id": 14.0
+					"p_id": 17
 				}
 			],
 			"id": "C--001",
-			"last_p": 14.0,
-			"name": "MAIN_MENU_SCENE",
-			"path": "addons/gdscript_mcp/testing/e2e/mcp_playthrough_driver.gd",
+			"last_p": 17,
+			"name": "advance",
+			"path": "scripts/doki/prompt/arc_engine.gd",
 			"status": "modified",
 			"type": "component"
 		},
 		"F--001": {
-			"first_p": 16,
+			"first_p": 17,
 			"history": [],
 			"id": "F--001",
-			"last_p": 16,
-			"name": "voice_composer.gd.uid",
-			"path": "scripts/doki/doki/prompt/voice_composer.gd.uid",
+			"last_p": 17,
+			"name": "voice_composer.gd",
+			"path": "scripts/doki/prompt/voice_composer.gd",
 			"status": "created",
 			"type": "file"
 		}

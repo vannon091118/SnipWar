@@ -13,6 +13,11 @@ const NEW_ENTITY_WEIGHT: float = 0.3
 const RECUR_ENTITY_WEIGHT: float = 0.4
 const MERGE_BONUS: float = 1.0
 
+## Kategorien, die einen Arc-Vorstoß blockieren (kein CLIMAX möglich).
+const NON_NARRATIVE_CLASSES: Array = ["FIX", "DOKU", "TRIVIAL", "TEST-ASSET"]
+## Kategorien mit reduziertem Gewicht (Wartung, aber nicht trivial).
+const MAINTENANCE_CLASSES: Array = ["REFACTOR", "BUILD"]
+
 var _data: Dictionary = {}
 var _path: String
 
@@ -46,7 +51,13 @@ func arc_count() -> int:
 
 ## Deterministische Gewichtsprognose FÜR den kommenden Commit.
 ## Called from prepare (Diff ist staged) — Ergebnis fließt in session.
-func forecast_weight(active_arc: Dictionary, change_entities: Array, is_merge: bool) -> Dictionary:
+## impulse_class: Klassifikation aus VoiceComposer.classify_impulse().
+## Kategorien steuern, ob ein Commit zum Arc-Vorstoß beiträgt und ob
+## ARC_CLIMAX ausgelöst werden darf:
+##   FIX/DOKU/TRIVIAL/TEST-ASSET → Gewicht 0, kein CLIMAX (Wartung)
+##   REFACTOR/BUILD → reduziertes Gewicht, CLIMAX möglich
+##   CODE/FEATURE → volles Gewicht, normaler CLIMAX
+func forecast_weight(active_arc: Dictionary, change_entities: Array, is_merge: bool, impulse_class: String = "CODE") -> Dictionary:
 	var weight: float = float(active_arc.get("weight", 0.0))
 	var climax_weight: float = float(active_arc.get("climax_weight", 3.0))
 
@@ -66,22 +77,36 @@ func forecast_weight(active_arc: Dictionary, change_entities: Array, is_merge: b
 			new_entities += 1
 			known_entity_ids[entity_id] = true
 
-	weight += BASE_WEIGHT + NEW_ENTITY_WEIGHT * new_entities + RECUR_ENTITY_WEIGHT * recur_entities
+	# Kategorie-basierte Gewichtung
+	var eligible: bool = true
+	var base: float = BASE_WEIGHT
+	if NON_NARRATIVE_CLASSES.has(impulse_class):
+		# FIX, DOKU, TRIVIAL, TEST-ASSET: kein Gewichtsbeitrag, kein CLIMAX
+		base = 0.0
+		eligible = false
+	elif MAINTENANCE_CLASSES.has(impulse_class):
+		# REFACTOR, BUILD: reduziertes Gewicht
+		base = BASE_WEIGHT * 0.5
+
+	weight += base + NEW_ENTITY_WEIGHT * new_entities + RECUR_ENTITY_WEIGHT * recur_entities
 	if is_merge:
 		weight += MERGE_BONUS
 
-	var climax: bool = weight >= climax_weight
+	var climax: bool = eligible and weight >= climax_weight
 	return {
 		"forecast_weight": weight,
 		"new_entities": new_entities,
 		"recur_entities": recur_entities,
 		"climax": climax,
+		"climax_eligible": eligible,
+		"impulse_class": impulse_class,
 	}
 
 
 ## Nach erfolgreichem Commit: Gewicht fortschreiben; bei Climax → Arc wechseln.
-func advance(new_entities: Array, is_merge: bool) -> Dictionary:
-	var forecast: Dictionary = forecast_weight(active_arc(), new_entities, is_merge)
+## impulse_class: Klassifikation des Commits (steuert Climax-Berechtigung).
+func advance(new_entities: Array, is_merge: bool, impulse_class: String = "CODE") -> Dictionary:
+	var forecast: Dictionary = forecast_weight(active_arc(), new_entities, is_merge, impulse_class)
 	var weight: float = forecast["forecast_weight"]
 	var climax: bool = forecast["climax"]
 	var old_id: String = active_id()

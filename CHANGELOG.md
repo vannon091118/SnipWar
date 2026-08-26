@@ -245,3 +245,34 @@ Entferne doppelten doki/doki Ordner - Godot Class Cache Kollision
 - scripts/doki/doki/prompt/sideplot_engine.gd.uid: Tooling erweitert (F--001).
 - scripts/doki/doki/prompt/voice_composer.gd: Tooling erweitert (F--001).
 - scripts/doki/doki/prompt/voice_composer.gd.uid: Tooling erweitert (F--001).
+
+## 2026-08-27 17:00:00 — p17 · c17j71n7a5p6 · Argos · sarkastisch
+
+**Argos: 8 Dateien — ArcEngine: Kategorie-basierte …**
+
+ArcEngine: Kategorie-basierte Climax-Steuerung — FIX/DOKU/TRIVIAL tragen nicht zum Arc-Vorstoß bei
+
+- change_index.json: Dokumentation aktualisiert (F--001).
+- narrative_chain.json: Dokumentation aktualisiert (F--001).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F--001).
+- scripts/doki/orchestration/flows/finalize_flow.gd: Dokumentation aktualisiert (F--001).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Dokumentation aktualisiert (F--001).
+- scripts/doki/orchestration/session_builder.gd: Dokumentation aktualisiert (F--001).
+- scripts/doki/prompt/arc_engine.gd: Dokumentation aktualisiert (F--001).
+- scripts/doki/prompt/voice_composer.gd: Dokumentation aktualisiert (F--001).
+
+## 2026-08-27 17:00:00 — p17 · c17j48n14a1p1 · Sage · trocken
+
+**Sage lehrt: ArcEngine: Kategorie-basierte Climax-Steuerung —…**
+
+ArcEngine: Kategorie-basierte Climax-Steuerung — FIX/DOKU/TRIVIAL tragen nicht zum Arc-Vorstoß bei
+
+- CHANGELOG.md: Dokumentation aktualisiert (F--001).
+- change_index.json: Dokumentation aktualisiert (F--001).
+- narrative_chain.json: Dokumentation aktualisiert (F--001).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F--001).
+- scripts/doki/orchestration/flows/finalize_flow.gd: Dokumentation aktualisiert (F--001).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Dokumentation aktualisiert (F--001).
+- scripts/doki/orchestration/session_builder.gd: Dokumentation aktualisiert (F--001).
+- scripts/doki/prompt/arc_engine.gd: Dokumentation aktualisiert (F--001).
+- scripts/doki/prompt/voice_composer.gd: Dokumentation aktualisiert (F--001).

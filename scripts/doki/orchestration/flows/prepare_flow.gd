@@ -112,7 +112,7 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	var sideplot: Dictionary = _sideplot_engine.build_context(entries)
 	var index: Dictionary = _index_store.read()
 	var analyze: Dictionary = _change_index_engine.analyze(staged, diff_output, index, int(result["p"]))
-	var arc_forecast: Dictionary = _arc_engine.forecast_weight(arc, analyze["entity_ids"], not sideplot.is_empty())
+	var arc_forecast: Dictionary = _arc_engine.forecast_weight(arc, analyze["entity_ids"], not sideplot.is_empty(), str(result["impulse_class"]))
 
 	# Beziehung zum Vorgänger-Narrator
 	var relationship: Dictionary = {}

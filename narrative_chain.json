@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-26 23:10:21 +0200",
-		"hash": "bbf8763ef955b92465ac981d415baba7afaa6e7d",
-		"subject": "Merge remote-tracking branch 'origin/main'"
+		"date": "2026-08-27 00:42:33 +0200",
+		"hash": "bf2cf55bb2aacf85e3f457695484541a3c72abbf",
+		"subject": "Ghost verzeichnet: Entferne doppelten doki/doki Ordner - Godot Classâ€¦"
 	},
 	"entries": [
 		{
@@ -994,9 +994,9 @@
 			"summary": "Ich predige Schichtentrennung und extrahiere in die gleiche Datei. Heute zahle ich den Preis dafür: Der MCP-Plugin-Satz — Agent-Workflow, Chain-Controller, E2E-Testtreiber, das gesamte Plugin-Layou..."
 		},
 		{
-			"a": 2,
+			"a": 2.0,
 			"arc": "a4",
-			"c": 15,
+			"c": 15.0,
 			"composite": "c15j38n3a2p11",
 			"data_changes": [
 				{
@@ -1022,20 +1022,342 @@
 			],
 			"date": "2026-08-27 15:00:00",
 			"hash": "0d3e994cdaff6003fe851ad638f06da48c6d57d9",
-			"j": 38,
+			"j": 38.0,
 			"model_id": "claude-sonnet-4",
 			"mood": "trocken",
-			"n": 3,
+			"n": 3.0,
 			"narrator": "Thinker",
-			"p": 11,
-			"p_id": 15,
+			"p": 11.0,
+			"p_id": 15.0,
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Devin",
-			"seq": 15,
+			"seq": 15.0,
 			"summary": "Ich zähle: vierzehn Checks, zwei Fehlfunde, einer war mein eigener Fehler. Die Verifier-Logik für kausale Konnektoren durchsuchte die gesamte Commit-Message — Tokens, Reason-Lines, alles — anstatt ..."
+		},
+		{
+			"a": 2.0,
+			"arc": "a4",
+			"c": 16.0,
+			"composite": "c16j24n8a2p12",
+			"data_changes": [
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "narrative_chain.json",
+					"insertions": 48.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/README.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/chain_store.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/chain_store.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/change_index_store.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/change_index_store.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/session_store.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/chain/session_store.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/character/mood_overlay.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/character/mood_overlay.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/character/narrator_catalog.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/character/narrator_catalog.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/rng_engine.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/rng_engine.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/verifier.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/verifier.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/xorshift128.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/core/xorshift128.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/data/arcs.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/data/moods.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/data/narrators.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki_selfcheck.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki_selfcheck.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki_story_test.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/doki_story_test.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/artifact_writer.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/artifact_writer.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/change_index_engine.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/change_index_engine.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/commit_orchestrator.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/commit_orchestrator.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/finalize_flow.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/finalize_flow.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/finish_flow.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/finish_flow.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/gate_flow.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/gate_flow.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/prepare_flow.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/status_flow.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/flows/status_flow.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/git_helper.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/git_helper.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/message_builder.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/message_builder.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/session_builder.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/orchestration/session_builder.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/arc_engine.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/arc_engine.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/relationship_engine.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/relationship_engine.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/sideplot_engine.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/sideplot_engine.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/voice_composer.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki/prompt/voice_composer.gd.uid",
+					"insertions": 0.0
+				}
+			],
+			"date": "2026-08-27 16:00:00",
+			"hash": "bf2cf55bb2aacf85e3f457695484541a3c72abbf",
+			"j": 24.0,
+			"model_id": "claude-sonnet-4",
+			"mood": "selbstironisch",
+			"n": 8.0,
+			"narrator": "Ghost",
+			"p": 12.0,
+			"p_id": 16.0,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Thinker",
+			"seq": 16.0,
+			"summary": "Es geschah in der siebzehnten Epoche der Historia, als Thinker noch den Verifier feinjustiert hatte und der Echo-Resonanz-Test just ins Grüne gesprungen war, da bemerkten die Chronisten einen Schat..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
 	"genesis_date": "2026-08-27 00:00:00",
-	"genesis_mood": "genesis"
+	"genesis_mood": "genesis",
+	"repairs": [
+		{
+			"at_hash": "bf2cf55bb2aacf85e3f457695484541a3c72abbf",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		}
+	]
 }
