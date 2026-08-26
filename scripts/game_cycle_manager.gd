@@ -1,13 +1,28 @@
 extends Node
 
+## Game-flow orchestrator: scene transitions, battle commits and victory checks.
+##
+## GameCycleManager is the single authority for game-flow decisions.
+## BattleScene and ConquestScene are NEVER accessed directly — they are
+## created and managed through typed interfaces (play_battle/play_conquest)
+## and communicate back via signals.
+##
+## Inline replay orchestration: when a BattleScene or ConquestScene is
+## created as an inline child (e.g. inside ConflictManager's parent node),
+## the scene's completion signal is wired to apply_battle_result here.
+
 signal battle_started(context: BattleContext)
 signal battle_committed(context: BattleContext)
+signal replay_completed(type: StringName, replay: CombatReplay)
 signal victory_detected(faction: StringName, reason: StringName)
 
 var _pending_battle: BattleContext
 var _committed_battles: Dictionary = {}
 var _victory_locked: bool = false
 var _return_to_world_after_battle: bool = false
+## Track inline replay nodes so we can clean them up on completion.
+var _inline_battle: BattleScene = null
+var _inline_conquest: ConquestScene = null
 
 func _ready() -> void:
 	var state: Node = _game_state()
@@ -94,6 +109,114 @@ func apply_battle_result(context: BattleContext = null) -> bool:
 		_return_to_world(resolved.return_scene_id)
 		return true
 	return false
+
+# --- Inline Replay Orchestration ---
+# When a BattleScene or ConquestScene is created inside the Layer-1 tree
+# (e.g. as a child of ConflictManager's parent), the scene's completion
+# signal is wired here. GameCycleManager decides whether to commit the
+# result and clean up.
+
+## Creates a BattleScene as an inline child of `parent` and wires its
+## completion signal to `apply_battle_result`. Used for AI-only or
+## in-world replay without a full scene switch.
+func begin_inline_battle(context: BattleContext, parent: Node) -> void:
+	if context == null or context.replay == null or parent == null:
+		return
+	_free_inline_battle()
+	var scene: BattleScene = BattleScene.new()
+	scene.name = "BattleReplay"
+	parent.add_child(scene)
+	scene.battle_completed.connect(Callable(self, "_on_inline_battle_completed").bind(context))
+	scene.play_battle(context.replay)
+	_inline_battle = scene
+
+## Creates a ConquestScene as an inline child of `parent` and wires its
+## completion signal to `apply_battle_result`. Used for in-world replay
+## without a full scene switch.
+func begin_inline_conquest(context: BattleContext, parent: Node) -> void:
+	if context == null or context.replay == null or parent == null:
+		return
+	_free_inline_conquest()
+	var scene: ConquestScene = ConquestScene.new()
+	scene.name = "ConquestReplay"
+	parent.add_child(scene)
+	scene.conquest_completed.connect(Callable(self, "_on_inline_conquest_completed").bind(context))
+	scene.play_conquest(context.replay)
+	_inline_conquest = scene
+
+func _on_inline_battle_completed(_replay: CombatReplay, context: BattleContext) -> void:
+	_free_inline_battle()
+	apply_battle_result(context)
+	replay_completed.emit(&"battle", _replay)
+
+func _on_inline_conquest_completed(_replay: CombatReplay, context: BattleContext) -> void:
+	_free_inline_conquest()
+	apply_battle_result(context)
+	replay_completed.emit(&"conquest", _replay)
+
+func _free_inline_battle() -> void:
+	if _inline_battle != null and is_instance_valid(_inline_battle):
+		_inline_battle.queue_free()
+	_inline_battle = null
+
+func _free_inline_conquest() -> void:
+	if _inline_conquest != null and is_instance_valid(_inline_conquest):
+		_inline_conquest.queue_free()
+	_inline_conquest = null
+
+## Signal handler: ConflictManager emits replay_requested when a combat
+## replay needs visual playback. GameCycleManager creates the appropriate
+## inline scene and wires its completion to apply_battle_result.
+func _on_replay_requested(simulation_type: StringName, replay: CombatReplay) -> void:
+	if replay == null:
+		return
+	# Only player-initiated replays need visual playback.
+	var state: Node = _game_state()
+	var is_player := false
+	if replay.is_battle():
+		is_player = replay.winner == GameState.FACTION_PLAYER
+	elif replay.is_conquest():
+		is_player = replay.captured
+	if not is_player:
+		return
+	# Build a minimal BattleContext for the inline replay. The ConflictManager
+	## already stores any full context in _pending_overlay_context for the
+	## route-engagement path; here we create a lightweight context for
+	## planet-arrival replays that don't need full transit bookkeeping.
+	var context := BattleContext.new()
+	context.battle_id = &"inline_%s" % simulation_type
+	context.replay = replay
+	if replay.is_battle():
+		context.fleet_a = FleetSnapshot.new()
+		context.fleet_a.faction = GameState.FACTION_PLAYER
+		context.fleet_b = FleetSnapshot.new()
+		context.fleet_b.faction = GameState.FACTION_CPU
+	else:
+		context.fleet_a = FleetSnapshot.new()
+		context.fleet_a.faction = GameState.FACTION_PLAYER
+		context.fleet_b = FleetSnapshot.new()
+		context.fleet_b.faction = GameState.FACTION_CPU
+	# Find the appropriate parent for the inline scene.
+	var parent: Node = _find_replay_parent()
+	if parent == null:
+		return
+	if simulation_type == &"battle":
+		begin_inline_battle(context, parent)
+	elif simulation_type == &"conquest":
+		begin_inline_conquest(context, parent)
+
+## Finds the best parent node for an inline replay scene.
+## Prefers the ConflictManager's parent (PlanetField) since that's
+## where the Layer-1 world scene lives.
+func _find_replay_parent() -> Node:
+	var tree := get_tree()
+	if tree == null:
+		return null
+	var world: Node = tree.current_scene
+	if world == null:
+		return null
+	var field: Node = world.get_node_or_null("PlanetField")
+	return field if field != null else world
 
 ## Returns to the scene named by the battle context (`return_scene_id`, a
 ## SceneDirector registry id; defaults to "world"). The tree is not paused at

@@ -128,7 +128,7 @@ func run(ctx: PreflightContext) -> bool:
 		and is_equal_approx(replayed_conquest.duration, conquest_replay.duration),
 		"captured conquest seed must reproduce the live replay result"):
 		return false
-	if not ctx.check(conflict_manager.get_node_or_null("ConquestReplay") is ConquestScene, "live ShipBase military arrival did not create a ConquestScene"):
+	if not ctx.check(ship_replay_kinds.has(&"conquest"), "live ShipBase military arrival did not emit replay_started for conquest"):
 		return false
 	await ctx.await_frame()
 	if not ctx.check(not is_instance_valid(ship_base), "arrived ShipBase was not freed after resolving arrival"):

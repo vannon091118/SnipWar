@@ -1,16 +1,27 @@
 extends Node
 
+## Layer-1 conflict orchestration (event-driven, no direct scene instantiation).
+##
+## ConflictManager lives inside Layer 1 (child of PlanetField) and orchestrates
+## ship transits, arrival resolution and combat. It does NOT instantiate
+## BattleScene or ConquestScene directly — those responsibilities belong to
+## GameCycleManager (or its ReplayOrchestrator).
+##
+## Layer contract:
+##   Signal: replay_started(type, replay)  — emitted for every combat replay
+##   Signal: replay_requested(type, replay) — requested full visual playback
+##   Signal: ship_dispatched / ship_arrived  — transit lifecycle
+
 const SHIP_BASE_SCENE: PackedScene = preload("res://scenes/objects/ships/ship_base.tscn")
 const DEFAULT_TRANSIT_CONFIG: TransitConfig = preload("res://resources/config/transit_default.tres")
 const FLIGHT_TIME_SCRIPT: Script = preload("res://scripts/flight_time.gd")
-const BATTLE_SCENE: PackedScene = preload("res://scenes/battle/battle_scene.tscn")
-const CONQUEST_SCENE: PackedScene = preload("res://scenes/conquest/conquest_scene.tscn")
 const ROUTE_ENGAGEMENT_SCRIPT: Script = preload("res://scripts/simulation/route_engagement_resolver.gd")
 const COMBAT_SEED_COUNTER_STRIDE: int = 1000003
 const BATTLE_SEED_SALT: int = 0x51A7E
 const CONQUEST_SEED_SALT: int = 0xC0A57
 
 signal replay_started(simulation_type: StringName, replay: CombatReplay)
+signal replay_requested(simulation_type: StringName, replay: CombatReplay)
 signal ship_dispatched(ship: ShipBase)
 signal ship_arrived(ship: ShipBase)
 
@@ -21,8 +32,6 @@ var _ship_manager: Node
 var _enabled: bool = true
 var _active_ships: Array[ShipBase] = []
 var _idle_ships: Array[ShipBase] = []
-var _battle_replay: BattleScene
-var _conquest_replay: ConquestScene
 var _game_seed: int = 0
 var _battle_counter: int = 0
 var _ship_by_transit: Dictionary = {}
@@ -55,6 +64,15 @@ func _connect_planet_conflict(planet: Planet, callback: Callable = Callable()) -
 	if not planet.conflict_simulated.is_connected(resolved_callback):
 		planet.conflict_simulated.connect(resolved_callback)
 
+## Connects to GameCycleManager so inline replay requests from
+## _start_replay are delegated to the proper orchestration layer.
+func _connect_replay_orchestration() -> void:
+	var cycle: Node = get_node_or_null("/root/GameCycleManager")
+	if cycle == null:
+		return
+	if not replay_requested.is_connected(Callable(cycle, "_on_replay_requested")):
+		replay_requested.connect(Callable(cycle, "_on_replay_requested"))
+
 func _on_research_task_completed(_mission_id: StringName, target_planet_id: StringName, task_type: StringName) -> void:
 	if task_type != &"scan":
 		return
@@ -73,38 +91,12 @@ func _on_planet_conflict_simulated(simulation_type: StringName, combat_replay: C
 	_start_replay(simulation_type, combat_replay)
 
 func _start_replay(simulation_type: StringName, combat_replay: CombatReplay) -> void:
-	if simulation_type == &"battle":
-		_free_replay(_battle_replay)
-		var battle_replay: BattleScene = BATTLE_SCENE.instantiate() as BattleScene
-		battle_replay.name = "BattleReplay"
-		add_child(battle_replay)
-		battle_replay.battle_completed.connect(Callable(self, "_on_battle_replay_completed").bind(battle_replay))
-		_battle_replay = battle_replay
-		battle_replay.play_battle(combat_replay)
-		replay_started.emit(simulation_type, combat_replay)
-	elif simulation_type == &"conquest":
-		_free_replay(_conquest_replay)
-		var conquest_replay: ConquestScene = CONQUEST_SCENE.instantiate() as ConquestScene
-		conquest_replay.name = "ConquestReplay"
-		add_child(conquest_replay)
-		conquest_replay.conquest_completed.connect(Callable(self, "_on_conquest_replay_completed").bind(conquest_replay))
-		_conquest_replay = conquest_replay
-		conquest_replay.play_conquest(combat_replay)
-		replay_started.emit(simulation_type, combat_replay)
-
-func _on_battle_replay_completed(_replay: CombatReplay, replay: BattleScene) -> void:
-	if replay == _battle_replay:
-		_battle_replay = null
-	_free_replay(replay)
-
-func _on_conquest_replay_completed(_replay: CombatReplay, replay: ConquestScene) -> void:
-	if replay == _conquest_replay:
-		_conquest_replay = null
-	_free_replay(replay)
-
-func _free_replay(replay: Node) -> void:
-	if replay != null and is_instance_valid(replay):
-		replay.queue_free()
+	## ConflictManager does NOT instantiate BattleScene/ConquestScene.
+	## It emits replay_started (for result tracking) and replay_requested
+	## (for visual playback). GameCycleManager or SceneDirector handles
+	## the actual scene instantiation and lifecycle.
+	replay_started.emit(simulation_type, combat_replay)
+	replay_requested.emit(simulation_type, combat_replay)
 
 func configure(field: Node, navigation: Node, ship_manager: Node, config: TransitConfig = null) -> void:
 	_field = field
@@ -115,6 +107,7 @@ func configure(field: Node, navigation: Node, ship_manager: Node, config: Transi
 	_battle_counter = 0
 	_ship_by_transit.clear()
 	_connect_planet_conflicts()
+	_connect_replay_orchestration()
 	call_deferred("_restore_persistent_transits")
 
 func _restore_persistent_transits() -> void:
@@ -588,10 +581,6 @@ func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 	_ship_by_transit.clear()
 	_game_seed = _resolve_game_seed(_field)
 	_battle_counter = 0
-	_free_replay(_battle_replay)
-	_free_replay(_conquest_replay)
-	_battle_replay = null
-	_conquest_replay = null
 	_connect_planet_conflicts()
 
 func _route(source: Planet, destination: Planet) -> Array[Vector2]:

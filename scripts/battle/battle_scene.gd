@@ -2,6 +2,17 @@
 class_name BattleScene
 extends CanvasLayer
 
+## Layer-2 fleet combat replay visualization (self-contained).
+##
+## Layer contract:
+##   Input:  play_battle(replay: CombatReplay)
+##   Output: signal battle_completed(replay: CombatReplay)
+##
+## BattleScene has NO runtime dependency on GameState, GameCycleManager
+## or any Layer-1 node. The caller wires battle_completed to the
+## appropriate result handler (ConflictManager for inline, GameCycleManager
+## for full-scene switches).
+
 signal battle_completed(replay: CombatReplay)
 
 const DEFAULT_SHIP_PART_CATALOG: ShipPartCatalog = preload("res://resources/config/ship_part_catalog_default.tres")
@@ -32,12 +43,10 @@ var _phase_label: Label
 var _route_nodes: Array[Line2D] = []
 var _route_offset := Vector2.ZERO
 var _engagement_time: float = 0.0
-var _pending_context: BattleContext
 
 func _ready() -> void:
 	layer = 80
 	_build_ui()
-	call_deferred("_boot_pending_battle")
 
 func _build_ui() -> void:
 	if _viewport_container != null:
@@ -83,25 +92,6 @@ func _build_ui() -> void:
 	_player_controls.speed_changed.connect(_on_speed_changed)
 	_player_controls.skip_pressed.connect(_on_skip_pressed)
 	_viewport_container.add_child(_player_controls)
-
-func _boot_pending_battle() -> void:
-	var state: Node = get_node_or_null("/root/GameState")
-	if state == null or not state.has_method("pending_battle_context"):
-		return
-	var context: BattleContext = state.pending_battle_context()
-	if context == null or context.replay == null:
-		return
-	_pending_context = context
-	if not battle_completed.is_connected(_on_pending_battle_completed):
-		battle_completed.connect(_on_pending_battle_completed)
-	play_battle(context.replay)
-
-func _on_pending_battle_completed(_replay: CombatReplay) -> void:
-	if _pending_context == null:
-		return
-	var cycle: Node = get_node_or_null("/root/GameCycleManager")
-	if cycle != null and cycle.has_method("apply_battle_result"):
-		cycle.call("apply_battle_result", _pending_context)
 
 func play_battle(replay: CombatReplay) -> void:
 	_ensure_ui()

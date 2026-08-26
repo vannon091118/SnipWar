@@ -39,6 +39,11 @@ func run(ctx: PreflightContext) -> bool:
 		replay_kinds.append(simulation_type as StringName)
 		replay_payloads[simulation_type] = replay as CombatReplay
 	conflict_manager.connect("replay_started", replay_capture)
+	var replay_requested_kinds: Array[StringName] = []
+	var replay_requested_capture: Callable = func(simulation_type, _replay):
+		replay_requested_kinds.append(simulation_type as StringName)
+	if conflict_manager.has_signal("replay_requested"):
+		conflict_manager.connect("replay_requested", replay_requested_capture)
 
 	var fleet_a := FleetSnapshot.new()
 	fleet_a.fleet_id = &"fleet_test_a"
@@ -328,7 +333,7 @@ func run(ctx: PreflightContext) -> bool:
 			return false
 		if not ctx.check(replay_kinds.has(&"battle"), "live fleet battle did not hand its result to the replay layer"):
 			return false
-		if not ctx.check(conflict_manager.get_node_or_null("BattleReplay") is BattleScene, "fleet battle did not create a BattleScene replay"):
+		if not ctx.check(replay_requested_kinds.has(&"battle"), "live fleet battle did not request visual playback via replay_requested"):
 			return false
 
 	# 6c. No defender fleet -> ConquestSimulator route. Use a neutral planet
@@ -359,16 +364,13 @@ func run(ctx: PreflightContext) -> bool:
 			return false
 		if not ctx.check(conquest_replay.planet_texture_path == conquest_target.planet_texture.resource_path, "conquest replay must preserve the stable planet texture path"):
 			return false
-		# ConflictManager may have queued the previous replay for deletion; a
-		# name lookup can then return that stale node while the new replay is
-		# already active. Assert against the manager's current typed reference.
-		var live_conquest: ConquestScene = conflict_manager.get("_conquest_replay") as ConquestScene
-		var rendered_texture: Texture2D = live_conquest._planet_sprite.texture if live_conquest != null and live_conquest._planet_sprite != null else null
-		var rendered_path: String = rendered_texture.resource_path if rendered_texture != null else ""
-		var target_path: String = conquest_target.planet_texture.resource_path if conquest_target.planet_texture != null else ""
-		if not ctx.check(live_conquest != null and rendered_texture != null and rendered_path == target_path, "conquest replay must resolve the attacked planet visual from its stable identity"):
+		# ConflictManager no longer creates inline scene children; verify via
+		# signal that visual playback was requested (GameCycleManager handles
+		# instantiation now).
+		if not ctx.check(replay_requested_kinds.has(&"conquest"), "live conquest did not request visual playback via replay_requested"):
 			return false
-		if not ctx.check(live_conquest != null and is_instance_valid(live_conquest), "fleet conquest did not create a ConquestScene replay"):
+		# Verify the replay payload carries the planet identity for visual resolution.
+		if not ctx.check(conquest_replay.planet_texture_path == conquest_target.planet_texture.resource_path, "conquest replay must preserve the stable planet texture path for visual resolution"):
 			return false
 
 	# 6d. Empty/defensive inputs -> REJECTED untouched

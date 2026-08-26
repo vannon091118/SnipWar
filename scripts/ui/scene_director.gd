@@ -31,6 +31,8 @@ const SCENE_ID_CONQUEST: StringName = &"conquest"
 
 var _fade_rect: ColorRect
 var _is_transitioning: bool = false
+var _pending_scene_context: BattleContext = null
+var _pending_scene_id: StringName = &""
 
 func _ready() -> void:
 	layer = 95
@@ -65,7 +67,8 @@ func registered_scene_ids() -> Array[StringName]:
 ## Requests a scene switch with a fade. The actual switch happens at the
 ## transition midpoint via the deferred custom-switcher. Context handover:
 ## - world: GameState.request_world_reconnect() (rebuild from session seed)
-## - battle/conquest: GameState.set_pending_battle_context(context)
+## - battle/conquest: The scene receives context via play_battle/play_conquest
+##   after instantiation (SceneDirector explicitly calls the play method).
 func goto_scene(scene_id: StringName, context: Resource = null) -> bool:
 	if _is_transitioning:
 		return false
@@ -77,9 +80,16 @@ func goto_scene(scene_id: StringName, context: Resource = null) -> bool:
 	if scene_id == SCENE_ID_WORLD:
 		if state != null and state.has_method("request_world_reconnect"):
 			state.request_world_reconnect()
+		_pending_scene_context = null
+		_pending_scene_id = &""
 	elif (scene_id == SCENE_ID_BATTLE or scene_id == SCENE_ID_CONQUEST) and context != null:
+		_pending_scene_context = context as BattleContext
+		_pending_scene_id = scene_id
 		if state != null and state.has_method("set_pending_battle_context"):
-			state.set_pending_battle_context(context)
+			state.set_pending_battle_context(_pending_scene_context)
+	else:
+		_pending_scene_context = null
+		_pending_scene_id = &""
 	transition(0.6, func(): _switch_scene(scene))
 	return true
 
@@ -119,6 +129,23 @@ func _deferred_switch_scene(scene: PackedScene) -> void:
 	var instance: Node = scene.instantiate()
 	get_tree().root.add_child(instance)
 	get_tree().current_scene = instance
+	# SceneDirector is the authority for handing context to newly-created
+	# scenes. BattleScene/ConquestScene no longer pull from GameState
+	# in _ready — they receive data through explicit play_battle/play_conquest
+	# calls. This is the single point where the handover happens.
+	_apply_pending_context(instance)
+
+func _apply_pending_context(scene: Node) -> void:
+	var ctx: BattleContext = _pending_scene_context
+	_pending_scene_context = null
+	var sid: StringName = _pending_scene_id
+	_pending_scene_id = &""
+	if ctx == null or ctx.replay == null:
+		return
+	if sid == SCENE_ID_BATTLE and scene is BattleScene:
+		(scene as BattleScene).play_battle(ctx.replay)
+	elif sid == SCENE_ID_CONQUEST and scene is ConquestScene:
+		(scene as ConquestScene).play_conquest(ctx.replay)
 
 ## Compatibility wrapper: player-involved battles switch to the battle scene.
 func transition_to_layer2(context: BattleContext) -> void:
