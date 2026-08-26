@@ -78,8 +78,12 @@ func start_server(port: int = DEFAULT_PORT, transport: String = "tcp", config: D
 	if contract_gate_script == null:
 		_log("Failed to load contract gate", true)
 		return false
+	# Kein pauschales "player"-Default: Der Gate-Konstruktor wählt rollenbasiert
+	# (editor → dev, runtime → player). Ein explizites --mcp-profile=qa|dev
+	# schlägt weiterhin. Sonst würde jede Editor-Session als player starten und
+	# die Autonomy-Workspace-Tools (Editor-Editierkanal) wären gesperrt.
 	_contract_gate = contract_gate_script.new()
-	_contract_gate.configure(str(config.get("profile", "player")), _role)
+	_contract_gate.configure(str(config.get("profile", "")), _role)
 	_profile = str(_contract_gate.get_profile())
 	_port = port
 	_transport = transport.to_lower()
@@ -204,6 +208,10 @@ func set_context_store(store: RefCounted) -> void:
 
 func get_transport() -> String:
 	return _transport
+
+
+func get_port() -> int:
+	return _port
 
 
 func is_running() -> bool:
@@ -342,8 +350,10 @@ func _register_editor_tools() -> void:
 		_make_tool("editor_delete_node", "Delete a node through Godot Undo/Redo", {"path": {"type": "string"}}, ["path"]),
 		_make_tool("editor_set_node_property", "Set a node property through Godot Undo/Redo", {"path": {"type": "string"}, "property": {"type": "string"}, "value": {}}, ["path", "property", "value"]),
 		_make_tool("editor_resource_read", "Inspect a project resource", {"path": {"type": "string"}}, ["path"]),
-		_make_tool("editor_screenshot", "Capture the edited editor viewport as a local artifact", {"viewport": {"type": "string", "default": ""}, "format": {"type": "string", "enum": ["png", "jpg"], "default": "png"}}),
-		_make_tool("editor_run_project", "Start the project from the editor. with_mcp=true launches the game as a separate process with the MCP runtime server (--mcp, port 9090) so the agent can switch from editing to live gameplay", {"scene": {"type": "string", "default": ""}, "with_mcp": {"type": "boolean", "default": false}}),
+		_make_tool("editor_screenshot", "Capture the edited editor viewport as a local artifact", {"viewport": {"type": "string", "default": ""}, "format": {"type": "string", "enum": ["png", "jpg"], "default": "png"}}, [], true),
+		_make_tool("editor_run_project", "Start the project from the editor. with_mcp=true launches the game as a separate process and waits for a verified runtime MCP handshake before returning", {"scene": {"type": "string", "default": ""}, "with_mcp": {"type": "boolean", "default": false}, "profile": {"type": "string", "enum": ["player", "qa", "dev"], "default": "player"}, "port": {"type": "integer", "default": 9090}, "wait_for_mcp": {"type": "boolean", "default": true}, "startup_timeout_ms": {"type": "integer", "default": 6000}}, [], true),
+		_make_tool("editor_stop_project", "Stop the runtime process started through editor_run_project, or stop the editor's active play session", {}),
+		_make_tool("editor_project_status", "Read the editor/runtime transition state, tracked PID, scene and MCP liveness metadata", {}),
 		_make_tool("editor_logs_read", "Read the MCP editor-session log (lifecycle events) plus the engine log tail when a --log-file is configured", {"cursor": {"type": "integer", "default": 0}, "limit": {"type": "integer", "default": 50}, "include_file": {"type": "boolean", "default": true}}),
 		_make_tool("editor_scene_save", "Explicitly save the edited scene; mutations never save implicitly", {"path": {"type": "string", "default": ""}}),
 		_make_tool("editor_undo", "Undo the latest editor transaction", {}),
@@ -352,15 +362,19 @@ func _register_editor_tools() -> void:
 	]
 	for definition in definitions:
 		if not _tool_index.has(str(definition.get("name", ""))):
-			_tools.append(definition)
+			var normalized := McpAutonomyContracts.normalize_tool(definition, "editor")
+			_tools.append(normalized)
 	_rebuild_tool_index()
 
 
-func _make_tool(name: String, description: String, properties: Dictionary = {}, required: Array = []) -> Dictionary:
+func _make_tool(name: String, description: String, properties: Dictionary = {}, required: Array = [], async_tool: bool = false) -> Dictionary:
 	var schema := {"type": "object", "properties": properties}
 	if not required.is_empty():
 		schema["required"] = required
-	return {"name": name, "description": description, "inputSchema": schema}
+	var tool := {"name": name, "description": description, "inputSchema": schema}
+	if async_tool:
+		tool["_async"] = true
+	return tool
 
 
 func _rebuild_tool_index() -> void:
@@ -375,6 +389,10 @@ func _poll_tcp() -> void:
 		if _client != null:
 			_client.disconnect_from_host()
 		_client = _tcp_server.take_connection()
+		# TCP_NODELAY auf dem akzeptierten Socket: ohne das Flag kann Nagle
+		# jedes MCP-Response um bis zu 40 ms verzögern (eine Hauptquelle für
+		# "Agent to game time"-Latenz bei Chatty-Tool-Calls auf localhost).
+		_client.set_no_delay(true)
 		_connection_generation += 1
 		_pending_async.clear()
 		_buffer = ""
@@ -638,7 +656,12 @@ func _handle_tool_call(id: Variant, params: Dictionary) -> void:
 	if is_editor_tool and _role != "editor":
 		_send_response(id, null, "Editor tool called on runtime session", -32001)
 		return
-	if not is_editor_tool and not is_host_tool and _role == "editor" and tool_name.begins_with("runtime_"):
+	# The editor session may use the journaled autonomy workspace as its
+	# project-edit channel. It is deliberately narrower than runtime access:
+	# only runtime_autonomy_* is allowed through this exception, and its own
+	# mutation gate still decides whether writes are authorized.
+	var is_editor_autonomy_tool := tool_name.begins_with("runtime_autonomy_")
+	if not is_editor_tool and not is_host_tool and not is_editor_autonomy_tool and _role == "editor" and tool_name.begins_with("runtime_"):
 		_send_response(id, null, "Runtime tool called on editor session", -32001)
 		return
 	if is_editor_tool:

@@ -232,7 +232,7 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 static func _is_runtime_tool(name: String) -> bool:
 	return name in [
 		"runtime_get_scene_tree", "runtime_find_node", "runtime_click",
-		"runtime_drag", "runtime_key", "runtime_mouse_move", "runtime_scroll", "runtime_virtual_mouse_status",
+		"runtime_drag", "runtime_key", "runtime_key_gesture", "runtime_mouse_move", "runtime_scroll", "runtime_virtual_mouse_status",
 		"runtime_get_ui_state", "runtime_wait_frames", "runtime_wait_ms",
 		"runtime_eval", "runtime_inspect_node", "runtime_find_nodes_by_type",
 		"runtime_node_ancestry",
@@ -317,7 +317,7 @@ static func _is_chain_controller_tool(name: String) -> bool:
 
 static func _is_goal_player_tool(name: String) -> bool:
 	return name in [
-		"runtime_goal_play", "runtime_goal_check", "runtime_goal_history",
+		"runtime_goal_play", "runtime_goal_sequence", "runtime_goal_check", "runtime_goal_history",
 	]
 
 
@@ -327,25 +327,27 @@ static func _is_goal_player_tool(name: String) -> bool:
 
 func _load_all() -> void:
 	_tools = []
+	# _loaded MUSS vor setup() gesetzt sein: setup() → _refresh_catalog() →
+	# get_all_tools() würde sonst _load_all() erneut aufrufen (Endlosrekursion).
+	_loaded = true
 	if _role == "editor":
-		if ResourceLoader.exists(AUTONOMY_PLANNER_PATH):
-			var editor_planner_script = load(AUTONOMY_PLANNER_PATH)
-			if editor_planner_script != null:
-				_autonomy_planner = editor_planner_script.new()
-				var editor_autonomy_defs = _autonomy_planner.get_tool_defs() if _autonomy_planner != null else []
-				if editor_autonomy_defs is Array:
-					_tools.append_array(editor_autonomy_defs)
-		var editor_contracts_script: Resource = load(AUTONOMY_CONTRACTS_PATH)
-		if editor_contracts_script != null:
-			_autonomy_contracts = editor_contracts_script.new()
-			for editor_index in range(_tools.size()):
-				if _tools[editor_index] is Dictionary:
-					_tools[editor_index] = McpAutonomyContracts.normalize_tool(_tools[editor_index], "registry")
-		_loaded = true
-		if _autonomy_planner != null and _autonomy_planner.has_method("setup"):
-			_autonomy_planner.setup(self, _lifecycle, _context_store)
-		return
+		_load_editor_autonomy_tools()
+	else:
+		_load_runtime_modules()
+	_finalize_registry()
 
+
+func _load_editor_autonomy_tools() -> void:
+	if ResourceLoader.exists(AUTONOMY_PLANNER_PATH):
+		var editor_planner_script = load(AUTONOMY_PLANNER_PATH)
+		if editor_planner_script != null:
+			_autonomy_planner = editor_planner_script.new()
+			var editor_autonomy_defs = _autonomy_planner.get_tool_defs() if _autonomy_planner != null else []
+			if editor_autonomy_defs is Array:
+				_tools.append_array(editor_autonomy_defs)
+
+
+func _load_runtime_modules() -> void:
 	if ResourceLoader.exists(VISION_PATH):
 		var vs = load(VISION_PATH)
 		if vs:
@@ -369,8 +371,21 @@ func _load_all() -> void:
 			_runtime_tools = rs.new()
 			var td = rs.get_tool_defs()
 			if td is Array: _tools.append_array(td)
-		elif rs != null:
-			push_warning("McpToolRegistry: %s failed to parse — runtime tools unavailable" % RUNTIME_TOOLS_PATH)
+		else:
+			# Editor-Start-Race: load() liefert das Skript ggf. vor Abschluss des
+			# asynchronen Skriptserver-Compiles (Cache-Eintrag vergeben, aber noch
+			# nicht kompilierbar). Frisch aus dem Quelltext kompilieren —
+			# cache-unabhängig und deterministisch.
+			var fresh := GDScript.new()
+			fresh.source_code = FileAccess.get_file_as_string(RUNTIME_TOOLS_PATH)
+			fresh.resource_path = RUNTIME_TOOLS_PATH
+			if fresh.reload() == OK and fresh.can_instantiate():
+				_runtime_tools = fresh.new()
+				var fresh_defs = fresh.get_tool_defs()
+				if fresh_defs is Array:
+					_tools.append_array(fresh_defs)
+			else:
+				push_warning("McpToolRegistry: %s cannot be instantiated — runtime tools unavailable" % RUNTIME_TOOLS_PATH)
 
 	if ResourceLoader.exists(UX_PATH):
 		var us = load(UX_PATH)
@@ -468,6 +483,8 @@ func _load_all() -> void:
 			if td is Array:
 				_tools.append_array(td)
 
+
+func _finalize_registry() -> void:
 	if _vision != null and _vision.has_method("set_context_store"):
 		_vision.set_context_store(_context_store)
 	if _vision != null and _vision.has_method("set_worker"):
@@ -480,7 +497,6 @@ func _load_all() -> void:
 		for index in range(_tools.size()):
 			if _tools[index] is Dictionary:
 				_tools[index] = McpAutonomyContracts.normalize_tool(_tools[index], "registry")
-	_loaded = true
 	if _autonomy_planner != null and _autonomy_planner.has_method("setup"):
 		_autonomy_planner.setup(self, _lifecycle, _context_store)
 	if _autonomy_planner != null and _autonomy_planner.has_method("set_mutations_allowed"):
