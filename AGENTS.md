@@ -41,10 +41,12 @@ $GODOT_BIN --headless --path . --script res://scripts/global_search.gd "func (_?
 
 ### 3. Preflight (Verbindlicher Qualitäts-Check)
 ```bash
-$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x   # Full Suite (36 Constraints, ~90s)
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x   # Full Suite (38 Constraints, ~100s, V2 Architecture)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd --filter=concept_index -v  # Einzelne Constraint
 ```
 **Verbindlich:** `RESULT: PASSED` — ERROR-Traces am Ende sind normales Headless-Rauschen.
+**V2 Features:** Auto-Discovery, Phase-Split (Pure/Scene), Fail-Fast mit Summary, Isolation Warnings.
+**Legacy V1:** `scripts/legacy/preflight_v1.gd` — archiviert, nicht aktiv.
 
 ### 4. Commit-Workflow (Hooks sind aktiv!)
 ```bash

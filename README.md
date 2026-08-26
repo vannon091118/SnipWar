@@ -527,12 +527,12 @@ Die Preflight-Suite (`scripts/preflight.gd`) ist der einzige autoritative Verifi
 # Smoke-Test: Hauptszene bootet durch
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Alle 36 Constraints
+# Alle 38 Constraints (V2 Auto-Discovery)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 ```
 
 <details>
-<summary>📋 <b>Die 36 Preflight-Constraints</b></summary>
+<summary>📋 <b>Die 38 Preflight-Constraints (V2)</b></summary>
 
 | # | Constraint | Prüft |
 |:---:|:---|:---|
@@ -571,10 +571,12 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 || 33 | `save_game_slots` | Save-Slot-Write/Read/Overwrite/Corruption/Delete |
 || 34 | `mechanic_coverage` | Mechanic-Entdeckung, Test-Modell-Integrität & Szenario-Validierung |
 || 35 | `concept_index` | Konzept-Index-Abdeckung, Klassen-Mapping & Fuzzy-Search |
+| 36 | `dead_code` | Heuristische Dead-Code-Analyse (Warnung, non-blocking) |
+| 37 | `global_search` | Globaler Volltext-Search tool-funktional validiert |
 
 </details>
 
-Preflight ist modular. `scripts/preflight.gd` ist der Orchestrator. Die Constraints liegen einzeln unter `scripts/preflight/constraint_*.gd`. Neue Coverage kommt als eigene `PreflightConstraintX`-Klasse mit `constraint_name()` + `run(ctx) -> bool` — im Orchestrator in `CONSTRAINT_REGISTRY` eintragen, fertig.
+Preflight ist modular (V2 Architecture). `scripts/preflight.gd` ist der Orchestrator mit Auto-Discovery. Die Constraints liegen einzeln unter `scripts/preflight/constraint_*.gd`. Neue Coverage kommt als eigene `PreflightConstraintX`-Klasse mit `constraint_name()` + `run(ctx) -> bool` — wird automatisch vom Scanner entdeckt. Pure/Scene-Klassifikation in `scripts/preflight_v2/constraint_catalog.json` überschreibbar.
 
 ---
 

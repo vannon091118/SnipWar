@@ -165,15 +165,12 @@ print("Uncovered: %s" % str(coverage.uncovered))
 
 ### 4. Preflight-Constraint (`mechanic_coverage`)
 
-Läuft als Teil der Standard-Preflight-Suite. Registry-Eintrag in `preflight.gd`:
+Läuft als Teil der Standard-Preflight-Suite (V2 Auto-Discovery). Der Scanner erkennt `constraint_mechanic_coverage.gd` automatisch; `requires_scene()` wird aus der Methode gelesen:
 
 ```gdscript
-{
-    "id": "mechanic_coverage",
-    "script": preload("res://scripts/preflight/constraint_mechanic_coverage.gd"),
-    "desc": "Mechanic discovery, test model integrity & scenario validation",
-    "requires_scene": false,
-},
+# In constraint_mechanic_coverage.gd:
+func requires_scene() -> bool:
+    return false  # Pure constraint
 ```
 
 **Was er prüft:**
@@ -190,10 +187,10 @@ Läuft als Teil der Standard-Preflight-Suite. Registry-Eintrag in `preflight.gd`
 
 ```bash
 # Nur diesen Constraint
-$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -- -f=mechanic_coverage
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -f=mechanic_coverage
 
 # Mit Detail-Output
-$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -- -f=mechanic_coverage -v
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -f=mechanic_coverage -v
 ```
 
 ---
