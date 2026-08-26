@@ -12,6 +12,9 @@ const TRANSFORMER_CONFIG: TransformerConfig = preload("res://resources/config/tr
 func constraint_name() -> String:
 	return "upgrade_catalog"
 
+func requires_scene() -> bool:
+	return false
+
 
 func run(ctx: PreflightContext) -> bool:
 	var upgrade_catalog: PlanetUpgradeCatalog = UPGRADE_CATALOG

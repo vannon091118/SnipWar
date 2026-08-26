@@ -9,6 +9,9 @@ const FLAVOR_CATALOG: SectorFlavorCatalog = preload("res://resources/config/sect
 func constraint_name() -> String:
 	return "sector_classification"
 
+func requires_scene() -> bool:
+	return false
+
 func run(ctx: PreflightContext) -> bool:
 	var world_size := Vector2(960.0, 540.0)
 	var flavors: Array[SectorFlavor] = FLAVOR_CATALOG.flavors

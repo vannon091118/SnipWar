@@ -248,6 +248,9 @@ const CALLSITE_RECEIVER_PATTERN := "(?:\\bGameState\\b|\\bgame_state\\b|\\bstate
 func constraint_name() -> String:
 	return "game_state_compatibility"
 
+func requires_scene() -> bool:
+	return true
+
 func run(ctx: PreflightContext) -> bool:
 	var state: Node = ctx.root().get_node_or_null("GameState") as Node
 	if state == null:

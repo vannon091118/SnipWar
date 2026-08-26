@@ -110,7 +110,7 @@ Diese Punkte sind inzwischen als Lore-Grundlage der sichtbaren Narbe einer alten
 #### GAP 3: Fraktions-Vorgeschichte (historisch)
 > *Was war BEVOR die beiden Fraktionen in die Eisen-Grenze kamen?*
 
-- Ocean-Koalition und Paper-Kollektiv werden als aktuelle Akteure beschrieben
+- Tideborn-Koalition und Reaper werden als aktuelle Akteure beschrieben; der Reaper ist der zentrale Hauptantagonist mit eigenem Plot
 - **Keine Ursprungsgeschichte** — wie entstanden diese Fraktionen?
 - **Keine Beziehung zueinander** — warum gerade diese beiden?
 
@@ -141,12 +141,12 @@ Diese Punkte sind inzwischen als Lore-Grundlage der sichtbaren Narbe einer alten
                     │   ist nicht zufällig..."  │
                     ├─────────────────────────┤
                     │   FRaktions-NARRATIVE     │
-                    │  Ocean-Koalition:        │
+                    │  Tideborn-Koalition:        │
                     │  WER: Handelsbündnis      │
                     │  WIE: Adaptiv, exped.    │
                     │  WARUM: Überleben        │
                     │                           │
-                    │  Paper-Kollektiv:        │
+                    │  Reaper:        │
                     │  WER: Kollektiver KI-Kern│
                     │  WIE: Logisch, stoisch   │
                     │  WARUM: Optimierung      │
@@ -195,13 +195,13 @@ Diese Punkte sind inzwischen als Lore-Grundlage der sichtbaren Narbe einer alten
 #### Kapitel 3 — "Die zwei Erben"
 **Konzept:**
 
-**Ocean-Koalition (Fraktion Alpha):**
+**Tideborn-Koalition (Fraktion Alpha):**
 - **Ursprung:** Ein lose organisiertes Handels- und Siedlungsbündnis, das nach dem Kollaps der alten Zivilisation entstand
 - **Philosophie:** "Adapt or die" — Anpassungsfähigkeit über reine Effizienz
 - **Charakterzug:** Menschlich, emotional, impulsiv, aber kreativ
 - **Metapher:** Das Wasser — fließt, passt sich an, durchdringt alles
 
-**Paper-Kollektiv (Fraktion Beta):**
+**Reaper (Fraktion Beta):**
 - **Ursprung:** Ein decentralisierter KI-Kern, der als Überwachungssystem der Grenze entstand und nach dem Kollaps eigenständig wurde
 - **Philosophie:** "Optimize or perish" — reine Logik und Effizienz
 - **Charakterzug:** Maschinell, stoisch, unbarmherzig kalkulierend

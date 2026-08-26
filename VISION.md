@@ -4,7 +4,7 @@ Dieses Dokument beschreibt die gewünschte Richtung von SnipWar und ist kein Ers
 
 ## Verifizierter Ausgangspunkt
 
-Der aktuelle Build besitzt bereits einen strategischen Overworld-Kern:
+Der aktuelle Build besitzt bereits einen strategischen Overworld-Kern. Die Spielerfraktion ist aktuell als Tideborn-Koalition gedacht; die CPU-Fraktion ist der Reaper-Hauptantagonist. Weitere Fraktionen sind geplant und sollen später eigene Ziele und Plots erhalten:
 
 - 10 Baustein-Typen (Ember, Ocean, Ice, Violet, Desert, Toxic, Storm, Volcanic, Paper, Golden) mit je 4 Varianten als seed-deterministischer Planeten-Pool; Default-Sektor nutzt chunk_size=3 (infinite/prozedurale Expansion)
 - seed-deterministische Layouts, Größenprofile, Details, Waypoints und Ressourcenverteilung
@@ -13,7 +13,7 @@ Der aktuelle Build besitzt bereits einen strategischen Overworld-Kern:
 - sichtbare Planetennachbarschaft, AStar2D-Routen und gemeinsame Flugzeitvorschau/Transitpfade
 - missionsabhängiger Transit für Military, Colony, Cargo und Collect
 - einfacher Resolve bei militärischer Ankunft: Verstärkung, Abwehr oder Besitzwechsel
-- Economy- und Gather-Timer, CPU-Dispatch-AI, Scouts und EventLog
+- Economy- und Gather-Timer, Reaper-Dispatch-AI, Scouts und EventLog
 - 17 Planet-Upgrade in vier Branches, planetare und globale Technologien, UI-Ship-Builder, FleetOverview mit Drag-to-Dispatch und EconomyWindow-Modul
 
 Der Ship Builder erzeugt jetzt einsatzfähige Assemblies: `ConflictManager` startet ShipBase-Transits, `FleetBattleSimulator` (Layer 2) und `ConquestSimulator` (Layer 3) resolved Loadouts. Ship-as-Minion-Adapter (`AssaultMinionDefinition.from_ship()`) erlaubt planetare Eroberung mit Schiffslasten. Der Scout bleibt der kostenlose Start-Scout.
@@ -122,7 +122,7 @@ Die aktuelle Richtung ist asymmetrisch: Eigene Angriffe werden gegen determinist
 
 ## Stil und Präsentation
 
-Der Paperclip-/Papercraft-Comicgedanke bleibt eine visuelle Leitlinie: klare Silhouetten, Zellschattierung, begrenzte Farbsignaturen, lesbare Routen und kleine Bewegungen. Die vorhandenen SVGs werden bevorzugt als wiederverwendbare Objekte eingesetzt; Variationen sollen langfristig durch Child-Komposition und Transformer entstehen, nicht durch eine unkontrollierte Zahl fertig gebackener Kombinationsassets.
+Der Paperclip-/Papercraft-Comicgedanke bleibt eine visuelle Leitlinie; die Reaper dürfen darin als unheimliche, fremde Ordnung innerhalb derselben materiellen Welt erscheinen: klare Silhouetten, Zellschattierung, begrenzte Farbsignaturen, lesbare Routen und kleine Bewegungen. Die vorhandenen SVGs werden bevorzugt als wiederverwendbare Objekte eingesetzt; Variationen sollen langfristig durch Child-Komposition und Transformer entstehen, nicht durch eine unkontrollierte Zahl fertig gebackener Kombinationsassets.
 
 4K bleibt eine Präsentations- und Qualitätsstufe. Die aktuelle 960×540-Viewport-Basis wird nicht als Beleg für eine bereits fertige 4K-Produktion verstanden.
 

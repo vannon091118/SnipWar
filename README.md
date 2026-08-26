@@ -576,9 +576,17 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 
 </details>
 
-Preflight ist modular (V2 Architecture). `scripts/preflight.gd` ist der Orchestrator mit Auto-Discovery. Die Constraints liegen einzeln unter `scripts/preflight/constraint_*.gd`. Neue Coverage kommt als eigene `PreflightConstraintX`-Klasse mit `constraint_name()` + `run(ctx) -> bool` — wird automatisch vom Scanner entdeckt. Pure/Scene-Klassifikation in `scripts/preflight_v2/constraint_catalog.json` überschreibbar.
+Preflight ist modular (V2 Architecture). `scripts/preflight.gd` ist der Orchestrator mit Auto-Discovery. Die Constraints liegen einzeln unter `scripts/preflight/constraint_*.gd`. Neue Coverage kommt als eigene `PreflightConstraintX`-Klasse mit `constraint_name()` + `requires_scene()` + `run(ctx) -> bool` — wird automatisch vom Scanner entdeckt. Pure/Scene-Klassifikation wird aus `requires_scene()` jedes Constraints abgeleitet (Single Source of Truth).
 
 ---
+
+## 🧭 REPOSITORY-GRENZEN — Inhalt vs. Entwicklungsartefakte
+
+Das Repository enthält ausschließlich den reproduzierbaren Spielstand: Godot-Code, Szenen, konfigurierte Ressourcen, Assets, verbindliche Spezifikationen und automatisierte Preflight-Prüfungen.
+
+Nicht in dieses Repository gehören Entwicklungsprotokolle, Agenten-Arbeitsdateien, MCP-Dumps, temporäre Skripte oder ZIP-Snapshots. Solche Dateien werden außerhalb des Repositories im übergeordneten `nip empire`-Ordner abgelegt, idealerweise unter `snapshots/` oder `dev-logs/`. Snapshot-Dateien werden nicht in den Build und nicht in die Git-Historie verdrahtet; ihre Herkunft und der zugehörige Commit werden über eine externe Index-/Manifestdatei dokumentiert.
+
+Für neue lokale Werkzeuge gilt: entweder in `addons/` bzw. `scripts/` als reproduzierbarer Projektbestandteil einordnen oder außerhalb des Repository-Ordners halten. Temporäre Root-Dateien wie `tmp_*`, `*_check.py` und `*.zip` dürfen nicht eingecheckt werden.
 
 ## 🔧 ENTWICKLER-WORKFLOW — Commit-Kette
 

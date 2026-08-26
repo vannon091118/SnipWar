@@ -7,6 +7,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "world_details_and_scale"
 
+func requires_scene() -> bool:
+	return true
+
 
 func run(ctx: PreflightContext) -> bool:
 	var background: Node = ctx.background

@@ -7,6 +7,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "concept_index"
 
+func requires_scene() -> bool:
+	return false
+
 func run(ctx: PreflightContext) -> bool:
 	var index: ConceptIndex = ConceptIndex.new()
 	var discovered: Dictionary = {}

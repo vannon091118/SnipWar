@@ -7,6 +7,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "main_menu_and_flow"
 
+func requires_scene() -> bool:
+	return true
+
 
 func run(ctx: PreflightContext) -> bool:
 	# 1. SceneDirector registry exposes all four scenes.

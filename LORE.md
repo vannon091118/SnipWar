@@ -32,10 +32,12 @@ Die Grenze wird nicht als fertige Welt entdeckt. Sie wird in Schichten sichtbar:
 3. Worker, Schiffe und Forschungsaufträge machen aus Intel eine Entscheidung.
 4. Jede Entscheidung verändert Besitz, Nachschub und die nächste Route.
 
-Zwei Mächte beanspruchen denselben Korridor:
+Zwei bekannte Mächte beanspruchen denselben Korridor — doch nur eine davon ist der eigentliche Antagonist:
 
-- **Fraktion Alpha, die Ocean-Koalition:** anpassungsfähig, schnell in der Erkundung und bereit, knappe Reserven für einen besseren Informationsstand zu riskieren.
-- **Fraktion Beta, das Paper-Kollektiv:** ein kaltes Dispatch-Netzwerk, das Kolonisierung, Verstärkung und Angriff nach festen Prioritäten taktet.
+- **Die Tideborn-Koalition:** anpassungsfähig, schnell in der Erkundung und bereit, knappe Reserven für einen besseren Informationsstand zu riskieren. Sie ist die aktuelle Spielerfraktion, nicht die einzige Zivilisation der Galaxis.
+- **Die Reaper:** eine unbekannte, nichtmenschliche Expansion ohne bekannte Heimatwelt oder verlässliche Diplomatie. Wo sie auftauchen, werden Ressourcen, Infrastruktur und jede verweigerte Unterwerfung systematisch ausgelöscht.
+
+Weitere Fraktionen sind geplant. Der Reaper bleibt jedoch der zentrale Hauptantagonist mit eigenem Plot; andere Völker können später eigene Ziele, Kampagnen und Konflikte eröffnen.
 
 Zwischen ihnen liegen neutrale Welten, Relais und unkartierte Chunks. Keine davon ist bloß Kulisse. Jede kann Rohstoffquelle, Sammelpunkt, Werftstandort oder Frontlinie werden.
 
@@ -43,7 +45,7 @@ Zwischen ihnen liegen neutrale Welten, Relais und unkartierte Chunks. Keine davo
 
 ## 🏛️ DIE FRAKTIONEN
 
-### 🟦 Fraktion Alpha — „Die Ocean-Koalition“
+### 🟦 Fraktion Alpha — „Die Tideborn-Koalition“
 
 | Merkmal | Statusbericht |
 |:---|:---|
@@ -55,17 +57,19 @@ Zwischen ihnen liegen neutrale Welten, Relais und unkartierte Chunks. Keine davo
 
 Alpha beginnt mit einem kostenlosen Start-Scout. Er ist kein Ersatz für Forschung, sondern die erste Wette auf Information. Nach dem ersten Scan öffnen sich die späteren Gates: Werftbau, Scout-Technologien, Worker-Automation und der modulare Hangar.
 
-### 🟥 Fraktion Beta — „Das Paper-Kollektiv“
+### ☠️ Fraktion Beta — „Die Reaper“
 
 | Merkmal | Statusbericht |
 |:---|:---|
-| **Homeworld** | `Paper` · XL-Profil · 3 Bauplätze · 6 Start-Worker |
-| **Philosophie** | Jede Verzögerung ist ein Fehler im Plan |
+| **Homeworld** | `Paper` · XL-Profil · 3 Bauplätze · 6 Start-Worker (technische Startrepräsentation) |
+| **Philosophie** | Alles, was sich nicht unterwirft, ist ein zu beseitigender Fehler |
+| **Herkunft** | Unbekannt; keine bestätigte Heimatwelt, keine bekannte Speziesklassifikation |
 | **Dispatch-Pacing** | 12 Sekunden Entscheidungsintervall, schrittweise bis 6 Sekunden |
 | **Sicherheitsmarge** | 2 Worker Reserve, mindestens 3 Worker als Dispatch-Quelle |
 | **Priorität** | Kolonie → Cargo-Verstärkung → Military-Angriff |
+| **Hauptplot** | Die Herkunft und das eigentliche Ziel der Expansion aufdecken |
 
-Paper baut keine Imperien aus Inspiration. Das Kollektiv liest bekannte Routen, hält Reserven zurück und schickt den nächsten Auftrag, sobald die Zahlen einen Vorteil versprechen.
+Die Reaper bauen kein Reich aus Diplomatie. Ihre Expansion nutzt vorhandene Routen, Rohstoffe, Werften und Forschungsinfrastruktur gegen die Bewohner der Grenze. Erst erscheinen sie wie eine weitere effiziente Fraktion; mit jeder verlorenen Welt wird klar, dass Unterwerfung nur die Vorstufe zur Auslöschung ist. Der aktuelle CPU-Dispatcher bildet ihre operative Logik ab, während Herkunft, Motive und die volle Kampagne bewusst als Plot reserviert bleiben.
 
 ---
 
@@ -107,7 +111,7 @@ Die folgenden Namen gehören zum anfänglichen Baustein-Pool. Sie sind keine unv
 ### 🌋 VOLCANIC — Der Schmelztiegel
 - **Profil:** Variable · 1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis
 - **Charakteristik:** Basaltströme, Ascheregen und seismische Erschütterungen.
-- **Strategischer Wert:** Nähe zur Paper-Front macht jeden Ausbau zur politischen Aussage und jeden Transit zum Risiko.
+- **Strategischer Wert:** Nähe zur Reaper-Front macht jeden Ausbau zur politischen Aussage und jeden Transit zum Risiko.
 
 ### ✨ GOLDEN — Das Kronjuwel
 - **Profil:** Variable · 1 Bauplatz · 2 Start-Worker · 1× Ressourcenbasis
@@ -189,7 +193,7 @@ Erreicht eine Flotte eine verteidigte Welt, übernimmt der **ConquestSimulator**
 
 ## 📡 ARCHIVNOTIZ // DIE KARTE IST EINE ENTSCHEIDUNG
 
-Die Papercraft-Oberfläche ist kein diegetischer Zufall: Die alten Mächte lesen die Grenze über Papierkarten, Schablonen und Relaisprotokolle. Das heutige Interface setzt diese Sprache fort. Das Planet-Panel trennt Lage, Auftrag und Bestätigung; das Forschungsmenü zeigt Rolle, Kosten, Voraussetzung und Freischaltung; der Vault meldet Ertrag und den nächsten Tick.
+Die Papercraft-Oberfläche ist kein diegetischer Zufall: Die Bewohner der Grenze lesen sie über Papierkarten, Schablonen und Relaisprotokolle; die Reaper nutzen dieselben Netze, als wären alle Welten nur austauschbare Bauteile. Das heutige Interface setzt diese Sprache fort. Das Planet-Panel trennt Lage, Auftrag und Bestätigung; das Forschungsmenü zeigt Rolle, Kosten, Voraussetzung und Freischaltung; der Vault meldet Ertrag und den nächsten Tick.
 
 So entsteht die eigentliche Geschichte nicht aus langen Zwischensequenzen, sondern aus sichtbaren Folgen: Eine Garnison wird kleiner, ein Forschungsschiff verschwindet aus dem Dock, eine Sammelroute bringt regelmäßig Vorräte zurück oder eine gelbe Dispatchlinie endet in einem Kampf.
 
@@ -200,7 +204,7 @@ So entsteht die eigentliche Geschichte nicht aus langen Zwischensequenzen, sonde
 ```
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
   GALAKTISCHER ARCHIV-EINTRAG // ENDE DER TRANSMISSION
-  Stand: Verifiziert durch 29 Preflight-Constraints // Engine: Godot 4.7
+  Stand: Verifiziert durch die aktuelle Preflight-Suite // Engine: Godot 4.7
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 ```
 

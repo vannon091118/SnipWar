@@ -12,6 +12,9 @@ const CONQUEST_CONFIG: ConquestConfig = preload("res://resources/config/conquest
 func constraint_name() -> String:
 	return "module_damage_model"
 
+func requires_scene() -> bool:
+	return false
+
 
 func run(ctx: PreflightContext) -> bool:
 	# 1. Influence scaling curve: 1 drive = 20 %, 2 drives ≈ 15 % each, with

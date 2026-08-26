@@ -61,7 +61,7 @@ graph TD
 | Dokument | Pfad | Zweck & Inhalt |
 |:---|:---|:---|
 | **Lagezentrum & Quickstart** | [`README.md`](../README.md) | Öffentlicher Einstiegspunkt, Terminal-Initialisierung, aufgeklärter Startausschnitt der prozeduralen Chunk-Welt, Ressourcen, Upgrades, Schiffe, Dispatch-UI, Preflight-Übersicht und Roadmap. |
-| **Galaktisches Archiv** | [`LORE.md`](../LORE.md) | Worldbuilding, Hintergrund der Ocean-Koalition und des Paper-Kollektivs, Dossiers des initialen Kartenausschnitts, lokale Vorräte, Dispatch-Aufträge, Scan-Intel und Technologiedoktrin. |
+| **Galaktisches Archiv** | [`LORE.md`](../LORE.md) | Worldbuilding, Hintergrund der Tideborn-Koalition und des Reaper-Hauptantagonisten, Dossiers des initialen Kartenausschnitts, lokale Vorräte, Dispatch-Aufträge, Scan-Intel und Technologiedoktrin. |
 | **Produkt- & 4X-Zielvision** | [`VISION.md`](../VISION.md) | Nicht-bindendes Zielbild für den vollständigen 4X-Kreislauf (`Wirtschaft → Expansion → Kontakt → Flottenkampf → Eroberung`). |
 
 ---

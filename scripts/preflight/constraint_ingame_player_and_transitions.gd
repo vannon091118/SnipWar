@@ -6,6 +6,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "ingame_player_and_transitions"
 
+func requires_scene() -> bool:
+	return true
+
 
 func run(ctx: PreflightContext) -> bool:
 	# 1. FloatingText

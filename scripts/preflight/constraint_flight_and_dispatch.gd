@@ -6,6 +6,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "flight_and_dispatch"
 
+func requires_scene() -> bool:
+	return false
+
 
 func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(is_equal_approx(FlightTime.seconds_for(100.0, 1), 8.0), "flight time baseline is wrong"):

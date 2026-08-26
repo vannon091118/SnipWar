@@ -10,12 +10,11 @@ extends SceneTree
 const _V2Ctx := preload("res://scripts/preflight_v2/v2_context.gd")
 const _V2Fixture := preload("res://scripts/preflight_v2/v2_fixture.gd")
 const _Scanner := preload("res://scripts/preflight_v2/constraint_scanner.gd")
-const _CatalogPath := "res://scripts/preflight_v2/constraint_catalog.json"
 
-# Loaded once at startup; used by _is_pure() for every constraint.
-var _pure_set: Dictionary = {}
+# Built from scanner registry at startup; used by _is_pure() for every constraint.
+var _registry: Array[Dictionary] = []
 
-# Constraints that破坏 the scene state and require a full re-boot after them.
+# Constraints that corrupt the scene state and require a full re-boot after them.
 const FULL_REBOOT_IDS: Array[String] = ["save_game_roundtrip", "context_handover"]
 
 
@@ -28,7 +27,7 @@ func _init() -> void:
 		return
 
 	if args.get("list", false):
-		_load_pure_catalog()
+		_registry = _Scanner.new().scan()
 		_print_list()
 		quit(0)
 		return
@@ -37,9 +36,8 @@ func _init() -> void:
 	ctx.verbose = args.get("verbose", false)
 	ctx.fail_fast = args.get("fail_fast", false)
 
-	_load_pure_catalog()
-
-	var registry: Array[Dictionary] = _Scanner.new().scan()
+	_registry = _Scanner.new().scan()
+	var registry: Array[Dictionary] = _registry
 	if registry.is_empty():
 		print("[preflight-v2] FATAL: No constraints discovered from preflight/ directory")
 		quit(1)
@@ -59,7 +57,7 @@ func _init() -> void:
 	var pure_constraints: Array[Dictionary] = []
 	var scene_constraints: Array[Dictionary] = []
 	for entry in pipeline:
-		if _is_pure(entry["id"]):
+		if not entry["requires_scene"]:
 			pure_constraints.append(entry)
 		else:
 			scene_constraints.append(entry)
@@ -224,7 +222,7 @@ func _build_pipeline(registry: Array[Dictionary], filter_query: String) -> Array
 			var t := token.strip_edges()
 			if not t.is_empty() and (c_id.contains(t) or c_desc.contains(t)):
 				selected.append(entry)
-				if not _is_pure(entry["id"]):
+				if entry["requires_scene"]:
 					needs_scene_boot = true
 				break
 
@@ -252,34 +250,8 @@ func _reverse_pipeline(pipeline: Array[Dictionary]) -> Array[Dictionary]:
 
 # --- Catalog lookup ---
 
-func _load_pure_catalog() -> void:
-	var file := FileAccess.open(_CatalogPath, FileAccess.READ)
-	if file == null:
-		return
-	var content: String = file.get_as_text()
-	file.close()
-
-	# Strip comment lines (## prefix)
-	var lines: PackedStringArray = content.split("\n")
-	var clean_lines: PackedStringArray = PackedStringArray()
-	for line in lines:
-		if not line.strip_edges().begins_with("##"):
-			clean_lines.append(line)
-	var clean_content: String = "\n".join(clean_lines)
-
-	var json := JSON.new()
-	if json.parse(clean_content) != OK:
-		return
-	var data: Dictionary = json.data as Dictionary
-	if data == null:
-		return
-	var pure_list: Array = data.get("pure", []) as Array
-	for entry in pure_list:
-		_pure_set[entry] = true
-
-
-func _is_pure(constraint_id: String) -> bool:
-	return _pure_set.has(constraint_id)
+## Pure/Scene classification is derived from each constraint's
+## requires_scene() method — the scanner is the single source of truth.
 
 
 # --- Fixture wiring ---
@@ -371,7 +343,7 @@ func _print_list() -> void:
 	print("-----------------------------------")
 	var idx := 1
 	for entry in registry:
-		var scene_tag := "[scene]" if not _is_pure(entry["id"]) else "[pure]   "
+		var scene_tag := "[scene]" if entry["requires_scene"] else "[pure]   "
 		print(" %2d. %-30s %-8s %s" % [idx, entry["id"], scene_tag, entry.get("desc", "")])
 		idx += 1
 	print("")

@@ -7,6 +7,9 @@ extends RefCounted
 func constraint_name() -> String:
 	return "conquest_grid_combat"
 
+func requires_scene() -> bool:
+	return true
+
 func run(ctx: PreflightContext) -> bool:
 	# Deterministic wave-based grid conquest.
 	var defender_grid := {

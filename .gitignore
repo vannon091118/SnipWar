@@ -4,11 +4,20 @@
 godot/
 *.exe
 
+# Accidental nested/exported repository copies and local snapshot folders.
+/res*/
+/snapshots/
+/dev-logs/
+
 .freebuff/
 
 # Freebuff/local agent workspace (never publish)
 .agents/
 
-# Ad-hoc MCP client dumps in project root (belong in addons/gdscript_mcp/client/playthroughs/)
+# Ad-hoc development artifacts never belong in the repository.
+/tmp_*
+*_check.py
+*.zip
+*.zip.*
 /_mcp_*
 /_ux_report_*
