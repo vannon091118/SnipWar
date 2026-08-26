@@ -100,6 +100,15 @@ func get_tool_defs() -> Array:
 			"transaction_id": {"type": "string"},
 		}, "write", ["transaction_id"]),
 		_make_workspace_tool("runtime_autonomy_rollback_all", "Roll back all journaled transactions to the baseline", {}, "write"),
+		_make_workspace_tool("runtime_autonomy_workspace_import", "Copy a res:// project file into the workspace for safe editing", {
+			"path": {"type": "string"},
+		}, "write", ["path"]),
+		_make_workspace_tool("runtime_autonomy_export", "Validate and apply an imported change back to the project (apply=true required)", {
+			"path": {"type": "string"},
+			"apply": {"type": "boolean", "default": false},
+			"force": {"type": "boolean", "default": false},
+		}, "write", ["path"]),
+		_make_workspace_tool("runtime_autonomy_imports", "List files imported into the workspace", {}, "read"),
 	]
 
 
@@ -137,6 +146,12 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 			return workspace_rollback(str(args.get("transaction_id", "")))
 		"runtime_autonomy_rollback_all":
 			return workspace_rollback_all()
+		"runtime_autonomy_workspace_import":
+			return workspace_import(str(args.get("path", "")))
+		"runtime_autonomy_export":
+			return workspace_export(str(args.get("path", "")), bool(args.get("apply", false)), bool(args.get("force", false)))
+		"runtime_autonomy_imports":
+			return workspace_imports()
 		_:
 			return {"error": "Unknown autonomy tool: " + tool_name}
 
@@ -407,6 +422,26 @@ func workspace_rollback_all() -> Dictionary:
 	if _workspace_journal == null or not _workspace_journal.is_bound():
 		return _blocked("no workspace bound", "BLOCKED")
 	return _workspace_journal.rollback_all(_session_id)
+
+
+func workspace_import(path_string: String) -> Dictionary:
+	var gate := _write_gate()
+	if not bool(gate.get("ok", false)):
+		return gate
+	return _workspace_tools.import_file(path_string)
+
+
+func workspace_export(path_string: String, apply: bool = false, force: bool = false) -> Dictionary:
+	var gate := _write_gate()
+	if not bool(gate.get("ok", false)):
+		return gate
+	return _workspace_tools.export_file(path_string, apply, force)
+
+
+func workspace_imports() -> Dictionary:
+	if _workspace_tools == null or not _workspace_tools.is_workspace_bound():
+		return _blocked("no workspace bound", "BLOCKED")
+	return _workspace_tools.list_imports()
 
 
 func _write_gate() -> Dictionary:

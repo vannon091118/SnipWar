@@ -145,6 +145,79 @@ func _run() -> void:
 	})
 	_check(bool((rollback as Dictionary).get("ok", false)), "rollback succeeds")
 
+	# ── Import / Export (gated apply) ───────────────────────────────
+	var fixture_path := "res://addons/gdscript_mcp/testing/import_export_fixture.gd"
+	var fixture_content := "extends RefCounted\n\nvar marker := 1\n\nfunc get_marker() -> int:\n\treturn marker\n"
+	var fixture_f := FileAccess.open(fixture_path, FileAccess.WRITE)
+	fixture_f.store_string(fixture_content)
+	fixture_f.close()
+
+	# Import copies the file into the workspace
+	var imported: Variant = planner.dispatch_tool("runtime_autonomy_workspace_import", {"path": fixture_path})
+	_check(bool((imported as Dictionary).get("ok", false)), "import copies res:// file into workspace")
+	var ws_import_path: String = str((imported as Dictionary).get("workspace_path", ""))
+	_check(ws_import_path.begins_with(root + "/imports/"), "import lands under workspace imports/")
+	_check(str((imported as Dictionary).get("origin_hash", "")) != "", "import records origin hash")
+
+	# Imports listing
+	var imports_list: Variant = planner.dispatch_tool("runtime_autonomy_imports", {})
+	_check(int((imports_list as Dictionary).get("count", 0)) >= 1, "imports list reports the import")
+
+	# Patch the workspace copy (marker 1 → 2)
+	var fixture_patch: Variant = planner.dispatch_tool("runtime_autonomy_patch", {
+		"path": ws_import_path,
+		"old_text": "var marker := 1",
+		"new_text": "var marker := 2",
+	})
+	_check(bool((fixture_patch as Dictionary).get("ok", false)), "workspace copy patchable after import")
+
+	# Dry-run export (apply=false) validates but never writes
+	var dry_run: Variant = planner.dispatch_tool("runtime_autonomy_export", {"path": fixture_path})
+	_check(bool((dry_run as Dictionary).get("ok", false)), "export dry-run succeeds")
+	_check(bool((dry_run as Dictionary).get("dry_run", false)), "export dry-run is not applied")
+	var dry_valid: Dictionary = (dry_run as Dictionary).get("validation", {})
+	_check(bool(dry_valid.get("ok", false)), "export validation passes")
+	var fixture_after_dry := FileAccess.open(fixture_path, FileAccess.READ)
+	var dry_text := fixture_after_dry.get_as_text()
+	fixture_after_dry.close()
+	_check(dry_text == fixture_content, "dry-run export leaves res:// untouched")
+
+	# Apply export (apply=true) writes back to the project
+	var applied: Variant = planner.dispatch_tool("runtime_autonomy_export", {"path": fixture_path, "apply": true})
+	_check(bool((applied as Dictionary).get("ok", false)), "export apply succeeds")
+	_check(bool((applied as Dictionary).get("applied", false)), "export reports applied")
+	var export_tx: String = str((applied as Dictionary).get("transaction_id", ""))
+	_check(export_tx != "", "export journals a transaction")
+	var fixture_after_apply := FileAccess.open(fixture_path, FileAccess.READ)
+	var applied_text := fixture_after_apply.get_as_text()
+	fixture_after_apply.close()
+	_check(applied_text.contains("var marker := 2"), "res:// file updated after export apply")
+
+	# Rollback restores the original project file
+	var export_rb: Variant = planner.dispatch_tool("runtime_autonomy_rollback", {"transaction_id": export_tx})
+	_check(bool((export_rb as Dictionary).get("ok", false)), "export rollback succeeds")
+	var fixture_after_rb := FileAccess.open(fixture_path, FileAccess.READ)
+	var rb_text := fixture_after_rb.get_as_text()
+	fixture_after_rb.close()
+	_check(rb_text == fixture_content, "res:// file restored after export rollback")
+
+	# Origin-changed guard: mutate res:// directly, then export without force
+	var mutate_f := FileAccess.open(fixture_path, FileAccess.READ_WRITE)
+	mutate_f.seek_end()
+	mutate_f.store_string("\n# external edit\n")
+	mutate_f.close()
+	var refused: Variant = planner.dispatch_tool("runtime_autonomy_export", {"path": fixture_path, "apply": true})
+	_check(not bool((refused as Dictionary).get("ok", true)), "export refused when origin changed")
+	var forced: Variant = planner.dispatch_tool("runtime_autonomy_export", {"path": fixture_path, "apply": true, "force": true})
+	_check(bool((forced as Dictionary).get("ok", false)), "export applies with force=true")
+
+	# Invalid content is refused by validation even with force
+	var invalid_f := FileAccess.open(ws_import_path, FileAccess.WRITE)
+	invalid_f.store_string("this is not valid gd :::")
+	invalid_f.close()
+	var invalid_export: Variant = planner.dispatch_tool("runtime_autonomy_export", {"path": fixture_path, "apply": true, "force": true})
+	_check(not bool((invalid_export as Dictionary).get("ok", true)), "export refuses invalid content")
+
 	# ── Rollback all + end ─────────────────────────────────────────
 	var rb_all: Variant = planner.dispatch_tool("runtime_autonomy_rollback_all", {})
 	_check(bool((rb_all as Dictionary).get("ok", false)), "rollback_all succeeds")
@@ -158,8 +231,10 @@ func _run() -> void:
 	})
 	_check(not bool((write2 as Dictionary).get("ok", true)), "write blocked after workspace end")
 
-	# ── Clean up the run workspace ─────────────────────────────────
+	# ── Clean up the run workspace + fixture so res:// stays pristine ──
 	_remove_recursive(ProjectSettings.globalize_path(root))
+	if FileAccess.file_exists(fixture_path):
+		DirAccess.remove_absolute(fixture_path)
 
 	print("Slice D write-gate contract test: %d failure(s)" % _failed)
 	_finish()

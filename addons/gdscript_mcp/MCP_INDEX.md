@@ -170,6 +170,14 @@ and explicit rollback. Probes remain read-only regardless of the gate.
 | `runtime_autonomy_symbols` | read | GDScript-Klassen/Funcs/Vars/Consts erkennen |
 | `runtime_autonomy_rollback` | write | Einzelne Transaktion zurücksetzen |
 | `runtime_autonomy_rollback_all` | write | Alle Transaktionen zur Baseline zurücksetzen |
+| `runtime_autonomy_workspace_import` | write | res://-Datei in Workspace kopieren (Origin-Hash registriert) |
+| `runtime_autonomy_export` | write | Gated Export: validierte Änderung zurück nach res:// (apply=true nötig, dry-run default) |
+| `runtime_autonomy_imports` | read | Importierte Dateien auflisten |
+
+**Export-Gate:** `runtime_autonomy_export` schreibt nie ohne explizites `apply=true`; es validiert
+GDScript-/JSON-Inhalt, verweigert bei verändertem Origin (Hash-Mismatch, es sei denn `force=true`)
+und legt vor dem Schreiben ein externes Journal-Preimage an — `runtime_autonomy_rollback`
+stellt den `res://`-Pfad danach wieder her.
 
 ### Custom Tools API — `runtime/core/mcp_custom_tool_loader.gd`
 Jede `.gd` in `res://mcp_tools/` wird beim Laden automatisch registriert:

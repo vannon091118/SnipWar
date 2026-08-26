@@ -73,10 +73,31 @@ func verify_session(p_session_id: String) -> Dictionary:
 
 
 ## Journalisiert eine Datei vor ihrer Modifikation.
+## Nur Pfade innerhalb des Workspace-Roots (default).
 func journal_preimage(path: String, content: String, is_text: bool = true) -> Dictionary:
-	var within: Dictionary = PATH_VALIDATOR_SCRIPT.is_within_root(path, root_path)
-	if not bool(within.get("ok", false)):
-		return {"ok": false, "error": str(within.get("reason", "path outside workspace"))}
+	return _journalize(path, content, is_text, true)
+
+
+## Journalisiert eine res://-Projektdatei vor einem Export-Rollback.
+## Bewusst ausserhalb des Workspace-Roots erlaubt, aber nur res://-Pfade
+## (fail-closed: kein user://-, kein absoluter OS-Pfad, kein Traversal).
+func journal_preimage_external(path: String, content: String, is_text: bool = true) -> Dictionary:
+	return _journalize(path, content, is_text, false)
+
+
+func _journalize(path: String, content: String, is_text: bool, within_root: bool) -> Dictionary:
+	var valid: Dictionary = PATH_VALIDATOR_SCRIPT.is_allowed_path(path)
+	if not bool(valid.get("ok", false)):
+		return {"ok": false, "error": str(valid.get("reason", "invalid path"))}
+	if within_root:
+		var within: Dictionary = PATH_VALIDATOR_SCRIPT.is_within_root(path, root_path)
+		if not bool(within.get("ok", false)):
+			return {"ok": false, "error": str(within.get("reason", "path outside workspace"))}
+	else:
+		# Export-Rollback: nur res://-Projektdateien sind als externe Preimage
+		# erlaubt — niemals user:// oder OS-Pfade.
+		if not String(path).begins_with("res://"):
+			return {"ok": false, "error": "external preimage requires a res:// project path"}
 	var tx_id := "tx_%d_%d" % [Time.get_unix_time_from_system(), _tx_seq]
 	_tx_seq += 1
 	var before_hash: String = PATH_VALIDATOR_SCRIPT.sha256_of_file(path) if FileAccess.file_exists(path) else ""
@@ -96,6 +117,7 @@ func journal_preimage(path: String, content: String, is_text: bool = true) -> Di
 		"existed": does_exist,
 		"kind": "text" if is_text else "binary",
 		"state": "pending",
+		"external": not within_root,
 	}
 	_tx_order.append(tx_id)
 	state = STATE_DIRTY

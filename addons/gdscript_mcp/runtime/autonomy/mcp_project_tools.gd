@@ -7,10 +7,12 @@ class_name McpProjectTools
 
 const PATH_VALIDATOR_SCRIPT := preload("res://addons/gdscript_mcp/runtime/autonomy/mcp_path_validator.gd")
 const JOURNAL_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_workspace_journal.gd"
+const IMPORT_SUBDIR := "imports"
 
 var _journal: RefCounted = null
 var _workspace_root := ""
 var _session_id := ""
+var _imports: Dictionary = {}
 
 
 func setup(workspace_root: String, session_id: String, journal: RefCounted = null) -> void:
@@ -105,6 +107,139 @@ func write(path_string: String, content: String, expected_hash: String = "", ses
 		"rollback_available": true,
 		"diagnostics": {"status": "complete", "entries": []},
 	}
+
+
+## IMPORT - kopiert eine res://-Projektdatei in den Workspace (journaled),
+## registriert Origin-Pfad + Origin-Hash für den gated Export.
+func import_file(path_string: String) -> Dictionary:
+	if not is_workspace_bound():
+		return {"ok": false, "error": "no workspace bound"}
+	var normalized: String = PATH_VALIDATOR_SCRIPT.normalize(path_string)
+	if not normalized.begins_with("res://"):
+		return {"ok": false, "error": "import source must be a res:// project path"}
+	if not FileAccess.file_exists(normalized):
+		return {"ok": false, "error": "import source not found: " + normalized}
+	var rel := normalized.trim_prefix("res://")
+	var target := _workspace_root.path_join(IMPORT_SUBDIR).path_join(rel)
+	var source_text := ""
+	var source := FileAccess.open(normalized, FileAccess.READ)
+	if source != null:
+		source_text = source.get_as_text()
+		source.close()
+	var origin_hash := PATH_VALIDATOR_SCRIPT.sha256_of_file(normalized)
+	var written := write(target, source_text, "")
+	if not bool(written.get("ok", false)):
+		return written
+	_imports[normalized] = {"workspace_path": target, "origin_hash": origin_hash}
+	return {
+		"ok": true,
+		"origin": normalized,
+		"workspace_path": target,
+		"origin_hash": origin_hash,
+		"transaction_id": written.get("transaction_id", ""),
+	}
+
+
+func list_imports() -> Dictionary:
+	var entries: Array = []
+	for origin in _imports:
+		entries.append({
+			"origin": origin,
+			"workspace_path": _imports[origin]["workspace_path"],
+			"origin_hash": _imports[origin]["origin_hash"],
+		})
+	return {"ok": true, "imports": entries, "count": entries.size()}
+
+
+## EXPORT - gated Zurückschreiben einer importierten Datei nach res://.
+## Fail-closed: dry-run ohne apply=true, Origin-Changed-Check (force zum
+## Übersteuern), Validierung (GDScript/JSON) blockiert invaliden Inhalt,
+## externes Journal-Preimage ermöglicht Rollback des Projektpfads.
+func export_file(path_string: String, apply: bool = false, force: bool = false) -> Dictionary:
+	if not is_workspace_bound():
+		return {"ok": false, "error": "no workspace bound"}
+	var normalized: String = PATH_VALIDATOR_SCRIPT.normalize(path_string)
+	if not _imports.has(normalized):
+		return {"ok": false, "error": "no import entry for " + normalized + "; import the file first"}
+	var entry: Dictionary = _imports[normalized]
+	var workspace_path := str(entry.get("workspace_path", ""))
+	var workspace_read := read(workspace_path)
+	if not bool(workspace_read.get("ok", false)):
+		return workspace_read
+	var content := str(workspace_read.get("text", ""))
+	var workspace_hash := str(workspace_read.get("sha256", ""))
+	var current_origin_hash := PATH_VALIDATOR_SCRIPT.sha256_of_file(normalized)
+	var origin_unchanged := str(entry.get("origin_hash", "")) == current_origin_hash
+	if not origin_unchanged and not force:
+		return {
+			"ok": false,
+			"error": "origin file changed since import; refusing overwrite (force=true to override)",
+			"current_origin_hash": current_origin_hash,
+			"import_origin_hash": entry.get("origin_hash", ""),
+		}
+	var validation := validate_text(normalized, content)
+	if not bool(validation.get("ok", false)):
+		return {"ok": false, "error": "validation failed: " + str(validation.get("error", "")), "validation": validation}
+	if not apply:
+		return {
+			"ok": true,
+			"applied": false,
+			"dry_run": true,
+			"validation": validation,
+			"workspace_hash": workspace_hash,
+			"current_origin_hash": current_origin_hash,
+		}
+	var original_text := ""
+	var original := FileAccess.open(normalized, FileAccess.READ)
+	if original != null:
+		original_text = original.get_as_text()
+		original.close()
+	var tx: Dictionary = _journal.call("journal_preimage_external", normalized, original_text, true)
+	if not bool(tx.get("ok", false)):
+		return {"ok": false, "error": "external preimage failed: " + str(tx.get("error", ""))}
+	var tx_id := str(tx.get("transaction_id", ""))
+	var tmp_path := normalized + ".tmp"
+	var wf := FileAccess.open(tmp_path, FileAccess.WRITE)
+	if wf == null:
+		return {"ok": false, "error": "cannot create tmp file"}
+	wf.store_string(content)
+	wf.close()
+	if FileAccess.file_exists(normalized):
+		DirAccess.remove_absolute(normalized)
+	if DirAccess.rename_absolute(tmp_path, normalized) != OK:
+		return {"ok": false, "error": "cannot rename tmp file"}
+	var after_hash := PATH_VALIDATOR_SCRIPT.sha256_of_file(normalized)
+	_journal.call("commit", tx_id, after_hash, _session_id)
+	_imports[normalized]["last_export_hash"] = after_hash
+	return {
+		"ok": true,
+		"applied": true,
+		"transaction_id": tx_id,
+		"origin": normalized,
+		"before_hash": str(entry.get("origin_hash", "")),
+		"after_hash": after_hash,
+		"validation": validation,
+		"rollback_available": true,
+	}
+
+
+## Validierung vor dem Export: GDScript- und JSON-Parser, sonst kein Parser
+## (Datei wird nur auf Hash-Ebene geprüft). Fail-closed bei Parse-Fehlern.
+static func validate_text(path: String, content: String) -> Dictionary:
+	var ext := path.get_extension().to_lower()
+	if ext == "gd":
+		var script := GDScript.new()
+		script.source_code = content
+		var err := script.reload()
+		if err != OK:
+			return {"ok": false, "error": error_string(err), "check": "gd_parse"}
+		return {"ok": true, "check": "gd_parse"}
+	if ext == "json":
+		var parsed = JSON.parse_string(content)
+		if parsed == null:
+			return {"ok": false, "error": "invalid JSON", "check": "json_parse"}
+		return {"ok": true, "check": "json_parse"}
+	return {"ok": true, "check": "none", "skipped": true}
 
 
 ## PATCH - fail-closed: kein old_text bei 0 oder mehreren Treffern.
