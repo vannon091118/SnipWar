@@ -12,9 +12,11 @@ const CONTEXT_STORE_PATH := "res://addons/gdscript_mcp/runtime/context/mcp_conte
 const LIFECYCLE_PATH := "res://addons/gdscript_mcp/runtime/lifecycle/mcp_lifecycle.gd"
 const PROTOCOL_PATH := "res://addons/gdscript_mcp/runtime/protocol/mcp_protocol.gd"
 const VISION_WORKER_PATH := "res://addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd"
+const AGENT_ACTIVITY_PATH := "res://addons/gdscript_mcp/runtime/tools/agent/mcp_agent_activity.gd"
 
 const DEFAULT_PORT := 9090
 const RUNTIME_TICK_INTERVAL := 0.05
+const CONNECTED_TICK_INTERVAL := 0.016
 const IDLE_TICK_INTERVAL := 0.15
 const CONTEXT_CLEANUP_INTERVAL := 2.0
 const MAX_BUFFER_BYTES := 4 * 1024 * 1024
@@ -27,6 +29,8 @@ var _port := DEFAULT_PORT
 var _frame_budget_ms := 1.5
 var _verbose := false
 var _editor_write_enabled := false
+var _contract_gate: RefCounted
+var _profile := "player"
 var _tcp_server: TCPServer
 var _client: StreamPeerTCP
 var _connection_generation := 0
@@ -39,6 +43,7 @@ var _context_store: RefCounted
 var _lifecycle: RefCounted
 var _protocol: RefCounted
 var _worker: Node
+var _agent_activity: RefCounted
 var _tools: Array = []
 var _tool_index: Dictionary = {}
 var _tick_accumulator := 0.0
@@ -69,6 +74,13 @@ func start_server(port: int = DEFAULT_PORT, transport: String = "tcp", config: D
 	_frame_budget_ms = float(config.get("frame_budget_ms", 1.5))
 	_verbose = bool(config.get("verbose", false))
 	_editor_write_enabled = bool(config.get("editor_write_enabled", false))
+	var contract_gate_script: Resource = load("res://addons/gdscript_mcp/runtime/autonomy/mcp_contract_gate.gd")
+	if contract_gate_script == null:
+		_log("Failed to load contract gate", true)
+		return false
+	_contract_gate = contract_gate_script.new()
+	_contract_gate.configure(str(config.get("profile", "player")), _role)
+	_profile = str(_contract_gate.get_profile())
 	_port = port
 	_transport = transport.to_lower()
 	if _transport != "tcp" and _transport != "stdio":
@@ -81,13 +93,15 @@ func start_server(port: int = DEFAULT_PORT, transport: String = "tcp", config: D
 	var lifecycle_script: Resource = load(LIFECYCLE_PATH)
 	var protocol_script: Resource = load(PROTOCOL_PATH)
 	var context_script: Resource = load(CONTEXT_STORE_PATH)
-	if lifecycle_script == null or protocol_script == null or context_script == null:
+	var agent_activity_script: Resource = load(AGENT_ACTIVITY_PATH)
+	if lifecycle_script == null or protocol_script == null or context_script == null or agent_activity_script == null:
 		_log("Failed to load MCP core modules", true)
 		return false
 	_lifecycle = lifecycle_script.new()
 	_protocol = protocol_script.new()
 	_context_store = _provided_context_store if _provided_context_store != null else context_script.new()
-	if _lifecycle == null or _protocol == null or _context_store == null:
+	_agent_activity = agent_activity_script.new()
+	if _lifecycle == null or _protocol == null or _context_store == null or _agent_activity == null:
 		_log("Failed to instantiate MCP core modules", true)
 		return false
 	if _provided_context_store == null:
@@ -104,7 +118,7 @@ func start_server(port: int = DEFAULT_PORT, transport: String = "tcp", config: D
 	if _registry.has_method("set_lifecycle"):
 		_registry.set_lifecycle(_lifecycle)
 	if _registry.has_method("set_autonomy_writes"):
-		_registry.set_autonomy_writes(bool(config.get("autonomy_writes", false)))
+		_registry.set_autonomy_writes(_resolve_autonomy_writes(config))
 	if _role == "runtime":
 		_create_vision_worker(config)
 		if _registry.has_method("set_worker"):
@@ -215,9 +229,11 @@ func get_lifecycle_state() -> Dictionary:
 		"port": _port,
 		"role": _role,
 		"session_id": _session_id,
+		"profile": _profile,
+		"contract_violations": _contract_gate.get_blocked_calls() if _contract_gate != null else 0,
 		"renderer": "visible" if _is_renderer_visible() else "unavailable",
 		"client_connected": _client != null and _client.get_status() == StreamPeerTCP.STATUS_CONNECTED,
-		"tick_interval_ms": int(RUNTIME_TICK_INTERVAL * 1000.0) if _client != null else int(IDLE_TICK_INTERVAL * 1000.0),
+		"tick_interval_ms": int(CONNECTED_TICK_INTERVAL * 1000.0) if _client != null else int(IDLE_TICK_INTERVAL * 1000.0),
 		"tool_count": _tools.size(),
 		"protocol_ready": _protocol_ready,
 		"protocol_version": _client_protocol_version if _protocol_ready else "",
@@ -243,7 +259,7 @@ func _process(delta: float) -> void:
 	if not _running:
 		return
 	_tick_accumulator += delta
-	var interval := RUNTIME_TICK_INTERVAL if _client != null else IDLE_TICK_INTERVAL
+	var interval := CONNECTED_TICK_INTERVAL if _client != null else IDLE_TICK_INTERVAL
 	if _tick_accumulator < interval:
 		return
 	_tick_accumulator = 0.0
@@ -296,6 +312,16 @@ func _register_host_tools() -> void:
 			"description": "Read incremental MCP lifecycle events and budget drops",
 			"inputSchema": {"type": "object", "properties": {"cursor": {"type": "integer", "default": 0}, "limit": {"type": "integer", "default": 32}}},
 		},
+		{
+			"name": "runtime_agent_goal_set",
+			"description": "Declare the agent's current goal so humans and logs can see what is being worked on (transparency; mutates agent telemetry only)",
+			"inputSchema": {"type": "object", "properties": {"goal": {"type": "string"}}, "required": ["goal"]},
+		},
+		{
+			"name": "runtime_agent_activity",
+			"description": "Read what the agent is currently doing: goal, last tool calls with args, timings and errors - without asking the agent",
+			"inputSchema": {"type": "object", "properties": {"limit": {"type": "integer", "default": 20}}},
+		},
 	]
 	for host_tool in host_tools:
 		var normalized = McpAutonomyContracts.normalize_tool(host_tool, "host") if contracts != null else host_tool
@@ -317,6 +343,8 @@ func _register_editor_tools() -> void:
 		_make_tool("editor_set_node_property", "Set a node property through Godot Undo/Redo", {"path": {"type": "string"}, "property": {"type": "string"}, "value": {}}, ["path", "property", "value"]),
 		_make_tool("editor_resource_read", "Inspect a project resource", {"path": {"type": "string"}}, ["path"]),
 		_make_tool("editor_screenshot", "Capture the edited editor viewport as a local artifact", {"viewport": {"type": "string", "default": ""}, "format": {"type": "string", "enum": ["png", "jpg"], "default": "png"}}),
+		_make_tool("editor_run_project", "Start the project from the editor. with_mcp=true launches the game as a separate process with the MCP runtime server (--mcp, port 9090) so the agent can switch from editing to live gameplay", {"scene": {"type": "string", "default": ""}, "with_mcp": {"type": "boolean", "default": false}}),
+		_make_tool("editor_logs_read", "Read the MCP editor-session log (lifecycle events) plus the engine log tail when a --log-file is configured", {"cursor": {"type": "integer", "default": 0}, "limit": {"type": "integer", "default": 50}, "include_file": {"type": "boolean", "default": true}}),
 		_make_tool("editor_scene_save", "Explicitly save the edited scene; mutations never save implicitly", {"path": {"type": "string", "default": ""}}),
 		_make_tool("editor_undo", "Undo the latest editor transaction", {}),
 		_make_tool("editor_redo", "Redo the latest editor transaction", {}),
@@ -468,6 +496,12 @@ func _handle_request(id: Variant, method: String, params: Dictionary) -> void:
 func _handle_resources_list(id: Variant) -> void:
 	var resources: Array = [
 		{
+			"uri": "godot://agent/activity",
+			"name": "Agent Activity Feed",
+			"description": "Current goal, last tool calls, timings and errors - agent transparency without asking the agent",
+			"mimeType": "application/json"
+		},
+		{
 			"uri": "godot://scene/current",
 			"name": "Current Scene Tree",
 			"description": "Live authoritative scene hierarchy and controls",
@@ -499,6 +533,11 @@ func _handle_resources_read(id: Variant, params: Dictionary) -> void:
 	var uri := str(params.get("uri", ""))
 	var data: Variant = null
 	match uri:
+		"godot://agent/activity":
+			if _agent_activity != null:
+				data = _agent_activity.get_feed(30)
+			else:
+				data = {"goal": "", "entries": []}
 		"godot://scene/current":
 			if _registry != null:
 				data = _registry.dispatch("runtime_get_scene_tree", {"root_path": "/root", "max_depth": 4, "max_nodes": 200})
@@ -563,6 +602,29 @@ func _handle_tool_call(id: Variant, params: Dictionary) -> void:
 		var limit := clampi(int(args.get("limit", 32)), 1, 128)
 		_send_tool_result_atomic(id, _lifecycle.events_since(cursor, limit) if _lifecycle != null else {"entries": [], "count": 0, "next_cursor": cursor})
 		return
+	if tool_name == "runtime_agent_goal_set":
+		var goal := str(args.get("goal", "")).strip_edges()
+		if goal == "":
+			_send_response(id, null, "goal must not be empty", -32602)
+			return
+		var goal_result: Variant = _agent_activity.set_goal(goal) if _agent_activity != null else {"ok": true, "goal": goal}
+		_send_tool_result_atomic(id, goal_result)
+		return
+	if tool_name == "runtime_agent_activity":
+		var feed_limit := clampi(int(args.get("limit", 20)), 1, 100)
+		var feed: Variant = _agent_activity.get_feed(feed_limit) if _agent_activity != null else {"goal": "", "entries": [], "count": 0, "total_calls": 0}
+		_send_tool_result_atomic(id, feed)
+		return
+	if tool_name == "editor_logs_read":
+		# Kein Plugin-Kontext nötig: Session-Logs leben im Server (Lifecycle).
+		var log_cursor := int(args.get("cursor", 0))
+		var log_limit := clampi(int(args.get("limit", 50)), 1, 200)
+		var events: Dictionary = _lifecycle.events_since(log_cursor, log_limit) if _lifecycle != null else {"entries": [], "count": 0, "next_cursor": log_cursor}
+		var result: Dictionary = {"source": "mcp_editor", "entries": events.get("entries", []), "next_cursor": events.get("next_cursor", log_cursor)}
+		if bool(args.get("include_file", true)):
+			result["engine_log_tail"] = _read_engine_log_tail()
+		_send_tool_result_atomic(id, result)
+		return
 	# MCP handshake gate: host tools (status/events) stay callable for health
 	# probes, but every other tool requires the client to have run initialize.
 	if not _protocol_ready:
@@ -592,6 +654,20 @@ func _handle_tool_call(id: Variant, params: Dictionary) -> void:
 		if request_generation == _connection_generation:
 			_send_tool_result_atomic(id, editor_result)
 		return
+	# Verbindlicher Spieler-Vertrag: Session-Profil-Gate vor jedem Runtime-Tool.
+	# Verstöße werden gezählt (runtime_mcp_status → contract_violations) und als
+	# Lifecycle-Event protokolliert — ein Agent kann sie über runtime_mcp_events
+	# lesen und den Modus wechseln (--mcp-profile=qa|dev), statt den Vertrag zu brechen.
+	if _contract_gate != null:
+		var gate_check: Dictionary = _contract_gate.check(tool_name)
+		if not bool(gate_check.get("allowed", false)):
+			var reason := str(gate_check.get("reason", "contract violation"))
+			if _lifecycle != null:
+				_lifecycle.note_event("warning", reason, "mcp", "contract")
+				_lifecycle.note_error("contract violation: " + tool_name)
+			log_message.emit("CONTRACT VIOLATION: " + reason, true)
+			_send_response(id, null, reason, -32003)
+			return
 	if _role == "runtime" and not _is_game_running():
 		_send_response(id, null, "Game not running", -32000)
 		return
@@ -615,6 +691,8 @@ func _handle_tool_call(id: Variant, params: Dictionary) -> void:
 		_lifecycle.end_tool(tool_name, started_ms)
 		if _protocol.result_is_error(result):
 			_lifecycle.note_error(str(result.get("error", "")))
+	if _agent_activity != null:
+		_agent_activity.record_tool(tool_name, args, float(Time.get_ticks_msec() - started_ms), not _protocol.result_is_error(result), str(result.get("error", "")) if _protocol.result_is_error(result) else "")
 	if request_generation == _connection_generation:
 		_send_tool_result_atomic(id, result)
 
@@ -626,6 +704,8 @@ func _run_async_tool(id: Variant, tool_name: String, args: Dictionary, generatio
 		_lifecycle.end_tool(tool_name, started_ms)
 		if _protocol.result_is_error(result):
 			_lifecycle.note_error(str(result.get("error", "")))
+	if _agent_activity != null:
+		_agent_activity.record_tool(tool_name, args, float(Time.get_ticks_msec() - started_ms), not _protocol.result_is_error(result), str(result.get("error", "")) if _protocol.result_is_error(result) else "")
 	if generation == _connection_generation:
 		_send_tool_result_atomic(id, result)
 	_async_busy = false
@@ -640,6 +720,47 @@ func _run_async_tool(id: Variant, tool_name: String, args: Dictionary, generatio
 			_lifecycle.mark_busy(true)
 		_run_async_tool(next.get("id"), str(next.get("name", "")), next.get("args", {}), _connection_generation)
 		break
+
+
+## Ein Schreib-Gate für beide Editier-Welten: Der Editor-Dock aktiviert
+## Schreibzugriffe über "editor_write_enabled"; die Autonomy-Workspace-Tools
+## (runtime_autonomy_write/patch/export) hängen am selben Gate. Vorher wurde
+## autonomy_writes nie gesetzt → Editor-Editieren über das Panel war trotz
+## "Allow write actions" gesperrt (echte Lücke im Edit↔Ingame-Wechsel).
+static func _resolve_autonomy_writes(config: Dictionary) -> bool:
+	return bool(config.get("autonomy_writes", false)) or bool(config.get("editor_write_enabled", false))
+
+
+## Liest den Tail der Engine-Log-Datei, falls der Editor mit --log-file
+## gestartet wurde (dokumentierter Start des Editor-MCP: --log-file).
+func _read_engine_log_tail() -> Array:
+	var log_path := ""
+	var cmdline := OS.get_cmdline_args()
+	var arg_index := cmdline.find("--log-file")
+	if arg_index >= 0 and arg_index + 1 < cmdline.size():
+		log_path = cmdline[arg_index + 1]
+	else:
+		for arg in cmdline:
+			if arg.begins_with("--log-file="):
+				log_path = arg.trim_prefix("--log-file=")
+				break
+	if log_path == "" or not FileAccess.file_exists(log_path):
+		return []
+	var file := FileAccess.open(log_path, FileAccess.READ)
+	if file == null:
+		return []
+	var lines: Array = []
+	file.seek_end()
+	var size := file.get_length()
+	var tail_bytes := mini(64 * 1024, size)
+	file.seek(maxi(0, size - tail_bytes))
+	if tail_bytes < size:
+		file.get_line()  # verwerfe erste halbe Zeile
+	while not file.eof_reached():
+		var line := file.get_line()
+		lines.append(line)
+	file.close()
+	return lines.slice(maxi(0, lines.size() - 200), lines.size())
 
 
 func _is_editor_write_tool(tool_name: String) -> bool:
@@ -702,8 +823,21 @@ func _create_vision_worker(config: Dictionary) -> void:
 
 func _send_tool_result_atomic(id: Variant, result: Variant) -> void:
 	var sanitized := _sanitize_result(result)
-	var content: Array = [_protocol.text_content(JSON.stringify(sanitized))]
+	var trim_result: Dictionary = McpProtocol.trim_result_to_budget(sanitized)
+	var payload: Variant = trim_result.get("value", sanitized)
+	if not bool(trim_result.get("fits", true)) and payload is Dictionary:
+		(payload as Dictionary)["_response_truncated"] = true
+		(payload as Dictionary)["_response_bytes"] = int(trim_result.get("trimmed_bytes", 0))
+		(payload as Dictionary)["_truncated_fields"] = trim_result.get("truncated_fields", [])
+	if not bool(trim_result.get("fits", true)):
+		note_truncation(int(trim_result.get("original_bytes", 0)), int(trim_result.get("trimmed_bytes", 0)))
+	var content: Array = [_protocol.text_content(JSON.stringify(payload))]
 	_send_response(id, _protocol.tool_result(content, _protocol.result_is_error(result)), "", 0)
+
+
+func note_truncation(original_bytes: int, trimmed_bytes: int) -> void:
+	if _lifecycle != null:
+		_lifecycle.note_event("warning", "Tool result trimmed %d → %d bytes" % [original_bytes, trimmed_bytes], "mcp", "budget")
 
 
 func _sanitize_result(value: Variant) -> Variant:

@@ -50,7 +50,7 @@ margin_right = 8
 margin_top = 8
 
 [node name="ConfigTitle" type="Label" parent="ConfigSection"]
-text = "Configuration"
+text = "✏️ Editor-Server (9091)"
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
 custom_minimum_size = Vector2(0, 20)
@@ -123,6 +123,173 @@ theme_override_font_sizes/font_size = 12
 custom_minimum_size = Vector2(100, 32)
 
 [node name="Separator3" type="HSeparator" parent="."]
+theme_override_colors/separator_color = Color(0.2, 0.2, 0.25, 1)
+
+[node name="RuntimeSection" type="VBoxContainer" parent="."]
+theme_override_constants/separation = 6
+margin_left = 8
+margin_right = 8
+
+[node name="RuntimeTitle" type="Label" parent="RuntimeSection"]
+text = "🎮 Runtime-Spiel (9090)"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.7, 0.8, 0.7, 1)
+custom_minimum_size = Vector2(0, 20)
+
+[node name="ProfileRow" type="HBoxContainer" parent="RuntimeSection"]
+theme_override_constants/separation = 8
+
+[node name="ProfileLabel" type="Label" parent="RuntimeSection/ProfileRow"]
+text = "Play-Goal:"
+theme_override_font_sizes/font_size = 11
+custom_minimum_size = Vector2(80, 0)
+
+[node name="ProfileSelect" type="OptionButton" parent="RuntimeSection/ProfileRow"]
+unique_name_in_owner = true
+items = ["player", "qa", "dev"]
+selected = 0
+tooltip_text = "player = sichtbarer Spieler-Lauf (Spieler-Vertrag) · qa = Debug/QA · dev = Reparatur/Edit"
+
+[node name="LaunchRow" type="HBoxContainer" parent="RuntimeSection"]
+theme_override_constants/separation = 8
+
+[node name="LaunchGameBtn" type="Button" parent="RuntimeSection/LaunchRow"]
+unique_name_in_owner = true
+text = "▶ Spiel starten +MCP"
+theme_override_font_sizes/font_size = 11
+custom_minimum_size = Vector2(120, 28)
+
+[node name="ConnectRuntimeBtn" type="Button" parent="RuntimeSection/LaunchRow"]
+unique_name_in_owner = true
+text = "Verbinden"
+theme_override_font_sizes/font_size = 11
+custom_minimum_size = Vector2(80, 28)
+
+[node name="DisconnectRuntimeBtn" type="Button" parent="RuntimeSection/LaunchRow"]
+unique_name_in_owner = true
+text = "Trennen"
+disabled = true
+theme_override_font_sizes/font_size = 11
+custom_minimum_size = Vector2(70, 28)
+
+[node name="OpenArtifactsBtn" type="Button" parent="RuntimeSection/LaunchRow"]
+unique_name_in_owner = true
+text = "Artefakte"
+theme_override_font_sizes/font_size = 11
+custom_minimum_size = Vector2(70, 28)
+
+[node name="RuntimeStatus" type="Label" parent="RuntimeSection"]
+unique_name_in_owner = true
+text = "○ nicht verbunden"
+theme_override_colors/font_color = Color(0.8, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 10
+autowrap_mode = 2
+
+[node name="CoordRow" type="HBoxContainer" parent="RuntimeSection"]
+theme_override_constants/separation = 6
+
+[node name="ClickXSpin" type="SpinBox" parent="RuntimeSection/CoordRow"]
+unique_name_in_owner = true
+min_value = 0
+max_value = 4000
+value = 480
+custom_minimum_size = Vector2(64, 0)
+
+[node name="ClickYSpin" type="SpinBox" parent="RuntimeSection/CoordRow"]
+unique_name_in_owner = true
+min_value = 0
+max_value = 4000
+value = 270
+custom_minimum_size = Vector2(64, 0)
+
+[node name="MouseMoveBtn" type="Button" parent="RuntimeSection/CoordRow"]
+unique_name_in_owner = true
+text = "Maus"
+disabled = true
+theme_override_font_sizes/font_size = 10
+custom_minimum_size = Vector2(56, 0)
+
+[node name="ClickBtn" type="Button" parent="RuntimeSection/CoordRow"]
+unique_name_in_owner = true
+text = "Klick"
+disabled = true
+theme_override_font_sizes/font_size = 10
+custom_minimum_size = Vector2(56, 0)
+
+[node name="KeyEdit" type="LineEdit" parent="RuntimeSection/CoordRow"]
+unique_name_in_owner = true
+text = "P"
+placeholder_text = "Taste (P, ESCAPE…)"
+custom_minimum_size = Vector2(56, 0)
+
+[node name="KeyBtn" type="Button" parent="RuntimeSection/CoordRow"]
+unique_name_in_owner = true
+text = "Taste"
+disabled = true
+theme_override_font_sizes/font_size = 10
+custom_minimum_size = Vector2(56, 0)
+
+[node name="ActionRow" type="HBoxContainer" parent="RuntimeSection"]
+theme_override_constants/separation = 6
+
+[node name="UIScanBtn" type="Button" parent="RuntimeSection/ActionRow"]
+unique_name_in_owner = true
+text = "UI-Scan"
+disabled = true
+theme_override_font_sizes/font_size = 10
+custom_minimum_size = Vector2(70, 0)
+
+[node name="ScreenshotBtn" type="Button" parent="RuntimeSection/ActionRow"]
+unique_name_in_owner = true
+text = "Screenshot"
+disabled = true
+theme_override_font_sizes/font_size = 10
+custom_minimum_size = Vector2(70, 0)
+
+[node name="FreezeBtn" type="Button" parent="RuntimeSection/ActionRow"]
+unique_name_in_owner = true
+text = "Freeze"
+disabled = true
+theme_override_font_sizes/font_size = 10
+custom_minimum_size = Vector2(56, 0)
+
+[node name="StepBtn" type="Button" parent="RuntimeSection/ActionRow"]
+unique_name_in_owner = true
+text = "Step ×5"
+disabled = true
+theme_override_font_sizes/font_size = 10
+custom_minimum_size = Vector2(56, 0)
+
+[node name="UnfreezeBtn" type="Button" parent="RuntimeSection/ActionRow"]
+unique_name_in_owner = true
+text = "Unfreeze"
+disabled = true
+theme_override_font_sizes/font_size = 10
+custom_minimum_size = Vector2(64, 0)
+
+[node name="E2ETitle" type="Label" parent="RuntimeSection"]
+text = "E2E-Szenarien (sichtbar im Spiel, nur QA/Dev-Profil)"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
+custom_minimum_size = Vector2(0, 20)
+
+[node name="E2ERefreshBtn" type="Button" parent="RuntimeSection"]
+unique_name_in_owner = true
+text = "Szenarien laden"
+disabled = true
+theme_override_font_sizes/font_size = 10
+
+[node name="E2EContainer" type="VBoxContainer" parent="RuntimeSection"]
+unique_name_in_owner = true
+theme_override_constants/separation = 2
+
+[node name="E2ERunBtn" type="Button" parent="RuntimeSection"]
+unique_name_in_owner = true
+text = "▶ Ausgewählte Szenarien ausführen"
+disabled = true
+theme_override_font_sizes/font_size = 10
+
+[node name="Separator4" type="HSeparator" parent="."]
 theme_override_colors/separator_color = Color(0.2, 0.2, 0.25, 1)
 
 [node name="LogSection" type="VBoxContainer" parent="."]

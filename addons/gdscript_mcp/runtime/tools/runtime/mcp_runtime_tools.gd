@@ -29,17 +29,20 @@ static func _basic_tools() -> Array:
 			{"max_depth": {"type": "integer", "default": 4}, "root_path": {"type": "string", "default": "/root"}, "max_nodes": {"type": "integer", "default": 200}}),
 		_make("runtime_find_node", "Find node in running game by path",
 			{"path": {"type": "string"}}, ["path"]),
-		_make("runtime_click", "Click a UI element or screen position in running game (engine-level mouse press+release)",
+		_make("runtime_click", "Click a UI element or screen position in running game (engine-level mouse press+release). The virtual cursor travels smoothly to the target like a real mouse; press happens after the approach",
 			{"path": {"type": "string", "description": "Node path or empty for screen coords"},
 			 "x": {"type": "integer", "description": "Screen X (viewport coords), or -1 to resolve from path"},
 			 "y": {"type": "integer", "description": "Screen Y (viewport coords), or -1 to resolve from path"},
 			 "hold_frames": {"type": "integer", "default": 1, "description": "Frames between press and release events"},
+			 "smooth": {"type": "boolean", "default": true, "description": "Smooth cursor approach (player-like); false = jump straight to target"},
 			 "inject_mode": {"type": "string", "default": "auto", "description": "auto|push|parse (see index)"}}),
 		_make("runtime_key", "Send key event to running game",
 			{"keycode": {"type": "integer"}, "pressed": {"type": "boolean", "default": true}},
 			["keycode"]),
-		_make("runtime_mouse_move", "Move the MCP virtual mouse pointer to a position (hover)",
-			{"x": {"type": "integer"}, "y": {"type": "integer"}}, ["x", "y"]),
+		_make("runtime_mouse_move", "Move the MCP virtual mouse pointer to a position (hover). Default: smooth visible cursor travel over several frames — the cursor never teleports",
+			{"x": {"type": "integer"}, "y": {"type": "integer"},
+			 "smooth": {"type": "boolean", "default": true, "description": "Interpolated cursor travel; false = single jump event"},
+			 "duration_ms": {"type": "integer", "default": 120, "description": "Approximate travel duration for smooth mode"}}, ["x", "y"]),
 		_make("runtime_scroll", "Perform one visible virtual mouse-wheel scroll gesture over a control or position",
 			{"path": {"type": "string", "default": ""}, "x": {"type": "integer", "default": -1}, "y": {"type": "integer", "default": -1}, "direction": {"type": "string", "enum": ["up", "down"], "default": "down"}, "steps": {"type": "integer", "default": 1}}, []),
 		_make("runtime_virtual_mouse_status", "Read MCP virtual mouse position, bounds and physical mouse isolation state"),
@@ -96,7 +99,8 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 		"runtime_key":
 			return _rt_key(_resolve_keycode(args.get("keycode", 0)), bool(args.get("pressed", true)))
 		"runtime_mouse_move":
-			return _rt_mouse_move(int(args.get("x", 0)), int(args.get("y", 0)))
+			return _rt_mouse_move(int(args.get("x", 0)), int(args.get("y", 0)),
+				bool(args.get("smooth", true)), int(args.get("duration_ms", 120)))
 		"runtime_scroll":
 			return _rt_scroll(args)
 		"runtime_virtual_mouse_status":
@@ -214,6 +218,7 @@ func _rt_click(args: Dictionary) -> Dictionary:
 	var x: int = int(args.get("x", -1))
 	var y: int = int(args.get("y", -1))
 	var hold_frames: int = maxi(1, int(args.get("hold_frames", 1)))
+	var smooth: bool = bool(args.get("smooth", true))
 	var inject_mode: String = str(args.get("inject_mode", "auto"))
 
 	var tree = Engine.get_main_loop()
@@ -221,9 +226,6 @@ func _rt_click(args: Dictionary) -> Dictionary:
 		return {"error": "No scene tree"}
 	var viewport: Window = (tree as SceneTree).root
 
-	var gesture_events := 3
-	if not _input_capacity_available(gesture_events):
-		return {"clicked": false, "error": "input queue full", "pending": get_input_status().get("status", {}).get("pending", 0)}
 	var resolved_from_path := false
 	if path != "" and x < 0:
 		var rt = _get_root()
@@ -257,7 +259,12 @@ func _rt_click(args: Dictionary) -> Dictionary:
 	if x < 0 or y < 0:
 		return {"error": "No click position available", "clicked": false}
 
-	var vp_pos := _set_virtual_mouse_position(Vector2(float(x), float(y)))
+	var target_vp := Vector2(float(x), float(y))
+	# Smoothes Cursor-Travel: Approach-Events von der aktuellen virtuellen
+	# Mausposition zum Ziel, danach Press→Release (AGENTS: kein Teleport).
+	var approach: Array = []
+	if smooth:
+		approach = _smooth_approach(target_vp)
 	var mode := "push"
 
 	# Coordinate spaces (Godot 4):
@@ -275,26 +282,42 @@ func _rt_click(args: Dictionary) -> Dictionary:
 		scale_x = float(window_size.x) / content_size.x
 		scale_y = float(window_size.y) / content_size.y
 
+	var gesture_events := approach.size() + 2 + hold_frames
+	if not _input_capacity_available(gesture_events):
+		return {"clicked": false, "error": "input queue full", "pending": get_input_status().get("status", {}).get("pending", 0)}
+
 	if inject_mode == "parse" or (inject_mode == "auto" and (absf(scale_x - 1.0) > 0.001 or absf(scale_y - 1.0) > 0.001)):
 		mode = "parse"
-		var window_pos := Vector2(vp_pos.x * scale_x, vp_pos.y * scale_y)
-		var scheduled := _schedule_mouse_move(false, _make_motion_event(window_pos), 1, true, vp_pos)
-		scheduled = _schedule_mouse_move(false, _make_button_event(window_pos, true), 2, true, vp_pos) and scheduled
-		scheduled = _schedule_mouse_move(false, _make_button_event(window_pos, false), 2 + hold_frames, true, vp_pos) and scheduled
+		var window_target := Vector2(target_vp.x * scale_x, target_vp.y * scale_y)
+		var scheduled := true
+		for step_data in approach:
+			var step_pos: Vector2 = step_data.get("pos")
+			var window_pos := Vector2(step_pos.x * scale_x, step_pos.y * scale_y)
+			scheduled = _schedule_mouse_move(false, _make_motion_event(window_pos),
+				int(step_data.get("frame", 1)), true, step_pos) and scheduled
+		var press_frame := approach.size() + 1
+		scheduled = _schedule_mouse_move(false, _make_button_event(window_target, true), press_frame, true, target_vp) and scheduled
+		scheduled = _schedule_mouse_move(false, _make_button_event(window_target, false), press_frame + hold_frames, true, target_vp) and scheduled
 		if not scheduled:
 			return {"clicked": false, "error": "input queue full"}
-		return {"clicked": true, "x": int(window_pos.x), "y": int(window_pos.y),
+		return {"clicked": true, "x": int(window_target.x), "y": int(window_target.y),
 			"mode": "parse", "resolved_from_path": resolved_from_path,
-			"hold_frames": hold_frames, "viewport_size": content_size,
+			"hold_frames": hold_frames, "smooth": approach.size() > 0,
+			"approach_steps": approach.size(), "viewport_size": content_size,
 			"scale": {"x": scale_x, "y": scale_y}}
 
-	var scheduled := _schedule_mouse_move(false, _make_motion_event(vp_pos), 1, false, vp_pos)
-	scheduled = _schedule_mouse_move(false, _make_button_event(vp_pos, true), 2, false, vp_pos) and scheduled
-	scheduled = _schedule_mouse_move(false, _make_button_event(vp_pos, false), 2 + hold_frames, false, vp_pos) and scheduled
+	var scheduled := true
+	for step_data in approach:
+		scheduled = _schedule_mouse_move(false, _make_motion_event(step_data.get("pos")),
+			int(step_data.get("frame", 1)), false, step_data.get("pos")) and scheduled
+	var press_frame := approach.size() + 1
+	scheduled = _schedule_mouse_move(false, _make_button_event(target_vp, true), press_frame, false, target_vp) and scheduled
+	scheduled = _schedule_mouse_move(false, _make_button_event(target_vp, false), press_frame + hold_frames, false, target_vp) and scheduled
 	if not scheduled:
 		return {"clicked": false, "error": "input queue full"}
 	return {"clicked": true, "x": x, "y": y, "mode": "push",
 		"resolved_from_path": resolved_from_path, "hold_frames": hold_frames,
+		"smooth": approach.size() > 0, "approach_steps": approach.size(),
 		"viewport_size": content_size, "scale": {"x": 1.0, "y": 1.0}}
 
 
@@ -361,20 +384,52 @@ func _make_wheel_event(pos: Vector2, button_index: int) -> InputEventMouseButton
 	return event
 
 
-func _rt_mouse_move(x: int, y: int) -> Dictionary:
+func _rt_mouse_move(x: int, y: int, smooth: bool = true, duration_ms: int = 120) -> Dictionary:
 	var tree := Engine.get_main_loop()
 	if not (tree is SceneTree):
 		return {"error": "No scene tree"}
 	var viewport: Window = (tree as SceneTree).root
-	if not _input_capacity_available(1):
+	var target_vp := _clamp_to_virtual_bounds(Vector2(float(x), float(y)))
+	if not smooth:
+		if not _input_capacity_available(1):
+			return {"moved": false, "requested": {"x": x, "y": y}, "error": "input queue full", "virtual_mouse": _virtual_mouse_status()}
+		var virtual_position := _set_virtual_mouse_position(target_vp)
+		var event_position := virtual_position
+		var parse_mode := _needs_parse_mode(viewport)
+		if parse_mode:
+			event_position = _viewport_to_window(viewport, virtual_position)
+		var moved := _schedule_mouse_move(false, _make_motion_event(event_position), 1, parse_mode, virtual_position)
+		return {"moved": moved, "requested": {"x": x, "y": y}, "position": _vector_dict(virtual_position), "mode": "parse" if parse_mode else "push", "smooth": false, "virtual_mouse": _virtual_mouse_status()}
+	var travel := _smooth_travel_from_current(target_vp, duration_ms)
+	if travel.is_empty():
+		# Kein Scheduler / keine virtuelle Maus: Einzel-Event-Fallback.
+		if not _input_capacity_available(1):
+			return {"moved": false, "requested": {"x": x, "y": y}, "error": "input queue full", "virtual_mouse": _virtual_mouse_status()}
+		var virtual_position := _set_virtual_mouse_position(target_vp)
+		var event_position := virtual_position
+		var parse_mode := _needs_parse_mode(viewport)
+		if parse_mode:
+			event_position = _viewport_to_window(viewport, virtual_position)
+		var moved := _schedule_mouse_move(false, _make_motion_event(event_position), 1, parse_mode, virtual_position)
+		return {"moved": moved, "requested": {"x": x, "y": y}, "position": _vector_dict(virtual_position), "mode": "parse" if parse_mode else "push", "smooth": false, "virtual_mouse": _virtual_mouse_status()}
+	if not _input_capacity_available(travel.size()):
 		return {"moved": false, "requested": {"x": x, "y": y}, "error": "input queue full", "virtual_mouse": _virtual_mouse_status()}
-	var virtual_position := _set_virtual_mouse_position(Vector2(float(x), float(y)))
-	var event_position := virtual_position
 	var parse_mode := _needs_parse_mode(viewport)
-	if parse_mode:
-		event_position = _viewport_to_window(viewport, virtual_position)
-	var moved := _schedule_mouse_move(false, _make_motion_event(event_position), 1, parse_mode, virtual_position)
-	return {"moved": moved, "requested": {"x": x, "y": y}, "position": _vector_dict(virtual_position), "mode": "parse" if parse_mode else "push", "virtual_mouse": _virtual_mouse_status()}
+	var scheduled := true
+	var last_position := target_vp
+	for step_data in travel:
+		var step_pos: Vector2 = step_data.get("pos")
+		last_position = step_pos
+		var event_position := step_pos
+		if parse_mode:
+			event_position = _viewport_to_window(viewport, step_pos)
+		scheduled = _schedule_mouse_move(false, _make_motion_event(event_position),
+			int(step_data.get("frame", 1)), parse_mode, step_pos) and scheduled
+	if not scheduled:
+		return {"moved": false, "requested": {"x": x, "y": y}, "error": "input queue full"}
+	return {"moved": true, "requested": {"x": x, "y": y}, "position": _vector_dict(last_position),
+		"smooth": true, "steps": travel.size(), "from": _vector_dict(_current_virtual_position()),
+		"mode": "parse" if parse_mode else "push", "virtual_mouse": _virtual_mouse_status()}
 
 
 func _rt_drag(args: Dictionary) -> Dictionary:
@@ -562,6 +617,67 @@ func _set_virtual_mouse_position(position: Vector2) -> Vector2:
 
 func _vector_dict(value: Vector2) -> Dictionary:
 	return {"x": value.x, "y": value.y}
+
+
+# ── Smooth cursor travel (player-like movement, no teleport) ────────────────
+
+## Interpolierte Travel-Schritte von `from` nach `to`. Schrittanzahl hängt von
+## der Distanz ab (~36 px pro Schritt, mindestens 3, maximal 96) und wird durch
+## duration_ms sanft gedeckelt. Statisch und testbar.
+static func smooth_travel(from: Vector2, to: Vector2, duration_ms: int = 120) -> Array:
+	var dist := from.distance_to(to)
+	if dist <= 0.5:
+		return []
+	# ~36 px pro Frame (sichtbar, aber schnell), gedeckelt durch duration_ms
+	# (16 ms pro Frame) und harte Grenzen 3..96.
+	var duration_steps := clampi(int(ceil(float(maxi(1, duration_ms)) / 16.0)), 3, 96)
+	var distance_steps := clampi(int(ceil(dist / 36.0)), 3, 96)
+	var steps := mini(duration_steps, distance_steps)
+	var travel: Array = []
+	for i in range(1, steps + 1):
+		var t := float(i) / float(steps)
+		travel.append({"pos": from.lerp(to, t), "frame": i, "t": t})
+	return travel
+
+
+func _current_virtual_position() -> Vector2:
+	var scheduler := _get_input_scheduler()
+	if scheduler != null and scheduler.has_method("get_virtual_mouse_status"):
+		var status: Dictionary = scheduler.call("get_virtual_mouse_status")
+		if bool(status.get("active", false)):
+			var position: Dictionary = status.get("position", {})
+			return Vector2(float(position.get("x", 0.0)), float(position.get("y", 0.0)))
+	return Vector2(-1.0, -1.0)
+
+
+func _clamp_to_virtual_bounds(position: Vector2) -> Vector2:
+	var scheduler := _get_input_scheduler()
+	if scheduler != null and scheduler.has_method("get_virtual_mouse_status"):
+		var status: Dictionary = scheduler.call("get_virtual_mouse_status")
+		if bool(status.get("active", false)):
+			var bounds: Dictionary = status.get("bounds", {})
+			var bounds_v := Vector2(float(bounds.get("x", 0.0)), float(bounds.get("y", 0.0)))
+			if bounds_v.x > 0.0 and bounds_v.y > 0.0:
+				return Vector2(clampf(position.x, 0.0, bounds_v.x), clampf(position.y, 0.0, bounds_v.y))
+	return position
+
+
+## Travel von der aktuellen virtuellen Mausposition zum Ziel (smoothes Hover).
+## Liefert [] wenn keine aktive virtuelle Maus existiert (Fallback = Einzel-Event).
+func _smooth_travel_from_current(target: Vector2, duration_ms: int = 120) -> Array:
+	var current := _current_virtual_position()
+	if current.x < 0.0 or current.y < 0.0:
+		return []
+	var travel := smooth_travel(current, target, duration_ms)
+	if travel.is_empty():
+		# Ziel == aktuelle Position: ein einzelnes Motion-Event reicht (Position stimmt schon).
+		travel = [{"pos": target, "frame": 1, "t": 1.0}]
+	return travel
+
+
+## Approach für Klicks: kurze interpolierte Bewegung zur Zielposition.
+func _smooth_approach(target: Vector2) -> Array:
+	return _smooth_travel_from_current(target, 90)
 
 
 func _get_input_scheduler() -> Node:

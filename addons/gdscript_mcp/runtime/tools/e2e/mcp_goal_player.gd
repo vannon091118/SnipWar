@@ -33,6 +33,10 @@ func play_goal(goal: String, scene_path: String = "", max_steps: int = MAX_STEPS
 	var steps: Array = []
 	var start_ms := Time.get_ticks_msec()
 	var anomalies: Array = []
+	# No-progress circuit breaker (Playtest-Handoff MCP-07): nach 3 identischen
+	# UI-Beobachtungen ohne Fortschritt stoppen statt Endlosschleife.
+	var last_signature := ""
+	var no_progress := 0
 
 	# 1. Analyze project code for input hints
 	var hints := McpCodeAnalyzer.analyze_input()
@@ -68,6 +72,20 @@ func play_goal(goal: String, scene_path: String = "", max_steps: int = MAX_STEPS
 			"timestamp_ms": Time.get_ticks_msec(),
 		}
 		steps.append(snapshot)
+
+		# No-progress-Breaker: identische UI-Signatur (Scene + Interactables mit
+		# Texte und disabled/pressed-Zustand) über 3 Beobachtungen → BLOCKED.
+		var signature := _scan_signature(scan)
+		if signature == last_signature:
+			no_progress += 1
+		else:
+			no_progress = 0
+		last_signature = signature
+		if no_progress >= 3:
+			_call("runtime_unfreeze", {})
+			steps.append({"no_progress": true, "identical_observations": no_progress + 1})
+			return _verdict("blocked", goal, steps, anomalies,
+				"No-progress circuit breaker: %d identische UI-Beobachtungen ohne Fortschritt" % (no_progress + 1))
 
 		# b. Check goal
 		var eval_result := _eval_goal_expression(goal)
@@ -148,6 +166,27 @@ func _eval_goal_expression(goal: String) -> Dictionary:
 	if expr.has_execute_failed():
 		return {"reached": false, "error": "execute error: " + expr.get_error_text()}
 	return {"reached": _is_truthy(result), "result": str(result), "type": typeof(result)}
+
+
+## Kompakte, deterministisch sortierte UI-Signatur für den No-progress-Breaker.
+func _scan_signature(scan: Dictionary) -> String:
+	var parts: Array = []
+	parts.append(str(scan.get("scene", "")))
+	parts.append(str(scan.get("screen_size", "")))
+	for raw in scan.get("interactables", []):
+		if not (raw is Dictionary):
+			continue
+		var ctrl: Dictionary = raw
+		parts.append("%s|%s|d:%s|p:%s|%s,%s" % [
+			str(ctrl.get("text", "")),
+			str(ctrl.get("name", "")),
+			str(ctrl.get("disabled", false)),
+			str(ctrl.get("pressed", false)),
+			str(ctrl.get("center", {}).get("x", 0)),
+			str(ctrl.get("center", {}).get("y", 0)),
+		])
+	parts.sort()
+	return "|".join(parts)
 
 
 func _is_truthy(value: Variant) -> bool:

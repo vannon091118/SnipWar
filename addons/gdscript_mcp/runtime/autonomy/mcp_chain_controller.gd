@@ -8,6 +8,9 @@ class_name McpChainController
 ##   Precondition → Action → Observation → Assertion → Evidence → Verdict
 
 const PREFLIGHT_PATH := "res://scripts/preflight.gd"
+const PREFLIGHT_TIMEOUT_MS := 120000
+const PREFLIGHT_POLL_MS := 400
+const PREFLIGHT_OUT_PATH := "user://mcp_preflight_result.json"
 
 var _registry: RefCounted = null
 var _lifecycle: RefCounted = null
@@ -279,11 +282,42 @@ func _eval_expression(code: String) -> Dictionary:
 	return {"ok": true, "result": res}
 
 
+## Führt Preflight real als Subprozess aus (headless) und pollt das
+## --mcp-json-Ergebnis. Kein Platzhalter mehr: Ein Constraint gilt nur als
+## PASS, wenn die Preflight-Suite es wirklich bestätigt hat.
 func _run_preflight_constraint(constraint_name: String) -> Dictionary:
-	if constraint_name == "":
+	var name := constraint_name.strip_edges()
+	if name == "":
 		return {"ok": false, "error": "no constraint specified"}
-	var pf_script: Resource = load(PREFLIGHT_PATH)
-	if pf_script == null:
-		return {"ok": false, "error": "preflight script not found"}
-	# Preflight constraint verification
-	return {"ok": true, "constraint": constraint_name, "verdict": "PASS"}
+	var project_dir := ProjectSettings.globalize_path("res://")
+	var out_path := ProjectSettings.globalize_path(PREFLIGHT_OUT_PATH)
+	if FileAccess.file_exists(out_path):
+		DirAccess.remove_absolute(out_path)
+	var args := PackedStringArray([
+		"--path", project_dir, "--headless",
+		"--script", PREFLIGHT_PATH,
+		"--filter=" + name, "--mcp-json=" + out_path,
+	])
+	var pid := OS.create_process(OS.get_executable_path(), args, false)
+	if pid <= 0:
+		return {"ok": false, "verdict": "FAIL", "error": "preflight subprocess failed to start", "constraint": name}
+	var deadline := Time.get_ticks_msec() + PREFLIGHT_TIMEOUT_MS
+	while Time.get_ticks_msec() < deadline:
+		if FileAccess.file_exists(out_path):
+			var file := FileAccess.open(out_path, FileAccess.READ)
+			if file != null:
+				var parsed: Variant = JSON.parse_string(file.get_as_text())
+				file.close()
+				DirAccess.remove_absolute(out_path)
+				if parsed is Dictionary:
+					(parsed as Dictionary)["constraint"] = name
+					(parsed as Dictionary)["pid"] = pid
+					return parsed
+		await _wait_ms(PREFLIGHT_POLL_MS)
+	return {"ok": false, "verdict": "FAIL", "error": "preflight timeout after %d ms" % PREFLIGHT_TIMEOUT_MS, "constraint": name}
+
+
+func _wait_ms(ms: int) -> void:
+	var tree := Engine.get_main_loop()
+	if tree is SceneTree:
+		await (tree as SceneTree).create_timer(float(ms) / 1000.0, true).timeout

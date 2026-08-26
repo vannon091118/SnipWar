@@ -175,7 +175,7 @@ func execute_editor_action(action: String, params: Dictionary) -> Variant:
 		"history":
 			return {"entries": _history.duplicate(true), "count": _history.size()}
 		"run_project":
-			return _run_project(str(params.get("scene", "")))
+			return _run_project(str(params.get("scene", "")), bool(params.get("with_mcp", false)))
 		"capture_screenshot", "screenshot":
 			# Async: return GDScriptFunctionState; the server awaits it.
 			return (Callable(self, "_capture_screenshot") as Callable).call(str(params.get("viewport", "")), str(params.get("format", "png")))
@@ -485,13 +485,23 @@ func _save_scene(path: String) -> bool:
 	var err = ResourceSaver.save(packed, save_path)
 	return err == OK
 
-func _run_project(scene_path: String) -> bool:
+func _run_project(scene_path: String, with_mcp: bool = false) -> Variant:
 	if scene_path != "" and not _is_project_resource_path(scene_path):
-		return false
+		return {"started": false, "error": "scene path must stay inside the project"}
+	if with_mcp:
+		# Zeigt das Spiel in einem eigenen Prozess MIT Runtime-MCP (9090):
+		# Der Agent kann vom Editor-MCP direkt zum Ingame-MCP wechseln.
+		var exec_path := OS.get_executable_path()
+		if exec_path == "":
+			return {"started": false, "error": "godot binary path unavailable"}
+		var project_dir := ProjectSettings.globalize_path("res://")
+		var args := PackedStringArray(["--path", project_dir, "--", "--mcp", "--mcp-port", "9090", "--mcp-virtual-mouse"])
+		var pid := OS.create_process(exec_path, args, false)
+		return {"started": pid > 0, "pid": pid, "mcp": true, "port": 9090}
 	if scene_path != "":
 		ProjectSettings.set_setting("application/run/main_scene", scene_path)
 	get_editor_interface().play_main_scene()
-	return true
+	return {"started": true, "mcp": false}
 
 func _is_project_resource_path(path: String) -> bool:
 	var normalized := path.strip_edges().simplify_path()

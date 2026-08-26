@@ -7,6 +7,7 @@ extends Node
 const DEFAULT_PORT := 9090
 const MCP_SERVER_PATH := "res://addons/gdscript_mcp/runtime/host/mcp_server.gd"
 const INPUT_SCHEDULER_PATH := "res://addons/gdscript_mcp/runtime/tools/runtime/mcp_input_scheduler.gd"
+const PROFILE_CONFIG_PATH := "user://gdscript_mcp_profile.cfg"
 
 var _server: Node
 var _transport := ""
@@ -33,6 +34,7 @@ func _ready() -> void:
 	var config := {
 		"role": "runtime",
 		"session_id": _parse_string_arg(user_args, "--mcp-session", "runtime_%d" % Time.get_ticks_msec()),
+		"profile": _resolve_profile(user_args),
 		"frame_budget_ms": _parse_float_arg(user_args, "--mcp-frame-budget", 1.5),
 		"mcp_virtual_mouse": not ("--mcp-real-mouse" in user_args),
 		"mcp_block_physical_mouse": not ("--mcp-allow-physical-mouse" in user_args),
@@ -158,6 +160,19 @@ func _parse_float_arg(args: PackedStringArray, flag: String, default_value: floa
 		if args[i] == flag and i + 1 < args.size():
 			return float(args[i + 1])
 	return default_value
+
+
+## Profil auflösen: CLI-Flag --mcp-profile=... gewinnt, sonst die vom
+## Editor-Dock geschriebene Datei (user://gdscript_mcp_profile.cfg), sonst
+## player (verbindlicher Spieler-Vertrag als Standard).
+func _resolve_profile(user_args: PackedStringArray) -> String:
+	var parsed := _parse_string_arg(user_args, "--mcp-profile", "")
+	if parsed != "":
+		return parsed
+	var file := ConfigFile.new()
+	if file.load(PROFILE_CONFIG_PATH) == OK:
+		return str(file.get_value("profile", "name", "player"))
+	return "player"
 
 
 func _notification(what: int) -> void:

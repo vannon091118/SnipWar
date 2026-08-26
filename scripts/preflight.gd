@@ -323,6 +323,10 @@ func _init() -> void:
 	_print_summary(ctx, pipeline.size(), constraints_passed, constraints_failed, total_suite_ms)
 	await ctx.fixture.cleanup()
 
+	var mcp_json_path: String = args.get("mcp_json", "")
+	if mcp_json_path != "":
+		_write_mcp_json(mcp_json_path, ctx, constraints_passed, constraints_failed, total_suite_ms, pipeline.size())
+
 	if ctx.failure_count > 0 or constraints_failed > 0:
 		quit(1)
 	else:
@@ -389,6 +393,7 @@ func _parse_cli_arguments() -> Dictionary:
 		"list": false,
 		"help": false,
 		"reverse": false,
+		"mcp_json": "",
 	}
 
 	var all_args: PackedStringArray = OS.get_cmdline_args()
@@ -411,8 +416,39 @@ func _parse_cli_arguments() -> Dictionary:
 			parsed["filter"] = arg.trim_prefix("-f=")
 		elif arg.begins_with("--only="):
 			parsed["filter"] = arg.trim_prefix("--only=")
+		elif arg.begins_with("--mcp-json="):
+			parsed["mcp_json"] = arg.trim_prefix("--mcp-json=")
 
 	return parsed
+
+
+## Schreibt ein maschinenlesbares Ergebnis (JSON) für den MCP Chain-Controller.
+## Der Chain-Controller startet Preflight als Subprozess und pollt diese Datei,
+## statt ein vorgeplantes PASS zu behaupten.
+func _write_mcp_json(path: String, ctx: PreflightContext, passed_constraints: int, failed_constraints: int, total_ms: float, total_constraints: int) -> void:
+	var summary := {
+		"ok": ctx.failure_count == 0 and failed_constraints == 0,
+		"verdict": "PASS" if ctx.failure_count == 0 and failed_constraints == 0 else "FAIL",
+		"constraints": {
+			"total": total_constraints,
+			"passed": passed_constraints,
+			"failed": failed_constraints,
+		},
+		"assertions": {
+			"run": ctx.checks_run,
+			"passed": ctx.checks_passed,
+			"failed": ctx.failure_count,
+		},
+		"duration_ms": total_ms,
+		"timings": ctx.constraint_timings.duplicate(true),
+		"failures": ctx.failures.duplicate(true),
+	}
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		push_error("Preflight: cannot write --mcp-json output to " + path)
+		return
+	file.store_string(JSON.stringify(summary, "\t"))
+	file.close()
 
 
 func _print_help() -> void:

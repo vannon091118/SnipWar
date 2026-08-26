@@ -3,6 +3,28 @@
 Status: 2026-08-26
 Goal: `erstes schiff bauen`
 
+## Session-Profile (verbindlich, seit v4.1 erzwungen)
+
+Die Spieler-Verträge unten werden vom Server durchgesetzt (`mcp_contract_gate.gd`):
+
+- **Runtime-Sessions starten standardmäßig als `player`** — Goal-Player, Chains,
+  Eval, Freeze/Step, `runtime_ux_click`, `game_state_restore`, E2E-Szenarien und
+  Autonomy-Writes sind gesperrt; Verstöße erscheinen als `contract_violations`
+  in `runtime_mcp_status` und als Lifecycle-Event.
+- `--mcp-profile=qa` (Debug/QA) oder `--mcp-profile=dev` (Reparatur) schalten
+  die Orchestrierungs-/Debug-Tools frei. Der Editor-Dock schreibt das Profil
+  als „Play-Goal“ nach `user://gdscript_mcp_profile.cfg` — wirkt beim nächsten
+  Runtime-Boot.
+- `editor_run_project(with_mcp=true)` startet das Spiel aus dem Editor mit
+  Runtime-MCP (9090): der Agent wechselt damit per Tool-Call Edit ↔ Ingame.
+
+## Maus-Regel: sanfter Cursor-Travel, kein Teleport
+
+Seit v4.1 ist die virtuelle Maus standardmäßig sichtbar-bewegt: `runtime_mouse_move`
+und `runtime_click` interpolieren den Cursor über mehrere Frames (`smooth=true`,
+`duration_ms`), statt zu springen. Agenten, die den Cursor „teleportieren“,
+verhalten sich damit wie echte Spieler und Hover-Effekte feuern korrekt.
+
 ## Verbindlicher Spieler-Vertrag
 
 Ein sichtbarer Playtest wird wie ein Spieler ausgefuehrt. Der Agent entscheidet den naechsten Zug erst nach der letzten Live-Beobachtung.
@@ -24,7 +46,8 @@ Nicht erlaubt fuer sichtbare Spielerlaeufe:
 - direkte GameState-Aufrufe oder Resource-/Domain-Mutationen
 - `runtime_goal_sequence`, `runtime_goal_play` oder `runtime_chain_run` als Live-Spieler-Ersatz
 - ein Runner, der mehrere Atome in einem Aufruf, einer Shell-Kette oder einem vorgeplanten Gesamtplan ausfuehrt
-- `runtime_ux_click`, weil Find+Click fuer diesen Vertrag zwei Aktionen in einem Tool verbirgt
+- `runtime_ux_click`, weil Find+Click fuer diesen Vertrag zwei Aktionen in einem Tool verbirgt (im player-Profil serverseitig gesperrt)
+- Freeze/Step, Goal-Player, Chains und E2E-Szenarien (im player-Profil serverseitig gesperrt)
 - Forschung, Werftbau, Teilekauf oder Schiffmontage ueber Funktions-Calls
 
 Autonomie-Repair, Headless-Vertragstests und Editor-Operationen sind eigene Modi. Sie duerfen nicht als sichtbares Spielergebnis gemeldet werden.

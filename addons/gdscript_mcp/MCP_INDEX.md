@@ -85,7 +85,36 @@ Verbindlicher Vertrag für sichtbares Remote-Gameplay. Pro Ingame-Aktion genau e
 - **`runtime_mcp_status`**: Zustand, Uptime, Tool-Latenz (avg/max), letzte
   Events, Watch-Status, Kontext-Cache — für "navigiere mich durch dein Leben".
 
-## Tool-Liste (Stand: 104 Tools + custom_*)
+## Session-Profile (Play-Goal-Gate)
+
+Der verbindliche Spieler-Vertrag (`PLAYTEST_HANDOFF.md`) wird seit v4.1 nicht
+mehr nur dokumentiert, sondern vom Server erzwungen (`runtime/autonomy/mcp_contract_gate.gd`):
+
+| Profil | Bedeutung | Gesperrte Tools (Auswahl) |
+|---|---|---|
+| `player` (Standard) | sichtbarer Spieler-Lauf: ein Atom pro Call, UI-Aktionen, read-only | `runtime_goal_*`, `runtime_chain_run`, `runtime_eval`, `runtime_ux_click`, `game_state_restore`, `runtime_freeze/step*`, `runtime_e2e_run`, Autonomy-Writes |
+| `qa` | Debug/QA: Goal Player, Chains, Freeze/Step, E2E | wie player, aber diese freigeschaltet |
+| `dev` | Reparatur/Edit: alles aus qa + `runtime_eval` (unter `--mcp-developer`) | — |
+
+Wahl: CLI `--mcp-profile=qa|dev` oder Editor-Dock „Play-Goal“ (wird nach
+`user://gdscript_mcp_profile.cfg` geschrieben und beim Runtime-Boot gelesen).
+Verstöße werden als `contract_violations` in `runtime_mcp_status` gezählt und als
+Lifecycle-Event (Kategorie `contract`) protokolliert — kein Endlos-Contract-Bruch.
+**Headless** verweigert der Server weiterhin absolut (kein Renderer → kein MCP).
+
+## Editor ↔ Ingame-Wechsel
+
+- `editor_run_project` — startet das Projekt aus dem Editor; `with_mcp=true`
+  öffnet das Spiel als separaten Prozess mit Runtime-MCP (Port 9090). Damit
+  wechselt ein Agent per Tool-Call von Edit- zu Ingame-Session.
+- `editor_logs_read` — Editor-Session-Logs (Lifecycle-Cursor) + optionaler
+  Engine-Log-Tail (`--log-file` beim Editor-Start), analog zu HiGodots `logs_read`.
+- Schreib-Gate vereinheitlicht: „Allow editor write actions" im Dock aktiviert
+  jetzt BOTH die `editor_*`-Mutationen UND die Autonomy-Workspace-Tools
+  (`runtime_autonomy_write/patch/export`) — vorher blieben die Autonomy-Tools im
+  Editor-Modus trotz aktiviertem Gate gesperrt.
+
+## Tool-Liste (Stand: 107 Tools + custom_*)
 
 ### Runtime (19) — `runtime/tools/runtime/mcp_runtime_tools.gd`
 | Tool | Beschreibung |
@@ -96,7 +125,7 @@ Verbindlicher Vertrag für sichtbares Remote-Gameplay. Pro Ingame-Aktion genau e
 | `runtime_click` | Engine-Klick (press→release belegt, Motion 1 Frame davor; `inject_mode` auto/push/parse; Koordinaten = Viewport-Pixel/Absolute) |
 | `runtime_drag` | Drag-Geste (press→motion→release über virtuelle Mausposition) |
 | `runtime_key` | Taste (keycode + physical_keycode) |
-| `runtime_mouse_move` | Hover-Motion (für Control-Hover-Effekte) |
+| `runtime_mouse_move` | Hover-Motion. Default: **smooth sichtbarer Cursor-Travel** (mehrere interpolierte Frames, kein Teleport) über `smooth`/`duration_ms`; auch `runtime_click` nähert sich standardmäßig sanft an |
 | `runtime_virtual_mouse_status` | Virtuelle Maus: active, Block-Status, Position, Bounds, blockierte physische Events |
 | `runtime_get_ui_state` | UI-Zustand (Text, Rect, Focus, Disabled) |
 | `runtime_wait_frames` | N Frames warten |
@@ -207,6 +236,11 @@ Deklarative Kettenschritt-Orchestrierung für kombinierte Headless- und Visible-
 - `runtime_chain_validate` — Kette vor Ausführung auf Atomgrenzen, sichtbare Verbote, Screenshot-Gründe und Context-Limits prüfen
 - `runtime_chain_run` (async) — validierte Kette aus Preconditions, Tools, Assertions und Evidenzerfassung ausführen
 - `runtime_chain_trace` — Letzten Ausführungs-Trace und Teilschritt-Verdicts abfragen
+
+Neuer `preflight_constraint`-Schritt: startet `scripts/preflight.gd` als Headless-
+Subprozess und pollt das `--mcp-json`-Ergebnis (`user://mcp_preflight_result.json`).
+Kein Platzhalter mehr — ein „PASS" für ein Constraint ist nur echt, wenn die
+Preflight-Suite es wirklich bestätigt hat.
 
 ### Code Analyzer (4) — `runtime/tools/e2e/mcp_code_analyzer.gd`
 Statische Projektanalyse über Dateisystem + FileAccess:
