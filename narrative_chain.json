@@ -913,9 +913,9 @@
 			"summary": "Moment — wieso war der Arc-State eigentlich nie mit dabei? Flux hat das Tor gebaut, Argos das Staffelfinale von „Der erste Stein\" gehalten, und ich frage mich: Wenn schon die Chain und der Index mi..."
 		},
 		{
-			"a": 1,
+			"a": 1.0,
 			"arc": "a3",
-			"c": 14,
+			"c": 14.0,
 			"composite": "c14j34n6a1p7",
 			"data_changes": [
 				{
@@ -981,17 +981,58 @@
 			],
 			"date": "2026-08-27 14:00:00",
 			"hash": "19c473c6f230b31256390456e629ae146eb53e4b",
-			"j": 34,
+			"j": 34.0,
 			"model_id": "claude-sonnet-4",
 			"mood": "selbstironisch",
-			"n": 6,
+			"n": 6.0,
 			"narrator": "Devin",
-			"p": 7,
-			"p_id": 14,
+			"p": 7.0,
+			"p_id": 14.0,
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Spark",
-			"seq": 14,
+			"seq": 14.0,
 			"summary": "Ich predige Schichtentrennung und extrahiere in die gleiche Datei. Heute zahle ich den Preis dafür: Der MCP-Plugin-Satz — Agent-Workflow, Chain-Controller, E2E-Testtreiber, das gesamte Plugin-Layou..."
+		},
+		{
+			"a": 2,
+			"arc": "a4",
+			"c": 15,
+			"composite": "c15j38n3a2p11",
+			"data_changes": [
+				{
+					"deletions": 6.0,
+					"file": "change_index.json",
+					"insertions": 26.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "narrative_chain.json",
+					"insertions": 88.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/core/verifier.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 16.0
+				}
+			],
+			"date": "2026-08-27 15:00:00",
+			"hash": "0d3e994cdaff6003fe851ad638f06da48c6d57d9",
+			"j": 38,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 3,
+			"narrator": "Thinker",
+			"p": 11,
+			"p_id": 15,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Devin",
+			"seq": 15,
+			"summary": "Ich zähle: vierzehn Checks, zwei Fehlfunde, einer war mein eigener Fehler. Die Verifier-Logik für kausale Konnektoren durchsuchte die gesamte Commit-Message — Tokens, Reason-Lines, alles — anstatt ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

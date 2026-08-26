@@ -179,3 +179,69 @@ Verifier-Fix: kausale Konnektoren nur im Narrator-Body prüfen, nicht in Tokens 
 - narrative_chain.json: Fehler behoben (F--001).
 - scripts/doki/core/verifier.gd: Fehler behoben (F--001).
 - scripts/doki/data/arcs.json: Fehler behoben (F--001).
+
+## 2026-08-27 16:00:00 — p16 · c16j24n8a2p12 · Ghost · selbstironisch
+
+**Ghost verzeichnet: Entferne doppelten doki/doki Ordner - Godot Class…**
+
+Entferne doppelten doki/doki Ordner - Godot Class Cache Kollision
+
+- change_index.json: Tooling erweitert (F--001).
+- narrative_chain.json: Tooling erweitert (F--001).
+- scripts/doki/data/arcs.json: Tooling erweitert (F--001).
+- scripts/doki/doki/README.md: Tooling erweitert (F--001).
+- scripts/doki/doki/chain/chain_store.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/chain/chain_store.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/chain/change_index_store.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/chain/change_index_store.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/chain/session_store.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/chain/session_store.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/character/mood_overlay.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/character/mood_overlay.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/character/narrator_catalog.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/character/narrator_catalog.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/core/rng_engine.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/core/rng_engine.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/core/verifier.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/core/verifier.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/core/xorshift128.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/core/xorshift128.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/data/arcs.json: Tooling erweitert (F--001).
+- scripts/doki/doki/data/moods.json: Tooling erweitert (F--001).
+- scripts/doki/doki/data/narrators.json: Tooling erweitert (F--001).
+- scripts/doki/doki/doki.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/doki.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/doki_selfcheck.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/doki_selfcheck.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/doki_story_test.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/doki_story_test.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/artifact_writer.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/artifact_writer.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/change_index_engine.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/change_index_engine.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/commit_orchestrator.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/commit_orchestrator.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/flows/finalize_flow.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/flows/finalize_flow.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/flows/finish_flow.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/flows/finish_flow.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/flows/gate_flow.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/flows/gate_flow.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/flows/prepare_flow.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/flows/prepare_flow.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/flows/status_flow.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/flows/status_flow.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/git_helper.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/git_helper.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/message_builder.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/message_builder.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/session_builder.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/orchestration/session_builder.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/prompt/arc_engine.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/prompt/arc_engine.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/prompt/relationship_engine.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/prompt/relationship_engine.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/prompt/sideplot_engine.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/prompt/sideplot_engine.gd.uid: Tooling erweitert (F--001).
+- scripts/doki/doki/prompt/voice_composer.gd: Tooling erweitert (F--001).
+- scripts/doki/doki/prompt/voice_composer.gd.uid: Tooling erweitert (F--001).
