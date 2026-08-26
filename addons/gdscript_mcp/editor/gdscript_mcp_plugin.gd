@@ -26,6 +26,30 @@ const RUNTIME_BOOT_FAST_INTERVAL := 0.5
 const RUNTIME_BOOT_FAST_MAX_ATTEMPTS := 40
 const RUNTIME_BOOT_SLOW_INTERVAL := 5.0
 
+# ─── Projektagnostische Auto-Registrierung ───────────────────────
+# Beim Aktivieren des Plugins (Project Settings → Plugins) richtet sich
+# dieses Addon selbst im aktuellen Projekt ein: die für den Runtime-MCP
+# nötigen Autoloads und die application/mcp/*-Settings werden ergänzt, falls
+# sie fehlen. Keine manuelle project.godot-Editierung nötig.
+#
+# Die Autoloads sind inert ohne den Game-Start-Flag --mcp (mcp_runtime.gd
+# _ready() kehrt früh zurück); GameState/EventLog bleiben projektseitig.
+const AUTOLOADS := {
+	"McpRuntime": "*res://addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
+	"McpProjectAdapter": "*res://addons/gdscript_mcp/runtime/core/mcp_project_adapter.gd",
+}
+# Achtung: Die beiden Pfade unter application/mcp/* sind DEFAULTS (SnipWar).
+# Andere Projekte überschreiben sie in ihrer own project.godot — das Addon
+# legt sie nur an, wenn sie noch nicht existieren.
+const MCP_SETTINGS := {
+	"application/mcp/preflight_script": {"value": "res://scripts/preflight.gd", "type": TYPE_STRING},
+	"application/mcp/main_menu_scene": {"value": "res://scenes/main_menu/main_menu.tscn", "type": TYPE_STRING},
+	"application/mcp/game_state_node": {"value": "", "type": TYPE_STRING},
+	"application/mcp/event_log_node": {"value": "", "type": TYPE_STRING},
+	"application/mcp/project_adapter_node": {"value": "", "type": TYPE_STRING},
+	"application/mcp/game_state_script": {"value": "", "type": TYPE_STRING},
+}
+
 var _server_instance = null
 var _runtime_server_instance = null
 var _dock = null
@@ -38,6 +62,8 @@ var _history: Array[Dictionary] = []
 var _context_store: RefCounted = null
 
 func _enter_tree() -> void:
+	_register_project_integration()
+
 	var context_script: Resource = load(CONTEXT_STORE_SCRIPT)
 	if context_script != null:
 		_context_store = context_script.new()
@@ -74,6 +100,34 @@ func _exit_tree() -> void:
 		remove_control_from_docks(_dock)
 		_dock.queue_free()
 		_dock = null
+
+## Legt fehlende Autoloads und application/mcp/*-Settings im aktuellen
+## Projekt an (idempotent: nur wenn abweichend). Schreibt project.godot nur,
+## wenn sich tatsächlich etwas ändert — kein Dirty-State bei reinen Starts.
+func _register_project_integration() -> void:
+	var changed := false
+
+	# 1. Autoloads registrieren (McpRuntime + McpProjectAdapter)
+	for autoload_name: String in AUTOLOADS:
+		var setting := "autoload/" + autoload_name
+		var desired: String = AUTOLOADS[autoload_name]
+		var current: Variant = ProjectSettings.get_setting(setting, null)
+		if str(current) != desired or current == null:
+			ProjectSettings.set_setting(setting, desired)
+			changed = true
+			push_warning("[GDScriptMcp] Autoload hinzugefügt: " + autoload_name)
+
+	# 2. application/mcp/*-Settings ergänzen (nur fehlende)
+	for setting: String in MCP_SETTINGS:
+		if not ProjectSettings.has_setting(setting):
+			var info: Dictionary = MCP_SETTINGS[setting]
+			ProjectSettings.set_setting(setting, info.get("value"))
+			changed = true
+			push_warning("[GDScriptMcp] Setting gesetzt: " + setting)
+
+	if changed:
+		ProjectSettings.save()
+
 
 func _on_start_server_requested(config: Dictionary) -> void:
 	_start_server_internal(config)

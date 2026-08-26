@@ -15,6 +15,53 @@
 
 ---
 
+## Installation & Selbst-Registrierung (projektagnostisch)
+
+Das Add-on ist projektagnostisch: Es koppelt keine SnipWar-Logik ein und richtet
+sich beim Aktivieren **automatisch im aktuellen Godot-Projekt** ein — kein
+manuelles Einfügen in `project.godot` nötig.
+
+### Wie aktivieren
+
+1. Ordner unter `res://addons/gdscript_mcp/` ablegen (Kopie / submodule /
+   packaged Release).
+2. **Project Settings → Plugins**: `GDScript MCP Bridge` aktivieren.
+3. Beim nächsten Editor-Boot registriert das Plugin idempotent (nur fehlende):
+   - Autoloads `McpRuntime` + `McpProjectAdapter` (inert ohne `--mcp`-Flag),
+   - `application/mcp/*`-Settings (`preflight_script`, `main_menu_scene`,
+     `game_state_node`, `event_log_node`, `project_adapter_node`,
+     `game_state_script`).
+
+### `application/mcp/*`-Settings (Defaults vs. projektseitig)
+
+| Setting | Default | Zweck |
+|---|---|---|
+| `preflight_script` | `res://scripts/preflight.gd` (SnipWar) | Pfad des Preflight-Tests für den `preflight_constraint`-Chain-Schritt |
+| `main_menu_scene` | `res://scenes/main_menu/main_menu.tscn` (SnipWar) | Start-Szene des sichtbaren Playthrough-Driver |
+| `game_state_node` | leer (= auto) | Pfad zum spielspezifischen GameState-Node, falls vorhanden |
+| `event_log_node` | leer (= auto) | Pfad zum EventLog-Node, falls vorhanden |
+| `project_adapter_node` | leer (= auto, `/root/McpProjectAdapter`) | optionaler Projekt-Adapter |
+| `game_state_script` | leer (= auto/Scan) | Skript-Pfad für GameState-API-Analyse |
+
+Die beiden SnipWar-Defaults erlauben SnipWar out-of-the-box, sind aber nur
+Fallbacks: Ein anderes Projekt setzt eigene Werte in **seiner** `project.godot`
+und vermischt so nie SnipWar-Constraints mit dem Addon. SnipWars
+`scripts/preflight.gd` wird nur als optional konfigurierbarer Chain-Schritt genutzt
+und nie in den Addon-Kern gezogen.
+
+### Ohne SnipWar nutzen
+
+1. Plugin aktivieren (siehe oben) — Autoloads/Settings kommen automatisch.
+2. Optional `application/mcp/preflight_script` + `main_menu_scene` auf eigene
+   Pfade setzen (oder weglassen → generische Tools, die ohne Spiel allein
+   funktionieren).
+3. Optional `mcp/game_state_node`/`event_log_node`/`game_state_script` für
+   State-/Log-Brücken setzen; fehlen sie, degradiert MCP clean (leere
+   Capabilities) statt zu crashen.
+4. Sichtbaren Runtime starten: `$GODOT_BIN --path . -- --mcp --mcp-port 9090`.
+
+---
+
 ## Kernprinzip
 
 Jeder Agent speichert seine funktionierenden Scripts atomar, kategorisiert sie und hinterlässt Wissen im `index.jsonl`-Archiv. Der nächste Agent liest dieses Archiv und nutzt vorhandene Lösungen statt null-deriviert zu analysieren.

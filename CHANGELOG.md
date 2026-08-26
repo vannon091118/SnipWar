@@ -149,3 +149,22 @@ finalize staged auch arcs.json — Arc-State (completed/neuer Arc) reist mit dem
 - narrative_chain.json: Implementiert und integriert (F--001).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F--001).
 - scripts/doki/orchestration/flows/finalize_flow.gd: Implementiert und integriert (F--001).
+
+## 2026-08-27 14:00:00 — p14 · c14j34n6a1p7 · Devin · selbstironisch
+
+**Devin sagt: MCP-Worktree-Sicherung: Agent-Workflow,…**
+
+MCP-Worktree-Sicherung: Agent-Workflow, Chain-Controller, E2E-Testtreiber, Plugin-Stabilität auf HEAD
+
+- addons/gdscript_mcp/AGENT_WORKFLOW.md: Test-Assets ergänzt (F--001).
+- addons/gdscript_mcp/MCP_INDEX.md: Test-Assets ergänzt (F--001).
+- addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd: Test-Assets ergänzt (F--001).
+- addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd: Test-Assets ergänzt (F--001).
+- addons/gdscript_mcp/testing/e2e/mcp_playthrough_driver.gd: Test-Assets ergänzt (F--001).
+- addons/gdscript_mcp/testing/portable/run_portable_smoke.sh: Test-Assets ergänzt (F--001).
+- addons/gdscript_mcp/testing/portable/templates/bootstrap_button.tscn: Test-Assets ergänzt (F--001).
+- addons/gdscript_mcp/testing/portable/templates/project.godot: Test-Assets ergänzt (F--001).
+- change_index.json: Test-Assets ergänzt (F--001).
+- narrative_chain.json: Test-Assets ergänzt (F--001).
+- project.godot: Test-Assets ergänzt (F--001).
+- scripts/doki/data/arcs.json: Test-Assets ergänzt (F--001).

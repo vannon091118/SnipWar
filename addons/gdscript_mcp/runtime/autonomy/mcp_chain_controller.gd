@@ -7,7 +7,7 @@ class_name McpChainController
 ## gameplay actions into a unified, reproducible verification trace:
 ##   Precondition → Action → Observation → Assertion → Evidence → Verdict
 
-const PREFLIGHT_PATH := "res://scripts/preflight.gd"
+const PREFLIGHT_PATH := "res://scripts/preflight.gd"  # Default (SnipWar). Konfigurierbar über application/mcp/preflight_script.
 const PREFLIGHT_TIMEOUT_MS := 120000
 const PREFLIGHT_POLL_MS := 400
 const PREFLIGHT_OUT_PATH := "user://mcp_preflight_result.json"
@@ -303,7 +303,7 @@ func _run_preflight_constraint(constraint_name: String) -> Dictionary:
 		DirAccess.remove_absolute(out_path)
 	var args := PackedStringArray([
 		"--path", project_dir, "--headless",
-		"--script", PREFLIGHT_PATH,
+		"--script", _resolve_preflight_path(),
 		"--filter=" + name, "--mcp-json=" + out_path,
 	])
 	var pid := OS.create_process(OS.get_executable_path(), args, false)
@@ -329,3 +329,13 @@ func _wait_ms(ms: int) -> void:
 	var tree := Engine.get_main_loop()
 	if tree is SceneTree:
 		await (tree as SceneTree).create_timer(float(ms) / 1000.0, true).timeout
+
+
+## Löst den Preflight-Script-Pfad projektagnostisch auf.
+## Default: SnipWar (res://scripts/preflight.gd). Andere Projekte setzen
+## application/mcp/preflight_script in project.godot.
+static func _resolve_preflight_path() -> String:
+	var configured := str(ProjectSettings.get_setting("application/mcp/preflight_script", PREFLIGHT_PATH))
+	if configured.begins_with("res://") or configured.begins_with("user://"):
+		return configured
+	return PREFLIGHT_PATH

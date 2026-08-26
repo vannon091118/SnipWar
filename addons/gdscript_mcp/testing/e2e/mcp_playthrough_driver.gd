@@ -12,7 +12,7 @@ extends SceneTree
 ##   $GODOT_BIN --path . --script ... --mcp-e2e=new_game_to_world
 ##   $GODOT_BIN --path . --script ... --mcp-e2e-list
 
-const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
+const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"  # Default (SnipWar). Konfigurierbar über application/mcp/main_menu_scene.
 const E2E_PATH := "res://addons/gdscript_mcp/runtime/tools/e2e/mcp_e2e.gd"
 const REGISTRY_PATH := "res://addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd"
 const INPUT_SCHEDULER_PATH := "res://addons/gdscript_mcp/runtime/tools/runtime/mcp_input_scheduler.gd"
@@ -66,9 +66,10 @@ func _run() -> void:
 		quit(0)
 		return
 
-	var packed: PackedScene = load(MAIN_MENU_SCENE)
+	var main_menu_scene := _resolve_main_menu_scene()
+	var packed: PackedScene = load(main_menu_scene)
 	if packed == null:
-		push_error("Main menu scene not found: " + MAIN_MENU_SCENE)
+		push_error("Main menu scene not found: " + main_menu_scene)
 		quit(1)
 		return
 	root.add_child(packed.instantiate())
@@ -97,3 +98,13 @@ func _deactivate_virtual_mouse() -> void:
 	if _virtual_mouse_scheduler != null and is_instance_valid(_virtual_mouse_scheduler):
 		_virtual_mouse_scheduler.call("deactivate_virtual_mouse")
 	_virtual_mouse_scheduler = null
+
+
+## Löst den Hauptmenü-Szenen-Pfad projektagnostisch auf.
+## Default: SnipWar (res://scenes/main_menu/main_menu.tscn). Andere Projekte
+## setzen application/mcp/main_menu_scene in project.godot.
+static func _resolve_main_menu_scene() -> String:
+	var configured := str(ProjectSettings.get_setting("application/mcp/main_menu_scene", MAIN_MENU_SCENE))
+	if configured.begins_with("res://"):
+		return configured
+	return MAIN_MENU_SCENE

@@ -124,6 +124,66 @@ konventionelle Node-Namen (`GameState`, `EventLog`, `PlanetField`,
 `application/config/name` abgeleitet; es gibt keinen Default auf einen konkreten
 Spielnamen.
 
+### Automatische Selbst-Registrierung (seit Plugin-Aktivierung)
+
+Das Add-on richtet sich beim Aktivieren in **Project Settings → Plugins** selbst
+im aktuellen Projekt ein — ohne manuelle `project.godot`-Editierung. Beim ersten
+Editor-Boot (`_register_project_integration()` in `editor/gdscript_mcp_plugin.gd`)
+ergänzt es idempotent:
+
+1. **Autoloads** (nur wenn fehlend): `McpRuntime` →
+   `res://addons/gdscript_mcp/runtime/host/mcp_runtime.gd` und
+   `McpProjectAdapter` →
+   `res://addons/gdscript_mcp/runtime/core/mcp_project_adapter.gd`.
+   Beide sind als Autoloads **inert**: ohne den Start-Flag `--mcp` kehrt
+   `_ready()` früh zurück und es startet kein MCP-Server.
+2. **`application/mcp/*`-Settings** (nur wenn fehlend):
+   `preflight_script`, `main_menu_scene`, `game_state_node`,
+   `event_log_node`, `project_adapter_node`, `game_state_script`.
+
+Die Registrierung schreibt `project.godot` nur bei tatsächlicher Abweichung —
+reine Starts bei bereits konfiguriertem Zustand hinterlassen keinen Dirty-State.
+
+### Zwei SnipWar-Defaults (überschreibbar!)
+
+Nur `preflight_script` und `main_menu_scene` tragen SnipWar-Defaults, damit das
+Add-on in SnipWar out-of-the-box läuft. Andere Projekte **überschreiben sie in
+eigener `project.godot`**:
+
+```ini
+[application]
+mcp/preflight_script="res://addons/mein_plugin/tests/preflight.gd"
+mcp/main_menu_scene="res://scenes/start/start_screen.tscn"
+```
+
+- `preflight_script` wird vom `preflight_constraint`-Chain-Schritt als Headless-
+  Subprozess gestartet (siehe `runtime/autonomy/mcp_chain_controller.gd`).
+- `main_menu_scene` lädt der sichtbare Playthrough-Driver
+  (`testing/e2e/mcp_playthrough_driver.gd`).
+
+Werden sie leer gelassen bzw. nicht gesetzt, fallen beide Resolver auf die
+SnipWar-Defaults zurück (`res://scripts/preflight.gd` bzw.
+`res://scenes/main_menu/main_menu.tscn`).
+
+### Einbindung ohne SnipWar (Schritt für Schritt)
+
+1. Plugin-Ordner unter `res://addons/gdscript_mcp/` ablegen (Kopie, submodule
+   oder Packaged Release). Das gut bekannte `addons/gdscript_mcp`-Verzeichnis ist
+   erwartet — intern sind alle `res://addons/...`-Pfade addon-intern und
+   redlicherweise an diesen Well-known-Pfad gebunden.
+2. In **Project Settings → Plugins**: `GDScript MCP Bridge` aktivieren. Das
+   Add-on registriert nun automatisch Autoloads + `application/mcp/*`-Settings.
+3. Optional eigene Werte für `application/mcp/preflight_script` und
+   `application/mcp/main_menu_scene` setzen (falls dein Projekt eigene
+   Test-/Startpfade nutzt).
+4. Falls du GameState-/EventLog-Brücken nutzt: `mcp/game_state_node`,
+   `mcp/event_log_node` bzw. `mcp/game_state_script` setzen. Ohne diese liefert
+   MCP nur generische Runtime-/Vision-/UX-Tools (voll funktionsfähig, aber ohne
+   spielspezifische State-Fingerprints).
+5. Sichtbaren Runtime starten: `$GODOT_BIN --path . -- --mcp --mcp-port 9090`.
+   SnipWar-Preflight/Constraints bleiben in SnipWar und werden nie in den
+   Addon-Kern gezogen.
+
 ## Editor ↔ Ingame-Wechsel
 
 - `editor_run_project` — startet das Projekt aus dem Editor; `with_mcp=true`
@@ -260,10 +320,11 @@ Deklarative Kettenschritt-Orchestrierung für kombinierte Headless- und Visible-
 - `runtime_chain_run` (async) — validierte Kette aus Preconditions, Tools, Assertions und Evidenzerfassung ausführen
 - `runtime_chain_trace` — Letzten Ausführungs-Trace und Teilschritt-Verdicts abfragen
 
-Neuer `preflight_constraint`-Schritt: startet `scripts/preflight.gd` als Headless-
+Neuer `preflight_constraint`-Schritt: startet das Preflight-Skript als Headless-
 Subprozess und pollt das `--mcp-json`-Ergebnis (`user://mcp_preflight_result.json`).
-Kein Platzhalter mehr — ein „PASS" für ein Constraint ist nur echt, wenn die
-Preflight-Suite es wirklich bestätigt hat.
+Der Pfad ist konfigurierbar (`application/mcp/preflight_script`, Default
+`res://scripts/preflight.gd`). Kein Platzhalter — ein „PASS" für ein Constraint ist
+nur echt, wenn die Preflight-Suite es wirklich bestätigt hat.
 
 ### Code Analyzer (4) — `runtime/tools/e2e/mcp_code_analyzer.gd`
 Statische Projektanalyse über Dateisystem + FileAccess:
@@ -317,6 +378,14 @@ Ein sichtbarer Live-Run dokumentiert zusätzlich separat: `game_findings`, `mcp_
 **Performancevertrag:** Screenshots sind Evidenz bei Unklarheit, nicht der Standard vor jeder Aktion. Für viele atomare Aktionen wird eine persistente MCP-Verbindung empfohlen; sie spart neue Prozesse und Handshakes, ohne mehrere Ingame-Tools in einem Atom zu bündeln. Identische Live-Scans werden über Watch-/Snapshot-Zustände wiederverwendet. Chains müssen vor Ausführung `runtime_chain_validate` passieren und pro Schritt genau einen MCP-Tool-Call, bounded context, Postcondition und No-progress-Grenze enthalten.
 
 ## Schnellstart
+
+**Variante A — Plugin (empfohlen):** Plugin in den Project Settings aktivieren
+(das Add-on registriert Autoloads + `application/mcp/*` selbst), optional
+Settings setzen, dann sichtbaren Runtime starten.
+
+**Variante B — rein CLI, ohne Plugin-Ordner-Auto-Setup:** Autoloads müssten
+manuell in `project.godot` unter `[autoload]` stehen (siehe Selbst-Registrierung),
+dann:
 
 ```bash
 # 1. Spiel mit MCP starten (sichtbares Fenster)

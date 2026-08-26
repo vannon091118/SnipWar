@@ -130,6 +130,17 @@
 			],
 			"p_id": 11.0
 		},
+		"b2558f9c0bfa80ae63804e06736aae668802e38f": {
+			"c": 13.0,
+			"composite": "c13j62n9a2p5",
+			"entities": [
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001"
+			],
+			"p_id": 13.0
+		},
 		"e186c98431e04aeca11e227c7459fc3daa695ff0": {
 			"c": 12.0,
 			"composite": "c12j11n13a1p1",
@@ -143,29 +154,29 @@
 	},
 	"entities": {
 		"C--001": {
-			"first_p": 11.0,
+			"first_p": 14,
 			"history": [
 				{
 					"lines": [
-						182.0
+						12
 					],
-					"p_id": 11.0
+					"p_id": 14
 				}
 			],
 			"id": "C--001",
-			"last_p": 11.0,
-			"name": "build_subject",
-			"path": "scripts/doki/prompt/voice_composer.gd",
+			"last_p": 14,
+			"name": "MAIN_MENU_SCENE",
+			"path": "addons/gdscript_mcp/testing/e2e/mcp_playthrough_driver.gd",
 			"status": "modified",
 			"type": "component"
 		},
 		"F--001": {
-			"first_p": 13,
+			"first_p": 14,
 			"history": [],
 			"id": "F--001",
-			"last_p": 13,
-			"name": "finalize_flow.gd",
-			"path": "scripts/doki/orchestration/flows/finalize_flow.gd",
+			"last_p": 14,
+			"name": "arcs.json",
+			"path": "scripts/doki/data/arcs.json",
 			"status": "created",
 			"type": "file"
 		}
