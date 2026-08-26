@@ -31,6 +31,23 @@
 			],
 			"p_id": 14.0
 		},
+		"2bc5533d6b8bb9fd26723d1048947df8561e89f6": {
+			"c": 17.0,
+			"composite": "c17j48n14a1p1",
+			"entities": [
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"F--001",
+				"C--001"
+			],
+			"p_id": 17.0
+		},
 		"a95a7ee437c739b97ceb60b66f5f4beb92f2bce1": {
 			"c": 11.0,
 			"composite": "c11j46n7a1p5",
@@ -251,29 +268,29 @@
 	},
 	"entities": {
 		"C--001": {
-			"first_p": 17,
+			"first_p": 18,
 			"history": [
 				{
 					"lines": [
-						93
+						329
 					],
-					"p_id": 17
+					"p_id": 18
 				}
 			],
 			"id": "C--001",
-			"last_p": 17,
-			"name": "advance",
-			"path": "scripts/doki/prompt/arc_engine.gd",
+			"last_p": 18,
+			"name": "_read_file",
+			"path": "scripts/doki/doki_analyze.gd",
 			"status": "modified",
 			"type": "component"
 		},
 		"F--001": {
-			"first_p": 17,
+			"first_p": 18,
 			"history": [],
 			"id": "F--001",
-			"last_p": 17,
-			"name": "voice_composer.gd",
-			"path": "scripts/doki/prompt/voice_composer.gd",
+			"last_p": 18,
+			"name": "doki_analyze.gd",
+			"path": "scripts/doki/doki_analyze.gd",
 			"status": "created",
 			"type": "file"
 		}

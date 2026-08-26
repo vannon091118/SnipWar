@@ -1349,6 +1349,72 @@
 			"prev_narrator": "Thinker",
 			"seq": 16.0,
 			"summary": "Es geschah in der siebzehnten Epoche der Historia, als Thinker noch den Verifier feinjustiert hatte und der Echo-Resonanz-Test just ins Grüne gesprungen war, da bemerkten die Chronisten einen Schat..."
+		},
+		{
+			"a": 1,
+			"arc": "a5",
+			"c": 17,
+			"composite": "c17j48n14a1p1",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 10.0,
+					"file": "change_index.json",
+					"insertions": 76.0
+				},
+				{
+					"deletions": 11.0,
+					"file": "narrative_chain.json",
+					"insertions": 333.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/orchestration/flows/finalize_flow.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/session_builder.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "scripts/doki/prompt/arc_engine.gd",
+					"insertions": 30.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "scripts/doki/prompt/voice_composer.gd",
+					"insertions": 13.0
+				}
+			],
+			"date": "2026-08-27 17:00:00",
+			"hash": "2bc5533d6b8bb9fd26723d1048947df8561e89f6",
+			"j": 48,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 14,
+			"narrator": "Sage",
+			"p": 1,
+			"p_id": 17,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Ghost",
+			"seq": 17,
+			"summary": "Stell dir vor, du hast einen Motor, der zählt, wie oft das Auto tankt. Jedes Mal, egal ob du 500 Kilometer Autobahn gefahren bist oder nur zum Bäcker um die Ecke — Zähler geht hoch. Irgendwann sagt..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
