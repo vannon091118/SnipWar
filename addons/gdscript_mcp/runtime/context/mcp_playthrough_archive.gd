@@ -262,7 +262,7 @@ func apply_snapshot(entry_id: String) -> Dictionary:
 	# Prefer adapter for cross-project state restore
 	var ml: Object = Engine.get_main_loop()
 	if ml is SceneTree:
-		var adapter: Node = (ml as SceneTree).root.get_node_or_null("/root/McpProjectAdapter")
+		var adapter: Node = _get_project_adapter()
 		if adapter != null and adapter.has_method("snapshot_restore"):
 			var restored: bool = adapter.snapshot_restore(snapshot)
 			return {"ok": restored, "preset": preset_path, "action": str(record.get("action", "")),
@@ -280,18 +280,40 @@ func apply_snapshot(entry_id: String) -> Dictionary:
 func _get_game_state() -> Node:
 	var ml: Object = Engine.get_main_loop()
 	if ml is SceneTree:
-		var adapter: Node = (ml as SceneTree).root.get_node_or_null("/root/McpProjectAdapter")
+		var adapter: Node = _get_project_adapter()
 		if adapter != null and adapter.has_method("snapshot_capture"):
 			return adapter
-		return (ml as SceneTree).root.get_node_or_null("/root/GameState")
+		var root := (ml as SceneTree).root
+		var configured_path := str(ProjectSettings.get_setting("application/mcp/game_state_node", ""))
+		if configured_path.begins_with("/"):
+			var configured := root.get_node_or_null(NodePath(configured_path))
+			if configured != null:
+				return configured
+		var direct := root.get_node_or_null("/root/GameState")
+		if direct != null:
+			return direct
+		return root.find_child("GameState", true, false)
 	return null
+
+
+func _get_project_adapter() -> Node:
+	var ml := Engine.get_main_loop()
+	if not (ml is SceneTree):
+		return null
+	var root := (ml as SceneTree).root
+	var configured_path := str(ProjectSettings.get_setting("application/mcp/project_adapter_node", "/root/McpProjectAdapter"))
+	if configured_path.begins_with("/"):
+		var configured := root.get_node_or_null(NodePath(configured_path))
+		if configured != null:
+			return configured
+	return root.find_child("McpProjectAdapter", true, false)
 
 
 func _capture_game_state() -> Variant:
 	var ml: Object = Engine.get_main_loop()
 	if ml is SceneTree:
 		# Prefer adapter for cross-project state snapshots
-		var adapter: Node = (ml as SceneTree).root.get_node_or_null("/root/McpProjectAdapter")
+		var adapter: Node = _get_project_adapter()
 		if adapter != null and adapter.has_method("snapshot_capture"):
 			return adapter.snapshot_capture()
 	var game_state := _get_game_state()

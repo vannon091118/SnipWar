@@ -126,7 +126,8 @@ func _scenario_pause_save_menu() -> bool:
 		_info("  [DIAG] PauseMenu/Content not visible — checking PauseMenu node directly")
 		var tree := Engine.get_main_loop()
 		if tree is SceneTree:
-			var pm := (tree as SceneTree).root.get_node_or_null("/root/World/PauseMenu")
+			var root := (tree as SceneTree).root
+			var pm := root.find_child("PauseMenu", true, false)
 			_info("  [DIAG] PauseMenu node: " + str(pm) + " paused=" + str((tree as SceneTree).paused))
 	var save := _find("SPEICHERN")
 	if bool(save.get("found", false)):
@@ -398,7 +399,7 @@ func _node_visible(path: String) -> bool:
 	if not (tree is SceneTree):
 		return false
 	var root := (tree as SceneTree).root
-	var node := root.get_node_or_null(NodePath("/root/World/" + path))
+	var node := root.find_child(path.get_file(), true, false)
 	return node != null and node is CanvasItem and (node as CanvasItem).is_visible_in_tree()
 
 

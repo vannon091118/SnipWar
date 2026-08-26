@@ -276,7 +276,14 @@ func _eval_expression(code: String) -> Dictionary:
 	var tree := Engine.get_main_loop()
 	var base_context: Object = null
 	if tree is SceneTree and (tree as SceneTree).root != null:
-		base_context = (tree as SceneTree).root.get_node_or_null("/root/GameState")
+		var root := (tree as SceneTree).root
+		var configured_path := str(ProjectSettings.get_setting("application/mcp/game_state_node", ""))
+		if configured_path.begins_with("/"):
+			base_context = root.get_node_or_null(NodePath(configured_path))
+		if base_context == null:
+			base_context = root.get_node_or_null("/root/GameState")
+		if base_context == null:
+			base_context = root.find_child("GameState", true, false)
 	var res = expr.execute([], base_context, false)
 	if expr.has_execute_failed():
 		return {"ok": false, "error": expr.get_error_text(), "result": false}

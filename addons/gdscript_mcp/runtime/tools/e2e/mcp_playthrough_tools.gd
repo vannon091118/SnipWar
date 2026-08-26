@@ -165,10 +165,22 @@ func _compare_presets(baseline_preset_id: String, action_tool: String, action_ar
 func _state_fingerprint() -> String:
 	var ml: Object = Engine.get_main_loop()
 	if ml is SceneTree:
-		var adapter: Node = (ml as SceneTree).root.get_node_or_null("/root/McpProjectAdapter")
+		var adapter: Node = _get_project_adapter()
 		if adapter != null and adapter.has_method("state_fingerprint"):
 			return str(adapter.state_fingerprint())
 	return ""
+
+
+func _get_project_adapter() -> Node:
+	var root := (Engine.get_main_loop() as SceneTree).root if Engine.get_main_loop() is SceneTree else null
+	if root == null:
+		return null
+	var configured_path := str(ProjectSettings.get_setting("application/mcp/project_adapter_node", "/root/McpProjectAdapter"))
+	if configured_path.begins_with("/"):
+		var configured := root.get_node_or_null(NodePath(configured_path))
+		if configured != null:
+			return configured
+	return root.find_child("McpProjectAdapter", true, false)
 
 
 ## Record a step with verdict into the archive (no screenshot).
