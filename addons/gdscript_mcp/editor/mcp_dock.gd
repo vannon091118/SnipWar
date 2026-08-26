@@ -15,10 +15,15 @@ class_name McpDock
 signal start_server_requested(config: Dictionary)
 signal stop_server_requested()
 signal config_changed(config: Dictionary)
+## Spielstart über das Plugin: Das Spiel läuft IN-PROCESS im Editor
+## (play_main_scene), der Runtime-MCP-Server des Plugins lauscht auf 9090.
+signal runtime_launch_requested(profile: String)
 
 const RUNTIME_CLIENT_PATH := "res://addons/gdscript_mcp/editor/mcp_runtime_client.gd"
 const PROFILE_CONFIG_PATH := "user://gdscript_mcp_profile.cfg"
 const RUNTIME_PORT := 9090
+const AUTO_CONNECT_TIMEOUT_MS := 8000
+const AUTO_CONNECT_RETRY_SECONDS := 0.35
 
 @onready var _status_label: Label = %StatusIndicator
 @onready var _transport_select: OptionButton = %TransportSelect
@@ -59,6 +64,8 @@ var _runtime_client: RefCounted = null
 var _runtime_connected := false
 var _status_accumulator := 0.0
 var _auto_connect_in := -1.0
+var _auto_connect_deadline_ms := 0
+var _auto_connect_attempts := 0
 var _last_artifact_path := ""
 var _e2e_scenarios: Array = []
 var _e2e_checks: Array = []
@@ -95,6 +102,12 @@ func _ready() -> void:
 	_load_config()
 	_load_profile()
 	_update_runtime_buttons()
+	# Runtime-MCP läuft in-process (Plugin startet ihn auf 9090). Der Dock
+	# verbindet sich direkt, sobald der Editor geladen ist — kein separater
+	# Spielprozess, kein Warten auf einen externen Start.
+	_auto_connect_in = 0.0
+	_auto_connect_deadline_ms = Time.get_ticks_msec() + AUTO_CONNECT_TIMEOUT_MS
+	_auto_connect_attempts = 0
 	set_process(true)
 
 func _process(_delta: float) -> void:
@@ -104,10 +117,16 @@ func _process(_delta: float) -> void:
 		if _runtime_client.is_ready() and _status_accumulator >= 1.0:
 			_status_accumulator = 0.0
 			_refresh_runtime_status()
-	if _auto_connect_in > 0.0:
-		_auto_connect_in -= _delta
-		if _auto_connect_in <= 0.0:
+	if _auto_connect_in >= 0.0:
+		if _auto_connect_deadline_ms > 0 and Time.get_ticks_msec() >= _auto_connect_deadline_ms:
+			_auto_connect_in = -1.0
+			add_log("Runtime-MCP nach begrenzten Verbindungsversuchen nicht erreichbar", true)
+		elif _auto_connect_in > 0.0:
+			_auto_connect_in -= _delta
+		elif _runtime_client == null or not _runtime_client.is_ready():
 			_connect_runtime()
+			_auto_connect_attempts += 1
+			_auto_connect_in = AUTO_CONNECT_RETRY_SECONDS
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Profile / Play-Goal
@@ -142,18 +161,18 @@ func _on_profile_selected(index: int) -> void:
 # ═══════════════════════════════════════════════════════════════════════════
 
 func _launch_runtime_game() -> void:
-	var exec_path := OS.get_executable_path()
-	if exec_path == "":
-		add_log("Godot binary path nicht verfügbar", true)
-		return
-	var project_dir := ProjectSettings.globalize_path("res://")
-	var args := PackedStringArray(["--path", project_dir, "--", "--mcp", "--mcp-port", str(RUNTIME_PORT), "--mcp-virtual-mouse"])
-	var pid := OS.create_process(exec_path, args, false)
-	if pid <= 0:
-		add_log("Spielstart fehlgeschlagen (pid=" + str(pid) + ")", true)
-		return
-	add_log("Spiel sichtbar gestartet (pid=" + str(pid) + ") mit --mcp auf Port " + str(RUNTIME_PORT) + " — verbinde in 2.5 s …")
-	_auto_connect_in = 2.5
+	if _runtime_client != null:
+		_runtime_client.close()
+		_runtime_client = null
+		_runtime_connected = false
+		_update_runtime_buttons()
+	var profile := "player"
+	if _profile_select != null and _profile_select.selected >= 0 and _profile_select.item_count > 0:
+		profile = _profile_select.get_item_text(_profile_select.selected).to_lower()
+	runtime_launch_requested.emit(profile)
+	_auto_connect_in = 0.2
+	_auto_connect_deadline_ms = Time.get_ticks_msec() + AUTO_CONNECT_TIMEOUT_MS
+	_auto_connect_attempts = 0
 
 func _connect_runtime() -> void:
 	if _runtime_client != null:
@@ -185,16 +204,25 @@ func _add_runtime_signal_handlers() -> void:
 
 func _on_runtime_connected_changed(connected: bool) -> void:
 	_runtime_connected = connected
-	_update_runtime_buttons()
 	if connected:
+		_auto_connect_in = -1.0
+		_auto_connect_deadline_ms = 0
 		add_log("Persistente MCP-Verbindung aktiv (ein Handshake, jeder Call = genau eine Aktion)")
+		_update_runtime_buttons()
 		_refresh_runtime_status()
 	else:
 		_runtime_status_label.text = "○ nicht verbunden"
 		_runtime_status_label.add_theme_color_override("font_color", Color(0.8, 0.4, 0.4, 1))
+		_update_runtime_buttons()
+		# Der Runtime-Server kann sich neu starten (Profilwechsel). Dann
+		# verbindet der Dock automatisch neu, solange ein Spielstart aktiv war.
+		if _auto_connect_deadline_ms > 0 or _auto_connect_attempts > 0:
+			_auto_connect_in = AUTO_CONNECT_RETRY_SECONDS
 
 func _on_runtime_error(message: String) -> void:
 	add_log("Runtime: " + message, true)
+	if _auto_connect_deadline_ms > 0 and not _runtime_connected:
+		_auto_connect_in = AUTO_CONNECT_RETRY_SECONDS
 
 func _update_runtime_buttons() -> void:
 	var ready: bool = _runtime_client != null and bool(_runtime_client.call("is_ready"))
@@ -264,8 +292,7 @@ func _on_runtime_key() -> void:
 	if keycode <= 0:
 		add_log("Unbekannte Taste: " + name, true)
 		return
-	_call_runtime("runtime_key", {"keycode": keycode, "pressed": true}, func(response): _log_tool_result("runtime_key", response))
-	_call_runtime("runtime_key", {"keycode": keycode, "pressed": false}, func(response): _log_tool_result("runtime_key release", response))
+	_call_runtime("runtime_key_gesture", {"keycode": keycode, "hold_frames": 1}, func(response): _log_tool_result("runtime_key_gesture", response))
 
 func _on_runtime_scan() -> void:
 	_call_runtime("runtime_ux_scan", {"max_controls": 120}, _on_scan_response)

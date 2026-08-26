@@ -263,6 +263,7 @@ func _is_async_tool(name: String) -> bool:
 		"runtime_goal_play",
 		"runtime_e2e_run",
 		"runtime_autonomy_probe",
+		"runtime_autonomy_export",
 		"runtime_chain_run"
 	]
 

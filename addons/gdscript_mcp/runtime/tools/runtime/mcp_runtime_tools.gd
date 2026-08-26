@@ -39,6 +39,9 @@ static func _basic_tools() -> Array:
 		_make("runtime_key", "Send key event to running game",
 			{"keycode": {"type": "integer"}, "pressed": {"type": "boolean", "default": true}},
 			["keycode"]),
+		_make("runtime_key_gesture", "Send one complete visible key gesture (press, then release) to the running game",
+			{"keycode": {"type": "integer"}, "hold_frames": {"type": "integer", "default": 1, "description": "Frames between press and release"}},
+			["keycode"]),
 		_make("runtime_mouse_move", "Move the MCP virtual mouse pointer to a position (hover). Default: smooth visible cursor travel over several frames — the cursor never teleports",
 			{"x": {"type": "integer"}, "y": {"type": "integer"},
 			 "smooth": {"type": "boolean", "default": true, "description": "Interpolated cursor travel; false = single jump event"},
@@ -98,6 +101,8 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 			return _rt_click(args)
 		"runtime_key":
 			return _rt_key(_resolve_keycode(args.get("keycode", 0)), bool(args.get("pressed", true)))
+		"runtime_key_gesture":
+			return _rt_key_gesture(_resolve_keycode(args.get("keycode", 0)), int(args.get("hold_frames", 1)))
 		"runtime_mouse_move":
 			return _rt_mouse_move(int(args.get("x", 0)), int(args.get("y", 0)),
 				bool(args.get("smooth", true)), int(args.get("duration_ms", 120)))
@@ -536,6 +541,14 @@ static func _resolve_keycode(raw) -> int:
 			_: return 0
 	return 0
 
+func _make_key_event(keycode: int, pressed: bool) -> InputEventKey:
+	var event := InputEventKey.new()
+	event.keycode = keycode
+	event.physical_keycode = keycode
+	event.pressed = pressed
+	return event
+
+
 func _rt_key(keycode: int, pressed: bool) -> Dictionary:
 	var tree = Engine.get_main_loop()
 	if not (tree is SceneTree):
@@ -544,10 +557,7 @@ func _rt_key(keycode: int, pressed: bool) -> Dictionary:
 		return {"error": "Invalid keycode", "sent": false}
 	var viewport: Window = (tree as SceneTree).root
 
-	var ke = InputEventKey.new()
-	ke.keycode = keycode
-	ke.physical_keycode = keycode   # AGENTS.md: both fields required
-	ke.pressed = pressed
+	var ke = _make_key_event(keycode, pressed)
 	# Engine-level, focus-independent injection (remote testing while window unfocused).
 	var scheduler := _get_input_scheduler()
 	if scheduler == null:
@@ -555,6 +565,35 @@ func _rt_key(keycode: int, pressed: bool) -> Dictionary:
 		return {"keycode": keycode, "pressed": pressed, "sent": true, "scheduler": "fallback"}
 	var scheduled: Dictionary = scheduler.call("schedule_key_event", ke, 0)
 	return {"keycode": keycode, "pressed": pressed, "sent": bool(scheduled.get("scheduled", false)), "scheduler": scheduled}
+
+
+func _rt_key_gesture(keycode: int, hold_frames: int = 1) -> Dictionary:
+	var tree := Engine.get_main_loop()
+	if not (tree is SceneTree):
+		return {"error": "No scene tree", "sent": false}
+	if keycode <= 0:
+		return {"error": "Invalid keycode", "sent": false}
+	var safe_hold := clampi(hold_frames, 1, 120)
+	var scheduler := _get_input_scheduler()
+	if scheduler == null:
+		var press := _rt_key(keycode, true)
+		var release := _rt_key(keycode, false)
+		return {"keycode": keycode, "sent": bool(press.get("sent", false)) and bool(release.get("sent", false)), "gesture": true, "hold_frames": safe_hold, "scheduler": "fallback"}
+	if not _input_capacity_available(1):
+		return {"keycode": keycode, "sent": false, "gesture": true, "error": "input queue full"}
+	var press_result: Dictionary = _rt_key(keycode, true)
+	if not bool(press_result.get("sent", false)):
+		return {"keycode": keycode, "sent": false, "gesture": true, "press": press_result}
+	var release_event := _make_key_event(keycode, false)
+	var release_result: Dictionary = scheduler.call("schedule_key_event", release_event, safe_hold)
+	return {
+		"keycode": keycode,
+		"sent": bool(release_result.get("scheduled", false)),
+		"gesture": true,
+		"hold_frames": safe_hold,
+		"press": press_result,
+		"release": release_result,
+	}
 
 
 # ── Frame queue ────────────────────────────────────────────────────────────

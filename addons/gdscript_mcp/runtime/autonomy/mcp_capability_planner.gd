@@ -107,7 +107,7 @@ func get_tool_defs() -> Array:
 			"path": {"type": "string"},
 			"apply": {"type": "boolean", "default": false},
 			"force": {"type": "boolean", "default": false},
-		}, "write", ["path"]),
+		}, "write", ["path"], true),
 		_make_workspace_tool("runtime_autonomy_imports", "List files imported into the workspace", {}, "read"),
 	]
 
@@ -423,8 +423,9 @@ func workspace_rollback(transaction_id: String) -> Dictionary:
 
 
 func workspace_rollback_all() -> Dictionary:
-	if _workspace_journal == null or not _workspace_journal.is_bound():
-		return _blocked("no workspace bound", "BLOCKED")
+	var gate := _write_gate()
+	if not bool(gate.get("ok", false)):
+		return gate
 	return _workspace_journal.rollback_all(_session_id)
 
 
@@ -701,7 +702,7 @@ static func _make_tool(name: String, description: String, properties: Dictionary
 	return tool
 
 
-static func _make_workspace_tool(name: String, description: String, properties: Dictionary = {}, access: String = "read", required: Array = []) -> Dictionary:
+static func _make_workspace_tool(name: String, description: String, properties: Dictionary = {}, access: String = "read", required: Array = [], async_tool: bool = false) -> Dictionary:
 	var schema := {"type": "object", "properties": properties}
 	if not required.is_empty():
 		schema["required"] = required
@@ -713,9 +714,18 @@ static func _make_workspace_tool(name: String, description: String, properties: 
 	tool["mode"] = "runtime_visible"
 	tool["mutates"] = is_write
 	tool["rollback"] = "journal_rollback" if is_write else "none"
-	tool["requires"] = ["mcp_session"] if not is_write else ["mcp_session", "workspace_bound"]
-	tool["produces"] = ["file_content"] if not is_write else ["file_change"]
-	tool["postconditions"] = ["result is a dictionary", "result.error is absent"] if not is_write else ["result.ok is present", "transaction journaled"]
+	# Starting a workspace creates the journal that later write tools require;
+	# requiring workspace_bound here would make the first step unplannable.
+	if name == "runtime_autonomy_workspace_begin":
+		tool["requires"] = ["mcp_session"]
+		tool["produces"] = ["workspace_bound"]
+		tool["postconditions"] = ["result.ok is present", "workspace is bound"]
+	else:
+		tool["requires"] = ["mcp_session"] if not is_write else ["mcp_session", "workspace_bound"]
+		tool["produces"] = ["file_content"] if not is_write else ["file_change"]
+		tool["postconditions"] = ["result is a dictionary", "result.error is absent"] if not is_write else ["result.ok is present", "transaction journaled"]
 	tool["evidence"] = ["tool_response"]
 	tool["cost"] = 2
+	if async_tool:
+		tool["_async"] = true
 	return tool

@@ -8,11 +8,20 @@ class_name GDScriptMcpPlugin
 
 const MCP_SERVER_SCRIPT = "res://addons/gdscript_mcp/runtime/host/mcp_server.gd"
 const CONTEXT_STORE_SCRIPT = "res://addons/gdscript_mcp/runtime/context/mcp_context_store.gd"
+const RUNTIME_CLIENT_SCRIPT = "res://addons/gdscript_mcp/editor/mcp_runtime_client.gd"
+const RUNTIME_TOOLS_PATH := "res://addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd"
 const DEFAULT_PORT = 9091
 
+const RUNTIME_PORT := 9090
+
 var _server_instance = null
+var _runtime_server_instance = null
 var _dock = null
 var _is_running = false
+var _runtime_server_running := false
+var _runtime_write_enabled := false
+var _runtime_session_id := ""
+var _runtime_profile := "player"
 var _history: Array[Dictionary] = []
 var _context_store: RefCounted = null
 
@@ -29,6 +38,14 @@ func _enter_tree() -> void:
 	_dock.start_server_requested.connect(_on_start_server_requested)
 	_dock.stop_server_requested.connect(_on_stop_server_requested)
 	_dock.config_changed.connect(_on_config_changed)
+	_dock.runtime_launch_requested.connect(_on_runtime_launch_requested)
+
+	# Runtime-MCP läuft IN-PROCESS im Editor (ein Godot-Prozess, keine
+	# separaten Spielprozesse). Der Dock verbindet sich direkt auf 9090.
+	# WICHTIG: Der Start wird mehrfach verzögert/retried, weil der Editor beim
+	# ersten Idle noch nicht alle Skripte kompiliert hat — ein sofortiger
+	# Start würde runtime_* Tools transient als „failed to parse“ melden.
+	call_deferred("_boot_runtime_server_retry", 0)
 
 	# Auto-start if configured
 	var config = _load_config()
@@ -36,6 +53,7 @@ func _enter_tree() -> void:
 		call_deferred("_start_server_internal", config)
 
 func _exit_tree() -> void:
+	_stop_runtime_server_internal()
 	_stop_server()
 	if _context_store != null:
 		_context_store.clear()
@@ -48,6 +66,15 @@ func _exit_tree() -> void:
 func _on_start_server_requested(config: Dictionary) -> void:
 	_start_server_internal(config)
 
+func _on_runtime_launch_requested(profile: String) -> void:
+	if get_editor_interface().is_playing_scene():
+		get_editor_interface().stop_playing_scene()
+	var result: Dictionary = await _run_project("", true, profile, RUNTIME_PORT)
+	if not bool(result.get("started", false)):
+		_push_error("Spielstart fehlgeschlagen: " + str(result.get("error", "?")))
+	else:
+		_push_log("Spiel sichtbar gestartet (in-process, Profil " + str(result.get("profile", "player")) + ") — Runtime-MCP auf Port " + str(RUNTIME_PORT) + ", verbinde …")
+
 func _on_stop_server_requested() -> void:
 	_stop_server()
 
@@ -56,6 +83,13 @@ func _on_config_changed(config: Dictionary) -> void:
 	if _is_running and config.get("auto_restart", true):
 		_stop_server()
 		call_deferred("_start_server_internal", config)
+	# In-process-Runtime-Server: Das Schreib-Gate (AllowWrites im Dock) soll
+	# ohne Editor-Neustart greifen — bei Änderung Server neu konfigurieren.
+	# Der Dock verbindet sich selbsttätig neu (_process-Reconnect).
+	var allow_writes := bool(config.get("editor_write_enabled", false))
+	if _runtime_server_running and allow_writes != _runtime_write_enabled:
+		_stop_runtime_server_internal()
+		call_deferred("_boot_runtime_server_retry", 0)
 
 func _start_server_internal(config: Dictionary) -> void:
 	if _is_running:
@@ -175,7 +209,11 @@ func execute_editor_action(action: String, params: Dictionary) -> Variant:
 		"history":
 			return {"entries": _history.duplicate(true), "count": _history.size()}
 		"run_project":
-			return _run_project(str(params.get("scene", "")), bool(params.get("with_mcp", false)))
+			return await _run_project(str(params.get("scene", "")), bool(params.get("with_mcp", false)), str(params.get("profile", "")), int(params.get("port", 9090)), bool(params.get("wait_for_mcp", true)), int(params.get("startup_timeout_ms", 6000)))
+		"stop_project", "stop_runtime":
+			return _stop_project()
+		"project_status", "runtime_status":
+			return _project_status()
 		"capture_screenshot", "screenshot":
 			# Async: return GDScriptFunctionState; the server awaits it.
 			return (Callable(self, "_capture_screenshot") as Callable).call(str(params.get("viewport", "")), str(params.get("format", "png")))
@@ -485,23 +523,174 @@ func _save_scene(path: String) -> bool:
 	var err = ResourceSaver.save(packed, save_path)
 	return err == OK
 
-func _run_project(scene_path: String, with_mcp: bool = false) -> Variant:
+func _run_project(scene_path: String, with_mcp: bool = false, profile: String = "", port: int = RUNTIME_PORT, wait_for_mcp: bool = true, startup_timeout_ms: int = 6000) -> Variant:
 	if scene_path != "" and not _is_project_resource_path(scene_path):
 		return {"started": false, "error": "scene path must stay inside the project"}
 	if with_mcp:
-		# Zeigt das Spiel in einem eigenen Prozess MIT Runtime-MCP (9090):
-		# Der Agent kann vom Editor-MCP direkt zum Ingame-MCP wechseln.
-		var exec_path := OS.get_executable_path()
-		if exec_path == "":
-			return {"started": false, "error": "godot binary path unavailable"}
-		var project_dir := ProjectSettings.globalize_path("res://")
-		var args := PackedStringArray(["--path", project_dir, "--", "--mcp", "--mcp-port", "9090", "--mcp-virtual-mouse"])
-		var pid := OS.create_process(exec_path, args, false)
-		return {"started": pid > 0, "pid": pid, "mcp": true, "port": 9090}
+		# IN-PROCESS-Wechsel: Das Spiel läuft im selben Godot-Prozess wie der
+		# Editor (play_main_scene / play_custom_scene). Der Runtime-MCP-Server
+		# wird beim Plugin-Start gestartet und hier nur noch mit dem aktuellen
+		# Play-Goal-Profil neu konfiguriert. Kein OS.create_process — genau ein
+		# Godot läuft; der Dock verbindet sich direkt auf RUNTIME_PORT.
+		var safe_profile := profile.strip_edges().to_lower()
+		if safe_profile != "" and safe_profile not in ["player", "qa", "dev"]:
+			return {"started": false, "mcp": false, "error": "profile must be player, qa, or dev"}
+		if safe_profile == "":
+			safe_profile = _runtime_profile
+		var safe_port := clampi(port, 1024, 65535)
+		if not _start_runtime_server_internal(safe_profile, safe_port):
+			return {"started": false, "mcp": false, "error": "in-process runtime MCP server could not be started"}
+		if scene_path != "":
+			get_editor_interface().play_custom_scene(scene_path)
+		else:
+			get_editor_interface().play_main_scene()
+		return {
+			"started": true,
+			"mcp": true,
+			"in_process": true,
+			"port": safe_port,
+			"profile": safe_profile,
+			"scene": scene_path,
+			"session_id": _runtime_session_id,
+			"mcp_ready": _runtime_server_running,
+		}
 	if scene_path != "":
-		ProjectSettings.set_setting("application/run/main_scene", scene_path)
-	get_editor_interface().play_main_scene()
-	return {"started": true, "mcp": false}
+		get_editor_interface().play_custom_scene(scene_path)
+	else:
+		get_editor_interface().play_main_scene()
+	return {"started": true, "mcp": false, "scene": scene_path}
+
+
+func _stop_project() -> Dictionary:
+	var result := _stop_runtime_server_internal()
+	if get_editor_interface().is_playing_scene():
+		get_editor_interface().stop_playing_scene()
+		result["editor_scene_stopped"] = true
+		result["stopped"] = true
+	elif not bool(result.get("stopped", false)):
+		result["reason"] = "no in-process runtime MCP or editor play session"
+	return result
+
+
+func _project_status() -> Dictionary:
+	return {
+		"in_process": true,
+		"runtime_server_running": _runtime_server_running,
+		"runtime_mcp_ready": _runtime_server_running and _runtime_server_instance != null and bool(_runtime_server_instance.call("is_running")),
+		"port": RUNTIME_PORT,
+		"profile": _runtime_profile,
+		"session_id": _runtime_session_id,
+		"editor_playing": get_editor_interface().is_playing_scene(),
+		"playing_scene": get_editor_interface().get_playing_scene(),
+	}
+
+
+func _start_runtime_server_internal(profile: String = "", port: int = RUNTIME_PORT) -> bool:
+	var safe_profile := profile.strip_edges().to_lower() if profile != "" else ""
+	if safe_profile == "":
+		safe_profile = _runtime_profile
+	if safe_profile == "":
+		# Im Editor ist McpRuntime inaktiv; das Play-Goal kommt aus dem Dock.
+		safe_profile = _read_dock_profile()
+	if safe_profile == "" or safe_profile not in ["player", "qa", "dev"]:
+		safe_profile = "player"
+	if _runtime_server_instance != null and is_instance_valid(_runtime_server_instance):
+		if _runtime_server_running and _runtime_profile == safe_profile and int(_runtime_server_instance.call("get_port")) == port:
+			return true
+		_stop_runtime_server_internal()
+	var script: Resource = load(MCP_SERVER_SCRIPT)
+	if script == null:
+		_push_error("MCP server script not found: " + MCP_SERVER_SCRIPT)
+		return false
+	_runtime_server_instance = script.new()
+	add_child(_runtime_server_instance)
+	_runtime_server_instance.log_message.connect(_on_runtime_server_log)
+	# Das Dock-Schreib-Gate (AllowWrites) gilt auch für den In-Process-
+	# Runtime-Server: Nur so kann der Agent über dieselbe Dock-Verbindung
+	# frei zwischen Edit (runtime_autonomy_write/patch) und Ingame wechseln.
+	var dock_config := _load_config()
+	var allow_writes := bool(dock_config.get("editor_write_enabled", false))
+	var server_config := {
+		"role": "runtime",
+		"profile": safe_profile,
+		"session_id": "runtime_%d" % Time.get_ticks_msec(),
+		"mcp_virtual_mouse": true,
+		"mcp_block_physical_mouse": true,
+		"mcp_virtual_mouse_cursor": true,
+		"vision_worker_enabled": false,
+		"editor_write_enabled": allow_writes,
+		"autonomy_writes": allow_writes,
+	}
+	var success: bool = _runtime_server_instance.start_server(port, "tcp", server_config)
+	if not success:
+		_runtime_server_instance.queue_free()
+		_runtime_server_instance = null
+		_runtime_server_running = false
+		_push_error("Runtime-MCP (in-process) konnte nicht starten auf Port " + str(port))
+		return false
+	_runtime_server_running = true
+	_runtime_write_enabled = allow_writes
+	_runtime_session_id = str(server_config.get("session_id", ""))
+	_runtime_profile = safe_profile
+	_push_log("Runtime-MCP in-process aktiv auf 127.0.0.1:" + str(port) + " (Profil " + safe_profile + ")")
+	return true
+
+
+func _stop_runtime_server_internal() -> Dictionary:
+	if _runtime_server_instance == null or not is_instance_valid(_runtime_server_instance):
+		_runtime_server_running = false
+		return {"stopped": false, "mode": "runtime_server", "reason": "no in-process runtime server"}
+	var was_running: bool = _runtime_server_running
+	_runtime_server_instance.stop_server()
+	_runtime_server_instance.queue_free()
+	_runtime_server_instance = null
+	_runtime_server_running = false
+	return {"stopped": was_running, "mode": "runtime_server", "was_running": was_running}
+
+
+func _on_runtime_server_log(message: String, is_error: bool = false) -> void:
+	if is_error:
+		_push_error("[Runtime-MCP] " + message)
+	else:
+		_push_log("[Runtime-MCP] " + message)
+
+
+func _boot_runtime_server_retry(attempt: int) -> void:
+	if _runtime_server_running:
+		return
+	if attempt >= 40:
+		_push_error("Runtime-MCP (in-process) konnte nach mehreren Versuchen nicht starten")
+		return
+	# Der load()-Cache des Editors kann mcp_runtime_tools.gd transient als
+	# "nicht instanziierbar" liefern (asynchroner Skriptserver-Compile). Der
+	# Check kompiliert deshalb frisch aus dem Quelltext — cache-unabhängig.
+	# Erst wenn das Skript wirklich parse-bar ist, startet der Server (sonst
+	# fehlen runtime_* Tools still).
+	if attempt > 0:
+		await get_tree().create_timer(0.5, true).timeout
+	if _runtime_tools_ready():
+		if _start_runtime_server_internal():
+			return
+	call_deferred("_boot_runtime_server_retry", attempt + 1)
+
+
+func _runtime_tools_ready() -> bool:
+	# Frisch aus Quelltext kompilieren: unabhängig vom Editor-Skriptserver-Cache
+	# und liefert den echten Compile-Status des Skripts.
+	var script := GDScript.new()
+	script.source_code = FileAccess.get_file_as_string(RUNTIME_TOOLS_PATH)
+	script.resource_path = RUNTIME_TOOLS_PATH
+	return script.reload() == OK and script.can_instantiate()
+
+
+func _read_dock_profile() -> String:
+	var file := ConfigFile.new()
+	if file.load("user://gdscript_mcp_profile.cfg") == OK:
+		var stored := str(file.get_value("profile", "name", "")).strip_edges().to_lower()
+		if stored in ["player", "qa", "dev"]:
+			return stored
+	return ""
+
 
 func _is_project_resource_path(path: String) -> bool:
 	var normalized := path.strip_edges().simplify_path()

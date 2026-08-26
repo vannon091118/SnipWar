@@ -20,13 +20,17 @@ var renderer := ""
 var state := STATE_CLEAN
 
 var _baseline: Dictionary = {}
+var _run_sequence := 0
 var _tx: Dictionary = {}
 var _tx_order: Array = []
 var _tx_seq := 1
 
 
 func begin_run(p_project_id: String, p_session_id: String, p_renderer: String, p_owner_pid: int) -> Dictionary:
-	run_id = "run_%d_%d" % [Time.get_unix_time_from_system(), _tx_seq]
+	_run_sequence += 1
+	# Millisecond wall-clock plus an instance-local sequence keeps runs distinct
+	# when an agent closes and reopens a workspace within the same second.
+	run_id = "run_%d_%d" % [int(Time.get_unix_time_from_system() * 1000.0), _run_sequence]
 	project_id = p_project_id
 	session_id = p_session_id
 	renderer = p_renderer
@@ -39,7 +43,10 @@ func begin_run(p_project_id: String, p_session_id: String, p_renderer: String, p
 	_tx_seq = 1
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(root_path))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(root_path.path_join("preimages")))
-	_scan_baseline()
+	# Capture and retain the actual run-start fingerprint. The previous call
+	# scanned the directory but discarded the result, so every workspace claimed
+	# an empty baseline even when it contained imported files.
+	_baseline = _scan_baseline()
 	_write_manifest()
 	return status()
 
