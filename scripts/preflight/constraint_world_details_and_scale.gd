@@ -51,8 +51,10 @@ func run(ctx: PreflightContext) -> bool:
 	var original_detail_seed: int = details_node.detail_seed
 	detail_planet.detail_profile = preload("res://resources/config/planet_details/toxic.tres")
 	details_node.set_seed(777)
+	await ctx.await_frame()
 	var seeded_types := details_node.get_detail_types()
 	details_node.set_seed(777)
+	await ctx.await_frame()
 	if not ctx.check(seeded_types == details_node.get_detail_types() and seeded_types.size() >= 2 and seeded_types.has(&"satellite") and seeded_types.has(&"asteroid_belt"), "planet details are not seed-stable"):
 		return false
 	var orbit: PlanetDetailOrbit = null

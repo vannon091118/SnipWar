@@ -131,6 +131,10 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	session["limits"] = limits.duplicate()
 
 	# Prompt bauen + Session + Datei schreiben
+	# Narrative Runtime is downstream-only. Context is intentionally not read
+	# during prepare: a missing/stale Python archive must never block or alter
+	# deterministic Composite/Narrator selection. Post-push tooling may export
+	# narrative_runtime/context separately.
 	var ctx: Dictionary = _session_builder.build_narrative_context(session, narrator, analyze)
 	session["prompt"] = _voice.build_prompts(ctx)
 	_session_store.save(session)

@@ -3824,6 +3824,53 @@
 			"seq": 48,
 			"subject": "Godot-Katalogressourcen serialisieren und… [Analyse: Thinker] — nach Squizzle",
 			"summary": "Es war unvermeidlich, weil selbst Kataloge irgendwann ihre Form verlieren und Godot sie dann neu sortiert. Squizzle hat die Spuren gepr�ft; �brig blieb keine neue Spielregel, sondern eine konsisten..."
+		},
+		{
+			"a": 1,
+			"arc": "a21",
+			"c": 49,
+			"composite": "c49j12n9a1p28",
+			"data_changes": [
+				{
+					"deletions": 5.0,
+					"file": "AGENTS.md",
+					"insertions": 19.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 30.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 222.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "narrative_chain.json",
+					"insertions": 144.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 33.0
+				}
+			],
+			"date": "2026-08-27 01:00:00",
+			"hash": "addf422e17b608ce57ed4546cb24b27ef2aca4bf",
+			"j": 12,
+			"model_id": "claude-sonnet-4",
+			"mood": "erschöpft",
+			"n": 9,
+			"narrator": "Spark",
+			"p": 28,
+			"p_id": 49,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Thinker",
+			"seq": 49,
+			"subject": "Spark entdeckt: Dokumentations- und DOKI-Artefakte mit dem… — nach Thinker",
+			"summary": "Warum war dieser letzte Archivschritt unvermeidlich? Weil eine Geschichte, deren technische Spuren nicht mit dem Arbeitsstand übereinstimmen, nur ein schlecht geführtes Protokoll ist. AGENTS.md häl..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

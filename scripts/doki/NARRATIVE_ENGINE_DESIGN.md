@@ -55,7 +55,7 @@ Entry (real): a, arc, c, composite, data_changes[], date, hash, j, model_id, moo
               — `impulse_category` und `parent_hashes` sind im aktuellen Bestand nicht vorhanden
 data_changes[] (real): [{file, insertions, deletions}]   ← Dateien liegen IN der Chain
 repairs[] (real): [{at_hash, note}]  — 2× Re-Anchoring nach rebase/amend/force-push bereits vorhanden
-Sequenzen: kontiguierlich 1..44 (Stand: 44 Einträge nach dem genehmigten Sprint-0-Doku-Commit)
+Sequenzen: kontiguierlich 1..49 (Stand: nach den drei logisch getrennten Folge-Commits)
 ```
 
 ### 3.2 `change_index.json`
@@ -128,7 +128,7 @@ Kanonische Serialisierung (bindend): `json.dumps(obj, sort_keys=True, separators
 
 ### 4.4 Backfill
 
-Backfill = Erzeugung aller Observations über die **komplette** bestehende Chain (aktuell .seq 1..44, allgemein .seq 1..N) mit identischen Regeln wie inkrementell. Gleiche Chain-Eingabe ⇒ identischer `observation_output_hash` (Abnahme Sprint 1).
+Backfill = Erzeugung aller Observations über die **komplette** bestehende Chain (aktuell .seq 1..49, allgemein .seq 1..N) mit identischen Regeln wie inkrementell. Gleiche Chain-Eingabe ⇒ identischer `observation_output_hash` (Abnahme Sprint 1).
 
 ---
 
@@ -202,7 +202,7 @@ concept_touches(seq INTEGER NOT NULL, entity_id TEXT NOT NULL, event_id TEXT NOT
 ```
 
 ### 6.3 Tabellen später (nur per Migration, nie jetzt anlegen)
-`relationship_events, beliefs, belief_evidence, threads, thread_events, character_state_history, narrative_snapshots, social_candidates, queue`
+`relationship_events, relationship_state_history, beliefs, belief_evidence, memory, threads, thread_events, perspectives, conflicts, character_state_history, narrative_snapshots, social_candidates, queue`
 
 ### 6.4 Transaktionsvertrag
 ```text
@@ -221,7 +221,7 @@ Exit-Codes: 0 ok · 2 HISTORY CHANGED (Rebuild erforderlich) · 3 Chain ungülti
 
 ---
 
-## 7. Beziehungsmodell RELATIONSHIP[A][B] (Vertrag für Sprint 3, nicht in MVP A implementiert)
+## 7. Beziehungsmodell RELATIONSHIP[A][B] (Sprint 3 implementiert)
 
 - **Gerichtet, ausnahmslos:** `RELATIONSHIP[A][B] ≠ RELATIONSHIP[B][A]`, keine automatische Spiegelung. 14 × 13 = **182 gerichtete Beziehungen** × 8 Achsen = **1.456 relationale State-Werte**.
 - **Achsen mit gerichteter Semantik pro Träger:** `trust` („Wie sehr glaube ich ihm?"), `respect` („Wie hoch schätze ich seine Kompetenz?"), `irritation`, `affinity`, `competence_confidence`, `resentment`, `curiosity`, `defensiveness`.
@@ -262,7 +262,32 @@ Regel: Abgeleitete Werte tragen eine Regelversion; Regeländerung ⇒ Rebuild mi
 
 ---
 
-## 10. Arc-Kompatibilität
+## 10. Thread-Merge-/Split-Vertrag (Sprint 5 implementiert)
+
+Thread-Zuordnung ist nur gültig, wenn sie durch objektive Observation-Evidence belegt ist:
+
+- gemeinsamer Pfad: 4 Punkte je Pfad
+- gemeinsame Entität: 3 Punkte je Entität
+- Zuordnung nur ab `MERGE_SCORE = 7`
+- Teilnehmer- oder Narrator-Überschneidung allein erzeugt niemals einen Thread-Link oder eine Reaktivierung
+- ein neuer, nicht ausreichend belegter Anker erzeugt einen separaten Thread (Split)
+- mehrere ausreichende Kandidaten werden als `linked_threads` mit Evidence-Refs verbunden (Merge)
+- Lifecycle: `OPEN`, `DORMANT`, `RESOLVED`, `REACTIVATED`
+- jede Zuordnung und jeder Zustand trägt `observation_seq`/`evidence_refs` und `threads/v3`
+
+Synthetic fixtures müssen beide Fälle prüfen: gemeinsamer Pfad plus Entität führt zu belegtem Merge; nur gemeinsame Beteiligte führt zu getrennten Threads.
+
+## 11. Gegenbeweis- und Conflict-Vertrag (implementiert)
+
+Ein Gegenbeweis darf nur als expliziter, strukturierter Projection-Fakt vorliegen:
+
+```json
+{"counter_evidence":{"subject":"change_process","evidence_type":"contradicts"}}
+```
+
+Die Runtime erzeugt daraus einen `contradicts`-Belief-Übergang mit `evidence_seq`. Freier Text, Schuldzuweisung oder Emotion wird nicht als Gegenbeweis interpretiert. Confidence wird deterministisch begrenzt und sinkt durch den Gegenbeweis; Perspectives und Conflicts dürfen ausschließlich diese Evidence-Referenzen verwenden.
+
+## 12. Arc-Kompatibilität
 
 - `scripts/doki/data/arcs.json` (18 Arcs) bleibt **Legacy-/Vergleichsquelle** — Referenzierbarkeit aller 18 Arcs ist Abnahmekriterium der Thread-Migration (Sprint 5).
 - `arc_engine.gd` bleibt unangetastet, bis Thread-Backfill validiert ist. Kein blindes Ersetzen.
@@ -271,15 +296,15 @@ Regel: Abgeleitete Werte tragen eine Regelversion; Regeländerung ⇒ Rebuild mi
 
 ---
 
-## 11. DOKI-Bridge-Vertrag (Sprint 7, hier nur Vertrag)
+## 11. DOKI-Bridge-Vertrag (Sprint 7, read-only Export implementiert)
 
 Aktueller DOKI-Fluss bleibt exakt: `prepare` (Hash/Narrator/Mood/Prompt) → `finish` (Body-Verifikation, 9 Checks) → `finalize` (Chain-Append, ChangeIndex, Artefakte).
 
-**Bridge liefert zusätzlich** `narrative_context.json` mit: `facts`, `current_character`, `current_state`, `relevant_relationships`, `beliefs`, `memory_refs`, `threads`, `conflicts`, `allowed_interpretations`.
+**Bridge liefert zusätzlich** per `python -m narrative_runtime context` ein read-only JSON mit: `schema`, `chain_seq`, `chain_hash`, `observation_output_hash`, `facts`, `current_character`, `current_state`, `relevant_relationships`, `beliefs`, `memory_refs`, `threads`, `conflicts`, `allowed_interpretations`. Der Export wird nur bei exakter SQLite-Verifikation gegen Chain und Change Index erzeugt.
 
 **Regeln:**
 - Der Context berechnet den Composite **nie** neu und wählt den Narrator **nie** um.
-- Fallback: Context fehlt oder ist veraltet → DOKI funktioniert mit bestehendem Verhalten weiter (frische Klones/fehlende DB = definierter Fallback).
+- Fallback: Context fehlt, ist leer oder veraltet → DOKI funktioniert mit bestehendem Verhalten weiter (frische Klones/fehlende DB = definierter Fallback). Die CLI meldet dies als `available: false`; kein DOKI-Flow wird dadurch blockiert.
 - Context-Fehler blockiert weder `prepare` noch `finish` noch den Commit.
 
 ---
@@ -338,10 +363,10 @@ G7  Rebuild ≠ Incremental-Result (Zustandsdifferenz)
 ## 15. Umsetzungsstand & Fahrplan
 
 **Nach MVP A (dieser Schnitt) existiert:** `narrative_runtime/` (stdlib-only, Python ≥ 3.11) mit
-`observe.py` (§4), `store.py` (§5–6), CLI (§6.5), Testsuite (Idempotenz, Anker/Amend, Rebuild-Determinismus, Atomicity, Purity, Gap, Incremental==Rebuild, Smoke gegen Kopie der echten Chain). Die reale Chain umfasst beim Abnahmelauf 44 Einträge.
+`observe.py` (§4), `store.py` (§5–6), CLI (§6.5), Testsuite (Idempotenz, Anker/Amend, Rebuild-Determinismus, Atomicity, Purity, Gap, Incremental==Rebuild, Smoke gegen Kopie der echten Chain). Die reale Chain umfasst beim Abnahmelauf 49 Einträge.
 
-**Noch nicht implementiert (nur vertraglich):** Relationship-Deltas (§7), Beliefs/Evidence/Memory (Sprint 4), Threads (Sprint 5), Perspectives/Conflicts (Sprint 6), Bridge (§11, Sprint 7), Candidates/Slice Gate/Queue (Sprint 8–9), X (Sprint 10), Analytics (Sprint 11), Community (Sprint 12), Gate-Implementierung (§13, vor Sprint 7).
+**Implementiert:** Relationship-Deltas (§7), begrenzter Character State, konservative Belief-/Memory-Projektionen sowie Threads, Perspectives und Conflicts (Sprint 3–6-Kern). **Noch nicht implementiert:** Bridge (§11, Sprint 7), Candidates/Slice Gate/Queue (Sprint 8–9), X (Sprint 10), Analytics (Sprint 11), Community (Sprint 12), Gate-Implementierung (§13, vor Sprint 7).
 
-**Fahrplan (bindende Reihenfolge):** Observation contract ✅ → SQLite archive ✅ → Backfill ✅ → Rebuild/Idempotency-Tests ✅ → Relationship + State-Deltas → Threads → Beliefs/Perspectives/Conflicts → Gate-Implementierung → DOKI context bridge → Social candidates → X adapter → Analytics → Community interactions.
+**Fahrplan (bindende Reihenfolge):** Observation contract ✅ → SQLite archive ✅ → Backfill ✅ → Rebuild/Idempotency-Tests ✅ → Relationship + State-Deltas ✅ → Beliefs + Memory ✅ → Threads ✅ → Perspectives/Conflicts ✅ → Gate-Implementierung → DOKI context bridge → Social candidates → X adapter → Analytics → Community interactions.
 
 **Der wichtigste erste Erfolg (Abnahme von MVP A):** die bestehende Chain lässt sich in die neue Narrative Runtime importieren, der Zustand lässt sich löschen und identisch wiederherstellen, und DOKI bleibt technisch exakt so zuverlässig wie vorher.

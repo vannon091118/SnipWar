@@ -17,6 +17,8 @@ func run(ctx: PreflightContext) -> bool:
 	var service: Node = ctx.root().get_node_or_null("SaveGameService")
 	if not ctx.check(service != null, "SaveGameService autoload is missing"):
 		return false
+	# Test slots are disposable; remove stale fixtures before and after the test.
+	# Never touch slot 0, which is the real player save.
 	service.delete_save(1)
 	service.delete_save(2)
 	if not ctx.check(not service.has_save(1), "slot 1 should start empty"):
@@ -62,7 +64,9 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 
 	# Deletion clears the slots.
-	if not ctx.check(service.delete_save(1) and service.delete_save(2), "delete_save failed"):
+	var slot_one_deleted: bool = service.delete_save(1)
+	var slot_two_deleted: bool = service.delete_save(2)
+	if not ctx.check(slot_one_deleted and slot_two_deleted, "delete_save failed"):
 		return false
 	if not ctx.check(not service.has_save(1) and not service.has_save(2), "slots were not cleared"):
 		return false

@@ -36,6 +36,8 @@ func regenerate() -> void:
 			continue
 		remove_child(child)
 		child.queue_free()
+	# Regeneration is deferred; wait for the old orbit nodes to leave the tree
+	# before callers inspect the newly selected details.
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = detail_seed

@@ -110,9 +110,20 @@ func stale_class_references() -> PackedStringArray:
 	for concept_value in _concepts.values():
 		var entry: ConceptEntry = concept_value as ConceptEntry
 		for class_name_value in entry.classes:
-			if not _class_to_file.has(class_name_value):
-				result.append("%s.%s" % [entry.concept, class_name_value])
+			if _class_to_file.has(class_name_value):
+				continue
+			# MCP classes live under addons, not scripts. They are still real
+			# project classes and must be resolved against the addon tree before
+			# being reported as stale catalog references.
+			if _class_exists_in_addons(class_name_value):
+				continue
+			result.append("%s.%s" % [entry.concept, class_name_value])
 	return result
+
+func _class_exists_in_addons(class_name_value: String) -> bool:
+	var found: Dictionary = {}
+	_collect_class_names("res://addons", found)
+	return found.has(class_name_value)
 
 func summary() -> String:
 	return "%d concepts across %d domains, %d class mappings, %d synonyms" % [_concepts.size(), domains().size(), _class_to_concept.size(), _synonyms.size()]
@@ -132,7 +143,7 @@ func get_concepts_with_free_slots() -> Array[Dictionary]:
 		var entry: ConceptEntry = concept_value as ConceptEntry
 		var mapped: int = 0
 		for cls in entry.classes:
-			if _class_to_file.has(cls):
+			if _class_to_file.has(cls) or _class_exists_in_addons(cls):
 				mapped += 1
 		if mapped < entry.classes.size():
 			result.append({
@@ -240,7 +251,7 @@ func _build_concepts() -> void:
 	_add_concept("technology_research", "tech", ["TechDomain", "TechnologyCatalog", "TechnologyDefinition", "TechShipBuilderView", "TechResearchShipView", "ParchmentTechTreeView", "WorkshopView", "PlanetDossierView", "UIStatusUtils"], ["has_technology", "research_technology", "can_research_technology", "advance_research"], "Technology research, prerequisites and tech UI", ["technology", "technologie", "tech", "research", "forschung", "prerequisite", "voraussetzung", "trait"])
 	_add_concept("ui_systems", "ui", ["PlanetPanel", "VaultBar", "MainMenu", "PauseMenu", "MessageFeed", "ModalCoordinator", "PaperDossier", "UIThemeConfig", "FloatingText", "IngamePlayerControls", "ModuleHpBar", "SelectionActionTooltip", "UIBaseUtils", "UIStatusUtils", "CaptureDecisionOverlay", "EconomyWindow", "FleetOverview", "ControlField", "LayoutCoordinator", "InputHintOverlay"], ["setup", "show_panel", "hide_panel", "refresh"], "Menus, panels, overlays, messages and theming", ["menu", "panel", "button", "overlay", "tooltip", "toast", "dossier", "pause", "theme", "status"])
 	_add_concept("scene_flow", "scenes", ["SceneDirector", "RunSession", "RunSaveData", "ChunkSaveData"], ["goto_scene", "snapshot_run", "restore_run", "request_new_run", "reconnect_world"], "Scene transitions, sessions and save/load", ["scene", "szene", "director", "transition", "wechsel", "save", "load", "speichern", "laden", "snapshot", "session"])
-	_add_concept("testing_quality", "preflight", ["PreflightContext", "PreflightFixture", "MechanicRegistry", "ScenarioLoader", "ScenarioSnapshot", "SearchCore", "PreflightConstraintDeadCode", "PreflightConstraintCameraAndInput", "PreflightConstraintChunkExpansion", "PreflightConstraintColonyMilestone", "PreflightConstraintConceptIndex", "PreflightConstraintConquestGridCombat", "PreflightConstraintContextHandover", "PreflightConstraintCpuDispatch", "PreflightConstraintEconomyProduction", "PreflightConstraintEffectsAndTraits", "PreflightConstraintEventLog", "PreflightConstraintFlightAndDispatch", "PreflightConstraintGameStateCompatibility", "PreflightConstraintGlobalSearch", "PreflightConstraintGridSystem", "PreflightConstraintIngamePlayerAndTransitions", "PreflightConstraintLayers2And3", "PreflightConstraintLocalResources", "PreflightConstraintMainMenuAndFlow", "PreflightConstraintMechanicCoverage", "PreflightConstraintMissionSemantics", "PreflightConstraintModuleDamageModel", "PreflightConstraintNavigationGrowth", "PreflightConstraintPaperStyle", "PreflightConstraintPauseAndContext", "PreflightConstraintResearchShip", "PreflightConstraintResourcesAndSeed", "PreflightConstraintSaveGameRoundtrip", "PreflightConstraintSaveGameSlots", "PreflightConstraintSceneBoot", "PreflightConstraintSectorClassification", "PreflightConstraintSelectionAndContext", "PreflightConstraintShipCatalogAndAssembly", "PreflightConstraintShipTransitAndArrival", "PreflightConstraintUpgradeCatalog", "PreflightConstraintWorldDetailsAndScale", "PreflightConstraintWorldGeneratorScaling", "PreflightConstraintWorldPlanetsAndDispatch", "PreflightConstraintClusterGeneration"], ["constraint_name", "run", "boot_default", "check"], "Preflight constraints, fixtures and scenario coverage", ["preflight", "constraint", "test", "fixture", "scenario", "mechanic", "coverage"])
+	_add_concept("testing_quality", "preflight", ["PreflightConstraintLayerIndependence", "PreflightConstraintMcpCaptureContract", "PreflightV2Context", "TutorialDirector", "PreflightContext", "PreflightFixture", "MechanicRegistry", "ScenarioLoader", "ScenarioSnapshot", "SearchCore", "PreflightConstraintDeadCode", "PreflightConstraintCameraAndInput", "PreflightConstraintChunkExpansion", "PreflightConstraintColonyMilestone", "PreflightConstraintConceptIndex", "PreflightConstraintConquestGridCombat", "PreflightConstraintContextHandover", "PreflightConstraintCpuDispatch", "PreflightConstraintEconomyProduction", "PreflightConstraintEffectsAndTraits", "PreflightConstraintEventLog", "PreflightConstraintFlightAndDispatch", "PreflightConstraintGameStateCompatibility", "PreflightConstraintGlobalSearch", "PreflightConstraintGridSystem", "PreflightConstraintIngamePlayerAndTransitions", "PreflightConstraintLayers2And3", "PreflightConstraintLocalResources", "PreflightConstraintMainMenuAndFlow", "PreflightConstraintMechanicCoverage", "PreflightConstraintMissionSemantics", "PreflightConstraintModuleDamageModel", "PreflightConstraintNavigationGrowth", "PreflightConstraintPaperStyle", "PreflightConstraintPauseAndContext", "PreflightConstraintResearchShip", "PreflightConstraintResourcesAndSeed", "PreflightConstraintSaveGameRoundtrip", "PreflightConstraintSaveGameSlots", "PreflightConstraintSceneBoot", "PreflightConstraintSectorClassification", "PreflightConstraintSelectionAndContext", "PreflightConstraintShipCatalogAndAssembly", "PreflightConstraintShipTransitAndArrival", "PreflightConstraintUpgradeCatalog", "PreflightConstraintWorldDetailsAndScale", "PreflightConstraintWorldGeneratorScaling", "PreflightConstraintWorldPlanetsAndDispatch", "PreflightConstraintClusterGeneration"], ["constraint_name", "run", "boot_default", "check"], "Preflight constraints, fixtures and scenario coverage", ["preflight", "constraint", "test", "fixture", "scenario", "mechanic", "coverage"])
 	_add_concept("cpu_ai", "ai", ["CpuDispatchConfig", "CpuDispatchAI"], ["set_enabled", "is_enabled"], "CPU dispatch AI and automation", ["cpu", "ai", "opponent", "gegner", "autopilot"])
 	_add_concept("missions", "missions", ["TechResearchShipView", "GameStateAccess", "PathUtils"], ["get_research_missions", "queue_research_mission", "get_research_ship_records"], "Scout, collect and research missions", ["mission", "auftrag", "scout", "collect", "research mission"])
 	_add_concept("background_visuals", "background", ["StarfieldBackground", "MapCamera", "MeteorConfig", "BackgroundConfig", "BackgroundNebulaDefinition"], ["_draw_background", "_draw_stars", "_draw_nebulae"], "Starfield, meteors, fog and camera visuals", ["background", "hintergrund", "starfield", "meteor", "fog", "camera", "zoom", "pan"])

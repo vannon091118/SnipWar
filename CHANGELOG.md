@@ -822,3 +822,15 @@ Godot-Katalogressourcen serialisieren und Upgrade-/Schiffskataloge konsistent ha
 - resources/config/upgrades/war_shipyard.tres: Implementiert und integriert (F-173).
 - resources/config/upgrades/weapon_lab.tres: Implementiert und integriert (F-174).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 01:00:00 — p49 · c49j12n9a1p28 · Spark · erschöpft
+
+**Spark entdeckt: Dokumentations- und DOKI-Artefakte mit dem… — nach Thinker**
+
+Dokumentations- und DOKI-Artefakte mit dem finalen lokalen Änderungsstand synchronisieren
+
+- AGENTS.md: Tooling erweitert (F-019).
+- CHANGELOG.md: Tooling erweitert (F-002).
+- change_index.json: Tooling erweitert (F-003).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).

@@ -22,12 +22,10 @@ func run(ctx: PreflightContext) -> bool:
 	if not missing.is_empty():
 		push_warning("ConceptIndex: %d classes not mapped (run concept_search.gd --unmapped): %s" % [missing.size(), ", ".join(missing)])
 
-	# Stale refs: only warning, no longer FAIL
 	var stale: PackedStringArray = index.stale_class_references()
-	if not stale.is_empty():
-		push_warning("ConceptIndex: %d stale class references (classes in index but not on disk): %s" % [stale.size(), ", ".join(stale)])
+	if not ctx.check(stale.is_empty(), "ConceptIndex contains stale class references", {"stale": stale} if not stale.is_empty() else {}):
+		return false
 
-	# Functional validation only
 	for term in ["ship", "fleet", "economy", "resource", "planet", "battle", "tech", "save", "worker", "navigation"]:
 		if not ctx.check(not index.search(term).is_empty(), "ConceptIndex.search('%s') returned no results" % term):
 			return false
@@ -35,16 +33,13 @@ func run(ctx: PreflightContext) -> bool:
 		if not ctx.check(not index.expand(term).is_empty(), "ConceptIndex.expand('%s') returned no results" % term):
 			return false
 
-	# NEW: Test get_unmapped_classes() API
 	var unmapped: Array[String] = index.get_unmapped_classes()
 	if not ctx.check(unmapped.size() == missing.size(), "get_unmapped_classes() count matches discovered-unmapped (%d vs %d)" % [unmapped.size(), missing.size()]):
 		return false
 
-	# NEW: Test get_concepts_with_free_slots() API
 	var free_slots: Array[Dictionary] = index.get_concepts_with_free_slots()
 	if not ctx.check(free_slots.size() >= 0, "get_concepts_with_free_slots() returns valid array"):
 		return false
-	# Verify structure of returned entries
 	for slot in free_slots:
 		if not ctx.check(slot.has("concept"), "Free slot entry has 'concept' field"):
 			return false

@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from .errors import NarrativeRuntimeError
+from .context import ContextUnavailable, build_context
 from .observe import SourceSnapshot
 from .store import Archive
 
@@ -16,7 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m narrative_runtime")
-    parser.add_argument("command", choices=("import", "rebuild", "verify", "status"))
+    parser.add_argument("command", choices=("import", "rebuild", "verify", "status", "derive", "context"))
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--db", type=Path, default=None)
     parser.add_argument("--chain", type=Path, default=None)
@@ -36,12 +37,22 @@ def main(argv: list[str] | None = None) -> int:
         chain_path = (args.chain or root / "narrative_chain.json").resolve()
         index_path = (args.index or root / "change_index.json").resolve()
         snapshot = SourceSnapshot.from_paths(chain_path, index_path)
+        if args.command == "context":
+            try:
+                print(json.dumps(build_context(archive, snapshot), ensure_ascii=False, indent=2, sort_keys=True))
+            except ContextUnavailable as exc:
+                print(json.dumps({"available": False, "reason": str(exc)}, ensure_ascii=False, indent=2, sort_keys=True))
+            return 0
         if args.command == "import":
             result = archive.import_snapshot(snapshot)
             print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
             return 0
         if args.command == "rebuild":
             result = archive.rebuild(snapshot)
+            print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
+            return 0
+        if args.command == "derive":
+            result = archive.derived_status()
             print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
             return 0
         if args.command == "verify":

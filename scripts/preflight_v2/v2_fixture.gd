@@ -32,6 +32,9 @@ func _init(p_tree: SceneTree) -> void:
 ## First boot — full scene instantiation (same as original).
 ## Also captures the initial baseline for future resets.
 func boot_default(ctx: PreflightContext) -> bool:
+	# A reboot must discard every queued-free node before the next world is
+	# instantiated. Otherwise old scene nodes can keep timers/signals alive and
+	# contaminate the following fixture.
 	var result: bool = await base.boot_default(ctx)
 	if result:
 		boot_count += 1
@@ -173,6 +176,10 @@ func _hard_invariant_check() -> PackedStringArray:
 func cleanup() -> void:
 	_initial_snapshot_valid = false
 	await base.cleanup()
+	# queue_free is processed at frame end; drain one additional frame so
+	# physics/rendering RIDs and deferred callbacks cannot survive process exit.
+	if tree != null:
+		await tree.process_frame
 
 
 ## Prepares the ship builder prerequisites (delegates to base).

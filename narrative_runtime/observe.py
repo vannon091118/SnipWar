@@ -44,7 +44,7 @@ OBSERVATION_FIELDS = frozenset(
         "composite_fields", "parent_hashes", "p_id", "arc", "impulse_category", "seeded", "model_id",
         "data_changes", "entities", "files", "impulse_category_recomputed",
         "subject_term_flags", "is_merge", "prior_file_touchers", "file_seq_gaps",
-        "shared_entities", "sequence_facts", "merge_facts", "sideplot_facts", "projection_rules",
+        "shared_entities", "sequence_facts", "merge_facts", "sideplot_facts",        "projection_rules", "counter_evidence",
     }
 )
 
@@ -211,6 +211,7 @@ def build_observations(chain: dict[str, Any], index: dict[str, Any]) -> list[dic
                 "reanchor_marker_count": len(repair_markers),
                 "reanchor_markers": repair_markers,
             },
+            "counter_evidence": entry.get("counter_evidence"),
             "projection_rules": PROJECTION_RULES,
         }
         unknown = set(observation) - OBSERVATION_FIELDS
