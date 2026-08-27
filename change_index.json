@@ -111,7 +111,7 @@
 			"p_id": 50.0
 		},
 		"17df68a364026b9f8b51d90412f0c14b52997d6e": {
-			"c": 52,
+			"c": 52.0,
 			"composite": "c52j40n6a7p27",
 			"entities": [
 				"F-002",
@@ -166,7 +166,7 @@
 				"C-349",
 				"C-350"
 			],
-			"p_id": 52
+			"p_id": 52.0
 		},
 		"193aa9dc36209b96d263cdd3fdb00a5f7fe9a0e3": {
 			"c": 18.0,
@@ -330,6 +330,59 @@
 				"C-001"
 			],
 			"p_id": 17.0
+		},
+		"3a8ac091fc1b6ae5c795231d291a87c974dde55a": {
+			"c": 53,
+			"composite": "c53j53n14a12p18",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-121",
+				"F-065",
+				"C-351",
+				"C-352",
+				"C-353",
+				"C-354",
+				"C-355",
+				"C-356",
+				"C-357",
+				"C-358",
+				"C-359",
+				"C-360",
+				"C-361",
+				"C-362",
+				"C-363",
+				"C-364",
+				"C-365",
+				"C-366",
+				"C-367",
+				"C-368",
+				"C-369",
+				"C-370",
+				"C-371",
+				"C-372",
+				"C-373",
+				"C-374",
+				"C-375",
+				"C-376",
+				"C-377",
+				"C-378",
+				"C-379",
+				"C-380",
+				"C-381",
+				"C-382",
+				"C-383",
+				"C-384",
+				"C-385",
+				"C-386",
+				"C-387",
+				"C-388",
+				"C-389",
+				"C-390"
+			],
+			"p_id": 53
 		},
 		"4483ceb09193b09566ee931b433a874fdc37c967": {
 			"c": 44.0,
@@ -7042,6 +7095,686 @@
 			"last_p": 52.0,
 			"name": "_initialize",
 			"path": "scripts/testing/narrative_runtime_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-351": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						28.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-351",
+			"last_p": 53.0,
+			"name": "worker_transport_started",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-352": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						29.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-352",
+			"last_p": 53.0,
+			"name": "worker_transport_phase_changed",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-353": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						577.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-353",
+			"last_p": 53.0,
+			"name": "can_purchase_upgrade_with_domains",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-354": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						607.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-354",
+			"last_p": 53.0,
+			"name": "purchase_upgrade_with_domains",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-355": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						726.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-355",
+			"last_p": 53.0,
+			"name": "can_build_worker_factory_with_domains",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-356": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						749.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-356",
+			"last_p": 53.0,
+			"name": "build_worker_factory_with_domains",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-357": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						773.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-357",
+			"last_p": 53.0,
+			"name": "steal_resources",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-358": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						804.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-358",
+			"last_p": 53.0,
+			"name": "register_gathering_workers_with_domains",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-359": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						1093.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-359",
+			"last_p": 53.0,
+			"name": "can_place_building",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-360": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						1107.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-360",
+			"last_p": 53.0,
+			"name": "place_building",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-361": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						189.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-361",
+			"last_p": 53.0,
+			"name": "_on_domain_planet_discovered",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-362": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						193.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-362",
+			"last_p": 53.0,
+			"name": "_on_domain_planet_scanned",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-363": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						197.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-363",
+			"last_p": 53.0,
+			"name": "_on_domain_faction_resources_changed",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-364": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						201.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-364",
+			"last_p": 53.0,
+			"name": "_on_domain_credits_changed",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-365": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						205.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-365",
+			"last_p": 53.0,
+			"name": "_on_domain_workers_reserved",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-366": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						209.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-366",
+			"last_p": 53.0,
+			"name": "_on_domain_workers_released",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-367": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						213.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-367",
+			"last_p": 53.0,
+			"name": "_on_domain_planet_upgraded",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-368": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						217.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-368",
+			"last_p": 53.0,
+			"name": "_on_domain_resource_generated",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-369": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						221.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-369",
+			"last_p": 53.0,
+			"name": "_on_domain_resources_collected",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-370": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						225.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-370",
+			"last_p": 53.0,
+			"name": "_on_domain_gathering_started",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-371": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						229.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-371",
+			"last_p": 53.0,
+			"name": "_on_domain_gathering_withdrawn",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-372": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						233.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-372",
+			"last_p": 53.0,
+			"name": "_on_domain_worker_factory_built",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-373": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						237.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-373",
+			"last_p": 53.0,
+			"name": "_on_domain_refinery_converted",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-374": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						241.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-374",
+			"last_p": 53.0,
+			"name": "_on_domain_local_resources_changed",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-375": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						245.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-375",
+			"last_p": 53.0,
+			"name": "_on_domain_resource_transferred",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-376": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						249.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-376",
+			"last_p": 53.0,
+			"name": "_on_domain_building_placed",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-377": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						253.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-377",
+			"last_p": 53.0,
+			"name": "_on_domain_building_removed",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-378": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						257.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-378",
+			"last_p": 53.0,
+			"name": "_on_domain_worker_transport_started",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-379": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						261.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-379",
+			"last_p": 53.0,
+			"name": "_on_domain_worker_transport_phase_changed",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-380": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						265.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-380",
+			"last_p": 53.0,
+			"name": "_on_domain_technology_researched",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-381": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						269.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-381",
+			"last_p": 53.0,
+			"name": "_on_domain_planet_technology_researched",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-382": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						273.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-382",
+			"last_p": 53.0,
+			"name": "_on_domain_research_started",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-383": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						277.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-383",
+			"last_p": 53.0,
+			"name": "_on_domain_ship_part_purchased",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-384": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						281.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-384",
+			"last_p": 53.0,
+			"name": "_on_domain_ship_disassembled",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-385": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						285.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-385",
+			"last_p": 53.0,
+			"name": "_on_domain_ship_launched",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-386": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						289.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-386",
+			"last_p": 53.0,
+			"name": "_on_domain_ship_lost",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-387": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						293.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-387",
+			"last_p": 53.0,
+			"name": "_on_domain_ship_build_started",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-388": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						297.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-388",
+			"last_p": 53.0,
+			"name": "_on_domain_research_ship_task_completed",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-389": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						301.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-389",
+			"last_p": 53.0,
+			"name": "_on_domain_research_ship_idle",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-390": {
+			"first_p": 53.0,
+			"history": [
+				{
+					"lines": [
+						305.0
+					],
+					"p_id": 53.0
+				}
+			],
+			"id": "C-390",
+			"last_p": 53.0,
+			"name": "_on_domain_persistent_ship_changed",
+			"path": "scripts/state/game_state.gd",
 			"status": "modified",
 			"type": "component"
 		},

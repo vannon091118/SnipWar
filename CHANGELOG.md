@@ -911,3 +911,16 @@ GameState für Domänen-Delegation refaktorieren und Narrative-Runtime-Gate inte
 - scripts/state/run_save_data.gd: Implementiert und integriert (F-196).
 - scripts/testing/narrative_runtime_gate.gd: Implementiert und integriert (F-197).
 - scripts/testing/narrative_runtime_gate.gd.uid: Implementiert und integriert (F-198).
+
+## 2026-08-27 05:00:00 — p53 · c53j53n14a12p18 · Sage · triumphierend
+
+**Sage lehrt: Refactor GameState delegate methods into… — nach Devin**
+
+Refactor GameState delegate methods into EconomyDomain overloads
+
+- CHANGELOG.md: Umstrukturiert (F-002).
+- change_index.json: Umstrukturiert (F-003).
+- narrative_chain.json: Umstrukturiert (F-004).
+- scripts/doki/data/arcs.json: Umstrukturiert (F-001).
+- scripts/state/domains/economy_domain.gd: Umstrukturiert (F-121).
+- scripts/state/game_state.gd: Umstrukturiert (F-065).

@@ -320,6 +320,7 @@ ConceptIndex.new().by_domain("ships")
 - **`docs/FINDINGS.md` — ZENTRALE FINDINGS-DATEI (Pflicht, IMMER aktuell halten!)** —
   Jeder QA-Lauf/Fix wird dort nachgetragen (Status ✅ GEFIXT / 🟡 OFFEN / 🔵 BEOBACHTET,
   Beleg, Referenz). Die Datei ist Todo-Referenz der Befunde und wird **mitcommittet**.
+- `ARCHITECTURE.md` — Technische Systemarchitektur, Godot 4.7 Specs, Domain-Manager & Preflight-Suite
 - `DESIGN.md` — Feature-Status, Umsetzungsplan
 - `VISION.md` — Spielkreislauf, Layer-Details
 - `scripts/testing/SCENARIO_LOADER_SPEC.md` — ScenarioLoader API

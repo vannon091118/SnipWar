@@ -10,7 +10,7 @@
 <br/>
 <samp>
 <b>SNIPWAR — RAND DER GALAXIE</b><br/>
-STRATEGISCHE OVERWORLD · UNENDLICHE WELTEN · 38 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
+STRATEGISCHE OVERWORLD · UNENDLICHE WELTEN · PAPERCRAFT 4X · ZERO ORBIT SAFETIES
 </samp>
 <br/><br/>
 </td>
@@ -18,10 +18,9 @@ STRATEGISCHE OVERWORLD · UNENDLICHE WELTEN · 38 PREFLIGHT-CONSTRAINTS · 0 SIC
 </table>
 
 [![Engine: Godot 4.7](https://img.shields.io/badge/Engine-Godot%204.7-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/)
-[![Status: Frontier-Kern](https://img.shields.io/badge/Status-Frontier--Kern%20aktiv-f0b429?style=for-the-badge)](#-lagezentrum--frontbericht)
-[![Preflight](https://img.shields.io/badge/Preflight-38%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
-[![Sprache: GDScript](https://img.shields.io/badge/GDScript-4.7-blue?style=for-the-badge)](#-architektur--vom-katalog-zum-spielstand)
-[![Treibstoff](https://img.shields.io/badge/Fuel-Koffein%20%26%20Größenwahn-6f4e37?style=for-the-badge)](#)
+[![Status: Frontier-Kern](https://img.shields.io/badge/Status-Frontier--Kern%20aktiv-f0b429?style=for-the-badge)](#-das-spiel--vision--features)
+[![Architektur](https://img.shields.io/badge/Dokumentation-ARCHITECTURE.md-2ea44f?style=for-the-badge)](ARCHITECTURE.md)
+[![Treibstoff](https://img.shields.io/badge/Treibstoff-Koffein%20%26%20Größenwahn-6f4e37?style=for-the-badge)](#)
 
 </div>
 
@@ -34,703 +33,164 @@ STRATEGISCHE OVERWORLD · UNENDLICHE WELTEN · 38 PREFLIGHT-CONSTRAINTS · 0 SIC
 ▓                                                          ▓
 ▓   EINGEHENDE TRANSMISSION // KANAL 7-DELTA               ▓
 ▓   HERKUNFT: RAND DER GALAXIE · SEKTOR [GESCHWÄRZT]       ▓
-▓   VERSCHLÜSSELUNG: KEINE  (Zu teuer. Wurde abgelehnt.)   ▓
-▓   EMPFÄNGER: Wer auch immer das Repository gerade klont  ▓
+▓   VERSCHLÜSSELUNG: KEINE (Zu teuer. Wurde abgelehnt.)   ▓
+▓   EMPFÄNGER: Spieler, KI-Agenten & übermüdete Devs      ▓
 ▓                                                          ▓
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ```
 
 *„Die Galaxie ist unendlich. Zwei Fraktionen bilden sich ein, wichtig zu sein.<br/>
-Der Rest hat keine Meinung — noch nicht."*
+Der Rest besteht aus Papier, Koffein und deterministischen Zufallszahlen.“*
 
 </div>
 
 ---
 
-## 📡 TRANSMISSION-LOG // EINTRAG 001
+## 📡 TRANSMISSION-LOG // EINTRAG 001 (Die Vierte Wand)
 
-> **AN:** Oberkommando & wer auch immer gerade die Konsole bewacht
-> **VON:** Einsatzleitung, Frontier-Basis *Ocean*
-> **BETREFF:** Lagebericht Rand der Galaxie. Bitte lesen, ignorieren, später bereuen.
+> **AN:** Oberkommando, den Spieler an der Maus & die KI-Agenten im Hintergrund<br/>
+> **VON:** Einsatzleitung, Frontier-Basis *Ocean*<br/>
+> **BETREFF:** Lagebericht am Rand der Galaxie. Bitte lesen, schmunzeln, Sektor erobern.
 
-Der **Rand der Galaxie** ist kein romantischer Name. Jemand hat die Karte gesehen, die Ressourcenverteilung kalkuliert und beschlossen, dass *„Hoffnungslos"* als Codename zu wenig Budget bewilligt bekommt.
+Willkommen am **Rand der Galaxie**.
 
-Unendlich Welten. Fünf Rohstoffe. Zwei Fraktionen mit ausgeprägter Antipathie — und eine wachsende Zahl neutraler Planeten, die den großen Fehler begangen haben, genau im Transitkorridor zu liegen.
+Wenn du dachtest, Raumfahrt sei voller glänzender Chromschiffe und epischer Orchestermusik, müssen wir dich enttäuschen: Hier am Rand besteht das Universum aus handgezeichneten Planeten, knisterndem Millimeterpapier und einem Logistiknetz, das dir keinen einzigen Fehler verzeiht.
 
-Die strategische Lage ist simpel: **Wer das Waypoint-Netz kontrolliert, bestimmt den Ressourcenstrom. Wer den Strom kontrolliert, baut Schiffe. Wer Schiffe hat, behauptet im Nachhinein, das Ganze sei ein genialer Masterplan gewesen.**
-
-Aktuell sind wir bei Schritt eins: Hoffen, dass die Worker nicht auf halbem Weg umdrehen.
-
-*(Für alle, die sich fragen, ob das hier eine Produktionsankündigung ist: Es ist ein Spiel in Entwicklung. Die Transmission klingt fertig. Der Code ist es fast.)*
-
----
-
-## ⚙️ TERMINAL-INITIALISIERUNG // FÜR DEN TECHNIKER
-
-<img src="assets/ui/banner_terminal.svg" alt="Terminal Initialisierung" width="100%"/>
-
-<br/>
-
-*Frontbasis Ocean an alle eintretenden Operatoren: Bevor ihr euch in die Weltkarte stürzt, braucht ihr das Haupt-Terminal. Das hier ist die Anleitung. Sie ist kurz, weil Zeit knapp ist.*
-
-### Voraussetzungen
-
-- **Godot 4.7** Console-Binary (nicht Editor, nicht Steam-Version)
-- `GODOT_BIN` auf die Binary zeigen lassen **oder** `godot` / `godot4` auf PATH
-
-```bash
-# Umgebungsvariable setzen (Pfad an euer System anpassen)
-export GODOT_BIN=/pfad/zu/godot4_console
-
-# Oder direkt auf PATH:
-export PATH="$PATH:/pfad/zu/godot-binary-verzeichnis"
-```
-
-### Repository klonen & verifizieren
-
-```bash
-git clone <repo-url>
-cd snip-war
-
-# Smoke-Test: Bootet die Hauptszene, wartet 2 Sekunden, beendet sich
-$GODOT_BIN --headless --path . --quit-after 2
-
-# Vollständige Preflight-Suite (36 Constraints)
-$GODOT_BIN --headless --path . --script res://scripts/preflight.gd
-```
-
-> [!NOTE]
-> Der Headless-Lauf spuckt am Ende `ERROR: ...RID allocations...leaked` und `ObjectDB instances leaked`. Das ist Teardown-Rauschen des Dummy-Renderers, kein Fehler. Was zählt: die Zeile `RESULT: PASSED`.
-
-Die Hauptszene ist `scenes/main_menu/main_menu.tscn` (Neues Spiel / Weiter / Beenden). Von dort bootet der `SceneDirectorService` die Strategie-Overworld (`scenes/world/world.tscn`), Layer-2-Flottenreplays (`scenes/battle/battle_scene.tscn`) und Layer-3-Eroberungsreplays (`scenes/conquest/conquest_scene.tscn`) — drei bootbare Szenen über einem gemeinsamen `GameState`-SSO.
+Die strategische Lage ist denkbar simpel:
+- **Fraktion Alpha (Du):** Operiert von Basis *Ocean*. Besitzt Hoffnung, einen kostenlosen Aufklärungs-Scout und akuten Ressourcenmangel.
+- **Fraktion Beta (Die KI):** Operiert von Basis *Paper*. Rechnet pausenlos im Hintergrund, schläft nie und wartet nur darauf, dass du deine Garnisonen unbewacht lässt.
+- **Das Niemandsland:** Unendlich viele prozedurale Planeten, die den fatalen Fehler begangen haben, genau im Transitkorridor zu liegen.
 
 ---
 
-## 🪐 DIE WELTEN AM RAND DER GALAXIE — Aufgeklärter Kartenausschnitt & Sektorstatus
+## 🎯 DIE VISION — 4X Strategie im Papercraft-Comic-Gewand
+
+SnipWar kombiniert die Tiefe klassischer Weltraum-Strategie mit dem unverwechselbaren Charme eines analogen Brettspiels auf Millimeterpapier:
+
+```mermaid
+graph LR
+	A["🌌 Erkunden<br/><i>(Scouts & Fog of War)</i>"] --> B["⛏️ Ausbeuten<br/><i>(Ressourcen & Vaults)</i>"]
+	B --> C["🏗️ Expandieren<br/><i>(Planeten-Upgrades & Formations-Transits)</i>"]
+	C --> D["⚔️ Auslöschen<br/><i>(Flottensimulation & Bodeneroberung)</i>"]
+	D --> A
+```
+
+### Die 3 Spiel-Ebenen (Nahtlose Layer-Hierarchie)
+1. **Layer 1 — Strategische Overworld:** Meistere die prozedural expandierende Sternenkarte. Schicke Worker-Cluster über Waypoint-Netze, baue Abbau-Stationen und plane Forschungsrouten.
+2. **Layer 2 — Taktische Flottenkämpfe:** Montiere im Hangar Schiffe aus Rümpfen, Antrieben, Schilden und Waffen. Treffen Flotten im Transit aufeinander, entscheidet der **FleetBattleSimulator** über den Ausgang.
+3. **Layer 3 — Planetare Bodeneroberung:** Schicke Truppen oder Mechs auf die Planetenoberfläche. Verteidigungstürme und Boden-Garnisonen kämpfen um die Vorherrschaft.
+
+---
+
+## 🎮 GAMEPLAY & SYSTEM-FUNKTIONEN
 
 <img src="assets/ui/readme_banner_overworld.jpg" alt="Die Welten am Rand der Galaxie" width="100%"/>
 
 <br/>
 
-```mermaid
-graph LR
-	subgraph A[" 🟦  Fraktion Alpha — Basis Ocean "]
-		Ocean["🌊 OCEAN
-        ──────────
-        Homeworld · XL
-        3 Bauplätze · 6 Worker
-		Status: Hält tapfer die Stellung"]
-	end
+### 1. 🪐 Prozedurale Chunk-Welten & Erkundung
+Das Universum generiert sich dynamisch um deine Aufklärung herum. Neutrale Welten wie *Ember*, *Ice*, *Violet* oder *Toxic* liegen im Nebel des Krieges.
+Erst wenn dein kostenloser **Start-Scout** mit Scannern ein System erreicht, werden Bauplätze, Rohstoffvorkommen und Planetenklassen enthüllt.
 
-	subgraph N[" ⬜  Neutrales Niemandsland (illustrativer Startausschnitt) "]
-		Ember["🔥 Ember"]
-		Ice["❄️ Ice"]
-		Violet["💜 Violet"]
-		Desert["🏜️ Desert · L-Klasse"]
-		Toxic["☣️ Toxic
-		(Satellit + Asteroidengürtel)"]
-		Storm["⚡ Storm · L-Klasse"]
-		Volcanic["🌋 Volcanic"]
-		Golden["✨ Golden"]
-	end
+### 2. ⚡ Das Fünf-Ressourcen-System
+Deine Fraktion verwaltet fünf essenzielle Güter in ihren Tresoren:
 
-	subgraph B[" 🟥  Fraktion Beta — Basis Paper "]
-		Paper["📄 PAPER
-        ──────────
-        Homeworld · XL
-        3 Bauplätze · 6 Worker
-		Status: Plant aktiv Ärger"]
-	end
-
-	Ocean -.-&gt;|"Scouts · Worker · Hoffnung"| Ember
-	Ocean -.-&gt; Ice
-	Ember -.-&gt; Violet
-	Ice -.-&gt; Desert
-	Violet -.-&gt; Toxic
-	Desert -.-&gt; Storm
-	Toxic -.-&gt; Volcanic
-	Storm -.-&gt; Golden
-	Volcanic -.-&gt; Paper
-	Golden -.-&gt; Paper
-
-	style Ocean fill:#1c4a7a,color:#9ecfff,stroke:#478cbf,stroke-width:2px
-	style Paper fill:#7a1c2e,color:#ffb3c1,stroke:#ef476f,stroke-width:2px
-	style Toxic fill:#2d4a1c,color:#b3ff9e,stroke:#4caf50,stroke-width:2px
-```
-
-> [!NOTE]
-> Die Grafik zeigt den anfänglichen aufgeklärten Ausschnitt, nicht die Grenze der Welt. Beide Shipped-Szenarien nutzen eine prozedurale Chunk-Welt (`chunk_size > 0`); weitere Planeten werden bei Erkundung und wachsendem FoV erzeugt.
->
-> Routing läuft über **Moon- und Comet-Waypoints** (Layout-Nachbarschaft) plus einen prozentualen K-Nearest-Langstreckengraph (`NavigationField`). AStar2D wählt den kürzesten Pfad. `NavigationField` ist die einzige Quelle der Wahrheit — `get_neighbors_for_planet()` versorgt Preview, Worker-Transit, Scout und ShipBase.
-
-<details>
-<summary>📐 <b>Planetenprofile — Seed-deterministische Klassifizierungsdaten</b></summary>
-
-| Klasse | Profil | Spawn-Intervall | Spawn-Menge | Basis-Garnison | Bauplätze | Ressourcenbasis |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **XL** | `extra_large` | 5.0 s | 3 Einheiten | 6 Worker | 3 Slots | 3× |
-| **L** | `large` | 7.0 s | 2 Einheiten | 4 Worker | 2 Slots | 2× |
-| **Variable** | `variable` | 10.0 s | 1 Einheit | 2 Worker | 1 Slot | 1× |
-
-Worker-Spawn-Timer existieren auf jedem Planeten, bleiben aber **inaktiv** bis `worker_automation` erforscht und eine Worker-Fabrik errichtet wurde. Kein Autostart.
-
-Im Default-Sektor gibt es **eine** L-Klasse-Welt (`large_count = 1`). L-Klasse-Welten haben doppelten Ressourcenertrag und doppelte Attraktivität als Konfliktziel.
-
-</details>
-
----
-
-## ⚡ RESSOURCENLAGEBERICHT — Die fünf Säulen des Faction-Vaults
-
-<img src="assets/ui/readme_banner_resources.jpg" alt="Ressourcen am Rand der Galaxie" width="100%"/>
-
-<br/>
-
-<div align="center">
-
-| | Rohstoff | Strategischer Nutzen |
+| Symbol | Ressource | Strategische Funktion |
 |:---:|:---|:---|
-| ⚡ | **Energy** | Werftbau, Scanner-Drohnen, Systembetrieb |
-| 🌿 | **Biomass** | Worker-Automation & Kolonisation |
-| 💠 | **Exotisch (`rare`)** | Planetares Vermessungswesen |
-| 🧪 | **Volatil (`volatile`)** | Waffensysteme & spätere Mech-Doktrin |
-| 🔩 | **Material** | Rümpfe, Extraktoren, Werften |
-
-</div>
+| ⚡ | **Energy** | Treibstoff für Scanned-Dronen, Werftbetrieb & Abwehrschilde |
+| 🌿 | **Biomass** | Kolonisation & Fabrik-Automation |
+| 💠 | **Exotisch (`rare`)** | Vermessungs-Technologie & fortgeschrittener Schiffs-Hangar |
+| 🧪 | **Volatil (`volatile`)** | Hochexplosiver Munitionsvorrat & Waffen-Doktrinen |
+| 🔩 | **Material** | Schiffsrümpfe, Planeten-Extrakte & Schutzbunker |
 
 > [!IMPORTANT]
-> **Ressourcen sind unsichtbare `GameResource`-Datenobjekte aus dem `ResourcePool`.**
-> `Bootstrap` dealt sie nach dem finalen Layout-Seed seed-deterministisch über den aktiven Katalog.
-> Homeworlds erhalten garantiert *unterschiedliche* Ressourcen; der Rest wird round-robin ausgeglichen (Häufigkeiten weichen um höchstens eins ab).
-> Das Faction-Vault hat strikten **Overdraft-Schutz**: `spend_faction_resource()` blockiert unbezahlbare Vorhaben vollständig — keine Teilzahlungen, keine Schulden.
-
-Die Reihenfolge des `resource_ids`-Shuffles ist Teil des Seed-Vertrags. Wer `deal_resources()` anfasst, bricht bestehende Reproduzierbarkeit.
+> **Strikter Overdraft-Schutz:** In SnipWar gibt es keine Schulden. Wer keine 20 Material im Tresor hat, baut kein Schiff. Punkt.
 
 ---
 
-## 🏗️ INFRASTRUKTUR-DOKTRIN — 17 Planeten-Upgrades in 4 Zweigen
+### 3. 📄 Das Paper-Dossier — Vollbild-Papier-Interface
 
-<img src="assets/ui/readme_banner_upgrades.jpg" alt="Orbitale Planeten-Upgrades" width="100%"/>
+<img src="assets/ui/readme_banner_upgrades.jpg" alt="Paper Dossier UI" width="100%"/>
 
 <br/>
 
-```mermaid
-graph TD
-	subgraph " 💰 Economy "
-		EXT["⛏️ Extractor"] --> REF["🏭 Refinery<br/><i>(Material→Rare-Konvertierung)</i>"]
-		EXT --> TP["🤝 Trade Post<br/><i>(Transfer-Speed-Bonus)</i>"]
-		REF --> AM["🤖 Automated Mine<br/><i>(Tech-gated Alternative)</i>"]
-		TP --> TH["🏪 Trade Hub<br/><i>(Tech-gated Alternative)</i>"]
-	end
+Vergiss kalte Tabellen-Menüs! In SnipWar klappt auf Knopfdruck das **Paper-Dossier** auf — ein handgezeichnetes Papier-Blatt im Dreh- & Scalemodus:
 
-	subgraph " ⚔️ Military "
-		SY["🔧 Shipyard"] --> WSY["⚔️ War Shipyard<br/><i>(+1 Cluster-Tier visuell)</i>"]
-		SY --> CSY["🚀 Colony Shipyard"]
-		SY --> DG["🛡️ Defense Grid<br/><i>(Defense-Rating-Boost)</i>"]
-	end
-
-	subgraph " 🧬 Tech "
-		TC["🔬 Tech Center"] --> WL["💥 Weapon Lab<br/><i>(+1 Cluster-Tier visuell)</i>"]
-		TC --> AL["🛡️ Armor Lab"]
-	end
-
-	subgraph " 🌐 Infrastructure "
-		OS["🛰️ Orbital Station"] --> CH["🏙️ Colony Hub"]
-		OS --> TN["🌐 Trade Network"]
-		OS --> CA["📡 Comms Array"]
-		OS --> DSS["🔭 Deep Space Scanner"]
-	end
-
-	style REF stroke:#f0b429,stroke-width:2px
-	style TP stroke:#f0b429,stroke-width:2px
-	style AM stroke:#f0b429,stroke-width:2px
-	style TH stroke:#f0b429,stroke-width:2px
-	style WSY stroke:#ef476f,stroke-width:2px
-	style DG stroke:#ef476f,stroke-width:2px
-	style WL stroke:#9b5de5,stroke-width:2px
-	style AL stroke:#9b5de5,stroke-width:2px
-```
-
-**Exklusivitätsregeln:** `refinery` ⮂ `trade_post` · `automated_mine` ⮂ `trade_hub` · `war_shipyard` ⮂ `colony_shipyard` · `weapon_lab` ⮂ `armor_lab`
-
-> [!NOTE]
-> `cluster_tier_bonus` ist rein visuell. Es verschiebt die sichtbare K/M/L-Clusterstufe nach oben, ändert aber nichts an logischer Kapazität, Packing-Logik, Fluglast oder Ankunftszählern.
-> `refinery` konvertiert 2 Material + 1 Energy → 1 Rare (`convert_refinery_resources()`). Refund bei Energy-Knappheit. `automated_mine` und `trade_hub` sind Tech-gated Alternativen zu `refinery` bzw. `trade_post`.
+- **Planeten-Dossier:** Setze Magnet-Plättchen auf rotierende Orbit-Ringe, um Extraktoren, Raffinerien oder Werften zu errichten.
+- **Der Hangar:** Kombiniere Rümpfe (T1 Scout bis T2 Schlachtkreuzer), Antriebe und Bordwaffen auf Millimeterpapier.
+- **Der Forschungsbaum:** Verzweigte Tech-Pfade mit handgezeichneten Verbindungsstrecken schalten neue Doktrinen frei.
 
 ---
 
-## 🚀 SCHIFFSBAU & FORSCHUNG — Vom freien Start-Scout zur Flotte
+### 4. 🚀 Schiffsbau & Logistik-Transits
 
-<img src="assets/ui/readme_banner_ships.jpg" alt="Modularer Schiffs-Hangar und Tech-Forschung" width="100%"/>
+<img src="assets/ui/readme_banner_ships.jpg" alt="Schiffsbau und Transits" width="100%"/>
 
 <br/>
 
-> *„Wir haben einen modularen Schiffs-Hangar. Er montiert Rümpfe, Antriebe, Waffen, Schilde und Scanner. Montierte Assemblies fliegen heute als echte ShipBase-Transits durch die Overworld und lösen am Ziel einen FleetBattle-Simulator aus."*
+Einheiten fliegen nicht einfach von A nach B — sie formieren sich in Abhängigkeit ihrer Gruppenstärke auf den echten Waypoint-Routen der Galaxie:
 
-```mermaid
-graph LR
-	A["🔬 Forschung:<br/><b>shipyard_construction</b>"] --> B["🏗️ Ausbau:<br/><b>Orbital Shipyard</b>"]
-	B --> C["📚 Forschung:<br/><b>scout_hull</b> + <b>scanner_drone</b>"]
-	C --> D["🛸 Montage:<br/><b>Tier-1 Scout</b>"]
-	D --> E["🔭 Scout-Mission:<br/>Unbekannten Nachbarn scannen"]
-	E --> F["📊 Intel gesichert:<br/>Ressource · Slots · Größe"]
-	F --> G["🔓 Freischaltung:<br/><b>worker_automation</b>"]
+```
+Solo (Tier K)      ──▶  1 Worker / Scout
+V-Formation (Tier M) ──▶  5 Einheiten
+Keil-Formation (Tier L) ──▶  100 Einheiten (Invasionsflotte)
 ```
 
-*Der neue Spieler bekommt exakt **einen kostenlosen Start-Scout**. Keine Werft nötig, kein Research. Danach gelten die vollen Gates.*
-
-### Technologie-Katalog
-
-| Kategorie | Tech-ID | Kosten | Effekt | Exklusiv zu |
-|:---|:---|:---|:---|:---|
-| 🚀 **Ships** | `shipyard_construction` | 10 Energy | Schaltet Werft-Upgrade frei | — |
-| 🚀 **Ships** | `scout_hull` | 15 Material | Leichter T1-Aufklärungsrumpf | — |
-| 🚀 **Ships** | `scanner_drone` | 10 Energy | Scout deckt Planeten auf und sichert Intel | — |
-| 🚀 **Ships** | `weapon_systems` | 12 Volatile | Bordwaffen & T2-Mehrzweckrumpf freigeschaltet | — |
-| 🚀 **Ships** | `worker_automation` | 15 Biomass | *(Discovery-Gate)* Erste Worker-Fabrik baubar | — |
-| 🚀 **Ships** | `advanced_propulsion` | 20 Volatile | Verbesserter Antrieb | `heavy_armor_plating` |
-| 🚀 **Ships** | `heavy_armor_plating` | 20 Material | Schwere Panzerung | `advanced_propulsion` |
-| 🤖 **Mech** | `mech_frame` | 25 Volatile | T1-Chassis, sichtbar aber bis Layer 3 inert | — |
-| 🔍 **Scan** | `deep_scan` | 15 Energy | Tiefenscan-Modus | `long_range_sensors` |
-| 🔍 **Scan** | `long_range_sensors` | 15 Rare | Langstrecken-Sensorik | `deep_scan` |
-| 🪐 **Planet** | `planetary_survey` | 10 Rare | Planetenproduktion auf 125 % | — |
-| 🪐 **Planet** | `planetary_extraction` | 20 Material | Baut Survey aus: Produktion auf 150 % | — |
-| 💰 **Economy** | `automated_refinery` | 25 Rare | Schaltet `automated_mine`-Upgrade frei | `bulk_processing` |
-| 💰 **Economy** | `bulk_processing` | 25 Biomass | Schaltet `trade_hub`-Upgrade frei | `automated_refinery` |
-
-**Forschung ist zeitgesteuert** — Kosten werden beim Start abgebucht. `technology_researched` / `ship_assembled` feuern erst bei Abschluss.
-
-### Schiffsmontage
-
-Vollständiger Loadout: `hull + drive + shield + scanner + optionale weapon + module_ids`
-
-- **Unbewaffnet** → Kolonieschiff, besiedelt ausschließlich gescannte neutrale Planeten
-- **Mit Waffe** → Militärschiff, löst am Ziel FleetBattle-/Conquest-Auflösung aus
+Mit dem **Dispatch-UI** siehst du schon vor dem Abflug exakte Ankunftszeiten, verbleibende Garnisonen und das geschätzte Eroberungsrisiko.
 
 ---
 
-## 🛤️ TRANSIT & LOGISTIK — Die Physik am Rand der Galaxie
+## 🕹️ QUICKSTART — WIE SPIELE ICH SNIPWAR?
 
-<img src="assets/ui/readme_banner_transit.jpg" alt="Routennetz und Cluster-Transit" width="100%"/>
+<img src="assets/ui/banner_terminal.svg" alt="Terminal Quickstart" width="100%"/>
 
 <br/>
 
+### Option A: Im Godot Editor (Empfohlen für Spieler & Creator)
+1. Öffne das Projekt in **Godot 4.7**.
+2. Drücke **F5** (oder starte die Szene `scenes/main_menu/main_menu.tscn`).
+3. Wähle **"Neues Spiel"** und erobere deinen ersten Sektor!
+
+### Option B: Über die Konsole (Headless & Developer)
+```bash
+# Setze deine Godot 4.7 Binary
+export GODOT_BIN="/pfad/zu/Godot_v4.7.2-stable_win64_console.exe"
+
+# Starte das Spiel direkt im Fenstermodus:
+$GODOT_BIN --path . scenes/main_menu/main_menu.tscn
+
+# Oder führe die automatische Preflight-Prüfsuite aus:
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x
 ```
-Flugzeit = (Distanz / 100) × 8.0 × (1.0 + 0.05 × √(max(Einheiten − 1, 0)))
-           ÷ Transfer-Geschwindigkeitsmultiplikator der Quelle
-```
 
-Preview und tatsächlicher Transit verwenden dieselbe `FlightTime.seconds_for()`-Funktion. Wenn sie divergieren, ist der Speed-Multiplikator der Quelle nicht beidseitig übergeben.
+---
 
-**Cluster-Packing** (largest-first, alle Gruppen starten im selben Frame):
+## 🤖 DIE VIERTE WAND — BEHIND THE SCENES & DEV-ANOMALIEN
 
-| Tier | Kapazität (logisch) | Formation |
-|:---:|:---:|:---:|
-| **K** | 1 | Solo |
-| **M** | 5 | V-Formation |
-| **L** | 100 | Keil |
+*Ein kurzer Blick hinter die Kulissen der Entwicklung:*
 
-7 Worker → `M + K + K`. Die Tier-Grenzen für Kapazität und Display sind absichtlich verschieden.
+### 📜 DOKI — Der Git-Commit-Narrator
+In diesem Repository gibt es kein trockenes `git commit -m "fix bug"`. Der **DOKI CommitLayer** fängt jeden Commit ab und zwingt den Entwickler (oder die KI), die Änderungen aus der Sicht von einer von **14 Charakter-Personas** (z. B. *Buffy*, *Basher*, *Squizzle* oder *Vannon*) mit **10 Stimmungs-Overlays** zu erzählen. Welcher Narrator spricht, bestimmt ein deterministischer Hash-Key.
 
-**Missionsarten:**
+### 📡 S.C.O.U.T. — Wie KI-Agenten das Spiel im Dunkeln testen
+Während du schläfst, testen KI-Agenten dieses Spiel über ein internes MCP-Addon (**S.C.O.U.T.**). Sie steuern Szenen, schicken Raumschiffe los und analysieren das Spielgeschehen über Tesseract-OCR und Screenshot-Analysen.
 
-| Typ | Gate | Effekt |
+### 🧪 Preflight — 38 Hüter des Codes
+Bevor ein einziger Commit in den Hauptzweig gelangt, prüft die maßgeschneiderte **Preflight-Suite** (38 automatische Contracts) alles: von der mathematischen Flugzeitformel über die Determinismus-Seeds bis hin zu Savegame-Roundtrips.
+
+---
+
+## 🔗 DOKUMENTATIONS-NAVIGATOR
+
+Suchst du nach den harten technischen Formeln, der Domain-Architektur oder den Preflight-Details? Hier geht es weiter:
+
+| Dokument | Pfad | Beschreibung |
 |:---|:---|:---|
-| `military` | — | Angriff / Eroberung; Konflikt möglich |
-| `colony` | Gescanntes neutrales Ziel | Friedliche Besiedlung, setzt `first_colony`-Meilenstein |
-| `cargo` | Eigener Zielplanet | Truppenverlegung ohne Eroberung |
-| `collect` | Bekanntes neutrales Scan-Ziel | Persistente Gatherer, zahlen `workers × resource_base` pro Tick |
-
-### Konsequenz-UI vor dem Dispatch
-
-Das Planet-Panel ist in Lage, Auftrag und Bestätigung getrennt. Der Inhalt bleibt scrollbar, während der Action-Footer mit **MISSION STARTEN** sichtbar bleibt. Vor dem Start zeigt die Vorschau:
-
-- `N / Maximum Einheiten` und die nach dem Abflug verbleibende Garnison;
-- Ziel, Missionsabsicht und spielerische Kurzbeschreibung;
-- gemeinsame Flugzeit aus derselben `FlightTime.seconds_for()`-Berechnung wie der Transit;
-- erwartete Rückkehrladung bei `collect`, Verstärkung bei `cargo` sowie Konflikt-/Eroberungsrisiko bei `military`;
-- lokale Vorräte und bekannte Scan-Intel, ohne technische Planet-IDs in der Oberfläche.
-
-Die Karte tritt bei geöffnetem Panel dezent zurück. Gelb markiert die aktive Dispatchroute, das übrige Netz bleibt als Navigationsreferenz sichtbar. Unbekannte Ziele bleiben im Nebel und werden nicht durch eine Vorschau verraten.
-
----
-
-## 🤖 KI-DISPATCH-DOKTRIN — Fraktion Beta schläft nicht
-
-<img src="assets/ui/banner_ai.svg" alt="CPU Dispatch AI Doktrin" width="100%"/>
-
-<br/>
-
-Das Paper-Kollektiv (`CpuDispatchAI`) arbeitet mit adaptivem Pacing:
-
-```
-decision_interval:     12.0s  →  sinkt mit pacing_decay_rate: 0.02
-min_decision_interval:  6.0s  (Untergrenze)
-reserve_workers:            2  (eiserne Reserve, immer einbehalten)
-minimum_source_workers:     3  (kein Dispatch unter diesem Wert)
-dispatch_fraction:        0.5
-```
-
-**Entscheidungspriorität:**
-
-```
-1. Kolonisieren  →  nächster neutraler Planet via Colony-Mission
-2. Verstärken    →  schwächerer eigener Planet via Cargo-Mission
-3. Angreifen     →  unterlegener Spielerplanet via Military-Mission
-```
-
-Die KI simuliert keine Schiffs- oder Mech-Kämpfe. Sie ist ein Overworld-Dispatcher — präzise, ohne Sentimentalitäten, ohne Pause.
-
----
-
-## ⚔️ KONFLIKT-RESOLVE — Die Arithmetik am Rand der Galaxie
-
-<img src="assets/ui/banner_conflict.svg" alt="Konflikt-Resolve und Flottenbegegnungen" width="100%"/>
-
-<br/>
-
-Militärischer Arrive-Resolve in `PlanetArrivalResolver` — zwei Pfade:
-
-**Worker-Military-Transits** (`resolve_military_arrival`) — Hauptpfad:
-```
-1. Gleiche Fraktion              →  alle eingehenden Worker verstärken den Zielplaneten (Fallback: resolve_arrival)
-2. ConquestSimulator.simulate_conquest()  →  deterministische Simulation
-3. conquest.captured == true     →  Faction-Wechsel; Überlebende als Worker registriert
-4. conquest.captured == false    →  Angriff abgewehrt; bis zu incoming Worker entfernt
-```
-
-**Schiffs-Ankünfte** (`resolve_ship_arrival`) — Layer 2:
-```
-1. Colony-Schiff    →  friedliche Besiedlung (nur gescannte neutrale Ziele)
-2. Defender-Fleet   →  FleetBattleSimulator (fleet-vs-fleet)
-3. Keine Defender   →  ConquestSimulator (fleet-vs-ground)
-```
-
-Für montierte Schiffe: Layer 2 (`FleetBattleSimulator`). Für planetare Bodeneroberung: Layer 3 (`ConquestSimulator`) — funktional für Worker-Military-Transits, Mech-Tech-Stubs vorhanden.
-
----
-
-## 🏛️ ARCHITEKTUR — Vom Katalog zum Spielstand
-
-<img src="assets/ui/banner_architecture.svg" alt="SnipWar Systemarchitektur" width="100%"/>
-
-<br/>
-
-```
-MainMenu (scenes/main_menu/main_menu.tscn)
-	├── Neues Spiel  →  GameState.request_new_run() + SceneDirector.goto_scene("world")
-	└── Weiter       →  SaveGameService.load_run(0) + goto_scene("world")
-
-WorldBootstrap._enter_tree()  (Wurzel von scenes/world/world.tscn)
-    ├── Szenarioauswahl (ScenarioCatalog)
-    ├── Layout-Seed finalisieren (_finalize_layout_seed)
-    ├── WorldGenerator.generate_catalog()  →  aktiver Startkatalog (p0/p1 = Homeworlds)
-    ├── ChunkCoordinator  →  weitere Planeten lazy aus Seed und FoV erzeugen
-    └── GameState.begin_new_game()/reconnect_world()  →  SSOT für Ownership, Ressourcen, Forschung, Upgrades
-
-Bootstrap._ready()
-    └── deal_resources(catalog, pool, seed)  →  deterministischer Ressourcen-Deal
-
-PlanetField._enter_tree()
-    └── SeededLayout._enter_tree()  →  Planeten-Nodes erzeugen, Größenprofile, Detail-Seeds
-        └── PlanetNetwork._ready()  →  Nachbarschaftsgraph, NavigationField, UI-Aufbau
-```
-
-Der `Background`-Renderer (`starfield_background.gd`) ist reine Optik; Szenario-, Seed- und Kataloglogik lebt ausschließlich im `WorldBootstrap`. Spielstände schreibt der `SaveGameService`-Autoload als `RunSaveData`-Resource nach `user://saves/` (atomar, versioniert); Layer-2/3-Replays wandern über `GameState.pending_battle_context` + `SceneDirectorService` nahtlos hin und zurück.
-
-**`GameState`** ist Autoload und delegiert intern an vier Domain-Manager:
-
-| Domain | Zuständigkeit |
-|:---|:---|
-| `FactionDomain` | Ownership, Homeworlds, Discovery, Scan-Intel, Starter-Scout |
-| `EconomyDomain` | Vaults, Ressourcen-Deals, Upgrades, Worker-Factories, Gatherer |
-| `TechDomain` | Globale & planetare Technologien, Research-Jobs, Prerequisites |
-| `ShipDomain` | Teile-Inventar, Montage (`assemble_ship`), Bau-Jobs, FleetSnapshot |
-
-Alle öffentlichen APIs und Signale bleiben als abwärtskompatible Delegaten erhalten. Captures laufen ausschließlich über `GameState.set_faction()`.
-
-**UI-Stack:**
-
-| Layer | Komponente | CanvasLayer |
-|:---|:---|:---:|
-| Planetennetz & Routing | `PlanetNetwork` | — |
-| Dossier Launcher | `DossierLauncher` | 40 |
-| HUD, VaultBar, PlanetPanel | `PlanetNetworkUI` | 50 |
-| Technologie-Menü | `TechnologyMenu` | 60 |
-| Pause-Menü | `PauseMenu` | 70 (PROCESS_MODE_ALWAYS) |
-| Paper-Dossier (Vollbild) | `PaperDossier` | 80 |
-| Capture Decision | `CaptureDecisionOverlay` | 90 |
-| Paper-Grain & Vignette | GrainOverlay | 100 |
-
-`TechnologyMenu` schließt das Planet-Panel bei Öffnung. ESC pausiert nicht, wenn Panel oder Tech-Menü offen sind. Das `PaperDossier` friert die Welt (Dim + Camera-Block) und zeigt ein rotiertes Papier-Blatt mit Scale/Fade-Tween; ESC schließt das Dossier statt zu pausieren.
-
----
-
-## 📄 PAPER-DOSSIER — Vollbild-Menüs im Papier-Stil
-
-Die drei Hauptansichten (Planeten-Management, Hangar/Werkstatt, Forschungsbaum) sind als fullscreen Modale implementiert, die sich organisch in den Papercraft-Comic-Stil einfügen.
-
-**Öffnen:** Drei Launcher-Buttons oben links (`PLANET`, `WERKSTATT`, `FORSCHUNG`) auf CanvasLayer 40. Beim Öffnen werden die kompakten rechtsseitigen Panel geschlossen.
-
-**Modal-Verhalten:**
-- Welt wird abgedunkelt (semi-transparente Überlagerung)
-- Kamera-Pan/Zoom/Selektion blockiert
-- Leicht schräges Papier-Blatt (−1,1°) klappt mit Scale (0,95→1,0) und Fade-In ein
-- ESC schließt das Dossier, nicht die Pause
-
-**Die drei Ansichten:**
-
-| Ansicht | Inhalt | Verwendete Logik |
-|:---|:---|:---|
-| **Planet-Dossier** | Papier-Planet mit rotierenden Orbital-Ringen, Magnet-Plättchen für Bauplätze | `PlanetUpgradeCatalog`, `GameState.purchase_upgrade` |
-| **Werkstatt** | Millimeterpapier-Hintergrund, modulare Schiffs-Montage, Kaufen/Zerlegen/Starten | `TechShipBuilderView` (bestehende Logik) |
-| **Forschungsbaum** | Verzweigter Stammbaum mit handgezeichneten Elbow-Connectoren, Klick zum Forschen | `TechnologyCatalog`, `GameState.research_technology` |
-
-**Technische Umsetzung:**
-- `PaperDossier` (CanvasLayer 80): wiederverwendbarer Modal-Shell mit Dim, Papier-Sheet, Scale/Fade-Tween
-- `ModalCoordinator` (Node): Besitzt das Dossier, blockiert die Kamera, koordiniert ESC
-- `MapCamera.set_input_blocked()`: sperrt Pan/Zoom/Selektion während ein Modal offen ist
-- `PauseMenu._overlay_ui_open()`: defers ESC an Dossier-Schließen statt Pause
-
----
-
-## 📊 LAGEZENTRUM — Frontbericht
-
-```
-LAYER 1 — STRATEGISCHE OVERWORLD
-████████████████████████████████░░  ~95%  Wirtschaft, Transit, Forschung, Scouts, UI-HUD + Paper-Dossier-Modale
-
-LAYER 2 — FLOTTENSIMULATION
-████████████████████████████████░░  ~95%  FleetBattleSimulator + BattleScene-Replay und
-                                          route-basierte Engagements im Live-Transit aktiv
-
-LAYER 3 — PLANETARE EROBERUNG
-████████████████████████░░░░░░░░░░  ~75%  ConquestSimulator + ConquestScene + Tower-Defense + Minion-Adapter
-                                          Mech-Kampflogik bleibt als spätere Doktrin inert
-
-CHUNK-WELT (prozedural, unendlich)
-████████████████████░░░░░░░░░░░░░░  ~60%  ChunkCoordinator, FoV-Cycling, inkrementelle Navigation
-```
-
-> [!CAUTION]
-> Nicht als implementiert behandeln: Eine sichtbare Planetensignatur ist aktuell kein fester Ressourcen-Contract; Mech-Kampflogik bleibt inert; komplexe Kampagnen-/Siegbedingungen sind noch offen. Die aktuelle UI, die Dispatch-Konsequenzen und die deterministischen Layer-2/3-Replays sind dagegen Laufzeitbestandteil.
-
----
-
-## 🛠️ PRÜFSEQUENZ — Automatisierte Vertragsverifizierung
-
-<img src="assets/ui/readme_banner_preflight.jpg" alt="Automatisierte Preflight Prüfsequenz" width="100%"/>
-
-<br/>
-
-Die Preflight-Suite (`scripts/preflight.gd`) ist der einzige autoritative Verifikationsweg. Kein Framework, kein externer Runner — läuft headless im selben Prozess wie das Spiel.
-
-```bash
-# Smoke-Test: Hauptszene bootet durch
-$GODOT_BIN --headless --path . --quit-after 2
-
-# Alle 38 Constraints (V2 Auto-Discovery)
-$GODOT_BIN --headless --path . --script res://scripts/preflight.gd
-```
-
-<details>
-<summary>📋 <b>Die 38 Preflight-Constraints (V2)</b></summary>
-
-| # | Constraint | Prüft |
-|:---:|:---|:---|
-| 1 | `game_state_compatibility` | Reflection-Check aller GameState-Façade-Methoden & Signalverträge |
-| 2 | `effects_and_traits` | Kampfeffekte, Modifikatoren & Trait-Mathematik |
-| 3 | `flight_and_dispatch` | Flugzeitberechnung & Cluster-Packing |
-| 4 | `world_generator_scaling` | Deterministische Welt- & Katalogexpansion |
-| 5 | `navigation_growth` | Wachstumsfaktoren & KNN-Langstreckengraph |
-| 6 | `scene_boot` | Szenen-Bootstrapping & Viewport-Synchronisation |
-| 7 | `resources_and_seed` | Seed-Deterministik & Ressourcen-Deals |
-| 8 | `world_planets_and_dispatch` | Planetennetz, Routen & Transitlinien |
-| 9 | `world_details_and_scale` | Detail-Generierung & Orbit-Skalierungen |
-| 10 | `upgrade_catalog` | Upgrade-Zweige, Voraussetzungen, Exklusivität & Trait-Verträge |
-| 11 | `economy_production` | Upgrades, Produktions-Boosts, Maintenance & Raffinerie-Konvertierung |
-| 12 | `mission_semantics` | Colony-/Cargo-/Military-Missions-Semantik |
-| 13 | `cpu_dispatch` | CPU-Dispatch-AI, Worker-Kosten & Cluster-Tier-Boni |
-| 14 | `selection_and_context` | SelectionService, Tooltips & Kontextmenüs |
-| 15 | `scout_and_discovery` | Werftbau, Scout-Flug & Scan-Intel |
-| 16 | `ship_catalog_and_assembly` | Teile-Katalog, Variantenpools, Montage & Tech-Gating |
-| 17 | `ship_transit_and_arrival` | ShipBase-Transit, FleetPreview & Conquest-Replay |
-| 18 | `colony_milestone` | Colony-Ship-Siedlung & first_colony-Meilenstein |
-| 19 | `event_log` | Toasts, History & Logfile-Export |
-| 20 | `camera_and_input` | Kamera-Pans, Zoom & Input-Mappings |
-| 21 | `pause_and_context` | Modale UI-Hierarchie & Pausenstatus |
-| 22 | `layers_2_and_3` | FleetBattleSimulator, ConquestSimulator, Replay-Daten |
-| 23 | `ingame_player_and_transitions` | IngamePlayerControls, FloatingText & SceneDirector |
-| 24 | `sector_classification` | Sektor-Klassifikation & Planeten-Typ-Zuordnung |
-| 25 | `grid_system` | Grid-System & Chunk-Grid-Verifikation |
-| 26 | `local_resources` | Lokale Ressourcen & Planeten-Resource-Signaturen |
-| 27 | `conquest_grid_combat` | Grid-basierter Conquest-Kampf & Eroberungslogik |
-| 28 | `paper_style` | Paper-/Papercraft-Comic-Visuallinie & Asset-Stil |
-| 29 | `chunk_expansion` | Deterministischer Chunk-Seed, inkrementelle Navigation & Prozedural-Deal |
-| 30 | `main_menu_and_flow` | Hauptmenü, SceneDirector-Registry & Continue-Gating |
-| 31 | `context_handover` | World→Battle→World-Szenenwechsel über den SceneDirector |
-| 32 | `save_game_roundtrip` | Verlustfreier Save/Load-Roundtrip eines mutierten Runs |
-| 33 | `save_game_slots` | Save-Slot-Write/Read/Overwrite/Corruption/Delete |
-| 34 | `mechanic_coverage` | Mechanic-Entdeckung, Test-Modell-Integrität & Szenario-Validierung |
-| 35 | `concept_index` | Konzept-Index-Abdeckung, Klassen-Mapping & Fuzzy-Search |
-| 36 | `dead_code` | Heuristische Dead-Code-Analyse (Warnung, non-blocking) |
-| 37 | `global_search` | Globaler Volltext-Search tool-funktional validiert |
-| 38 | `mcp_capture_contract` | S.C.O.U.T.-Capture-Vertrag: async-only, kein Sync-Bypass, frame-korrekte Textur |
-
-</details>
-
-Preflight ist modular (V2 Architecture). `scripts/preflight.gd` ist der Orchestrator mit Auto-Discovery. Die Constraints liegen einzeln unter `scripts/preflight/constraint_*.gd`. Neue Coverage kommt als eigene `PreflightConstraintX`-Klasse mit `constraint_name()` + `requires_scene()` + `run(ctx) -> bool` — wird automatisch vom Scanner entdeckt. Pure/Scene-Klassifikation wird aus `requires_scene()` jedes Constraints abgeleitet (Single Source of Truth).
-
----
-
-## 🔬 EIGENBAUTEN — S.C.O.U.T. & DOKI
-
-*Kurze Unterbrechung der Immersion. Diese Sektion gehört nicht in die Galaxie — sie gehört hinter den Bildschirm. Aber sie existiert, also bekommt sie ihren Platz. Danach geht's weiter.*
-
-<div align="center">
-
-```
-┌────────────────────────────────────────────────────────────┐
-│   ENTWICKLUNGSINFRASTRUKTUR — ZWEI EIGENE WERKZEUGE        │
-│   Beide selbst gebaut. Beide nicht standalone verfügbar.   │
-│   Beide trotzdem real — und zu wichtig um sie wegzulassen. │
-└────────────────────────────────────────────────────────────┘
-```
-
-</div>
-
-### 📡 S.C.O.U.T. — Scripted Control & Observation Utility Terminal
-
-`addons/gdscript_mcp/`
-
-**S.C.O.U.T.** ist eine MCP-Bridge (*Model Context Protocol*) für Godot — entwickelt als Addon innerhalb dieses Projekts, nicht als eigenständiges Release. Es erlaubt KI-Agenten, das laufende Spiel live zu steuern: Screenshots aufnehmen, Szenen befragen, GDScript-Tools aufrufen und Spielzustände verifizieren — alles über einen lokalen Protokollkanal mit einem Handshake pro Befehl.
-
-```
-Godot Editor (Port 9091) ←──── S.C.O.U.T. ────→ Agent
-Godot Runtime (Port 9090) ←──────────────────── Agent
-```
-
-Was S.C.O.U.T. kann:
-
-- **107+ Tools** — von `get_image()` über `dispatch_mission()` bis `run_preflight()`
-- **OCR-Pflicht** — visueller Beweis statt reiner API-Antworten; Screenshots sind Evidence, keine Behauptungen
-- **Atom-Vertrag** — ein Befehl = ein Prozess + ein Handshake. Kein Session-Basteln, kein FIFO.
-- **Async-Capture** — Screenshots erst nach `frame_post_draw`, nie vorher. Wer das umgeht, bekommt eine leere Textur.
-
-> *Kein öffentliches Release. S.C.O.U.T. lebt in `addons/gdscript_mcp/`. Wer es findet, findet es.*
-
----
-
-### 📜 DOKI — Deterministischer Commit-Narrator
-
-`scripts/doki/`
-
-**DOKI** ist das Commit-Gate des Repos. Kein `git commit -m` ohne DOKI — der pre-commit-Hook blockiert es. Jeder Commit wird stattdessen erzählt: von einer von **14 virtuellen Personas**, ausgewählt via deterministischem Composite-Hash, mit einem von **10 Mood-Overlays**. Der Narrator wechselt nie zufällig; derselbe Zustand + derselbe Impuls = derselbe Charakter, jedes Mal.
-
-```
-Djb2(prevComposite + TreeHash + DiffHash + Impuls)
-  → XorShift128 (32-Bit-maskiert, 10×Warmup)
-  → cXjXnXaXpX   ← Composite-Hash
-       │││││
-       ││││└─ p: Plot-Referenz (inhaltlich)
-       │││└── a: Arc-Phase (Handlungsbogen)
-       ││└─── n: Narrator  (1–14 → Charakter)
-       │└──── j: Jitter    (Mood-Overlay)
-       └───── c: Commit-Counter (monoton steigend)
-```
-
-DOKI ist **keine Spiellogik**. Es importiert nichts aus dem Spiel, kennt keine Autoloads, schickt keine Signale. Es lebt in `scripts/doki/`, kommuniziert ausschließlich mit Git und eigenen Dateien — und blockt den Commit, wenn die Erzählung nicht trägt.
-
-```bash
-# DOKI-Flow (vor jedem Commit):
-$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- prepare "<impuls>"
-# → .doki/prompt.txt: Narrator + Mood + Composite
-# → Agent schreibt den Body in der Rolle des Narrators (Fließtext, keine Bullets)
-$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- finish --body-file .doki/narrator_body.md
-git commit -F .commit_msg.txt
-```
-
-> *Auch kein öffentliches Release. DOKI läuft hier, weil es hier entwickelt wurde. Das ist die ganze Geschichte.*
-
----
-
-## 🧭 REPOSITORY-GRENZEN — Inhalt vs. Entwicklungsartefakte
-
-Das Repository enthält ausschließlich den reproduzierbaren Spielstand: Godot-Code, Szenen, konfigurierte Ressourcen, Assets, verbindliche Spezifikationen und automatisierte Preflight-Prüfungen.
-
-Nicht in dieses Repository gehören Entwicklungsprotokolle, Agenten-Arbeitsdateien, MCP-Dumps, temporäre Skripte oder ZIP-Snapshots. Solche Dateien werden außerhalb des Repositories im übergeordneten Ordner abgelegt. Snapshot-Dateien werden nicht in den Build und nicht in die Git-Historie verdrahtet; ihre Herkunft und der zugehörige Commit werden über eine externe Index-/Manifestdatei dokumentiert.
-
-Für neue lokale Werkzeuge gilt: entweder in `addons/` bzw. `scripts/` als reproduzierbarer Projektbestandteil einordnen oder außerhalb des Repository-Ordners halten. Temporäre Root-Dateien wie `tmp_*`, `*_check.py` und `*.zip` dürfen nicht eingecheckt werden.
-
----
-
-## 🔧 ENTWICKLER-WORKFLOW — Commit-Kette
-
-<img src="assets/ui/banner_workflow.svg" alt="Git Commit und Preflight Hook Workflow" width="100%"/>
-
-<br/>
-
-Jeder `git commit` läuft durch die vollständige Hook-Kette und landet **sofort auf `origin/main`**. Es gibt keinen Skip-Pfad.
-
-```
-┌─────────────┐     ┌─────────────┐     ┌──────────────┐
-│ pre-commit  │────▶│ commit-msg  │────▶│ post-commit  │
-│             │     │             │     │              │
-│ whitespace  │     │ DOKI-Flow   │     │ push origin  │
-│ + preflight │     │ (Narrator)  │     │ HEAD:main    │
-└─────────────┘     └─────────────┘     └──────────────┘
-		│                   │                    │
-		▼                   ▼                    ▼
-   Preflight-Fehler    Erzählung fehlt      Commit ist
-   bricht den Push     bricht den Commit    sofort public
-```
-
-```bash
-git add scripts/meine_datei.gd resources/meine_resource.tres
-# Niemals: git add -A
-
-# DOKI-Flow (Pflicht):
-$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- prepare "<impuls>"
-# ... Body schreiben in .doki/narrator_body.md ...
-$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- finish --body-file .doki/narrator_body.md
-git commit -F .commit_msg.txt
-```
-
-> [!WARNING]
-> `core.hooksPath=/dev/null` ist deaktiviert. Es gibt keinen Bypass. Das ist Absicht.
-
-**Bei Preflight-Fehlern:** Fehler lesen → Dateien korrigieren → `git add` + DOKI-Flow wiederholen → Hook-Kette läuft erneut.
-
----
-
-## 🗺️ STRATEGISCHE ROADMAP
-
-**Aktueller Stand (Aug 2026):**
-
-| Metrik | Wert |
-|:---|:---|
-| GDScript-Dateien | **155** |
-| Code-Zeilen | **22.469** |
-| Szenen | **16** |
-| Assets | **419** |
-| Ressourcen | **91** |
-| Preflight-Constraints | **38 PASS** |
-
-```mermaid
-timeline
-	title SnipWar Entwicklungsvektoren
-	section ✅ Phase 1: Kernsysteme
-		Layer 1 Overworld : Wirtschaft · Upgrades · Forschung · Scouts · CPU AI
-		Simulatoren : FleetBattleSimulator · ConquestSimulator · IngamePlayer · SceneDirector
-		Chunk-Welt : Prozedurale Expansion · FoV-Cycling · Inkrementelle Navigation
-	section 🔮 Phase 2: Kampf-Integration
-		Overworld-Trigger : Flottenbegegnungen lösen direkte Replays aus
-		Ship-Traits im Gefecht : Modul- & Waffensets bestimmen Gefechtsdynamik
-	section 🔮 Phase 3: Eroberung & Mechs
-		Bodenkampf : Minion-Adapter für Schiffe · Abwehrtürme · Mech-Bataillone
-	section 🔮 Phase 4: High-End Polish
-		4K Asset Pipeline : VFX · dynamische Shader · atmosphärische Soundkulisse
-```
+| 🏛️ **Systemarchitektur** | [`ARCHITECTURE.md`](ARCHITECTURE.md) | **Der komplette technische Vertrag:** Domain-Manager, Formeln, Search-Tools, Preflight & Hooks. |
+| 📖 **Galaktisches Archiv** | [`LORE.md`](LORE.md) | Feldberichte, Planeten-Dossiers & Fraktions-Hintergründe. |
+| 🎯 **Zielvision** | [`VISION.md`](VISION.md) | Der langfristige 4X-Plan und Entwicklungs-Meilensteine. |
+| 📐 **System-Spezifikation** | [`DESIGN.md`](DESIGN.md) | Grundlegende MVP-Spezifikationen. |
+| 🗺️ **Dokumenten-Index** | [`docs/README.md`](docs/README.md) | Vollständiger Leitfaden aller Dokumentations-Dateien. |
 
 ---
 
@@ -740,24 +200,12 @@ timeline
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
   S · N · I · P · W · A · R
   Strategische Nebel-Imperien · Integrierte Planeten · Worker · Allianz-Routen
-  (Akronym-Echtheit zu 100% zertifiziert vom galaktischen Standardbüro)
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 ```
 
 **`CONNECT · DEPLOY · HOLD THE LINE`**
 
 *Unendlich Welten. Ein deterministischer Seed. Keine Ausreden.*
-
----
-
-| | |
-|:---:|:---|
-| 📖 **Galaktisches Archiv** | [`LORE.md`](LORE.md) — Feldberichte & Planetendossiers |
-| 📐 **Technischer Vertrag** | [`DESIGN.md`](DESIGN.md) — Verbindliche Spezifikation |
-| 🎯 **Zielvision** | [`VISION.md`](VISION.md) — 4X-Kreislauf & Roadmap |
-| 🗺️ **Dokumentations-Index** | [`docs/README.md`](docs/README.md) — Struktur & Zugehörigkeiten |
-| 📡 **S.C.O.U.T.-Bridge** | [`addons/gdscript_mcp/`](addons/gdscript_mcp/) — MCP-Addon (intern) |
-| 📜 **DOKI CommitLayer** | [`scripts/doki/README.md`](scripts/doki/README.md) — Commit-Gate |
 
 ---
 
