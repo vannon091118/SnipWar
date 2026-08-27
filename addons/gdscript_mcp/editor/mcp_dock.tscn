@@ -185,109 +185,56 @@ theme_override_colors/font_color = Color(0.8, 0.4, 0.4, 1)
 theme_override_font_sizes/font_size = 10
 autowrap_mode = 2
 
-[node name="CoordRow" type="HBoxContainer" parent="RuntimeSection"]
-theme_override_constants/separation = 6
-
-[node name="ClickXSpin" type="SpinBox" parent="RuntimeSection/CoordRow"]
-unique_name_in_owner = true
-min_value = 0
-max_value = 4000
-value = 480
-custom_minimum_size = Vector2(64, 0)
-
-[node name="ClickYSpin" type="SpinBox" parent="RuntimeSection/CoordRow"]
-unique_name_in_owner = true
-min_value = 0
-max_value = 4000
-value = 270
-custom_minimum_size = Vector2(64, 0)
-
-[node name="MouseMoveBtn" type="Button" parent="RuntimeSection/CoordRow"]
-unique_name_in_owner = true
-text = "Maus"
-disabled = true
-theme_override_font_sizes/font_size = 10
-custom_minimum_size = Vector2(56, 0)
-
-[node name="ClickBtn" type="Button" parent="RuntimeSection/CoordRow"]
-unique_name_in_owner = true
-text = "Klick"
-disabled = true
-theme_override_font_sizes/font_size = 10
-custom_minimum_size = Vector2(56, 0)
-
-[node name="KeyEdit" type="LineEdit" parent="RuntimeSection/CoordRow"]
-unique_name_in_owner = true
-text = "P"
-placeholder_text = "Taste (P, ESCAPE…)"
-custom_minimum_size = Vector2(56, 0)
-
-[node name="KeyBtn" type="Button" parent="RuntimeSection/CoordRow"]
-unique_name_in_owner = true
-text = "Taste"
-disabled = true
-theme_override_font_sizes/font_size = 10
-custom_minimum_size = Vector2(56, 0)
-
-[node name="ActionRow" type="HBoxContainer" parent="RuntimeSection"]
-theme_override_constants/separation = 6
-
-[node name="UIScanBtn" type="Button" parent="RuntimeSection/ActionRow"]
-unique_name_in_owner = true
-text = "UI-Scan"
-disabled = true
-theme_override_font_sizes/font_size = 10
-custom_minimum_size = Vector2(70, 0)
-
-[node name="ScreenshotBtn" type="Button" parent="RuntimeSection/ActionRow"]
-unique_name_in_owner = true
-text = "Screenshot"
-disabled = true
-theme_override_font_sizes/font_size = 10
-custom_minimum_size = Vector2(70, 0)
-
-[node name="FreezeBtn" type="Button" parent="RuntimeSection/ActionRow"]
-unique_name_in_owner = true
-text = "Freeze"
-disabled = true
-theme_override_font_sizes/font_size = 10
-custom_minimum_size = Vector2(56, 0)
-
-[node name="StepBtn" type="Button" parent="RuntimeSection/ActionRow"]
-unique_name_in_owner = true
-text = "Step ×5"
-disabled = true
-theme_override_font_sizes/font_size = 10
-custom_minimum_size = Vector2(56, 0)
-
-[node name="UnfreezeBtn" type="Button" parent="RuntimeSection/ActionRow"]
-unique_name_in_owner = true
-text = "Unfreeze"
-disabled = true
-theme_override_font_sizes/font_size = 10
-custom_minimum_size = Vector2(64, 0)
-
-[node name="E2ETitle" type="Label" parent="RuntimeSection"]
-text = "E2E-Szenarien (sichtbar im Spiel, nur QA/Dev-Profil)"
-theme_override_font_sizes/font_size = 11
-theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
+[node name="PipelineTitle" type="Label" parent="RuntimeSection"]
+text = "🤖 Agent-Pipeline (live)"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.8, 0.7, 0.9, 1)
 custom_minimum_size = Vector2(0, 20)
 
-[node name="E2ERefreshBtn" type="Button" parent="RuntimeSection"]
+[node name="AgentGoalLabel" type="Label" parent="RuntimeSection"]
 unique_name_in_owner = true
-text = "Szenarien laden"
-disabled = true
+text = "🎯 Ziel: —"
 theme_override_font_sizes/font_size = 10
+autowrap_mode = 2
 
-[node name="E2EContainer" type="VBoxContainer" parent="RuntimeSection"]
+[node name="AgentStatsLabel" type="Label" parent="RuntimeSection"]
 unique_name_in_owner = true
-theme_override_constants/separation = 2
-
-[node name="E2ERunBtn" type="Button" parent="RuntimeSection"]
-unique_name_in_owner = true
-text = "▶ Ausgewählte Szenarien ausführen"
-disabled = true
+text = "Calls: 0 · ok: 0 · Fehler: 0"
 theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.6, 0.6, 0.7, 1)
+
+[node name="ToolFeedScroll" type="ScrollContainer" parent="RuntimeSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 150)
+v_size_flags = 3
+theme_override_styles/panel = SubResource("3")
+
+[node name="ToolFeed" type="RichTextLabel" parent="RuntimeSection/ToolFeedScroll"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 0)
+bbcode_enabled = true
+scroll_active = false
+theme_override_font_sizes/normal_font_size = 10
+
+[node name="EvidenceTitle" type="Label" parent="RuntimeSection"]
+text = "🖼️ Visual Evidence (OCR)"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.7, 0.8, 0.7, 1)
+custom_minimum_size = Vector2(0, 18)
+
+[node name="EvidenceLabel" type="Label" parent="RuntimeSection"]
+unique_name_in_owner = true
+text = "— kein Screenshot/OCR ausgewertet —"
+theme_override_font_sizes/font_size = 10
+autowrap_mode = 2
+
+[node name="EventFeed" type="Label" parent="RuntimeSection"]
+unique_name_in_owner = true
+text = "Events: —"
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
+autowrap_mode = 2
+custom_minimum_size = Vector2(0, 40)
 
 [node name="Separator4" type="HSeparator" parent="."]
 theme_override_colors/separator_color = Color(0.2, 0.2, 0.25, 1)

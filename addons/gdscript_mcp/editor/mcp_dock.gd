@@ -44,20 +44,11 @@ const AUTO_CONNECT_RETRY_SECONDS := 0.35
 @onready var _disconnect_btn: Button = %DisconnectRuntimeBtn
 @onready var _open_artifacts_btn: Button = %OpenArtifactsBtn
 @onready var _runtime_status_label: Label = %RuntimeStatus
-@onready var _click_x_spin: SpinBox = %ClickXSpin
-@onready var _click_y_spin: SpinBox = %ClickYSpin
-@onready var _mouse_move_btn: Button = %MouseMoveBtn
-@onready var _click_btn: Button = %ClickBtn
-@onready var _key_edit: LineEdit = %KeyEdit
-@onready var _key_btn: Button = %KeyBtn
-@onready var _scan_btn: Button = %UIScanBtn
-@onready var _shot_btn: Button = %ScreenshotBtn
-@onready var _freeze_btn: Button = %FreezeBtn
-@onready var _step_btn: Button = %StepBtn
-@onready var _unfreeze_btn: Button = %UnfreezeBtn
-@onready var _e2e_refresh_btn: Button = %E2ERefreshBtn
-@onready var _e2e_container: VBoxContainer = %E2EContainer
-@onready var _e2e_run_btn: Button = %E2ERunBtn
+@onready var _agent_goal_label: Label = %AgentGoalLabel
+@onready var _agent_stats_label: Label = %AgentStatsLabel
+@onready var _tool_feed: RichTextLabel = %ToolFeed
+@onready var _evidence_label: Label = %EvidenceLabel
+@onready var _event_feed: Label = %EventFeed
 
 var _server_running = false
 var _runtime_client: RefCounted = null
@@ -66,9 +57,7 @@ var _status_accumulator := 0.0
 var _auto_connect_in := -1.0
 var _auto_connect_deadline_ms := 0
 var _auto_connect_attempts := 0
-var _last_artifact_path := ""
-var _e2e_scenarios: Array = []
-var _e2e_checks: Array = []
+var _pipeline_accumulator := 0.0
 
 const TEST_CONFIG_PATH := "user://mcp_test_config.cfg"
 
@@ -87,17 +76,6 @@ func _ready() -> void:
 	_disconnect_btn.pressed.connect(_disconnect_runtime)
 	_open_artifacts_btn.pressed.connect(_open_artifacts_folder)
 	_profile_select.item_selected.connect(_on_profile_selected)
-	_mouse_move_btn.pressed.connect(_on_runtime_mouse_move)
-	_click_btn.pressed.connect(_on_runtime_click)
-	_key_btn.pressed.connect(_on_runtime_key)
-	_scan_btn.pressed.connect(_on_runtime_scan)
-	_shot_btn.pressed.connect(_on_runtime_screenshot)
-	_freeze_btn.pressed.connect(_on_runtime_freeze)
-	_step_btn.pressed.connect(_on_runtime_step)
-	_unfreeze_btn.pressed.connect(_on_runtime_unfreeze)
-	_e2e_refresh_btn.pressed.connect(_refresh_e2e_list)
-	_e2e_run_btn.pressed.connect(_run_selected_e2e)
-	_key_edit.text_submitted.connect(func(_text): _on_runtime_key())
 
 	_load_config()
 	_load_profile()
@@ -117,6 +95,10 @@ func _process(_delta: float) -> void:
 		if _runtime_client.is_ready() and _status_accumulator >= 1.0:
 			_status_accumulator = 0.0
 			_refresh_runtime_status()
+			_pipeline_accumulator += 1.0
+			if _pipeline_accumulator >= 2.0:
+				_pipeline_accumulator = 0.0
+				_refresh_agent_pipeline()
 	if _auto_connect_in >= 0.0:
 		if _auto_connect_deadline_ms > 0 and Time.get_ticks_msec() >= _auto_connect_deadline_ms:
 			_auto_connect_in = -1.0
@@ -226,17 +208,10 @@ func _on_runtime_error(message: String) -> void:
 
 func _update_runtime_buttons() -> void:
 	var ready: bool = _runtime_client != null and bool(_runtime_client.call("is_ready"))
-	_scan_btn.disabled = not ready
-	_shot_btn.disabled = not ready
-	_mouse_move_btn.disabled = not ready
-	_click_btn.disabled = not ready
-	_key_btn.disabled = not ready
-	_freeze_btn.disabled = not ready
-	_step_btn.disabled = not ready
-	_unfreeze_btn.disabled = not ready
-	_e2e_refresh_btn.disabled = not ready
-	_e2e_run_btn.disabled = not ready
 	_disconnect_btn.disabled = not _runtime_connected
+	# Pipeline-Anzeige startet sofort, sobald verbunden.
+	if ready and _runtime_connected:
+		_refresh_agent_pipeline()
 
 func _open_artifacts_folder() -> void:
 	var dir := ProjectSettings.globalize_path("user://mcp_context")
@@ -273,131 +248,94 @@ func _on_status_response(response: Dictionary) -> void:
 # Runtime: sichtbare Aktionen
 # ═══════════════════════════════════════════════════════════════════════════
 
-func _on_runtime_mouse_move() -> void:
-	var x := int(_click_x_spin.value)
-	var y := int(_click_y_spin.value)
-	_call_runtime("runtime_mouse_move", {"x": x, "y": y}, func(response): _log_tool_result("runtime_mouse_move", response))
+## Pipeline-Refresh: Agent-Ziel, Tool-Call-Feed, OCR-Evidence, Events.
+func _refresh_agent_pipeline() -> void:
+	_call_runtime("runtime_agent_activity", {"limit": 14}, _on_activity_response)
+	_call_runtime("runtime_visual_evidence", {"wait_ms": 0}, _on_evidence_response)
+	_call_runtime("runtime_mcp_events", {"cursor": 0, "limit": 8}, _on_events_response)
 
-func _on_runtime_click() -> void:
-	var x := int(_click_x_spin.value)
-	var y := int(_click_y_spin.value)
-	_call_runtime("runtime_click", {"x": x, "y": y, "hold_frames": 1}, func(response): _log_tool_result("runtime_click", response))
 
-func _on_runtime_key() -> void:
-	var name := _key_edit.text.strip_edges()
-	if name == "":
-		add_log("Bitte Taste angeben (z.B. P, ESCAPE, SPACE)", true)
-		return
-	var keycode := _keycode_from_name(name)
-	if keycode <= 0:
-		add_log("Unbekannte Taste: " + name, true)
-		return
-	_call_runtime("runtime_key_gesture", {"keycode": keycode, "hold_frames": 1}, func(response): _log_tool_result("runtime_key_gesture", response))
-
-func _on_runtime_scan() -> void:
-	_call_runtime("runtime_ux_scan", {"max_controls": 120}, _on_scan_response)
-
-func _on_scan_response(response: Dictionary) -> void:
+func _on_activity_response(response: Dictionary) -> void:
 	var data := _extract_result(response)
 	if data == null:
 		return
-	var interactables: Array = data.get("interactables", [])
-	var texts: Array = []
-	for ctrl in interactables:
-		if ctrl is Dictionary:
-			var text := str(ctrl.get("text", ""))
-			if text != "":
-				texts.append(text)
-	add_log("UI-Scan: scene=" + str(data.get("scene", "?")) + " controls=" + str(data.get("control_count", 0)) +
-		" interaktive=" + str(interactables.size()) + " → " + str(texts.slice(0, 8)))
+	var goal := str(data.get("goal", ""))
+	_agent_goal_label.text = "🎯 Ziel: " + (goal if goal != "" else "—")
+	_agent_goal_label.tooltip_text = goal
+	var entries: Array = data.get("entries", []) as Array
+	var ok_count := 0
+	var err_count := 0
+	var parts := PackedStringArray()
+	for entry in entries:
+		if entry is Dictionary:
+			if bool(entry.get("ok", false)):
+				ok_count += 1
+			else:
+				err_count += 1
+	parts.append("Calls: " + str(data.get("total_calls", entries.size())))
+	parts.append("ok: " + str(ok_count))
+	parts.append("Fehler: " + str(err_count))
+	_agent_stats_label.text = " · ".join(parts)
+	var bb := "[color=#9a9aa5]— keine Tool-Calls sichtbar —[/color]"
+	if not entries.is_empty():
+		var lines := PackedStringArray()
+		for entry in entries.slice(-10):
+			if not (entry is Dictionary):
+				continue
+			var label := str(entry.get("label", "?"))
+			var dur := float(entry.get("duration_ms", 0.0))
+			var ok := bool(entry.get("ok", false))
+			var err := str(entry.get("error", ""))
+			var color := "#4caf50" if ok else "#e57373"
+			var icon := "✓" if ok else "✗"
+			var line := "[color=" + color + "]" + icon + "[/color] " + label
+			line += " [color=#8a8a95]" + str(snappedf(dur, 0.1)) + "ms[/color]"
+			if err != "":
+				line += " [color=#e57373]" + err.substr(0, 60) + "[/color]"
+			lines.append(line)
+		bb = "
+".join(lines)
+	_tool_feed.text = bb
 
-func _on_runtime_screenshot() -> void:
-	_call_runtime("runtime_screenshot", {"format": "png"}, _on_screenshot_response)
 
-func _on_screenshot_response(response: Dictionary) -> void:
+func _on_evidence_response(response: Dictionary) -> void:
 	var data := _extract_result(response)
 	if data == null:
 		return
-	var context: Variant = data.get("context", {})
-	if context is Dictionary:
-		_last_artifact_path = str(context.get("absolute_path", ""))
-	add_log("Screenshot: " + str(data.get("context_id", "?")) + " @ " + _last_artifact_path +
-		" (" + str(data.get("width", "?")) + "×" + str(data.get("height", "?")) + ")")
-	_open_artifacts_btn.tooltip_text = _last_artifact_path
+	var status := str(data.get("status", "none"))
+	if status == "none":
+		_evidence_label.text = "— kein Screenshot/OCR ausgewertet —"
+		return
+	var evidence: Dictionary = data.get("evidence", {})
+	var ocr: Dictionary = evidence.get("ocr", {}) if evidence.get("ocr") is Dictionary else {}
+	var shot: Dictionary = evidence.get("screenshot", {}) if evidence.get("screenshot") is Dictionary else {}
+	var ocr_text := str(ocr.get("text", ""))
+	var conf := float(ocr.get("confidence", 0.0))
+	var text := "🖼 " + str(shot.get("width", "?")) + "×" + str(shot.get("height", "?"))
+	if status == "pending":
+		text += " · Analyse läuft …"
+	elif ocr_text != "":
+		text += " · OCR: „" + ocr_text.substr(0, 140) + "…\" (conf " + str(snappedf(conf, 1)) + ")"
+	else:
+		text += " · OCR: n/a"
+	_evidence_label.text = text
+	_evidence_label.tooltip_text = ocr_text
 
-func _on_runtime_freeze() -> void:
-	_call_runtime("runtime_freeze", {}, func(response): _log_tool_result("runtime_freeze", response))
 
-func _on_runtime_step() -> void:
-	_call_runtime("runtime_step_frames", {"count": 5}, func(response): _log_tool_result("runtime_step_frames", response))
-
-func _on_runtime_unfreeze() -> void:
-	_call_runtime("runtime_unfreeze", {}, func(response): _log_tool_result("runtime_unfreeze", response))
-
-# ═══════════════════════════════════════════════════════════════════════════
-# Runtime: E2E-Szenarien direkt im laufenden Spiel
-# ═══════════════════════════════════════════════════════════════════════════
-
-func _refresh_e2e_list() -> void:
-	_call_runtime("runtime_e2e_list", {}, _on_e2e_list_response)
-
-func _on_e2e_list_response(response: Dictionary) -> void:
+func _on_events_response(response: Dictionary) -> void:
 	var data := _extract_result(response)
 	if data == null:
 		return
-	_e2e_scenarios = data.get("scenarios", []) as Array
-	for child in _e2e_container.get_children():
-		child.queue_free()
-	_e2e_checks.clear()
-	if _e2e_scenarios.is_empty():
-		var none := Label.new()
-		none.text = "  (keine Szenarien)"
-		none.add_theme_font_size_override("font_size", 10)
-		_e2e_container.add_child(none)
+	var entries: Array = data.get("entries", []) as Array
+	if entries.is_empty():
+		_event_feed.text = "Events: —"
 		return
-	for scenario in _e2e_scenarios:
-		var check := CheckBox.new()
-		check.text = " " + str(scenario.get("id", "?")) + " — " + str(scenario.get("description", ""))
-		check.tooltip_text = "ID: " + str(scenario.get("id", ""))
-		check.add_theme_font_size_override("font_size", 10)
-		check.add_theme_constant_override("margin_left", 8)
-		check.button_pressed = true
-		check.set_meta("scenario_id", str(scenario.get("id", "")))
-		_e2e_container.add_child(check)
-		_e2e_checks.append(check)
-	add_log("E2E-Szenarien geladen: " + str(_e2e_scenarios.size()))
+	var lines := PackedStringArray()
+	for entry in entries.slice(-5):
+		if entry is Dictionary:
+			lines.append(str(entry.get("type", "?")) + ": " + str(entry.get("message", "")))
+	_event_feed.text = "Events: " + " | ".join(lines)
 
-func _run_selected_e2e() -> void:
-	if not _runtime_connected or _runtime_client == null or not _runtime_client.is_ready():
-		add_log("Keine Runtime-Verbindung — Spiel starten und verbinden", true)
-		return
-	var selected: Array = []
-	for check in _e2e_checks:
-		if check is CheckBox and (check as CheckBox).button_pressed:
-			selected.append(str(check.get_meta("scenario_id", "")))
-	if selected.is_empty():
-		add_log("Kein Szenario ausgewählt", true)
-		return
-	for scenario_id in selected:
-		add_log("▶ E2E '" + scenario_id + "' läuft sichtbar im Spiel …")
-		_call_runtime("runtime_e2e_run", {"scenario_id": scenario_id},
-			Callable(self, "_on_e2e_run_response").bind(scenario_id))
-
-func _on_e2e_run_response(scenario_id: String, response: Dictionary) -> void:
-	var data := _extract_result(response)
-	if data == null:
-		add_log("E2E '" + scenario_id + "': kein Ergebnis (Verbindung/Profil?)", true)
-		return
-	if data.has("error"):
-		add_log("E2E '" + scenario_id + "': " + str(data.get("error", "?")) +
-			" — ggf. Profil auf QA/Debug stellen (E2E ist kein Spieler-Atom)", true)
-		return
-	add_log("E2E '" + scenario_id + "' → " + str(data.get("verdict", "?")) +
-		" | Schritte=" + str(data.get("steps", []).size()) +
-		" | Failures=" + str(data.get("failures", 0)) +
-		" | Anomalien=" + str(data.get("anomalies", []).size()) +
-		" | " + str(snappedf(float(data.get("elapsed_seconds", 0.0)), 0.1)) + "s",
-		str(data.get("verdict", "FAIL")) != "PASS")
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Runtime: Call-Helfer
@@ -445,37 +383,6 @@ func _log_tool_result(tool_name: String, response: Dictionary) -> void:
 		add_log(tool_name + " → " + str(data.get("error", "?")), true)
 	else:
 		add_log(tool_name + " → ok (" + ", ".join(keys.slice(0, 6)) + ")")
-
-func _keycode_from_name(name: String) -> int:
-	var key := name.to_upper()
-	if key.length() == 1:
-		var char_code := int(key.unicode_at(0))
-		if char_code >= 65 and char_code <= 90:
-			return char_code
-		if char_code >= 48 and char_code <= 57:
-			return char_code
-	match key:
-		"ESCAPE", "ESC": return KEY_ESCAPE
-		"ENTER", "RETURN": return KEY_ENTER
-		"SPACE": return KEY_SPACE
-		"TAB": return KEY_TAB
-		"BACKSPACE": return KEY_BACKSPACE
-		"DELETE", "DEL": return KEY_DELETE
-		"LEFT": return KEY_LEFT
-		"RIGHT": return KEY_RIGHT
-		"UP": return KEY_UP
-		"DOWN": return KEY_DOWN
-		"HOME": return KEY_HOME
-		"END": return KEY_END
-		"PAGEUP": return KEY_PAGEUP
-		"PAGEDOWN": return KEY_PAGEDOWN
-		"SHIFT": return KEY_SHIFT
-		"CTRL", "CONTROL": return KEY_CTRL
-		"ALT": return KEY_ALT
-	for i in range(1, 13):
-		if key == "F" + str(i):
-			return KEY_F1 + i - 1
-	return 0
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Editor-Server Config (unverändert)

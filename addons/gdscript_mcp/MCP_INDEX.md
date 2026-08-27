@@ -468,6 +468,8 @@ addons/gdscript_mcp/
 ├── AGENT_WORKFLOW.md                  Agent-Workflow-Doku (6-Schritte-Loop)
 │       └── systems/   mcp_audio_tools.gd  (Audio, Animation, Network, Gamepad, Shader, Partikel)
 ├── client/  (mcp_client.py, vision_worker.py, vision_worker.js, remote_playout.py, agent_store.py, agent_playthrough.py, mcp_stresstest.js)
-├── editor/  (Plugin + Dock)
+├── editor/  (Plugin + Dock — Pipeline-Visualisierung für den User: Agent-Ziel,
+│             Tool-Call-Feed mit Timing/Fehlern, OCR-Evidence, Event-Stream; KEINE
+│             Agenten-Steuerung mehr — die Aktionen macht der Agent über MCP)
 └── testing/ (mcp_test_runner, mcp_test_scenario, scenarios/, e2e/playthrough_driver)
 ```

@@ -2178,6 +2178,68 @@
 			"seq": 30,
 			"subject": "Null: MCP-Server: Pflicht-Analyse bei unerwart… — nach Argos",
 			"summary": "Der Agent soll nicht raten. Das klingt selbstverständlich, war es aber nicht: Wenn ein Klick danebenging oder ein Scan leer zurückkam, stand da nur ein Fehlercode, und der Rest war Spekulation. Als..."
+		},
+		{
+			"a": 7,
+			"arc": "a12",
+			"c": 31,
+			"composite": "c31j69n4a7p26",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "AGENTS.md",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/MCP_INDEX.md",
+					"insertions": 27.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 208.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 82.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "docs/mcp_live_test_results.md",
+					"insertions": 211.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 57.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 30.0
+				}
+			],
+			"date": "2026-08-27 07:00:00",
+			"hash": "e2a63b42c45eb9c8bacf1affd41387ac902daa56",
+			"j": 69,
+			"model_id": "claude-sonnet-4",
+			"mood": "warm",
+			"n": 4,
+			"narrator": "Vannon",
+			"p": 26,
+			"p_id": 31,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Null",
+			"seq": 31,
+			"subject": "Doku-Konsolidierung: Zentrale FINDINGS.md als… — nach Null",
+			"summary": "Jetzt wird die Session zur Akte. Alles, was in dieser Runde gefunden und gefixt wurde, gehört an einen Ort, der immer aktuell bleibt — nicht in Notizen, die keiner liest. Deshalb steht jetzt eine z..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

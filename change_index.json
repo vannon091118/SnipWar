@@ -244,7 +244,7 @@
 			"p_id": 25.0
 		},
 		"cb69ee7ba579a50e90360ed6d7f800341bbf87e4": {
-			"c": 30,
+			"c": 30.0,
 			"composite": "c30j58n11a7p15",
 			"entities": [
 				"F-002",
@@ -264,7 +264,7 @@
 				"C-075",
 				"C-076"
 			],
-			"p_id": 30
+			"p_id": 30.0
 		},
 		"e186c98431e04aeca11e227c7459fc3daa695ff0": {
 			"c": 12.0,
@@ -284,6 +284,21 @@
 				"F-001"
 			],
 			"p_id": 21.0
+		},
+		"e2a63b42c45eb9c8bacf1affd41387ac902daa56": {
+			"c": 31,
+			"composite": "c31j69n4a7p26",
+			"entities": [
+				"F-019",
+				"F-002",
+				"F-045",
+				"F-003",
+				"F-046",
+				"F-047",
+				"F-004",
+				"F-001"
+			],
+			"p_id": 31
 		},
 		"fdb32c6e2dfa34e9a7bd1736bfa29b202417b2d8": {
 			"c": 28.0,
@@ -2056,6 +2071,36 @@
 			"last_p": 30.0,
 			"name": "mcp_ux_pipeline.gd",
 			"path": "addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-045": {
+			"first_p": 31.0,
+			"history": [],
+			"id": "F-045",
+			"last_p": 31.0,
+			"name": "MCP_INDEX.md",
+			"path": "addons/gdscript_mcp/MCP_INDEX.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-046": {
+			"first_p": 31.0,
+			"history": [],
+			"id": "F-046",
+			"last_p": 31.0,
+			"name": "FINDINGS.md",
+			"path": "docs/FINDINGS.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-047": {
+			"first_p": 31.0,
+			"history": [],
+			"id": "F-047",
+			"last_p": 31.0,
+			"name": "mcp_live_test_results.md",
+			"path": "docs/mcp_live_test_results.md",
 			"status": "created",
 			"type": "file"
 		}

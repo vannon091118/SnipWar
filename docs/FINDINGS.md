@@ -49,6 +49,11 @@
 | MCP-06 | Pflicht-Analyse: unerwartetes Ergebnis ohne Bild/Kontext → Agent rät | ✅ GEFIXT | `mcp_server.gd` `visual_evidence` (Screenshot + OCR) |
 | MCP-07 | Analyse blockiert Aktion (Antwort erst nach 1,5–2,3 s OCR) | ✅ GEFIXT | Entkopplung: Antwort sofort (4 ms), Fire-and-forget + Cache + `runtime_visual_evidence` (6 ms Abruf) |
 
+### Dock-Umbau (Pipeline-Visualisierung)
+| # | Befund | Status | Beleg |
+|---|--------|--------|-------|
+| DOCK-1 | Dock war eine Agenten-Steuerkonsole (Maus/Klick/Taste/Scan/Freeze/E2E) — für den User irrelevant | ✅ GEFIXT | Steuerung entfernt; `mcp_dock.gd/.tscn` zeigen jetzt live: Agent-Ziel (`runtime_agent_activity`), Tool-Call-Feed (✓/✗ + Timing + Fehler), OCR-Evidence (`runtime_visual_evidence`), Event-Stream (`runtime_mcp_events`) — Polling alle 2 s |
+
 ### OCR-Pipeline (implementiert, live verifiziert)
 | # | Befund | Status | Beleg |
 |---|--------|--------|-------|

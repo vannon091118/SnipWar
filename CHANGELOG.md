@@ -446,3 +446,18 @@ MCP-Server: Pflicht-Analyse bei unerwarteten Ergebnissen (visual_evidence, Rekur
 - change_index.json: Implementiert und integriert (F-003).
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 07:00:00 — p31 · c31j69n4a7p26 · Vannon · warm
+
+**Doku-Konsolidierung: Zentrale FINDINGS.md als… — nach Null**
+
+Doku-Konsolidierung: Zentrale FINDINGS.md als Pflicht-Referenz (immer aktuell, Status GEFIXT/OFFEN/BEOBACHTET, Todo-Charakter) + AGENTS.md verankert sie + MCP_INDEX Pflicht-OCR entkoppelt + Session-Hergang komplett in live_test_results
+
+- AGENTS.md: Dokumentation aktualisiert (F-019).
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- addons/gdscript_mcp/MCP_INDEX.md: Dokumentation aktualisiert (F-045).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- docs/FINDINGS.md: Dokumentation aktualisiert (F-046).
+- docs/mcp_live_test_results.md: Dokumentation aktualisiert (F-047).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
