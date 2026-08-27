@@ -461,3 +461,18 @@ Doku-Konsolidierung: Zentrale FINDINGS.md als Pflicht-Referenz (immer aktuell, S
 - docs/mcp_live_test_results.md: Dokumentation aktualisiert (F-047).
 - narrative_chain.json: Dokumentation aktualisiert (F-004).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+
+## 2026-08-27 08:00:00 — p32 · c32j51n2a8p19 · Basher · sarkastisch
+
+**Basher (8 files): Dock-Umbau zur Pipeline-Visualisierung:… — nach Vannon**
+
+Dock-Umbau zur Pipeline-Visualisierung: Agenten-Steuerung (Maus/Klick/Taste/Scan/Freeze/Step/E2E) entfernt, stattdessen live Agent-Ziel + Tool-Call-Feed (Timing/Fehler) + OCR-Evidence + Event-Stream, Polling alle 2s — der Dock ist die nachvollziehbare Info-Schicht für den User
+
+- CHANGELOG.md: Fehler behoben (F-002).
+- addons/gdscript_mcp/MCP_INDEX.md: Fehler behoben (F-045).
+- addons/gdscript_mcp/editor/mcp_dock.gd: Fehler behoben (F-048).
+- addons/gdscript_mcp/editor/mcp_dock.tscn: Fehler behoben (F-049).
+- change_index.json: Fehler behoben (F-003).
+- docs/FINDINGS.md: Fehler behoben (F-046).
+- narrative_chain.json: Fehler behoben (F-004).
+- scripts/doki/data/arcs.json: Fehler behoben (F-001).

@@ -77,6 +77,25 @@
 			],
 			"p_id": 24.0
 		},
+		"1cdb336744a9eaf34b3f1bf8789dfe93d7638a77": {
+			"c": 32,
+			"composite": "c32j51n2a8p19",
+			"entities": [
+				"F-002",
+				"F-045",
+				"F-048",
+				"F-049",
+				"F-003",
+				"F-046",
+				"F-004",
+				"F-001",
+				"C-077",
+				"C-078",
+				"C-079",
+				"C-080"
+			],
+			"p_id": 32
+		},
 		"26116836822ddb42740b7b848fac7ecae227a51b": {
 			"c": 27.0,
 			"composite": "c27j57n13a6p25",
@@ -286,7 +305,7 @@
 			"p_id": 21.0
 		},
 		"e2a63b42c45eb9c8bacf1affd41387ac902daa56": {
-			"c": 31,
+			"c": 31.0,
 			"composite": "c31j69n4a7p26",
 			"entities": [
 				"F-019",
@@ -298,7 +317,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 31
+			"p_id": 31.0
 		},
 		"fdb32c6e2dfa34e9a7bd1736bfa29b202417b2d8": {
 			"c": 28.0,
@@ -1634,6 +1653,74 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-077": {
+			"first_p": 32.0,
+			"history": [
+				{
+					"lines": [
+						249.0
+					],
+					"p_id": 32.0
+				}
+			],
+			"id": "C-077",
+			"last_p": 32.0,
+			"name": "_refresh_agent_pipeline",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-078": {
+			"first_p": 32.0,
+			"history": [
+				{
+					"lines": [
+						253.0
+					],
+					"p_id": 32.0
+				}
+			],
+			"id": "C-078",
+			"last_p": 32.0,
+			"name": "_on_activity_response",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-079": {
+			"first_p": 32.0,
+			"history": [
+				{
+					"lines": [
+						293.0
+					],
+					"p_id": 32.0
+				}
+			],
+			"id": "C-079",
+			"last_p": 32.0,
+			"name": "_on_evidence_response",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-080": {
+			"first_p": 32.0,
+			"history": [
+				{
+					"lines": [
+						312.0
+					],
+					"p_id": 32.0
+				}
+			],
+			"id": "C-080",
+			"last_p": 32.0,
+			"name": "_on_events_response",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -2101,6 +2188,26 @@
 			"last_p": 31.0,
 			"name": "mcp_live_test_results.md",
 			"path": "docs/mcp_live_test_results.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-048": {
+			"first_p": 32.0,
+			"history": [],
+			"id": "F-048",
+			"last_p": 32.0,
+			"name": "mcp_dock.gd",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-049": {
+			"first_p": 32.0,
+			"history": [],
+			"id": "F-049",
+			"last_p": 32.0,
+			"name": "mcp_dock.tscn",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.tscn",
 			"status": "created",
 			"type": "file"
 		}

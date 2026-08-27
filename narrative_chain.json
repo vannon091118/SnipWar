@@ -2240,6 +2240,68 @@
 			"seq": 31,
 			"subject": "Doku-Konsolidierung: Zentrale FINDINGS.md als… — nach Null",
 			"summary": "Jetzt wird die Session zur Akte. Alles, was in dieser Runde gefunden und gefixt wurde, gehört an einen Ort, der immer aktuell bleibt — nicht in Notizen, die keiner liest. Deshalb steht jetzt eine z..."
+		},
+		{
+			"a": 8,
+			"arc": "a12",
+			"c": 32,
+			"composite": "c32j51n2a8p19",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/gdscript_mcp/MCP_INDEX.md",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 179.0,
+					"file": "addons/gdscript_mcp/editor/mcp_dock.gd",
+					"insertions": 86.0
+				},
+				{
+					"deletions": 85.0,
+					"file": "addons/gdscript_mcp/editor/mcp_dock.tscn",
+					"insertions": 32.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 47.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 62.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 11.0
+				}
+			],
+			"date": "2026-08-27 08:00:00",
+			"hash": "1cdb336744a9eaf34b3f1bf8789dfe93d7638a77",
+			"j": 51,
+			"model_id": "claude-sonnet-4",
+			"mood": "sarkastisch",
+			"n": 2,
+			"narrator": "Basher",
+			"p": 19,
+			"p_id": 32,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Vannon",
+			"seq": 32,
+			"subject": "Basher (8 files): Dock-Umbau zur Pipeline-Visualisierung:… — nach Vannon",
+			"summary": "Betrachte den Dock. Na ja, er hat einen Zweck bekommen. Vorher war er eine Bedienkonsole für Dinge, die der Agent längst selbst erledigt — Maus, Klick, Tasten, Scans, Freeze, eine ganze E2E-Fernbed..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

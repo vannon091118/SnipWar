@@ -279,8 +279,11 @@ ConceptIndex.new().by_domain("ships")
 - Kleine, atomare Änderungen
 - Nach jeder logischen Einheit: `git add <dateien>` + `git commit` mit Begründungszeilen
 - Preflight läuft automatisch im Hook
-- **MCP-Läufe (sichtbar):** Standard-Transport ist `mcp_file_driver.js` (eine Befehlszeile = genau ein Tool-Call, Latenz ~4–16 ms; Nutzung siehe `MCP_INDEX.md` → Schnellstart). Kein FIFO-/Session-Basteln mehr.
-- **Nie bei unerwarteten Ergebnissen raten:** Fehler (`ok:false`, `_error`, „Node not found"), daneben gegangene Klicks (`clicked:false`) und leere Scans (`controls:[]`) hängt der MCP-Server **automatisch** `visual_evidence` an (Screenshot + OCR). Daraus den echten Bildschirmzustand ableiten — nicht spekulieren.
+- **MCP-Tests (sichtbar):** **Pflicht-Lektüre** ist `addons/gdscript_mcp/AGENTS.md` —
+  die MCP-Test-Doktrin (Standard-Transport `mcp_file_driver.js`, OCR-Pflicht/
+  `visual_evidence`, Entkopplung, Atom-Vertrag) lebt **im MCP-Addon, getrennt
+  vom Spiel**. Vor jedem MCP-Test-Lauf: diese Datei + die 6 Pflicht-Dokumente
+  dort lesen. MCP-Findings → `docs/FINDINGS.md` (Abschnitt „MCP-Findings").
 
 ### AM ENDE (nach Arbeit)
 1. **Full Preflight**: `$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x`
@@ -297,5 +300,7 @@ ConceptIndex.new().by_domain("ships")
 - `DESIGN.md` — Feature-Status, Umsetzungsplan
 - `VISION.md` — Spielkreislauf, Layer-Details
 - `scripts/testing/SCENARIO_LOADER_SPEC.md` — ScenarioLoader API
-- `addons/gdscript_mcp/` — MCP-Remote-Testing (E2E, Playthrough-Archiv)
+- **`addons/gdscript_mcp/AGENTS.md` — PFLICHT-LESE für MCP-Tests** (MCP-Doktrin:
+  Transport, OCR, Entkopplung, Atom-Vertrag — getrennt von dieser Datei)
+- `addons/gdscript_mcp/` — MCP-Remote-Testing (E2E, Playthrough-Archiv; Doku im Addon)
 - `scripts/doki/README.md` — DOKI CommitLayer (Commit-Gate, Flow, Checks, Recovery)
