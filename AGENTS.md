@@ -144,7 +144,7 @@ Ein Bugfix löst also **kein** Staffelfinale aus — der Prompt unterscheidet
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- init --seed-last 10   # Genesis + letzte 10 Commits als Chain-Vorgeschichte
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- status
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki_analyze.gd                  # Qualitäts-Analyse (Befunde: Fehler/Warnungen)
-$GODOT_BIN --headless --path . --script res://scripts/doki/doki_selfcheck.gd                # 35 Regressionstests
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki_selfcheck.gd                # 65 Regressionstests
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki_story_test.gd               # 5-Commits-E2E (NUR im Test-Worktree!)
 ```
 **Full-Ref:** `scripts/doki/README.md` | CLI: `doki init|prepare|finish|amend|verify-only|finalize|repair|status|gate`
@@ -168,6 +168,14 @@ $GODOT_BIN --headless --path . --script res://scripts/doki/doki_story_test.gd   
 - **Seed:** Preflight erzwingt `PREFLIGHT_LAYOUT_SEED = 424242` (deterministisch)
 - **Chunk-Welt:** Beide Shipped-Szenarien sind unendlich (`chunk_size > 0`)
 - **Sector-System:** Nur visuell (`planet_visual_scale`), nie `set_size_profile` ändern
+
+### Narrative Runtime (Python) — abgeleitete State-Welt
+**Vertrag (verbindlich):** `scripts/doki/NARRATIVE_ENGINE_DESIGN.md` (Sprint 0, Rev. 2).
+- **Git/DOKI bleibt Wahrheit** (Git-Historie, `narrative_chain.json`, `change_index.json`, DOKI-Session). Die Runtime (`narrative_runtime/`, Python ≥ 3.11, **stdlib-only**) leitet nur ab: ChainObservations → später Relationships/Beliefs/Threads/Perspectives/Candidates. SQLite (`narrative_runtime/state/`, gitignored) ist rekonstruierbares Archiv, nie zweite Wahrheit.
+- **Nie blockierend:** Runtime-Fehler dürfen prepare/finish/commit/finalize nie berühren; Anbindung erst post-push (best-effort), geplant vor Sprint 7 hinter dem **NARRATIVE_RUNTIME_GATE** (fail-closed: stdlib-only, Purity, Event-ID-Reproduzierbarkeit, Chain-Lücken, State-schreibt-Git, Idempotenz, Rebuild == Incremental).
+- **Chain-Anker:** Meta speichert `last_processed_chain_seq` + `commit_hash` + `entry_digest` — rebase/amend-Rewrite an derselben Seq ⇒ HISTORY CHANGED (Exit 2), Rebuild Pflicht, kein stiller Skip.
+- **Composite unberührt:** Runtime berechnet niemals Composite/Narrator-Auswahl (`n`/`j`) neu.
+- **CLI:** `python -m narrative_runtime import|rebuild|verify|status` (Exit-Codes: 0 ok · 2 Rebuild erforderlich · 3 Chain ungültig · 1 sonstig).
 
 ---
 
@@ -245,6 +253,7 @@ ConceptIndex.new().by_domain("ships")
 | **ConceptIndex & Suche** | `concept_index.gd`, `constraint_concept_index.gd`, `mechanic_registry.gd`, `scenario_loader.gd`, `scenario_snapshot.gd`, `preflight.gd` |
 | **Global Search** | `global_search.gd`, `AGENTS.md` |
 | **DOKI CommitLayer** | `scripts/doki/**`, `narrative_chain.json`, `change_index.json`, `CHANGELOG.md`, `.githooks/pre-commit`, `.githooks/commit-msg`, `.githooks/post-commit`, `AGENTS.md`, `scripts/concept_index.gd` |
+| **Narrative Runtime (Python)** | `narrative_runtime/**`, `.gitignore`, `scripts/doki/NARRATIVE_ENGINE_DESIGN.md`, `AGENTS.md` |
 
 ---
 
@@ -304,3 +313,4 @@ ConceptIndex.new().by_domain("ships")
   Transport, OCR, Entkopplung, Atom-Vertrag — getrennt von dieser Datei)
 - `addons/gdscript_mcp/` — MCP-Remote-Testing (E2E, Playthrough-Archiv; Doku im Addon)
 - `scripts/doki/README.md` — DOKI CommitLayer (Commit-Gate, Flow, Checks, Recovery)
+- `scripts/doki/NARRATIVE_ENGINE_DESIGN.md` — Narrative Runtime Verträge (Sprint 0): Schichtmodell 0–7, ChainObservation-Schema, Chain-Anker, SQLite-Vertrag, gerichtetes Beziehungsmodell, NARRATIVE_RUNTIME_GATE

@@ -29,3 +29,8 @@ node_modules/
 # DOKI CommitLayer — transiente Flow-Artefakte (nie committen)
 /.doki/
 /.commit_msg.txt
+
+# Narrative Runtime (Python) — abgeleiteter State (jederzeit aus der Chain rekonstruierbar)
+narrative_runtime/state/
+__pycache__/
+*.pyc

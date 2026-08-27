@@ -36,7 +36,22 @@ func run(ctx: PreflightContext) -> bool:
 	# ── Basic camera init + bounds ──────────────────────────────────
 	if not ctx.check(ctx.get_root().get_viewport().get_camera_2d() == camera, "map camera is not the active 2D camera"):
 		return false
-	if not ctx.check(camera.zoom == Vector2.ONE and camera.position.distance_to(world_config.design_size * 0.5) <= 0.01, "map camera did not initialize to the map center"):
+	var expected_initial_center: Vector2 = world_config.design_size * 0.5
+	if world_config.is_infinite_world():
+		# Infinite worlds center on the player's homeworld. Invoke the camera's
+		# own centering contract once after fixture boot so deferred planet_added
+		# timing cannot make this assertion race the layout.
+		camera.call("_center_on_homeworld")
+		var player_homeworld_id: StringName = GameStateAccess.autoload(camera).homeworld_for(GameState.FACTION_PLAYER)
+		var homeworld: Node2D = null
+		for planet in camera.get_tree().get_nodes_in_group("planets"):
+			if planet is Node2D and planet.get("planet_id") == player_homeworld_id:
+				homeworld = planet as Node2D
+				break
+		if not ctx.check(homeworld != null, "infinite-world player homeworld is missing for camera center"):
+			return false
+		expected_initial_center = homeworld.global_position
+	if not ctx.check(camera.zoom == Vector2.ONE and camera.position.distance_to(expected_initial_center) <= 0.01, "map camera did not initialize to the expected world center"):
 		return false
 	# Finite maps clamp to their authored rectangle. Infinite maps deliberately
 	# allow exploration beyond the currently active cache and expand by FoV.

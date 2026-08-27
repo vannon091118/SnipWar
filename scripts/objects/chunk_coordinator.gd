@@ -254,8 +254,11 @@ func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
 						var dist_r: float = chunk_rng.randf_range(10.0, nearest_cluster.radius * 0.9)
 						world_pos = nearest_cluster.center_position + Vector2(cos(angle), sin(angle)) * dist_r
 					cluster_slot_counters[cid] = slot_idx + 1
-					# Assign faction from cluster
-					def.faction = _assign_faction_from_cluster(nearest_cluster, def.planet_role)
+					# Cluster resource bias must never assign ownership. Homeworld
+					# identities come from the origin catalog; procedural planets
+					# remain neutral until an explicit colonization action.
+					if def.planet_role != &"homeworld":
+						def.faction = _assign_faction_from_cluster(nearest_cluster, def.planet_role)
 				else:
 					# Outside cluster but attracted toward it — organic drift
 					var to_cluster: Vector2 = nearest_cluster.center_position - base_pos
@@ -440,18 +443,12 @@ func _get_cluster_planet_index(cluster, position: Vector2) -> int:
 			best_idx = i
 	return best_idx
 
-## Assign faction based on cluster resource bias
-func _assign_faction_from_cluster(cluster, planet_role: StringName) -> StringName:
+## Assign faction for a procedural planet. Resource bias describes resource
+## distribution only; it must not grant ownership or discovery at world boot.
+func _assign_faction_from_cluster(_cluster, planet_role: StringName) -> StringName:
 	if planet_role == &"homeworld":
-		return &"a"  # Will be overwritten by homeworld logic
-
-	if cluster.resource_bias == &"cpu":
-		return &"b"
-	elif cluster.resource_bias == &"neural":
-		return &"neutral"
-	elif cluster.resource_bias == &"uninhabited":
-		return &"neutral"
-	return &"neutral"
+		return GameState.FACTION_PLAYER # Defensive fallback; caller excludes it.
+	return GameState.FACTION_NEUTRAL
 
 ## Get all clusters (for LoD and other systems)
 func get_clusters() -> Array:

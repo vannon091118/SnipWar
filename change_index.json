@@ -205,6 +205,74 @@
 			],
 			"p_id": 17.0
 		},
+		"4483ceb09193b09566ee931b433a874fdc37c967": {
+			"c": 44,
+			"composite": "c44j38n3a12p28",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-127",
+				"F-055",
+				"F-128",
+				"F-129",
+				"F-130",
+				"F-112",
+				"F-001",
+				"F-131",
+				"F-132",
+				"F-133",
+				"F-134",
+				"F-135",
+				"C-254",
+				"C-255",
+				"C-256",
+				"C-257",
+				"C-258",
+				"C-259",
+				"C-260",
+				"C-261",
+				"C-262",
+				"C-263",
+				"C-264",
+				"C-265",
+				"C-266",
+				"C-267",
+				"C-268",
+				"C-269",
+				"C-270",
+				"C-271",
+				"C-272",
+				"C-273",
+				"C-274",
+				"C-275",
+				"C-276",
+				"C-277",
+				"C-278",
+				"C-279",
+				"C-280",
+				"C-281",
+				"C-282",
+				"C-283",
+				"C-284",
+				"C-285",
+				"C-286",
+				"C-287",
+				"C-288",
+				"C-289",
+				"C-290",
+				"C-291",
+				"C-292",
+				"C-293",
+				"C-294",
+				"C-295",
+				"C-296",
+				"C-297",
+				"C-298",
+				"C-299"
+			],
+			"p_id": 44
+		},
 		"4560e16ae80496534b8ce5eced53d3ae736217b6": {
 			"c": 33.0,
 			"composite": "c33j17n7a4p5",
@@ -461,7 +529,7 @@
 			"p_id": 19.0
 		},
 		"c649bf053d1f7de69565cd872a3959cb06e5b74d": {
-			"c": 43,
+			"c": 43.0,
 			"composite": "c43j96n1a10p37",
 			"entities": [
 				"F-125",
@@ -484,7 +552,7 @@
 				"C-252",
 				"C-253"
 			],
-			"p_id": 43
+			"p_id": 43.0
 		},
 		"caeed225d6e93fbfd5c0160e8f62c616aefbbf31": {
 			"c": 25.0,
@@ -5092,6 +5160,788 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-254": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-254",
+			"last_p": 44.0,
+			"name": "ClusterData",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-255": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-255",
+			"last_p": 44.0,
+			"name": "_init",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-256": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-256",
+			"last_p": 44.0,
+			"name": "get_world_planet_positions",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-257": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-257",
+			"last_p": 44.0,
+			"name": "contains_point",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-258": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						28.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-258",
+			"last_p": 44.0,
+			"name": "is_void",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-259": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						31.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-259",
+			"last_p": 44.0,
+			"name": "get_cluster_type",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-260": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						35.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-260",
+			"last_p": 44.0,
+			"name": "SunData",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-261": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						48.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-261",
+			"last_p": 44.0,
+			"name": "get_scale",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-262": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						51.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-262",
+			"last_p": 44.0,
+			"name": "get_gravity_influence",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-263": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						54.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-263",
+			"last_p": 44.0,
+			"name": "get_visual_color",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-264": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						67.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-264",
+			"last_p": 44.0,
+			"name": "ResourceDistribution",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-265": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						77.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-265",
+			"last_p": 44.0,
+			"name": "total",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-266": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						80.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-266",
+			"last_p": 44.0,
+			"name": "get_bias",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-267": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						89.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-267",
+			"last_p": 44.0,
+			"name": "distribute",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-268": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						250.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-268",
+			"last_p": 44.0,
+			"name": "is_cluster_generation_enabled",
+			"path": "scripts/config/world_config.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-269": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						253.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-269",
+			"last_p": 44.0,
+			"name": "resolved_cluster_count",
+			"path": "scripts/config/world_config.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-270": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						259.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-270",
+			"last_p": 44.0,
+			"name": "resolved_sun_mass",
+			"path": "scripts/config/world_config.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-271": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						262.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-271",
+			"last_p": 44.0,
+			"name": "resolved_sun_glow",
+			"path": "scripts/config/world_config.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-272": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						265.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-272",
+			"last_p": 44.0,
+			"name": "resolved_resource_bias",
+			"path": "scripts/config/world_config.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-273": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						389.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-273",
+			"last_p": 44.0,
+			"name": "_ensure_clusters_generated",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-274": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						422.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-274",
+			"last_p": 44.0,
+			"name": "_find_cluster_for_position",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-275": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						429.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-275",
+			"last_p": 44.0,
+			"name": "_get_cluster_planet_index",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-276": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						441.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-276",
+			"last_p": 44.0,
+			"name": "_assign_faction_from_cluster",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-277": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						454.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-277",
+			"last_p": 44.0,
+			"name": "get_clusters",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-278": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						458.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-278",
+			"last_p": 44.0,
+			"name": "get_sun_nodes",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-279": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						462.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-279",
+			"last_p": 44.0,
+			"name": "is_void_position",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-280": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						469.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-280",
+			"last_p": 44.0,
+			"name": "get_cluster_lod",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-281": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						483.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-281",
+			"last_p": 44.0,
+			"name": "should_simulate_cluster",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-282": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						487.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-282",
+			"last_p": 44.0,
+			"name": "get_cluster_lod_state",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-283": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						502.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-283",
+			"last_p": 44.0,
+			"name": "_get_cluster_factions",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-284": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						2.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-284",
+			"last_p": 44.0,
+			"name": "Sun",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-285": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						28.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-285",
+			"last_p": 44.0,
+			"name": "_ready",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-286": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						31.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-286",
+			"last_p": 44.0,
+			"name": "_process",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-287": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						35.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-287",
+			"last_p": 44.0,
+			"name": "_draw",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-288": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						52.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-288",
+			"last_p": 44.0,
+			"name": "_draw_glow_layer",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-289": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						60.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-289",
+			"last_p": 44.0,
+			"name": "_draw_sun_core",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-290": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						70.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-290",
+			"last_p": 44.0,
+			"name": "_draw_corona",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-291": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						92.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-291",
+			"last_p": 44.0,
+			"name": "_draw_gravity_field",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-292": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						103.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-292",
+			"last_p": 44.0,
+			"name": "configure_cluster",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-293": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						113.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-293",
+			"last_p": 44.0,
+			"name": "set_gravity_visualization",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-294": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						117.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-294",
+			"last_p": 44.0,
+			"name": "get_gravity_influence",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-295": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						120.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-295",
+			"last_p": 44.0,
+			"name": "_get_visual_color",
+			"path": "scripts/objects/sun.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-296": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-296",
+			"last_p": 44.0,
+			"name": "PreflightConstraintClusterGeneration",
+			"path": "scripts/preflight/constraint_cluster_generation.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-297": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-297",
+			"last_p": 44.0,
+			"name": "constraint_name",
+			"path": "scripts/preflight/constraint_cluster_generation.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-298": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-298",
+			"last_p": 44.0,
+			"name": "requires_scene",
+			"path": "scripts/preflight/constraint_cluster_generation.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-299": {
+			"first_p": 44.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 44.0
+				}
+			],
+			"id": "C-299",
+			"last_p": 44.0,
+			"name": "run",
+			"path": "scripts/preflight/constraint_cluster_generation.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -6349,6 +7199,96 @@
 			"last_p": 43.0,
 			"name": "chain_validate_entry_test.gd",
 			"path": "scripts/testing/chain_validate_entry_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-127": {
+			"first_p": 44.0,
+			"history": [],
+			"id": "F-127",
+			"last_p": 44.0,
+			"name": "sun.tscn",
+			"path": "scenes/objects/sun.tscn",
+			"status": "created",
+			"type": "file"
+		},
+		"F-128": {
+			"first_p": 44.0,
+			"history": [],
+			"id": "F-128",
+			"last_p": 44.0,
+			"name": "cluster_data.gd",
+			"path": "scripts/config/cluster_data.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-129": {
+			"first_p": 44.0,
+			"history": [],
+			"id": "F-129",
+			"last_p": 44.0,
+			"name": "cluster_data.gd.uid",
+			"path": "scripts/config/cluster_data.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-130": {
+			"first_p": 44.0,
+			"history": [],
+			"id": "F-130",
+			"last_p": 44.0,
+			"name": "world_config.gd",
+			"path": "scripts/config/world_config.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-131": {
+			"first_p": 44.0,
+			"history": [],
+			"id": "F-131",
+			"last_p": 44.0,
+			"name": "chunk_coordinator.gd",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-132": {
+			"first_p": 44.0,
+			"history": [],
+			"id": "F-132",
+			"last_p": 44.0,
+			"name": "sun.gd",
+			"path": "scripts/objects/sun.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-133": {
+			"first_p": 44.0,
+			"history": [],
+			"id": "F-133",
+			"last_p": 44.0,
+			"name": "sun.gd.uid",
+			"path": "scripts/objects/sun.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-134": {
+			"first_p": 44.0,
+			"history": [],
+			"id": "F-134",
+			"last_p": 44.0,
+			"name": "constraint_cluster_generation.gd",
+			"path": "scripts/preflight/constraint_cluster_generation.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-135": {
+			"first_p": 44.0,
+			"history": [],
+			"id": "F-135",
+			"last_p": 44.0,
+			"name": "constraint_cluster_generation.gd.uid",
+			"path": "scripts/preflight/constraint_cluster_generation.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

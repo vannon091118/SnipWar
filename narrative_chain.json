@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-27 15:14:39 +0200",
-		"hash": "c649bf053d1f7de69565cd872a3959cb06e5b74d",
-		"subject": "[Buffy] Harte Evidence-Gates: beide mechanische Gatesâ€¦ â€” nach Null"
+		"date": "2026-08-27 19:18:09 +0200",
+		"hash": "4483ceb09193b09566ee931b433a874fdc37c967",
+		"subject": "Makulatur: Cluster-Void Generierungssystem mitâ€¦ [Analyse: Thinker] â€” nach Buffy"
 	},
 	"entries": [
 		{
@@ -3334,6 +3334,103 @@
 			"seq": 43,
 			"subject": "[Buffy] Harte Evidence-Gates: beide mechanische Gates… — nach Null",
 			"summary": "Weisst du, was passiert, wenn ein Gate behauptet, alles zu prüfen, aber stillschweigend einen Parse-Fehler durchlässt? Ich schon — genau das habe ich diesmal auseinandergenommen. Null hat vor mir d..."
+		},
+		{
+			"a": 12,
+			"arc": "a18",
+			"c": 44,
+			"composite": "c44j38n3a12p28",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 218.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "narrative_chain.json",
+					"insertions": 74.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scenes/objects/sun.tscn",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/concept_index.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/config/cluster_data.gd",
+					"insertions": 112.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/config/cluster_data.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/config/world_config.gd",
+					"insertions": 61.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/config/world_generator.gd",
+					"insertions": 246.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 33.0
+				},
+				{
+					"deletions": 19.0,
+					"file": "scripts/objects/chunk_coordinator.gd",
+					"insertions": 208.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/objects/sun.gd",
+					"insertions": 131.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/objects/sun.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_cluster_generation.gd",
+					"insertions": 117.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_cluster_generation.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 20:00:00",
+			"hash": "4483ceb09193b09566ee931b433a874fdc37c967",
+			"j": 38,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 3,
+			"narrator": "Thinker",
+			"p": 28,
+			"p_id": 44,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Buffy",
+			"seq": 44,
+			"subject": "Makulatur: Cluster-Void Generierungssystem mit… [Analyse: Thinker] — nach Buffy",
+			"summary": "Ich zähle drei Schichten: Konzept, Architektur, Korrektur. Die erste war unvermeidlich."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
@@ -3350,6 +3447,10 @@
 		},
 		{
 			"at_hash": "c649bf053d1f7de69565cd872a3959cb06e5b74d",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		},
+		{
+			"at_hash": "4483ceb09193b09566ee931b433a874fdc37c967",
 			"note": "Anker nach rebase/amend/force-push neu verankert."
 		}
 	]

@@ -711,3 +711,25 @@ Harte Evidence-Gates: beide mechanische Gates (compile_gate, chain_manifest_gate
 - scripts/testing/chain_manifest_gate.gd: Tooling erweitert (F-122).
 - scripts/testing/chain_validate_entry_test.gd: Tooling erweitert (F-126).
 - scripts/testing/compile_gate.gd: Tooling erweitert (F-123).
+
+## 2026-08-27 20:00:00 — p44 · c44j38n3a12p28 · Thinker · trocken
+
+**Makulatur: Cluster-Void Generierungssystem mit… [Analyse: Thinker] — nach Buffy**
+
+Makulatur: Cluster-Void Generierungssystem mit organischer Planetplatzierung und Sonnen
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scenes/objects/sun.tscn: Implementiert und integriert (F-127).
+- scripts/concept_index.gd: Implementiert und integriert (F-055).
+- scripts/config/cluster_data.gd: Implementiert und integriert (F-128).
+- scripts/config/cluster_data.gd.uid: Implementiert und integriert (F-129).
+- scripts/config/world_config.gd: Implementiert und integriert (F-130).
+- scripts/config/world_generator.gd: Implementiert und integriert (F-112).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/objects/chunk_coordinator.gd: Implementiert und integriert (F-131).
+- scripts/objects/sun.gd: Implementiert und integriert (F-132).
+- scripts/objects/sun.gd.uid: Implementiert und integriert (F-133).
+- scripts/preflight/constraint_cluster_generation.gd: Implementiert und integriert (F-134).
+- scripts/preflight/constraint_cluster_generation.gd.uid: Implementiert und integriert (F-135).
