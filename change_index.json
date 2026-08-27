@@ -131,6 +131,35 @@
 			],
 			"p_id": 26.0
 		},
+		"a36707d4cf6285ad4e0ff2a6d1f348cbc6a343d0": {
+			"c": 29,
+			"composite": "c29j35n7a7p26",
+			"entities": [
+				"F-037",
+				"F-002",
+				"F-038",
+				"F-039",
+				"F-040",
+				"F-041",
+				"F-003",
+				"F-004",
+				"F-001",
+				"C-055",
+				"C-056",
+				"C-057",
+				"C-058",
+				"C-059",
+				"C-060",
+				"C-061",
+				"C-062",
+				"C-063",
+				"C-064",
+				"C-065",
+				"C-066",
+				"C-067"
+			],
+			"p_id": 29
+		},
 		"a95a7ee437c739b97ceb60b66f5f4beb92f2bce1": {
 			"c": 11.0,
 			"composite": "c11j46n7a1p5",
@@ -234,7 +263,7 @@
 			"p_id": 21.0
 		},
 		"fdb32c6e2dfa34e9a7bd1736bfa29b202417b2d8": {
-			"c": 28,
+			"c": 28.0,
 			"composite": "c28j67n11a6p15",
 			"entities": [
 				"F-002",
@@ -259,7 +288,7 @@
 				"C-053",
 				"C-054"
 			],
-			"p_id": 28
+			"p_id": 28.0
 		}
 	},
 	"entities": {
@@ -1187,6 +1216,233 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-055": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						54.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-055",
+			"last_p": 29.0,
+			"name": "subdirs",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-056": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						58.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-056",
+			"last_p": 29.0,
+			"name": "candidate",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-057": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						65.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-057",
+			"last_p": 29.0,
+			"name": "artifactDir",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-058": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						66.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-058",
+			"last_p": 29.0,
+			"name": "artifact",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-059": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						235.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-059",
+			"last_p": 29.0,
+			"name": "OCR_POOL_SIZE",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-060": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						236.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-060",
+			"last_p": 29.0,
+			"name": "OCR_CACHE_DIR",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-061": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						237.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-061",
+			"last_p": 29.0,
+			"name": "OCR_OPTIONS",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-062": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						259.0
+					],
+					"p_id": 29.0
+				},
+				{
+					"lines": [
+						275.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-062",
+			"last_p": 29.0,
+			"name": "worker",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-063": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						333.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-063",
+			"last_p": 29.0,
+			"name": "parsed",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-064": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						334.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-064",
+			"last_p": 29.0,
+			"name": "isOcrJob",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-065": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						335.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-065",
+			"last_p": 29.0,
+			"name": "pending",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-066": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						345.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-066",
+			"last_p": 29.0,
+			"name": "response",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-067": {
+			"first_p": 29.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 29.0
+				}
+			],
+			"id": "C-067",
+			"last_p": 29.0,
+			"name": "REQUEST_TIMEOUT_MS",
+			"path": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -1544,6 +1800,56 @@
 			"last_p": 28.0,
 			"name": "mcp_lib.js",
 			"path": "addons/gdscript_mcp/client/playthroughs/mcp_lib.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-037": {
+			"first_p": 29.0,
+			"history": [],
+			"id": "F-037",
+			"last_p": 29.0,
+			"name": ".gitignore",
+			"path": ".gitignore",
+			"status": "created",
+			"type": "file"
+		},
+		"F-038": {
+			"first_p": 29.0,
+			"history": [],
+			"id": "F-038",
+			"last_p": 29.0,
+			"name": "package-lock.json",
+			"path": "addons/gdscript_mcp/client/package-lock.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-039": {
+			"first_p": 29.0,
+			"history": [],
+			"id": "F-039",
+			"last_p": 29.0,
+			"name": "package.json",
+			"path": "addons/gdscript_mcp/client/package.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-040": {
+			"first_p": 29.0,
+			"history": [],
+			"id": "F-040",
+			"last_p": 29.0,
+			"name": "vision_worker.js",
+			"path": "addons/gdscript_mcp/client/vision_worker.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-041": {
+			"first_p": 29.0,
+			"history": [],
+			"id": "F-041",
+			"last_p": 29.0,
+			"name": "mcp_vision_worker.gd",
+			"path": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd",
 			"status": "created",
 			"type": "file"
 		}

@@ -416,3 +416,19 @@ mcp_file_driver als Standard-Transport für sichtbare MCP-Läufe (ein Prozess, e
 - change_index.json: Implementiert und integriert (F-003).
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 05:00:00 — p29 · c29j35n7a7p26 · Argos · neugierig
+
+**Argos: 9 Dateien — OCR-Pipeline: tesseract.js ins… — nach Null**
+
+OCR-Pipeline: tesseract.js installiert (Client-Ordner, node_modules in .gitignore), Assets lokal (Kaltstart 2.3s statt CDN-Timeout), Worker-Pool default 2 (MCP_OCR_POOL), Unterordner-Suche für Artefakte, kein workerPath (Node-Variante), Timeouts 15→60s, OCR-Command-Durchreichung
+
+- .gitignore: Tooling erweitert (F-037).
+- CHANGELOG.md: Tooling erweitert (F-002).
+- addons/gdscript_mcp/client/package-lock.json: Tooling erweitert (F-038).
+- addons/gdscript_mcp/client/package.json: Tooling erweitert (F-039).
+- addons/gdscript_mcp/client/vision_worker.js: Tooling erweitert (F-040).
+- addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd: Tooling erweitert (F-041).
+- change_index.json: Tooling erweitert (F-003).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).

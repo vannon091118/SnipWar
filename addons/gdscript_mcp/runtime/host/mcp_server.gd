@@ -58,6 +58,8 @@ var _async_busy := false
 var _pending_async: Array[Dictionary] = []
 var _last_tick_ms := 0
 var _last_error := ""
+var _evidence_cache: Dictionary = {}
+var _evidence_inflight := false
 
 
 func _init() -> void:
@@ -329,6 +331,11 @@ func _register_host_tools() -> void:
 			"name": "runtime_agent_activity",
 			"description": "Read what the agent is currently doing: goal, last tool calls with args, timings and errors - without asking the agent",
 			"inputSchema": {"type": "object", "properties": {"limit": {"type": "integer", "default": 20}}},
+		},
+		{
+			"name": "runtime_visual_evidence",
+			"description": "Return the latest automatic visual analysis (screenshot + OCR) that the server captured in the background after an unexpected tool result. status: none | pending | ready. wait_ms polls up to that many ms for an in-flight analysis (0 = return immediately). capture=true starts a fresh analysis when none is cached yet.",
+			"inputSchema": {"type": "object", "properties": {"wait_ms": {"type": "integer", "default": 0}, "capture": {"type": "boolean", "default": false}}},
 		},
 	]
 	for host_tool in host_tools:
@@ -633,6 +640,9 @@ func _handle_tool_call(id: Variant, params: Dictionary) -> void:
 		var feed: Variant = _agent_activity.get_feed(feed_limit) if _agent_activity != null else {"goal": "", "entries": [], "count": 0, "total_calls": 0}
 		_send_tool_result_atomic(id, feed)
 		return
+	if tool_name == "runtime_visual_evidence":
+		_handle_visual_evidence(id, args, request_generation)
+		return
 	if tool_name == "editor_logs_read":
 		# Kein Plugin-Kontext nötig: Session-Logs leben im Server (Lifecycle).
 		var log_cursor := int(args.get("cursor", 0))
@@ -717,7 +727,7 @@ func _handle_tool_call(id: Variant, params: Dictionary) -> void:
 	if _agent_activity != null:
 		_agent_activity.record_tool(tool_name, args, float(Time.get_ticks_msec() - started_ms), not _protocol.result_is_error(result), str(result.get("error", "")) if _protocol.result_is_error(result) else "")
 	if request_generation == _connection_generation:
-		_send_tool_result_atomic(id, result)
+		_send_tool_result_with_visual_evidence(id, tool_name, result, _connection_generation)
 
 
 func _run_async_tool(id: Variant, tool_name: String, args: Dictionary, generation: int) -> void:
@@ -743,6 +753,108 @@ func _run_async_tool(id: Variant, tool_name: String, args: Dictionary, generatio
 			_lifecycle.mark_busy(true)
 		_run_async_tool(next.get("id"), str(next.get("name", "")), next.get("args", {}), _connection_generation)
 		break
+
+
+## PFLICHT-Regel: Folgt auf ein Tool-Ergebnis eine unerwartete Lage (Fehler,
+## daneben gegangener Klick, leerer Scan), wird automatisch eine Bild-/OCR-Analyse
+## angestoßen und als visual_evidence an die Antwort angehängt — der Agent sieht
+## sofort den echten Bildschirmzustand, statt nur einen Fehlercode zu raten.
+const UNEXPECTED_VISUAL_EXCLUSIONS: Array[String] = [
+	"runtime_screenshot", "runtime_ux_analyze", "runtime_ux_read",
+	"runtime_get_pixel", "runtime_get_pixel_region", "runtime_find_color",
+	"runtime_find_all_colors", "runtime_count_color_pixels", "runtime_image_diff",
+	"runtime_wait_for_stable", "runtime_frame_changed", "runtime_find_template",
+	"runtime_context_release", "runtime_vision_worker_analyze", "runtime_vision_status",
+	"runtime_mcp_status", "runtime_mcp_events", "editor_logs_read",
+	"runtime_agent_goal_set", "runtime_agent_activity",
+]
+
+func _is_unexpected_result(result: Variant) -> bool:
+	if not (result is Dictionary):
+		return false
+	var data: Dictionary = result
+	if _protocol.result_is_error(data):
+		return true
+	if data.has("ok") and not bool(data.get("ok", true)):
+		return true
+	if data.has("_error") and bool(data.get("_error", false)):
+		return true
+	if data.has("clicked") and not bool(data.get("clicked", true)):
+		return true
+	if data.has("moved") and not bool(data.get("moved", true)):
+		return true
+	if data.has("controls") and data.get("controls") is Array and (data.get("controls") as Array).is_empty():
+		return true
+	return false
+
+## ENTKOPPELT: Die Antwort wird SOFORT gesendet (die Aktion blockiert nie auf
+## Screenshot/OCR). Bei unerwarteter Lage wird die Analyse als Fire-and-forget
+## im Hintergrund gestartet und in _evidence_cache abgelegt — der Agent holt sie
+## gezielt über runtime_visual_evidence, wenn er sie braucht.
+func _send_tool_result_with_visual_evidence(id: Variant, tool_name: String, result: Variant, generation: int) -> void:
+	if tool_name in UNEXPECTED_VISUAL_EXCLUSIONS or not _is_unexpected_result(result):
+		_send_tool_result_atomic(id, result)
+		return
+	_start_background_evidence()
+	if result is Dictionary:
+		(result as Dictionary)["visual_evidence"] = {"status": "pending", "hint": "call runtime_visual_evidence (wait_ms) to fetch the analysis"}
+	if generation == _connection_generation:
+		_send_tool_result_atomic(id, result)
+
+
+func _handle_visual_evidence(id: Variant, args: Dictionary, generation: int) -> void:
+	var wait_ms := clampi(int(args.get("wait_ms", 0)), 0, 10000)
+	if bool(args.get("capture", false)) and not _evidence_inflight and _evidence_cache.is_empty():
+		_start_background_evidence()
+	var waited := 0
+	while _evidence_inflight and waited < wait_ms:
+		await get_tree().create_timer(0.05).timeout
+		waited += 50
+		if generation != _connection_generation:
+			return
+	var status := "none"
+	if not _evidence_cache.is_empty():
+		status = "ready"
+	elif _evidence_inflight:
+		status = "pending"
+	_send_tool_result_atomic(id, {"ok": true, "status": status, "evidence": _evidence_cache})
+
+
+func _start_background_evidence() -> void:
+	if _evidence_inflight:
+		return
+	_evidence_inflight = true
+	_run_background_evidence()
+
+
+func _run_background_evidence() -> void:
+	var evidence := await _capture_visual_evidence()
+	if not evidence.is_empty():
+		_evidence_cache = evidence
+	_evidence_inflight = false
+
+func _capture_visual_evidence() -> Dictionary:
+	var evidence: Dictionary = {}
+	var shot: Variant = await _registry.dispatch_async("runtime_screenshot", {"persist_context": true})
+	if shot is Dictionary and not shot.has("error") and not bool((shot as Dictionary).get("_error", false)):
+		var shot_data: Dictionary = shot
+		var quality: Dictionary = shot_data.get("screen_quality", {}) if shot_data.get("screen_quality") is Dictionary else {}
+		evidence["screenshot"] = {
+			"context_id": str(shot_data.get("context_id", "")),
+			"width": int(shot_data.get("width", 0)),
+			"height": int(shot_data.get("height", 0)),
+			"quality": str(quality.get("quality", "")),
+		}
+		var context_id := str(shot_data.get("context_id", ""))
+		if context_id != "" and _worker != null and is_instance_valid(_worker) and _worker.has_method("request"):
+			var ocr_result: Variant = await _worker.request("ocr", {"context_id": context_id})
+			if ocr_result is Dictionary:
+				var ocr_data: Dictionary = ocr_result
+				if ocr_data.has("ocr") and ocr_data.get("ocr") is Dictionary:
+					evidence["ocr"] = ocr_data.get("ocr")
+				elif ocr_data.has("error"):
+					evidence["ocr"] = {"available": false, "reason": str(ocr_data.get("error", "vision worker error"))}
+	return evidence
 
 
 ## Ein Schreib-Gate für beide Editier-Welten: Der Editor-Dock aktiviert
@@ -840,6 +952,7 @@ func _create_vision_worker(config: Dictionary) -> void:
 			"vision_worker_command": str(config.get("vision_worker_command", "node")),
 			"vision_worker_script": str(config.get("vision_worker_script", "res://addons/gdscript_mcp/client/vision_worker.js")),
 			"vision_worker_port": int(config.get("vision_worker_port", 9127)),
+			"vision_worker_ocr_command": str(config.get("vision_worker_ocr_command", "")),
 			"context_root": _context_store.get_root_path() if _context_store != null else "",
 		})
 

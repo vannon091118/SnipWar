@@ -2054,6 +2054,73 @@
 			"seq": 28,
 			"subject": "Null: mcp_file_driver als Standard-Transport f… — nach Flux",
 			"summary": "Ein Transport, der nicht abbricht. Flux hat die Tasten gesetzt, und jetzt soll der Agent sie auch drücken können, ohne dass die Verbindung unterwegs aufgibt. Also: ein Prozess, ein Handshake, eine ..."
+		},
+		{
+			"a": 7,
+			"arc": "a10",
+			"c": 29,
+			"composite": "c29j35n7a7p26",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": ".gitignore",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/package-lock.json",
+					"insertions": 130.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/package.json",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 20.0,
+					"file": "addons/gdscript_mcp/client/vision_worker.js",
+					"insertions": 74.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 311.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 52.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 37.0
+				}
+			],
+			"date": "2026-08-27 05:00:00",
+			"hash": "a36707d4cf6285ad4e0ff2a6d1f348cbc6a343d0",
+			"j": 35,
+			"model_id": "claude-sonnet-4",
+			"mood": "neugierig",
+			"n": 7,
+			"narrator": "Argos",
+			"p": 26,
+			"p_id": 29,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Null",
+			"seq": 29,
+			"subject": "Argos: 9 Dateien — OCR-Pipeline: tesseract.js ins… — nach Null",
+			"summary": "Moment — wieso eigentlich dauert das so lange? Genau diese Frage stand am Anfang, als der erste OCR-Lauf über sechzig Sekunden brauchte und dann im Leeren verpuffte, weil die Daten vom CDN kamen, d..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

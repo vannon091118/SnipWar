@@ -1,5 +1,5 @@
 {
-	"active": "a10",
+	"active": "a11",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -18,11 +18,46 @@
 		},
 		"a10": {
 			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
 			"id": "a10",
 			"name": "Der sichtbare Durchlauf",
+			"seen_entities": [
+				"F-037",
+				"F-002",
+				"F-038",
+				"F-039",
+				"F-040",
+				"F-041",
+				"F-003",
+				"F-004",
+				"F-001",
+				"C-055",
+				"C-056",
+				"C-057",
+				"C-058",
+				"C-059",
+				"C-060",
+				"C-061",
+				"C-062",
+				"C-063",
+				"C-064",
+				"C-065",
+				"C-066",
+				"C-067"
+			],
+			"span": "heute → offen",
+			"status": "completed",
+			"theme": "das erste Schiff im Tutorial, vom ersten Klick bis zum Abschluss.",
+			"version": "",
+			"weight": 6.85
+		},
+		"a11": {
+			"climax_weight": 3.0,
+			"id": "a11",
+			"name": "Nächster Akt",
 			"span": "heute → offen",
 			"status": "active",
-			"theme": "das erste Schiff im Tutorial, vom ersten Klick bis zum Abschluss.",
+			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
 			"weight": 0.0
 		},

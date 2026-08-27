@@ -223,7 +223,9 @@ func _rt_click(args: Dictionary) -> Dictionary:
 	var x: int = int(args.get("x", -1))
 	var y: int = int(args.get("y", -1))
 	var hold_frames: int = maxi(1, int(args.get("hold_frames", 1)))
-	var smooth: bool = bool(args.get("smooth", true))
+	# Grundsatz: Klicks springen nie - der virtuelle Cursor faehrt immer smooth
+	# zum Ziel (sichtbare Geste, kein Teleport), unabhaengig vom Agenten.
+	var smooth := true
 	var inject_mode: String = str(args.get("inject_mode", "auto"))
 
 	var tree = Engine.get_main_loop()
@@ -667,11 +669,13 @@ static func smooth_travel(from: Vector2, to: Vector2, duration_ms: int = 120) ->
 	var dist := from.distance_to(to)
 	if dist <= 0.5:
 		return []
-	# ~36 px pro Frame (sichtbar, aber schnell), gedeckelt durch duration_ms
-	# (16 ms pro Frame) und harte Grenzen 3..96.
-	var duration_steps := clampi(int(ceil(float(maxi(1, duration_ms)) / 16.0)), 3, 96)
-	var distance_steps := clampi(int(ceil(dist / 36.0)), 3, 96)
-	var steps := mini(duration_steps, distance_steps)
+	# Grundsatz: Der virtuelle Cursor SPRINGT NIE. Die Schrittzahl richtet sich
+	# nach der Distanz (~32 px pro Frame, sichtbar weich), mit Mindest-Schritten,
+	# damit auch kurze Bewegungen als fließende Geste erscheinen. duration_ms
+	# wirkt als Untergrenze (niemals schneller als min_frames Frames).
+	var duration_steps := clampi(int(ceil(float(maxi(1, duration_ms)) / 16.0)), 8, 96)
+	var distance_steps := clampi(int(ceil(dist / 32.0)), 8, 96)
+	var steps := maxi(duration_steps, distance_steps)
 	var travel: Array = []
 	for i in range(1, steps + 1):
 		var t := float(i) / float(steps)

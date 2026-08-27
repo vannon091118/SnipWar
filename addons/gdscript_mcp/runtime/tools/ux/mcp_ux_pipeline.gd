@@ -149,8 +149,8 @@ func _run_watch_visual() -> void:
 	_watch_visual_busy = false
 
 
-func analyze(include_visual: bool = true) -> Dictionary:
-	var live := McpUxLive.build_snapshot()
+func analyze(include_visual: bool = true, root_path: String = "/root", max_controls: int = 300, max_depth: int = 32) -> Dictionary:
+	var live := McpUxLive.build_snapshot(root_path, max_controls, max_depth)
 	if not include_visual:
 		return _build_analysis_result(live, {}, {}, 0, 0, false)
 	if not _ensure_vision():
@@ -215,8 +215,8 @@ func _build_analysis_result(live: Dictionary, visual: Dictionary, image_context:
 	return result
 
 
-func analyze_async(include_visual: bool = true) -> Dictionary:
-	var live := McpUxLive.build_snapshot()
+func analyze_async(include_visual: bool = true, root_path: String = "/root", max_controls: int = 300, max_depth: int = 32) -> Dictionary:
+	var live := McpUxLive.build_snapshot(root_path, max_controls, max_depth)
 	if not include_visual:
 		return _build_analysis_result(live, {}, {}, 0, 0, false)
 	if not _ensure_vision():
@@ -630,7 +630,7 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 	match tool_name:
 		"runtime_ux_analyze":
-			return await analyze_async(bool(args.get("include_visual", true)))
+			return await analyze_async(bool(args.get("include_visual", true)), str(args.get("root_path", "/root")), int(args.get("max_controls", 300)), int(args.get("max_depth", 32)))
 		"runtime_ux_read":
 			return await read_region_async(args.get("rect", {}))
 		"runtime_ux_click":
@@ -641,7 +641,7 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 
 static func get_tool_defs() -> Array:
 	return [
-		_make("runtime_ux_analyze", "Run the complete live-control plus visual UX pipeline", {"include_visual": {"type": "boolean", "default": true}}, [], true),
+		_make("runtime_ux_analyze", "Run the complete live-control plus visual UX pipeline", {"include_visual": {"type": "boolean", "default": true}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, [], true),
 		_make("runtime_ux_scan", "Fast bounded live scan of clickable controls and exact labels", {"root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}),
 		_make("runtime_ux_find", "Find an interactable in a bounded visible scope by exact text, node name, type, or position", {"description": {"type": "string"}, "rect": {"type": "object"}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, ["description"]),
 		_make("runtime_ux_read", "Read a visual region and return local context metadata", {"rect": {"type": "object"}}, ["rect"], true),
