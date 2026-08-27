@@ -1945,6 +1945,63 @@
 			"seq": 26,
 			"subject": "Ghost verzeichnet: Tutorial-Doktrin rein präsentativ (Karte… — nach Vannon",
 			"summary": "Die Chronik verzeichnet einen stillen Nachmittag der Korrekturen, deren Notwendigkeit sich aus dem sichtbaren Lauf des Tutorials ergab. Vannons QA-Runde hatte offengelegt, was die Logs nicht zeigte..."
+		},
+		{
+			"a": 6,
+			"arc": "a8",
+			"c": 27,
+			"composite": "c27j57n13a6p25",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 130.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 67.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/ui/dossier/parchment_tech_tree_view.gd",
+					"insertions": 34.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/ui/dossier/planet_dossier_view.gd",
+					"insertions": 23.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/ui/dossier/workshop_view.gd",
+					"insertions": 25.0
+				}
+			],
+			"date": "2026-08-27 03:00:00",
+			"hash": "26116836822ddb42740b7b848fac7ecae227a51b",
+			"j": 57,
+			"model_id": "claude-sonnet-4",
+			"mood": "alarmiert",
+			"n": 13,
+			"narrator": "Flux",
+			"p": 25,
+			"p_id": 27,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Ghost",
+			"seq": 27,
+			"subject": "Flux — also — Kontext-gated Sub-Menü-Hotkeys: Planeten-Dossier… — nach Ghost",
+			"summary": "Also erstmal — warte — halt — nein, genau so: Die Tasten. Es musste Tasten geben, weil Ghosts stiller Nachmittag zwar die Karte durchlässig machte, aber jeder, der das Dossier öffnete, wieder zur M..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

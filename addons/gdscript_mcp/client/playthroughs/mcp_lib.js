@@ -22,15 +22,23 @@ class McpClient {
     connect() {
         return new Promise((resolve, reject) => {
             this.sock = net.connect(this.port, this.host);
+            const timer = setTimeout(() => {
+                this.sock.destroy();
+                reject(new Error('Connection timeout'));
+            }, 8000);
+            const onError = (e) => {
+                clearTimeout(timer);
+                reject(e);
+            };
             this.sock.on('connect', () => {
+                clearTimeout(timer);
                 this.sock.on('data', (d) => this._onData(d));
                 this.sock.on('error', (e) => this._onError(e));
                 this.sock.on('close', () => { this.connected = false; });
                 this.connected = true;
                 resolve();
             });
-            this.sock.on('error', reject);
-            setTimeout(() => reject(new Error('Connection timeout')), 8000);
+            this.sock.on('error', onError);
         });
     }
 
@@ -61,19 +69,26 @@ class McpClient {
         this.pending.clear();
     }
 
-    _call(method, params, timeoutMs = 30000) {
+    _call(method, params, timeoutMs = 90000) {
         if (!this.connected) return Promise.reject(new Error('Not connected'));
         return new Promise((resolve, reject) => {
             const id = ++this.seq;
-            this.pending.set(id, { resolve, reject });
-            const payload = JSON.stringify({ jsonrpc: '2.0', id, method, params: params || {} }) + '\n';
-            try { this.sock.write(payload); } catch (e) { this.pending.delete(id); reject(e); }
-            setTimeout(() => {
+            const timer = setTimeout(() => {
                 if (this.pending.has(id)) {
                     this.pending.delete(id);
                     reject(new Error('Tool timeout: ' + method));
                 }
             }, timeoutMs);
+            // settle() clears the timeout so a finished call never keeps the
+            // process alive — one tool call per process should exit promptly.
+            const settle = (fn) => (value) => {
+                clearTimeout(timer);
+                this.pending.delete(id);
+                fn(value);
+            };
+            this.pending.set(id, { resolve: settle(resolve), reject: settle(reject) });
+            const payload = JSON.stringify({ jsonrpc: '2.0', id, method, params: params || {} }) + '\n';
+            try { this.sock.write(payload); } catch (e) { clearTimeout(timer); this.pending.delete(id); reject(e); }
         });
     }
 

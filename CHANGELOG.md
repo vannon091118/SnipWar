@@ -389,3 +389,17 @@ Tutorial-Doktrin rein präsentativ (Karte klickdurchlässig), Touch-Ripple nur n
 - scripts/state/event_log.gd: Fehler behoben (F-029).
 - scripts/ui/touch_feedback_layer.gd: Fehler behoben (F-030).
 - scripts/ui/tutorial/tutorial_director.gd: Fehler behoben (F-031).
+
+## 2026-08-27 03:00:00 — p27 · c27j57n13a6p25 · Flux · alarmiert
+
+**Flux — also — Kontext-gated Sub-Menü-Hotkeys: Planeten-Dossier… — nach Ghost**
+
+Kontext-gated Sub-Menü-Hotkeys: Planeten-Dossier [1]-[9] + Bild auf/ab, Forschungsbaum WASD/Pfeile + PgUp/PgDn, Werkstatt PgUp/PgDn — Hotkeys feuern nur im offenen Menü (Kamera/Menü-Navigation, keine Aktions-Hotkeys)
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/ui/dossier/parchment_tech_tree_view.gd: Implementiert und integriert (F-032).
+- scripts/ui/dossier/planet_dossier_view.gd: Implementiert und integriert (F-033).
+- scripts/ui/dossier/workshop_view.gd: Implementiert und integriert (F-034).

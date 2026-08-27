@@ -77,6 +77,23 @@
 			],
 			"p_id": 24.0
 		},
+		"26116836822ddb42740b7b848fac7ecae227a51b": {
+			"c": 27,
+			"composite": "c27j57n13a6p25",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-032",
+				"F-033",
+				"F-034",
+				"C-037",
+				"C-038",
+				"C-039"
+			],
+			"p_id": 27
+		},
 		"2bc5533d6b8bb9fd26723d1048947df8561e89f6": {
 			"c": 17.0,
 			"composite": "c17j48n14a1p1",
@@ -95,7 +112,7 @@
 			"p_id": 20.0
 		},
 		"60c1d3dec9005e8bc53a14b24a400c4c231807d3": {
-			"c": 26,
+			"c": 26.0,
 			"composite": "c26j88n8a5p2",
 			"entities": [
 				"F-002",
@@ -112,7 +129,7 @@
 				"C-035",
 				"C-036"
 			],
-			"p_id": 26
+			"p_id": 26.0
 		},
 		"a95a7ee437c739b97ceb60b66f5f4beb92f2bce1": {
 			"c": 11.0,
@@ -830,6 +847,57 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-037": {
+			"first_p": 27.0,
+			"history": [
+				{
+					"lines": [
+						47.0
+					],
+					"p_id": 27.0
+				}
+			],
+			"id": "C-037",
+			"last_p": 27.0,
+			"name": "_unhandled_input",
+			"path": "scripts/ui/dossier/parchment_tech_tree_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-038": {
+			"first_p": 27.0,
+			"history": [
+				{
+					"lines": [
+						81.0
+					],
+					"p_id": 27.0
+				}
+			],
+			"id": "C-038",
+			"last_p": 27.0,
+			"name": "_unhandled_input",
+			"path": "scripts/ui/dossier/planet_dossier_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-039": {
+			"first_p": 27.0,
+			"history": [
+				{
+					"lines": [
+						66.0
+					],
+					"p_id": 27.0
+				}
+			],
+			"id": "C-039",
+			"last_p": 27.0,
+			"name": "_unhandled_input",
+			"path": "scripts/ui/dossier/workshop_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -1137,6 +1205,36 @@
 			"last_p": 26.0,
 			"name": "tutorial_director.gd",
 			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-032": {
+			"first_p": 27.0,
+			"history": [],
+			"id": "F-032",
+			"last_p": 27.0,
+			"name": "parchment_tech_tree_view.gd",
+			"path": "scripts/ui/dossier/parchment_tech_tree_view.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-033": {
+			"first_p": 27.0,
+			"history": [],
+			"id": "F-033",
+			"last_p": 27.0,
+			"name": "planet_dossier_view.gd",
+			"path": "scripts/ui/dossier/planet_dossier_view.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-034": {
+			"first_p": 27.0,
+			"history": [],
+			"id": "F-034",
+			"last_p": 27.0,
+			"name": "workshop_view.gd",
+			"path": "scripts/ui/dossier/workshop_view.gd",
 			"status": "created",
 			"type": "file"
 		}

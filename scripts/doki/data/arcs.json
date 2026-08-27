@@ -1,5 +1,5 @@
 {
-	"active": "a8",
+	"active": "a9",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -151,6 +151,7 @@
 		},
 		"a8": {
 			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
 			"id": "a8",
 			"name": "Nächster Akt",
 			"seen_entities": [
@@ -180,13 +181,29 @@
 				"C-033",
 				"C-034",
 				"C-035",
-				"C-036"
+				"C-036",
+				"F-032",
+				"F-033",
+				"F-034",
+				"C-037",
+				"C-038",
+				"C-039"
 			],
 			"span": "heute → offen",
-			"status": "active",
+			"status": "completed",
 			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
-			"weight": 12.1
+			"weight": 16.0
+		},
+		"a9": {
+			"climax_weight": 3.0,
+			"id": "a9",
+			"name": "Der sichtbare Durchlauf",
+			"span": "heute → offen",
+			"status": "active",
+			"theme": "der erste Flottenbau im Tutorial als Abschluss des Onboardings.",
+			"version": "",
+			"weight": 0.0
 		}
 	},
 	"description": "Arcs als abstrakte ID-Map (a1..aN). Jeder Arc repräsentiert eine Projekt-Phase. Der aktive Arc ist über 'active' referenziert. 'weight' ist der akkumulierte narrative Druck (deterministisch aus Chain + Diff berechnet), 'climax_weight' die Schwelle für ARC_CLIMAX. Port aus lore_arcs.json, erweitert um Gewichtsmodell.",
