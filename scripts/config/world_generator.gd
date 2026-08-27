@@ -257,6 +257,252 @@ static func homeworld_cells(chunk_size: int) -> Array[Vector2i]:
 		return []
 	return [Vector2i.ZERO, Vector2i(chunk_size - 1, chunk_size - 1)]
 
+## --- Cluster Generation (Makulatur System) ---
+
+## Generates clusters of planets around suns with void spaces between.
+## Each cluster has a central sun that scales with cluster size.
+static func generate_clusters(
+	config: WorldConfig,
+	layout_seed: int,
+	world_size: Vector2,
+	planet_count: int
+) -> Array[ClusterData]:
+	var clusters: Array[ClusterData] = []
+	if config == null or not config.is_cluster_generation_enabled():
+		return clusters
+
+	var rng := RandomNumberGenerator.new()
+	rng.seed = layout_seed
+
+	# Calculate target cluster count based on planet count and cluster sizes
+	var target_clusters := config.resolved_cluster_count(planet_count)
+	var target_void_area := world_size.x * world_size.y * config.void_ratio
+	var target_cluster_area := world_size.x * world_size.y * (1.0 - config.void_ratio)
+	var area_per_cluster := target_cluster_area / float(target_clusters)
+
+	# Generate cluster centers using Poisson-Disk-like sampling
+	var cluster_centers := _generate_cluster_centers(
+		config, rng, world_size, target_clusters, area_per_cluster
+	)
+
+	# Assign planet counts to clusters (weighted random)
+	var planets_per_cluster := _distribute_planets_to_clusters(
+		config, rng, cluster_centers.size(), planet_count
+	)
+
+	# Create cluster data
+	for i in cluster_centers.size():
+		var cluster := ClusterData.new()
+		cluster.cluster_id = StringName("cluster_%d" % i)
+		cluster.center_position = cluster_centers[i]
+		cluster.planet_count = planets_per_cluster[i]
+		cluster.radius = _calculate_cluster_radius(config, rng, planets_per_cluster[i])
+
+		# Generate sun
+		cluster.sun = _generate_sun(config, rng, cluster)
+
+		# Generate planet positions within cluster
+		cluster.planet_slots = _generate_planet_positions(
+			rng, cluster.center_position, cluster.radius, cluster.planet_count
+		)
+
+		# Distribute resources — pass cluster index as seed component for variety
+		var resource_dist := ClusterData.ResourceDistribution.new()
+		resource_dist.distribute(cluster.planet_count, config.resolved_resource_bias(), layout_seed + i)
+		cluster.resource_bias = resource_dist.get_bias()
+
+		clusters.append(cluster)
+
+	return clusters
+
+## Poisson-Disk-like sampling for cluster centers
+static func _generate_cluster_centers(
+	config: WorldConfig,
+	rng: RandomNumberGenerator,
+	world_size: Vector2,
+	target_count: int,
+	area_per_cluster: float
+) -> Array[Vector2]:
+	var centers: Array[Vector2] = []
+	var min_distance := sqrt(area_per_cluster) * 0.5  # Minimum distance between clusters
+	var max_attempts := target_count * 20
+	var attempts := 0
+
+	while centers.size() < target_count and attempts < max_attempts:
+		var candidate := Vector2(
+			rng.randf_range(config.padding, world_size.x - config.padding),
+			rng.randf_range(config.padding, world_size.y - config.padding)
+		)
+
+		# Check distance to existing centers
+		var valid := true
+		for center in centers:
+			if candidate.distance_to(center) < min_distance:
+				valid = false
+				break
+
+		if valid:
+			centers.append(candidate)
+
+		attempts += 1
+
+	# If we couldn't place enough, fill with grid-based fallback
+	if centers.size() < target_count:
+		var grid_cols := ceili(sqrt(float(target_count) * world_size.x / world_size.y))
+		var grid_rows := ceili(float(target_count) / float(grid_cols))
+		var cell_width := world_size.x / float(grid_cols)
+		var cell_height := world_size.y / float(grid_rows)
+
+		for row in grid_rows:
+			for col in grid_cols:
+				if centers.size() >= target_count:
+					break
+				var grid_center := Vector2(
+					(float(col) + 0.5) * cell_width,
+					(float(row) + 0.5) * cell_height
+				)
+				# Add jitter
+				var jitter := Vector2(
+					rng.randf_range(-cell_width * 0.2, cell_width * 0.2),
+					rng.randf_range(-cell_height * 0.2, cell_height * 0.2)
+				)
+				centers.append(grid_center + jitter)
+
+	return centers
+
+## Distribute planets to clusters with weighted randomness
+static func _distribute_planets_to_clusters(
+	config: WorldConfig,
+	rng: RandomNumberGenerator,
+	cluster_count: int,
+	total_planets: int
+) -> Array[int]:
+	var distribution: Array[int] = []
+	var remaining := total_planets
+
+	# First cluster gets player homeworld (minimum size)
+	var first_cluster_size := mini(config.max_cluster_size, maxi(config.min_cluster_size, remaining))
+	distribution.append(first_cluster_size)
+	remaining -= first_cluster_size
+
+	# Distribute remaining planets
+	for i in range(1, cluster_count):
+		if remaining <= 0:
+			distribution.append(0)
+			continue
+
+		# Weighted random: smaller clusters more likely for variety
+		var weight := rng.randf()
+		var cluster_size: int
+		if weight < 0.3:  # 30% chance: small cluster
+			cluster_size = rng.randi_range(config.min_cluster_size, maxi(config.min_cluster_size, config.max_cluster_size / 2))
+		elif weight < 0.7:  # 40% chance: medium cluster
+			cluster_size = rng.randi_range(config.max_cluster_size / 3, config.max_cluster_size * 2 / 3)
+		else:  # 30% chance: large cluster
+			cluster_size = rng.randi_range(config.max_cluster_size * 2 / 3, config.max_cluster_size)
+
+		cluster_size = mini(cluster_size, remaining)
+		distribution.append(cluster_size)
+		remaining -= cluster_size
+
+	# Distribute any remaining planets to random clusters (with safety guard)
+	var safety := 0
+	var max_safety := remaining * maxi(distribution.size(), 1) + 100
+	while remaining > 0 and safety < max_safety:
+		safety += 1
+		var target := rng.randi_range(0, distribution.size() - 1)
+		if distribution[target] < config.max_cluster_size:
+			distribution[target] += 1
+			remaining -= 1
+
+	return distribution
+
+## Calculate cluster radius based on planet count and config
+static func _calculate_cluster_radius(
+	config: WorldConfig,
+	rng: RandomNumberGenerator,
+	planet_count: int
+) -> float:
+	if planet_count <= 0:
+		return 0.0
+
+	# Base radius scales with sqrt of planet count
+	var base_radius := sqrt(float(planet_count)) * 50.0
+
+	# Add randomness within config bounds
+	var min_radius := config.cluster_radius_min
+	var max_radius := config.cluster_radius_max
+
+	return rng.randf_range(
+		maxf(min_radius, base_radius * 0.7),
+		minf(max_radius, base_radius * 1.3)
+	)
+
+## Generate a sun for a cluster
+static func _generate_sun(
+	config: WorldConfig,
+	rng: RandomNumberGenerator,
+	cluster: ClusterData
+) -> ClusterData.SunData:
+	var sun := ClusterData.SunData.new()
+	sun.cluster_id = cluster.cluster_id
+	sun.position = cluster.center_position
+
+	# Mass scales with sqrt of cluster size
+	var mass := config.resolved_sun_mass(cluster.planet_count)
+	sun.mass = mass * rng.randf_range(0.8, 1.2)  # Add slight variation
+
+	# Glow radius scales with mass
+	var glow := config.resolved_sun_glow(cluster.planet_count)
+	sun.glow_radius = glow * rng.randf_range(0.9, 1.1)
+
+	# Temperature variation (3000-30000 K)
+	sun.temperature = rng.randf_range(3000.0, 30000.0)
+
+	# Color from temperature
+	sun.color = sun.get_visual_color()
+
+	return sun
+
+## Generate planet positions within a cluster (dense packing)
+static func _generate_planet_positions(
+	rng: RandomNumberGenerator,
+	center: Vector2,
+	radius: float,
+	count: int
+) -> Array[Vector2]:
+	var positions: Array[Vector2] = []
+	if count <= 0:
+		return positions
+
+	# First planet near center
+	positions.append(center + Vector2(
+		rng.randf_range(-radius * 0.1, radius * 0.1),
+		rng.randf_range(-radius * 0.1, radius * 0.1)
+	))
+
+	# Remaining planets in rings
+	for i in range(1, count):
+		var ring := ceili(float(i) / 6.0)  # 6 planets per ring
+		var angle_offset := rng.randf() * TAU
+		var angle := angle_offset + (float(i % 6) / 6.0) * TAU
+		var ring_radius := radius * (float(ring) / float(ceili(float(count) / 6.0)))
+
+		var pos := center + Vector2(
+			cos(angle) * ring_radius,
+			sin(angle) * ring_radius
+		)
+
+		# Add jitter for organic feel
+		pos += Vector2(
+			rng.randf_range(-radius * 0.05, radius * 0.05),
+			rng.randf_range(-radius * 0.05, radius * 0.05)
+		)
+
+		positions.append(pos)
+
+	return positions
+
 ## Generates planet definitions for a single chunk deterministically. The
 ## origin chunk owns the two persistent homeworld identities; every other slot
 ## is a neutral procedural planet derived from the supplied template catalog.

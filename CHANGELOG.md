@@ -695,3 +695,19 @@ Manuelle Verifikations-Runde: 19 Spiel-Skripte per Auge geprüft und repariert (
 - scripts/ui/control_field.gd: Implementiert und integriert (F-124).
 - scripts/ui/dossier/parchment_tech_tree_view.gd: Implementiert und integriert (F-032).
 - scripts/ui/tutorial/tutorial_director.gd: Implementiert und integriert (F-031).
+
+## 2026-08-27 19:00:00 — p43 · c43j96n1a10p37 · Buffy · müde-zufrieden
+
+**[Buffy] Harte Evidence-Gates: beide mechanische Gates… — nach Null**
+
+Harte Evidence-Gates: beide mechanische Gates (compile_gate, chain_manifest_gate) schreiben jetzt atomare Evidence nach user://mcp_evidence/, Chain-Controller kennt Host-Tools (world_smoke-Validierung war gebrochen: runtime_mcp_status als unavailable), chain_validate_entry_test falsifiziert die harten Verträge über den echten Registry-Dispatch, pre-commit-Hook blockt bei jedem der drei Evidence-Läufer
+
+- .githooks/pre-commit: Tooling erweitert (F-125).
+- CHANGELOG.md: Tooling erweitert (F-002).
+- addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd: Tooling erweitert (F-086).
+- change_index.json: Tooling erweitert (F-003).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+- scripts/testing/chain_manifest_gate.gd: Tooling erweitert (F-122).
+- scripts/testing/chain_validate_entry_test.gd: Tooling erweitert (F-126).
+- scripts/testing/compile_gate.gd: Tooling erweitert (F-123).

@@ -48,6 +48,21 @@ const ROUTE_MODE_NEIGHBORS_ONLY := "neighbors_only"
 ## screen at once. 1.0 = authored scale (backward compatible).
 @export_range(0.1, 2.0, 0.05) var planet_visual_scale: float = 1.0
 
+## --- Cluster-Void Generation (Makulatur-System) ---
+## Generates unique clusters of planets around suns with void spaces between.
+## Each cluster has a central sun that scales with cluster size.
+@export_range(0.0, 0.6, 0.05) var void_ratio: float = 0.4
+@export_range(1, 20, 1) var min_cluster_size: int = 2
+@export_range(2, 50, 1) var max_cluster_size: int = 8
+@export_range(0.5, 5.0, 0.1) var sun_mass_scale: float = 1.0
+@export_range(10.0, 200.0, 5.0) var sun_glow_base: float = 50.0
+@export_range(50.0, 500.0, 10.0) var cluster_radius_min: float = 100.0
+@export_range(100.0, 1000.0, 10.0) var cluster_radius_max: float = 300.0
+## Resource distribution ratios per cluster type
+@export_range(0.0, 1.0, 0.05) var cpu_cluster_ratio: float = 0.3
+@export_range(0.0, 1.0, 0.05) var neural_cluster_ratio: float = 0.1
+@export_range(0.0, 1.0, 0.05) var uninhabited_ratio: float = 0.2
+
 ## --- Infinite chunk-grid world ---
 ## When chunk_size > 0, the world expands procedurally as the player explores.
 ## When 0 (default), the world is finite and uses the legacy layout path.
@@ -193,6 +208,27 @@ func validate_for_planet_count(planet_count: int) -> PackedStringArray:
 		errors.append("meteor edge margin cannot be negative")
 	if route_mode != ROUTE_MODE_ALL_PLANETS and route_mode != ROUTE_MODE_NEIGHBORS_ONLY:
 		errors.append("world route_mode is invalid")
+	# Cluster-Void validation
+	if void_ratio < 0.0 or void_ratio > 0.6:
+		errors.append("world void_ratio must stay between 0 and 0.6")
+	if min_cluster_size < 1:
+		errors.append("world min_cluster_size must be at least 1")
+	if max_cluster_size < min_cluster_size:
+		errors.append("world max_cluster_size must be >= min_cluster_size")
+	if sun_mass_scale <= 0.0:
+		errors.append("world sun_mass_scale must be positive")
+	if sun_glow_base <= 0.0:
+		errors.append("world sun_glow_base must be positive")
+	if cluster_radius_min <= 0.0 or cluster_radius_max < cluster_radius_min:
+		errors.append("world cluster radius range is invalid")
+	if cpu_cluster_ratio < 0.0 or cpu_cluster_ratio > 1.0:
+		errors.append("world cpu_cluster_ratio must stay between 0 and 1")
+	if neural_cluster_ratio < 0.0 or neural_cluster_ratio > 1.0:
+		errors.append("world neural_cluster_ratio must stay between 0 and 1")
+	if uninhabited_ratio < 0.0 or uninhabited_ratio > 1.0:
+		errors.append("world uninhabited_ratio must stay between 0 and 1")
+	if cpu_cluster_ratio + neural_cluster_ratio + uninhabited_ratio > 1.0:
+		errors.append("world resource ratios cannot exceed 1.0 combined")
 	return errors
 
 func validate_profiles(profiles: Array[PlanetSizeProfile]) -> PackedStringArray:
@@ -211,3 +247,28 @@ func validate_profiles(profiles: Array[PlanetSizeProfile]) -> PackedStringArray:
 		if not profile_ids.has(required_id):
 			errors.append("world is missing planet size profile %s" % required_id)
 	return errors
+
+## --- Cluster helpers ---
+
+func is_cluster_generation_enabled() -> bool:
+	return min_cluster_size >= 1 and max_cluster_size >= min_cluster_size
+
+func resolved_cluster_count(planet_count: int) -> int:
+	if not is_cluster_generation_enabled():
+		return 0
+	var avg_cluster := float(min_cluster_size + max_cluster_size) * 0.5
+	return maxi(1, int(round(float(planet_count) / avg_cluster)))
+
+func resolved_sun_mass(cluster_size: int) -> float:
+	return sqrt(float(cluster_size)) * sun_mass_scale
+
+func resolved_sun_glow(cluster_size: int) -> float:
+	return sun_glow_base * sqrt(float(cluster_size))
+
+func resolved_resource_bias() -> Dictionary:
+	return {
+		"cpu": cpu_cluster_ratio,
+		"neural": neural_cluster_ratio,
+		"uninhabited": uninhabited_ratio,
+		"player": 1.0 - cpu_cluster_ratio - neural_cluster_ratio - uninhabited_ratio,
+	}

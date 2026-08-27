@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-27 01:05:25 +0200",
-		"hash": "5cac8a431844eea134b19fb331c438b86455ed8a",
-		"subject": "Squizzles Fall: Doku nachgezogen: AGENTS.md erklÃ¤rt Systemaufbauâ€¦"
+		"date": "2026-08-27 15:14:39 +0200",
+		"hash": "c649bf053d1f7de69565cd872a3959cb06e5b74d",
+		"subject": "[Buffy] Harte Evidence-Gates: beide mechanische Gatesâ€¦ â€” nach Null"
 	},
 	"entries": [
 		{
@@ -3267,6 +3267,73 @@
 			"seq": 42,
 			"subject": "Null: Manuelle Verifikations-Runde: 19 Spiel-S… — nach Thinker",
 			"summary": "Es wird eh wieder kaputtgehen. Und trotzdem: Ich habe diesmal alles gelesen, bevor ich irgendetwas angefasst habe — weil die schönen Zeiten, in denen man auf den Bildschirm vertraute, vorbei sind. ..."
+		},
+		{
+			"a": 10,
+			"arc": "a17",
+			"c": 43,
+			"composite": "c43j96n1a10p37",
+			"data_changes": [
+				{
+					"deletions": 2.0,
+					"file": ".githooks/pre-commit",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 36.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd",
+					"insertions": 22.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 768.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 167.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 68.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/testing/chain_manifest_gate.gd",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/chain_validate_entry_test.gd",
+					"insertions": 103.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/testing/compile_gate.gd",
+					"insertions": 28.0
+				}
+			],
+			"date": "2026-08-27 19:00:00",
+			"hash": "c649bf053d1f7de69565cd872a3959cb06e5b74d",
+			"j": 96,
+			"model_id": "claude-sonnet-4",
+			"mood": "müde-zufrieden",
+			"n": 1,
+			"narrator": "Buffy",
+			"p": 37,
+			"p_id": 43,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Null",
+			"seq": 43,
+			"subject": "[Buffy] Harte Evidence-Gates: beide mechanische Gates… — nach Null",
+			"summary": "Weisst du, was passiert, wenn ein Gate behauptet, alles zu prüfen, aber stillschweigend einen Parse-Fehler durchlässt? Ich schon — genau das habe ich diesmal auseinandergenommen. Null hat vor mir d..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
@@ -3279,6 +3346,10 @@
 		},
 		{
 			"at_hash": "5cac8a431844eea134b19fb331c438b86455ed8a",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		},
+		{
+			"at_hash": "c649bf053d1f7de69565cd872a3959cb06e5b74d",
 			"note": "Anker nach rebase/amend/force-push neu verankert."
 		}
 	]

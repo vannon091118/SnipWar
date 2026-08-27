@@ -261,7 +261,7 @@
 			"p_id": 26.0
 		},
 		"71357fdce9f50cb3ec7b0a709ca0d883416d712c": {
-			"c": 42,
+			"c": 42.0,
 			"composite": "c42j82n11a6p37",
 			"entities": [
 				"F-002",
@@ -324,7 +324,7 @@
 				"C-242",
 				"C-243"
 			],
-			"p_id": 42
+			"p_id": 42.0
 		},
 		"a36707d4cf6285ad4e0ff2a6d1f348cbc6a343d0": {
 			"c": 29.0,
@@ -459,6 +459,32 @@
 				"F-001"
 			],
 			"p_id": 19.0
+		},
+		"c649bf053d1f7de69565cd872a3959cb06e5b74d": {
+			"c": 43,
+			"composite": "c43j96n1a10p37",
+			"entities": [
+				"F-125",
+				"F-002",
+				"F-086",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-122",
+				"F-126",
+				"F-123",
+				"C-244",
+				"C-245",
+				"C-246",
+				"C-247",
+				"C-248",
+				"C-249",
+				"C-250",
+				"C-251",
+				"C-252",
+				"C-253"
+			],
+			"p_id": 43
 		},
 		"caeed225d6e93fbfd5c0160e8f62c616aefbbf31": {
 			"c": 25.0,
@@ -4896,6 +4922,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-244": {
+			"first_p": 43.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 43.0
+				}
+			],
+			"id": "C-244",
+			"last_p": 43.0,
+			"name": "HOST_TOOLS",
+			"path": "addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-245": {
+			"first_p": 43.0,
+			"history": [
+				{
+					"lines": [
+						31.0
+					],
+					"p_id": 43.0
+				}
+			],
+			"id": "C-245",
+			"last_p": 43.0,
+			"name": "EVIDENCE_PATH",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-246": {
+			"first_p": 43.0,
+			"history": [
+				{
+					"lines": [
+						32.0
+					],
+					"p_id": 43.0
+				}
+			],
+			"id": "C-246",
+			"last_p": 43.0,
+			"name": "EVIDENCE_TMP",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-247": {
+			"first_p": 43.0,
+			"history": [
+				{
+					"lines": [
+						220.0
+					],
+					"p_id": 43.0
+				}
+			],
+			"id": "C-247",
+			"last_p": 43.0,
+			"name": "_write_evidence",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-248": {
+			"first_p": 43.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 43.0
+				}
+			],
+			"id": "C-248",
+			"last_p": 43.0,
+			"name": "EVIDENCE_PATH",
+			"path": "scripts/testing/chain_validate_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-249": {
+			"first_p": 43.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 43.0
+				}
+			],
+			"id": "C-249",
+			"last_p": 43.0,
+			"name": "_init",
+			"path": "scripts/testing/chain_validate_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-250": {
+			"first_p": 43.0,
+			"history": [
+				{
+					"lines": [
+						94.0
+					],
+					"p_id": 43.0
+				}
+			],
+			"id": "C-250",
+			"last_p": 43.0,
+			"name": "_write_evidence",
+			"path": "scripts/testing/chain_validate_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-251": {
+			"first_p": 43.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 43.0
+				}
+			],
+			"id": "C-251",
+			"last_p": 43.0,
+			"name": "EVIDENCE_PATH",
+			"path": "scripts/testing/compile_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-252": {
+			"first_p": 43.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 43.0
+				}
+			],
+			"id": "C-252",
+			"last_p": 43.0,
+			"name": "EVIDENCE_TMP",
+			"path": "scripts/testing/compile_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-253": {
+			"first_p": 43.0,
+			"history": [
+				{
+					"lines": [
+						36.0
+					],
+					"p_id": 43.0
+				}
+			],
+			"id": "C-253",
+			"last_p": 43.0,
+			"name": "_write_evidence",
+			"path": "scripts/testing/compile_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -6133,6 +6329,26 @@
 			"last_p": 42.0,
 			"name": "control_field.gd",
 			"path": "scripts/ui/control_field.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-125": {
+			"first_p": 43.0,
+			"history": [],
+			"id": "F-125",
+			"last_p": 43.0,
+			"name": "pre-commit",
+			"path": ".githooks/pre-commit",
+			"status": "created",
+			"type": "file"
+		},
+		"F-126": {
+			"first_p": 43.0,
+			"history": [],
+			"id": "F-126",
+			"last_p": 43.0,
+			"name": "chain_validate_entry_test.gd",
+			"path": "scripts/testing/chain_validate_entry_test.gd",
 			"status": "created",
 			"type": "file"
 		}

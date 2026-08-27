@@ -39,6 +39,11 @@ var _is_configured := false
 var _sector_anchors: Array[SectorAnchor] = []
 var _sector_noise: FastNoiseLite
 var _sector_cache_ready := false
+# Cluster-Void generation (Makulatur system) — untyped to avoid alphabetical
+# load-order issues (chunk_coordinator.gd loads before cluster_data.gd).
+var _clusters: Array = []  # Array[ClusterData]
+var _cluster_cache_ready := false
+var _sun_nodes: Dictionary = {}  # cluster_id -> Sun node
 
 func configure(field: Node2D, navigation: NavigationField, world_config: WorldConfig, base_catalog: PlanetCatalog, size_profiles: Array[PlanetSizeProfile], layout_seed: int) -> void:
 	_field = field
@@ -48,6 +53,7 @@ func configure(field: Node2D, navigation: NavigationField, world_config: WorldCo
 	_size_profiles = size_profiles
 	_layout_seed = layout_seed
 	_is_configured = true
+	_cluster_cache_ready = false
 
 func set_layout_seed(value: int) -> void:
 	if _layout_seed != value:
@@ -61,6 +67,14 @@ func reset_for_layout_seed(value: int) -> void:
 	_sector_cache_ready = false
 	_sector_anchors = [] as Array[SectorAnchor]
 	_sector_noise = null
+	_cluster_cache_ready = false
+	_clusters = []
+	# Free sun nodes
+	for cluster_id in _sun_nodes:
+		var sun_node = _sun_nodes[cluster_id]
+		if sun_node != null and is_instance_valid(sun_node):
+			sun_node.queue_free()
+	_sun_nodes.clear()
 	for cell in _active_planets.keys():
 		var planet: Planet = _active_planets[cell]
 		if planet != null and is_instance_valid(planet):
@@ -165,8 +179,6 @@ func planet_cell(world_position: Vector2) -> Vector2i:
 
 func _cell_to_chunk(cell: Vector2i) -> Vector2i:
 	var cs: int = _world_config.chunk_size
-	# Use floori for correct negative-coordinate chunk mapping
-	# (int() truncates toward zero, which would map cell -1 to chunk 0).
 	return Vector2i(floori(float(cell.x) / float(cs)), floori(float(cell.y) / float(cs)))
 
 func _chunk_to_cell_base(chunk_coord: Vector2i) -> Vector2i:
@@ -175,10 +187,6 @@ func _chunk_to_cell_base(chunk_coord: Vector2i) -> Vector2i:
 
 func _cells_in_rect(rect: Rect2) -> Array[Vector2i]:
 	var cs := _world_config.resolved_cell_size()
-	# floori for the inclusive lower bound, ceili(end) - 1 for the exclusive
-	# upper bound. floori(rect.end / cs) over-includes the cell whose origin sits
-	# exactly on the exclusive Rect2.end (the initial FoV region aligns end to a
-	# cell boundary, so this generated one extra ring).
 	var min_col := floori(rect.position.x / cs.x)
 	var min_row := floori(rect.position.y / cs.y)
 	var max_col := ceili(rect.end.x / cs.x) - 1
@@ -190,6 +198,9 @@ func _cells_in_rect(rect: Rect2) -> Array[Vector2i]:
 	return cells
 
 func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
+	# Ensure clusters are generated
+	_ensure_clusters_generated()
+
 	var cs: int = _world_config.chunk_size
 	var c_seed := WorldGenerator.chunk_seed(_layout_seed, chunk_coord.x, chunk_coord.y)
 	var definitions := WorldGenerator.generate_chunk_planets(
@@ -197,6 +208,14 @@ func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
 	)
 	var cell_base := _chunk_to_cell_base(chunk_coord)
 	var data_array: Array = []
+
+	# Per-chunk RNG for organic placement (breaks grid pattern)
+	var chunk_rng := RandomNumberGenerator.new()
+	chunk_rng.seed = c_seed + 99999  # Separate from planet composition seed
+
+	# Track cluster-local slot usage per overlapping cluster
+	var cluster_slot_counters: Dictionary = {}  # cluster_id -> next free slot index
+
 	for slot in definitions.size():
 		var def: PlanetDefinition = definitions[slot]
 		if def == null:
@@ -204,7 +223,60 @@ func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
 		var local_col := slot % cs
 		var local_row := int(slot / float(cs))
 		var cell := Vector2i(cell_base.x + local_col, cell_base.y + local_row)
-		var world_pos := _cell_center(cell)
+		var base_pos := _cell_center(cell)
+		var world_pos := base_pos
+
+		# --- Cluster-aware organic positioning ---
+		if _world_config.is_cluster_generation_enabled() and not _clusters.is_empty():
+			# Find the NEAREST cluster (not just contained — attraction model)
+			var nearest_cluster = null
+			var nearest_dist := INF
+			for cluster in _clusters:
+				var dist: float = base_pos.distance_to(cluster.center_position)
+				if dist < nearest_dist:
+					nearest_dist = dist
+					nearest_cluster = cluster
+
+			if nearest_cluster != null:
+				var in_cluster_radius: bool = nearest_dist <= nearest_cluster.radius
+
+				if in_cluster_radius:
+					# Inside cluster: use next available cluster-local slot
+					var cid: StringName = nearest_cluster.cluster_id
+					if not cluster_slot_counters.has(cid):
+						cluster_slot_counters[cid] = 0
+					var slot_idx: int = cluster_slot_counters[cid]
+					if slot_idx < nearest_cluster.planet_slots.size():
+						world_pos = nearest_cluster.planet_slots[slot_idx]
+					else:
+						# Overflow: place around cluster center with organic jitter
+						var angle: float = chunk_rng.randf() * TAU
+						var dist_r: float = chunk_rng.randf_range(10.0, nearest_cluster.radius * 0.9)
+						world_pos = nearest_cluster.center_position + Vector2(cos(angle), sin(angle)) * dist_r
+					cluster_slot_counters[cid] = slot_idx + 1
+					# Assign faction from cluster
+					def.faction = _assign_faction_from_cluster(nearest_cluster, def.planet_role)
+				else:
+					# Outside cluster but attracted toward it — organic drift
+					var to_cluster: Vector2 = nearest_cluster.center_position - base_pos
+					var attract_strength: float = clampf(1.0 - (nearest_dist / (nearest_cluster.radius * 3.0)), 0.0, 0.4)
+					var drift: Vector2 = to_cluster * attract_strength
+
+					# Heavy organic jitter to break grid
+					var cell_size: Vector2 = _world_config.resolved_cell_size()
+					var jitter_x: float = chunk_rng.randf_range(-cell_size.x * 0.6, cell_size.x * 0.6)
+					var jitter_y: float = chunk_rng.randf_range(-cell_size.y * 0.6, cell_size.y * 0.6)
+					world_pos = base_pos + drift + Vector2(jitter_x, jitter_y)
+			else:
+				# No clusters at all — pure organic jitter
+				var cell_size_fallback: Vector2 = _world_config.resolved_cell_size()
+				var jx: float = chunk_rng.randf_range(-cell_size_fallback.x * 0.6, cell_size_fallback.x * 0.6)
+				var jy: float = chunk_rng.randf_range(-cell_size_fallback.y * 0.6, cell_size_fallback.y * 0.6)
+				world_pos = base_pos + Vector2(jx, jy)
+		else:
+			# Cluster system disabled — legacy grid (unchanged)
+			pass
+
 		var data := ChunkPlanetData.new()
 		data.planet_id = def.planet_id
 		data.display_name = def.display_name
@@ -248,7 +320,9 @@ func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
 		state.deal_resources_for_planets(data_array, pool, c_seed)
 		var local_ids: Array = []
 		for generated_data in data_array:
-			local_ids.append(generated_data.planet_id)
+			var pd: ChunkPlanetData = generated_data as ChunkPlanetData
+			if pd != null:
+				local_ids.append(pd.planet_id)
 		state.deal_local_resources(local_ids, pool, c_seed)
 
 func _instantiate_planet(cell: Vector2i) -> void:
@@ -264,9 +338,6 @@ func _instantiate_planet(cell: Vector2i) -> void:
 		return
 	var planet: Planet = PLANET_SCENE.instantiate()
 	planet.name = data.display_name
-	# Configure BEFORE add_child() so _ready() registers the real planet_id/
-	# faction and applies the cached detail/size profiles (mirrors the finite
-	# path, where apply_definition() runs during _enter_tree).
 	var profile: PlanetSizeProfile = _resolve_size_profile(data.size_class)
 	planet.configure_from_cache(data, profile)
 	_field.add_child(planet)
@@ -290,7 +361,6 @@ func _cull_planet(cell: Vector2i) -> void:
 	if planet == null or not is_instance_valid(planet):
 		_active_planets.erase(cell)
 		return
-	# Halt-Phase: disable first, then deferred free
 	planet.visible = false
 	planet.process_mode = Node.PROCESS_MODE_DISABLED
 	planet.set_meta("pending_free", true)
@@ -301,7 +371,6 @@ func _actually_free_planet(cell: Vector2i) -> void:
 	if planet == null or not is_instance_valid(planet):
 		_active_planets.erase(cell)
 		return
-	# If the planet was re-enabled (meta cleared), don't free it.
 	if not planet.get_meta("pending_free", false):
 		return
 	_active_planets.erase(cell)
@@ -316,6 +385,132 @@ func _cell_center(cell: Vector2i) -> Vector2:
 		(float(cell.x) + 0.5) * cs.x,
 		(float(cell.y) + 0.5) * cs.y
 	)
+
+## --- Cluster helpers (Makulatur system) ---
+
+## Ensure clusters are generated if cluster generation is enabled
+func _ensure_clusters_generated() -> void:
+	if _cluster_cache_ready or not _world_config.is_cluster_generation_enabled():
+		return
+	_cluster_cache_ready = true
+
+	# Get world size from config
+	var world_size := _world_config.resolved_design_size()
+	var planet_count := _world_config.resolved_target_planet_count(100)  # Estimate
+
+	_clusters = WorldGenerator.generate_clusters(
+		_world_config,
+		_layout_seed,
+		world_size,
+		planet_count
+	)
+
+	# Spawn sun nodes
+	for cluster in _clusters:
+		if cluster.sun != null:
+			var sun_scene: PackedScene = preload("res://scenes/objects/sun.tscn")
+			var sun_node = sun_scene.instantiate()
+			sun_node.configure_cluster(
+				cluster.cluster_id,
+				cluster.sun.mass,
+				cluster.sun.glow_radius,
+				cluster.sun.temperature,
+				cluster.sun.position
+			)
+			sun_node.name = String(cluster.cluster_id) + "_Sun"
+			_field.add_child(sun_node)
+			_sun_nodes[cluster.cluster_id] = sun_node
+
+## Find the cluster that contains a given position
+func _find_cluster_for_position(position: Vector2):
+	for cluster in _clusters:
+		if cluster.contains_point(position):
+			return cluster
+	return null
+
+## Get the index of a planet within a cluster based on position
+func _get_cluster_planet_index(cluster, position: Vector2) -> int:
+	var min_dist := INF
+	var best_idx := -1
+	for i in cluster.planet_slots.size():
+		var slot_pos: Vector2 = cluster.planet_slots[i]
+		var dist := position.distance_to(slot_pos)
+		if dist < min_dist:
+			min_dist = dist
+			best_idx = i
+	return best_idx
+
+## Assign faction based on cluster resource bias
+func _assign_faction_from_cluster(cluster, planet_role: StringName) -> StringName:
+	if planet_role == &"homeworld":
+		return &"a"  # Will be overwritten by homeworld logic
+
+	if cluster.resource_bias == &"cpu":
+		return &"b"
+	elif cluster.resource_bias == &"neural":
+		return &"neutral"
+	elif cluster.resource_bias == &"uninhabited":
+		return &"neutral"
+	return &"neutral"
+
+## Get all clusters (for LoD and other systems)
+func get_clusters() -> Array:
+	return _clusters
+
+## Get sun nodes (for rendering and interaction)
+func get_sun_nodes() -> Dictionary:
+	return _sun_nodes
+
+## Check if a position is in a void (no cluster)
+func is_void_position(position: Vector2) -> bool:
+	return _find_cluster_for_position(position) == null
+
+## --- LoD System for distant clusters ---
+
+## Get cluster LoD level based on distance from player
+## Returns: 0 = full detail, 1 = simplified, 2 = minimal, 3 = void-simulated
+func get_cluster_lod(cluster, player_position: Vector2) -> int:
+	var distance: float = cluster.center_position.distance_to(player_position)
+	var lod_radius := _world_config.resolved_cell_size().x * 5.0
+
+	if distance < lod_radius:
+		return 0  # Full detail - active simulation
+	elif distance < lod_radius * 2:
+		return 1  # Simplified - basic resource ticks
+	elif distance < lod_radius * 4:
+		return 2  # Minimal - faction state only
+	else:
+		return 3  # Void-simulated - time acceleration
+
+## Check if a cluster should be fully simulated
+func should_simulate_cluster(cluster, player_position: Vector2) -> bool:
+	return get_cluster_lod(cluster, player_position) <= 1
+
+## Get simplified cluster state for distant LoD
+func get_cluster_lod_state(cluster, lod_level: int) -> Dictionary:
+	var state := {
+		"cluster_id": cluster.cluster_id,
+		"lod_level": lod_level,
+		"planet_count": cluster.planet_count,
+		"resource_bias": cluster.resource_bias,
+	}
+
+	if lod_level >= 2:
+		state["factions"] = _get_cluster_factions(cluster)
+		state["time_acceleration"] = pow(2.0, float(lod_level - 1))
+
+	return state
+
+## Get faction distribution for a cluster
+func _get_cluster_factions(cluster) -> Dictionary:
+	var factions := {&"a": 0, &"b": 0, &"neutral": 0}
+	for cell in _active_planets:
+		var planet: Planet = _active_planets[cell] as Planet
+		if planet != null and is_instance_valid(planet) and cluster.contains_point(planet.global_position):
+			var faction: StringName = planet.get_faction()
+			if factions.has(faction):
+				factions[faction] += 1
+	return factions
 
 ## Deterministic per-planet render scale for the infinite path: size-profile
 ## midpoint × global visual multiplier × optional sector-scale multiplier.
@@ -364,8 +559,6 @@ func _resolve_size_class(slot: int, chunk_size: int) -> StringName:
 		return &"l"
 	return &"variable"
 
-## Maps a resolved size class back to the WorldConfig size profile. Shared with
-## PlanetProcedural so coordinator and planet never diverge.
 func _resolve_size_profile(size_class: StringName) -> PlanetSizeProfile:
 	return PlanetProcedural.resolve_size_profile(_world_config, _size_profiles, size_class)
 
@@ -405,8 +598,6 @@ func _get_map_definition() -> MapDefinition:
 func save_state() -> ChunkSaveData:
 	var data := ChunkSaveData.new()
 	data.layout_seed = _layout_seed
-	# Build the typed array explicitly: casting an untyped Array with `as` does
-	# not convert it, and assigning an untyped Array to a typed property fails.
 	var coords: Array[Vector2i] = []
 	for key in _chunk_cache.keys():
 		coords.append(key as Vector2i)
@@ -430,11 +621,9 @@ func load_state(data: ChunkSaveData) -> void:
 	if data == null:
 		return
 	_layout_seed = data.layout_seed
-	# Re-generate cached chunks from saved coordinates.
 	for chunk_coord in data.cached_chunk_coords:
 		if not _chunk_cache.has(chunk_coord):
 			_generate_chunk(chunk_coord, &"xl")
-	# Apply saved faction states.
 	var state := _game_state()
 	for planet_id in data.planet_states:
 		var pd = _planet_id_to_data.get(planet_id)
