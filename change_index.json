@@ -78,7 +78,7 @@
 			"p_id": 24.0
 		},
 		"1cdb336744a9eaf34b3f1bf8789dfe93d7638a77": {
-			"c": 32,
+			"c": 32.0,
 			"composite": "c32j51n2a8p19",
 			"entities": [
 				"F-002",
@@ -94,7 +94,7 @@
 				"C-079",
 				"C-080"
 			],
-			"p_id": 32
+			"p_id": 32.0
 		},
 		"26116836822ddb42740b7b848fac7ecae227a51b": {
 			"c": 27.0,
@@ -121,6 +121,19 @@
 				"C-001"
 			],
 			"p_id": 17.0
+		},
+		"4560e16ae80496534b8ce5eced53d3ae736217b6": {
+			"c": 33,
+			"composite": "c33j17n7a4p5",
+			"entities": [
+				"F-019",
+				"F-002",
+				"F-050",
+				"F-003",
+				"F-004",
+				"F-001"
+			],
+			"p_id": 33
 		},
 		"5cac8a431844eea134b19fb331c438b86455ed8a": {
 			"c": 20.0,
@@ -2208,6 +2221,16 @@
 			"last_p": 32.0,
 			"name": "mcp_dock.tscn",
 			"path": "addons/gdscript_mcp/editor/mcp_dock.tscn",
+			"status": "created",
+			"type": "file"
+		},
+		"F-050": {
+			"first_p": 33.0,
+			"history": [],
+			"id": "F-050",
+			"last_p": 33.0,
+			"name": "AGENTS.md",
+			"path": "addons/gdscript_mcp/AGENTS.md",
 			"status": "created",
 			"type": "file"
 		}

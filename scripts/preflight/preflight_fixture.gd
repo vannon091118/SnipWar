@@ -43,6 +43,9 @@ func boot_default(ctx: PreflightContext) -> bool:
 		return false
 
 	tree.paused = false
+	var existing_state: Node = tree.root.get_node_or_null("GameState")
+	if existing_state != null and existing_state.has_method("set_jobs_auto_advance"):
+		existing_state.call("set_jobs_auto_advance", false)
 	background = BACKGROUND_SCENE.instantiate()
 	background.set("active_scenario_id", &"default")
 	tree.root.add_child(background)

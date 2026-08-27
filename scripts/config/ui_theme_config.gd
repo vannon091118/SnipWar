@@ -49,7 +49,7 @@ extends Resource
 @export_range(8, 64, 1) var panel_title_font_size: int = 20
 @export_range(0, 24, 1) var card_padding: int = 10
 @export_range(20.0, 64.0, 1.0) var section_row_height: float = 30.0
-@export_range(0.05, 1.0, 0.05) var transition_duration: float = 0.18
+@export_range(0.05, 2.0, 0.05) var transition_duration: float = 1.2
 @export_group("Message Feed")
 @export_range(0.5, 30.0, 0.5) var message_toast_duration: float = 4.0
 @export_range(0.1, 2.0, 0.1) var message_toast_fade_duration: float = 0.5

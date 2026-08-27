@@ -265,7 +265,7 @@ func _build_agent_context(scene_hint: String, interactables: Array, elements: Ar
 
 func scan_interactables(root_path: String = "/root", max_controls: int = 300, max_depth: int = 32) -> Dictionary:
 	var live := McpUxLive.build_snapshot(root_path, max_controls, max_depth)
-	return {
+	var result := {
 		"scene": live.get("scene", "unknown"),
 		"scene_path": live.get("scene_path", ""),
 		"interactables": McpUxLive.interactables(live.get("controls", [])),
@@ -273,7 +273,12 @@ func scan_interactables(root_path: String = "/root", max_controls: int = 300, ma
 		"scroll_containers": live.get("scroll_containers", []),
 		"count": McpUxLive.interactables(live.get("controls", [])).size(),
 		"watch_sequence": _watch_sequence,
+		"ui_ready": bool(live.get("ui_ready", false)),
+		"scope_missing": bool(live.get("scope_missing", false)),
 	}
+	if bool(live.get("scope_missing", false)):
+		result["error"] = "root_path not found: " + root_path
+	return result
 
 
 ## Check whether a control's rect is within the visible viewport.
@@ -630,7 +635,9 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 	match tool_name:
 		"runtime_ux_analyze":
-			return await analyze_async(bool(args.get("include_visual", true)), str(args.get("root_path", "/root")), int(args.get("max_controls", 300)), int(args.get("max_depth", 32)))
+			# Direkte Ausführung zuerst: DOM-Snapshot sofort ohne Screenshot.
+			# OCR/Screenshot (vision_worker, eigener Prozess) nur noch opt-in.
+			return await analyze_async(bool(args.get("include_visual", false)), str(args.get("root_path", "/root")), int(args.get("max_controls", 300)), int(args.get("max_depth", 32)))
 		"runtime_ux_read":
 			return await read_region_async(args.get("rect", {}))
 		"runtime_ux_click":
@@ -641,7 +648,7 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 
 static func get_tool_defs() -> Array:
 	return [
-		_make("runtime_ux_analyze", "Run the complete live-control plus visual UX pipeline", {"include_visual": {"type": "boolean", "default": true}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, [], true),
+		_make("runtime_ux_analyze", "Run the live-control UX pipeline directly; screenshots/OCR only when include_visual=true", {"include_visual": {"type": "boolean", "description": "Optional screenshot/OCR via separate vision_worker process", "default": false}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, [], true),
 		_make("runtime_ux_scan", "Fast bounded live scan of clickable controls and exact labels", {"root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}),
 		_make("runtime_ux_find", "Find an interactable in a bounded visible scope by exact text, node name, type, or position", {"description": {"type": "string"}, "rect": {"type": "object"}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, ["description"]),
 		_make("runtime_ux_read", "Read a visual region and return local context metadata", {"rect": {"type": "object"}}, ["rect"], true),

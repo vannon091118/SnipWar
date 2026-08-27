@@ -374,7 +374,13 @@ func _create_tutorial() -> void:
 	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
 	_tutorial = TUTORIAL_DIRECTOR_SCRIPT.new() as TutorialDirector
 	_tutorial.name = "TutorialDirector"
-	add_child(_tutorial)
+	# CanvasLayer muss zum Scene-Root (World) hinzugefügt werden, nicht zu PlanetNetwork
+	# (Node2D mit Transform), sonst stimmt viewport.get_canvas_transform() nicht.
+	var world_root := get_tree().root
+	if world_root != null:
+		world_root.add_child(_tutorial)
+	else:
+		add_child(_tutorial)  # Fallback
 	_tutorial.setup(ui_theme_config)
 	if not _tutorial_auto_started:
 		_tutorial_auto_started = true
@@ -383,6 +389,8 @@ func _create_tutorial() -> void:
 func _restart_tutorial() -> void:
 	if _tutorial != null and is_instance_valid(_tutorial):
 		_tutorial.restart()
+	else:
+		_create_tutorial()
 
 func _create_fleet_overview() -> void:
 	_fleet_overview = FLEET_OVERVIEW_SCRIPT.new() as FleetOverview

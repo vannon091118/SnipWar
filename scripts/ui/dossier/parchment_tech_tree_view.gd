@@ -21,6 +21,8 @@ var _canvas: Control
 var _positions: Dictionary = {}
 var _node_controls: Dictionary = {}
 var _tree_scroll: ScrollContainer
+var _parallax_offset := Vector2.ZERO
+var _mouse_position := Vector2.ZERO
 
 func setup(ship_manager: ShipManager, theme_config: UIThemeConfig = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
@@ -121,15 +123,16 @@ func _build_status_legend() -> void:
 	add_child(legend)
 
 func _layout_tree(state: Node) -> void:
+	var visible_techs: Array = _visible_path_technologies(state)
 	var depths: Dictionary = {}
-	for tech in _catalog.resolve_all():
+	for tech in visible_techs:
 		_depth_of(tech.id, depths)
 	var max_depth := 0
 	for depth_value in depths.values():
 		max_depth = maxi(max_depth, int(depth_value))
 	var rows: Dictionary = {}
 	var max_row := 0
-	for tech in _catalog.resolve_all():
+	for tech in visible_techs:
 		var depth: int = int(depths.get(tech.id, 0))
 		var row: int = int(rows.get(depth, 0))
 		rows[depth] = row + 1
@@ -142,6 +145,32 @@ func _layout_tree(state: Node) -> void:
 	var canvas_size := Vector2(PAD * 2.0 + float(max_depth + 1) * COL_W, PAD * 2.0 + float(max_row + 1) * ROW_H)
 	_canvas.custom_minimum_size = canvas_size
 	_canvas.size = canvas_size
+
+func _visible_path_technologies(state: Node) -> Array:
+	if _catalog == null or state == null:
+		return []
+	var all: Array = _catalog.resolve_all()
+	var visible: Array = []
+	var frontier: Array[StringName] = []
+	for technology in all:
+		var tech_state: StringName = UIStatusUtils.research_state(GameState.FACTION_PLAYER, technology, state, _catalog)
+		if tech_state == UIStatusUtils.STATE_IN_PROGRESS or tech_state == UIStatusUtils.STATE_AVAILABLE:
+			frontier.append(technology.id)
+	for technology in all:
+		var learned: StringName = UIStatusUtils.research_state(GameState.FACTION_PLAYER, technology, state, _catalog)
+		if learned == UIStatusUtils.STATE_LEARNED:
+			visible.append(technology)
+	for technology_id in frontier:
+		var technology: TechnologyDefinition = _catalog.resolve(technology_id)
+		if technology != null and not visible.has(technology):
+			visible.append(technology)
+	# Keep one readable next step per branch; locked distant nodes are hidden.
+	for technology in all:
+		if visible.size() >= 12:
+			break
+		if not visible.has(technology) and not String(technology.prerequisite_tech_id).is_empty() and visible.any(func(item): return item.id == technology.prerequisite_tech_id):
+			visible.append(technology)
+	return visible
 
 func _depth_of(tech_id: StringName, memo: Dictionary) -> int:
 	if memo.has(tech_id):
@@ -173,6 +202,7 @@ func _tech_node(technology: TechnologyDefinition, state: Node, center: Vector2) 
 			status_mark = "✗ "
 	button.text = "%s%s\n%d %s" % [status_mark, technology.display_name, technology.cost_amount, String(technology.cost_resource)]
 	button.position = center - Vector2(NODE_W * 0.5, NODE_H * 0.5)
+	button.set_meta("tree_center", center)
 	button.size = Vector2(NODE_W, NODE_H)
 	button.focus_mode = Control.FOCUS_NONE
 	# Der Rahmen kommuniziert den Zustand farblich (Grau/Grün/Rot/Gelb).
@@ -186,6 +216,9 @@ func _tech_node(technology: TechnologyDefinition, state: Node, center: Vector2) 
 	button.add_theme_color_override("font_disabled_color", accent.darkened(0.1))
 	button.tooltip_text = technology.description + "\n" + technology.mechanic_description + _disabled_reason(technology, state)
 	button.pressed.connect(_research.bind(technology.id))
+	if research_state_id == UIStatusUtils.STATE_IN_PROGRESS:
+		button.disabled = true
+		button.tooltip_text += "\nLäuft bereits — Fortschritt läuft ohne weitere Klicks."
 	return button
 
 ## Sprint 6 (G7): explains WHY a tech node is greyed out. Logic is centralized
@@ -199,6 +232,22 @@ func _research(technology_id: StringName) -> void:
 	_state.research_technology(GameState.FACTION_PLAYER, technology_id, _catalog)
 	refresh(_state)
 
+func _process(_delta: float) -> void:
+	if _canvas == null or not is_visible_in_tree():
+		return
+	_mouse_position = get_local_mouse_position()
+	var viewport_size := size
+	var normalized := Vector2.ZERO
+	if viewport_size.x > 0.0 and viewport_size.y > 0.0:
+		normalized = (_mouse_position / viewport_size - Vector2(0.5, 0.5)) * 2.0
+	_parallax_offset = normalized.clamp(Vector2(-1.0, -1.0), Vector2.ONE) * 10.0
+	for technology_id in _node_controls:
+		var node: Control = _node_controls[technology_id] as Control
+		if node != null and is_instance_valid(node):
+			var center: Vector2 = node.get_meta("tree_center", node.position + Vector2(NODE_W * 0.5, NODE_H * 0.5))
+			node.position = center - Vector2(NODE_W * 0.5, NODE_H * 0.5) + _parallax_offset * (0.45 + float(center.x) / maxf(_canvas.size.x, 1.0) * 0.55)
+		_canvas.queue_redraw()
+
 func _draw_connectors() -> void:
 	if _catalog == null:
 		return
@@ -209,8 +258,19 @@ func _draw_connectors() -> void:
 			continue
 		if not _positions.has(technology.id) or not _positions.has(technology.prerequisite_tech_id):
 			continue
-		var from: Vector2 = _positions[technology.prerequisite_tech_id] as Vector2
-		var to: Vector2 = _positions[technology.id] as Vector2
+		var from := _live_node_center(technology.prerequisite_tech_id)
+		var to := _live_node_center(technology.id)
 		var elbow := Vector2(to.x, from.y)
 		_canvas.draw_line(from, elbow, line_color, 2.0, true)
 		_canvas.draw_line(elbow, to, line_color, 2.0, true)
+
+## Connectors must end at their bubbles' live parallax positions. Deriving
+## endpoints from base coordinates plus fixed offsets lets the drawn lines
+## drift away from the nodes they belong to whenever mouse parallax moves
+## buttons by their depth-scaled factors.
+func _live_node_center(technology_id: StringName) -> Vector2:
+	if _node_controls.has(technology_id):
+		var node: Control = _node_controls[technology_id] as Control
+		if node != null and is_instance_valid(node):
+			return node.position + Vector2(NODE_W * 0.5, NODE_H * 0.5)
+	return (_positions.get(technology_id, Vector2.ZERO) as Vector2)

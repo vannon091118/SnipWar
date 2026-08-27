@@ -55,9 +55,16 @@ func run(ctx: PreflightContext) -> bool:
 	details_node.set_seed(777)
 	if not ctx.check(seeded_types == details_node.get_detail_types() and seeded_types.size() >= 2 and seeded_types.has(&"satellite") and seeded_types.has(&"asteroid_belt"), "planet details are not seed-stable"):
 		return false
-	var orbit: PlanetDetailOrbit = details_node.get_node("AsteroidOrbit_0") as PlanetDetailOrbit
-	var satellite_orbit: PlanetDetailOrbit = details_node.get_node_or_null("Satellite") as PlanetDetailOrbit
-	if not ctx.check(satellite_orbit != null and satellite_orbit.orbit_motion_mode == PlanetDetailFidelity.MOTION_FULL and orbit.orbit_motion_mode == PlanetDetailFidelity.MOTION_THROTTLED and orbit.orbit_update_interval > 0.0, "detail motion fidelity was not applied"):
+	var orbit: PlanetDetailOrbit = null
+	var satellite_orbit: PlanetDetailOrbit = null
+	for detail_child in details_node.get_children():
+		if detail_child is PlanetDetailOrbit:
+			var detail_orbit := detail_child as PlanetDetailOrbit
+			if detail_orbit.name.begins_with("AsteroidOrbit"):
+				orbit = detail_orbit
+			elif detail_orbit.name.begins_with("Satellite"):
+				satellite_orbit = detail_orbit
+	if not ctx.check(satellite_orbit != null and orbit != null and satellite_orbit.orbit_motion_mode == PlanetDetailFidelity.MOTION_FULL and orbit.orbit_motion_mode == PlanetDetailFidelity.MOTION_THROTTLED and orbit.orbit_update_interval > 0.0, "detail motion fidelity was not applied"):
 		return false
 	var orbit_angle: float = orbit.rotation
 	var satellite_angle: float = satellite_orbit.rotation

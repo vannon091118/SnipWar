@@ -67,7 +67,10 @@ func _connect_planet_conflict(planet: Planet, callback: Callable = Callable()) -
 ## Connects to GameCycleManager so inline replay requests from
 ## _start_replay are delegated to the proper orchestration layer.
 func _connect_replay_orchestration() -> void:
-	var cycle: Node = get_node_or_null("/root/GameCycleManager")
+	var main_loop := Engine.get_main_loop()
+	if not (main_loop is SceneTree):
+		return
+	var cycle: Node = (main_loop as SceneTree).root.get_node_or_null("GameCycleManager")
 	if cycle == null:
 		return
 	if not replay_requested.is_connected(Callable(cycle, "_on_replay_requested")):

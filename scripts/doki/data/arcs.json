@@ -98,13 +98,14 @@
 				"C-077",
 				"C-078",
 				"C-079",
-				"C-080"
+				"C-080",
+				"F-050"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
-			"weight": 6.6
+			"weight": 8.9
 		},
 		"a2": {
 			"climax_weight": 3.0,

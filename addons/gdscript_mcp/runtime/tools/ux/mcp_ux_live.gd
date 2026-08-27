@@ -26,6 +26,10 @@ static func build_snapshot(root_path: String = "/root", max_controls: int = 300,
 	var root := tree.root
 	var current := tree.current_scene
 	var scoped_root: Node = root if root_path in ["", ".", "/root"] else root.get_node_or_null(NodePath(root_path))
+	# A runtime scene can be valid while its UI is still being attached. Keep
+	# the authoritative scene identity, but make the empty-scope case explicit
+	# so callers can distinguish "no controls yet" from a completed scan.
+	var scope_missing := scoped_root == null
 	var controls: Array = []
 	var scroll_containers: Array = []
 	var safe_max_controls := clampi(max_controls, 1, 1000)
@@ -39,6 +43,8 @@ static func build_snapshot(root_path: String = "/root", max_controls: int = 300,
 	var snapshot := {
 		"scene": scene_name_hint(scene_name, controls),
 		"scene_name": scene_name,
+		"scope_missing": scope_missing,
+		"ui_ready": not scope_missing and controls.size() > 0,
 		"scene_path": String(current.get_path()) if current != null else "",
 		"scope_root": String(scoped_root.get_path()) if scoped_root != null else root_path,
 		"controls": controls,

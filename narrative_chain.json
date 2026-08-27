@@ -2302,6 +2302,58 @@
 			"seq": 32,
 			"subject": "Basher (8 files): Dock-Umbau zur Pipeline-Visualisierung:… — nach Vannon",
 			"summary": "Betrachte den Dock. Na ja, er hat einen Zweck bekommen. Vorher war er eine Bedienkonsole für Dinge, die der Agent längst selbst erledigt — Maus, Klick, Tasten, Scans, Freeze, eine ganze E2E-Fernbed..."
+		},
+		{
+			"a": 4,
+			"arc": "a12",
+			"c": 33,
+			"composite": "c33j17n7a4p5",
+			"data_changes": [
+				{
+					"deletions": 3.0,
+					"file": "AGENTS.md",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/AGENTS.md",
+					"insertions": 101.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 109.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 62.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 8.0
+				}
+			],
+			"date": "2026-08-27 09:00:00",
+			"hash": "4560e16ae80496534b8ce5eced53d3ae736217b6",
+			"j": 17,
+			"model_id": "claude-sonnet-4",
+			"mood": "alarmiert",
+			"n": 7,
+			"narrator": "Argos",
+			"p": 5,
+			"p_id": 33,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Basher",
+			"seq": 33,
+			"subject": "Argos: 6 Dateien — Trennung MCP-Test-Doku vom Pro… — nach Basher",
+			"summary": "Halt. Vorher war das ein Durcheinander: Die MCP-Test-Regeln standen im Projekt-AGENTS, während die eigentliche MCP-Doku im Addon lag. Wer einen Test laufen ließ, musste an zwei Orten lesen, und nie..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

@@ -476,3 +476,16 @@ Dock-Umbau zur Pipeline-Visualisierung: Agenten-Steuerung (Maus/Klick/Taste/Scan
 - docs/FINDINGS.md: Fehler behoben (F-046).
 - narrative_chain.json: Fehler behoben (F-004).
 - scripts/doki/data/arcs.json: Fehler behoben (F-001).
+
+## 2026-08-27 09:00:00 — p33 · c33j17n7a4p5 · Argos · alarmiert
+
+**Argos: 6 Dateien — Trennung MCP-Test-Doku vom Pro… — nach Basher**
+
+Trennung MCP-Test-Doku vom Projekt: neues addons/gdscript_mcp/AGENTS.md als Pflicht-Lese-Doktrin (Transport, OCR-Pflicht, Entkopplung, Atom-Vertrag, Doku-Landkarte mit 6 Pflicht-Dokumenten); Projekt-AGENTS.md verweist nur noch darauf — MCP-Test-Details leben im Addon, Spiel-Doku im Projekt
+
+- AGENTS.md: Dokumentation aktualisiert (F-019).
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- addons/gdscript_mcp/AGENTS.md: Dokumentation aktualisiert (F-050).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).

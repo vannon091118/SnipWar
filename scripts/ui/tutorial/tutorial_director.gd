@@ -11,7 +11,6 @@ extends CanvasLayer
 ## vordefinierten Test-Szenarien für den Ablauf — die MCP-Agenten entdecken die
 ## Oberfläche selbst und erweitern ihre Bibliothek über das Playthrough-Archiv.
 
-const MAX_STEPS := 8
 
 var _theme_config: UIThemeConfig
 var _planet_network: Node
@@ -32,6 +31,11 @@ var _counter_label: Label
 var _weiter_button: Button
 var _marker_target: Vector2
 var _marker_target_valid := false
+var _marker_draw_pos := Vector2.ZERO
+var _marker_offscreen := false
+var _open_pending_label := ""
+var _open_pending_delay := 0.0
+var _scrolled_steps: Dictionary = {}
 
 const DEFAULT_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
 
@@ -52,6 +56,9 @@ func start(planet_network: Node, ship_manager: Node, state: Node, map_camera: No
 	_build_steps()
 	_step_index = 0
 	_auto_started = true
+	_scrolled_steps.clear()
+	_open_pending_label = ""
+	_open_pending_delay = 0.0
 	_active = true
 	_show_overlay()
 	_present_step()
@@ -157,6 +164,8 @@ func hide_overlay() -> void:
 	_marker.visible = false
 	_card.visible = false
 	_marker_target_valid = false
+	_marker_offscreen = false
+	_marker_draw_pos = Vector2.ZERO
 
 # ── Schritte ───────────────────────────────────────────────────────────
 
@@ -164,52 +173,66 @@ func _build_steps() -> void:
 	_steps = []
 	_steps.append({
 		"id": "camera",
-		"title": "WILLKOMMEN BEI SNIPWAR",
-		"text": "Bewege die Kamera mit [W A S D] und zoome mit dem Mausrad. Deine Heimatwelt trägt den grünen Ring.",
+		"title": "WILLKOMMEN IM PAPIERKOSMOS",
+		"text": "Deine Heimatwelt trägt den grünen Ring. Kamera: [W A S D], Zoom: Mausrad. Mehr braucht es nicht — Stickmen reisen leicht.",
 		"target": "planet",
+		"width_min": 340.0,
 	})
 	_steps.append({
 		"id": "select_homeworld",
-		"title": "PLANET WÄHLEN",
-		"text": "Klicke deine Heimatwelt an. Rechts öffnet sich das Planeten-Panel für Missionen und Versand.",
+		"title": "HEIMATWELT WÄHLEN",
+		"text": "Klick die grün geringelte Welt an. Das Planeten-Panel öffnet sich rechts — dort laufen Missionsversand und deine existenziellen Entscheidungen zusammen.",
 		"target": "planet",
+		"width_min": 340.0,
 	})
 	_steps.append({
 		"id": "research",
-		"title": "ERSTE FORSCHUNG",
-		"text": "Öffne links [F] FORSCHUNG und klicke im Forschungsbaum „Orbitales Werft-Design“ (grüner Rahmen = lernbar). Die Forschung läuft dann von selbst — du siehst den Fortschritt im Spinner.",
-		"target": "button:FORSCHUNG",
+		"title": "DIREKT FORSCHEN",
+		"text": "Wir haben den Forschungsbaum aufgeklappt und zur nächsten Bubble gescrollt. Grüner Rahmen = klickbar. EIN Klick startet die Forschung sofort; der Fortschritt füllt sich live in der Bubble. Keine Bestätigungsfalle, versprochen.",
+		"target": "",
+		"open": "FORSCHUNG",
+		"width_min": 380.0,
 	})
 	_steps.append({
 		"id": "open_dossier",
-		"title": "PLANETEN-DOSSIER",
-		"text": "Öffne [P] PLANETEN-DOSSIER (links PLANET) und wähle deine Heimatwelt — dort liegen Bau, Hangar und planetare Forschung.",
-		"target": "button:PLANET",
+		"title": "DOSSIER AUFKLAPPEN",
+		"text": "[PLANET] ist offen: Bau, Hangar und planetare Forschung stecken in deinem Aktenberg. Blättern lohnt sich — Papier lügt nicht. Meistens.",
+		"target": "",
+		"open": "PLANET",
+		"width_min": 340.0,
 	})
 	_steps.append({
 		"id": "build_shipyard",
-		"title": "ERSTES GEBÄUDE",
-		"text": "Scrolle im Dossier zur Kategorie MILITARY, finde die „Orbitale Werft“ (20 Biomasse · 5 Credits) und drücke BAUEN.",
-		"target": "planet",
+		"title": "WERFT BAUEN",
+		"text": "Im Block MILITARY wartet die Orbitale Werft (20 Biomasse · 5 Credits). BAUEN drücken — der Timer läuft von allein, wir arbeiten hier schließlich professionell.",
+		"target": "",
+		"open": "PLANET",
+		"width_min": 350.0,
 	})
 	_steps.append({
 		"id": "workshop",
-		"title": "WERKSTATT & SCHIFF",
-		"text": "Öffne [W] WERKSTATT, kaufe Teile (Hülle, Antrieb, Schild, Scanner), wähle sie in der Montage und drücke KOMBINIEREN.",
-		"target": "button:WERKSTATT",
+		"title": "WERKSTATT: TEILE MONTIEREN",
+		"text": "Hülle, Antrieb, Schild, Scanner kaufen, in der Montage wählen, KOMBINIEREN drücken. Vier Teile, ein Schiff — Flottenbau war nie ehrlicher.",
+		"target": "",
+		"open": "WERKSTATT",
+		"width_min": 360.0,
 	})
 	_steps.append({
 		"id": "scout",
 		"title": "FORSCHUNGSSCHIFF STARTEN",
-		"text": "In der WERKSTATT unten: Startplanet + unbekannter Nachbar wählen und FORSCHUNGSSCHIFF STARTEN drücken.",
-		"target": "button:WERKSTATT",
+		"text": "Ganz unten in der Werkstatt: Startplanet wählen, unbekannten Nachbarn ins Visier nehmen, FORSCHUNGSSCHIFF STARTEN. Sag den Nachbarn hallo für uns.",
+		"target": "",
+		"open": "WERKSTATT",
+		"width_min": 350.0,
 	})
 	_steps.append({
 		"id": "done",
-		"title": "BEREIT FÜR DIE STERNE",
-		"text": "Geschafft! Erkunde weitere Welten, sammle Ressourcen und erweitere deine Flotte. Viel Erfolg, Commander.",
+		"title": "READY, COMMANDER",
+		"text": "Fertig. Weitere Welten, mehr Ressourcen, größere Flotte — die Eisen-Grenze schreibt das alles in deine Akte. Das X oben rechts schließt dieses Fenster hier.",
 		"target": "",
+		"width_min": 320.0,
 	})
+
 
 func _present_step() -> void:
 	if _step_index >= _steps.size() or not _active:
@@ -218,13 +241,71 @@ func _present_step() -> void:
 	var step: Dictionary = _steps[_step_index]
 	_title_label.text = String(step.get("title", ""))
 	_text_label.text = String(step.get("text", ""))
+	var width_min := float(step.get("width_min", 320.0))
+	_text_label.custom_minimum_size.x = width_min - 36.0
 	_counter_label.text = "Schritt %d / %d" % [_step_index + 1, _steps.size()]
 	_refresh_marker_target()
 	_marker.queue_redraw()
+	_schedule_open(step)
 
 func _on_weiter_pressed() -> void:
 	_step_index += 1
 	_present_step()
+
+## Oeffnet das zum Schritt gehoerende Menue (Flyover-Onboarding): Der Schritt
+## erklaert das Ziel dort, wo es liegt -- nicht als statisches Dialogfeld.
+func _schedule_open(step: Dictionary) -> void:
+	var label := String(step.get("open", ""))
+	if label.is_empty():
+		return
+	# Launcher-Buttons oeffnen nur (idempotent, kein Toggle) — daher darf der
+	# Schritt sie immer druecken. Ein zwischenzeitlich manuell geschlossenes
+	# Menue wird so zuverlaessig wieder geoeffnet; kein Client-Sync-Status.
+	_open_pending_label = label
+	_open_pending_delay = 0.3
+
+func _press_launcher(label: String) -> void:
+	var button := _find_launcher_button(label)
+	if button is Button and is_instance_valid(button):
+		(button as Button).pressed.emit()
+
+func _current_step_id() -> String:
+	if _step_index >= _steps.size():
+		return ""
+	return String(_steps[_step_index].get("id", ""))
+
+## Fuer den Forschungsschritt: TreeScroll auf die erste klickbare Bubble
+## zentrieren, damit direkte Ausfuehrung tatsaechlich vor Augen steht.
+func _try_research_auto_scroll() -> void:
+	if _current_step_id() != "research" or _scrolled_steps.has("research"):
+		return
+	var scroll := _find_tree_scroll()
+	if scroll == null or not scroll.is_visible_in_tree():
+		return
+	for child in scroll.get_children():
+		if child is Control and String(child.name) == "TreeCanvas":
+			var canvas := child as Control
+			var decided := false
+			for node in canvas.get_children():
+				var button := node as Button
+				if button == null or not String(node.name).begins_with("TechNode_") or button.disabled:
+					continue
+				var center: Vector2 = button.get_meta("tree_center", button.position + button.size * 0.5)
+				var h_bar := scroll.get_h_scroll_bar()
+				var v_bar := scroll.get_v_scroll_bar()
+				scroll.scroll_horizontal = int(clampf(center.x - scroll.size.x * 0.5, 0.0, float(h_bar.max_value))) if h_bar != null else 0
+				scroll.scroll_vertical = int(clampf(center.y - scroll.size.y * 0.5, 0.0, float(v_bar.max_value))) if v_bar != null else 0
+				decided = true
+				break
+			if decided or canvas.get_child_count() > 0:
+				_scrolled_steps["research"] = true
+			return
+
+func _find_tree_scroll() -> ScrollContainer:
+	var tree := get_tree()
+	if tree == null or tree.current_scene == null:
+		return null
+	return tree.current_scene.find_child("TreeScroll", true, false) as ScrollContainer
 
 func _finish() -> void:
 	_active = false
@@ -233,6 +314,20 @@ func _finish() -> void:
 # ── Helfer ─────────────────────────────────────────────────────────────
 
 func _target_planet() -> Node:
+	if get_tree() == null or _state == null:
+		return null
+	# Versprechen des Tutorials: Der Ring haengt an der HEIMATWELT -- nicht an
+	# irgendeinem Spielerplaneten, falls mehrere registriert sind.
+	var home_id: StringName = &""
+	if _state.has_method("homeworld_for"):
+		home_id = _state.homeworld_for(GameState.FACTION_PLAYER)
+	if not home_id.is_empty():
+		for node in get_tree().get_nodes_in_group("planets"):
+			if node == null or not is_instance_valid(node):
+				continue
+			var pid: StringName = node.get("planet_id") if node.get("planet_id") != null else &""
+			if pid == home_id:
+				return node
 	for planet in _planets_of(GameState.FACTION_PLAYER):
 		if planet != null:
 			return planet
@@ -264,6 +359,13 @@ func _find_launcher_button(label: String) -> Control:
 	return null
 
 func _world_to_screen(world_position: Vector2) -> Vector2:
+	# CanvasLayer controls live in viewport/screen coordinates. Use the
+	# viewport's canvas transform rather than the camera node directly; this
+	# keeps the marker aligned with the rendered planet when the camera zooms,
+	# pans, or the window is resized.
+	var viewport := get_viewport()
+	if viewport != null:
+		return viewport.get_canvas_transform() * world_position
 	if _map_camera != null and is_instance_valid(_map_camera) and _map_camera.has_method("get_canvas_transform"):
 		return _map_camera.get_canvas_transform() * world_position
 	return world_position
@@ -273,17 +375,29 @@ func _world_to_screen(world_position: Vector2) -> Vector2:
 func _refresh_marker_target() -> void:
 	var step: Dictionary = _steps[_step_index] if _step_index < _steps.size() else {}
 	_marker_target_valid = false
+	_marker_offscreen = false
+	_marker_draw_pos = Vector2.ZERO
 	_marker_target = Vector2.ZERO
-	if String(step.get("target", "")) == "planet":
+	var target_text := String(step.get("target", ""))
+	var point_valid := false
+	if target_text == "planet":
 		var target_planet := _target_planet()
 		if target_planet != null and is_instance_valid(target_planet):
 			_marker_target = _world_to_screen(target_planet.global_position)
-			_marker_target_valid = true
-	elif String(step.get("target", "")).begins_with("button:"):
-		var button := _find_launcher_button(String(step.get("target", "")).get_slice(":", 1))
+			point_valid = true
+	elif target_text.begins_with("button:"):
+		var button := _find_launcher_button(String(target_text).get_slice(":", 1))
 		if button != null and is_instance_valid(button):
 			_marker_target = button.get_global_rect().get_center()
-			_marker_target_valid = true
+			point_valid = true
+	if not point_valid:
+		return
+	# Der Ring bleibt sichtbar, solange das Ziel existiert: Liegt es ausserhalb
+	# des Viewports, klemmt der Marker an den Rand und zeigt per Pfeil dahin.
+	var viewport_rect := get_viewport().get_visible_rect()
+	_marker_offscreen = not viewport_rect.grow(-40.0).has_point(_marker_target)
+	_marker_draw_pos = _marker_target.clamp(viewport_rect.position + Vector2(34.0, 34.0), viewport_rect.end - Vector2(34.0, 34.0))
+	_marker_target_valid = true
 
 ## Flyover positioning: the card floats above the target when there is room,
 ## otherwise below it, always clamped inside the viewport.
@@ -293,29 +407,49 @@ func _position_card() -> void:
 	if card_size.x <= 0.0 or card_size.y <= 0.0 or viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
 		return
 	var margin := 10.0
-	var target: Vector2 = _marker_target if _marker_target_valid else Vector2(viewport_size.x * 0.5, viewport_size.y - 80.0)
+	var target: Vector2 = _marker_draw_pos if _marker_target_valid else Vector2(viewport_size.x * 0.5, viewport_size.y - 80.0)
 	var position := Vector2(target.x - card_size.x * 0.5, target.y + 16.0)
 	if target.y - card_size.y - margin >= 0.0:
 		position.y = target.y - card_size.y - margin
 	position.x = clampf(position.x, margin, maxf(margin, viewport_size.x - card_size.x - margin))
 	position.y = clampf(position.y, margin, maxf(margin, viewport_size.y - card_size.y - margin))
 	_card.position = position
+	# _present_step fordert die schrittspezifische Breite an (_width_min);
+	# hier wird nur bei schmalen Fenstern geschrumpft, sonst bleibt jede
+	# Karte in ihrer eigenen Groesse statt uniform ueberzuscaliert.
+	var requested := maxf(284.0, _text_label.custom_minimum_size.x)
+	var allowed := maxf(240.0, viewport_size.x - margin * 2.0 - 36.0)
+	_text_label.custom_minimum_size.x = minf(requested, allowed)
 
 func _draw_marker() -> void:
 	if not _active or not _marker_target_valid:
 		return
-	var radius := 16.0 + 4.0 * sin(Time.get_ticks_msec() * 0.006)
-	# The tutorial promises a GREEN ring around the homeworld — keep it green.
+	var t := Time.get_ticks_msec() * 0.001
+	var radius := 16.0 + 3.0 * sin(t * 6.28)
 	var color := Color(0.35, 0.85, 0.45)
-	color.a = 0.9
-	_marker.draw_arc(_marker_target, radius, 0.0, TAU, 48, color, 3.0, true)
-	_marker.draw_arc(_marker_target, radius + 6.0, 0.0, TAU, 48, Color(color.r, color.g, color.b, 0.35), 2.0, true)
+	# Drehende Doppelschlinge: liest sich als Tutorial-Markierung, nicht als
+	# Klick-Echo der Touch-/Maussteuerung.
+	_marker.draw_arc(_marker_draw_pos, radius, t * 1.7, t * 1.7 + TAU * 0.72, 40, color, 3.0, true)
+	_marker.draw_arc(_marker_draw_pos, radius + 6.0, -t * 1.1, -t * 1.1 + TAU * 0.55, 40, Color(color.r, color.g, color.b, 0.4), 2.0, true)
+	if _marker_offscreen:
+		var dir := _marker_target - _marker_draw_pos
+		if dir.length_squared() > 1.0:
+			dir = dir.normalized()
+			var tip := _marker_draw_pos + dir * (radius + 18.0)
+			var side := dir.orthogonal() * 9.0
+			_marker.draw_colored_polygon(PackedVector2Array([tip, tip - dir * 14.0 + side, tip - dir * 14.0 - side]), color)
 
 func _process(delta: float) -> void:
 	if not _active:
 		return
-	# Präsentation only: Ring und Flyover-Karte kleben am Ziel, während die
-	# Kamera gleitet/pannt/zoomt. Das Tutorial selbst macht NICHTS automatisch.
+	# Flyover-Onboarding: Der Schritt oeffnet sein Menue selbst und richtet
+	# den Blick aufs Ziel -- NUR Praesentation, keine Spiellogik.
+	if _open_pending_delay > 0.0:
+		_open_pending_delay -= delta
+		if _open_pending_delay <= 0.0 and not _open_pending_label.is_empty():
+			_press_launcher(_open_pending_label)
+			_open_pending_label = ""
 	_refresh_marker_target()
 	_marker.queue_redraw()
 	_position_card()
+	_try_research_auto_scroll()

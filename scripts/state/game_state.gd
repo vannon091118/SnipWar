@@ -125,6 +125,8 @@ var _ship_part_inventory: Dictionary:
 		return ship_domain.ship_part_inventory
 
 var _jobs_auto_advance: bool = true
+var _player_name: String = ""
+var _stickman_profile: String = "FORSCHER"
 var _run_active: bool = false
 var _run_id: StringName = &""
 var _run_scenario_id: StringName = &""
@@ -345,6 +347,16 @@ func next_transit_id() -> StringName:
 
 func set_jobs_auto_advance(auto_advance: bool) -> void:
 	_jobs_auto_advance = auto_advance
+
+func jobs_auto_advance_enabled() -> bool:
+	return _jobs_auto_advance
+
+func set_player_identity(player_name: String, profile: String = "FORSCHER") -> void:
+	_player_name = player_name.strip_edges()
+	_stickman_profile = profile.strip_edges().to_upper() if not profile.strip_edges().is_empty() else "FORSCHER"
+
+func player_identity() -> Dictionary:
+	return {"name": _player_name, "profile": _stickman_profile}
 
 func advance_upgrade_builds(delta: float) -> void:
 	economy_domain.advance_upgrade_builds(delta)

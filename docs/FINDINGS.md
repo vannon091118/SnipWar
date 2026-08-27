@@ -76,6 +76,36 @@
 
 ---
 
+## Research-Warning Root-Cause-Auflösung — 2026-08-27
+
+Die zuvor sichtbaren `tech_drift`-Meldungen waren keine automatische Spielerforschung und kein einzelner Forschungsbug. Sie entstanden durch absichtliche Forschungsaktionen innerhalb von Constraints (`cpu_dispatch`, `save_game_roundtrip`, `ship_catalog_and_assembly`, `ship_transit_and_arrival`), während die V2-Checkpoint-Prüfung weiterhin den unveränderten Baseline-Snapshot verglich. Zusätzlich konnte der CPU-Timer in einer Fixture vor dem Deaktivieren einmal laufen.
+
+Behoben:
+- `V2Fixture.reset_state()` deaktiviert Job-Fortschritt vor und nach dem Domain-Reset.
+- `PreflightFixture.boot_default()` deaktiviert vorhandenen GameState-Fortschritt vor dem Szene-Boot.
+- CPU- und Spielerforschung bleiben getrennte Pfade; CPU-Abschlüsse erzeugen keinen Spieler-Toast.
+- `ConflictManager` löst `GameCycleManager` über den aktiven `SceneTree` statt über ungültige absolute NodePaths außerhalb einer Szene auf.
+- Research- und Event-Log-Constraints: ✅ PASS.
+- Vollständiger Preflight: ✅ 39/39 Constraints, 2020/2020 Assertions.
+
+Die verbleibenden Isolation-Warnings anderer Constraints sind erwartete Mutationsnachweise innerhalb von Tests, keine Forschungsfehler. Die Architektur sollte sie künftig pro Constraint als erwartete Mutation markieren oder den Checkpoint erst nach der definierten Testphase vergleichen; sie dürfen nicht als Gameplay-Warnung interpretiert werden.
+
+## Visuelle Forschung-/Gebäude-Runde — 2026-08-27
+
+- Planetare Gebäude nutzen bereits die vorhandene SVG-Tierkette (`visual_assets_by_tier`) und werden über `PlanetDetails.add_upgrade_structure()` am ausgewählten Planeten visualisiert. Die Darstellung bleibt damit seed-/faktionskompatibel und erzeugt keine neue parallele Asset-Pipeline.
+- Der Forschungsbaum reduziert die Darstellung auf den erforschten Pfad, aktive Forschung und die nächsten erreichbaren Knoten; entfernte gesperrte Äste werden nicht mehr als visuelles Rauschen aufgebaut.
+- Tech-Knoten und Connectoren reagieren auf die Mausposition mit einem kleinen, begrenzten Parallax-Versatz. Der Effekt verändert keine Forschungslogik und keine Klickziele.
+- Parsercheck, `paper_style` und `world_details_and_scale` sind erfolgreich. Eine echte Screenshot-/OCR-Visual-QA bleibt für die endgültige Positionierung und Lesbarkeit erforderlich; Headless bestätigt nur Ressourcen, Szenenaufbau und Laufzeitverträge.
+
+## Flyover-Onboarding und Indikator-Bereinigung — 2026-08-27
+
+- ✅ GEFIXT — Zentrierter Wellen-Kreis entfernt (`ResearchIndicator`): Spawn in `planet.gd` auf `research_started` gestrichen, Klasse samt `.uid` gelöscht, ConceptIndex bereinigt. Der Ring las sich kamerazentriert wie ein dauerhafter Klick-Echo der Maus-/Touchsteuerung; Forschungsstatus gehört in den Bubble-Tech-Tree, nicht in die Welt.
+- ✅ GEFIXT — Heimatweltring im Tutorial fehlte: Ziel ist jetzt `homeworld_for(FACTION_PLAYER)` statt erst-bester Spielerplanet. Liegt das Ziel offscreen, klemmt der Marker am Viewport-Rand und zeigt per Pfeil Richtung; die drehende Doppelschlinge unterscheidet ihn klar vom Klick-Indikator.
+- ✅ GEFIXT — Onboarding öffnet nun pro Schritt das Zielenü (FORSCHUNG / PLANET / WERKSTATT) über den DossierLauncher und zentriert im Forschungsbaum die erste klickbare Bubble (`_schedule_open`, `_press_launcher`, `_try_research_auto_scroll`). Die Karte bleibt Flyover am aktuellen Ziel, Breite je Schritt skaliert. Keine Spiellogik im Tutorial.
+- ✅ GEFIXT — Formulierungen: Tutorial-Schritte selbstironisch-nüchtern umgeschrieben; Identitätsdialog zeigt Rassen-Lore der Stickmen und eine eigene ironische Beschreibung je Profil (GUT/BÖSE/MILITÄRISCH/FORSCHER/BAUMEISTER).
+- ✅ GEFIXT — MCP Vor-/Nachlaufzeit: `runtime_ux_analyze` läuft standardmäßig direkt als DOM-Snapshot; Screenshot/OCR nur noch opt-in (`include_visual=true`) im vorhandenen `vision_worker`-Eigenprozess. Verbunden mit der Multi-Client/NODELAY-Runde ist damit kein Standardpfad mehr serialisiert auf OCR.
+- 🔵 BEOBACHTET — `user://saves/run_2.tres` meldet beim Boot einen veralteten Parse-Fehler aus Test-Slot 2 (Slots 1–7 sind Test-Slots); Constraint `save_game_slots` bleibt PASS. Bereinigung als Trivial-Kandidat.
+
 ## Offene Punkte (nächste Runden)
 | # | Punkt | Priorität |
 |---|-------|-----------|

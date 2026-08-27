@@ -146,18 +146,34 @@ func _set_open(open_value: bool, animate: bool) -> void:
 	if open_value:
 		if animate:
 			_sheet.modulate.a = 0.0
-			_sheet.scale = Vector2(0.95, 0.95)
+			_sheet.scale = Vector2(0.78, 0.08)
+			_sheet.rotation = -0.025
 			_tween = create_tween().set_parallel(true)
-			_tween.tween_property(_sheet, "modulate:a", 1.0, _theme_config.transition_duration)
-			_tween.tween_property(_sheet, "scale", Vector2.ONE, _theme_config.transition_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			_tween.tween_property(_sheet, "modulate:a", 1.0, _theme_config.transition_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			_tween.tween_property(_sheet, "scale", Vector2(1.02, 1.0), _theme_config.transition_duration * 0.72).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			_tween.tween_property(_sheet, "rotation", 0.0, _theme_config.transition_duration * 0.72).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			_tween.chain().tween_property(_sheet, "scale", Vector2.ONE, _theme_config.transition_duration * 0.28).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 		else:
 			_sheet.modulate.a = 1.0
 			_sheet.scale = Vector2.ONE
+			_sheet.rotation = 0.0
 		opened.emit()
 	else:
-		_sheet.modulate.a = 1.0
-		_sheet.scale = Vector2.ONE
-		closed.emit()
+		if animate and _sheet.visible:
+			_tween = create_tween().set_parallel(true)
+			_tween.tween_property(_sheet, "modulate:a", 0.0, _theme_config.transition_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+			_tween.tween_property(_sheet, "scale", Vector2(0.78, 0.08), _theme_config.transition_duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+			_tween.tween_property(_sheet, "rotation", 0.025, _theme_config.transition_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+			_tween.finished.connect(func():
+				_sheet.visible = false
+				closed.emit()
+			)
+		else:
+			_sheet.modulate.a = 1.0
+			_sheet.scale = Vector2.ONE
+			_sheet.rotation = 0.0
+			_sheet.visible = false
+			closed.emit()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _open and event.is_action_pressed(&"ui_cancel"):

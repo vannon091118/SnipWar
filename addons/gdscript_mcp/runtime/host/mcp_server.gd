@@ -32,10 +32,13 @@ var _editor_write_enabled := false
 var _contract_gate: RefCounted
 var _profile := "player"
 var _tcp_server: TCPServer
-var _client: StreamPeerTCP
-var _connection_generation := 0
+# Multi-Client: mehrere gleichzeitige TCP-Clients (Agent + Dock/Beobachter).
+# Jeder Client hat eigenen Puffer/Handshake/Generation; Responses gehen an
+# den Client, der den Call gestellt hat. Async-Coroutinen verwerfen ihre
+# Antwort, wenn sich der Client zwischenzeitlich getrennt/neu verbunden hat.
+var _clients: Dictionary = {}   # client_id -> {peer, buffer, protocol_ready, protocol_version, generation}
+var _next_client_id := 1
 var _running := false
-var _buffer := ""
 var _editor_plugin: Object
 var _provided_context_store: RefCounted = null
 var _registry: RefCounted
@@ -48,8 +51,6 @@ var _tools: Array = []
 var _tool_index: Dictionary = {}
 var _tick_accumulator := 0.0
 var _context_cleanup_accumulator := 0.0
-var _protocol_ready := false
-var _client_protocol_version := ""
 var _stdio_thread: Thread
 var _stdio_mutex := Mutex.new()
 var _stdio_queue: Array[String] = []
@@ -70,7 +71,8 @@ func start_server(port: int = DEFAULT_PORT, transport: String = "tcp", config: D
 	if _running:
 		_log("Server already running", true)
 		return false
-	_connection_generation += 1
+	_clients.clear()
+	_next_client_id = 1
 	_role = str(config.get("role", "editor" if _editor_plugin != null else "runtime"))
 	_session_id = str(config.get("session_id", "%s_%d" % [_role, Time.get_ticks_msec()]))
 	_frame_budget_ms = float(config.get("frame_budget_ms", 1.5))
@@ -152,7 +154,8 @@ func start_server(port: int = DEFAULT_PORT, transport: String = "tcp", config: D
 
 	_running = true
 	set_process(true)
-	_protocol_ready = false
+	_clients.clear()
+	_next_client_id = 1
 	_async_busy = false
 	_pending_async.clear()
 	_lifecycle.mark_ready()
@@ -170,13 +173,15 @@ func stop_server() -> void:
 	if _stdio_thread != null:
 		_stdio_thread.wait_to_finish()
 		_stdio_thread = null
-	if _client != null:
-		_client.disconnect_from_host()
-		_client = null
+	for client_id in _clients:
+		var client_peer: StreamPeerTCP = _clients[client_id]["peer"] as StreamPeerTCP
+		if client_peer != null:
+			client_peer.disconnect_from_host()
+	_clients.clear()
+	_next_client_id = 1
 	if _tcp_server != null:
 		_tcp_server.stop()
 		_tcp_server = null
-	_connection_generation += 1
 	_pending_async.clear()
 	_async_busy = false
 	_dispose_worker()
@@ -187,8 +192,6 @@ func stop_server() -> void:
 	_registry = null
 	_tools.clear()
 	_tool_index.clear()
-	_buffer = ""
-	_protocol_ready = false
 	_stdio_mutex.lock()
 	_stdio_queue.clear()
 	_stdio_mutex.unlock()
@@ -242,11 +245,12 @@ func get_lifecycle_state() -> Dictionary:
 		"profile": _profile,
 		"contract_violations": _contract_gate.get_blocked_calls() if _contract_gate != null else 0,
 		"renderer": "visible" if _is_renderer_visible() else "unavailable",
-		"client_connected": _client != null and _client.get_status() == StreamPeerTCP.STATUS_CONNECTED,
-		"tick_interval_ms": int(CONNECTED_TICK_INTERVAL * 1000.0) if _client != null else int(IDLE_TICK_INTERVAL * 1000.0),
+		"client_count": _clients.size(),
+		"client_connected": _any_client_connected(),
+		"tick_interval_ms": int(CONNECTED_TICK_INTERVAL * 1000.0) if _any_client_connected() else int(IDLE_TICK_INTERVAL * 1000.0),
 		"tool_count": _tools.size(),
-		"protocol_ready": _protocol_ready,
-		"protocol_version": _client_protocol_version if _protocol_ready else "",
+		"protocol_ready": _any_client_ready(),
+		"protocol_version": _first_ready_protocol_version(),
 		"async_busy": _async_busy,
 		"async_pending": _pending_async.size(),
 		"process_mode": "ALWAYS",
@@ -269,7 +273,7 @@ func _process(delta: float) -> void:
 	if not _running:
 		return
 	_tick_accumulator += delta
-	var interval := CONNECTED_TICK_INTERVAL if _client != null else IDLE_TICK_INTERVAL
+	var interval := CONNECTED_TICK_INTERVAL if _any_client_connected() else IDLE_TICK_INTERVAL
 	if _tick_accumulator < interval:
 		return
 	_tick_accumulator = 0.0
@@ -392,47 +396,53 @@ func _rebuild_tool_index() -> void:
 
 
 func _poll_tcp() -> void:
-	if _tcp_server != null and _tcp_server.is_connection_available():
-		if _client != null:
-			_client.disconnect_from_host()
-		_client = _tcp_server.take_connection()
+	# Multi-Client: ALLE neuen Verbindungen werden angenommen (Dock-Beobachter
+	# und Agent-Driver parallel). Vorher kippte jede neue Verbindung den
+	# bestehenden Client raus — deshalb blieb der Dock während Agent-Arbeit leer.
+	while _tcp_server != null and _tcp_server.is_connection_available():
+		var peer := _tcp_server.take_connection()
 		# TCP_NODELAY auf dem akzeptierten Socket: ohne das Flag kann Nagle
 		# jedes MCP-Response um bis zu 40 ms verzögern (eine Hauptquelle für
 		# "Agent to game time"-Latenz bei Chatty-Tool-Calls auf localhost).
-		_client.set_no_delay(true)
-		_connection_generation += 1
-		_pending_async.clear()
-		_buffer = ""
-		_protocol_ready = false
-		_log("Remote client connected")
-	if _client == null:
-		return
-	if _client.get_status() != StreamPeerTCP.STATUS_CONNECTED:
-		_connection_generation += 1
-		_pending_async.clear()
-		_client = null
-		_protocol_ready = false
-		_log("Remote client disconnected")
-		return
-	var available := _client.get_available_bytes()
-	if available <= 0:
-		return
-	var buffered_bytes := _buffer.to_utf8_buffer().size()
-	if buffered_bytes + available > MAX_BUFFER_BYTES:
-		_connection_generation += 1
-		_client.disconnect_from_host()
-		_client = null
-		_buffer = ""
-		_note_error("request buffer exceeded limit")
-		return
-	var packet: Array = _client.get_data(available)
-	if packet.size() < 2 or int(packet[0]) != OK:
-		return
-	var bytes: PackedByteArray = packet[1] as PackedByteArray
-	if bytes == null:
-		return
-	_buffer += bytes.get_string_from_utf8()
-	_process_buffer()
+		peer.set_no_delay(true)
+		var client_id := _next_client_id
+		_next_client_id += 1
+		_clients[client_id] = {
+			"peer": peer,
+			"buffer": "",
+			"protocol_ready": false,
+			"protocol_version": "",
+			"generation": client_id,
+		}
+		_log("Remote client connected (id %d, %d active)" % [client_id, _clients.size()])
+	var dead: Array = []
+	for client_id in _clients:
+		var client_data: Dictionary = _clients[client_id]
+		var client_peer: StreamPeerTCP = client_data["peer"] as StreamPeerTCP
+		if client_peer == null or client_peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
+			dead.append(client_id)
+			continue
+		var available := client_peer.get_available_bytes()
+		if available <= 0:
+			continue
+		var buffer_text := str(client_data.get("buffer", ""))
+		var buffered_bytes := buffer_text.to_utf8_buffer().size()
+		if buffered_bytes + available > MAX_BUFFER_BYTES:
+			client_peer.disconnect_from_host()
+			dead.append(client_id)
+			_note_error("request buffer exceeded limit")
+			continue
+		var packet: Array = client_peer.get_data(available)
+		if packet.size() < 2 or int(packet[0]) != OK:
+			continue
+		var bytes: PackedByteArray = packet[1] as PackedByteArray
+		if bytes == null:
+			continue
+		client_data["buffer"] = buffer_text + bytes.get_string_from_utf8()
+		_process_buffer(client_id)
+	for client_id in dead:
+		_clients.erase(client_id)
+		_log("Remote client disconnected (id %d, %d active)" % [client_id, _clients.size()])
 
 
 func _stdio_reader() -> void:
@@ -466,36 +476,42 @@ func _drain_stdio() -> void:
 		_handle_line(line.strip_edges())
 
 
-func _process_buffer() -> void:
+func _process_buffer(client_id: int) -> void:
+	if not _clients.has(client_id):
+		return
 	while true:
-		var newline_index := _buffer.find("\n")
+		var buffer_text := str(_clients[client_id].get("buffer", ""))
+		var newline_index: int = buffer_text.find("\n")
 		if newline_index < 0:
 			return
-		var line := _buffer.substr(0, newline_index).strip_edges()
-		_buffer = _buffer.substr(newline_index + 1)
+		var line := buffer_text.substr(0, newline_index).strip_edges()
+		_clients[client_id]["buffer"] = buffer_text.substr(newline_index + 1)
 		if line != "":
-			_handle_line(line)
+			_handle_line(line, client_id)
 
 
-func _handle_line(line: String) -> void:
+func _handle_line(line: String, client_id: int = 0) -> void:
 	var parsed: Dictionary = _protocol.parse_message(line)
 	if not bool(parsed.get("ok", false)):
-		_send_response(null, null, str(parsed.get("error", "Parse error: invalid JSON")), -32700)
+		_send_response(client_id, null, null, str(parsed.get("error", "Parse error: invalid JSON")), -32700)
 		return
 	var message: Dictionary = parsed.get("message", {})
 	if not message.has("method"):
 		return
 	var params: Variant = message.get("params", {})
-	_handle_request(message.get("id"), str(message.get("method", "")), params if params is Dictionary else {})
+	_handle_request(client_id, message.get("id"), str(message.get("method", "")), params if params is Dictionary else {})
 
 
-func _handle_request(id: Variant, method: String, params: Dictionary) -> void:
+func _handle_request(client_id: int, id: Variant, method: String, params: Dictionary) -> void:
+	var client_data: Dictionary = _clients.get(client_id, {}) as Dictionary
 	match method:
 		"initialize":
-			_client_protocol_version = _protocol.negotiate_protocol_version(str(params.get("protocolVersion", "")))
-			_protocol_ready = true
-			_send_response(id, {
-				"protocolVersion": _client_protocol_version,
+			var negotiated: String = str(_protocol.negotiate_protocol_version(str(params.get("protocolVersion", ""))))
+			if _clients.has(client_id):
+				_clients[client_id]["protocol_version"] = negotiated
+				_clients[client_id]["protocol_ready"] = true
+			_send_response(client_id, id, {
+				"protocolVersion": negotiated,
 				"capabilities": {
 					"tools": {"listChanged": true},
 					"resources": {"listChanged": true}
@@ -503,22 +519,22 @@ func _handle_request(id: Variant, method: String, params: Dictionary) -> void:
 				"serverInfo": {"name": "gdscript-mcp-bridge", "version": "4.0.0", "role": _role},
 			}, "", 0)
 		"initialized":
-			_send_response(id, {"ready": true, "lifecycle": get_lifecycle_state()}, "", 0)
+			_send_response(client_id, id, {"ready": true, "lifecycle": get_lifecycle_state()}, "", 0)
 		"tools/list":
-			_send_response(id, {"tools": _tools}, "", 0)
+			_send_response(client_id, id, {"tools": _tools}, "", 0)
 		"tools/call":
-			_handle_tool_call(id, params)
+			_handle_tool_call(client_id, id, params)
 		"resources/list":
-			_handle_resources_list(id)
+			_handle_resources_list(client_id, id)
 		"resources/read":
-			_handle_resources_read(id, params)
+			_handle_resources_read(client_id, id, params)
 		"ping":
-			_send_response(id, {"lifecycle": get_lifecycle_state()}, "", 0)
+			_send_response(client_id, id, {"lifecycle": get_lifecycle_state()}, "", 0)
 		_:
-			_send_response(id, null, "Method not found: " + method, -32601)
+			_send_response(client_id, id, null, "Method not found: " + method, -32601)
 
 
-func _handle_resources_list(id: Variant) -> void:
+func _handle_resources_list(client_id: int, id: Variant) -> void:
 	var resources: Array = [
 		{
 			"uri": "godot://agent/activity",
@@ -551,10 +567,10 @@ func _handle_resources_list(id: Variant) -> void:
 			"mimeType": "application/json"
 		}
 	]
-	_send_response(id, {"resources": resources}, "", 0)
+	_send_response(client_id, id, {"resources": resources}, "", 0)
 
 
-func _handle_resources_read(id: Variant, params: Dictionary) -> void:
+func _handle_resources_read(client_id: int, id: Variant, params: Dictionary) -> void:
 	var uri := str(params.get("uri", ""))
 	var data: Variant = null
 	match uri:
@@ -578,13 +594,13 @@ func _handle_resources_read(id: Variant, params: Dictionary) -> void:
 			if _registry != null:
 				data = _registry.dispatch("runtime_chain_trace", {})
 		_:
-			_send_response(id, null, "Resource not found: " + uri, -32602)
+			_send_response(client_id, id, null, "Resource not found: " + uri, -32602)
 			return
 
 	if data == null:
 		data = {}
 	var text_payload := JSON.stringify(_sanitize_result(data))
-	_send_response(id, {
+	_send_response(client_id, id, {
 		"contents": [
 			{
 				"uri": uri,
@@ -599,9 +615,12 @@ func send_notification(method: String, params: Dictionary = {}) -> void:
 	var msg: Dictionary = {"jsonrpc": "2.0", "method": method}
 	if not params.is_empty():
 		msg["params"] = params
-	var encoded := JSON.stringify(msg) + "\n"
-	if _transport == "tcp" and _client != null:
-		_client.put_data(encoded.to_utf8_buffer())
+	var encoded: String = JSON.stringify(msg) + "\n"
+	if _transport == "tcp":
+		for client_id in _clients:
+			var client_peer: StreamPeerTCP = _clients[client_id]["peer"] as StreamPeerTCP
+			if client_peer != null and client_peer.get_status() == StreamPeerTCP.STATUS_CONNECTED:
+				client_peer.put_data(encoded.to_utf8_buffer())
 	elif _transport == "stdio":
 		print(encoded.strip_edges())
 
@@ -614,34 +633,34 @@ func notify_resources_changed() -> void:
 	send_notification("notifications/resources/list_changed")
 
 
-func _handle_tool_call(id: Variant, params: Dictionary) -> void:
-	var request_generation := _connection_generation
+func _handle_tool_call(client_id: int, id: Variant, params: Dictionary) -> void:
+	var request_generation := int(_clients[client_id]["generation"]) if _clients.has(client_id) else client_id
 	var tool_name := str(params.get("name", ""))
 	var raw_args: Variant = params.get("arguments", {})
 	var args: Dictionary = raw_args if raw_args is Dictionary else {}
 	if tool_name == "runtime_mcp_status":
-		_send_tool_result_atomic(id, get_lifecycle_state())
+		_send_tool_result_atomic(client_id, id, get_lifecycle_state())
 		return
 	if tool_name == "runtime_mcp_events":
 		var cursor := int(args.get("cursor", 0))
 		var limit := clampi(int(args.get("limit", 32)), 1, 128)
-		_send_tool_result_atomic(id, _lifecycle.events_since(cursor, limit) if _lifecycle != null else {"entries": [], "count": 0, "next_cursor": cursor})
+		_send_tool_result_atomic(client_id, id, _lifecycle.events_since(cursor, limit) if _lifecycle != null else {"entries": [], "count": 0, "next_cursor": cursor})
 		return
 	if tool_name == "runtime_agent_goal_set":
 		var goal := str(args.get("goal", "")).strip_edges()
 		if goal == "":
-			_send_response(id, null, "goal must not be empty", -32602)
+			_send_response(client_id, id, null, "goal must not be empty", -32602)
 			return
 		var goal_result: Variant = _agent_activity.set_goal(goal) if _agent_activity != null else {"ok": true, "goal": goal}
-		_send_tool_result_atomic(id, goal_result)
+		_send_tool_result_atomic(client_id, id, goal_result)
 		return
 	if tool_name == "runtime_agent_activity":
 		var feed_limit := clampi(int(args.get("limit", 20)), 1, 100)
 		var feed: Variant = _agent_activity.get_feed(feed_limit) if _agent_activity != null else {"goal": "", "entries": [], "count": 0, "total_calls": 0}
-		_send_tool_result_atomic(id, feed)
+		_send_tool_result_atomic(client_id, id, feed)
 		return
 	if tool_name == "runtime_visual_evidence":
-		_handle_visual_evidence(id, args, request_generation)
+		_handle_visual_evidence(client_id, id, args, request_generation)
 		return
 	if tool_name == "editor_logs_read":
 		# Kein Plugin-Kontext nötig: Session-Logs leben im Server (Lifecycle).
@@ -651,20 +670,20 @@ func _handle_tool_call(id: Variant, params: Dictionary) -> void:
 		var result: Dictionary = {"source": "mcp_editor", "entries": events.get("entries", []), "next_cursor": events.get("next_cursor", log_cursor)}
 		if bool(args.get("include_file", true)):
 			result["engine_log_tail"] = _read_engine_log_tail()
-		_send_tool_result_atomic(id, result)
+		_send_tool_result_atomic(client_id, id, result)
 		return
 	# MCP handshake gate: host tools (status/events) stay callable for health
 	# probes, but every other tool requires the client to have run initialize.
-	if not _protocol_ready:
-		_send_response(id, null, "Server not initialized: call initialize first", -32002)
+	if not _clients.has(client_id) or not bool(_clients[client_id].get("protocol_ready", false)):
+		_send_response(client_id, id, null, "Server not initialized: call initialize first", -32002)
 		return
 	if not _tool_index.has(tool_name):
-		_send_response(id, null, "Tool not found: " + tool_name, -32601)
+		_send_response(client_id, id, null, "Tool not found: " + tool_name, -32601)
 		return
 	var is_editor_tool := tool_name.begins_with("editor_")
 	var is_host_tool := tool_name == "runtime_mcp_status" or tool_name == "runtime_mcp_events"
 	if is_editor_tool and _role != "editor":
-		_send_response(id, null, "Editor tool called on runtime session", -32001)
+		_send_response(client_id, id, null, "Editor tool called on runtime session", -32001)
 		return
 	# The editor session may use the journaled autonomy workspace as its
 	# project-edit channel. It is deliberately narrower than runtime access:
@@ -672,20 +691,20 @@ func _handle_tool_call(id: Variant, params: Dictionary) -> void:
 	# mutation gate still decides whether writes are authorized.
 	var is_editor_autonomy_tool := tool_name.begins_with("runtime_autonomy_")
 	if not is_editor_tool and not is_host_tool and not is_editor_autonomy_tool and _role == "editor" and tool_name.begins_with("runtime_"):
-		_send_response(id, null, "Runtime tool called on editor session", -32001)
+		_send_response(client_id, id, null, "Runtime tool called on editor session", -32001)
 		return
 	if is_editor_tool:
 		if _is_editor_write_tool(tool_name) and not _editor_write_enabled:
-			_send_response(id, null, "Editor write actions are disabled for this session", -32003)
+			_send_response(client_id, id, null, "Editor write actions are disabled for this session", -32003)
 			return
 		if _editor_plugin == null:
-			_send_response(id, null, "Editor plugin not available", -32000)
+			_send_response(client_id, id, null, "Editor plugin not available", -32000)
 			return
 		var editor_result: Variant = _editor_plugin.execute_editor_action(tool_name.trim_prefix("editor_"), args)
 		if typeof(editor_result) == TYPE_OBJECT and (editor_result as Object).has_method("resume"):
 			editor_result = await editor_result
-		if request_generation == _connection_generation:
-			_send_tool_result_atomic(id, editor_result)
+		if request_generation == int(_clients[client_id]["generation"]):
+			_send_tool_result_atomic(client_id, id, editor_result)
 		return
 	# Verbindlicher Spieler-Vertrag: Session-Profil-Gate vor jedem Runtime-Tool.
 	# Verstöße werden gezählt (runtime_mcp_status → contract_violations) und als
@@ -699,24 +718,24 @@ func _handle_tool_call(id: Variant, params: Dictionary) -> void:
 				_lifecycle.note_event("warning", reason, "mcp", "contract")
 				_lifecycle.note_error("contract violation: " + tool_name)
 			log_message.emit("CONTRACT VIOLATION: " + reason, true)
-			_send_response(id, null, reason, -32003)
+			_send_response(client_id, id, null, reason, -32003)
 			return
 	if _role == "runtime" and not _is_game_running():
-		_send_response(id, null, "Game not running", -32000)
+		_send_response(client_id, id, null, "Game not running", -32000)
 		return
 	var tool: Dictionary = _tool_index[tool_name]
 	if bool(tool.get("_async", false)):
 		if _async_busy:
 			if _pending_async.size() >= MAX_ASYNC_QUEUE:
 				_note_error("async queue full")
-				_send_response(id, null, "Async queue full", -32002)
+				_send_response(client_id, id, null, "Async queue full", -32002)
 				return
-			_pending_async.append({"id": id, "name": tool_name, "args": args, "generation": _connection_generation})
+			_pending_async.append({"id": id, "name": tool_name, "args": args, "generation": request_generation, "client_id": client_id})
 			return
 		_async_busy = true
 		if _lifecycle != null:
 			_lifecycle.mark_busy(true)
-		_run_async_tool(id, tool_name, args, _connection_generation)
+		_run_async_tool(client_id, id, tool_name, args, request_generation)
 		return
 	var started_ms: int = _lifecycle.begin_tool(tool_name) if _lifecycle != null else 0
 	var result: Variant = _registry.dispatch(tool_name, args)
@@ -726,11 +745,11 @@ func _handle_tool_call(id: Variant, params: Dictionary) -> void:
 			_lifecycle.note_error(str(result.get("error", "")))
 	if _agent_activity != null:
 		_agent_activity.record_tool(tool_name, args, float(Time.get_ticks_msec() - started_ms), not _protocol.result_is_error(result), str(result.get("error", "")) if _protocol.result_is_error(result) else "")
-	if request_generation == _connection_generation:
-		_send_tool_result_with_visual_evidence(id, tool_name, result, _connection_generation)
+	if _clients.has(client_id) and request_generation == int(_clients[client_id]["generation"]):
+		_send_tool_result_with_visual_evidence(client_id, id, tool_name, result, request_generation)
 
 
-func _run_async_tool(id: Variant, tool_name: String, args: Dictionary, generation: int) -> void:
+func _run_async_tool(client_id: int, id: Variant, tool_name: String, args: Dictionary, generation: int) -> void:
 	var started_ms: int = _lifecycle.begin_tool(tool_name) if _lifecycle != null else 0
 	var result: Variant = await _registry.dispatch_async(tool_name, args)
 	if _lifecycle != null:
@@ -739,19 +758,20 @@ func _run_async_tool(id: Variant, tool_name: String, args: Dictionary, generatio
 			_lifecycle.note_error(str(result.get("error", "")))
 	if _agent_activity != null:
 		_agent_activity.record_tool(tool_name, args, float(Time.get_ticks_msec() - started_ms), not _protocol.result_is_error(result), str(result.get("error", "")) if _protocol.result_is_error(result) else "")
-	if generation == _connection_generation:
-		_send_tool_result_atomic(id, result)
+	if _clients.has(client_id) and generation == int(_clients[client_id]["generation"]):
+		_send_tool_result_atomic(client_id, id, result)
 	_async_busy = false
 	if _lifecycle != null:
 		_lifecycle.mark_busy(false)
 	while not _pending_async.is_empty():
 		var next: Dictionary = _pending_async.pop_front()
-		if int(next.get("generation", -1)) != _connection_generation:
+		var next_client := int(next.get("client_id", client_id))
+		if not _clients.has(next_client) or int(next.get("generation", -1)) != int(_clients[next_client]["generation"]):
 			continue
 		_async_busy = true
 		if _lifecycle != null:
 			_lifecycle.mark_busy(true)
-		_run_async_tool(next.get("id"), str(next.get("name", "")), next.get("args", {}), _connection_generation)
+		_run_async_tool(next_client, next.get("id"), str(next.get("name", "")), next.get("args", {}), int(next.get("generation", -1)))
 		break
 
 
@@ -791,18 +811,18 @@ func _is_unexpected_result(result: Variant) -> bool:
 ## Screenshot/OCR). Bei unerwarteter Lage wird die Analyse als Fire-and-forget
 ## im Hintergrund gestartet und in _evidence_cache abgelegt — der Agent holt sie
 ## gezielt über runtime_visual_evidence, wenn er sie braucht.
-func _send_tool_result_with_visual_evidence(id: Variant, tool_name: String, result: Variant, generation: int) -> void:
+func _send_tool_result_with_visual_evidence(client_id: int, id: Variant, tool_name: String, result: Variant, generation: int) -> void:
 	if tool_name in UNEXPECTED_VISUAL_EXCLUSIONS or not _is_unexpected_result(result):
-		_send_tool_result_atomic(id, result)
+		_send_tool_result_atomic(client_id, id, result)
 		return
 	_start_background_evidence()
 	if result is Dictionary:
 		(result as Dictionary)["visual_evidence"] = {"status": "pending", "hint": "call runtime_visual_evidence (wait_ms) to fetch the analysis"}
-	if generation == _connection_generation:
-		_send_tool_result_atomic(id, result)
+	if _clients.has(client_id) and generation == int(_clients[client_id]["generation"]):
+		_send_tool_result_atomic(client_id, id, result)
 
 
-func _handle_visual_evidence(id: Variant, args: Dictionary, generation: int) -> void:
+func _handle_visual_evidence(client_id: int, id: Variant, args: Dictionary, generation: int) -> void:
 	var wait_ms := clampi(int(args.get("wait_ms", 0)), 0, 10000)
 	if bool(args.get("capture", false)) and not _evidence_inflight and _evidence_cache.is_empty():
 		_start_background_evidence()
@@ -810,14 +830,14 @@ func _handle_visual_evidence(id: Variant, args: Dictionary, generation: int) -> 
 	while _evidence_inflight and waited < wait_ms:
 		await get_tree().create_timer(0.05).timeout
 		waited += 50
-		if generation != _connection_generation:
+		if not _clients.has(client_id) or generation != int(_clients[client_id]["generation"]):
 			return
 	var status := "none"
 	if not _evidence_cache.is_empty():
 		status = "ready"
 	elif _evidence_inflight:
 		status = "pending"
-	_send_tool_result_atomic(id, {"ok": true, "status": status, "evidence": _evidence_cache})
+	_send_tool_result_atomic(client_id, id, {"ok": true, "status": status, "evidence": _evidence_cache})
 
 
 func _start_background_evidence() -> void:
@@ -957,7 +977,7 @@ func _create_vision_worker(config: Dictionary) -> void:
 		})
 
 
-func _send_tool_result_atomic(id: Variant, result: Variant) -> void:
+func _send_tool_result_atomic(client_id: int, id: Variant, result: Variant) -> void:
 	var sanitized := _sanitize_result(result)
 	var trim_result: Dictionary = McpProtocol.trim_result_to_budget(sanitized)
 	var payload: Variant = trim_result.get("value", sanitized)
@@ -968,7 +988,7 @@ func _send_tool_result_atomic(id: Variant, result: Variant) -> void:
 	if not bool(trim_result.get("fits", true)):
 		note_truncation(int(trim_result.get("original_bytes", 0)), int(trim_result.get("trimmed_bytes", 0)))
 	var content: Array = [_protocol.text_content(JSON.stringify(payload))]
-	_send_response(id, _protocol.tool_result(content, _protocol.result_is_error(result)), "", 0)
+	_send_response(client_id, id, _protocol.tool_result(content, _protocol.result_is_error(result)), "", 0)
 
 
 func note_truncation(original_bytes: int, trimmed_bytes: int) -> void:
@@ -999,10 +1019,34 @@ func _sanitize_result(value: Variant) -> Variant:
 	return value
 
 
-func _send_response(id: Variant, result: Variant, error_message: String, code: int) -> void:
+func _any_client_connected() -> bool:
+	for client_id in _clients:
+		var client_peer: StreamPeerTCP = _clients[client_id]["peer"] as StreamPeerTCP
+		if client_peer != null and client_peer.get_status() == StreamPeerTCP.STATUS_CONNECTED:
+			return true
+	return false
+
+
+func _any_client_ready() -> bool:
+	for client_id in _clients:
+		if bool(_clients[client_id].get("protocol_ready", false)):
+			return true
+	return false
+
+
+func _first_ready_protocol_version() -> String:
+	for client_id in _clients:
+		if bool(_clients[client_id].get("protocol_ready", false)):
+			return str(_clients[client_id].get("protocol_version", ""))
+	return ""
+
+
+func _send_response(client_id: int, id: Variant, result: Variant, error_message: String, code: int) -> void:
 	var encoded: String = _protocol.encode_response(id, result, error_message, code)
-	if _transport == "tcp" and _client != null:
-		_client.put_data(encoded.to_utf8_buffer())
+	if _transport == "tcp" and _clients.has(client_id):
+		var resp_peer: StreamPeerTCP = _clients[client_id]["peer"] as StreamPeerTCP
+		if resp_peer != null and resp_peer.get_status() == StreamPeerTCP.STATUS_CONNECTED:
+			resp_peer.put_data(encoded.to_utf8_buffer())
 	elif _transport == "stdio":
 		print(encoded.strip_edges())
 

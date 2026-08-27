@@ -78,7 +78,9 @@ func reset_state(ctx: PreflightContext) -> bool:
 	if planet_catalog == null:
 		return false
 
-	# 1. Reset all GameState domains
+	# 1. Reset all GameState domains. Disable the autoload process before the
+	# reset so no research job can advance between reset and the next check.
+	state.call("set_jobs_auto_advance", false)
 	var infinite_world: bool = world_config.is_infinite_world()
 	state.call("begin_new_game", planet_catalog, &"default", PreflightFixture.PREFLIGHT_LAYOUT_SEED, infinite_world)
 	state.call("set_jobs_auto_advance", false)
@@ -134,8 +136,10 @@ func reset_state(ctx: PreflightContext) -> bool:
 		planet.worker_count = state.starting_workers_of(planet.planet_id)
 		planet.worker_state = 0  # WorkerState.IDLE
 
-	# 9. Disable automation & refresh
+	# 9. Disable automation & refresh. Also clear any externally started jobs
+	# and verify the reset is a true baseline rather than merely a new run.
 	_disable_automation()
+	state.call("set_jobs_auto_advance", false)
 	if base.network != null and base.network.has_method("_refresh_fog_of_war"):
 		base.network.call("_refresh_fog_of_war")
 
