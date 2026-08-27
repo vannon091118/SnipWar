@@ -381,6 +381,44 @@
 			],
 			"p_id": 30.0
 		},
+		"d5cd2f9e7af8ca65c73e5625c8f9bdbee626d9f5": {
+			"c": 37,
+			"composite": "c37j19n11a14p9",
+			"entities": [
+				"F-002",
+				"F-083",
+				"F-048",
+				"F-084",
+				"F-085",
+				"F-042",
+				"F-043",
+				"F-003",
+				"F-004",
+				"F-001",
+				"C-158",
+				"C-159",
+				"C-160",
+				"C-161",
+				"C-162",
+				"C-163",
+				"C-164",
+				"C-165",
+				"C-166",
+				"C-167",
+				"C-168",
+				"C-169",
+				"C-170",
+				"C-171",
+				"C-172",
+				"C-173",
+				"C-174",
+				"C-175",
+				"C-176",
+				"C-177",
+				"C-178"
+			],
+			"p_id": 37
+		},
 		"e186c98431e04aeca11e227c7459fc3daa695ff0": {
 			"c": 12.0,
 			"composite": "c12j11n13a1p1",
@@ -416,7 +454,7 @@
 			"p_id": 31.0
 		},
 		"fa2b7bbd7316ba058617513072f00afdf6e7dc93": {
-			"c": 36,
+			"c": 36.0,
 			"composite": "c36j38n2a4p6",
 			"entities": [
 				"F-069",
@@ -483,7 +521,7 @@
 				"C-156",
 				"C-157"
 			],
-			"p_id": 36
+			"p_id": 36.0
 		},
 		"fdb32c6e2dfa34e9a7bd1736bfa29b202417b2d8": {
 			"c": 28.0,
@@ -3209,6 +3247,363 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-158": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-158",
+			"last_p": 37.0,
+			"name": "EMBEDDED_ENV",
+			"path": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-159": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-159",
+			"last_p": 37.0,
+			"name": "EMBEDDED_PORT_ENV",
+			"path": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-160": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-160",
+			"last_p": 37.0,
+			"name": "EMBEDDED_PROFILE_ENV",
+			"path": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-161": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-161",
+			"last_p": 37.0,
+			"name": "EMBEDDED_WRITES_ENV",
+			"path": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-162": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						643.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-162",
+			"last_p": 37.0,
+			"name": "_set_embedded_env",
+			"path": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-163": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						651.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-163",
+			"last_p": 37.0,
+			"name": "_clear_embedded_env",
+			"path": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-164": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						660.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-164",
+			"last_p": 37.0,
+			"name": "_wait_for_runtime_mcp",
+			"path": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-165": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-165",
+			"last_p": 37.0,
+			"name": "EMBEDDED_ENV",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-166": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-166",
+			"last_p": 37.0,
+			"name": "EMBEDDED_PORT_ENV",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-167": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-167",
+			"last_p": 37.0,
+			"name": "EMBEDDED_PROFILE_ENV",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-168": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-168",
+			"last_p": 37.0,
+			"name": "EMBEDDED_WRITES_ENV",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-169": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						191.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-169",
+			"last_p": 37.0,
+			"name": "_parse_env_int",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-170": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						202.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-170",
+			"last_p": 37.0,
+			"name": "_resolve_embedded_profile",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-171": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-171",
+			"last_p": 37.0,
+			"name": "RUN_TRACE_PATH",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-172": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						1097.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-172",
+			"last_p": 37.0,
+			"name": "_handle_run_trace",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-173": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						1130.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-173",
+			"last_p": 37.0,
+			"name": "_record_trace_tool",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-174": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						1156.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-174",
+			"last_p": 37.0,
+			"name": "_trace_handle_run_boundaries",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-175": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						1192.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-175",
+			"last_p": 37.0,
+			"name": "_trace_fingerprint",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-176": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						543.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-176",
+			"last_p": 37.0,
+			"name": "_make_key_event",
+			"path": "addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-177": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						591.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-177",
+			"last_p": 37.0,
+			"name": "_rt_key",
+			"path": "addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-178": {
+			"first_p": 37.0,
+			"history": [
+				{
+					"lines": [
+						616.0
+					],
+					"p_id": 37.0
+				}
+			],
+			"id": "C-178",
+			"last_p": 37.0,
+			"name": "_rt_key_gesture",
+			"path": "addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -4026,6 +4421,36 @@
 			"last_p": 36.0,
 			"name": "vision_worker.py",
 			"path": "addons/gdscript_mcp/client/vision_worker.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-083": {
+			"first_p": 37.0,
+			"history": [],
+			"id": "F-083",
+			"last_p": 37.0,
+			"name": "gdscript_mcp_plugin.gd",
+			"path": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-084": {
+			"first_p": 37.0,
+			"history": [],
+			"id": "F-084",
+			"last_p": 37.0,
+			"name": "mcp_capability_planner.gd",
+			"path": "addons/gdscript_mcp/runtime/autonomy/mcp_capability_planner.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-085": {
+			"first_p": 37.0,
+			"history": [],
+			"id": "F-085",
+			"last_p": 37.0,
+			"name": "mcp_runtime.gd",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
 			"status": "created",
 			"type": "file"
 		}

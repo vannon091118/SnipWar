@@ -563,3 +563,20 @@ Client-Konsolidierung: Python-Stack entfernt, einheitlicher JS-Client (stdio-Bri
 - change_index.json: Implementiert und integriert (F-003).
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 13:00:00 — p37 · c37j19n11a14p9 · Null · warm
+
+**Null: Embedded-Runtime: MCP_EMBEDDED-Env start… — nach Basher**
+
+Embedded-Runtime: MCP_EMBEDDED-Env startet den Server im Spiel-SceneTree des Kind-Prozesses (OFFEN-1 gelöst), Dock zeigt ehrliche Zustände mit game_running, Key-Input mit Shift/Unicode, OCR-Ausnahmen für Chain/Trace-Tools
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd: Implementiert und integriert (F-083).
+- addons/gdscript_mcp/editor/mcp_dock.gd: Implementiert und integriert (F-048).
+- addons/gdscript_mcp/runtime/autonomy/mcp_capability_planner.gd: Implementiert und integriert (F-084).
+- addons/gdscript_mcp/runtime/host/mcp_runtime.gd: Implementiert und integriert (F-085).
+- addons/gdscript_mcp/runtime/host/mcp_server.gd: Implementiert und integriert (F-042).
+- addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd: Implementiert und integriert (F-043).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).

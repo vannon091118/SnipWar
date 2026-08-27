@@ -2685,6 +2685,78 @@
 			"seq": 36,
 			"subject": "Basher (18 files): Client-Konsolidierung: Python-Stack entfernt,… — nach Squizzle",
 			"summary": "client/consolidate. exit 0."
+		},
+		{
+			"a": 14,
+			"arc": "a14",
+			"c": 37,
+			"composite": "c37j19n11a14p9",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 172.0,
+					"file": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+					"insertions": 95.0
+				},
+				{
+					"deletions": 12.0,
+					"file": "addons/gdscript_mcp/editor/mcp_dock.gd",
+					"insertions": 41.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "addons/gdscript_mcp/runtime/autonomy/mcp_capability_planner.gd",
+					"insertions": 20.0
+				},
+				{
+					"deletions": 13.0,
+					"file": "addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
+					"insertions": 47.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+					"insertions": 173.0
+				},
+				{
+					"deletions": 10.0,
+					"file": "addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd",
+					"insertions": 57.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 978.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 112.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 74.0
+				}
+			],
+			"date": "2026-08-27 13:00:00",
+			"hash": "d5cd2f9e7af8ca65c73e5625c8f9bdbee626d9f5",
+			"j": 19,
+			"model_id": "claude-sonnet-4",
+			"mood": "warm",
+			"n": 11,
+			"narrator": "Null",
+			"p": 9,
+			"p_id": 37,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Basher",
+			"seq": 37,
+			"subject": "Null: Embedded-Runtime: MCP_EMBEDDED-Env start… — nach Basher",
+			"summary": "Der Embedded-Lauf endet, wie er begann: mit der Frage, wo der Server eigentlich zu Hause ist. Lange Zeit stand er neben dem Spiel, nicht in ihm — der Editor hostete ihn, und das Spiel blieb ihm fre..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

@@ -12,6 +12,12 @@ const PREFLIGHT_TIMEOUT_MS := 120000
 const PREFLIGHT_POLL_MS := 400
 const PREFLIGHT_OUT_PATH := "user://mcp_preflight_result.json"
 
+# Versionierte Chain-Manifeste (F5): wiederholbare, deklarative Testketten als
+# JSON-Dateien unter res://mcp_chains/<id>.json (überschreibbar über
+# application/mcp/chain_dir). Jedes Manifest durchläuft runtime_chain_validate,
+# bevor es ausgeführt wird.
+const CHAIN_DIR := "res://mcp_chains"
+
 var _registry: RefCounted = null
 var _lifecycle: RefCounted = null
 var _last_trace: Dictionary = {}
@@ -27,20 +33,20 @@ static func get_tool_defs() -> Array:
 	return [
 		{
 			"name": "runtime_chain_run",
-			"description": "Execute a declarative multi-step test or feature verification chain",
+			"description": "Execute a declarative multi-step test or feature verification chain. Pass chain_id to run a versioned manifest from the chain catalog (res://mcp_chains), or inline steps for ad-hoc chains",
 			"inputSchema": {
 				"type": "object",
 				"properties": {
+					"chain_id": {"type": "string", "description": "Versioned chain manifest id (res://mcp_chains/<id>.json). Overrides inline steps"},
 					"name": {"type": "string", "description": "Human-readable chain name"},
 					"mode": {"type": "string", "enum": ["auto", "headless", "visible"], "default": "auto"},
 					"stop_on_failure": {"type": "boolean", "default": true},
 					"steps": {
 						"type": "array",
-						"description": "Ordered chain steps",
+						"description": "Ordered chain steps (required unless chain_id is given)",
 						"items": {"type": "object"}
 					}
-				},
-				"required": ["steps"]
+				}
 			},
 			"_async": true
 		},
@@ -54,17 +60,27 @@ static func get_tool_defs() -> Array:
 		},
 		{
 			"name": "runtime_chain_validate",
-			"description": "Validate an atomic chain without executing it: tool availability, visible-mode safety, screenshot gates, and step contracts",
+			"description": "Validate an atomic chain without executing it: tool availability, mode safety, screenshot gates, and step contracts. Accepts chain_id to validate a manifest",
 			"inputSchema": {
 				"type": "object",
 				"properties": {
+					"chain_id": {"type": "string", "description": "Versioned chain manifest id"},
 					"mode": {"type": "string", "enum": ["auto", "headless", "visible"], "default": "auto"},
 					"exploratory": {"type": "boolean", "default": false},
 					"steps": {"type": "array", "items": {"type": "object"}}
-				},
-				"required": ["steps"]
-			}
-		}
+				}
+			},
+		},
+		{
+			"name": "runtime_chain_list",
+			"description": "List versioned chain manifests from the chain catalog (res://mcp_chains/*.json): id, name, description, mode, step count",
+			"inputSchema": {"type": "object", "properties": {}},
+		},
+		{
+			"name": "runtime_chain_load",
+			"description": "Load and validate a chain manifest by id; returns the validated chain definition ready for runtime_chain_run",
+			"inputSchema": {"type": "object", "properties": {"chain_id": {"type": "string"}}, "required": ["chain_id"]},
+		},
 	]
 
 
@@ -73,7 +89,11 @@ func dispatch_tool(tool_name: String, _args: Dictionary) -> Variant:
 		"runtime_chain_trace":
 			return _last_trace
 		"runtime_chain_validate":
-			return validate_chain(_args)
+			return _validate_with_manifest(_args)
+		"runtime_chain_list":
+			return list_manifests()
+		"runtime_chain_load":
+			return load_manifest(str(_args.get("chain_id", "")))
 		_:
 			return {"error": "Unknown chain controller tool: " + tool_name}
 
@@ -84,6 +104,23 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 			return await run_chain(args)
 		_:
 			return {"error": "Unknown async chain controller tool: " + tool_name}
+
+
+## Validates inline steps, or loads a manifest first when chain_id is given.
+func _validate_with_manifest(chain_def: Dictionary) -> Dictionary:
+	var chain_id := str(chain_def.get("chain_id", ""))
+	if chain_id == "":
+		return validate_chain(chain_def)
+	var manifest := load_manifest(chain_id)
+	if not bool(manifest.get("ok", false)):
+		return {"ok": false, "verdict": "BLOCKED", "error": str(manifest.get("error", "manifest not found"))}
+	var merged: Dictionary = chain_def.duplicate(true)
+	var manifest_def: Dictionary = manifest.get("def", {})
+	for key in ["name", "description", "mode", "stop_on_failure", "steps"]:
+		if not merged.has(key):
+			merged[key] = manifest_def.get(key)
+	merged["id"] = chain_id
+	return validate_chain(merged)
 
 
 ## Execute a declarative chain.
@@ -150,18 +187,32 @@ func validate_chain(chain_def: Dictionary) -> Dictionary:
 	}
 
 
-## Execute a declarative chain.
+## Execute a declarative chain. When chain_id is given, the manifest is loaded
+## and merged BEFORE validation (its steps become the chain definition).
 func run_chain(chain_def: Dictionary) -> Dictionary:
-	var validation := validate_chain(chain_def)
+	var chain := chain_def.duplicate(true)
+	var chain_id := str(chain_def.get("chain_id", ""))
+	var manifest_path := ""
+	if chain_id != "":
+		var manifest := load_manifest(chain_id)
+		if not bool(manifest.get("ok", false)):
+			return {"ok": false, "verdict": "BLOCKED", "error": str(manifest.get("error", "manifest not found"))}
+		var manifest_def: Dictionary = manifest.get("def", {})
+		for key in ["name", "description", "mode", "stop_on_failure", "steps"]:
+			if not chain.has(key):
+				chain[key] = manifest_def.get(key)
+		chain["id"] = chain_id
+		manifest_path = str(manifest.get("path", ""))
+	var validation := validate_chain(chain)
 	if not bool(validation.get("ok", false)):
 		return {"ok": false, "verdict": "BLOCKED", "validation": validation}
 	if _running:
 		return {"ok": false, "error": "Chain execution already in progress"}
 	_running = true
 
-	var chain_name: String = str(chain_def.get("name", "unnamed_chain"))
-	var stop_on_failure: bool = bool(chain_def.get("stop_on_failure", true))
-	var steps: Array = chain_def.get("steps", []) as Array
+	var chain_name: String = str(chain.get("name", "unnamed_chain"))
+	var stop_on_failure: bool = bool(chain.get("stop_on_failure", true))
+	var steps: Array = chain.get("steps", []) as Array
 
 	var trace_id := "trace_%d" % int(Time.get_unix_time_from_system())
 	var step_results: Array = []
@@ -218,11 +269,19 @@ func run_chain(chain_def: Dictionary) -> Dictionary:
 				action_result = {"error": "registry unavailable"}
 			result["action_result"] = action_result
 
-		# 3. Assertion check (if provided)
+		# 3. Assertion check (assertion expression with result binding, or the
+		#    declarative expect form: {key, op, value} against the tool result)
 		var assertion: String = str(step.get("assertion", ""))
-		if assertion != "":
-			var assert_eval := _eval_expression(assertion)
-			var ok := bool(assert_eval.get("result", false))
+		var expect: Variant = step.get("expect", null)
+		if assertion != "" or expect != null:
+			var ok := false
+			var assert_eval: Dictionary = {}
+			if assertion != "":
+				assert_eval = _eval_expression(assertion, {"result": action_result})
+				ok = bool(assert_eval.get("result", false))
+			else:
+				assert_eval = _expect_check(action_result, expect)
+				ok = bool(assert_eval.get("result", false))
 			result["assertion_eval"] = assert_eval
 			if not ok:
 				result["status"] = "ASSERTION_FAILED"
@@ -241,6 +300,8 @@ func run_chain(chain_def: Dictionary) -> Dictionary:
 	_last_trace = {
 		"trace_id": trace_id,
 		"chain_name": chain_name,
+		"chain_id": chain_id,
+		"manifest_path": manifest_path,
 		"verdict": "PASS" if passed else "FAIL",
 		"duration_ms": total_duration_ms,
 		"total_steps": steps.size(),
@@ -268,9 +329,13 @@ func _is_async_tool(name: String) -> bool:
 	]
 
 
-func _eval_expression(code: String) -> Dictionary:
+## Wertet einen GDScript-Ausdruck aus. inputs (z.B. {"result": action_result})
+## werden als benannte Variablen gebunden; base_instance ist der GameState-
+## Node (falls verfügbar), damit Assertions auch Spielzustand lesen können.
+func _eval_expression(code: String, inputs: Dictionary = {}) -> Dictionary:
 	var expr := Expression.new()
-	var err := expr.parse(code, [])
+	var input_names: Array = inputs.keys()
+	var err := expr.parse(code, input_names)
 	if err != OK:
 		return {"ok": false, "error": "parse error: " + error_string(err), "result": false}
 	var tree := Engine.get_main_loop()
@@ -284,10 +349,67 @@ func _eval_expression(code: String) -> Dictionary:
 			base_context = root.get_node_or_null("/root/GameState")
 		if base_context == null:
 			base_context = root.find_child("GameState", true, false)
-	var res = expr.execute([], base_context, false)
+	var input_values: Array = []
+	for name in input_names:
+		input_values.append(inputs[name])
+	var res = expr.execute(input_values, base_context, false)
 	if expr.has_execute_failed():
 		return {"ok": false, "error": expr.get_error_text(), "result": false}
 	return {"ok": true, "result": res}
+
+
+## Deklarative Expect-Prüfung gegen ein Tool-Result: {key, op, value}.
+## op: ==, !=, >=, <=, >, <, contains, has_key. key ist dot-notiert
+## (z.B. "count" oder "result.steps" — wird relativ zum Result aufgelöst).
+func _expect_check(result: Variant, expect: Variant) -> Dictionary:
+	if not (expect is Dictionary):
+		return {"ok": false, "result": false, "error": "expect must be an object {key, op, value}"}
+	var expect_data: Dictionary = expect
+	var key := str(expect_data.get("key", ""))
+	var op := str(expect_data.get("op", "=="))
+	var expected: Variant = expect_data.get("value")
+	var actual: Variant = _get_nested(result, key)
+	var ok := false
+	match op:
+		"==": ok = actual == expected
+		"!=": ok = actual != expected
+		">=": ok = actual >= expected
+		"<=": ok = actual <= expected
+		">": ok = actual > expected
+		"<": ok = actual < expected
+		"contains":
+			if actual is String and expected is String:
+				ok = expected in actual
+			elif actual is Array:
+				ok = expected in actual
+		"has_key":
+			ok = actual is Dictionary and expected in actual
+		_:
+			ok = actual == expected
+	return {"ok": true, "result": ok, "key": key, "op": op, "expected": expected, "actual": actual}
+
+
+## Navigiert dot-notierte Pfade durch Dictionary/Array (wie der Test-Runner).
+func _get_nested(data: Variant, key_path: String) -> Variant:
+	if data == null or key_path == "":
+		return data
+	if not (data is Dictionary):
+		return null
+	var parts: PackedStringArray = key_path.split(".")
+	var current: Variant = data
+	for part in parts:
+		if current is Dictionary:
+			if not (current as Dictionary).has(part):
+				return null
+			current = (current as Dictionary)[part]
+		elif current is Array:
+			var idx: int = part.to_int()
+			if idx < 0 or idx >= (current as Array).size():
+				return null
+			current = (current as Array)[idx]
+		else:
+			return null
+	return current
 
 
 ## Führt Preflight real als Subprozess aus (headless) und pollt das
@@ -332,10 +454,80 @@ func _wait_ms(ms: int) -> void:
 
 
 ## Löst den Preflight-Script-Pfad projektagnostisch auf.
-## Default: SnipWar (res://scripts/preflight.gd). Andere Projekte setzen
+## Default: SnipWar (scripts/preflight.gd). Andere Projekte setzen
 ## application/mcp/preflight_script in project.godot.
 static func _resolve_preflight_path() -> String:
 	var configured := str(ProjectSettings.get_setting("application/mcp/preflight_script", PREFLIGHT_PATH))
 	if configured.begins_with("res://") or configured.begins_with("user://"):
 		return configured
 	return PREFLIGHT_PATH
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Versionierte Chain-Manifeste (F5)
+# ═══════════════════════════════════════════════════════════════════════════
+
+## Löst das Manifest-Verzeichnis auf (application/mcp/chain_dir, Default
+## res://mcp_chains).
+static func _resolve_chain_dir() -> String:
+	var configured := str(ProjectSettings.get_setting("application/mcp/chain_dir", CHAIN_DIR))
+	if configured.begins_with("res://") or configured.begins_with("user://"):
+		return configured
+	return CHAIN_DIR
+
+
+## Lädt und validiert ein Manifest (res://mcp_chains/<id>.json).
+func load_manifest(chain_id: String) -> Dictionary:
+	var id := chain_id.strip_edges()
+	if id == "":
+		return {"ok": false, "error": "chain_id must not be empty"}
+	var dir := _resolve_chain_dir()
+	var path := "%s/%s.json" % [dir, id]
+	if not FileAccess.file_exists(path):
+		return {"ok": false, "error": "chain manifest not found: " + id, "dir": dir}
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return {"ok": false, "error": "chain manifest unreadable: " + id}
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	file.close()
+	if not (parsed is Dictionary):
+		return {"ok": false, "error": "chain manifest is not valid JSON: " + id}
+	var manifest_def: Dictionary = parsed
+	if str(manifest_def.get("id", "")) == "":
+		manifest_def["id"] = id
+	var validation := validate_chain(manifest_def)
+	if not bool(validation.get("ok", false)):
+		return {"ok": false, "error": "chain manifest failed validation: " + str(validation.get("errors", [])), "validation": validation}
+	return {"ok": true, "def": manifest_def, "path": path}
+
+
+## Listet alle Manifeste im Katalog auf (id, name, description, mode, steps).
+func list_manifests() -> Dictionary:
+	var dir := _resolve_chain_dir()
+	var manifests: Array = []
+	var da := DirAccess.open(dir)
+	if da != null:
+		da.list_dir_begin()
+		var entry := da.get_next()
+		while entry != "":
+			if entry.ends_with(".json"):
+				var path := "%s/%s" % [dir, entry]
+				var file := FileAccess.open(path, FileAccess.READ)
+				if file != null:
+					var parsed: Variant = JSON.parse_string(file.get_as_text())
+					file.close()
+					if parsed is Dictionary:
+						var def: Dictionary = parsed
+						manifests.append({
+							"id": str(def.get("id", entry.trim_suffix(".json"))),
+							"name": str(def.get("name", "")),
+							"description": str(def.get("description", "")),
+							"mode": str(def.get("mode", "auto")),
+							"step_count": int((def.get("steps", []) as Array).size()),
+						})
+			entry = da.get_next()
+		da.list_dir_end()
+	manifests.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return str(a.get("id", "")) < str(b.get("id", ""))
+	)
+	return {"ok": true, "count": manifests.size(), "manifests": manifests, "dir": dir}

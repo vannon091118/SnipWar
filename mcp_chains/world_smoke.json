@@ -1,0 +1,32 @@
+{
+  "id": "world_smoke",
+  "name": "World Smoke",
+  "description": "Visible smoke test against a running game: UI settles, the live scan finds controls, a screenshot is captured as evidence, and GameState reports an active run. Requires the game to be in-world (after NEUES SPIEL).",
+  "mode": "auto",
+  "stop_on_failure": true,
+  "steps": [
+    {
+      "name": "settle",
+      "tool": "runtime_wait_ms",
+      "args": { "ms": 500 }
+    },
+    {
+      "name": "scan",
+      "tool": "runtime_ux_scan",
+      "args": {},
+      "assertion": "result.count > 0"
+    },
+    {
+      "name": "screenshot",
+      "tool": "runtime_screenshot",
+      "reason": "smoke evidence for the run trace",
+      "args": { "persist_context": true }
+    },
+    {
+      "name": "run_check",
+      "tool": "game_state_summary",
+      "args": { "faction": "a" },
+      "assertion": "has_active_run()"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "preflight_core",
+  "name": "Preflight Core Constraints",
+  "description": "Headless verification of the core project constraints via real preflight subprocess runs (each step executes the preflight suite filtered to one constraint).",
+  "mode": "headless",
+  "stop_on_failure": true,
+  "steps": [
+    {
+      "name": "concept_index",
+      "tool": "preflight_constraint",
+      "args": { "constraint": "concept_index" },
+      "assertion": "true"
+    },
+    {
+      "name": "game_state_compatibility",
+      "tool": "preflight_constraint",
+      "args": { "constraint": "game_state_compatibility" },
+      "assertion": "true"
+    },
+    {
+      "name": "mechanic_coverage",
+      "tool": "preflight_constraint",
+      "args": { "constraint": "mechanic_coverage" },
+      "assertion": "true"
+    },
+    {
+      "name": "save_game_slots",
+      "tool": "preflight_constraint",
+      "args": { "constraint": "save_game_slots" },
+      "assertion": "true"
+    }
+  ]
+}
