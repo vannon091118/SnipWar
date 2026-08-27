@@ -50,14 +50,29 @@ function safeContextId(value) {
 function artifactFromContext(rootValue, contextId) {
   const root = path.resolve(rootValue);
   const id = safeContextId(contextId);
-  const metadataPath = path.join(root, `${id}.json`);
+  // Metadaten koennen im Root ODER in Session-Unterordnern liegen
+  // (z.B. runtime_runtime_<pid>/ — Context-Store gruppiert pro Session).
+  let metadataPath = path.join(root, `${id}.json`);
+  if (!fs.existsSync(metadataPath)) {
+    const subdirs = fs.readdirSync(root, { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name);
+    for (const dir of subdirs) {
+      const candidate = path.join(root, dir, `${id}.json`);
+      if (fs.existsSync(candidate)) {
+        metadataPath = candidate;
+        break;
+      }
+    }
+  }
   const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
   const extension = path.extname(String(metadata.worker_path || metadata.path || ".png")).toLowerCase() || ".png";
   if (![".png", ".jpg", ".jpeg"].includes(extension)) {
     throw new Error("Unsupported artifact format");
   }
-  const artifact = path.resolve(root, `${id}${extension}`);
-  if (artifact !== root && !artifact.startsWith(`${root}${path.sep}`)) {
+  const artifactDir = path.dirname(metadataPath);
+  const artifact = path.resolve(artifactDir, `${id}${extension}`);
+  if (!artifact.startsWith(`${root}${path.sep}`)) {
     throw new Error("Artifact escaped context root");
   }
   if (!fs.statSync(artifact).isFile()) throw new Error("Context image not found");
@@ -211,17 +226,45 @@ function analyzeArtifact(filePath) {
   };
 }
 
-// ─── OCR via Tesseract.js ───────────────────────────────────────
+// ─── OCR via Tesseract.js (Pool + Asset-Cache) ───────────────────
+// Parallelisierung: OCR_POOL_SIZE Tesseract-Worker (default 2, env MCP_OCR_POOL),
+// Jobs werden round-robin verteilt und im Serve-Loop NICHT seriell awaited.
+// Cache: worker/core werden aus node_modules geladen; heruntergeladene Assets
+// (traineddata etc.) landen per cacheMethod "write" in node_modules/.cache
+// (innerhalb node_modules -> von .gitignore abgedeckt) und sind beim naechsten
+// Worker-Start sofort da, ohne CDN-Roundtrip.
 
-let _ocrWorker = null;
-let _ocrReady = false;
+let _ocrPool = [];
+let _ocrRoundRobin = 0;
+const OCR_POOL_SIZE = Math.max(1, parseInt(process.env.MCP_OCR_POOL || "2", 10) || 2);
+const OCR_CACHE_DIR = path.join(__dirname, "node_modules", ".cache", "tesseract.js");
+const OCR_OPTIONS = {
+  // KEIN workerPath: die Browser-Variante (dist/worker.min.js) braucht
+  // addEventListener und crasht in Node. Ohne workerPath waehlt tesseract.js
+  // automatisch die Node-kompatible Worker-Variante.
+  corePath: path.join(__dirname, "node_modules", "tesseract.js-core"),
+  // langPath lokal: deu.traineddata.gz liegt einmalig im Cache-Ordner
+  // (siehe Setup-Hinweis) -> Kaltstart ohne CDN-Roundtrip.
+  langPath: OCR_CACHE_DIR,
+  cacheMethod: "write",
+  cachePath: OCR_CACHE_DIR,
+};
 
-async function ensureOcrWorker() {
-  if (_ocrReady && _ocrWorker) return _ocrWorker;
+async function ensureOcrPool() {
+  if (_ocrPool.length > 0) return;
   if (!TesseractWorker) throw new Error("tesseract.js is not installed (run: npm install tesseract.js)");
-  _ocrWorker = await TesseractWorker("deu");
-  _ocrReady = true;
-  return _ocrWorker;
+  // Seriell initialisieren: Der erste Worker laedt die Assets (CDN beim
+  // Kaltstart), weitere Worker nutzen den tesseract.js-Asset-Cache
+  // (cacheMethod "write" -> cachePath) und starten so deutlich schneller.
+  for (let i = 0; i < OCR_POOL_SIZE; i++) {
+    _ocrPool.push(await TesseractWorker("deu", 1, OCR_OPTIONS));
+  }
+}
+
+function pickOcrWorker() {
+  const worker = _ocrPool[_ocrRoundRobin % _ocrPool.length];
+  _ocrRoundRobin = (_ocrRoundRobin + 1) % _ocrPool.length;
+  return worker;
 }
 
 async function runOcr(job, contextRoot) {
@@ -231,7 +274,8 @@ async function runOcr(job, contextRoot) {
   }
   try {
     const artifact = artifactFromContext(contextRoot, job.context_id);
-    const worker = await ensureOcrWorker();
+    await ensureOcrPool();
+    const worker = pickOcrWorker();
     const { data: { text, confidence } } = await worker.recognize(artifact);
     const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
     return {
@@ -288,21 +332,31 @@ function serve(options) {
         return;
       }
       let newline;
-      while ((newline = buffer.indexOf("\n")) >= 0) {
+      while ((newline = buffer.indexOf(String.fromCharCode(10))) >= 0) {
         const line = buffer.slice(0, newline).trim();
         buffer = buffer.slice(newline + 1);
         if (!line) continue;
-        let response;
         try {
-          response = handleJob(JSON.parse(line), contextRoot);
-          // If the response is a Promise (OCR), await it.
-          if (response && typeof response.then === "function") {
-            response = await response;
+          const parsed = JSON.parse(line);
+          const isOcrJob = parsed.operation === "ocr" || (parsed.operation === "analyze" && parsed.ocr === true);
+          const pending = handleJob(parsed, contextRoot);
+          if (pending && typeof pending.then === "function") {
+            if (isOcrJob) {
+              // OCR-Jobs NICHT seriell awaiten: Antwort schreiben, sobald sie fertig
+              // ist (id-basiertes Protokoll, Reihenfolge egal) -> paralleler Durchsatz.
+              pending
+                .then((res) => socket.write(JSON.stringify(res) + String.fromCharCode(10)))
+                .catch((err) => socket.write(JSON.stringify({ ok: false, error: String((err && err.message) || err) }) + String.fromCharCode(10)));
+              continue;
+            }
+            const response = await pending;
+            socket.write(JSON.stringify(response) + String.fromCharCode(10));
+            continue;
           }
+          socket.write(JSON.stringify(pending) + String.fromCharCode(10));
         } catch (error) {
-          response = { ok: false, error: String(error.message || error) };
+          socket.write(JSON.stringify({ ok: false, error: String((error && error.message) || error) }) + String.fromCharCode(10));
         }
-        socket.write(`${JSON.stringify(response)}\n`);
       }
     });
   });

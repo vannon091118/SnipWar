@@ -1,5 +1,5 @@
 {
-	"active": "a9",
+	"active": "a10",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -15,6 +15,16 @@
 			"theme": "Genesis des CommitLayer in SnipWar — deterministisch, GDScript, Layered Monolith. Kein XBridge-Legacy-Code.",
 			"version": "v0.1.0",
 			"weight": 49.5
+		},
+		"a10": {
+			"climax_weight": 3.0,
+			"id": "a10",
+			"name": "Der sichtbare Durchlauf",
+			"span": "heute → offen",
+			"status": "active",
+			"theme": "das erste Schiff im Tutorial, vom ersten Klick bis zum Abschluss.",
+			"version": "",
+			"weight": 0.0
 		},
 		"a2": {
 			"climax_weight": 3.0,
@@ -197,13 +207,37 @@
 		},
 		"a9": {
 			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
 			"id": "a9",
 			"name": "Der sichtbare Durchlauf",
+			"seen_entities": [
+				"F-002",
+				"F-035",
+				"F-036",
+				"F-003",
+				"F-004",
+				"F-001",
+				"C-040",
+				"C-041",
+				"C-042",
+				"C-043",
+				"C-044",
+				"C-045",
+				"C-046",
+				"C-047",
+				"C-048",
+				"C-049",
+				"C-050",
+				"C-051",
+				"C-052",
+				"C-053",
+				"C-054"
+			],
 			"span": "heute → offen",
-			"status": "active",
+			"status": "completed",
 			"theme": "der erste Flottenbau im Tutorial als Abschluss des Onboardings.",
 			"version": "",
-			"weight": 0.0
+			"weight": 6.8
 		}
 	},
 	"description": "Arcs als abstrakte ID-Map (a1..aN). Jeder Arc repräsentiert eine Projekt-Phase. Der aktive Arc ist über 'active' referenziert. 'weight' ist der akkumulierte narrative Druck (deterministisch aus Chain + Diff berechnet), 'climax_weight' die Schwelle für ARC_CLIMAX. Port aus lore_arcs.json, erweitert um Gewichtsmodell.",

@@ -403,3 +403,16 @@ Kontext-gated Sub-Menü-Hotkeys: Planeten-Dossier [1]-[9] + Bild auf/ab, Forschu
 - scripts/ui/dossier/parchment_tech_tree_view.gd: Implementiert und integriert (F-032).
 - scripts/ui/dossier/planet_dossier_view.gd: Implementiert und integriert (F-033).
 - scripts/ui/dossier/workshop_view.gd: Implementiert und integriert (F-034).
+
+## 2026-08-27 04:00:00 — p28 · c28j67n11a6p15 · Null · trocken
+
+**Null: mcp_file_driver als Standard-Transport f… — nach Flux**
+
+mcp_file_driver als Standard-Transport für sichtbare MCP-Läufe (ein Prozess, ein Handshake, ein Tool-Call pro Zeile, Latenz 4-16ms) + mcp_lib Timeout-Fixes (Connect-Timeout sauber, Call-Timeout 90s, settle() damit ein Call pro Prozess sauber endet)
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js: Implementiert und integriert (F-035).
+- addons/gdscript_mcp/client/playthroughs/mcp_lib.js: Implementiert und integriert (F-036).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).

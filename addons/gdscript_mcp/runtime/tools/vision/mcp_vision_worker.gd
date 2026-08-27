@@ -9,8 +9,9 @@ const DEFAULT_SCRIPT := "res://addons/gdscript_mcp/client/vision_worker.js"
 
 var _script_path := DEFAULT_SCRIPT
 var _context_root := ""
+var _ocr_command := ""
 const CONNECT_TIMEOUT_MS := 2500
-const REQUEST_TIMEOUT_MS := 15000
+const REQUEST_TIMEOUT_MS := 60000
 const MAX_PENDING := 4
 const MAX_BUFFER_BYTES := 1024 * 1024
 
@@ -37,6 +38,7 @@ func configure(config: Dictionary = {}) -> void:
 	_command = str(config.get("vision_worker_command", DEFAULT_COMMAND))
 	_script_path = str(config.get("vision_worker_script", DEFAULT_SCRIPT))
 	_context_root = str(config.get("context_root", ""))
+	_ocr_command = str(config.get("vision_worker_ocr_command", ""))
 	_port = clampi(int(config.get("vision_worker_port", DEFAULT_PORT)), 1024, 65535)
 	_enabled = bool(config.get("vision_worker_enabled", true))
 
@@ -136,6 +138,9 @@ func _start_worker_and_connect() -> bool:
 	if context_root == "":
 		context_root = ProjectSettings.globalize_path("user://mcp_context")
 	var args := [script_path, "--serve", "--host", "127.0.0.1", "--port", str(_port), "--context-root", context_root]
+	if _ocr_command != "":
+		args.append("--ocr-command")
+		args.append(_ocr_command)
 	_worker_pid = OS.create_process(_command, args, false)
 	if _worker_pid < 0:
 		_starting = false

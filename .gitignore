@@ -24,6 +24,8 @@ godot/
 /_mcp_*
 /_ux_report_*
 
+node_modules/
+
 # DOKI CommitLayer — transiente Flow-Artefakte (nie committen)
 /.doki/
 /.commit_msg.txt

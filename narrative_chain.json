@@ -2002,6 +2002,58 @@
 			"seq": 27,
 			"subject": "Flux — also — Kontext-gated Sub-Menü-Hotkeys: Planeten-Dossier… — nach Ghost",
 			"summary": "Also erstmal — warte — halt — nein, genau so: Die Tasten. Es musste Tasten geben, weil Ghosts stiller Nachmittag zwar die Karte durchlässig machte, aber jeder, der das Dossier öffnete, wieder zur M..."
+		},
+		{
+			"a": 6,
+			"arc": "a9",
+			"c": 28,
+			"composite": "c28j67n11a6p15",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+					"insertions": 82.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "addons/gdscript_mcp/client/playthroughs/mcp_lib.js",
+					"insertions": 22.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 100.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 57.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 21.0
+				}
+			],
+			"date": "2026-08-27 04:00:00",
+			"hash": "fdb32c6e2dfa34e9a7bd1736bfa29b202417b2d8",
+			"j": 67,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 11,
+			"narrator": "Null",
+			"p": 15,
+			"p_id": 28,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Flux",
+			"seq": 28,
+			"subject": "Null: mcp_file_driver als Standard-Transport f… — nach Flux",
+			"summary": "Ein Transport, der nicht abbricht. Flux hat die Tasten gesetzt, und jetzt soll der Agent sie auch drücken können, ohne dass die Verbindung unterwegs aufgibt. Also: ein Prozess, ein Handshake, eine ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

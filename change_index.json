@@ -78,7 +78,7 @@
 			"p_id": 24.0
 		},
 		"26116836822ddb42740b7b848fac7ecae227a51b": {
-			"c": 27,
+			"c": 27.0,
 			"composite": "c27j57n13a6p25",
 			"entities": [
 				"F-002",
@@ -92,7 +92,7 @@
 				"C-038",
 				"C-039"
 			],
-			"p_id": 27
+			"p_id": 27.0
 		},
 		"2bc5533d6b8bb9fd26723d1048947df8561e89f6": {
 			"c": 17.0,
@@ -232,6 +232,34 @@
 				"F-001"
 			],
 			"p_id": 21.0
+		},
+		"fdb32c6e2dfa34e9a7bd1736bfa29b202417b2d8": {
+			"c": 28,
+			"composite": "c28j67n11a6p15",
+			"entities": [
+				"F-002",
+				"F-035",
+				"F-036",
+				"F-003",
+				"F-004",
+				"F-001",
+				"C-040",
+				"C-041",
+				"C-042",
+				"C-043",
+				"C-044",
+				"C-045",
+				"C-046",
+				"C-047",
+				"C-048",
+				"C-049",
+				"C-050",
+				"C-051",
+				"C-052",
+				"C-053",
+				"C-054"
+			],
+			"p_id": 28
 		}
 	},
 	"entities": {
@@ -898,6 +926,267 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-040": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-040",
+			"last_p": 28.0,
+			"name": "fs",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-041": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-041",
+			"last_p": 28.0,
+			"name": "PORT",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-042": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-042",
+			"last_p": 28.0,
+			"name": "COMMANDS_FILE",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-043": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-043",
+			"last_p": 28.0,
+			"name": "OUTPUT_FILE",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-044": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-044",
+			"last_p": 28.0,
+			"name": "POLL_MS",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-045": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						30.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-045",
+			"last_p": 28.0,
+			"name": "client",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-046": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						40.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-046",
+			"last_p": 28.0,
+			"name": "data",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-047": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						41.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-047",
+			"last_p": 28.0,
+			"name": "parts",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-048": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						44.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-048",
+			"last_p": 28.0,
+			"name": "completeCount",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-049": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						65.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-049",
+			"last_p": 28.0,
+			"name": "started",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-050": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						67.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-050",
+			"last_p": 28.0,
+			"name": "result",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-051": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 28.0
+				},
+				{
+					"lines": [
+						70.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-051",
+			"last_p": 28.0,
+			"name": "timer",
+			"path": "addons/gdscript_mcp/client/playthroughs/mcp_lib.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-052": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						26.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-052",
+			"last_p": 28.0,
+			"name": "onError",
+			"path": "addons/gdscript_mcp/client/playthroughs/mcp_lib.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-053": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						73.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-053",
+			"last_p": 28.0,
+			"name": "settle",
+			"path": "addons/gdscript_mcp/client/playthroughs/mcp_lib.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-054": {
+			"first_p": 28.0,
+			"history": [
+				{
+					"lines": [
+						79.0
+					],
+					"p_id": 28.0
+				}
+			],
+			"id": "C-054",
+			"last_p": 28.0,
+			"name": "payload",
+			"path": "addons/gdscript_mcp/client/playthroughs/mcp_lib.js",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -1235,6 +1524,26 @@
 			"last_p": 27.0,
 			"name": "workshop_view.gd",
 			"path": "scripts/ui/dossier/workshop_view.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-035": {
+			"first_p": 28.0,
+			"history": [],
+			"id": "F-035",
+			"last_p": 28.0,
+			"name": "mcp_file_driver.js",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-036": {
+			"first_p": 28.0,
+			"history": [],
+			"id": "F-036",
+			"last_p": 28.0,
+			"name": "mcp_lib.js",
+			"path": "addons/gdscript_mcp/client/playthroughs/mcp_lib.js",
 			"status": "created",
 			"type": "file"
 		}
