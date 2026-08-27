@@ -523,3 +523,18 @@ Flyover-Onboarding: Tutorial-Schritte oeffnen ihre Menues, Heimatweltring mit Ra
 - scripts/ui/dossier/parchment_tech_tree_view.gd: Implementiert und integriert (F-032).
 - scripts/ui/main_menu.gd: Implementiert und integriert (F-067).
 - scripts/ui/tutorial/tutorial_director.gd: Implementiert und integriert (F-031).
+
+## 2026-08-27 11:00:00 — p35 · c35j41n5a8p34 · Squizzle · sarkastisch
+
+**Squizzles Fall: Rebranding: 'Eisen-Grenze' konsequent zu 'Rand… — nach Basher**
+
+Rebranding: 'Eisen-Grenze' konsequent zu 'Rand der Galaxie' in LORE, README, Main-Menu- und Tutorial-Texten vereinheitlicht
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- LORE.md: Dokumentation aktualisiert (F-051).
+- README.md: Dokumentation aktualisiert (F-068).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- scripts/ui/main_menu.gd: Dokumentation aktualisiert (F-067).
+- scripts/ui/tutorial/tutorial_director.gd: Dokumentation aktualisiert (F-031).

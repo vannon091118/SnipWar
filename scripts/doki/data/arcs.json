@@ -168,11 +168,21 @@
 			"climax_weight": 3.0,
 			"id": "a13",
 			"name": "Fraktionsprotokoll",
+			"seen_entities": [
+				"F-002",
+				"F-051",
+				"F-068",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-067",
+				"F-031"
+			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "datengetriebene Fraktionen mit Akzenten, Boni und Silhouetten.",
 			"version": "",
-			"weight": 0.0
+			"weight": 2.4
 		},
 		"a2": {
 			"climax_weight": 3.0,

@@ -2511,6 +2511,68 @@
 			"seq": 34,
 			"subject": "Basher (27 files): Flyover-Onboarding: Tutorial-Schritte oeffnen… — nach Argos",
 			"summary": "Statuszeile vorab: der Ring musste weg, deshalb diese Runde. Ein pulsierender Punktkreis über der Heimatwelt, getriggert bei jeder gestarteten Forschung — von unten las sich das wie ein Maus-Echo, ..."
+		},
+		{
+			"a": 8,
+			"arc": "a13",
+			"c": 35,
+			"composite": "c35j41n5a8p34",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 34.0
+				},
+				{
+					"deletions": 13.0,
+					"file": "LORE.md",
+					"insertions": 34.0
+				},
+				{
+					"deletions": 9.0,
+					"file": "README.md",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "change_index.json",
+					"insertions": 798.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 157.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 71.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/ui/main_menu.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/ui/tutorial/tutorial_director.gd",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 11:00:00",
+			"hash": "24c93b5d06215f826ff304f560ff0a94240f45c4",
+			"j": 41,
+			"model_id": "claude-sonnet-4",
+			"mood": "sarkastisch",
+			"n": 5,
+			"narrator": "Squizzle",
+			"p": 34,
+			"p_id": 35,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Basher",
+			"seq": 35,
+			"subject": "Squizzles Fall: Rebranding: 'Eisen-Grenze' konsequent zu 'Rand… — nach Basher",
+			"summary": "FALL-AUFNAHME: Ein Name, der nicht mehr passt. Die Ermittlung begann, wie so oft, mit einer Unstimmigkeit: Das Universum hieß in der LORE „Eisen-Grenze“, während das Spiel selbst längst am Rand der..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
