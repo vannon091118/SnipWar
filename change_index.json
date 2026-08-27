@@ -453,8 +453,28 @@
 			],
 			"p_id": 31.0
 		},
+		"efc07a25345c759262292b4f6e5ae67f846412a7": {
+			"c": 39,
+			"composite": "c39j78n2a3p30",
+			"entities": [
+				"F-002",
+				"F-091",
+				"F-050",
+				"F-092",
+				"F-093",
+				"F-094",
+				"F-045",
+				"F-095",
+				"F-096",
+				"F-003",
+				"F-046",
+				"F-004",
+				"F-001"
+			],
+			"p_id": 39
+		},
 		"f5b933b14f7bb53a637cf6fc559569665288d2a8": {
-			"c": 38,
+			"c": 38.0,
 			"composite": "c38j33n6a14p37",
 			"entities": [
 				"F-002",
@@ -489,7 +509,7 @@
 				"C-199",
 				"C-200"
 			],
-			"p_id": 38
+			"p_id": 38.0
 		},
 		"fa2b7bbd7316ba058617513072f00afdf6e7dc93": {
 			"c": 36.0,
@@ -4913,6 +4933,66 @@
 			"last_p": 38.0,
 			"name": "world_smoke.json",
 			"path": "mcp_chains/world_smoke.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-091": {
+			"first_p": 39.0,
+			"history": [],
+			"id": "F-091",
+			"last_p": 39.0,
+			"name": "PLAN.md",
+			"path": "PLAN.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-092": {
+			"first_p": 39.0,
+			"history": [],
+			"id": "F-092",
+			"last_p": 39.0,
+			"name": "AGENT_WORKFLOW.md",
+			"path": "addons/gdscript_mcp/AGENT_WORKFLOW.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-093": {
+			"first_p": 39.0,
+			"history": [],
+			"id": "F-093",
+			"last_p": 39.0,
+			"name": "CONTEXT_AUTONOMY_AUDIT.md",
+			"path": "addons/gdscript_mcp/CONTEXT_AUTONOMY_AUDIT.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-094": {
+			"first_p": 39.0,
+			"history": [],
+			"id": "F-094",
+			"last_p": 39.0,
+			"name": "MCP_ANOMALIES.md",
+			"path": "addons/gdscript_mcp/MCP_ANOMALIES.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-095": {
+			"first_p": 39.0,
+			"history": [],
+			"id": "F-095",
+			"last_p": 39.0,
+			"name": "PERSISTENCE.md",
+			"path": "addons/gdscript_mcp/PERSISTENCE.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-096": {
+			"first_p": 39.0,
+			"history": [],
+			"id": "F-096",
+			"last_p": 39.0,
+			"name": "PLAYTEST_HANDOFF.md",
+			"path": "addons/gdscript_mcp/PLAYTEST_HANDOFF.md",
 			"status": "created",
 			"type": "file"
 		}

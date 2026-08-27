@@ -596,3 +596,23 @@ Evidence-Protokoll: McpRunTrace bindet Tool-Calls, Fingerprints, Log-Delta und V
 - mcp_chains/world_smoke.json: Implementiert und integriert (F-090).
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 15:00:00 — p39 · c39j78n2a3p30 · Basher · trocken
+
+**Basher (13 files): Persistenz-Pakt: PERSISTENCE.md als vollständige… — nach Devin**
+
+Persistenz-Pakt: PERSISTENCE.md als vollständige user://-Landkarte mit TTLs, Tool-Zahlen wahr gemacht (149 Tools), historische Doku-Status-Header, FINDINGS nachgezogen
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- PLAN.md: Dokumentation aktualisiert (F-091).
+- addons/gdscript_mcp/AGENTS.md: Dokumentation aktualisiert (F-050).
+- addons/gdscript_mcp/AGENT_WORKFLOW.md: Dokumentation aktualisiert (F-092).
+- addons/gdscript_mcp/CONTEXT_AUTONOMY_AUDIT.md: Dokumentation aktualisiert (F-093).
+- addons/gdscript_mcp/MCP_ANOMALIES.md: Dokumentation aktualisiert (F-094).
+- addons/gdscript_mcp/MCP_INDEX.md: Dokumentation aktualisiert (F-045).
+- addons/gdscript_mcp/PERSISTENCE.md: Dokumentation aktualisiert (F-095).
+- addons/gdscript_mcp/PLAYTEST_HANDOFF.md: Dokumentation aktualisiert (F-096).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- docs/FINDINGS.md: Dokumentation aktualisiert (F-046).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).

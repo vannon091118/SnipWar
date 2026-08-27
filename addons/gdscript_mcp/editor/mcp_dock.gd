@@ -77,6 +77,18 @@ func _ready() -> void:
 	_open_artifacts_btn.pressed.connect(_open_artifacts_folder)
 	_profile_select.item_selected.connect(_on_profile_selected)
 
+	# OptionButton-Items idempotent per Code befüllen: Die `items`-Zeile der
+	# .tscn wird von Godot 4 nur als Array[Dictionary] rekonstruiert; ein
+	# String-Array (alter Dock-Umbau) lädt zu item_count == 0 → leere
+	# Dropdowns ohne Transport-Auswahl und Play-Goal.
+	if _transport_select != null and _transport_select.item_count == 0:
+		_transport_select.add_item("stdio")
+		_transport_select.add_item("tcp")
+	if _profile_select != null and _profile_select.item_count == 0:
+		_profile_select.add_item("player")
+		_profile_select.add_item("qa")
+		_profile_select.add_item("dev")
+
 	_load_config()
 	_load_profile()
 	_update_runtime_buttons()

@@ -65,7 +65,11 @@ custom_minimum_size = Vector2(80, 0)
 
 [node name="TransportSelect" type="OptionButton" parent="ConfigSection/TransportRow"]
 unique_name_in_owner = true
-items = ["stdio", "tcp"]
+items = [{
+"text": "stdio"
+}, {
+"text": "tcp"
+}]
 selected = 1
 
 [node name="PortRow" type="HBoxContainer" parent="ConfigSection"]
@@ -146,7 +150,13 @@ custom_minimum_size = Vector2(80, 0)
 
 [node name="ProfileSelect" type="OptionButton" parent="RuntimeSection/ProfileRow"]
 unique_name_in_owner = true
-items = ["player", "qa", "dev"]
+items = [{
+"text": "player"
+}, {
+"text": "qa"
+}, {
+"text": "dev"
+}]
 selected = 0
 tooltip_text = "player = sichtbarer Spieler-Lauf (Spieler-Vertrag) · qa = Debug/QA · dev = Reparatur/Edit"
 

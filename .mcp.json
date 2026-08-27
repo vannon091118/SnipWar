@@ -2,7 +2,9 @@
   "mcpServers": {
     "snipwar-runtime": {
       "command": "node",
-      "args": ["addons/gdscript_mcp/client/mcp_stdio_bridge.js"],
+      "args": [
+        "C:/Users/Vannon/Documents/snippet-empire/snip-war/addons/gdscript_mcp/client/mcp_stdio_bridge.js"
+      ],
       "env": {
         "MCP_HOST": "127.0.0.1",
         "MCP_PORT": "9090"

@@ -336,11 +336,26 @@
 			"climax_weight": 3.0,
 			"id": "a16",
 			"name": "Persistenz-Pakt",
+			"seen_entities": [
+				"F-002",
+				"F-091",
+				"F-050",
+				"F-092",
+				"F-093",
+				"F-094",
+				"F-045",
+				"F-095",
+				"F-096",
+				"F-003",
+				"F-046",
+				"F-004",
+				"F-001"
+			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Doku und Laufzeit im Gleichschritt, user://-Landkarte statt verstreuter Pfade.",
 			"version": "",
-			"weight": 0.0
+			"weight": 3.9
 		},
 		"a2": {
 			"climax_weight": 3.0,
