@@ -36,7 +36,7 @@ var _navigation: NavigationField
 var _field: Node2D
 var _is_configured := false
 # Density-field sector cache (opt-in; recomputed when the layout seed changes).
-var _sector_anchors: Array[SectorAnchor] = []
+var _sector_anchors: Array[SectorClassifier.Anchor] = []
 var _sector_noise: FastNoiseLite
 var _sector_cache_ready := false
 # Cluster-Void generation (Makulatur system) — untyped to avoid alphabetical
@@ -58,14 +58,14 @@ func configure(field: Node2D, navigation: NavigationField, world_config: WorldCo
 func set_layout_seed(value: int) -> void:
 	if _layout_seed != value:
 		_sector_cache_ready = false
-		_sector_anchors = [] as Array[SectorAnchor]
+		_sector_anchors = [] as Array[SectorClassifier.Anchor]
 		_sector_noise = null
 	_layout_seed = value
 
 func reset_for_layout_seed(value: int) -> void:
 	_layout_seed = value
 	_sector_cache_ready = false
-	_sector_anchors = [] as Array[SectorAnchor]
+	_sector_anchors = [] as Array[SectorClassifier.Anchor]
 	_sector_noise = null
 	_cluster_cache_ready = false
 	_clusters = []
@@ -522,11 +522,11 @@ func _planet_render_scale(data: ChunkPlanetData, profile: PlanetSizeProfile) -> 
 	return scale
 
 ## Cached sector anchors covering a virtual region centred on the world origin.
-func _get_sector_anchors() -> Array[SectorAnchor]:
+func _get_sector_anchors() -> Array[SectorClassifier.Anchor]:
 	if not _sector_cache_ready:
 		_sector_cache_ready = true
 		if _world_config.resolved_sector_count() <= 0 or _world_config.sector_flavors.is_empty():
-			_sector_anchors = [] as Array[SectorAnchor]
+			_sector_anchors = [] as Array[SectorClassifier.Anchor]
 		else:
 			var cs := _world_config.resolved_cell_size()
 			var span := _world_config.resolved_sector_radius() * float(_world_config.resolved_sector_count()) * 3.0

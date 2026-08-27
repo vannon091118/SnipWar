@@ -111,3 +111,28 @@ static func _canonical(value: Variant) -> Variant:
 			out[prop_name] = _canonical(value.get(prop.name))
 		return out
 	return value
+
+static func restore_dict(source: Dictionary) -> Dictionary:
+	var result := {}
+	for key in source:
+		var new_key: Variant = key
+		if key is String:
+			new_key = StringName(key)
+		var value: Variant = source[key]
+		if value is Dictionary:
+			value = restore_dict(value)
+		elif value is Array:
+			value = restore_array(value)
+		result[new_key] = value
+	return result
+
+static func restore_array(source: Array) -> Array:
+	var result := []
+	for item in source:
+		if item is Dictionary:
+			result.append(restore_dict(item))
+		elif item is Array:
+			result.append(restore_array(item))
+		else:
+			result.append(item)
+	return result

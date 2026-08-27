@@ -4008,6 +4008,63 @@
 			"seq": 50,
 			"subject": "Ghost verzeichnet: Implement narrative runtime state, context… — nach Spark",
 			"summary": "Ghost trägt den Archivstand weiter, weil die Narrative Runtime nun nicht mehr nur Ereignisse sammelt, sondern ihre abgeleiteten Zustände reproduzierbar an die historische Chain bindet. Relationship..."
+		},
+		{
+			"a": 19,
+			"arc": "a22",
+			"c": 51,
+			"composite": "c51j51n6a19p16",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 30.0
+				},
+				{
+					"deletions": 32.0,
+					"file": "LORE.md",
+					"insertions": 19.0
+				},
+				{
+					"deletions": 21.0,
+					"file": "README.md",
+					"insertions": 98.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "assets/ui/snipwar_banner.jpg",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 212.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 137.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 38.0
+				}
+			],
+			"date": "2026-08-27 03:00:00",
+			"hash": "f4ad0a403215cec46c4054884825a1f0865419cc",
+			"j": 51,
+			"model_id": "claude-sonnet-4",
+			"mood": "sarkastisch",
+			"n": 6,
+			"narrator": "Devin",
+			"p": 16,
+			"p_id": 51,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Ghost",
+			"seq": 51,
+			"subject": "Devin sagt: FEATURE: Lore komplett überarbeitet in… — nach Ghost",
+			"summary": "Man konnte die bisherige Dokumentation und Lore natürlich so stehen lassen, wenn man darauf stand, dass ein Universum nach sterilen Enzyklopädie-Einträgen aus dem Textbaukasten riecht. Weil aber ei..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

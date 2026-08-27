@@ -76,7 +76,7 @@
 			"p_id": 15.0
 		},
 		"12f27b1e4053869400cc79ab34622ff8b2d7596b": {
-			"c": 50,
+			"c": 50.0,
 			"composite": "c50j22n8a11p47",
 			"entities": [
 				"F-002",
@@ -108,7 +108,7 @@
 				"C-324",
 				"C-325"
 			],
-			"p_id": 50
+			"p_id": 50.0
 		},
 		"193aa9dc36209b96d263cdd3fdb00a5f7fe9a0e3": {
 			"c": 18.0,
@@ -817,6 +817,20 @@
 				"F-001"
 			],
 			"p_id": 39.0
+		},
+		"f4ad0a403215cec46c4054884825a1f0865419cc": {
+			"c": 51,
+			"composite": "c51j51n6a19p16",
+			"entities": [
+				"F-002",
+				"F-051",
+				"F-068",
+				"F-184",
+				"F-003",
+				"F-004",
+				"F-001"
+			],
+			"p_id": 51
 		},
 		"f5b933b14f7bb53a637cf6fc559569665288d2a8": {
 			"c": 38.0,
@@ -8375,6 +8389,16 @@
 			"last_p": 50.0,
 			"name": "constraint_save_game_slots.gd",
 			"path": "scripts/preflight/constraint_save_game_slots.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-184": {
+			"first_p": 51.0,
+			"history": [],
+			"id": "F-184",
+			"last_p": 51.0,
+			"name": "snipwar_banner.jpg",
+			"path": "assets/ui/snipwar_banner.jpg",
 			"status": "created",
 			"type": "file"
 		}

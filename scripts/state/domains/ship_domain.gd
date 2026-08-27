@@ -636,3 +636,89 @@ func _select_variant_id(catalog: ShipPartCatalog, part_id: StringName, blueprint
 
 func _tally(dict: Dictionary, key: StringName) -> void:
 	dict[key] = dict.get(key, 0) + 1
+
+func capture_snapshot(data: RunSaveData) -> void:
+	if data == null:
+		return
+	data.ship_part_inventory = ship_part_inventory.duplicate(true)
+	data.ship_assemblies = ship_assemblies.duplicate(true)
+	data.ship_build_jobs = ship_build_jobs.duplicate(true)
+	data.persistent_ships = _snapshot_persistent_ships()
+	data.research_missions = _snapshot_research_missions()
+	data.next_ship_index = next_ship_index
+	data.next_research_mission_index = next_research_mission_index
+
+func restore_snapshot(data: RunSaveData) -> void:
+	if data == null:
+		return
+	reset()
+	ship_part_inventory = RunSaveData.restore_dict(data.ship_part_inventory)
+	ship_assemblies = RunSaveData.restore_dict(data.ship_assemblies)
+	ship_build_jobs = RunSaveData.restore_dict(data.ship_build_jobs)
+	_restore_persistent_ships(data.persistent_ships)
+	_restore_research_missions(data.research_missions)
+	next_ship_index = data.next_ship_index
+	next_research_mission_index = data.next_research_mission_index
+
+func _snapshot_persistent_ships() -> Dictionary:
+	var result: Dictionary = {}
+	for ship_id in persistent_ships:
+		var record: PersistentShipRecord = persistent_ships[ship_id] as PersistentShipRecord
+		if record == null:
+			continue
+		result[ship_id] = {
+			"faction": record.faction,
+			"mission_role": record.mission_role,
+			"current_planet_id": record.current_planet_id,
+			"status": record.status,
+			"active_mission_id": record.active_mission_id,
+			"fleet": record.fleet.copy() if record.fleet != null else null,
+		}
+	return result
+
+func _snapshot_research_missions() -> Dictionary:
+	var result: Dictionary = {}
+	for mission in research_missions:
+		if mission == null:
+			continue
+		result[String(mission.mission_id)] = {
+			"mission_id": mission.mission_id,
+			"target_planet_id": mission.target_planet_id,
+			"task_type": mission.task_type,
+			"duration": mission.duration,
+			"remaining": mission.remaining,
+			"status": mission.status,
+		}
+	return result
+
+func _restore_persistent_ships(source: Dictionary) -> void:
+	persistent_ships.clear()
+	for key in source:
+		var ship_id := StringName(key)
+		var entry: Dictionary = source[key] as Dictionary
+		if entry == null:
+			continue
+		var record := PersistentShipRecord.new()
+		record.ship_id = ship_id
+		record.faction = StringName(entry.get("faction", &""))
+		record.mission_role = StringName(entry.get("mission_role", &""))
+		record.current_planet_id = StringName(entry.get("current_planet_id", &""))
+		record.status = StringName(entry.get("status", &"idle"))
+		record.active_mission_id = StringName(entry.get("active_mission_id", &""))
+		record.fleet = entry.get("fleet") as FleetSnapshot
+		persistent_ships[ship_id] = record
+
+func _restore_research_missions(source: Dictionary) -> void:
+	research_missions.clear()
+	for key in source:
+		var entry: Dictionary = source[key] as Dictionary
+		if entry == null:
+			continue
+		var mission := ResearchMission.new()
+		mission.mission_id = StringName(entry.get("mission_id", &""))
+		mission.target_planet_id = StringName(entry.get("target_planet_id", &""))
+		mission.task_type = StringName(entry.get("task_type", &"scan"))
+		mission.duration = float(entry.get("duration", 1.0))
+		mission.remaining = float(entry.get("remaining", mission.duration))
+		mission.status = StringName(entry.get("status", &"queued"))
+		research_missions.append(mission)

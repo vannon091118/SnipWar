@@ -864,3 +864,17 @@ Implement narrative runtime state, context bridge, and verified preflight fixes
 - scripts/preflight/constraint_save_game_slots.gd: Implementiert und integriert (F-183).
 - scripts/preflight/constraint_world_details_and_scale.gd: Implementiert und integriert (F-062).
 - scripts/preflight_v2/v2_fixture.gd: Implementiert und integriert (F-064).
+
+## 2026-08-27 03:00:00 — p51 · c51j51n6a19p16 · Devin · sarkastisch
+
+**Devin sagt: FEATURE: Lore komplett überarbeitet in… — nach Ghost**
+
+FEATURE: Lore komplett überarbeitet in Archiv-Fragment-Stil, Immersion ohne Wiki-Texte. Plus 4 visuelle ingame Fragmente generiert. S.C.O.U.T. & DOKI in README ergänzt.
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- LORE.md: Dokumentation aktualisiert (F-051).
+- README.md: Dokumentation aktualisiert (F-068).
+- assets/ui/snipwar_banner.jpg: Dokumentation aktualisiert (F-184).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).

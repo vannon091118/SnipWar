@@ -1040,3 +1040,46 @@ func _route_owner(planet_id: StringName) -> StringName:
 
 func market_snapshot() -> Dictionary:
 	return {"prices": market_prices.duplicate(), "volumes": trade_volumes.duplicate(), "routes": trade_routes_snapshot()}
+
+func capture_snapshot(data: RunSaveData) -> void:
+	if data == null:
+		return
+	data.faction_vaults = faction_vaults.duplicate(true)
+	data.faction_credits = faction_credits.duplicate(true)
+	data.worker_reservations = worker_reservations.duplicate(true)
+	data.upgrade_build_jobs = upgrade_build_jobs.duplicate(true)
+	data.planet_resources = planet_resources.duplicate(true)
+	data.planet_upgrades = planet_upgrades.duplicate(true)
+	data.worker_factories = worker_factories.duplicate(true)
+	data.gathering_workers = gathering_workers.duplicate(true)
+	data.gathering_sources = gathering_sources.duplicate(true)
+	data.local_vaults = local_vaults.duplicate(true)
+	data.trade_routes = trade_routes.duplicate(true)
+	data.planet_buildings = planet_buildings.duplicate(true)
+	data.building_jobs = building_jobs.duplicate(true)
+	data.local_seeded_planets = _local_seeded_planets.duplicate(true)
+	data.worker_transport_records = worker_transport_records.duplicate(true)
+	data.next_trade_route_index = _next_trade_route_index
+	data.next_worker_transport_index = _next_worker_transport_index
+
+func restore_snapshot(data: RunSaveData) -> void:
+	if data == null:
+		return
+	reset()
+	faction_vaults = RunSaveData.restore_dict(data.faction_vaults)
+	faction_credits = RunSaveData.restore_dict(data.faction_credits)
+	worker_reservations = RunSaveData.restore_dict(data.worker_reservations)
+	upgrade_build_jobs = RunSaveData.restore_dict(data.upgrade_build_jobs)
+	planet_resources = RunSaveData.restore_dict(data.planet_resources)
+	planet_upgrades = RunSaveData.restore_dict(data.planet_upgrades)
+	worker_factories = RunSaveData.restore_dict(data.worker_factories)
+	gathering_workers = RunSaveData.restore_dict(data.gathering_workers)
+	gathering_sources = RunSaveData.restore_dict(data.gathering_sources)
+	local_vaults = RunSaveData.restore_dict(data.local_vaults)
+	trade_routes = RunSaveData.restore_dict(data.trade_routes)
+	planet_buildings = RunSaveData.restore_dict(data.planet_buildings)
+	building_jobs = RunSaveData.restore_dict(data.building_jobs)
+	_local_seeded_planets = RunSaveData.restore_dict(data.local_seeded_planets)
+	worker_transport_records = RunSaveData.restore_dict(data.worker_transport_records)
+	_next_trade_route_index = data.next_trade_route_index
+	_next_worker_transport_index = data.next_worker_transport_index

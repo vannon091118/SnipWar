@@ -37,6 +37,13 @@ var _battle_counter: int = 0
 var _ship_by_transit: Dictionary = {}
 var _pending_overlay_context: BattleContext
 
+func _dispatch_event(type: StringName, data: Dictionary) -> void:
+	var root: Node = Engine.get_main_loop().root if Engine.get_main_loop() else null
+	if root != null:
+		var bus: Node = root.get_node_or_null("EventBus")
+		if bus != null and bus.has_method("emit_event"):
+			bus.emit_event(type, data)
+
 func _ready() -> void:
 	var state: Node = _game_state()
 	if state != null and state.has_signal("catalog_reset") and not state.catalog_reset.is_connected(_on_catalog_reset):
@@ -100,6 +107,7 @@ func _start_replay(simulation_type: StringName, combat_replay: CombatReplay) -> 
 	## the actual scene instantiation and lifecycle.
 	replay_started.emit(simulation_type, combat_replay)
 	replay_requested.emit(simulation_type, combat_replay)
+	_dispatch_event(&"replay_started", {"simulation_type": simulation_type, "duration": combat_replay.duration if combat_replay != null else 0.0})
 
 func configure(field: Node, navigation: Node, ship_manager: Node, config: TransitConfig = null) -> void:
 	_field = field
@@ -278,6 +286,7 @@ func dispatch_research_ship(source: Planet, destination: Planet) -> ShipBase:
 			break
 	ship.start_flight()
 	ship_dispatched.emit(ship)
+	_dispatch_event(&"ship_dispatched", {"transit_id": ship.transit_id})
 	return ship
 
 func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName, role: StringName = &"") -> ShipBase:
@@ -334,6 +343,7 @@ func dispatch_ship(source: Planet, destination: Planet, ship_id: StringName, rol
 	if not _check_route_engagement(record):
 		ship.start_flight()
 	ship_dispatched.emit(ship)
+	_dispatch_event(&"ship_dispatched", {"transit_id": ship.transit_id})
 	return ship
 
 func _check_route_engagement(record: TransitRecord) -> bool:
@@ -434,6 +444,7 @@ func _on_ship_arrived(ship_node: Node2D) -> void:
 	if ship == null:
 		return
 	ship_arrived.emit(ship)
+	_dispatch_event(&"ship_arrived", {"transit_id": ship.transit_id})
 	var state: Node = _game_state()
 	var record: TransitRecord = state.get_transit(ship.transit_id) if state != null and not String(ship.transit_id).is_empty() else null
 	if ship.mission_role == &"research":

@@ -11,12 +11,52 @@ var _max_entries: int = 200
 var _entries: Array[Dictionary] = []
 
 func _ready() -> void:
-	_connect_game_state.call_deferred()
+	_connect_event_bus.call_deferred()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		export_to_player_log()
 
+func _connect_event_bus() -> void:
+	var bus: Node = get_node_or_null("/root/EventBus")
+	if bus != null and bus.has_signal("game_event"):
+		if not bus.game_event.is_connected(_on_game_event):
+			bus.game_event.connect(_on_game_event)
+		return
+	_connect_game_state()
+
+func _on_game_event(type: StringName, data: Dictionary) -> void:
+	match type:
+		&"faction_changed":
+			_on_faction_changed(data.get("planet_id", &""), data.get("old_faction", &""), data.get("new_faction", &""))
+		&"planet_discovered":
+			_on_planet_discovered(data.get("faction", &""), data.get("planet_id", &""))
+		&"planet_scanned":
+			_on_planet_scanned(data.get("faction", &""), data.get("planet_id", &""), data.get("resource_id", &""), data.get("size_id", &""), data.get("build_slots", 0))
+		&"planet_upgraded":
+			_on_planet_upgraded(data.get("planet_id", &""), data.get("upgrade_id", &""))
+		&"technology_researched":
+			_on_technology_researched(data.get("faction", &""), data.get("technology_id", &""))
+		&"planet_technology_researched":
+			_on_planet_technology_researched(data.get("planet_id", &""), data.get("technology_id", &""))
+		&"resource_generated":
+			_on_resource_generated(data.get("planet_id", &""), data.get("resource_id", &""), data.get("amount", 0))
+		&"resources_collected":
+			_on_resources_collected(data.get("faction", &""), data.get("planet_id", &""), data.get("resource_id", &""), data.get("amount", 0))
+		&"gathering_started":
+			_on_gathering_started(data.get("faction", &""), data.get("planet_id", &""), data.get("workers", 0))
+		&"gathering_withdrawn":
+			_on_gathering_withdrawn(data.get("faction", &""), data.get("planet_id", &""), data.get("workers", 0))
+		&"worker_factory_built":
+			_on_worker_factory_built(data.get("planet_id", &""))
+		&"ship_assembled":
+			_on_ship_assembled(data.get("planet_id", &""), data.get("ship_id", &""))
+		&"ship_launched":
+			_on_ship_launched(data.get("planet_id", &""), data.get("ship_id", &""), data.get("role", &""))
+		&"ship_lost":
+			_on_ship_lost(data.get("planet_id", &""), data.get("ship_id", &""))
+		&"milestone_reached":
+			_on_milestone_reached(data.get("faction", &""), data.get("milestone_id", &""))
 func _connect_game_state() -> void:
 	var state: Node = get_node_or_null("/root/GameState")
 	if state == null:

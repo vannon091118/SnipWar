@@ -143,3 +143,18 @@ func research_planet_technology(faction: StringName, planet_id: StringName, tech
 		planet_technologies[planet_id] = list
 		planet_technology_researched.emit(planet_id, technology_id)
 	return true
+
+func capture_snapshot(data: RunSaveData) -> void:
+	if data == null:
+		return
+	data.researched_techs = researched_techs.duplicate(true)
+	data.planet_technologies = planet_technologies.duplicate(true)
+	data.research_jobs = research_jobs.duplicate(true)
+
+func restore_snapshot(data: RunSaveData) -> void:
+	if data == null:
+		return
+	reset()
+	researched_techs = RunSaveData.restore_dict(data.researched_techs)
+	planet_technologies = RunSaveData.restore_dict(data.planet_technologies)
+	research_jobs = RunSaveData.restore_dict(data.research_jobs)

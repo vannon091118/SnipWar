@@ -23,6 +23,7 @@ mcp/game_state_script=""
 
 [autoload]
 
+EventBus="*res://scripts/state/event_bus.gd"
 GameState="*res://scripts/state/game_state.gd"
 GameCycleManager="*res://scripts/game_cycle_manager.gd"
 SceneDirectorService="*res://scripts/ui/scene_director.gd"

@@ -55,7 +55,7 @@ Entry (real): a, arc, c, composite, data_changes[], date, hash, j, model_id, moo
               — `impulse_category` und `parent_hashes` sind im aktuellen Bestand nicht vorhanden
 data_changes[] (real): [{file, insertions, deletions}]   ← Dateien liegen IN der Chain
 repairs[] (real): [{at_hash, note}]  — 2× Re-Anchoring nach rebase/amend/force-push bereits vorhanden
-Sequenzen: kontiguierlich 1..49 (Stand: nach den drei logisch getrennten Folge-Commits)
+Sequenzen: kontiguierlich 1..50 (Stand: nach dem Runtime-State-Commit)
 ```
 
 ### 3.2 `change_index.json`
@@ -128,7 +128,7 @@ Kanonische Serialisierung (bindend): `json.dumps(obj, sort_keys=True, separators
 
 ### 4.4 Backfill
 
-Backfill = Erzeugung aller Observations über die **komplette** bestehende Chain (aktuell .seq 1..49, allgemein .seq 1..N) mit identischen Regeln wie inkrementell. Gleiche Chain-Eingabe ⇒ identischer `observation_output_hash` (Abnahme Sprint 1).
+Backfill = Erzeugung aller Observations über die **komplette** bestehende Chain (aktuell .seq 1..50, allgemein .seq 1..N) mit identischen Regeln wie inkrementell. Gleiche Chain-Eingabe ⇒ identischer `observation_output_hash` (Abnahme Sprint 1).
 
 ---
 
@@ -365,8 +365,8 @@ G7  Rebuild ≠ Incremental-Result (Zustandsdifferenz)
 **Nach MVP A (dieser Schnitt) existiert:** `narrative_runtime/` (stdlib-only, Python ≥ 3.11) mit
 `observe.py` (§4), `store.py` (§5–6), CLI (§6.5), Testsuite (Idempotenz, Anker/Amend, Rebuild-Determinismus, Atomicity, Purity, Gap, Incremental==Rebuild, Smoke gegen Kopie der echten Chain). Die reale Chain umfasst beim Abnahmelauf 49 Einträge.
 
-**Implementiert:** Relationship-Deltas (§7), begrenzter Character State, konservative Belief-/Memory-Projektionen sowie Threads, Perspectives und Conflicts (Sprint 3–6-Kern). **Noch nicht implementiert:** Bridge (§11, Sprint 7), Candidates/Slice Gate/Queue (Sprint 8–9), X (Sprint 10), Analytics (Sprint 11), Community (Sprint 12), Gate-Implementierung (§13, vor Sprint 7).
+**Implementiert:** Relationship-Deltas (§7), begrenzter Character State, konservative Belief-/Memory-Projektionen, Threads, Perspectives, Conflicts (Sprint 3–6-Kern), read-only Context-Export (§11) und das lokale NARRATIVE_RUNTIME_GATE G1–G7. **Noch nicht implementiert:** produktive DOKI-Prepare-Bridge, Candidates/Slice Gate/Queue (Sprint 8–9), X (Sprint 10), Analytics (Sprint 11), Community (Sprint 12).
 
-**Fahrplan (bindende Reihenfolge):** Observation contract ✅ → SQLite archive ✅ → Backfill ✅ → Rebuild/Idempotency-Tests ✅ → Relationship + State-Deltas ✅ → Beliefs + Memory ✅ → Threads ✅ → Perspectives/Conflicts ✅ → Gate-Implementierung → DOKI context bridge → Social candidates → X adapter → Analytics → Community interactions.
+**Fahrplan (bindende Reihenfolge):** Observation contract ✅ → SQLite archive ✅ → Backfill ✅ → Rebuild/Idempotency-Tests ✅ → Relationship + State-Deltas ✅ → Beliefs + Memory ✅ → Threads ✅ → Perspectives/Conflicts ✅ → Runtime-Gate G1–G7 ✅ → read-only Context-Export ✅ → produktive DOKI-Context-Bridge ⏳ → Social candidates → Slice Gate/Queue → X adapter → Analytics → Community interactions.
 
 **Der wichtigste erste Erfolg (Abnahme von MVP A):** die bestehende Chain lässt sich in die neue Narrative Runtime importieren, der Zustand lässt sich löschen und identisch wiederherstellen, und DOKI bleibt technisch exakt so zuverlässig wie vorher.

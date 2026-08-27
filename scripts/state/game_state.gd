@@ -147,58 +147,153 @@ func _init() -> void:
 	economy_domain.reset_vaults()
 	_session = RunSession.new()
 
+func _dispatch_event(type: StringName, data: Dictionary) -> void:
+	var root: Node = Engine.get_main_loop().root if Engine.get_main_loop() else null
+	if root != null:
+		var bus: Node = root.get_node_or_null("EventBus")
+		if bus != null and bus.has_method("emit_event"):
+			bus.emit_event(type, data)
+
 func _connect_domain_signals() -> void:
-	# Typed signals in Godot 4.x must be forwarded with explicit arg lists, so
-	# each connection lists the source/domain and target/facade pair.
+	# Typed signals in Godot 4.x must be forwarded with explicit arg lists.
+	# Also dispatched into EventBus for decoupled global subscribers.
 	faction_domain.faction_changed.connect(_on_domain_faction_changed)
-	faction_domain.planet_discovered.connect(func(f, p): planet_discovered.emit(f, p))
-	faction_domain.planet_scanned.connect(func(f, p, r, s, b): planet_scanned.emit(f, p, r, s, b))
+	faction_domain.planet_discovered.connect(func(f, p):
+		planet_discovered.emit(f, p)
+		_dispatch_event(&"planet_discovered", {"faction": f, "planet_id": p})
+	)
+	faction_domain.planet_scanned.connect(func(f, p, r, s, b):
+		planet_scanned.emit(f, p, r, s, b)
+		_dispatch_event(&"planet_scanned", {"faction": f, "planet_id": p, "resource_id": r, "size_id": s, "build_slots": b})
+	)
 	faction_domain.milestone_reached.connect(_on_domain_milestone_reached)
 
-	economy_domain.faction_resources_changed.connect(func(f, r, a): faction_resources_changed.emit(f, r, a))
-	economy_domain.credits_changed.connect(func(f, a): credits_changed.emit(f, a))
-	economy_domain.workers_reserved.connect(func(p, j, a): workers_reserved.emit(p, j, a))
-	economy_domain.workers_released.connect(func(p, j, a): workers_released.emit(p, j, a))
-	economy_domain.planet_upgraded.connect(func(p, u): planet_upgraded.emit(p, u))
-	economy_domain.resource_generated.connect(func(p, r, a): resource_generated.emit(p, r, a))
-	economy_domain.resources_collected.connect(func(f, p, r, a): resources_collected.emit(f, p, r, a))
-	economy_domain.gathering_started.connect(func(f, p, w): gathering_started.emit(f, p, w))
-	economy_domain.gathering_withdrawn.connect(func(f, p, w): gathering_withdrawn.emit(f, p, w))
-	economy_domain.worker_factory_built.connect(func(p): worker_factory_built.emit(p))
-	economy_domain.refinery_converted.connect(func(p, f, c, pr): refinery_converted.emit(p, f, c, pr))
-	economy_domain.local_resources_changed.connect(func(p, r, a): local_resources_changed.emit(p, r, a))
-	economy_domain.resource_transferred.connect(func(f, t, r, a): resource_transferred.emit(f, t, r, a))
-	economy_domain.building_placed.connect(func(p, b, q, r): planet_building_placed.emit(p, q, r, b))
-	economy_domain.building_removed.connect(func(p, q, r): planet_building_destroyed.emit(p, q, r))
+	economy_domain.faction_resources_changed.connect(func(f, r, a):
+		faction_resources_changed.emit(f, r, a)
+		_dispatch_event(&"faction_resources_changed", {"faction": f, "resource_id": r, "new_amount": a})
+	)
+	economy_domain.credits_changed.connect(func(f, a):
+		credits_changed.emit(f, a)
+		_dispatch_event(&"credits_changed", {"faction": f, "new_amount": a})
+	)
+	economy_domain.workers_reserved.connect(func(p, j, a):
+		workers_reserved.emit(p, j, a)
+		_dispatch_event(&"workers_reserved", {"planet_id": p, "job_id": j, "amount": a})
+	)
+	economy_domain.workers_released.connect(func(p, j, a):
+		workers_released.emit(p, j, a)
+		_dispatch_event(&"workers_released", {"planet_id": p, "job_id": j, "amount": a})
+	)
+	economy_domain.planet_upgraded.connect(func(p, u):
+		planet_upgraded.emit(p, u)
+		_dispatch_event(&"planet_upgraded", {"planet_id": p, "upgrade_id": u})
+	)
+	economy_domain.resource_generated.connect(func(p, r, a):
+		resource_generated.emit(p, r, a)
+		_dispatch_event(&"resource_generated", {"planet_id": p, "resource_id": r, "amount": a})
+	)
+	economy_domain.resources_collected.connect(func(f, p, r, a):
+		resources_collected.emit(f, p, r, a)
+		_dispatch_event(&"resources_collected", {"faction": f, "planet_id": p, "resource_id": r, "amount": a})
+	)
+	economy_domain.gathering_started.connect(func(f, p, w):
+		gathering_started.emit(f, p, w)
+		_dispatch_event(&"gathering_started", {"faction": f, "planet_id": p, "workers": w})
+	)
+	economy_domain.gathering_withdrawn.connect(func(f, p, w):
+		gathering_withdrawn.emit(f, p, w)
+		_dispatch_event(&"gathering_withdrawn", {"faction": f, "planet_id": p, "workers": w})
+	)
+	economy_domain.worker_factory_built.connect(func(p):
+		worker_factory_built.emit(p)
+		_dispatch_event(&"worker_factory_built", {"planet_id": p})
+	)
+	economy_domain.refinery_converted.connect(func(p, f, c, pr):
+		refinery_converted.emit(p, f, c, pr)
+		_dispatch_event(&"refinery_converted", {"planet_id": p, "faction": f, "consumed": c, "produced": pr})
+	)
+	economy_domain.local_resources_changed.connect(func(p, r, a):
+		local_resources_changed.emit(p, r, a)
+		_dispatch_event(&"local_resources_changed", {"planet_id": p, "resource_id": r, "new_amount": a})
+	)
+	economy_domain.resource_transferred.connect(func(f, t, r, a):
+		resource_transferred.emit(f, t, r, a)
+		_dispatch_event(&"resource_transferred", {"from_planet": f, "to_planet": t, "resource_id": r, "amount": a})
+	)
+	economy_domain.building_placed.connect(func(p, b, q, r):
+		planet_building_placed.emit(p, q, r, b)
+		_dispatch_event(&"planet_building_placed", {"planet_id": p, "building_id": b, "q": q, "r": r})
+	)
+	economy_domain.building_removed.connect(func(p, q, r):
+		planet_building_destroyed.emit(p, q, r)
+		_dispatch_event(&"planet_building_destroyed", {"planet_id": p, "q": q, "r": r})
+	)
 
-	tech_domain.technology_researched.connect(func(f, t): technology_researched.emit(f, t))
-	tech_domain.planet_technology_researched.connect(func(p, t): planet_technology_researched.emit(p, t))
-	tech_domain.research_started.connect(func(f, t, r): research_started.emit(f, t, r))
+	tech_domain.technology_researched.connect(func(f, t):
+		technology_researched.emit(f, t)
+		_dispatch_event(&"technology_researched", {"faction": f, "technology_id": t})
+	)
+	tech_domain.planet_technology_researched.connect(func(p, t):
+		planet_technology_researched.emit(p, t)
+		_dispatch_event(&"planet_technology_researched", {"planet_id": p, "technology_id": t})
+	)
+	tech_domain.research_started.connect(func(f, t, r):
+		research_started.emit(f, t, r)
+		_dispatch_event(&"research_started", {"faction": f, "technology_id": t, "remaining": r})
+	)
 
-	ship_domain.ship_part_purchased.connect(func(p, pt): ship_part_purchased.emit(p, pt))
+	ship_domain.ship_part_purchased.connect(func(p, pt):
+		ship_part_purchased.emit(p, pt)
+		_dispatch_event(&"ship_part_purchased", {"planet_id": p, "part_id": pt})
+	)
 	ship_domain.ship_assembled.connect(_on_ship_assembled_domain)
-	ship_domain.ship_disassembled.connect(func(p, s): ship_disassembled.emit(p, s))
-	ship_domain.ship_launched.connect(func(p, s, r): ship_launched.emit(p, s, r))
-	ship_domain.ship_lost.connect(func(p, s): ship_lost.emit(p, s))
-	ship_domain.ship_build_started.connect(func(p, s, r): ship_build_started.emit(p, s, r))
-	ship_domain.research_ship_task_completed.connect(func(m, p, t): research_ship_task_completed.emit(m, p, t))
-	ship_domain.research_ship_idle.connect(func(s, p): research_ship_idle.emit(s, p))
-	ship_domain.persistent_ship_changed.connect(func(s, status): persistent_ship_changed.emit(s, status))
+	ship_domain.ship_disassembled.connect(func(p, s):
+		ship_disassembled.emit(p, s)
+		_dispatch_event(&"ship_disassembled", {"planet_id": p, "ship_id": s})
+	)
+	ship_domain.ship_launched.connect(func(p, s, r):
+		ship_launched.emit(p, s, r)
+		_dispatch_event(&"ship_launched", {"planet_id": p, "ship_id": s, "role": r})
+	)
+	ship_domain.ship_lost.connect(func(p, s):
+		ship_lost.emit(p, s)
+		_dispatch_event(&"ship_lost", {"planet_id": p, "ship_id": s})
+	)
+	ship_domain.ship_build_started.connect(func(p, s, r):
+		ship_build_started.emit(p, s, r)
+		_dispatch_event(&"ship_build_started", {"planet_id": p, "ship_id": s, "remaining": r})
+	)
+	ship_domain.research_ship_task_completed.connect(func(m, p, t):
+		research_ship_task_completed.emit(m, p, t)
+		_dispatch_event(&"research_ship_task_completed", {"mission_id": m, "target_planet_id": p, "task_type": t})
+	)
+	ship_domain.research_ship_idle.connect(func(s, p):
+		research_ship_idle.emit(s, p)
+		_dispatch_event(&"research_ship_idle", {"ship_id": s, "planet_id": p})
+	)
+	ship_domain.persistent_ship_changed.connect(func(s, status):
+		persistent_ship_changed.emit(s, status)
+		_dispatch_event(&"persistent_ship_changed", {"ship_id": s, "status": status})
+	)
 
 func _on_ship_assembled_domain(planet_id: StringName, ship_id: StringName) -> void:
 	economy_domain.release_workers(planet_id, ship_id)
 	ship_assembled.emit(planet_id, ship_id)
+	_dispatch_event(&"ship_assembled", {"planet_id": planet_id, "ship_id": ship_id})
 	mark_milestone(faction_of(planet_id), &"first_ship")
 
 func _on_domain_faction_changed(planet_id: StringName, old_faction: StringName, new_faction: StringName) -> void:
 	faction_changed.emit(planet_id, old_faction, new_faction)
+	_dispatch_event(&"faction_changed", {"planet_id": planet_id, "old_faction": old_faction, "new_faction": new_faction})
 	if new_faction != FACTION_NEUTRAL and get_ownership_count(new_faction) >= 2:
 		mark_milestone(new_faction, &"second_planet")
 
 func _on_domain_milestone_reached(faction: StringName, milestone_id: StringName) -> void:
 	milestone_reached.emit(faction, milestone_id)
+	_dispatch_event(&"milestone_reached", {"faction": faction, "milestone_id": milestone_id})
 	if faction == FACTION_PLAYER and milestone_id == &"second_planet":
 		mid_game_started.emit(faction)
+		_dispatch_event(&"mid_game_started", {"faction": faction})
 
 func reset_from_catalog(catalog: PlanetCatalog) -> void:
 	faction_domain.reset(catalog)
@@ -930,44 +1025,11 @@ func snapshot_run() -> RunSaveData:
 	var data := RunSaveData.new()
 	data.save_version = RunSaveData.SAVE_VERSION
 	data.session = session().copy()
-	# Faction
-	data.ownership = faction_domain.ownership.duplicate(true)
-	data.homeworlds = faction_domain.homeworlds.duplicate(true)
-	data.starting_workers = faction_domain.starting_workers.duplicate(true)
-	data.known_planets = faction_domain.known_planets.duplicate(true)
-	data.scanned_planets = faction_domain.scanned_planets.duplicate(true)
-	data.scan_intel = faction_domain.scan_intel.duplicate(true)
-	data.milestones = faction_domain.milestones.duplicate(true)
-	# Economy
-	data.faction_vaults = economy_domain.faction_vaults.duplicate(true)
-	data.faction_credits = economy_domain.faction_credits.duplicate(true)
-	data.worker_reservations = economy_domain.worker_reservations.duplicate(true)
-	data.upgrade_build_jobs = economy_domain.upgrade_build_jobs.duplicate(true)
-	data.planet_resources = economy_domain.planet_resources.duplicate(true)
-	data.planet_upgrades = economy_domain.planet_upgrades.duplicate(true)
-	data.worker_factories = economy_domain.worker_factories.duplicate(true)
-	data.gathering_workers = economy_domain.gathering_workers.duplicate(true)
-	data.gathering_sources = economy_domain.gathering_sources.duplicate(true)
-	data.local_vaults = economy_domain.local_vaults.duplicate(true)
-	data.trade_routes = economy_domain.trade_routes.duplicate(true)
-	data.planet_buildings = economy_domain.planet_buildings.duplicate(true)
-	data.building_jobs = economy_domain.building_jobs.duplicate(true)
-	data.local_seeded_planets = economy_domain._local_seeded_planets.duplicate(true)
-	data.worker_transport_records = economy_domain.worker_transport_records.duplicate(true)
-	data.next_trade_route_index = economy_domain._next_trade_route_index
-	data.next_worker_transport_index = economy_domain._next_worker_transport_index
-	# Tech
-	data.researched_techs = tech_domain.researched_techs.duplicate(true)
-	data.planet_technologies = tech_domain.planet_technologies.duplicate(true)
-	data.research_jobs = tech_domain.research_jobs.duplicate(true)
-	# Ship
-	data.ship_part_inventory = ship_domain.ship_part_inventory.duplicate(true)
-	data.ship_assemblies = ship_domain.ship_assemblies.duplicate(true)
-	data.ship_build_jobs = ship_domain.ship_build_jobs.duplicate(true)
-	data.persistent_ships = _snapshot_persistent_ships()
-	data.research_missions = _snapshot_research_missions()
-	data.next_ship_index = ship_domain.next_ship_index
-	data.next_research_mission_index = ship_domain.next_research_mission_index
+	faction_domain.capture_snapshot(data)
+	economy_domain.capture_snapshot(data)
+	tech_domain.capture_snapshot(data)
+	ship_domain.capture_snapshot(data)
+
 	# Transits
 	for record_value in _transit_records.values():
 		var record: TransitRecord = record_value as TransitRecord
@@ -999,48 +1061,12 @@ func restore_run(data: RunSaveData) -> bool:
 		_run_scenario_id = &""
 		_run_layout_seed = 0
 		_run_infinite_world = false
-	# Faction
-	faction_domain.reset_infinite()
-	faction_domain.ownership = _restore_dict(data.ownership)
-	faction_domain.homeworlds = _restore_dict(data.homeworlds)
-	faction_domain.starting_workers = _restore_dict(data.starting_workers)
-	faction_domain.known_planets = _restore_dict(data.known_planets)
-	faction_domain.scanned_planets = _restore_dict(data.scanned_planets)
-	faction_domain.scan_intel = _restore_dict(data.scan_intel)
-	faction_domain.milestones = _restore_dict(data.milestones)
-	# Economy
-	economy_domain.reset()
-	economy_domain.faction_vaults = _restore_dict(data.faction_vaults)
-	economy_domain.faction_credits = _restore_dict(data.faction_credits)
-	economy_domain.worker_reservations = _restore_dict(data.worker_reservations)
-	economy_domain.upgrade_build_jobs = _restore_dict(data.upgrade_build_jobs)
-	economy_domain.planet_resources = _restore_dict(data.planet_resources)
-	economy_domain.planet_upgrades = _restore_dict(data.planet_upgrades)
-	economy_domain.worker_factories = _restore_dict(data.worker_factories)
-	economy_domain.gathering_workers = _restore_dict(data.gathering_workers)
-	economy_domain.gathering_sources = _restore_dict(data.gathering_sources)
-	economy_domain.local_vaults = _restore_dict(data.local_vaults)
-	economy_domain.trade_routes = _restore_dict(data.trade_routes)
-	economy_domain.planet_buildings = _restore_dict(data.planet_buildings)
-	economy_domain.building_jobs = _restore_dict(data.building_jobs)
-	economy_domain._local_seeded_planets = _restore_dict(data.local_seeded_planets)
-	economy_domain.worker_transport_records = _restore_dict(data.worker_transport_records)
-	economy_domain._next_trade_route_index = data.next_trade_route_index
-	economy_domain._next_worker_transport_index = data.next_worker_transport_index
-	# Tech
-	tech_domain.reset()
-	tech_domain.researched_techs = _restore_dict(data.researched_techs)
-	tech_domain.planet_technologies = _restore_dict(data.planet_technologies)
-	tech_domain.research_jobs = _restore_dict(data.research_jobs)
-	# Ship
-	ship_domain.reset()
-	ship_domain.ship_part_inventory = _restore_dict(data.ship_part_inventory)
-	ship_domain.ship_assemblies = _restore_dict(data.ship_assemblies)
-	ship_domain.ship_build_jobs = _restore_dict(data.ship_build_jobs)
-	_restore_persistent_ships(data.persistent_ships)
-	_restore_research_missions(data.research_missions)
-	ship_domain.next_ship_index = data.next_ship_index
-	ship_domain.next_research_mission_index = data.next_research_mission_index
+
+	faction_domain.restore_snapshot(data)
+	economy_domain.restore_snapshot(data)
+	tech_domain.restore_snapshot(data)
+	ship_domain.restore_snapshot(data)
+
 	# Transits
 	_transit_records.clear()
 	for record in data.transits:
@@ -1110,95 +1136,11 @@ func _find_node_with_method(node: Node, method: String, class_hint: String) -> N
 			return found
 	return null
 
-func _snapshot_persistent_ships() -> Dictionary:
-	var result: Dictionary = {}
-	for ship_id in ship_domain.persistent_ships:
-		var record: ShipDomain.PersistentShipRecord = ship_domain.persistent_ships[ship_id] as ShipDomain.PersistentShipRecord
-		if record == null:
-			continue
-		result[ship_id] = {
-			"faction": record.faction,
-			"mission_role": record.mission_role,
-			"current_planet_id": record.current_planet_id,
-			"status": record.status,
-			"active_mission_id": record.active_mission_id,
-			"fleet": record.fleet.copy() if record.fleet != null else null,
-		}
-	return result
-
-func _snapshot_research_missions() -> Dictionary:
-	var result: Dictionary = {}
-	for mission in ship_domain.research_missions:
-		if mission == null:
-			continue
-		result[String(mission.mission_id)] = {
-			"mission_id": mission.mission_id,
-			"target_planet_id": mission.target_planet_id,
-			"task_type": mission.task_type,
-			"duration": mission.duration,
-			"remaining": mission.remaining,
-			"status": mission.status,
-		}
-	return result
-
-func _restore_persistent_ships(source: Dictionary) -> void:
-	ship_domain.persistent_ships.clear()
-	for key in source:
-		var ship_id := StringName(key)
-		var entry: Dictionary = source[key] as Dictionary
-		if entry == null:
-			continue
-		var record := ShipDomain.PersistentShipRecord.new()
-		record.ship_id = ship_id
-		record.faction = StringName(entry.get("faction", &""))
-		record.mission_role = StringName(entry.get("mission_role", &""))
-		record.current_planet_id = StringName(entry.get("current_planet_id", &""))
-		record.status = StringName(entry.get("status", &"idle"))
-		record.active_mission_id = StringName(entry.get("active_mission_id", &""))
-		record.fleet = entry.get("fleet") as FleetSnapshot
-		ship_domain.persistent_ships[ship_id] = record
-
-func _restore_research_missions(source: Dictionary) -> void:
-	ship_domain.research_missions.clear()
-	for key in source:
-		var entry: Dictionary = source[key] as Dictionary
-		if entry == null:
-			continue
-		var mission := ShipDomain.ResearchMission.new()
-		mission.mission_id = StringName(entry.get("mission_id", &""))
-		mission.target_planet_id = StringName(entry.get("target_planet_id", &""))
-		mission.task_type = StringName(entry.get("task_type", &"scan"))
-		mission.duration = float(entry.get("duration", 1.0))
-		mission.remaining = float(entry.get("remaining", mission.duration))
-		mission.status = StringName(entry.get("status", &"queued"))
-		ship_domain.research_missions.append(mission)
-
-## Deep-restores a dictionary, converting String keys back to StringName so
-## domain lookups behave exactly like the pre-save state. Int keys stay ints.
 func _restore_dict(source: Dictionary) -> Dictionary:
-	var result := {}
-	for key in source:
-		var new_key: Variant = key
-		if key is String:
-			new_key = StringName(key)
-		var value: Variant = source[key]
-		if value is Dictionary:
-			value = _restore_dict(value)
-		elif value is Array:
-			value = _restore_array(value)
-		result[new_key] = value
-	return result
+	return RunSaveData.restore_dict(source)
 
 func _restore_array(source: Array) -> Array:
-	var result := []
-	for item in source:
-		if item is Dictionary:
-			result.append(_restore_dict(item))
-		elif item is Array:
-			result.append(_restore_array(item))
-		else:
-			result.append(item)
-	return result
+	return RunSaveData.restore_array(source)
 
 # --- VALIDATION HELPERS ---
 func validate() -> PackedStringArray:

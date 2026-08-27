@@ -6,6 +6,12 @@ extends RefCounted
 ## static methods so SeededLayout, ChunkCoordinator and NavigationField can all
 ## consume it without node coupling. Fully seed-deterministic.
 
+class Anchor extends RefCounted:
+	var position: Vector2 = Vector2.ZERO
+	var radius: float = 100.0
+	var flavor: SectorFlavor
+	var seed_offset: int = 0
+
 const ROLE_CORE := &"core"
 const ROLE_MID := &"mid"
 const ROLE_EDGE := &"edge"
@@ -18,8 +24,8 @@ const EDGE_VOID := &"void_edge"
 ## Generates a deterministic set of sector anchors via Poisson-disk sampling.
 ## sector_count <= 0 returns an empty array (sector system disabled). When
 ## base_radius <= 0 it is derived from world size + sector count.
-static func generate_anchors(seed_value: int, sector_count: int, world_size: Vector2, flavors: Array[SectorFlavor], base_radius: float = -1.0) -> Array[SectorAnchor]:
-	var anchors: Array[SectorAnchor] = []
+static func generate_anchors(seed_value: int, sector_count: int, world_size: Vector2, flavors: Array[SectorFlavor], base_radius: float = -1.0) -> Array[Anchor]:
+	var anchors: Array[Anchor] = []
 	if sector_count <= 0 or world_size.x <= 0.0 or world_size.y <= 0.0:
 		return anchors
 	var effective_flavors: Array[SectorFlavor] = []
@@ -37,7 +43,7 @@ static func generate_anchors(seed_value: int, sector_count: int, world_size: Vec
 	var positions := _poisson_disk_sample(seed_value, world_size, min_separation)
 	var count := mini(sector_count, positions.size())
 	for index in range(count):
-		var anchor := SectorAnchor.new()
+		var anchor := Anchor.new()
 		anchor.position = positions[index]
 		anchor.flavor = effective_flavors[index % effective_flavors.size()]
 		anchor.seed_offset = rng.randi()
@@ -48,7 +54,7 @@ static func generate_anchors(seed_value: int, sector_count: int, world_size: Vec
 ## Classifies a world position against the anchors. Returns
 ## {sector_index, sector_id, role, depth, radius, flavor}. depth 0.0 = center,
 ## > 1.0 = outside every anchor (void / inter-sector space).
-static func classify_position(pos: Vector2, anchors: Array[SectorAnchor], noise: FastNoiseLite = null) -> Dictionary:
+static func classify_position(pos: Vector2, anchors: Array, noise: FastNoiseLite = null) -> Dictionary:
 	var result := {
 		"sector_index": -1,
 		"sector_id": &"",
@@ -60,7 +66,7 @@ static func classify_position(pos: Vector2, anchors: Array[SectorAnchor], noise:
 	var best_index := -1
 	var best_score := -INF
 	for index in range(anchors.size()):
-		var candidate_anchor: SectorAnchor = anchors[index]
+		var candidate_anchor: Anchor = anchors[index] as Anchor
 		if candidate_anchor == null:
 			continue
 		var dist := pos.distance_to(candidate_anchor.position)
@@ -71,7 +77,7 @@ static func classify_position(pos: Vector2, anchors: Array[SectorAnchor], noise:
 	if best_index < 0:
 		return result
 
-	var anchor: SectorAnchor = anchors[best_index]
+	var anchor: Anchor = anchors[best_index] as Anchor
 
 	var radius := maxf(anchor.radius, 0.001)
 	var noisy_radius := radius

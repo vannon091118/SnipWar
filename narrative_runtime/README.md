@@ -13,6 +13,7 @@ python -m narrative_runtime verify
 python -m narrative_runtime status
 python -m narrative_runtime derive
 python -m narrative_runtime context
+python -m narrative_runtime.gate_cli --root .
 ```
 
 `derive` reports the derived row counts. Exit codes are 0 for success, 1 for
@@ -47,5 +48,7 @@ facts. The `context` command exports a read-only `narrative_context/v1` JSON bri
 when SQLite exactly verifies against the current chain and change index. Missing,
 empty, or stale state returns an explicit unavailable response, allowing DOKI to
 use its existing fallback without changing Composite or narrator selection.
+The local NARRATIVE_RUNTIME_GATE validates G1–G7: stdlib-only imports, observation purity, reproducible IDs, contiguous chains, no source-truth writes, idempotent imports, and rebuild/incremental equality. Run it with `python -m narrative_runtime.gate_cli --root .`.
+
 The runtime does not yet implement social candidates, X, analytics, or community
 features. Threads, perspectives, and conflict projections are deterministic local state.

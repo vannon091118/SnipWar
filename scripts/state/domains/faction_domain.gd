@@ -213,3 +213,26 @@ func get_milestones(faction: StringName) -> Dictionary:
 	if not milestones.has(faction):
 		return {}
 	return (milestones[faction] as Dictionary).duplicate()
+
+func capture_snapshot(data: RunSaveData) -> void:
+	if data == null:
+		return
+	data.ownership = ownership.duplicate(true)
+	data.homeworlds = homeworlds.duplicate(true)
+	data.starting_workers = starting_workers.duplicate(true)
+	data.known_planets = known_planets.duplicate(true)
+	data.scanned_planets = scanned_planets.duplicate(true)
+	data.scan_intel = scan_intel.duplicate(true)
+	data.milestones = milestones.duplicate(true)
+
+func restore_snapshot(data: RunSaveData) -> void:
+	if data == null:
+		return
+	reset_infinite()
+	ownership = RunSaveData.restore_dict(data.ownership)
+	homeworlds = RunSaveData.restore_dict(data.homeworlds)
+	starting_workers = RunSaveData.restore_dict(data.starting_workers)
+	known_planets = RunSaveData.restore_dict(data.known_planets)
+	scanned_planets = RunSaveData.restore_dict(data.scanned_planets)
+	scan_intel = RunSaveData.restore_dict(data.scan_intel)
+	milestones = RunSaveData.restore_dict(data.milestones)
