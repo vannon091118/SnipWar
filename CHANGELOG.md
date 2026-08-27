@@ -771,3 +771,24 @@ Narrative Runtime Append-Determinismus korrigieren: look-ahead-freie ChainObserv
 - narrative_runtime/observe.py: Implementiert und integriert (F-141).
 - scripts/doki/NARRATIVE_ENGINE_DESIGN.md: Implementiert und integriert (F-145).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 23:00:00 — p47 · c47j54n5a9p26 · Squizzle · neugierig
+
+**Squizzles Fall: MCP-Capture-Vertrag und deterministische… — nach Spark**
+
+MCP-Capture-Vertrag und deterministische Vision-/UX-Testabdeckung integrieren
+
+- CHANGELOG.md: Test-Assets ergänzt (F-002).
+- addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd: Test-Assets ergänzt (F-044).
+- addons/gdscript_mcp/runtime/tools/vision/mcp_vision.gd: Test-Assets ergänzt (F-147).
+- addons/gdscript_mcp/runtime/tools/vision/mcp_vision_capture.gd: Test-Assets ergänzt (F-148).
+- change_index.json: Test-Assets ergänzt (F-003).
+- narrative_chain.json: Test-Assets ergänzt (F-004).
+- scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).
+- scripts/preflight/constraint_mcp_capture_contract.gd: Test-Assets ergänzt (F-149).
+- scripts/preflight/constraint_mcp_capture_contract.gd.uid: Test-Assets ergänzt (F-150).
+- scripts/testing/chain_manifest_gate.gd.uid: Test-Assets ergänzt (F-151).
+- scripts/testing/chain_validate_entry_test.gd.uid: Test-Assets ergänzt (F-152).
+- scripts/testing/compile_gate.gd.uid: Test-Assets ergänzt (F-153).
+- scripts/testing/mcp_capture_entry_test.gd: Test-Assets ergänzt (F-154).
+- scripts/testing/mcp_capture_entry_test.gd.uid: Test-Assets ergänzt (F-155).

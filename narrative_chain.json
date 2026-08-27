@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-27 20:46:18 +0200",
-		"hash": "8d9d9f4ad24a1baba88e4c08fe114bd1767178e9",
-		"subject": "Spark entdeckt: Narrative Runtime Append-Determinismusâ€¦ â€” nach Ghost"
+		"date": "2026-08-27 20:54:17 +0200",
+		"hash": "4885a0249af70c3329eb9da047711d4b53fac7dd",
+		"subject": "Squizzles Fall: MCP-Capture-Vertrag und deterministischeâ€¦ â€” nach Spark"
 	},
 	"entries": [
 		{
@@ -3595,6 +3595,98 @@
 			"seq": 46,
 			"subject": "Spark entdeckt: Narrative Runtime Append-Determinismus… — nach Ghost",
 			"summary": "Warum war dieser Nachtrag unvermeidlich? Weil die erste Runtime zwar brav die Chain bis zum aktuellen Ende rekonstruierte, dabei aber noch nach vorne blickte — und ein Archiv, das beim nächsten Ein..."
+		},
+		{
+			"a": 9,
+			"arc": "a20",
+			"c": 47,
+			"composite": "c47j54n5a9p26",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 18.0,
+					"file": "addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+					"insertions": 22.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 18.0,
+					"file": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision_capture.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "narrative_chain.json",
+					"insertions": 59.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_mcp_capture_contract.gd",
+					"insertions": 121.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_mcp_capture_contract.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/chain_manifest_gate.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/chain_validate_entry_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/compile_gate.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/mcp_capture_entry_test.gd",
+					"insertions": 96.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/mcp_capture_entry_test.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 23:00:00",
+			"hash": "4885a0249af70c3329eb9da047711d4b53fac7dd",
+			"j": 54,
+			"model_id": "claude-sonnet-4",
+			"mood": "neugierig",
+			"n": 5,
+			"narrator": "Squizzle",
+			"p": 26,
+			"p_id": 47,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Spark",
+			"seq": 47,
+			"subject": "Squizzles Fall: MCP-Capture-Vertrag und deterministische… — nach Spark",
+			"summary": "Warum war dieser Commit unvermeidlich? Weil die Spuren im Capture-Pfad nicht länger zusammenpassen durften. Aha — der Verdächtige war kein einzelner Screenshot, sondern die Lücke zwischen asynchron..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
@@ -3619,6 +3711,10 @@
 		},
 		{
 			"at_hash": "8d9d9f4ad24a1baba88e4c08fe114bd1767178e9",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		},
+		{
+			"at_hash": "4885a0249af70c3329eb9da047711d4b53fac7dd",
 			"note": "Anker nach rebase/amend/force-push neu verankert."
 		}
 	]

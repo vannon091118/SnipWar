@@ -1,10 +1,11 @@
-[gd_resource type="Resource" script_class="PlanetUpgradeDefinition" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="PlanetUpgradeDefinition" format=3 uid="uid://b5qf03obu377i"]
 
-[ext_resource type="Script" path="res://scripts/config/planet_upgrade_definition.gd" id="1_def"]
-[ext_resource type="Script" path="res://scripts/config/trait_definition.gd" id="2_trait_script"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_automated_mine_l1.svg" id="3_asset_l1"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_automated_mine_l2.svg" id="4_asset_l2"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_automated_mine_l3.svg" id="5_asset_l3"]
+[ext_resource type="Script" uid="uid://c46aw7c040kwr" path="res://scripts/config/planet_upgrade_definition.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://cfm1ao0dkefra" path="res://scripts/config/effect_definition.gd" id="2_p3e22"]
+[ext_resource type="Script" uid="uid://dfbxa4ac73vfm" path="res://scripts/config/trait_definition.gd" id="2_trait_script"]
+[ext_resource type="Texture2D" uid="uid://bcb4qiijs4mhn" path="res://assets/objects/structures/structure_automated_mine_l1.svg" id="3_asset_l1"]
+[ext_resource type="Texture2D" uid="uid://bxcfa1xabi63i" path="res://assets/objects/structures/structure_automated_mine_l2.svg" id="4_asset_l2"]
+[ext_resource type="Texture2D" uid="uid://b78mjfr1k6i5d" path="res://assets/objects/structures/structure_automated_mine_l3.svg" id="5_asset_l3"]
 
 [sub_resource type="Resource" id="Trait_automated_mine"]
 script = ExtResource("2_trait_script")
@@ -20,12 +21,10 @@ script = ExtResource("1_def")
 id = &"automated_mine"
 display_name = "Automatisiertes Bergwerk"
 description = "Ein automatisiertes Bergwerk steigert die Rohstoffproduktion des Planeten."
-branch = &"economy"
 required_technology_id = &"automated_refinery"
 cost_resource = &"material"
 cost_amount = 20
-workers_required = 1
 trait_definition = SubResource("Trait_automated_mine")
 visual_asset = ExtResource("3_asset_l1")
-visual_assets_by_tier = [ExtResource("3_asset_l1"), ExtResource("4_asset_l2"), ExtResource("5_asset_l3")]
+visual_assets_by_tier = Array[Texture2D]([ExtResource("3_asset_l1"), ExtResource("4_asset_l2"), ExtResource("5_asset_l3")])
 transformer_tint_mode = &"resource"

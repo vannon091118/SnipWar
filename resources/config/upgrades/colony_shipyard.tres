@@ -2,9 +2,10 @@
 
 [ext_resource type="Script" uid="uid://c46aw7c040kwr" path="res://scripts/config/planet_upgrade_definition.gd" id="1_def"]
 [ext_resource type="Script" uid="uid://dfbxa4ac73vfm" path="res://scripts/config/trait_definition.gd" id="2_trait_script"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_colony_shipyard_l1.svg" id="3_asset_l1"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_colony_shipyard_l2.svg" id="4_asset_l2"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_colony_shipyard_l3.svg" id="5_asset_l3"]
+[ext_resource type="Script" uid="uid://cfm1ao0dkefra" path="res://scripts/config/effect_definition.gd" id="2_v2cqo"]
+[ext_resource type="Texture2D" uid="uid://sfs1hjqh6wul" path="res://assets/objects/structures/structure_colony_shipyard_l1.svg" id="3_asset_l1"]
+[ext_resource type="Texture2D" uid="uid://cpio5hhjwjnqk" path="res://assets/objects/structures/structure_colony_shipyard_l2.svg" id="4_asset_l2"]
+[ext_resource type="Texture2D" uid="uid://c35gkpjoifjy3" path="res://assets/objects/structures/structure_colony_shipyard_l3.svg" id="5_asset_l3"]
 
 [sub_resource type="Resource" id="Trait_colony_shipyard"]
 script = ExtResource("2_trait_script")
@@ -29,4 +30,4 @@ cost_amount = 25
 workers_required = 2
 trait_definition = SubResource("Trait_colony_shipyard")
 visual_asset = ExtResource("3_asset_l1")
-visual_assets_by_tier = [ExtResource("3_asset_l1"), ExtResource("4_asset_l2"), ExtResource("5_asset_l3")]
+visual_assets_by_tier = Array[Texture2D]([ExtResource("3_asset_l1"), ExtResource("4_asset_l2"), ExtResource("5_asset_l3")])

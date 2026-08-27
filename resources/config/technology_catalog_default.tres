@@ -1,108 +1,94 @@
-[gd_resource type="Resource" script_class="TechnologyCatalog" load_steps=25 format=3]
+[gd_resource type="Resource" script_class="TechnologyCatalog" format=3 uid="uid://88ty8h5pxn4c"]
 
-[ext_resource type="Script" path="res://scripts/config/technology_catalog.gd" id="1_catalog"]
-[ext_resource type="Script" path="res://scripts/config/technology_definition.gd" id="2_definition"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/hulls/hull_t1_scout.svg" id="3_scout_hull"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scanner_t1_dish.svg" id="4_scanner"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/hulls/hull_t3_dreadnought.svg" id="5_mech"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_02_ocean_v2.svg" id="6_planet_survey"]
-[ext_resource type="Texture2D" path="res://assets/objects/planets/planet_04_violet_v3.svg" id="7_planet_extraction"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_shipyard_l1.svg" id="8_shipyard"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drive_t2_warp_gold.svg" id="9_advanced_drive"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_reinforced.svg" id="10_heavy_armor"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scanner_t2_phased.svg" id="11_scanner_t2"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/module_sensor.svg" id="12_sensor_array"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_automated_mine_l1.svg" id="13_automated_mine"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_trade_hub_l1.svg" id="14_trade_hub"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/repair_drone_t1.svg" id="15_repair_t1"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/repair_drone_t2.svg" id="16_repair_t2"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/repair_drone_t3.svg" id="17_repair_t3"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/combat_drone_t1.svg" id="18_combat_t1"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/combat_drone_t2.svg" id="19_combat_t2"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scan_drone_t1.svg" id="20_scan_t1"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/scan_drone_t2.svg" id="21_scan_t2"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drone_vision.svg" id="22_vision"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drone_booster_t1.svg" id="23_booster_t1"]
-[ext_resource type="Texture2D" path="res://assets/objects/ships/components/drone_booster_t2.svg" id="24_booster_t2"]
+[ext_resource type="Script" uid="uid://cqccjp8t21yek" path="res://scripts/config/technology_catalog.gd" id="1_catalog"]
+[ext_resource type="Script" uid="uid://btn0esl4gltrr" path="res://scripts/config/technology_definition.gd" id="2_definition"]
+[ext_resource type="Texture2D" uid="uid://bsm8gqq61qxct" path="res://assets/objects/ships/hulls/hull_t1_scout.svg" id="3_scout_hull"]
+[ext_resource type="Texture2D" uid="uid://dxai7pi505mbo" path="res://assets/objects/ships/components/scanner_t1_dish.svg" id="4_scanner"]
+[ext_resource type="Texture2D" uid="uid://d0mx3s12btbhp" path="res://assets/objects/ships/hulls/hull_t3_dreadnought.svg" id="5_mech"]
+[ext_resource type="Texture2D" uid="uid://bv1pstvl8aayb" path="res://assets/objects/planets/planet_02_ocean_v2.svg" id="6_planet_survey"]
+[ext_resource type="Texture2D" uid="uid://c6mty68o6xgcq" path="res://assets/objects/planets/planet_04_violet_v3.svg" id="7_planet_extraction"]
+[ext_resource type="Texture2D" uid="uid://cwosdw6q1l8m0" path="res://assets/objects/structures/structure_shipyard_l1.svg" id="8_shipyard"]
+[ext_resource type="Texture2D" uid="uid://ce4a4emv72aq1" path="res://assets/objects/ships/components/drive_t2_warp_gold.svg" id="9_advanced_drive"]
+[ext_resource type="Texture2D" uid="uid://b8ufhfdic6wgi" path="res://assets/objects/ships/components/module_reinforced.svg" id="10_heavy_armor"]
+[ext_resource type="Texture2D" uid="uid://bdo51815dpjru" path="res://assets/objects/ships/components/scanner_t2_phased.svg" id="11_scanner_t2"]
+[ext_resource type="Texture2D" uid="uid://cblvvgahp488j" path="res://assets/objects/ships/components/module_sensor.svg" id="12_sensor_array"]
+[ext_resource type="Texture2D" uid="uid://bcb4qiijs4mhn" path="res://assets/objects/structures/structure_automated_mine_l1.svg" id="13_automated_mine"]
+[ext_resource type="Texture2D" uid="uid://p2vhc2ja1hwv" path="res://assets/objects/structures/structure_trade_hub_l1.svg" id="14_trade_hub"]
+[ext_resource type="Texture2D" uid="uid://dthgx0bww1ipt" path="res://assets/objects/ships/components/repair_drone_t1.svg" id="15_repair_t1"]
+[ext_resource type="Texture2D" uid="uid://2ygl5guhgjc2" path="res://assets/objects/ships/components/repair_drone_t2.svg" id="16_repair_t2"]
+[ext_resource type="Texture2D" uid="uid://g7lxrteitgrd" path="res://assets/objects/ships/components/repair_drone_t3.svg" id="17_repair_t3"]
+[ext_resource type="Texture2D" uid="uid://d1agodhb32x2i" path="res://assets/objects/ships/components/combat_drone_t1.svg" id="18_combat_t1"]
+[ext_resource type="Texture2D" uid="uid://b3sxf3cnjjyl3" path="res://assets/objects/ships/components/combat_drone_t2.svg" id="19_combat_t2"]
+[ext_resource type="Texture2D" uid="uid://b102i84d1gyni" path="res://assets/objects/ships/components/scan_drone_t1.svg" id="20_scan_t1"]
+[ext_resource type="Texture2D" uid="uid://cxacw38e1nb15" path="res://assets/objects/ships/components/scan_drone_t2.svg" id="21_scan_t2"]
+[ext_resource type="Texture2D" uid="uid://d2wbovvq88uot" path="res://assets/objects/ships/components/drone_vision.svg" id="22_vision"]
+[ext_resource type="Texture2D" uid="uid://b4e4jafiwiliy" path="res://assets/objects/ships/components/drone_booster_t1.svg" id="23_booster_t1"]
+[ext_resource type="Texture2D" uid="uid://b0l77dui7hd75" path="res://assets/objects/ships/components/drone_booster_t2.svg" id="24_booster_t2"]
 
 [sub_resource type="Resource" id="Tech_shipyard_construction"]
 script = ExtResource("2_definition")
 id = &"shipyard_construction"
-category = &"ships"
 display_name = "Orbitales Werft-Design"
 description = "Erlaubt den Bau einer ersten orbitalen Werft am eigenen Startplaneten."
-cost_resource = &"energy"
-cost_amount = 10
+strategic_role = &"infrastructure"
 visual_asset = ExtResource("8_shipyard")
 effect_id = &"shipyard_construction"
-strategic_role = &"infrastructure"
 mechanic_description = "Mechanik: Der Ausbau Orbitale Werft wird im Planetennetz freigeschaltet."
-production_multiplier = 1.0
 research_time = 15.0
 
 [sub_resource type="Resource" id="Tech_scout_hull"]
 script = ExtResource("2_definition")
 id = &"scout_hull"
-category = &"ships"
 display_name = "Aufklärungsrumpf T1"
 description = "Freischaltung eines leichten Tier-1-Scout-Schiffes mit Scanner-Aufhängung."
 cost_resource = &"material"
 cost_amount = 15
+strategic_role = &"exploration"
 prerequisite_tech_id = &"shipyard_construction"
 visual_asset = ExtResource("3_scout_hull")
 effect_id = &"scout_hull"
-strategic_role = &"exploration"
 mechanic_description = "Mechanik: ShipManager erlaubt danach den Bau eines Tier-1-Scout-Schiffs."
-production_multiplier = 1.0
 research_time = 16.0
 
 [sub_resource type="Resource" id="Tech_scanner_drone"]
 script = ExtResource("2_definition")
 id = &"scanner_drone"
-category = &"ships"
 display_name = "Scanner-Drohne T1"
 description = "Montierbare Scanner-Drohne; entdeckt unbekannte Planeten bei Ankunft."
-cost_resource = &"energy"
-cost_amount = 10
+strategic_role = &"exploration"
 prerequisite_tech_id = &"scout_hull"
 visual_asset = ExtResource("4_scanner")
 effect_id = &"scanner_drone"
-strategic_role = &"exploration"
 mechanic_description = "Mechanik: Das persistente Forschungsschiff scannt bei Abschluss einer Forschungsmission den Zielplaneten."
-production_multiplier = 1.0
 research_time = 15.0
 
 [sub_resource type="Resource" id="Tech_weapon_systems"]
 script = ExtResource("2_definition")
 id = &"weapon_systems"
-category = &"ships"
 display_name = "Waffensysteme T1"
 description = "Schaltet Bordwaffen frei; aus einem Montageauftrag wird ein militärisches Schiff."
 cost_resource = &"volatile"
 cost_amount = 12
+strategic_role = &"combat"
 prerequisite_tech_id = &"shipyard_construction"
 visual_asset = ExtResource("5_mech")
 effect_id = &"weapon_systems"
-strategic_role = &"combat"
 mechanic_description = "Mechanik: Waffenbauteile und der Tier-2-Mehrzweckrumpf werden in der Schiffswerft kaufbar."
-production_multiplier = 1.0
 research_time = 18.0
 
 [sub_resource type="Resource" id="Tech_worker_automation"]
 script = ExtResource("2_definition")
 id = &"worker_automation"
-category = &"ships"
 display_name = "Werft-Arbeiterautomatik"
 description = "Nach dem ersten Scan kann die Werft einen Worker-Fertiger aktivieren."
 cost_resource = &"biomass"
 cost_amount = 15
+strategic_role = &"economy"
 prerequisite_tech_id = &"scanner_drone"
 requires_discovery = true
 visual_asset = ExtResource("3_scout_hull")
 effect_id = &"worker_automation"
-strategic_role = &"economy"
 mechanic_description = "Mechanik: Die erste Worker-Fabrik wird baubar und startet langsamen automatischen Nachschub."
-production_multiplier = 1.0
 research_time = 16.0
 
 [sub_resource type="Resource" id="Tech_mech_frame"]
@@ -113,11 +99,10 @@ display_name = "Mech-Chassis T1"
 description = "Grundrahmen für Layer-3-Mechs."
 cost_resource = &"volatile"
 cost_amount = 25
+strategic_role = &"combat"
 visual_asset = ExtResource("5_mech")
 effect_id = &"mech_frame_layer3"
-strategic_role = &"combat"
 mechanic_description = "Mechanik: Layer-3-Chassis wird registriert; der taktische Mech-Kampf bleibt bis Layer 3 inert."
-production_multiplier = 1.0
 research_time = 20.0
 
 [sub_resource type="Resource" id="Tech_planetary_survey"]
@@ -127,10 +112,9 @@ category = &"planet"
 display_name = "Planetare Vermessung"
 description = "Analysiert die lokale Signatur eines bekannten eigenen Planeten."
 cost_resource = &"rare"
-cost_amount = 10
+strategic_role = &"exploration"
 visual_asset = ExtResource("6_planet_survey")
 effect_id = &"planet_production_survey"
-strategic_role = &"exploration"
 mechanic_description = "Mechanik: Die Ressourcenproduktion dieses Planeten steigt auf 125 %."
 production_multiplier = 1.25
 research_time = 15.0
@@ -143,10 +127,10 @@ display_name = "Planetare Extraktion"
 description = "Baut die Vermessung zu einer spezialisierten Förderkette aus."
 cost_resource = &"material"
 cost_amount = 20
+strategic_role = &"economy"
 prerequisite_tech_id = &"planetary_survey"
 visual_asset = ExtResource("7_planet_extraction")
 effect_id = &"planet_production_extraction"
-strategic_role = &"economy"
 mechanic_description = "Mechanik: Die Ressourcenproduktion dieses Planeten steigt zusätzlich auf 150 %."
 production_multiplier = 1.5
 research_time = 30.0
@@ -154,64 +138,59 @@ research_time = 30.0
 [sub_resource type="Resource" id="Tech_advanced_propulsion"]
 script = ExtResource("2_definition")
 id = &"advanced_propulsion"
-category = &"ships"
 display_name = "Fortschrittlicher Antrieb"
 description = "Optimiert die Schiffsfahrt und schaltet das Reaktormodul frei."
 cost_resource = &"volatile"
 cost_amount = 20
+strategic_role = &"mobility"
 prerequisite_tech_id = &"weapon_systems"
 mutually_exclusive_with = &"heavy_armor_plating"
 visual_asset = ExtResource("9_advanced_drive")
 effect_id = &"advanced_propulsion"
-strategic_role = &"mobility"
 mechanic_description = "Mechanik: +15 % Schiffsfahrt; das Reaktor-Modul wird in der Werft verfügbar."
 research_time = 30.0
 
 [sub_resource type="Resource" id="Tech_heavy_armor_plating"]
 script = ExtResource("2_definition")
 id = &"heavy_armor_plating"
-category = &"ships"
 display_name = "Schwere Panzerplatten"
 description = "Verstärkt die Schiffshülle und schaltet das verstärkte Utility-Modul frei."
 cost_resource = &"material"
 cost_amount = 20
+strategic_role = &"defense"
 prerequisite_tech_id = &"weapon_systems"
 mutually_exclusive_with = &"advanced_propulsion"
 visual_asset = ExtResource("10_heavy_armor")
 effect_id = &"heavy_armor_plating"
-strategic_role = &"defense"
 mechanic_description = "Mechanik: +30 Hüllenbonus; das verstärkte Panzerungsmodul wird in der Werft verfügbar."
 research_time = 30.0
 
 [sub_resource type="Resource" id="Tech_deep_scan"]
 script = ExtResource("2_definition")
 id = &"deep_scan"
-category = &"ships"
 display_name = "Tiefenscan"
 description = "Verbessert die Scan-Intel und schaltet den Scanner T2 frei."
-cost_resource = &"energy"
 cost_amount = 15
+strategic_role = &"exploration"
 prerequisite_tech_id = &"scanner_drone"
 mutually_exclusive_with = &"long_range_sensors"
 visual_asset = ExtResource("11_scanner_t2")
 effect_id = &"deep_scan"
-strategic_role = &"exploration"
 mechanic_description = "Mechanik: Scanner T2 liefert detailliertere Planeten-Intel."
 research_time = 25.0
 
 [sub_resource type="Resource" id="Tech_long_range_sensors"]
 script = ExtResource("2_definition")
 id = &"long_range_sensors"
-category = &"ships"
 display_name = "Langstreckensensoren"
 description = "Erweitert die Sensorreichweite und schaltet das Sensor-Array-Modul frei."
 cost_resource = &"rare"
 cost_amount = 15
+strategic_role = &"exploration"
 prerequisite_tech_id = &"scanner_drone"
 mutually_exclusive_with = &"deep_scan"
 visual_asset = ExtResource("12_sensor_array")
 effect_id = &"long_range_sensors"
-strategic_role = &"exploration"
 mechanic_description = "Mechanik: Sensor-Array-Modul erhöht die Reichweite um 40 px."
 research_time = 25.0
 
@@ -223,11 +202,11 @@ display_name = "Automatisierte Raffinerie"
 description = "Schaltet das automatisierte Bergwerk für die eigene Wirtschaft frei."
 cost_resource = &"rare"
 cost_amount = 25
+strategic_role = &"economy"
 prerequisite_tech_id = &"worker_automation"
 mutually_exclusive_with = &"bulk_processing"
 visual_asset = ExtResource("13_automated_mine")
 effect_id = &"automated_refinery"
-strategic_role = &"economy"
 mechanic_description = "Mechanik: Das Upgrade Automatisiertes Bergwerk wird baubar."
 research_time = 30.0
 
@@ -239,11 +218,11 @@ display_name = "Massenverarbeitung"
 description = "Schaltet das Handelszentrum für kontinuierliche Sammelerträge frei."
 cost_resource = &"biomass"
 cost_amount = 25
+strategic_role = &"economy"
 prerequisite_tech_id = &"worker_automation"
 mutually_exclusive_with = &"automated_refinery"
 visual_asset = ExtResource("14_trade_hub")
 effect_id = &"bulk_processing"
-strategic_role = &"economy"
 mechanic_description = "Mechanik: Das Upgrade Handelszentrum wird baubar."
 research_time = 30.0
 
@@ -255,12 +234,11 @@ display_name = "Drohnenschwarm T1"
 description = "Verbinder Mech- und Schiffs-Forschung: öffnet den verzweigten Drohnen-Techbaum und macht Drohnen-Module montierbar."
 cost_resource = &"volatile"
 cost_amount = 25
-prerequisite_tech_ids = [&"mech_frame", &"scanner_drone"]
+strategic_role = &"drones"
+prerequisite_tech_ids = Array[StringName]([&"mech_frame", &"scanner_drone"])
 visual_asset = ExtResource("18_combat_t1")
 effect_id = &"drone_swarm"
-strategic_role = &"drones"
 mechanic_description = "Mechanik: Drohnen-Module (Reparatur/Kampf/Scan/Vision/Booster) werden in der Werft kaufbar."
-production_multiplier = 1.0
 research_time = 35.0
 
 [sub_resource type="Resource" id="Tech_repair_drone_t1"]
@@ -269,14 +247,12 @@ id = &"repair_drone_t1"
 category = &"drones"
 display_name = "Reparatur-Drohne T1"
 description = "Repariert Schiffe in der Tower-Defense — aber nie vollständig, nur bis zum funktionsfähigen Zustand (~35 %)."
-cost_resource = &"energy"
 cost_amount = 15
+strategic_role = &"repair"
 prerequisite_tech_id = &"drone_swarm"
 visual_asset = ExtResource("15_repair_t1")
 effect_id = &"repair_drone_t1"
-strategic_role = &"repair"
 mechanic_description = "Mechanik: Reparatur-Drohnen-Modul T1 regeneriert Modul-HP in der Grid-Conquest bis 35 %."
-production_multiplier = 1.0
 research_time = 25.0
 
 [sub_resource type="Resource" id="Tech_repair_drone_t2"]
@@ -285,14 +261,12 @@ id = &"repair_drone_t2"
 category = &"drones"
 display_name = "Reparatur-Drohne T2"
 description = "Repariert bis 50 % der Modul-HP, mit hoher Aufladezeit (langsame Regeneration)."
-cost_resource = &"energy"
 cost_amount = 25
+strategic_role = &"repair"
 prerequisite_tech_id = &"repair_drone_t1"
 visual_asset = ExtResource("16_repair_t2")
 effect_id = &"repair_drone_t2"
-strategic_role = &"repair"
 mechanic_description = "Mechanik: Reparatur-Drohnen-Modul T2 regeneriert Modul-HP bis 50 % (langsamer)."
-production_multiplier = 1.0
 research_time = 35.0
 
 [sub_resource type="Resource" id="Tech_repair_drone_t3"]
@@ -301,14 +275,12 @@ id = &"repair_drone_t3"
 category = &"drones"
 display_name = "Reparatur-Drohne T3"
 description = "Repariert bis 60 % der Modul-HP mit mittlerer Aufladung."
-cost_resource = &"energy"
 cost_amount = 35
+strategic_role = &"repair"
 prerequisite_tech_id = &"repair_drone_t2"
 visual_asset = ExtResource("17_repair_t3")
 effect_id = &"repair_drone_t3"
-strategic_role = &"repair"
 mechanic_description = "Mechanik: Reparatur-Drohnen-Modul T3 regeneriert Modul-HP bis 60 % (mittlere Aufladung)."
-production_multiplier = 1.0
 research_time = 55.0
 
 [sub_resource type="Resource" id="Tech_combat_drone_t1"]
@@ -319,12 +291,11 @@ display_name = "Kampf-Drohne T1"
 description = "Bewaffnete Begleitdrohnen, die als Modul montiert zusätzlichen Schaden beitragen."
 cost_resource = &"volatile"
 cost_amount = 20
+strategic_role = &"combat"
 prerequisite_tech_id = &"drone_swarm"
 visual_asset = ExtResource("18_combat_t1")
 effect_id = &"combat_drone_t1"
-strategic_role = &"combat"
 mechanic_description = "Mechanik: Kampf-Drohnen-Modul T1 addiert +6 DPS (plus Tier-Basis) als Drohnenschwarm."
-production_multiplier = 1.0
 research_time = 25.0
 
 [sub_resource type="Resource" id="Tech_combat_drone_t2"]
@@ -335,12 +306,11 @@ display_name = "Kampf-Drohne T2"
 description = "Schwerere Kampf-Drohnen mit deutlich mehr Schwarm-Schaden."
 cost_resource = &"volatile"
 cost_amount = 30
+strategic_role = &"combat"
 prerequisite_tech_id = &"combat_drone_t1"
 visual_asset = ExtResource("19_combat_t2")
 effect_id = &"combat_drone_t2"
-strategic_role = &"combat"
 mechanic_description = "Mechanik: Kampf-Drohnen-Modul T2 addiert +12 DPS (plus Tier-Basis)."
-production_multiplier = 1.0
 research_time = 35.0
 
 [sub_resource type="Resource" id="Tech_scan_drone_t1"]
@@ -351,12 +321,11 @@ display_name = "Scan-Drohne T1"
 description = "Schwarm-Sensoren erweitern die effektive Reichweite des Schiffs."
 cost_resource = &"rare"
 cost_amount = 15
+strategic_role = &"exploration"
 prerequisite_tech_id = &"drone_swarm"
 visual_asset = ExtResource("20_scan_t1")
 effect_id = &"scan_drone_t1"
-strategic_role = &"exploration"
 mechanic_description = "Mechanik: Scan-Drohnen-Modul T1 addiert +40 Reichweite."
-production_multiplier = 1.0
 research_time = 25.0
 
 [sub_resource type="Resource" id="Tech_scan_drone_t2"]
@@ -367,12 +336,11 @@ display_name = "Scan-Drohne T2"
 description = "Hochauflösende Schwarm-Sensoren mit großem Reichweiten-Bonus."
 cost_resource = &"rare"
 cost_amount = 25
+strategic_role = &"exploration"
 prerequisite_tech_id = &"scan_drone_t1"
 visual_asset = ExtResource("21_scan_t2")
 effect_id = &"scan_drone_t2"
-strategic_role = &"exploration"
 mechanic_description = "Mechanik: Scan-Drohnen-Modul T2 addiert +80 Reichweite."
-production_multiplier = 1.0
 research_time = 35.0
 
 [sub_resource type="Resource" id="Tech_drone_vision"]
@@ -381,14 +349,12 @@ id = &"drone_vision"
 category = &"drones"
 display_name = "Drohnen-Vision"
 description = "Ein optisches Schwarm-Netzwerk, das die Sensorreichweite spürbar erweitert."
-cost_resource = &"energy"
 cost_amount = 20
+strategic_role = &"exploration"
 prerequisite_tech_id = &"drone_swarm"
 visual_asset = ExtResource("22_vision")
 effect_id = &"drone_vision"
-strategic_role = &"exploration"
 mechanic_description = "Mechanik: Vision-Modul addiert +60 Reichweite."
-production_multiplier = 1.0
 research_time = 30.0
 
 [sub_resource type="Resource" id="Tech_drone_booster_t1"]
@@ -399,12 +365,11 @@ display_name = "Drohnen-Booster T1"
 description = "Verstärkt alle montierten Drohnen-Module um 25 % — ein Mid-Tier-Verstärker."
 cost_resource = &"rare"
 cost_amount = 20
+strategic_role = &"support"
 prerequisite_tech_id = &"drone_swarm"
 visual_asset = ExtResource("23_booster_t1")
 effect_id = &"drone_booster_t1"
-strategic_role = &"support"
 mechanic_description = "Mechanik: Booster-Modul T1 verstärkt montierte Drohnen-Module um +25 %."
-production_multiplier = 1.0
 research_time = 30.0
 
 [sub_resource type="Resource" id="Tech_drone_booster_t2"]
@@ -415,14 +380,13 @@ display_name = "Drohnen-Booster T2"
 description = "Verstärkt alle montierten Drohnen-Module um 50 %."
 cost_resource = &"rare"
 cost_amount = 30
+strategic_role = &"support"
 prerequisite_tech_id = &"drone_booster_t1"
 visual_asset = ExtResource("24_booster_t2")
 effect_id = &"drone_booster_t2"
-strategic_role = &"support"
 mechanic_description = "Mechanik: Booster-Modul T2 verstärkt montierte Drohnen-Module um +50 %."
-production_multiplier = 1.0
 research_time = 45.0
 
 [resource]
 script = ExtResource("1_catalog")
-technologies = [SubResource("Tech_shipyard_construction"), SubResource("Tech_scout_hull"), SubResource("Tech_scanner_drone"), SubResource("Tech_weapon_systems"), SubResource("Tech_worker_automation"), SubResource("Tech_mech_frame"), SubResource("Tech_planetary_survey"), SubResource("Tech_planetary_extraction"), SubResource("Tech_advanced_propulsion"), SubResource("Tech_heavy_armor_plating"), SubResource("Tech_deep_scan"), SubResource("Tech_long_range_sensors"), SubResource("Tech_automated_refinery"), SubResource("Tech_bulk_processing"), SubResource("Tech_drone_swarm"), SubResource("Tech_repair_drone_t1"), SubResource("Tech_repair_drone_t2"), SubResource("Tech_repair_drone_t3"), SubResource("Tech_combat_drone_t1"), SubResource("Tech_combat_drone_t2"), SubResource("Tech_scan_drone_t1"), SubResource("Tech_scan_drone_t2"), SubResource("Tech_drone_vision"), SubResource("Tech_drone_booster_t1"), SubResource("Tech_drone_booster_t2")]
+technologies = Array[ExtResource("2_definition")]([SubResource("Tech_shipyard_construction"), SubResource("Tech_scout_hull"), SubResource("Tech_scanner_drone"), SubResource("Tech_weapon_systems"), SubResource("Tech_worker_automation"), SubResource("Tech_mech_frame"), SubResource("Tech_planetary_survey"), SubResource("Tech_planetary_extraction"), SubResource("Tech_advanced_propulsion"), SubResource("Tech_heavy_armor_plating"), SubResource("Tech_deep_scan"), SubResource("Tech_long_range_sensors"), SubResource("Tech_automated_refinery"), SubResource("Tech_bulk_processing"), SubResource("Tech_drone_swarm"), SubResource("Tech_repair_drone_t1"), SubResource("Tech_repair_drone_t2"), SubResource("Tech_repair_drone_t3"), SubResource("Tech_combat_drone_t1"), SubResource("Tech_combat_drone_t2"), SubResource("Tech_scan_drone_t1"), SubResource("Tech_scan_drone_t2"), SubResource("Tech_drone_vision"), SubResource("Tech_drone_booster_t1"), SubResource("Tech_drone_booster_t2")])

@@ -1,18 +1,19 @@
-[gd_resource type="Resource" script_class="PlanetUpgradeDefinition" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="PlanetUpgradeDefinition" format=3 uid="uid://canvb2g5uwjqb"]
 
-[ext_resource type="Script" path="res://scripts/config/planet_upgrade_definition.gd" id="1_def"]
-[ext_resource type="Script" path="res://scripts/config/trait_definition.gd" id="2_trait_script"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_comms_array_l1.svg" id="3_asset_l1"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_comms_array_l2.svg" id="4_asset_l2"]
-[ext_resource type="Texture2D" path="res://assets/objects/structures/structure_comms_array_l3.svg" id="5_asset_l3"]
+[ext_resource type="Script" uid="uid://c46aw7c040kwr" path="res://scripts/config/planet_upgrade_definition.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://dfbxa4ac73vfm" path="res://scripts/config/trait_definition.gd" id="2_trait_script"]
+[ext_resource type="Script" uid="uid://cfm1ao0dkefra" path="res://scripts/config/effect_definition.gd" id="2_uo4kw"]
+[ext_resource type="Texture2D" uid="uid://bnk8exwqsdymw" path="res://assets/objects/structures/structure_comms_array_l1.svg" id="3_asset_l1"]
+[ext_resource type="Texture2D" uid="uid://xu1ksfefpydf" path="res://assets/objects/structures/structure_comms_array_l2.svg" id="4_asset_l2"]
+[ext_resource type="Texture2D" uid="uid://dsab3305hu0c4" path="res://assets/objects/structures/structure_comms_array_l3.svg" id="5_asset_l3"]
 
 [sub_resource type="Resource" id="Trait_comms_array"]
 script = ExtResource("2_trait_script")
 id = &"trait_comms_array"
 display_name = "Kommunikationsarray"
 description = "+100px Reichweite, +1 Perimeter"
-range_bonus = 100.0
 perimeter_slots_bonus = 1
+range_bonus = 100.0
 
 [resource]
 script = ExtResource("1_def")
@@ -24,9 +25,8 @@ tier = 2
 parent_upgrade_id = &"orbital_station"
 cost_resource = &"rare"
 cost_amount = 25
-workers_required = 2
 credit_cost = 8
+workers_required = 2
 trait_definition = SubResource("Trait_comms_array")
 visual_asset = ExtResource("3_asset_l1")
-visual_assets_by_tier = [ExtResource("3_asset_l1"), ExtResource("4_asset_l2"), ExtResource("5_asset_l3")]
-transformer_tint_mode = &"faction"
+visual_assets_by_tier = Array[Texture2D]([ExtResource("3_asset_l1"), ExtResource("4_asset_l2"), ExtResource("5_asset_l3")])

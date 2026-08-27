@@ -319,6 +319,41 @@
 			],
 			"p_id": 33.0
 		},
+		"4885a0249af70c3329eb9da047711d4b53fac7dd": {
+			"c": 47,
+			"composite": "c47j54n5a9p26",
+			"entities": [
+				"F-002",
+				"F-044",
+				"F-147",
+				"F-148",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-149",
+				"F-150",
+				"F-151",
+				"F-152",
+				"F-153",
+				"F-154",
+				"F-155",
+				"C-307",
+				"C-308",
+				"C-309",
+				"C-310",
+				"C-311",
+				"C-312",
+				"C-313",
+				"C-314",
+				"C-315",
+				"C-316",
+				"C-317",
+				"C-318",
+				"C-319",
+				"C-320"
+			],
+			"p_id": 47
+		},
 		"5bc899b56982f3b9676e93bc1c5d773c05c42f94": {
 			"c": 40.0,
 			"composite": "c40j23n4a5p37",
@@ -428,7 +463,7 @@
 			"p_id": 42.0
 		},
 		"8d9d9f4ad24a1baba88e4c08fe114bd1767178e9": {
-			"c": 46,
+			"c": 46.0,
 			"composite": "c46j14n9a1p6",
 			"entities": [
 				"F-002",
@@ -438,7 +473,7 @@
 				"F-145",
 				"F-001"
 			],
-			"p_id": 46
+			"p_id": 46.0
 		},
 		"a36707d4cf6285ad4e0ff2a6d1f348cbc6a343d0": {
 			"c": 29.0,
@@ -6113,6 +6148,244 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-307": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-307",
+			"last_p": 47.0,
+			"name": "PreflightConstraintMcpCaptureContract",
+			"path": "scripts/preflight/constraint_mcp_capture_contract.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-308": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-308",
+			"last_p": 47.0,
+			"name": "SCAN_ROOT",
+			"path": "scripts/preflight/constraint_mcp_capture_contract.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-309": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						15.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-309",
+			"last_p": 47.0,
+			"name": "ASYNC_TOOLS",
+			"path": "scripts/preflight/constraint_mcp_capture_contract.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-310": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						24.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-310",
+			"last_p": 47.0,
+			"name": "constraint_name",
+			"path": "scripts/preflight/constraint_mcp_capture_contract.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-311": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						28.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-311",
+			"last_p": 47.0,
+			"name": "requires_scene",
+			"path": "scripts/preflight/constraint_mcp_capture_contract.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-312": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						32.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-312",
+			"last_p": 47.0,
+			"name": "run",
+			"path": "scripts/preflight/constraint_mcp_capture_contract.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-313": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						44.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-313",
+			"last_p": 47.0,
+			"name": "_check_capture_sites",
+			"path": "scripts/preflight/constraint_mcp_capture_contract.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-314": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						89.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-314",
+			"last_p": 47.0,
+			"name": "_check_async_marker",
+			"path": "scripts/preflight/constraint_mcp_capture_contract.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-315": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						107.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-315",
+			"last_p": 47.0,
+			"name": "_collect_gd_files",
+			"path": "scripts/preflight/constraint_mcp_capture_contract.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-316": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-316",
+			"last_p": 47.0,
+			"name": "EVIDENCE_PATH",
+			"path": "scripts/testing/mcp_capture_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-317": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-317",
+			"last_p": 47.0,
+			"name": "ASYNC_UX_TOOLS",
+			"path": "scripts/testing/mcp_capture_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-318": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-318",
+			"last_p": 47.0,
+			"name": "SYNC_ONLY_UX_TOOLS",
+			"path": "scripts/testing/mcp_capture_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-319": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-319",
+			"last_p": 47.0,
+			"name": "_check",
+			"path": "scripts/testing/mcp_capture_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-320": {
+			"first_p": 47.0,
+			"history": [
+				{
+					"lines": [
+						26.0
+					],
+					"p_id": 47.0
+				}
+			],
+			"id": "C-320",
+			"last_p": 47.0,
+			"name": "_init",
+			"path": "scripts/testing/mcp_capture_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -7570,6 +7843,96 @@
 			"last_p": 45.0,
 			"name": "constraint_camera_and_input.gd",
 			"path": "scripts/preflight/constraint_camera_and_input.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-147": {
+			"first_p": 47.0,
+			"history": [],
+			"id": "F-147",
+			"last_p": 47.0,
+			"name": "mcp_vision.gd",
+			"path": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-148": {
+			"first_p": 47.0,
+			"history": [],
+			"id": "F-148",
+			"last_p": 47.0,
+			"name": "mcp_vision_capture.gd",
+			"path": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision_capture.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-149": {
+			"first_p": 47.0,
+			"history": [],
+			"id": "F-149",
+			"last_p": 47.0,
+			"name": "constraint_mcp_capture_contract.gd",
+			"path": "scripts/preflight/constraint_mcp_capture_contract.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-150": {
+			"first_p": 47.0,
+			"history": [],
+			"id": "F-150",
+			"last_p": 47.0,
+			"name": "constraint_mcp_capture_contract.gd.uid",
+			"path": "scripts/preflight/constraint_mcp_capture_contract.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-151": {
+			"first_p": 47.0,
+			"history": [],
+			"id": "F-151",
+			"last_p": 47.0,
+			"name": "chain_manifest_gate.gd.uid",
+			"path": "scripts/testing/chain_manifest_gate.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-152": {
+			"first_p": 47.0,
+			"history": [],
+			"id": "F-152",
+			"last_p": 47.0,
+			"name": "chain_validate_entry_test.gd.uid",
+			"path": "scripts/testing/chain_validate_entry_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-153": {
+			"first_p": 47.0,
+			"history": [],
+			"id": "F-153",
+			"last_p": 47.0,
+			"name": "compile_gate.gd.uid",
+			"path": "scripts/testing/compile_gate.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-154": {
+			"first_p": 47.0,
+			"history": [],
+			"id": "F-154",
+			"last_p": 47.0,
+			"name": "mcp_capture_entry_test.gd",
+			"path": "scripts/testing/mcp_capture_entry_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-155": {
+			"first_p": 47.0,
+			"history": [],
+			"id": "F-155",
+			"last_p": 47.0,
+			"name": "mcp_capture_entry_test.gd.uid",
+			"path": "scripts/testing/mcp_capture_entry_test.gd.uid",
 			"status": "created",
 			"type": "file"
 		}
