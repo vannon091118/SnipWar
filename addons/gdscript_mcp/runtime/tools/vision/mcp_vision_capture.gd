@@ -41,24 +41,9 @@ static func get_viewport_for_capture() -> Viewport:
 	return root if root.get_texture() != null and root.get_texture().get_rid().is_valid() else null
 
 
-func capture_screenshot_sync(format_name: String = "png") -> Dictionary:
-	var viewport_node := get_viewport_for_capture()
-	if viewport_node == null:
-		return {"error": "No visible viewport available"}
-	var texture := viewport_node.get_texture()
-	if texture == null or not texture.get_rid().is_valid():
-		return {"error": "Viewport texture is unavailable"}
-	var image := texture.get_image()
-	if image == null or image.is_empty():
-		return {"error": "Captured image is empty"}
-	if image.get_width() > MAX_DIMENSION or image.get_height() > MAX_DIMENSION:
-		return {"error": "Captured image exceeds dimension limit"}
-	return {
-		"image": image,
-		"format": "jpg" if format_name == "jpg" or format_name == "jpeg" else "png",
-		"width": image.get_width(),
-		"height": image.get_height(),
-	}
+## Unsafe since Godot 4.x ohne gezeichneten Frame; existiert bewusst nicht.
+## Capture-Vertrag: immer über capture_screenshot() mit
+## `await RenderingServer.frame_post_draw` vor texture.get_image().
 
 
 static func get_pixel(image: Image, x: int, y: int) -> Dictionary:

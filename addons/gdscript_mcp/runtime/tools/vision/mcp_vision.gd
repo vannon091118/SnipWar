@@ -68,11 +68,6 @@ func _commit_capture(capture: Dictionary, format_name: String, persist_context: 
 	return result
 
 
-func capture_screenshot_sync(format_name: String = "png", persist_context: bool = true) -> Dictionary:
-	_hide_cursor_for_capture()
-	var capture: Dictionary = _capture.capture_screenshot_sync(format_name)
-	_show_cursor_after_capture()
-	return _commit_capture(capture, format_name, persist_context)
 
 
 func capture_screenshot(format_name: String = "png", persist_context: bool = true) -> Dictionary:

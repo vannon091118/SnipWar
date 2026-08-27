@@ -758,3 +758,16 @@ MVP A Narrative Runtime implementiert und verifiziert: deterministische ChainObs
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
 - scripts/objects/chunk_coordinator.gd: Dokumentation aktualisiert (F-131).
 - scripts/preflight/constraint_camera_and_input.gd: Dokumentation aktualisiert (F-146).
+
+## 2026-08-27 22:00:00 — p46 · c46j14n9a1p6 · Spark · selbstironisch
+
+**Spark entdeckt: Narrative Runtime Append-Determinismus… — nach Ghost**
+
+Narrative Runtime Append-Determinismus korrigieren: look-ahead-freie ChainObservations verhindern rückwirkende Änderungen alter Events; Rebuild und idempotenter Import bleiben identisch
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- narrative_runtime/observe.py: Implementiert und integriert (F-141).
+- scripts/doki/NARRATIVE_ENGINE_DESIGN.md: Implementiert und integriert (F-145).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).

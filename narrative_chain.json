@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-27 19:18:09 +0200",
-		"hash": "4483ceb09193b09566ee931b433a874fdc37c967",
-		"subject": "Makulatur: Cluster-Void Generierungssystem mitâ€¦ [Analyse: Thinker] â€” nach Buffy"
+		"date": "2026-08-27 20:46:18 +0200",
+		"hash": "8d9d9f4ad24a1baba88e4c08fe114bd1767178e9",
+		"subject": "Spark entdeckt: Narrative Runtime Append-Determinismusâ€¦ â€” nach Ghost"
 	},
 	"entries": [
 		{
@@ -3543,6 +3543,58 @@
 			"seq": 45,
 			"subject": "Ghost verzeichnet: MVP A Narrative Runtime implementiert und… — nach Thinker",
 			"summary": "Die Chronik musste diesen Eintrag aufnehmen, weil die bisherige Geschichte zwar zuverlässig festhielt, was DOKI schrieb, aber noch kein Gedächtnis besaß, das sich löschen und ohne Bedeutungsverlust..."
+		},
+		{
+			"a": 1,
+			"arc": "a19",
+			"c": 46,
+			"composite": "c46j14n9a1p6",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "change_index.json",
+					"insertions": 271.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 112.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "narrative_runtime/observe.py",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 10.0,
+					"file": "scripts/doki/NARRATIVE_ENGINE_DESIGN.md",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 29.0
+				}
+			],
+			"date": "2026-08-27 22:00:00",
+			"hash": "8d9d9f4ad24a1baba88e4c08fe114bd1767178e9",
+			"j": 14,
+			"model_id": "claude-sonnet-4",
+			"mood": "selbstironisch",
+			"n": 9,
+			"narrator": "Spark",
+			"p": 6,
+			"p_id": 46,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Ghost",
+			"seq": 46,
+			"subject": "Spark entdeckt: Narrative Runtime Append-Determinismus… — nach Ghost",
+			"summary": "Warum war dieser Nachtrag unvermeidlich? Weil die erste Runtime zwar brav die Chain bis zum aktuellen Ende rekonstruierte, dabei aber noch nach vorne blickte — und ein Archiv, das beim nächsten Ein..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
@@ -3563,6 +3615,10 @@
 		},
 		{
 			"at_hash": "4483ceb09193b09566ee931b433a874fdc37c967",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		},
+		{
+			"at_hash": "8d9d9f4ad24a1baba88e4c08fe114bd1767178e9",
 			"note": "Anker nach rebase/amend/force-push neu verankert."
 		}
 	]

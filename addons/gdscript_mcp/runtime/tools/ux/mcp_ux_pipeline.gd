@@ -149,18 +149,10 @@ func _run_watch_visual() -> void:
 	_watch_visual_busy = false
 
 
+## Sync-Fassade auf analyze_async. Coroutine: der visuelle Zweig wartet auf
+## frame_post_draw, daher NUR über die Async-Kette aufrufen.
 func analyze(include_visual: bool = true, root_path: String = "/root", max_controls: int = 300, max_depth: int = 32) -> Dictionary:
-	var live := McpUxLive.build_snapshot(root_path, max_controls, max_depth)
-	if not include_visual:
-		return _build_analysis_result(live, {}, {}, 0, 0, false)
-	if not _ensure_vision():
-		return {"error": "Vision module not loaded", "live": live}
-	var capture: Dictionary = _vision.capture_screenshot_sync("png", true)
-	if capture.has("error"):
-		return {"error": "Capture failed: " + str(capture.get("error", "")), "live": live}
-	var image: Image = capture.get("image") as Image
-	var visual := _analyze_pixels(image) if image != null and not image.is_empty() else {}
-	return _build_analysis_result(live, visual, capture.get("context", {}), int(capture.get("width", 0)), int(capture.get("height", 0)), true, capture)
+	return await analyze_async(include_visual, root_path, max_controls, max_depth)
 
 
 func _build_analysis_result(live: Dictionary, visual: Dictionary, image_context: Dictionary, width: int, height: int, include_visual: bool, capture: Dictionary = {}) -> Dictionary:
@@ -221,6 +213,7 @@ func analyze_async(include_visual: bool = true, root_path: String = "/root", max
 		return _build_analysis_result(live, {}, {}, 0, 0, false)
 	if not _ensure_vision():
 		return {"error": "Vision module not loaded", "live": live}
+	# Capture-Vertrag: IST-Screenshot erst nach einem gezeichneten Frame.
 	var capture: Dictionary = await _vision.capture_screenshot("png", true)
 	if capture.has("error"):
 		return {"error": "Capture failed: " + str(capture.get("error", "")), "live": live}
@@ -324,7 +317,7 @@ func find_element(description: String, search_rect: Dictionary = {}, root_path: 
 		return best
 
 	if _last_analysis.is_empty() or _last_analysis.get("elements", []).is_empty():
-		var refreshed := analyze(true)
+		var refreshed: Dictionary = await analyze(true)
 		if refreshed.has("error"):
 			return refreshed
 		for element in refreshed.get("elements", []):
@@ -345,7 +338,10 @@ func find_element(description: String, search_rect: Dictionary = {}, root_path: 
 func read_region(rect: Dictionary = {}) -> Dictionary:
 	if not _ensure_vision():
 		return {"error": "Vision module not loaded"}
-	var capture: Dictionary = _vision.capture_screenshot_sync("png", true)
+	# Contract: IST-Screenshot erst nach einem gezeichneten Frame — nie
+	# synchron vom Viewport-Texture lesen. Dieser Pfad läuft nur über die
+	# Async-Kette (dispatch_async → read_region_async).
+	var capture: Dictionary = await _vision.capture_screenshot("png", true)
 	if capture.has("error"):
 		return capture
 	var image: Image = capture.get("image") as Image
@@ -433,7 +429,8 @@ func collect_logs(limit: int = 100, filter_str: String = "", cursor: int = -1) -
 	for raw_entry in all_raw:
 		var entry: Dictionary = raw_entry
 		var source := str(entry.get("source", ""))
-		var base_key := source + ":" + str(entry.get("cursor", "")) + ":" + str(entry.get("stamp", "")) + ":" + str(entry.get("category", "")) + ":" + str(entry.get("text", ""))
+		var source_cursor := str(entry.get("cursor", ""))
+		var base_key := source + ":" + source_cursor + ":" + str(entry.get("stamp", "")) + ":" + str(entry.get("category", "")) + ":" + str(entry.get("text", ""))
 		var occurrence := int(occurrences.get(base_key, 0))
 		occurrences[base_key] = occurrence + 1
 		var stable_key := base_key + ":" + str(occurrence)
@@ -475,6 +472,7 @@ func collect_logs(limit: int = 100, filter_str: String = "", cursor: int = -1) -
 		"next_cursor": str(_log_cursor),
 		"source_counts": source_counts,
 		"cursor_reset": effective_cursor > _log_stream_cursor,
+		"cursor_type": "monotonic_stream_id",
 	}
 
 
@@ -482,10 +480,12 @@ func collect_logs(limit: int = 100, filter_str: String = "", cursor: int = -1) -
 func _is_anomaly(entry: Dictionary) -> bool:
 	var level := str(entry.get("level", "")).to_lower()
 	var source := str(entry.get("source", ""))
+	var category := str(entry.get("category", "")).to_lower()
+	var text := str(entry.get("text", entry.get("message", ""))).to_lower()
 	var visible: bool = entry.get("visible", true)
 	if level == "error" or level == "fatal":
 		return true
-	if level == "warning":
+	if level == "warning" or category in ["warning", "warn", "error", "fatal"] or text.begins_with("warning:") or text.begins_with("error:"):
 		return source == "mcp" or visible
 	return false
 
@@ -617,7 +617,9 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 		"runtime_ux_scan":
 			return scan_interactables(str(args.get("root_path", "/root")), int(args.get("max_controls", 300)), int(args.get("max_depth", 32)))
 		"runtime_ux_find":
-			return find_element(str(args.get("description", "")), args.get("rect", {}), str(args.get("root_path", "/root")), int(args.get("max_controls", 300)), int(args.get("max_depth", 32)))
+			# Der Screenshot-Fallback in find_element wartet auf frame_post_draw
+			# und ist daher async-only.
+			return {"error": "runtime_ux_find is async-only; dispatch via async path"}
 		"runtime_ux_watch_start":
 			return start_watch(int(args.get("interval_ms", 500)), bool(args.get("include_visual", false)))
 		"runtime_ux_watch_stop":
@@ -638,6 +640,8 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 			# Direkte Ausführung zuerst: DOM-Snapshot sofort ohne Screenshot.
 			# OCR/Screenshot (vision_worker, eigener Prozess) nur noch opt-in.
 			return await analyze_async(bool(args.get("include_visual", false)), str(args.get("root_path", "/root")), int(args.get("max_controls", 300)), int(args.get("max_depth", 32)))
+		"runtime_ux_find":
+			return await find_element(str(args.get("description", "")), args.get("rect", {}), str(args.get("root_path", "/root")), int(args.get("max_controls", 300)), int(args.get("max_depth", 32)))
 		"runtime_ux_read":
 			return await read_region_async(args.get("rect", {}))
 		"runtime_ux_click":
@@ -650,7 +654,7 @@ static func get_tool_defs() -> Array:
 	return [
 		_make("runtime_ux_analyze", "Run the live-control UX pipeline directly; screenshots/OCR only when include_visual=true", {"include_visual": {"type": "boolean", "description": "Optional screenshot/OCR via separate vision_worker process", "default": false}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, [], true),
 		_make("runtime_ux_scan", "Fast bounded live scan of clickable controls and exact labels", {"root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}),
-		_make("runtime_ux_find", "Find an interactable in a bounded visible scope by exact text, node name, type, or position", {"description": {"type": "string"}, "rect": {"type": "object"}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, ["description"]),
+		_make("runtime_ux_find", "Find an interactable in a bounded visible scope by exact text, node name, type, or position", {"description": {"type": "string"}, "rect": {"type": "object"}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, ["description"], true),
 		_make("runtime_ux_read", "Read a visual region and return local context metadata", {"rect": {"type": "object"}}, ["rect"], true),
 		_make("runtime_ux_click", "Click an element and observe with a compact receipt; the screenshot artifact is released unless retained", {"description": {"type": "string"}, "rect": {"type": "object"}, "retain_artifact": {"type": "boolean", "default": false}}, ["description"], true),
 		_make("runtime_ux_watch_start", "Start periodic, event-driven UX snapshots (signature-delta gated)", {"interval_ms": {"type": "integer", "default": 500}, "include_visual": {"type": "boolean", "default": false}}),
@@ -686,7 +690,7 @@ func _click_and_observe(description: String, search_rect: Dictionary = {}, retai
 	# Phase 0: Snapshot BEFORE the click for delta comparison
 	var before_live := McpUxLive.build_snapshot()
 
-	var element := find_element(description, search_rect)
+	var element: Dictionary = await find_element(description, search_rect)
 	if not bool(element.get("found", false)):
 		return {"found": false, "clicked": false, "description": description, "verdict": "MCP_ISSUE", "verdict_reason": "Element not found in scene tree"}
 

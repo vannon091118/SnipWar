@@ -1,5 +1,5 @@
 {
-	"active": "a19",
+	"active": "a20",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -548,6 +548,7 @@
 		},
 		"a19": {
 			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
 			"id": "a19",
 			"name": "Sonnensystem",
 			"seen_entities": [
@@ -579,10 +580,10 @@
 				"C-276"
 			],
 			"span": "heute → offen",
-			"status": "active",
+			"status": "completed",
 			"theme": "Orbitalmechanik und visuelle Tiefe",
 			"version": "",
-			"weight": 7.8
+			"weight": 10.7
 		},
 		"a2": {
 			"climax_weight": 3.0,
@@ -597,6 +598,16 @@
 			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
 			"weight": 3.7
+		},
+		"a20": {
+			"climax_weight": 3.0,
+			"id": "a20",
+			"name": "Nächster Akt",
+			"span": "heute → offen",
+			"status": "active",
+			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
+			"version": "",
+			"weight": 0.0
 		},
 		"a3": {
 			"climax_weight": 3.0,
