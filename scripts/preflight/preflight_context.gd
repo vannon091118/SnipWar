@@ -8,6 +8,10 @@ extends RefCounted
 var tree: SceneTree
 var fixture: PreflightFixture
 
+## Shared In-Memory Codebase Index — built once before Phase 1 runs.
+## Pure constraints read from here instead of opening files themselves.
+var code_index: PreflightCodeIndex = null
+
 # Node/Resource references (filled by the isolated preflight fixture).
 var background: Node
 var field: Node

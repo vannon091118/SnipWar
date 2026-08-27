@@ -67,6 +67,42 @@
 			],
 			"p_id": 22.0
 		},
+		"085e7e0018665fd0bb3c8104de1c827556f75c67": {
+			"c": 55,
+			"composite": "c55j40n4a13p50",
+			"entities": [
+				"F-002",
+				"F-050",
+				"F-003",
+				"F-046",
+				"F-201",
+				"F-202",
+				"F-004",
+				"F-055",
+				"F-001",
+				"F-203",
+				"F-204",
+				"F-205",
+				"F-206",
+				"C-391",
+				"C-392",
+				"C-393",
+				"C-394",
+				"C-395",
+				"C-396",
+				"C-397",
+				"C-398",
+				"C-399",
+				"C-400",
+				"C-401",
+				"C-402",
+				"C-403",
+				"C-404",
+				"C-405",
+				"C-406"
+			],
+			"p_id": 55
+		},
 		"0d3e994cdaff6003fe851ad638f06da48c6d57d9": {
 			"c": 15.0,
 			"composite": "c15j38n3a2p11",
@@ -332,7 +368,7 @@
 			"p_id": 17.0
 		},
 		"2e0c055b552f60ea1cce83d3270e0d114a23651e": {
-			"c": 54,
+			"c": 54.0,
 			"composite": "c54j27n10a8p27",
 			"entities": [
 				"F-019",
@@ -344,7 +380,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 54
+			"p_id": 54.0
 		},
 		"3a8ac091fc1b6ae5c795231d291a87c974dde55a": {
 			"c": 53.0,
@@ -7793,6 +7829,278 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-391": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-391",
+			"last_p": 55.0,
+			"name": "PreflightConstraintDocsIntegrity",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-392": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-392",
+			"last_p": 55.0,
+			"name": "TARGET_DOCS",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-393": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-393",
+			"last_p": 55.0,
+			"name": "HEADING_PATTERN",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-394": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-394",
+			"last_p": 55.0,
+			"name": "SEPARATOR_CHARS",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-395": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-395",
+			"last_p": 55.0,
+			"name": "constraint_name",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-396": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-396",
+			"last_p": 55.0,
+			"name": "constraint_description",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-397": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-397",
+			"last_p": 55.0,
+			"name": "requires_scene",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-398": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						28.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-398",
+			"last_p": 55.0,
+			"name": "run",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-399": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						61.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-399",
+			"last_p": 55.0,
+			"name": "_analyze_lines",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-400": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						112.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-400",
+			"last_p": 55.0,
+			"name": "_check_table_block",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-401": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						134.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-401",
+			"last_p": 55.0,
+			"name": "_is_separator",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-402": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						144.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-402",
+			"last_p": 55.0,
+			"name": "_count_unescaped_pipes",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-403": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						152.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-403",
+			"last_p": 55.0,
+			"name": "_normalize",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-404": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-404",
+			"last_p": 55.0,
+			"name": "_mark",
+			"path": "scripts/testing/docs_integrity_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-405": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-405",
+			"last_p": 55.0,
+			"name": "_init",
+			"path": "scripts/testing/docs_integrity_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-406": {
+			"first_p": 55.0,
+			"history": [
+				{
+					"lines": [
+						139.0
+					],
+					"p_id": 55.0
+				}
+			],
+			"id": "C-406",
+			"last_p": 55.0,
+			"name": "_expect",
+			"path": "scripts/testing/docs_integrity_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -9790,6 +10098,66 @@
 			"last_p": 54.0,
 			"name": "README.md",
 			"path": "docs/README.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-201": {
+			"first_p": 55.0,
+			"history": [],
+			"id": "F-201",
+			"last_p": 55.0,
+			"name": "kilo.json",
+			"path": "kilo.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-202": {
+			"first_p": 55.0,
+			"history": [],
+			"id": "F-202",
+			"last_p": 55.0,
+			"name": "mcp_bridge.cmd",
+			"path": "mcp_bridge.cmd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-203": {
+			"first_p": 55.0,
+			"history": [],
+			"id": "F-203",
+			"last_p": 55.0,
+			"name": "constraint_docs_integrity.gd",
+			"path": "scripts/preflight/constraint_docs_integrity.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-204": {
+			"first_p": 55.0,
+			"history": [],
+			"id": "F-204",
+			"last_p": 55.0,
+			"name": "constraint_docs_integrity.gd.uid",
+			"path": "scripts/preflight/constraint_docs_integrity.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-205": {
+			"first_p": 55.0,
+			"history": [],
+			"id": "F-205",
+			"last_p": 55.0,
+			"name": "docs_integrity_entry_test.gd",
+			"path": "scripts/testing/docs_integrity_entry_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-206": {
+			"first_p": 55.0,
+			"history": [],
+			"id": "F-206",
+			"last_p": 55.0,
+			"name": "docs_integrity_entry_test.gd.uid",
+			"path": "scripts/testing/docs_integrity_entry_test.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

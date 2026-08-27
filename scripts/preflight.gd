@@ -10,6 +10,7 @@ extends SceneTree
 const _V2Ctx := preload("res://scripts/preflight_v2/v2_context.gd")
 const _V2Fixture := preload("res://scripts/preflight_v2/v2_fixture.gd")
 const _Scanner := preload("res://scripts/preflight_v2/constraint_scanner.gd")
+const _CodeIndex := preload("res://scripts/preflight_v2/preflight_code_index.gd")
 
 # Built from scanner registry at startup; used by _is_pure() for every constraint.
 var _registry: Array[Dictionary] = []
@@ -35,6 +36,13 @@ func _init() -> void:
 	var ctx = _V2Ctx.new(self)
 	ctx.verbose = args.get("verbose", false)
 	ctx.fail_fast = args.get("fail_fast", false)
+
+	# Watchdog: guarantee preflight can never hang indefinitely in background
+	var watchdog_seconds: float = 120.0
+	create_timer(watchdog_seconds).timeout.connect(func() -> void:
+		print("\n[preflight-v2] FATAL: WATCHDOG TIMEOUT (%ds) — an async constraint never resolved" % int(watchdog_seconds))
+		quit(124)
+	)
 
 	_registry = _Scanner.new().scan()
 	var registry: Array[Dictionary] = _registry
@@ -70,6 +78,18 @@ func _init() -> void:
 	])
 	if ctx.verbose:
 		print(" Mode: Verbose | Fail-Fast: %s" % str(ctx.fail_fast))
+
+	# --- Build shared In-Memory Codebase Index (one disk pass for all pure constraints) ---
+	var index_start_usec: int = Time.get_ticks_usec()
+	ctx.code_index = _CodeIndex.new()
+	ctx.code_index.build()
+	var index_ms: float = (Time.get_ticks_usec() - index_start_usec) / 1000.0
+	var idx_stats: Dictionary = ctx.code_index.stats()
+	print(" CodeIndex: %d .gd files / %d LOC / built in %.1f ms" % [
+		int(idx_stats.get("files_gd", 0)),
+		int(idx_stats.get("total_loc", 0)),
+		index_ms,
+	])
 	print("==================================================")
 
 	var suite_start_usec: int = Time.get_ticks_usec()

@@ -120,19 +120,24 @@ func stale_class_references() -> PackedStringArray:
 			result.append("%s.%s" % [entry.concept, class_name_value])
 	return result
 
+var _addons_scanned: bool = false
+var _addon_classes: Dictionary = {}
+
+func get_discovered_classes() -> Dictionary:
+	return _class_to_file
+
 func _class_exists_in_addons(class_name_value: String) -> bool:
-	var found: Dictionary = {}
-	_collect_class_names("res://addons", found)
-	return found.has(class_name_value)
+	if not _addons_scanned:
+		_collect_class_names("res://addons", _addon_classes)
+		_addons_scanned = true
+	return _addon_classes.has(class_name_value)
 
 func summary() -> String:
 	return "%d concepts across %d domains, %d class mappings, %d synonyms" % [_concepts.size(), domains().size(), _class_to_concept.size(), _synonyms.size()]
 
 func get_unmapped_classes() -> Array[String]:
 	var result: Array[String] = []
-	var discovered: Dictionary = {}
-	_collect_class_names("res://scripts", discovered)
-	for class_name_value in discovered:
+	for class_name_value in _class_to_file:
 		if not _class_to_concept.has(class_name_value):
 			result.append(class_name_value)
 	return result
@@ -181,12 +186,16 @@ func _scan_class_name(path: String, result: Dictionary) -> void:
 	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		return
+	var lines_read: int = 0
 	while not file.eof_reached():
+		lines_read += 1
 		var line: String = file.get_line().strip_edges()
 		if line.begins_with("class_name "):
 			var class_name_value: String = line.substr("class_name ".length()).strip_edges()
 			if not class_name_value.is_empty():
 				result[class_name_value] = path
+			break
+		elif lines_read > 25 or line.begins_with("func ") or line.begins_with("static func "):
 			break
 	file.close()
 

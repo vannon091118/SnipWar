@@ -12,8 +12,7 @@ func requires_scene() -> bool:
 
 func run(ctx: PreflightContext) -> bool:
 	var index: ConceptIndex = ConceptIndex.new()
-	var discovered: Dictionary = {}
-	_collect_class_names("res://scripts", discovered)
+	var discovered: Dictionary = index.get_discovered_classes()
 
 	var missing: PackedStringArray = []
 	for class_name_value in discovered:

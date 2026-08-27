@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-27 21:00:46 +0200",
-		"hash": "fb79d22ee870a1661cbba007f8f09416a75a899a",
-		"subject": "Godot-Katalogressourcen serialisieren undâ€¦ [Analyse: Thinker] â€” nach Squizzle"
+		"date": "2026-08-27 23:49:39 +0200",
+		"hash": "085e7e0018665fd0bb3c8104de1c827556f75c67",
+		"subject": "Docs-Integrity-Constraint: zentrale Dokuâ€¦ â€” nach Glitch"
 	},
 	"entries": [
 		{
@@ -4331,6 +4331,93 @@
 			"seq": 54,
 			"subject": "Glitch ermittelt: refactor documentation: split technical specs… — nach Sage",
 			"summary": "Zufall? Ich denke nicht. Wer glaubt schon, dass eine maßlos aufgeblähte Dokumentation nur ein harmloses Versehen des Systems war? Sage hat vor mir zwar hervorragende, blitzsaubere Arbeit geleistet ..."
+		},
+		{
+			"a": 13,
+			"arc": "a24",
+			"c": 55,
+			"composite": "c55j40n4a13p50",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/AGENTS.md",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 37.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "kilo.json",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "mcp_bridge.cmd",
+					"insertions": 21.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 62.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/concept_index.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_docs_integrity.gd",
+					"insertions": 155.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_docs_integrity.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/docs_integrity_entry_test.gd",
+					"insertions": 148.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/docs_integrity_entry_test.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 07:00:00",
+			"hash": "085e7e0018665fd0bb3c8104de1c827556f75c67",
+			"j": 40,
+			"model_id": "claude-sonnet-4",
+			"mood": "sachlich",
+			"n": 4,
+			"narrator": "Vannon",
+			"p": 50,
+			"p_id": 55,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Glitch",
+			"seq": 55,
+			"subject": "Docs-Integrity-Constraint: zentrale Doku… — nach Glitch",
+			"summary": "Vertrauen in Doku ist kein Zustand, es ist ein Gate — und genau deshalb ließ dieser Commit keinen anderen Weg. Die zentrale Findings-Datei erzählte Geschichten, die niemand mechanisch prüfen konnte..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
@@ -4363,6 +4450,10 @@
 		},
 		{
 			"at_hash": "fb79d22ee870a1661cbba007f8f09416a75a899a",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		},
+		{
+			"at_hash": "085e7e0018665fd0bb3c8104de1c827556f75c67",
 			"note": "Anker nach rebase/amend/force-push neu verankert."
 		}
 	]

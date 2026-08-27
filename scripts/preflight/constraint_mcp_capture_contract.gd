@@ -31,9 +31,12 @@ func requires_scene() -> bool:
 
 func run(ctx: PreflightContext) -> bool:
 	var failures: PackedStringArray = []
-	var capture_sites := _check_capture_sites(failures)
+	# Use pre-loaded sources filtered to the MCP addon subtree.
+	var mcp_sources: Array[Dictionary] = ctx.code_index.sources_under(SCAN_ROOT)
+	var capture_sites := _check_capture_sites(mcp_sources, failures)
 	for tool_name: String in ASYNC_TOOLS:
-		_check_async_marker(SCAN_ROOT.path_join(str(ASYNC_TOOLS[tool_name])), tool_name, failures)
+		var tool_path: String = SCAN_ROOT.path_join(str(ASYNC_TOOLS[tool_name]))
+		_check_async_marker(tool_path, tool_name, ctx.code_index, failures)
 	if not failures.is_empty():
 		for failure in failures:
 			print("[mcp_capture_contract] VIOLATION: " + failure)
@@ -41,24 +44,18 @@ func run(ctx: PreflightContext) -> bool:
 	return ctx.check(failures.is_empty() and capture_sites > 0, summary, {"violations": "\n".join(failures)})
 
 
-func _check_capture_sites(failures: PackedStringArray) -> int:
+## Iteriert über bereits geladene MCP-Quellen statt Disk-Scan.
+func _check_capture_sites(sources: Array[Dictionary], failures: PackedStringArray) -> int:
 	var capture_sites := 0
 	var func_header := RegEx.new()
 	func_header.compile("^\\s*(?:static\\s+)?func\\s+")
-	var gd_files: Array[String] = []
-	_collect_gd_files(SCAN_ROOT, gd_files)
-	gd_files.sort()
-	for gd_path in gd_files:
-		var file := FileAccess.open(gd_path, FileAccess.READ)
-		if file == null:
-			failures.append("%s: nicht lesbar" % gd_path)
-			continue
-		var lines: PackedStringArray = file.get_as_text().split("\n")
-		file.close()
+	for source in sources:
+		var gd_path: String = String(source.file)
+		var lines: Array = source.get("lines", [])
 		var func_start := 0
 		var sync_bypass := false
 		for i in lines.size():
-			var line := lines[i]
+			var line := String(lines[i])
 			# Kommentare sind kein Code: weder Capture-Site noch frame-Wait-Nachweis.
 			if line.strip_edges().begins_with("#"):
 				continue
@@ -71,7 +68,7 @@ func _check_capture_sites(failures: PackedStringArray) -> int:
 			capture_sites += 1
 			var waited := false
 			for j in range(func_start, i):
-				var probe := lines[j].strip_edges()
+				var probe := String(lines[j]).strip_edges()
 				if probe.begins_with("#"):
 					continue
 				if probe.contains("frame_post_draw"):
@@ -84,38 +81,20 @@ func _check_capture_sites(failures: PackedStringArray) -> int:
 	return capture_sites
 
 
-## Tool-Defs sind einzeilige _make/_make_tool-Calls; der Def endet bei
-## Async-Markierung mit `, true)`.
-func _check_async_marker(path: String, tool: String, failures: PackedStringArray) -> void:
-	var file := FileAccess.open(path, FileAccess.READ)
-	if file == null:
+## Liest Tool-Defs via CodeIndex statt eigenem FileAccess.
+func _check_async_marker(path: String, tool: String, code_index: PreflightCodeIndex, failures: PackedStringArray) -> void:
+	var content: String = code_index.get_file_content(path)
+	if content.is_empty():
 		failures.append("C| %s: nicht lesbar (Tool %s)" % [path, tool])
 		return
 	var def_regex := RegEx.new()
 	def_regex.compile("^\\s*_make(?:_tool)?\\(\\s*\"%s\"" % tool)
 	var tail_regex := RegEx.new()
 	tail_regex.compile(",\\s*true\\s*\\)\\s*,?\\s*$")
-	for line in file.get_as_text().split("\n"):
+	for line in content.split("\n"):
 		if def_regex.search(line) == null:
 			continue
 		if tail_regex.search(line) == null:
 			failures.append("C| %s Tool '%s' ist nicht async deklariert (Def endet nicht mit ', true')" % [path, tool])
 		return
 	failures.append("C| %s: Tool '%s' fehlt im Tool-Katalog" % [path, tool])
-
-
-func _collect_gd_files(dir_path: String, out: Array[String]) -> void:
-	var dir := DirAccess.open(dir_path)
-	if dir == null:
-		return
-	dir.list_dir_begin()
-	var entry := dir.get_next()
-	while entry != "":
-		var full := dir_path.path_join(entry)
-		if dir.current_is_dir():
-			if not entry.begins_with("."):
-				_collect_gd_files(full, out)
-		elif entry.ends_with(".gd"):
-			out.append(full)
-		entry = dir.get_next()
-	dir.list_dir_end()

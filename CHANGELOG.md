@@ -939,3 +939,23 @@ refactor documentation: split technical specs into ARCHITECTURE.md and focus REA
 - docs/README.md: Dokumentation aktualisiert (F-200).
 - narrative_chain.json: Dokumentation aktualisiert (F-004).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+
+## 2026-08-27 07:00:00 — p55 · c55j40n4a13p50 · Vannon · sachlich
+
+**Docs-Integrity-Constraint: zentrale Doku… — nach Glitch**
+
+Docs-Integrity-Constraint: zentrale Doku mechanisch auf Duplikate und kaputte Tabellen pruefen; MCP-Transport-Fix: cwd-immuner Bridge-Wrapper fuer externe Clients
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- addons/gdscript_mcp/AGENTS.md: Dokumentation aktualisiert (F-050).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- docs/FINDINGS.md: Dokumentation aktualisiert (F-046).
+- kilo.json: Dokumentation aktualisiert (F-201).
+- mcp_bridge.cmd: Dokumentation aktualisiert (F-202).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/concept_index.gd: Dokumentation aktualisiert (F-055).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- scripts/preflight/constraint_docs_integrity.gd: Dokumentation aktualisiert (F-203).
+- scripts/preflight/constraint_docs_integrity.gd.uid: Dokumentation aktualisiert (F-204).
+- scripts/testing/docs_integrity_entry_test.gd: Dokumentation aktualisiert (F-205).
+- scripts/testing/docs_integrity_entry_test.gd.uid: Dokumentation aktualisiert (F-206).

@@ -19,6 +19,10 @@ var _failures: Array[String] = []
 var _live_verified := 0
 
 func _init() -> void:
+	create_timer(30.0).timeout.connect(func() -> void:
+		print("COMPILE_GATE: FATAL: WATCHDOG TIMEOUT")
+		quit(3)
+	)
 	_collect("res://scripts")
 	_collect("res://addons/gdscript_mcp")
 	print("COMPILE_GATE: scanning ", _files.size(), " files")

@@ -276,7 +276,7 @@ func run(ctx: PreflightContext) -> bool:
 		if not _check_signature(ctx, method_name, method_info, contract):
 			return false
 
-	var callsite_errors: PackedStringArray = _scan_callsites()
+	var callsite_errors: PackedStringArray = _scan_callsites(ctx.code_index.gd_sources)
 	if not ctx.check(callsite_errors.is_empty(), "stale GameState call signature detected before scene boot", {"errors": callsite_errors}):
 		return false
 	return true
@@ -306,20 +306,24 @@ func _check_signature(ctx: PreflightContext, method_name: StringName, method_inf
 	var actual_required: int = actual_args.size() - actual_defaults.size()
 	return ctx.check(actual_required == expected_required, "GameState façade optional-argument contract drifted for %s (expected %d required, got %d)" % [method_name, expected_required, actual_required])
 
-func _scan_callsites() -> PackedStringArray:
+## Scans pre-loaded GDScript sources for stale GameState call signatures.
+## sources: Array[{file:String, content:String, lines:Array[String]}] from PreflightCodeIndex.
+func _scan_callsites(sources: Array[Dictionary]) -> PackedStringArray:
 	var errors := PackedStringArray()
-	var files: Array[String] = []
-	_collect_gd_files("res://scripts", files)
 	var receiver_regex := RegEx.new()
 	var compile_error: int = receiver_regex.compile(CALLSITE_RECEIVER_PATTERN + "\\s*\\.\\s*([A-Za-z_]\\w*)\\s*\\(")
 	if compile_error != OK:
 		errors.append("could not compile GameState callsite regex")
 		return errors
-	for path in files:
+	for source in sources:
+		var path: String = String(source.file)
 		if path.ends_with("constraint_game_state_compatibility.gd"):
 			continue
-		var source: String = FileAccess.get_file_as_string(path)
-		var masked_source: String = _mask_non_code(source)
+		# Only check scripts/ subtree (addons have separate conventions)
+		if not path.begins_with("res://scripts"):
+			continue
+		var source_str: String = String(source.content)
+		var masked_source: String = _mask_non_code(source_str)
 		for match in receiver_regex.search_all(masked_source):
 			var method_name: StringName = StringName(match.get_string(1))
 			if not SIGNATURE_CONTRACTS.has(method_name):
@@ -347,62 +351,42 @@ func _legacy_signature_message(method_name: StringName, call_prefix: String) -> 
 			return String(pattern.get("message", "legacy GameState call"))
 	return ""
 
-func _collect_gd_files(path: String, files: Array[String]) -> void:
-	var directory := DirAccess.open(path)
-	if directory == null:
-		return
-	directory.list_dir_begin()
-	while true:
-		var entry: String = directory.get_next()
-		if entry.is_empty():
-			break
-		if entry.begins_with("."):
-			continue
-		var child_path: String = path.path_join(entry)
-		if directory.current_is_dir():
-			_collect_gd_files(child_path, files)
-		elif entry.ends_with(".gd"):
-			files.append(child_path)
-	directory.list_dir_end()
-
 func _mask_non_code(source: String) -> String:
-	var masked := ""
+	var bytes: PackedByteArray = source.to_utf8_buffer()
 	var in_string := false
 	var in_comment := false
 	var escaped := false
-	for index in source.length():
-		var character: String = source[index]
+	var byte_count: int = bytes.size()
+	for i in range(byte_count):
+		var b: int = bytes[i]
 		if in_comment:
-			if character == "\n":
+			if b == 10:  # \n
 				in_comment = false
-				masked += character
 			else:
-				masked += " "
+				bytes[i] = 32  # space
 			continue
 		if in_string:
-			if character == "\n":
-				masked += character
+			if b == 10:  # \n
+				continue
 			elif escaped:
-				masked += " "
+				bytes[i] = 32
 				escaped = false
-			elif character == "\\":
-				masked += " "
+			elif b == 92:  # \
+				bytes[i] = 32
 				escaped = true
-			elif character == "\"":
-				masked += " "
+			elif b == 34:  # "
+				bytes[i] = 32
 				in_string = false
 			else:
-				masked += " "
+				bytes[i] = 32
 			continue
-		if character == "#":
+		if b == 35:  # #
 			in_comment = true
-			masked += " "
-		elif character == "\"":
+			bytes[i] = 32
+		elif b == 34:  # "
 			in_string = true
-			masked += " "
-		else:
-			masked += character
-	return masked
+			bytes[i] = 32
+	return bytes.get_string_from_utf8()
 
 func _count_call_arguments(source: String, open_index: int) -> int:
 	var parentheses := 0

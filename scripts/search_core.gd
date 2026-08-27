@@ -26,6 +26,18 @@ var context_lines: int = 2
 var regex_mode: bool = false
 ## alle gd-Quellen des letzten Laufs (für den dependency graph)
 var _gd_sources: Array[Dictionary] = []
+## Wenn true, überspringt run() den _scan_dir-Durchlauf.
+## Wird von PreflightCodeIndex.inject_into_search_core() gesetzt.
+var _sources_injected: bool = false
+
+
+## Befüllt _gd_sources von extern (PreflightCodeIndex-Sharing).
+## Muss vor configure()+run() aufgerufen werden.
+## Format: Array[{file:String, lines:Array[String]}]
+func inject_sources(sources: Array[Dictionary]) -> void:
+	_gd_sources.clear()
+	_gd_sources.assign(sources)
+	_sources_injected = true
 
 
 func configure(q: String, types: Array = [], exclude: Array = [], p_max_results: int = 200, p_context_lines: int = 2, p_regex_mode: bool = false) -> void:
@@ -52,10 +64,33 @@ func configure(q: String, types: Array = [], exclude: Array = [], p_max_results:
 
 
 func run() -> Dictionary:
-	_gd_sources.clear()
 	var hits: Array[Dictionary] = []
 	var start_ms: int = Time.get_ticks_msec()
-	var totals: Array = _scan_dir("res://", hits, 0, 0)
+	var totals: Array
+
+	if _sources_injected:
+		# Fast path: index already in RAM, no disk scan needed.
+		# Respects exclude_dirs by skipping files whose path contains an excluded segment.
+		_sources_injected = false  # Reset so next standalone run() works correctly
+		var total_lines := 0
+		for source in _gd_sources:
+			var file_path: String = String(source.file)
+			var excluded := false
+			for excl_dir in exclude_dirs:
+				if file_path.contains("/" + excl_dir + "/") or file_path.contains("\\" + excl_dir + "\\"):
+					excluded = true
+					break
+			if excluded:
+				continue
+			var lines: Array = source.get("lines", [])
+			total_lines += lines.size()
+			_search_lines_for_hits(file_path, "gd", lines, hits)
+		totals = [_gd_sources.size(), total_lines]
+	else:
+		# Normal path: full disk scan (CLI tool, standalone usage).
+		_gd_sources.clear()
+		totals = _scan_dir("res://", hits, 0, 0)
+
 	var duration_ms: int = Time.get_ticks_msec() - start_ms
 
 	var by_type: Dictionary = {}
@@ -112,18 +147,22 @@ func _dependency_graph() -> Dictionary:
 		}
 		for line in source.lines:
 			var l := String(line)
-			var m := regex_class.search(l)
-			if m != null and entry.class_name == "":
-				entry.class_name = m.get_string(1)
-			var ex := regex_extends.search(l)
-			if ex != null and entry.extends == "":
-				entry.extends = ex.get_string(1)
-			var pr := regex_preload.search(l)
-			if pr != null:
-				entry.preloads.append(pr.get_string(1))
-			var ld := regex_load.search(l)
-			if ld != null:
-				entry.loads.append(ld.get_string(1))
+			if entry.class_name == "" and "class_name " in l:
+				var m := regex_class.search(l)
+				if m != null:
+					entry.class_name = m.get_string(1)
+			if entry.extends == "" and "extends" in l:
+				var ex := regex_extends.search(l)
+				if ex != null:
+					entry.extends = ex.get_string(1)
+			if "preload(" in l:
+				var pr := regex_preload.search(l)
+				if pr != null:
+					entry.preloads.append(pr.get_string(1))
+			if "load(" in l:
+				var ld := regex_load.search(l)
+				if ld != null:
+					entry.loads.append(ld.get_string(1))
 		graph[path] = entry
 	return graph
 
@@ -163,7 +202,14 @@ func _process_file(path: String, ext: String, hits: Array) -> int:
 	file.close()
 	if ext == "gd":
 		_gd_sources.append({"file": path, "lines": lines})
+	_search_lines_for_hits(path, ext, lines, hits)
+	return lines.size()
 
+
+## Sucht in bereits gelesenen Zeilen nach Treffern und fügt sie zu `hits` hinzu.
+## Kein Disk-I/O — wird sowohl vom normalen _process_file als auch vom
+## inject_sources-Schnellpfad in run() genutzt.
+func _search_lines_for_hits(path: String, ext: String, lines: Array, hits: Array) -> void:
 	var matches: Array[Dictionary] = []
 	if regex_mode:
 		var regex := RegEx.new()
@@ -199,13 +245,11 @@ func _process_file(path: String, ext: String, hits: Array) -> int:
 			"line_count": lines.size(),
 			"matches": matches,
 		})
-	return lines.size()
 
 
 func _line_matches(line: String) -> bool:
-	var lower := line.to_lower()
 	for alt in alternatives:
-		if alt in lower:
+		if line.findn(alt) != -1:
 			return true
 	return false
 

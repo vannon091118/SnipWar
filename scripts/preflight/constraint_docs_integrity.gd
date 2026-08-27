@@ -31,10 +31,10 @@ func run(ctx: PreflightContext) -> bool:
 	var total_tables := 0
 	for path in TARGET_DOCS:
 		var label := path.replace("res://", "")
-		if not FileAccess.file_exists(path):
+		var text := ctx.code_index.get_file_content(path)
+		if text.is_empty():
 			all_findings.append("%s: file missing" % label)
 			continue
-		var text := FileAccess.get_file_as_string(path)
 		var lines: Array[String] = []
 		for raw in text.split("\n"):
 			lines.append(String(raw).trim_suffix("\r"))

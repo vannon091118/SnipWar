@@ -15,6 +15,9 @@ func requires_scene() -> bool:
 func run(ctx: PreflightContext) -> bool:
 	var core: Object = SEARCH_CORE.new()
 
+	# Inject pre-built sources so SearchCore skips its internal _scan_dir pass.
+	ctx.code_index.inject_into_search_core(core)
+
 	# Test 1: basic search returns hits + scan metrics
 	core.configure("fleet", ["gd"])
 	var basic: Dictionary = core.run()
@@ -52,8 +55,9 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(first_gd.has("extends") and first_gd.has("preloads") and first_gd.has("loads") and first_gd.has("class_name"), "SearchCore dependency entry shape is complete"):
 		return false
 
-	# Test 5: exclude dirs work
-	core.configure("fleet", [], ["addons"])
+	# Test 5: exclude dirs work — re-inject since run() resets the flag.
+	ctx.code_index.inject_into_search_core(core)
+	core.configure("fleet", ["gd"], ["addons"])
 	var excl: Dictionary = core.run()
 	if not ctx.check(excl.has("total_files_scanned") and int(excl.get("total_files_scanned", 0)) > 0, "SearchCore exclude returns scanned count"):
 		return false
