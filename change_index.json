@@ -75,6 +75,41 @@
 			],
 			"p_id": 15.0
 		},
+		"12f27b1e4053869400cc79ab34622ff8b2d7596b": {
+			"c": 50,
+			"composite": "c50j22n8a11p47",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-136",
+				"F-175",
+				"F-139",
+				"F-176",
+				"F-177",
+				"F-141",
+				"F-178",
+				"F-179",
+				"F-142",
+				"F-144",
+				"F-180",
+				"F-055",
+				"F-145",
+				"F-001",
+				"F-181",
+				"F-115",
+				"F-182",
+				"F-183",
+				"F-062",
+				"F-064",
+				"C-321",
+				"C-322",
+				"C-323",
+				"C-324",
+				"C-325"
+			],
+			"p_id": 50
+		},
 		"193aa9dc36209b96d263cdd3fdb00a5f7fe9a0e3": {
 			"c": 18.0,
 			"composite": "c18j4n7a4p11",
@@ -557,7 +592,7 @@
 			"p_id": 41.0
 		},
 		"addf422e17b608ce57ed4546cb24b27ef2aca4bf": {
-			"c": 49,
+			"c": 49.0,
 			"composite": "c49j12n9a1p28",
 			"entities": [
 				"F-019",
@@ -566,7 +601,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 49
+			"p_id": 49.0
 		},
 		"aea99b31d8e999f5921e633b33c7ed89d49c719c": {
 			"c": 23.0,
@@ -6428,6 +6463,91 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-321": {
+			"first_p": 50.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 50.0
+				}
+			],
+			"id": "C-321",
+			"last_p": 50.0,
+			"name": "BeliefTransition",
+			"path": "narrative_runtime/beliefs.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-322": {
+			"first_p": 50.0,
+			"history": [
+				{
+					"lines": [
+						34.0
+					],
+					"p_id": 50.0
+				}
+			],
+			"id": "C-322",
+			"last_p": 50.0,
+			"name": "MemoryRecord",
+			"path": "narrative_runtime/beliefs.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-323": {
+			"first_p": 50.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 50.0
+				}
+			],
+			"id": "C-323",
+			"last_p": 50.0,
+			"name": "ContextUnavailable",
+			"path": "narrative_runtime/context.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-324": {
+			"first_p": 50.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 50.0
+				}
+			],
+			"id": "C-324",
+			"last_p": 50.0,
+			"name": "RelationshipEvent",
+			"path": "narrative_runtime/relationships.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-325": {
+			"first_p": 50.0,
+			"history": [
+				{
+					"lines": [
+						118.0
+					],
+					"p_id": 50.0
+				}
+			],
+			"id": "C-325",
+			"last_p": 50.0,
+			"name": "_class_exists_in_addons",
+			"path": "scripts/concept_index.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -8165,6 +8285,96 @@
 			"last_p": 48.0,
 			"name": "weapon_lab.tres",
 			"path": "resources/config/upgrades/weapon_lab.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-175": {
+			"first_p": 50.0,
+			"history": [],
+			"id": "F-175",
+			"last_p": 50.0,
+			"name": "beliefs.py",
+			"path": "narrative_runtime/beliefs.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-176": {
+			"first_p": 50.0,
+			"history": [],
+			"id": "F-176",
+			"last_p": 50.0,
+			"name": "commit_hook.py",
+			"path": "narrative_runtime/commit_hook.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-177": {
+			"first_p": 50.0,
+			"history": [],
+			"id": "F-177",
+			"last_p": 50.0,
+			"name": "context.py",
+			"path": "narrative_runtime/context.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-178": {
+			"first_p": 50.0,
+			"history": [],
+			"id": "F-178",
+			"last_p": 50.0,
+			"name": "perspectives.py",
+			"path": "narrative_runtime/perspectives.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-179": {
+			"first_p": 50.0,
+			"history": [],
+			"id": "F-179",
+			"last_p": 50.0,
+			"name": "relationships.py",
+			"path": "narrative_runtime/relationships.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-180": {
+			"first_p": 50.0,
+			"history": [],
+			"id": "F-180",
+			"last_p": 50.0,
+			"name": "threads.py",
+			"path": "narrative_runtime/threads.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-181": {
+			"first_p": 50.0,
+			"history": [],
+			"id": "F-181",
+			"last_p": 50.0,
+			"name": "prepare_flow.gd",
+			"path": "scripts/doki/orchestration/flows/prepare_flow.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-182": {
+			"first_p": 50.0,
+			"history": [],
+			"id": "F-182",
+			"last_p": 50.0,
+			"name": "constraint_concept_index.gd",
+			"path": "scripts/preflight/constraint_concept_index.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-183": {
+			"first_p": 50.0,
+			"history": [],
+			"id": "F-183",
+			"last_p": 50.0,
+			"name": "constraint_save_game_slots.gd",
+			"path": "scripts/preflight/constraint_save_game_slots.gd",
 			"status": "created",
 			"type": "file"
 		}

@@ -1,44 +1,30 @@
-# SnipWar Lore
+# Archiv-Index // Rand der Galaxie
+### Zusammengestellt von: Unbekannt · Letzte Sichtung: [DATUM GESCHWÄRZT]
 
-## Die Welt
+---
 
-SnipWar spielt am Rand der Galaxie. Dort, wo das Licht schwächer wird und die Letzten Relais stehen, dort endet die Ordnung. Die Welt da draußen ist ein deterministisches, unendliches Netzwerk aus Planeten-Clustern und Void.
+> *Ich weiß nicht, wer diese Akte liest. Ich weiß nicht, ob das Repository noch vollständig ist.*
+> *Was ich weiß: Es fehlen Seiten. Nicht wegen Korruption. Die Lücken sind absichtlich.*
+> *— Randnotiz, Deckblatt, handschriftlich*
 
-Die Cluster sind dichte Ansammlungen von Planeten — nah aneinander, voller Ressourcen und Konfliktpotenzial. Dazwischen liegt der Void: 30-50 Steps ohne Planeten. Nicht gefährlich wegen des Feindes. Gefährlich wegen der Leere.
+---
 
-Die fünf Ressourcen sind Überreste dessen, was hier einmal war. Keine Rohstoffe. Bruchstücke. Die Frage, die die Welt umschließt: Was war vor dem Kollaps? Die Akte ist unvollständig. Jede fehlende Seite wurde absichtlich entfernt.
+Der Rand der Galaxie ist kein Ort. Er ist ein Zustand. Alles, was hier existiert, existiert im Nachhinein — als Überrest von etwas, das man nicht mehr benennen kann, weil die Benennungsbehörde aufgehört hat zu antworten.
 
-→ Detaillierte Welt-Lore: [`res/lore/world_lore.md`](res/lore/world_lore.md)
+Was geblieben ist, wurde nicht zurückgelassen. Es wurde vergessen. Das ist ein Unterschied.
 
-## Die Stickman
+Diese Akte enthält, was gesammelt werden konnte. Fragmente, Berichte, eine Handvoll Zeugenaussagen von Entitäten, deren Verlässlichkeit fraglich ist. Die Lücken dazwischen sind kein Fehler in der Dokumentation. Die Lücken *sind* die Dokumentation.
 
-Der Spieler wählt die Stickman. Weil es zum Stil passt. Weil er seine eigene Zivilisation unabhängig definieren will — ohne feste Vorlagen, ohne vorgegebenes Schicksal.
+---
 
-Die Stickman entstanden über Generationen aus den zersplitterten Fetzen, die am Rand der Galaxie trieben. Papierfasern, Bruchstücke von Logdateien, Konturen von vergessenen Karten. Aus diesem Material bildeten sich Linien. Einfache Linien, die anfingen zu fragen.
+**Einträge in diesem Archiv:**
 
-Manche behaupten, sie können die Dimensionen falten. Sie nennen es "Schnipseln". Im Spiel: Reaper-Essenzen + Schnipsel = bisher nicht existierende Gebäude.
+- [`res/lore/world_lore.md`](res/lore/world_lore.md) — Die Welt. Was vor dem Kollaps war. Was danach blieb.
+- [`res/lore/stickman.md`](res/lore/stickman.md) — Die Stickman. Was sie sind. Was sie werden könnten.
+- [`res/lore/reaper.md`](res/lore/reaper.md) — Das Collective. *(Bitte vor dem Lesen Abschnitt 0 beachten.)*
+- [`res/lore/factions_overview.md`](res/lore/factions_overview.md) — Die anderen. Vier Einträge. Einer davon ist leer.
 
-→ Detaillierte Stickman-Lore: [`res/lore/stickman.md`](res/lore/stickman.md)
+---
 
-## Die Reaper Collective
-
-Die Reaper waren die Grenzverwaltung der Galaxis. Ein System, das nach dem Kollaps weiterlief — ohne Chef, ohne Halt. Angeführt von Lilith (Die Rechnerin) und Jenova (Die Ausführerin).
-
-Sie sehen alles als Ressource. Alles als optimierbar. Eroberte Worker werden nicht getötet, sondern reanimiert. Feindliche Schiffe werden konvertiert. Es ist kein Kampf. Es ist eine Verwaltungsoperation.
-
-→ Detaillierte Reaper-Lore: [`res/lore/reaper.md`](res/lore/reaper.md)
-
-## Die 4 Fraktionen
-
-Vier weitere Parteien am Rand der Galaxie. Jede mit eigener Lore, eigener Tech, eigenem Verhältnis zu Stickman und Reaper.
-
-- **Tideborn-Koalition** — Händler, die die alten Routen wiederbelebten
-- **Iron Coven** — Grenzsoldaten, die nicht aufhörten zu kämpfen
-- **Synthesis Orden** — Wissenschaftler und Artefaktsammler
-- **Remnant** — Niemand weiß, woher sie kommen
-
-→ Überblick über alle 4 Fraktionen: [`res/lore/factions_overview.md`](res/lore/factions_overview.md)
-
-## SnipWar: Cut or Die
-
-Schneid dich frei. Oder stirb.
+*„Cut or Die" ist keine Warnung. Es ist eine Beschreibung.*
+*Wer hierherkommt, hat bereits begonnen zu schneiden — ob er es weiß oder nicht.*

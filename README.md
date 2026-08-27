@@ -10,7 +10,7 @@
 <br/>
 <samp>
 <b>SNIPWAR — RAND DER GALAXIE</b><br/>
-STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 34 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
+STRATEGISCHE OVERWORLD · UNENDLICHE WELTEN · 38 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
 </samp>
 <br/><br/>
 </td>
@@ -19,7 +19,7 @@ STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 34 PREFLIGHT-CONSTRAINTS · 0 SICH
 
 [![Engine: Godot 4.7](https://img.shields.io/badge/Engine-Godot%204.7-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/)
 [![Status: Frontier-Kern](https://img.shields.io/badge/Status-Frontier--Kern%20aktiv-f0b429?style=for-the-badge)](#-lagezentrum--frontbericht)
-[![Preflight](https://img.shields.io/badge/Preflight-36%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
+[![Preflight](https://img.shields.io/badge/Preflight-38%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
 [![Sprache: GDScript](https://img.shields.io/badge/GDScript-4.7-blue?style=for-the-badge)](#-architektur--vom-katalog-zum-spielstand)
 [![Treibstoff](https://img.shields.io/badge/Fuel-Koffein%20%26%20Größenwahn-6f4e37?style=for-the-badge)](#)
 
@@ -33,14 +33,14 @@ STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 34 PREFLIGHT-CONSTRAINTS · 0 SICH
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ▓                                                          ▓
 ▓   EINGEHENDE TRANSMISSION // KANAL 7-DELTA               ▓
-▓   HERKUNFT: RAND DER GALAXIE · SEKTOR [REDACTED]             ▓
-▓   VERSCHLÜSSELUNG: KEINE (Zu teuer in der Anschaffung)   ▓
+▓   HERKUNFT: RAND DER GALAXIE · SEKTOR [GESCHWÄRZT]       ▓
+▓   VERSCHLÜSSELUNG: KEINE  (Zu teuer. Wurde abgelehnt.)   ▓
 ▓   EMPFÄNGER: Wer auch immer das Repository gerade klont  ▓
 ▓                                                          ▓
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ```
 
-*„Die Galaxie ist unendlich. Zwei davon bilden sich ein, wichtig zu sein.<br/>
+*„Die Galaxie ist unendlich. Zwei Fraktionen bilden sich ein, wichtig zu sein.<br/>
 Der Rest hat keine Meinung — noch nicht."*
 
 </div>
@@ -60,6 +60,8 @@ Unendlich Welten. Fünf Rohstoffe. Zwei Fraktionen mit ausgeprägter Antipathie 
 Die strategische Lage ist simpel: **Wer das Waypoint-Netz kontrolliert, bestimmt den Ressourcenstrom. Wer den Strom kontrolliert, baut Schiffe. Wer Schiffe hat, behauptet im Nachhinein, das Ganze sei ein genialer Masterplan gewesen.**
 
 Aktuell sind wir bei Schritt eins: Hoffen, dass die Worker nicht auf halbem Weg umdrehen.
+
+*(Für alle, die sich fragen, ob das hier eine Produktionsankündigung ist: Es ist ein Spiel in Entwicklung. Die Transmission klingt fertig. Der Code ist es fast.)*
 
 ---
 
@@ -568,11 +570,12 @@ $GODOT_BIN --headless --path . --script res://scripts/preflight.gd
 | 30 | `main_menu_and_flow` | Hauptmenü, SceneDirector-Registry & Continue-Gating |
 | 31 | `context_handover` | World→Battle→World-Szenenwechsel über den SceneDirector |
 | 32 | `save_game_roundtrip` | Verlustfreier Save/Load-Roundtrip eines mutierten Runs |
-|| 33 | `save_game_slots` | Save-Slot-Write/Read/Overwrite/Corruption/Delete |
-|| 34 | `mechanic_coverage` | Mechanic-Entdeckung, Test-Modell-Integrität & Szenario-Validierung |
-|| 35 | `concept_index` | Konzept-Index-Abdeckung, Klassen-Mapping & Fuzzy-Search |
+| 33 | `save_game_slots` | Save-Slot-Write/Read/Overwrite/Corruption/Delete |
+| 34 | `mechanic_coverage` | Mechanic-Entdeckung, Test-Modell-Integrität & Szenario-Validierung |
+| 35 | `concept_index` | Konzept-Index-Abdeckung, Klassen-Mapping & Fuzzy-Search |
 | 36 | `dead_code` | Heuristische Dead-Code-Analyse (Warnung, non-blocking) |
 | 37 | `global_search` | Globaler Volltext-Search tool-funktional validiert |
+| 38 | `mcp_capture_contract` | S.C.O.U.T.-Capture-Vertrag: async-only, kein Sync-Bypass, frame-korrekte Textur |
 
 </details>
 
@@ -580,13 +583,86 @@ Preflight ist modular (V2 Architecture). `scripts/preflight.gd` ist der Orchestr
 
 ---
 
+## 🔬 EIGENBAUTEN — S.C.O.U.T. & DOKI
+
+*Kurze Unterbrechung der Immersion. Diese Sektion gehört nicht in die Galaxie — sie gehört hinter den Bildschirm. Aber sie existiert, also bekommt sie ihren Platz. Danach geht's weiter.*
+
+<div align="center">
+
+```
+┌────────────────────────────────────────────────────────────┐
+│   ENTWICKLUNGSINFRASTRUKTUR — ZWEI EIGENE WERKZEUGE        │
+│   Beide selbst gebaut. Beide nicht standalone verfügbar.   │
+│   Beide trotzdem real — und zu wichtig um sie wegzulassen. │
+└────────────────────────────────────────────────────────────┘
+```
+
+</div>
+
+### 📡 S.C.O.U.T. — Scripted Control & Observation Utility Terminal
+
+`addons/gdscript_mcp/`
+
+**S.C.O.U.T.** ist eine MCP-Bridge (*Model Context Protocol*) für Godot — entwickelt als Addon innerhalb dieses Projekts, nicht als eigenständiges Release. Es erlaubt KI-Agenten, das laufende Spiel live zu steuern: Screenshots aufnehmen, Szenen befragen, GDScript-Tools aufrufen und Spielzustände verifizieren — alles über einen lokalen Protokollkanal mit einem Handshake pro Befehl.
+
+```
+Godot Editor (Port 9091) ←──── S.C.O.U.T. ────→ Agent
+Godot Runtime (Port 9090) ←──────────────────── Agent
+```
+
+Was S.C.O.U.T. kann:
+
+- **107+ Tools** — von `get_image()` über `dispatch_mission()` bis `run_preflight()`
+- **OCR-Pflicht** — visueller Beweis statt reiner API-Antworten; Screenshots sind Evidence, keine Behauptungen
+- **Atom-Vertrag** — ein Befehl = ein Prozess + ein Handshake. Kein Session-Basteln, kein FIFO.
+- **Async-Capture** — Screenshots erst nach `frame_post_draw`, nie vorher. Wer das umgeht, bekommt eine leere Textur.
+
+> *Kein öffentliches Release. S.C.O.U.T. lebt in `addons/gdscript_mcp/`. Wer es findet, findet es.*
+
+---
+
+### 📜 DOKI — Deterministischer Commit-Narrator
+
+`scripts/doki/`
+
+**DOKI** ist das Commit-Gate des Repos. Kein `git commit -m` ohne DOKI — der pre-commit-Hook blockiert es. Jeder Commit wird stattdessen erzählt: von einer von **14 virtuellen Personas**, ausgewählt via deterministischem Composite-Hash, mit einem von **10 Mood-Overlays**. Der Narrator wechselt nie zufällig; derselbe Zustand + derselbe Impuls = derselbe Charakter, jedes Mal.
+
+```
+Djb2(prevComposite + TreeHash + DiffHash + Impuls)
+  → XorShift128 (32-Bit-maskiert, 10×Warmup)
+  → cXjXnXaXpX   ← Composite-Hash
+       │││││
+       ││││└─ p: Plot-Referenz (inhaltlich)
+       │││└── a: Arc-Phase (Handlungsbogen)
+       ││└─── n: Narrator  (1–14 → Charakter)
+       │└──── j: Jitter    (Mood-Overlay)
+       └───── c: Commit-Counter (monoton steigend)
+```
+
+DOKI ist **keine Spiellogik**. Es importiert nichts aus dem Spiel, kennt keine Autoloads, schickt keine Signale. Es lebt in `scripts/doki/`, kommuniziert ausschließlich mit Git und eigenen Dateien — und blockt den Commit, wenn die Erzählung nicht trägt.
+
+```bash
+# DOKI-Flow (vor jedem Commit):
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- prepare "<impuls>"
+# → .doki/prompt.txt: Narrator + Mood + Composite
+# → Agent schreibt den Body in der Rolle des Narrators (Fließtext, keine Bullets)
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- finish --body-file .doki/narrator_body.md
+git commit -F .commit_msg.txt
+```
+
+> *Auch kein öffentliches Release. DOKI läuft hier, weil es hier entwickelt wurde. Das ist die ganze Geschichte.*
+
+---
+
 ## 🧭 REPOSITORY-GRENZEN — Inhalt vs. Entwicklungsartefakte
 
 Das Repository enthält ausschließlich den reproduzierbaren Spielstand: Godot-Code, Szenen, konfigurierte Ressourcen, Assets, verbindliche Spezifikationen und automatisierte Preflight-Prüfungen.
 
-Nicht in dieses Repository gehören Entwicklungsprotokolle, Agenten-Arbeitsdateien, MCP-Dumps, temporäre Skripte oder ZIP-Snapshots. Solche Dateien werden außerhalb des Repositories im übergeordneten `nip empire`-Ordner abgelegt, idealerweise unter `snapshots/` oder `dev-logs/`. Snapshot-Dateien werden nicht in den Build und nicht in die Git-Historie verdrahtet; ihre Herkunft und der zugehörige Commit werden über eine externe Index-/Manifestdatei dokumentiert.
+Nicht in dieses Repository gehören Entwicklungsprotokolle, Agenten-Arbeitsdateien, MCP-Dumps, temporäre Skripte oder ZIP-Snapshots. Solche Dateien werden außerhalb des Repositories im übergeordneten Ordner abgelegt. Snapshot-Dateien werden nicht in den Build und nicht in die Git-Historie verdrahtet; ihre Herkunft und der zugehörige Commit werden über eine externe Index-/Manifestdatei dokumentiert.
 
 Für neue lokale Werkzeuge gilt: entweder in `addons/` bzw. `scripts/` als reproduzierbarer Projektbestandteil einordnen oder außerhalb des Repository-Ordners halten. Temporäre Root-Dateien wie `tmp_*`, `*_check.py` und `*.zip` dürfen nicht eingecheckt werden.
+
+---
 
 ## 🔧 ENTWICKLER-WORKFLOW — Commit-Kette
 
@@ -600,12 +676,12 @@ Jeder `git commit` läuft durch die vollständige Hook-Kette und landet **sofort
 ┌─────────────┐     ┌─────────────┐     ┌──────────────┐
 │ pre-commit  │────▶│ commit-msg  │────▶│ post-commit  │
 │             │     │             │     │              │
-│ whitespace  │     │ Begründung  │     │ push origin  │
-│ + preflight │     │ pro Datei   │     │ HEAD:main    │
+│ whitespace  │     │ DOKI-Flow   │     │ push origin  │
+│ + preflight │     │ (Narrator)  │     │ HEAD:main    │
 └─────────────┘     └─────────────┘     └──────────────┘
 		│                   │                    │
 		▼                   ▼                    ▼
-   Preflight-Fehler    Fehlende Begründung   Commit ist
+   Preflight-Fehler    Erzählung fehlt      Commit ist
    bricht den Push     bricht den Commit    sofort public
 ```
 
@@ -613,21 +689,21 @@ Jeder `git commit` läuft durch die vollständige Hook-Kette und landet **sofort
 git add scripts/meine_datei.gd resources/meine_resource.tres
 # Niemals: git add -A
 
-git commit
-# Jede gestagte Datei braucht eine Begründungszeile:
-# - scripts/meine_datei.gd: Was wurde geändert und warum.
+# DOKI-Flow (Pflicht):
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- prepare "<impuls>"
+# ... Body schreiben in .doki/narrator_body.md ...
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- finish --body-file .doki/narrator_body.md
+git commit -F .commit_msg.txt
 ```
 
 > [!WARNING]
 > `core.hooksPath=/dev/null` ist deaktiviert. Es gibt keinen Bypass. Das ist Absicht.
 
-**Bei Preflight-Fehlern:** Fehler lesen → Dateien korrigieren → `git add` + `git commit` → Hook-Kette wiederholt sich automatisch.
+**Bei Preflight-Fehlern:** Fehler lesen → Dateien korrigieren → `git add` + DOKI-Flow wiederholen → Hook-Kette läuft erneut.
 
 ---
 
 ## 🗺️ STRATEGISCHE ROADMAP
-
-> **[📊 Visuelle Entwicklungs-Roadmap öffnen](ROADMAP_VISUAL.html)** — Interaktive HTML-Übersicht mit Snapshot-Wachstums-Chart, Zeitstrahl, Fortschrittsbalken und Phasen-Zusammenfassung. Basierend auf 14 Snapshots (Aug 19–21) und dem aktuellen Code-Stand.
 
 **Aktueller Stand (Aug 2026):**
 
@@ -638,8 +714,7 @@ git commit
 | Szenen | **16** |
 | Assets | **419** |
 | Ressourcen | **91** |
-| Preflight-Constraints | **33 PASS** |
-| Snapshots | **14** (Aug 19–21) |
+| Preflight-Constraints | **38 PASS** |
 
 ```mermaid
 timeline
@@ -681,9 +756,11 @@ timeline
 | 📐 **Technischer Vertrag** | [`DESIGN.md`](DESIGN.md) — Verbindliche Spezifikation |
 | 🎯 **Zielvision** | [`VISION.md`](VISION.md) — 4X-Kreislauf & Roadmap |
 | 🗺️ **Dokumentations-Index** | [`docs/README.md`](docs/README.md) — Struktur & Zugehörigkeiten |
+| 📡 **S.C.O.U.T.-Bridge** | [`addons/gdscript_mcp/`](addons/gdscript_mcp/) — MCP-Addon (intern) |
+| 📜 **DOKI CommitLayer** | [`scripts/doki/README.md`](scripts/doki/README.md) — Commit-Gate |
 
 ---
 
-<sub>SnipWar // Entwickelt mit Godot 4.7 & Vektorgrafiken · Stand: 2026</sub>
+<sub>SnipWar // Entwickelt mit Godot 4.7 & viel Papier · Stand: 2026</sub>
 
 </div>

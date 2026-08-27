@@ -834,3 +834,33 @@ Dokumentations- und DOKI-Artefakte mit dem finalen lokalen Änderungsstand synch
 - change_index.json: Tooling erweitert (F-003).
 - narrative_chain.json: Tooling erweitert (F-004).
 - scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+
+## 2026-08-27 02:00:00 — p50 · c50j22n8a11p47 · Ghost · triumphierend
+
+**Ghost verzeichnet: Implement narrative runtime state, context… — nach Spark**
+
+Implement narrative runtime state, context bridge, and verified preflight fixes
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- narrative_runtime/README.md: Implementiert und integriert (F-136).
+- narrative_runtime/beliefs.py: Implementiert und integriert (F-175).
+- narrative_runtime/cli.py: Implementiert und integriert (F-139).
+- narrative_runtime/commit_hook.py: Implementiert und integriert (F-176).
+- narrative_runtime/context.py: Implementiert und integriert (F-177).
+- narrative_runtime/observe.py: Implementiert und integriert (F-141).
+- narrative_runtime/perspectives.py: Implementiert und integriert (F-178).
+- narrative_runtime/relationships.py: Implementiert und integriert (F-179).
+- narrative_runtime/store.py: Implementiert und integriert (F-142).
+- narrative_runtime/tests/test_runtime.py: Implementiert und integriert (F-144).
+- narrative_runtime/threads.py: Implementiert und integriert (F-180).
+- scripts/concept_index.gd: Implementiert und integriert (F-055).
+- scripts/doki/NARRATIVE_ENGINE_DESIGN.md: Implementiert und integriert (F-145).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Implementiert und integriert (F-181).
+- scripts/objects/planets/planet_details.gd: Implementiert und integriert (F-115).
+- scripts/preflight/constraint_concept_index.gd: Implementiert und integriert (F-182).
+- scripts/preflight/constraint_save_game_slots.gd: Implementiert und integriert (F-183).
+- scripts/preflight/constraint_world_details_and_scale.gd: Implementiert und integriert (F-062).
+- scripts/preflight_v2/v2_fixture.gd: Implementiert und integriert (F-064).

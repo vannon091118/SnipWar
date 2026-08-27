@@ -3871,6 +3871,143 @@
 			"seq": 49,
 			"subject": "Spark entdeckt: Dokumentations- und DOKI-Artefakte mit dem… — nach Thinker",
 			"summary": "Warum war dieser letzte Archivschritt unvermeidlich? Weil eine Geschichte, deren technische Spuren nicht mit dem Arbeitsstand übereinstimmen, nur ein schlecht geführtes Protokoll ist. AGENTS.md häl..."
+		},
+		{
+			"a": 11,
+			"arc": "a21",
+			"c": 50,
+			"composite": "c50j22n8a11p47",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 47.0
+				},
+				{
+					"deletions": 15.0,
+					"file": "narrative_runtime/README.md",
+					"insertions": 35.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/beliefs.py",
+					"insertions": 113.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "narrative_runtime/cli.py",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/commit_hook.py",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/context.py",
+					"insertions": 62.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "narrative_runtime/observe.py",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/perspectives.py",
+					"insertions": 59.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/relationships.py",
+					"insertions": 121.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "narrative_runtime/store.py",
+					"insertions": 144.0
+				},
+				{
+					"deletions": 128.0,
+					"file": "narrative_runtime/tests/test_runtime.py",
+					"insertions": 67.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/threads.py",
+					"insertions": 143.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/concept_index.gd",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 11.0,
+					"file": "scripts/doki/NARRATIVE_ENGINE_DESIGN.md",
+					"insertions": 36.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/objects/planets/planet_details.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "scripts/preflight/constraint_concept_index.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/preflight/constraint_save_game_slots.gd",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_world_details_and_scale.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_v2/v2_fixture.gd",
+					"insertions": 7.0
+				}
+			],
+			"date": "2026-08-27 02:00:00",
+			"hash": "12f27b1e4053869400cc79ab34622ff8b2d7596b",
+			"j": 22,
+			"model_id": "claude-sonnet-4",
+			"mood": "triumphierend",
+			"n": 8,
+			"narrator": "Ghost",
+			"p": 47,
+			"p_id": 50,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Spark",
+			"seq": 50,
+			"subject": "Ghost verzeichnet: Implement narrative runtime state, context… — nach Spark",
+			"summary": "Ghost trägt den Archivstand weiter, weil die Narrative Runtime nun nicht mehr nur Ereignisse sammelt, sondern ihre abgeleiteten Zustände reproduzierbar an die historische Chain bindet. Relationship..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
