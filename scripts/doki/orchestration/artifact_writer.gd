@@ -15,31 +15,33 @@ func _init(repo_root: String, git: DOKI_GitHelper, index_store: DOKI_ChangeIndex
 	_index_store = index_store
 
 
-## Schreibt alle Commit-Artefakte (nach bestandenen Checks).
-## - persistiert change_index.json (mit neuen Entitäten)
-## - hängt CHANGELOG-Eintrag an
-## - schreibt .commit_msg.txt
-## - staged CHANGELOG + change_index
-## - speichert die Analyze-Ergebnisse in der Session (für finalize-Link)
-func apply_commit_artifacts(session: Dictionary, message: Dictionary, analyze: Dictionary, index: Dictionary, subject: String, date_str: String) -> void:
-	_index_store.save(index)
-	session["_entities"] = analyze
-
-	var changelog_path: String = _repo_root.path_join("CHANGELOG.md")
-	var existing: String = FileAccess.get_file_as_string(changelog_path) if FileAccess.file_exists(changelog_path) else "# CHANGELOG\n"
-	_write_changelog(changelog_path, existing.rstrip("\n") + "\n" + _changelog_entry(session, subject, message, date_str))
-
+## finish: schreibt NUR die Commit-Message-Datei (nach bestandenen Checks).
+## CHANGELOG/change_index entstehen bewusst NICHT hier — sie werden erst in
+## finalize NACH dem Commit geschrieben. Sonst bliebe bei einem gescheiterten
+## Commit ein Orphan-Eintrag stehen (bekannter Fehler: p17/Argos ohne Commit).
+func write_commit_msg(full_message: String) -> void:
 	var msg_path: String = _repo_root.path_join(".commit_msg.txt")
 	var msg_file := FileAccess.open(msg_path, FileAccess.WRITE)
 	if msg_file != null:
-		msg_file.store_string(str(message["full_message"]))
+		msg_file.store_string(full_message)
 		msg_file.close()
 
-	_git.stage(["CHANGELOG.md", "change_index.json"])
+
+## finalize (post-commit, transaktional): persistiert change_index.json (inkl.
+## Commit-Link) und hängt den CHANGELOG-Eintrag an. Das Stagen der narrative
+## Dateien macht finalize selbst (ein Punkt, alle 4 Dateien). Kein Orphan möglich.
+func apply_finalize_artifacts(session: Dictionary, index: Dictionary, date_str: String) -> void:
+	_index_store.save(index)
+
+	var changelog_path: String = _repo_root.path_join("CHANGELOG.md")
+	var existing: String = FileAccess.get_file_as_string(changelog_path) if FileAccess.file_exists(changelog_path) else "# CHANGELOG\n"
+	var subject: String = str(session.get("subject", ""))
+	var reason_lines: Array = session.get("reason_lines", [])
+	_write_changelog(changelog_path, existing.rstrip("\n") + "\n" + _changelog_entry(session, subject, reason_lines, date_str))
 
 
 ## CHANGELOG-Eintrag für diesen Commit (deterministischer Zeitstempel aus der Chain).
-func _changelog_entry(session: Dictionary, subject: String, message: Dictionary, date_str: String) -> String:
+func _changelog_entry(session: Dictionary, subject: String, reason_lines: Array, date_str: String) -> String:
 	var entry_lines: Array = []
 	entry_lines.append("")
 	entry_lines.append("## %s — p%d · %s · %s · %s" % [date_str, int(session.get("p_id", 0)), str(session.get("composite", "")), str(session.get("narrator", "")), str(session.get("mood", ""))])
@@ -47,10 +49,9 @@ func _changelog_entry(session: Dictionary, subject: String, message: Dictionary,
 	entry_lines.append("**%s**" % subject)
 	entry_lines.append("")
 	entry_lines.append(str(session.get("impulse", "")))
-	var reasons: Array = message.get("reason_lines", [])
-	if not reasons.is_empty():
+	if not reason_lines.is_empty():
 		entry_lines.append("")
-		entry_lines.append_array(reasons)
+		entry_lines.append_array(reason_lines)
 	entry_lines.append("")
 	return "\n".join(entry_lines)
 
@@ -74,10 +75,18 @@ func write_prompt_file(prompt: Dictionary, narrator: String, mood: String) -> St
 
 
 ## Bereinigt verbrauchte Transient-Dateien (nach finalize).
+## Entfernt auch .doki/prompt.txt und .doki/narrator_body.md — sonst bleiben
+## Artefakte des letzten Flows liegen und verwirren den nächsten Agenten.
 func cleanup_transients() -> void:
 	var msg_path: String = _repo_root.path_join(".commit_msg.txt")
 	if FileAccess.file_exists(msg_path):
 		DirAccess.remove_absolute(msg_path)
+	var prompt_path: String = _repo_root.path_join(".doki").path_join("prompt.txt")
+	if FileAccess.file_exists(prompt_path):
+		DirAccess.remove_absolute(prompt_path)
+	var body_path: String = _repo_root.path_join(".doki").path_join("narrator_body.md")
+	if FileAccess.file_exists(body_path):
+		DirAccess.remove_absolute(body_path)
 
 
 static func _write_changelog(path: String, content: String) -> void:

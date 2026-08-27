@@ -128,6 +128,28 @@ func _main(args: PackedStringArray) -> int:
 			if bool(arc_result.get("advanced", false)):
 				print("  ✦ ARC abgeschlossen: '%s' → neuer Arc '%s'" % [str(arc_result.get("old_arc_name", "")), str(arc_result.get("new_arc_name", ""))])
 			return 0
+		"amend":
+			var body: String = _body_input(rest)
+			if body.is_empty():
+				return _fail("amend: Body fehlt. Text via --body, --body-file oder stdin übergeben.")
+			var result: Dictionary = orchestrator.amend(body)
+			if not result["ok"]:
+				if result.get("phase") == "verify":
+					print("✗ HARTE BLOCKS (Checks 1-8):")
+					for e in result.get("errors", []):
+						print("  ✗ %s" % str(e))
+					if not result.get("soft_errors", []).is_empty():
+						print("Warnungen (1-6):")
+						for e in result.get("soft_errors", []):
+							print("  ⚠ %s" % str(e))
+					return 1
+				return _fail(str(result.get("error", "amend fehlgeschlagen.")))
+			if _json_output:
+				_print_json({"ok": true, "message": result["message"]})
+				return 0
+			print("✓ amend: Checks 1-8 bestanden — Message geschrieben nach .commit_msg.txt")
+			print("  → git commit --amend -F .commit_msg.txt")
+			return 0
 		"repair":
 			var result: Dictionary = orchestrator.repair()
 			if not result["ok"]:
@@ -239,6 +261,7 @@ func _print_help() -> void:
 	print("  init [--seed-last N]    Genesis am HEAD verankern; letzte N Commits als Chain-Vorgeschichte")
 	print("  prepare \"<impuls>\"      Nach `git add` — schreibt .doki/prompt.txt (Narrator+Mood deterministisch)")
 	print("  finish                  Body via --body \"<text>\" / --body-file <pfad> / --stdin (explizit)")
+	print("  amend                   DOKI-Message des letzten Commits nachbearbeiten (Body ersetzen)")
 	print("  verify-only <msgfile>   Checks 1-9 (commit-msg Hook)")
 	print("  gate                    pre-commit Gate (Session + Snapshot + .commit_msg.txt)")
 	print("  finalize                Chain-Append nach Commit (post-commit Hook)")

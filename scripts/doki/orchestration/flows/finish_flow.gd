@@ -45,7 +45,8 @@ func run(body: String) -> Dictionary:
 		return state
 	var session: Dictionary = state["session"]
 
-	# Diff + Entitäten (index ist jetzt der Schreibpunkt — finish persistiert)
+	# Diff + Entitäten — der Index wird analysiert, aber erst in finalize persistiert
+	# (sonst blieben bei einem gescheiterten Commit Orphan-Entitäten stehen).
 	var index: Dictionary = _index_store.read()
 	var staged: Array = _git.staged_files()
 	if staged.is_empty():
@@ -59,17 +60,27 @@ func run(body: String) -> Dictionary:
 	var subject_line: String = str(message["subject"])
 
 	# 9 Checks
-	var verify_result: Dictionary = _verifier.validate(full_message, session, _chain_store.read(), staged.duplicate(), _git.unstaged_diffs(), {})
+	var verify_result: Dictionary = _verifier.validate(full_message, session, _chain_store.read(), staged.duplicate(), _git.unstaged_diffs())
 	var hard_errors: Array = verify_result["hard_errors"]
 	if not hard_errors.is_empty():
 		return {"ok": false, "errors": hard_errors, "soft_errors": verify_result["soft_errors"], "phase": "verify", "message": full_message}
 
-	# Erst JETZT schreiben (Fehlschlag = Disk unberührt).
-	# Deterministischer Artefakt-Timestamp aus der Chain (kein Time.get_date_string —
-	# sonst bricht die Reproduzierbarkeit über Tagesgrenzen).
-	var date_str: String = _chain_store.entry_timestamp(int(session.get("p_id", 1)))
-	_artifacts.apply_commit_artifacts(session, message, analyze, index, subject_line, date_str)
+	# Erst JETZT schreiben (Fehlschlag = Disk unberührt). Nur die Message-Datei:
+	# CHANGELOG/change_index entstehen erst in finalize NACH dem Commit — sonst
+	# bliebe bei einem gescheiterten Commit ein Orphan-Eintrag stehen.
+	_artifacts.write_commit_msg(full_message)
 
+	# NÄCHSTER-ARC-Vorschlag des Narrators (am Epilogende) parsen — wird beim
+	# Climax-Advance als Name/Thema des nächsten Bogens übernommen.
+	var next_arc: Dictionary = _parse_next_arc(body)
+	if not next_arc.is_empty():
+		session["next_arc"] = next_arc
+
+	# Analyze-Ergebnisse + Subject in der Session tragen (finalize braucht sie).
+	session["subject"] = subject_line  # echter Git-Subject für Chain + Analyzer (Kausalität)
+	session["reason_lines"] = message.get("reason_lines", [])
+	session["_entities"] = analyze
+	session["_index"] = index
 	session["body_text"] = body
 	session["state"] = DOKI_SessionStore.STATE_VERIFIED
 	_session_store.save(session)
@@ -77,10 +88,24 @@ func run(body: String) -> Dictionary:
 	return {"ok": true, "message": full_message, "soft_errors": verify_result["soft_errors"], "reason_lines": message.get("reason_lines", [])}
 
 
+## Parst den Arc-Vorschlag des Narrators aus dem Body: „NÄCHSTER ARC: <Name> — <Thema>“.
+static func _parse_next_arc(body: String) -> Dictionary:
+	var re := RegEx.new()
+	re.compile("NÄCHSTER ARC:\\s*([^\\n]+?)\\s*—\\s*([^\\n]+)")
+	var m: RegExMatch = re.search(body)
+	if m == null:
+		return {}
+	return {"name": m.get_string(1).strip_edges(), "theme": m.get_string(2).strip_edges()}
+
+
 ## verify_only(message) — für den commit-msg Hook (Checks 1-9, keine Nebenwirkungen).
 func verify_only(message: String) -> Dictionary:
 	var session: Dictionary = _session_store.read()
 	if session.get("state") != DOKI_SessionStore.STATE_VERIFIED:
+		# Amend-Modus: idle + HEAD ist DOKI-Commit → chain-verankerte Prüfung (1-8).
+		if session.get("state") == DOKI_SessionStore.STATE_IDLE and _git.head_message().contains("[COMPOSITE:"):
+			var amend_result: Dictionary = _verifier.validate_amend(message, _chain_store.read(), _git.unstaged_diffs())
+			return {"ok": amend_result["success"], "errors": amend_result["hard_errors"], "soft_errors": amend_result["soft_errors"], "mode": "amend"}
 		return {"ok": false, "errors": ["verify-only: Session ist nicht im verified-Zustand. Vollständiger DOKI-Flow (prepare→finish) erforderlich."], "soft_errors": []}
-	var result: Dictionary = _verifier.validate(message, session, _chain_store.read(), _git.staged_files(), _git.unstaged_diffs(), {})
+	var result: Dictionary = _verifier.validate(message, session, _chain_store.read(), _git.staged_files(), _git.unstaged_diffs())
 	return {"ok": result["success"], "errors": result["hard_errors"], "soft_errors": result["soft_errors"]}

@@ -185,7 +185,9 @@ func _build_user_prompt(ctx: Dictionary) -> String:
 
 
 ## Narrator-spezifischer Subject (Port von BuildSubject).
-func build_subject(narrator_name: String, impulse: String, file_count: int) -> String:
+## prev_narrator: Wenn vorhanden, wird die Kausalkette im Git-Log sichtbar
+## („… — nach <Vorgänger>") — genau das prüft der Analyzer (Kausalität).
+func build_subject(narrator_name: String, impulse: String, file_count: int, prev_narrator: String = "") -> String:
 	var short_impulse: String = impulse
 	while short_impulse.length() > 0 and ".,:;!? ".find(short_impulse[short_impulse.length() - 1]) != -1:
 		short_impulse = short_impulse.substr(0, short_impulse.length() - 1)
@@ -195,38 +197,43 @@ func build_subject(narrator_name: String, impulse: String, file_count: int) -> S
 		short_impulse = (cut.substr(0, last_space) if last_space > 30 else cut) + "…"
 	var words: PackedStringArray = short_impulse.split(" ")
 
+	var subject: String = ""
 	match narrator_name:
 		"Buffy":
-			return "[%s] %s" % [narrator_name, short_impulse]
+			subject = "[%s] %s" % [narrator_name, short_impulse]
 		"Basher":
-			return "%s (%d files): %s" % [narrator_name, file_count, short_impulse]
+			subject = "%s (%d files): %s" % [narrator_name, file_count, short_impulse]
 		"Vannon":
 			var taken: PackedStringArray = words.slice(0, 4)
-			return " ".join(taken) + (". …" if words.size() > 4 else "")
+			subject = " ".join(taken) + (". …" if words.size() > 4 else "")
 		"Thinker":
-			return "%s [Analyse: %s]" % [short_impulse, narrator_name]
+			subject = "%s [Analyse: %s]" % [short_impulse, narrator_name]
 		"Devin":
-			return "%s sagt: %s" % [narrator_name, short_impulse]
+			subject = "%s sagt: %s" % [narrator_name, short_impulse]
 		"Ghost":
-			return "%s verzeichnet: %s" % [narrator_name, short_impulse]
+			subject = "%s verzeichnet: %s" % [narrator_name, short_impulse]
 		"Glitch":
-			return "%s ermittelt: %s" % [narrator_name, short_impulse]
+			subject = "%s ermittelt: %s" % [narrator_name, short_impulse]
 		"Squizzle":
-			return "%ss Fall: %s" % [narrator_name, short_impulse]
+			subject = "%ss Fall: %s" % [narrator_name, short_impulse]
 		"Echo":
-			return "%s erinnert: %s" % [narrator_name, short_impulse]
+			subject = "%s erinnert: %s" % [narrator_name, short_impulse]
 		"Spark":
-			return "%s entdeckt: %s" % [narrator_name, short_impulse]
+			subject = "%s entdeckt: %s" % [narrator_name, short_impulse]
 		"Argos":
-			return "%s: %d Dateien — %s" % [narrator_name, file_count, short_impulse.substr(0, 30) + ("…" if short_impulse.length() > 30 else "")]
+			subject = "%s: %d Dateien — %s" % [narrator_name, file_count, short_impulse.substr(0, 30) + ("…" if short_impulse.length() > 30 else "")]
 		"Null":
-			return "%s: %s" % [narrator_name, short_impulse.substr(0, 40) + ("…" if short_impulse.length() > 40 else "")]
+			subject = "%s: %s" % [narrator_name, short_impulse.substr(0, 40) + ("…" if short_impulse.length() > 40 else "")]
 		"Flux":
-			return "%s — also — %s" % [narrator_name, " ".join(words.slice(0, 5)) + ("…" if words.size() > 5 else "")]
+			subject = "%s — also — %s" % [narrator_name, " ".join(words.slice(0, 5)) + ("…" if words.size() > 5 else "")]
 		"Sage":
-			return "%s lehrt: %s" % [narrator_name, short_impulse]
+			subject = "%s lehrt: %s" % [narrator_name, short_impulse]
 		_:
-			return "%s: %s" % [narrator_name, short_impulse]
+			subject = "%s: %s" % [narrator_name, short_impulse]
+
+	if not prev_narrator.is_empty():
+		subject += " — nach %s" % prev_narrator
+	return subject
 
 
 ## Deterministische Impuls-Klassifikation (Port von ClassifyImpulse).

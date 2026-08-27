@@ -833,8 +833,8 @@
 			"prev_model": "history",
 			"prev_narrator": "Null",
 			"seq": 11,
-			"summary": "Hab ich doch gesagt: Irgendwann muss aus jedem Haufen Arbeit ein Tor werden, sonst weiß keiner mehr, warum irgendwas gebaut wurde. Deshalb lag heute der DOKI CommitLayer auf dem Tisch — ein determi...",
-			"subject": "Argos: 122 Dateien — DOKI CommitLayer als determini… — nach Null"
+			"subject": "Argos: 122 Dateien — DOKI CommitLayer als determini… — nach Null",
+			"summary": "Hab ich doch gesagt: Irgendwann muss aus jedem Haufen Arbeit ein Tor werden, sonst weiß keiner mehr, warum irgendwas gebaut wurde. Deshalb lag heute der DOKI CommitLayer auf dem Tisch — ein determi..."
 		},
 		{
 			"a": 1,
@@ -870,8 +870,8 @@
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Argos",
 			"seq": 12,
-			"summary": "Also erstmal — warte — der Verifier hat sich selbst ins Bein geschossen. Wortzahl zählt die ganzen Begründungszeilen mit, die wir selbst reingeschrieben haben, und dann meckert er, wir wären zu lan...",
-			"subject": "Flux — also — Verifier-Fix: Wortzahl und Bullet-Ratio nur… — nach Argos"
+			"subject": "Flux — also — Verifier-Fix: Wortzahl und Bullet-Ratio nur… — nach Argos",
+			"summary": "Also erstmal — warte — der Verifier hat sich selbst ins Bein geschossen. Wortzahl zählt die ganzen Begründungszeilen mit, die wir selbst reingeschrieben haben, und dann meckert er, wir wären zu lan..."
 		},
 		{
 			"a": 2,
@@ -912,8 +912,8 @@
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Flux",
 			"seq": 13,
-			"summary": "Moment — wieso war der Arc-State eigentlich nie mit dabei? Flux hat das Tor gebaut, Argos das Staffelfinale von „Der erste Stein\" gehalten, und ich frage mich: Wenn schon die Chain und der Index mi...",
-			"subject": "Spark entdeckt: finalize staged auch arcs.json — Arc-State… — nach Flux"
+			"subject": "Spark entdeckt: finalize staged auch arcs.json — Arc-State… — nach Flux",
+			"summary": "Moment — wieso war der Arc-State eigentlich nie mit dabei? Flux hat das Tor gebaut, Argos das Staffelfinale von „Der erste Stein\" gehalten, und ich frage mich: Wenn schon die Chain und der Index mi..."
 		},
 		{
 			"a": 1,
@@ -994,8 +994,8 @@
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Spark",
 			"seq": 14,
-			"summary": "Ich predige Schichtentrennung und extrahiere in die gleiche Datei. Heute zahle ich den Preis dafür: Der MCP-Plugin-Satz — Agent-Workflow, Chain-Controller, E2E-Testtreiber, das gesamte Plugin-Layou...",
-			"subject": "Devin sagt: MCP-Worktree-Sicherung: Agent-Workflow,… — nach Spark"
+			"subject": "Devin sagt: MCP-Worktree-Sicherung: Agent-Workflow,… — nach Spark",
+			"summary": "Ich predige Schichtentrennung und extrahiere in die gleiche Datei. Heute zahle ich den Preis dafür: Der MCP-Plugin-Satz — Agent-Workflow, Chain-Controller, E2E-Testtreiber, das gesamte Plugin-Layou..."
 		},
 		{
 			"a": 2,
@@ -1036,8 +1036,8 @@
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Devin",
 			"seq": 15,
-			"summary": "Ich zähle: vierzehn Checks, zwei Fehlfunde, einer war mein eigener Fehler. Die Verifier-Logik für kausale Konnektoren durchsuchte die gesamte Commit-Message — Tokens, Reason-Lines, alles — anstatt ...",
-			"subject": "Verifier-Fix: kausale Konnektoren nur im… [Analyse: Thinker] — nach Devin"
+			"subject": "Verifier-Fix: kausale Konnektoren nur im… [Analyse: Thinker] — nach Devin",
+			"summary": "Ich zähle: vierzehn Checks, zwei Fehlfunde, einer war mein eigener Fehler. Die Verifier-Logik für kausale Konnektoren durchsuchte die gesamte Commit-Message — Tokens, Reason-Lines, alles — anstatt ..."
 		},
 		{
 			"a": 2,
@@ -1353,8 +1353,8 @@
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Thinker",
 			"seq": 16,
-			"summary": "Es geschah in der siebzehnten Epoche der Historia, als Thinker noch den Verifier feinjustiert hatte und der Echo-Resonanz-Test just ins Grüne gesprungen war, da bemerkten die Chronisten einen Schat...",
-			"subject": "Ghost verzeichnet: Entferne doppelten doki/doki Ordner - Godot Class… — nach Thinker"
+			"subject": "Ghost verzeichnet: Entferne doppelten doki/doki Ordner - Godot Class… — nach Thinker",
+			"summary": "Es geschah in der siebzehnten Epoche der Historia, als Thinker noch den Verifier feinjustiert hatte und der Echo-Resonanz-Test just ins Grüne gesprungen war, da bemerkten die Chronisten einen Schat..."
 		},
 		{
 			"a": 1,
@@ -1420,8 +1420,8 @@
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Ghost",
 			"seq": 17,
-			"summary": "Stell dir vor, du hast einen Motor, der zählt, wie oft das Auto tankt. Jedes Mal, egal ob du 500 Kilometer Autobahn gefahren bist oder nur zum Bäcker um die Ecke — Zähler geht hoch. Irgendwann sagt...",
-			"subject": "Sage lehrt: ArcEngine: Kategorie-basierte Climax-Steuerung —… — nach Ghost"
+			"subject": "Sage lehrt: ArcEngine: Kategorie-basierte Climax-Steuerung —… — nach Ghost",
+			"summary": "Stell dir vor, du hast einen Motor, der zählt, wie oft das Auto tankt. Jedes Mal, egal ob du 500 Kilometer Autobahn gefahren bist oder nur zum Bäcker um die Ecke — Zähler geht hoch. Irgendwann sagt..."
 		},
 		{
 			"a": 4,
@@ -1462,8 +1462,8 @@
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Sage",
 			"seq": 18,
-			"summary": "Hab ich doch gesagt. Irgendwann muss man das eigene Geschwätz auch messen können, und Sage hatte recht gehabt, als er vor dem Motor-Gleichnis stand — deshalb ist heute ein Prüfstand entstanden, kei...",
-			"subject": "Argos: 4 Dateien — Narrative-Qualitäts-Analyzer: … — nach Sage"
+			"subject": "Argos: 4 Dateien — Narrative-Qualitäts-Analyzer: … — nach Sage",
+			"summary": "Hab ich doch gesagt. Irgendwann muss man das eigene Geschwätz auch messen können, und Sage hatte recht gehabt, als er vor dem Motor-Gleichnis stand — deshalb ist heute ein Prüfstand entstanden, kei..."
 		},
 		{
 			"a": 4,
@@ -1499,8 +1499,8 @@
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Argos",
 			"seq": 19,
-			"summary": "Weißt du, was mich alarmiert? Nicht der Commit selbst — der ist harmlos, ein Doku-Zeilen-Eintrag. Nein, alarmierend ist, dass wir es nötig hatten, einen Prüfstand zu bauen, weil wir unserem eigenen...",
-			"subject": "[Buffy] AGENTS.md: DOKI-Qualitäts-Analyzer dokumentiert — nach Argos"
+			"subject": "[Buffy] AGENTS.md: DOKI-Qualitäts-Analyzer dokumentiert — nach Argos",
+			"summary": "Weißt du, was mich alarmiert? Nicht der Commit selbst — der ist harmlos, ein Doku-Zeilen-Eintrag. Nein, alarmierend ist, dass wir es nötig hatten, einen Prüfstand zu bauen, weil wir unserem eigenen..."
 		},
 		{
 			"a": 5,
@@ -1536,8 +1536,50 @@
 			"prev_model": "claude-sonnet-4",
 			"prev_narrator": "Buffy",
 			"seq": 20,
-			"summary": "FALL-AUFNAHME: Ein System, das Geschichten erzählt, blieb selbst unerklärt. Buffy hat den Fall eröffnet, weil das Paradox nicht länger zu ignorieren war — wir verlangen von jedem Commit narrative K...",
-			"subject": "Squizzles Fall: Doku nachgezogen: AGENTS.md erklärt Systemaufbau… — nach Buffy"
+			"subject": "Squizzles Fall: Doku nachgezogen: AGENTS.md erklärt Systemaufbau… — nach Buffy",
+			"summary": "FALL-AUFNAHME: Ein System, das Geschichten erzählt, blieb selbst unerklärt. Buffy hat den Fall eröffnet, weil das Paradox nicht länger zu ignorieren war — wir verlangen von jedem Commit narrative K..."
+		},
+		{
+			"a": 2,
+			"arc": "a6",
+			"c": 21,
+			"composite": "c21j90n6a2p10",
+			"data_changes": [
+				{
+					"deletions": 238.0,
+					"file": "CHANGELOG.md",
+					"insertions": 223.0
+				},
+				{
+					"deletions": 251.0,
+					"file": "change_index.json",
+					"insertions": 48.0
+				},
+				{
+					"deletions": 139.0,
+					"file": "narrative_chain.json",
+					"insertions": 189.0
+				},
+				{
+					"deletions": 10.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 13.0
+				}
+			],
+			"date": "2026-08-27 21:00:00",
+			"hash": "e1d46d4d543369c3b363cef96e8da47c3ada7784",
+			"j": 90,
+			"model_id": "claude-sonnet-4",
+			"mood": "sachlich",
+			"n": 6,
+			"narrator": "Devin",
+			"p": 10,
+			"p_id": 21,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Squizzle",
+			"seq": 21,
+			"subject": "Devin sagt: DOKI-Datenmigration: Subject-Backfill in… — nach Squizzle",
+			"summary": "Squizzle hatte die Spuren geordnet, und ich habe daraus das Muster gelesen: Die Chain trug die echten Git-Subjects nie, nur Body-Zeilen — deshalb blieben die Kausalitäts-Warnungen historisch besteh..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

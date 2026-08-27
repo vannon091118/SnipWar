@@ -23,7 +23,7 @@ func _init(catalog: DOKI_NarratorCatalog, repo_root: String) -> void:
 
 ## Prüft die Message gegen Session + Chain + Git-Zustand.
 ## Return: { success, hard_errors: [...], soft_errors: [...], checks: [...] }
-func validate(message: String, session: Dictionary, chain: Dictionary, staged_file_names: Array, unstaged_doc_diffs: Array, doc_in_staging: Dictionary) -> Dictionary:
+func validate(message: String, session: Dictionary, chain: Dictionary, staged_file_names: Array, unstaged_doc_diffs: Array) -> Dictionary:
 	var checks: Array = []
 	var hard_errors: Array = []
 	var soft_errors: Array = []
@@ -35,8 +35,51 @@ func validate(message: String, session: Dictionary, chain: Dictionary, staged_fi
 	_append(check_5_composite(message, session, chain), checks, hard_errors, soft_errors)
 	_append(check_6_cross_narrator(message, session), checks, hard_errors, soft_errors)
 	_append(check_7_causality(message, session), checks, hard_errors, soft_errors)
-	_append(check_8_docsync(message, session, staged_file_names, unstaged_doc_diffs, doc_in_staging), checks, hard_errors, soft_errors)
+	_append(check_8_docsync(message, session, staged_file_names, unstaged_doc_diffs), checks, hard_errors, soft_errors)
 	_append(check_9_chain_audit(message, session, chain), checks, hard_errors, soft_errors)
+
+	return {
+		"success": hard_errors.is_empty(),
+		"hard_errors": hard_errors,
+		"soft_errors": soft_errors,
+		"checks": checks,
+	}
+
+
+## validate_amend(message) — für `doki amend` (Amend eines DOKI-Commits nach
+## finalize, Session ist idle). Chain-verankert: die Erwartungswerte kommen aus
+## dem letzten Chain-Eintrag (gleicher Commit, gleicher Composite) + den
+## Message-Tokens. Check 9 (RNG-Replay) braucht die Session-Limits und ist in
+## diesem Modus nicht möglich → dokumentiert übersprungen (Checks 1-8).
+func validate_amend(message: String, chain: Dictionary, unstaged_doc_diffs: Array) -> Dictionary:
+	var entries: Array = chain.get("entries", [])
+	var last: Dictionary = entries[entries.size() - 1] if not entries.is_empty() else {}
+	var composite: String = str(last.get("composite", ""))
+	var fields: Dictionary = DOKI_RngEngine.parse_composite(composite)
+
+	# Session-artige Erwartungswerte aus Chain + Message-Tokens rekonstruieren
+	var session: Dictionary = {
+		"narrator": str(last.get("narrator", "")),
+		"prev_narrator": str(last.get("prev_narrator", "")),
+		"impulse": _extract_token(message, "IMPULSE"),
+		"composite": composite,
+		"c": int(fields["c"]),
+		"p": int(fields["p"]),
+		"a": int(fields["a"]),
+		"narrator_index": 0,
+	}
+	var checks: Array = []
+	var hard_errors: Array = []
+	var soft_errors: Array = []
+
+	_append(check_1_tokens(message, session), checks, hard_errors, soft_errors)
+	_append(check_2_impulse(message, session), checks, hard_errors, soft_errors)
+	_append(check_3_storytelling(message), checks, hard_errors, soft_errors)
+	_append(check_4_narrator(message, session), checks, hard_errors, soft_errors)
+	_append(check_5_composite(message, session, chain), checks, hard_errors, soft_errors)
+	_append(check_6_cross_narrator(message, session), checks, hard_errors, soft_errors)
+	_append(check_7_causality(message, session), checks, hard_errors, soft_errors)
+	_append(check_8_docsync(message, session, [], unstaged_doc_diffs), checks, hard_errors, soft_errors)
 
 	return {
 		"success": hard_errors.is_empty(),
@@ -178,15 +221,18 @@ func check_6_cross_narrator(message: String, session: Dictionary) -> Dictionary:
 	var prev: String = str(session.get("prev_narrator", ""))
 	if prev.is_empty():
 		return _result("CHECK 6", false, true, "")  # Genesis — kein Vorgänger
-	var ok: bool = message.to_lower().contains(prev.to_lower())
+	# NUR der Narrator-Body zählt — die Subject-Erwähnung („… — nach X“) erfüllt
+	# den Erzähl-Check nicht, sonst wäre die Body-Erwähnung nicht mehr erzwungen.
+	var body: String = _body_only(message)
+	var ok: bool = body.to_lower().contains(prev.to_lower())
 	# Wenn [PREV_NARRATOR:...] Token existiert, muss der Name im Body stehen (ohne Token)
 	var re := RegEx.new()
 	re.compile("\\[PREV_NARRATOR:(\\w+)\\]")
 	var m: RegExMatch = re.search(message)
 	if m != null:
 		var token_name: String = m.get_string(1)
-		var body: String = message.replace(m.get_string(0), "").replace("[NARRATOR:%s]" % str(session.get("narrator", "")), "")
-		if not body.to_lower().contains(token_name.to_lower()):
+		var body_clean: String = body.replace(m.get_string(0), "")
+		if not body_clean.to_lower().contains(token_name.to_lower()):
 			ok = false
 	return _result("CHECK 6", false, ok, "Vorgänger-Narrator '%s' nicht im Commit-Body erwähnt." % prev)
 
@@ -231,7 +277,7 @@ func check_7_causality(message: String, session: Dictionary) -> Dictionary:
 ## werden erst NACH bestandener Verifikation geschrieben+gestaged
 ## (apply_commit_artifacts) — zum Check-Zeitpunkt kann die aktuelle
 ## Commit-Doku also noch gar nicht gestaged sein.
-func check_8_docsync(message: String, session: Dictionary, staged_file_names: Array, unstaged_doc_diffs: Array, doc_in_staging: Dictionary) -> Dictionary:
+func check_8_docsync(message: String, session: Dictionary, staged_file_names: Array, unstaged_doc_diffs: Array) -> Dictionary:
 	var ok: bool = true
 	var problems: Array = []
 
@@ -308,6 +354,16 @@ func check_9_chain_audit(message: String, session: Dictionary, chain: Dictionary
 ## ─── Helfer ─────────────────────────────────────────────────────────────
 ## Extrahiert den Narrator-Body aus der Message-Struktur:
 ##   <subject> / [NARRATOR:X] / <body> / [MODEL:...] / [IMPULSE:...] / ... / Arc: ... / reason-lines
+## Extrahiert den Wert eines Token (IMPULSE, MODEL, …) aus der Message.
+static func _extract_token(message: String, token: String) -> String:
+	var re := RegEx.new()
+	re.compile("\\[%s:([^\\]]*)\\]" % token)
+	var m: RegExMatch = re.search(message)
+	if m == null:
+		return ""
+	return m.get_string(1).strip_edges()
+
+
 static func _body_only(message: String) -> String:
 	var lines: PackedStringArray = message.split("\n")
 	var in_body: bool = false

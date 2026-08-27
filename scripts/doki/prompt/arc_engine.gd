@@ -105,7 +105,9 @@ func forecast_weight(active_arc: Dictionary, change_entities: Array, is_merge: b
 
 ## Nach erfolgreichem Commit: Gewicht fortschreiben; bei Climax → Arc wechseln.
 ## impulse_class: Klassifikation des Commits (steuert Climax-Berechtigung).
-func advance(new_entities: Array, is_merge: bool, impulse_class: String = "CODE") -> Dictionary:
+## next_arc: NÄCHSTER-ARC-Vorschlag des Narrators ({name, theme}) — wird beim
+## Anlegen des neuen Bogens übernommen (statt des Platzhalters „Nächster Akt").
+func advance(new_entities: Array, is_merge: bool, impulse_class: String = "CODE", next_arc: Dictionary = {}) -> Dictionary:
 	var forecast: Dictionary = forecast_weight(active_arc(), new_entities, is_merge, impulse_class)
 	var weight: float = forecast["forecast_weight"]
 	var climax: bool = forecast["climax"]
@@ -143,6 +145,13 @@ func advance(new_entities: Array, is_merge: bool, impulse_class: String = "CODE"
 				"weight": 0.0,
 				"climax_weight": 3.0,
 			}
+		# NÄCHSTER-ARC-Vorschlag des Narrators übernehmen (falls im Body vorhanden)
+		var next_name: String = str(next_arc.get("name", "")).strip_edges()
+		var next_theme: String = str(next_arc.get("theme", "")).strip_edges()
+		if not next_name.is_empty():
+			_data["arcs"][next_id]["name"] = next_name
+		if not next_theme.is_empty():
+			_data["arcs"][next_id]["theme"] = next_theme
 		_data["arcs"][next_id]["status"] = "active"
 		_data["arcs"][next_id]["weight"] = 0.0
 		_data["active"] = next_id

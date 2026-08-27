@@ -34,13 +34,33 @@ func _init(
 func run() -> Dictionary:
 	var state: Dictionary = _session_store.ensure_state(DOKI_SessionStore.STATE_VERIFIED)
 	if not state["ok"]:
-		# Idempotent: wenn idle, ist nichts zu tun (kein Fehler)
+		# Idempotent: idle → prüfen, ob ein Amend den letzten Chain-Hash verändert hat
+		# (dann Eintrag-Hash nachziehen), sonst nichts zu tun (kein Fehler).
+		var amend_fix: Dictionary = _sync_amended_entry_hash()
+		if not amend_fix["ok"]:
+			return amend_fix
 		return {"ok": true, "idempotent": true, "error": ""}
 	var session: Dictionary = state["session"]
 
 	var head: String = _git.head_hash_full()
 	if head == str(session.get("git_head_before", "")):
 		return {"ok": false, "error": "finalize: HEAD unverändert — Git-Commit fehlt. (`doki repair` für Recovery)"}
+
+	# Idempotenz-Guard: Wenn finalize schon einmal lief (z. B. Stage-Fehler oder
+	# Crash zwischen commit und reset), trägt der letzte Chain-Eintrag bereits
+	# diesen Commit (gleicher Hash + Composite). Dann nur Stage nachholen + Reset —
+	# KEIN zweiter append/Arc-Advance/CHANGELOG-Eintrag (Doppel-Einträge brechen
+	# Check 9a: c-Folge wäre nicht mehr lückenlos).
+	var existing_entries: Array = _chain_store.entries()
+	if not existing_entries.is_empty():
+		var last_existing: Dictionary = existing_entries[existing_entries.size() - 1]
+		if str(last_existing.get("hash", "")) == head and str(last_existing.get("composite", "")) == str(session.get("composite", "")):
+			var restage: Dictionary = _git.stage(["narrative_chain.json", "change_index.json", "scripts/doki/data/arcs.json", "CHANGELOG.md"])
+			if not restage["ok"]:
+				return {"ok": false, "error": "finalize: narrative Dateien konnten nicht gestaged werden: %s" % str(restage.get("stderr", "?"))}
+			_artifacts.cleanup_transients()
+			_session_store.reset()
+			return {"ok": true, "idempotent": true, "entry": last_existing, "note": "finalize bereits ausgeführt — Stage nachgeholt"}
 
 	# Chain-Append (Summary = erste Body-Zeile)
 	var summary: String = DOKI_MessageBuilder.summary_from_body(str(session.get("body_text", "")))
@@ -56,6 +76,7 @@ func run() -> Dictionary:
 		str(session.get("narrator", "")),
 		str(session.get("model_id", "")),
 		summary,
+		str(session.get("subject", "")),
 		str(session.get("prev_narrator", "")),
 		str(session.get("prev_model", "")),
 		data_changes,
@@ -68,8 +89,11 @@ func run() -> Dictionary:
 		int(session.get("p", 0))
 	)
 
-	# ChangeIndex mit Git-Hash verknüpfen (Entitäten aus finish)
-	var index: Dictionary = _index_store.read()
+	# ChangeIndex mit Git-Hash verknüpfen — der analysierte Index kommt aus der
+	# Session (finish), sonst gingen die neuen Entitäten verloren.
+	var index: Dictionary = session.get("_index", {})
+	if index.is_empty():
+		index = _index_store.read()
 	_index_store.link_commit(
 		index,
 		head,
@@ -78,16 +102,20 @@ func run() -> Dictionary:
 		int(session.get("c", 0)),
 		entity_ids
 	)
-	_index_store.save(index)
 
-	# Arc-Advance (schreibt arcs.json — Arc-State, z. B. completed + neuer aktiver Arc)
+	# Arc-Advance (schreibt arcs.json — Arc-State, z. B. completed + neuer aktiver Arc).
+	# Der NÄCHSTER-ARC-Vorschlag des Narrators (aus finish geparst) wird übernommen.
 	var impulse_class: String = str(session.get("impulse_class", "CODE"))
-	var arc_result: Dictionary = _arc_engine.advance(entity_ids, not (session.get("sideplot", {}) as Dictionary).is_empty(), impulse_class)
+	var next_arc: Dictionary = session.get("next_arc", {})
+	var arc_result: Dictionary = _arc_engine.advance(entity_ids, not (session.get("sideplot", {}) as Dictionary).is_empty(), impulse_class, next_arc)
 
-	# Chain + Index + Arc-State stagen — sie reisen mit dem NÄCHSTEN Commit
-	# (der aktuelle Commit ist bereits erstellt). Sonst bliebe der Repo-Zustand
-	# dirty und Check 8 (DocSync) blockte den nächsten Commit.
-	var stage_res: Dictionary = _git.stage(["narrative_chain.json", "change_index.json", "scripts/doki/data/arcs.json"])
+	# CHANGELOG + change_index persistieren (NACH dem Commit — transaktional,
+	# kein Orphan möglich) und alle narrative Dateien stagen: sie reisen mit dem
+	# NÄCHSTEN Commit. Sonst bliebe der Repo-Zustand dirty und Check 8 (DocSync)
+	# blockte den nächsten Commit.
+	var date_str: String = _chain_store.entry_timestamp(int(session.get("p_id", 1)))
+	_artifacts.apply_finalize_artifacts(session, index, date_str)
+	var stage_res: Dictionary = _git.stage(["narrative_chain.json", "change_index.json", "scripts/doki/data/arcs.json", "CHANGELOG.md"])
 	if not stage_res["ok"]:
 		return {"ok": false, "error": "finalize: narrative Dateien konnten nicht gestaged werden: %s" % str(stage_res.get("stderr", "?"))}
 
@@ -96,6 +124,49 @@ func run() -> Dictionary:
 
 	_session_store.reset()
 	return {"ok": true, "idempotent": false, "entry": entry, "arc": arc_result}
+
+
+## Nach `git commit --amend` hat sich der HEAD-Hash geändert, der letzte
+## Chain-Eintrag trägt aber noch den alten. Hier: Eintrag per Composite-Abgleich
+## aktualisieren (gleicher Commit, neuer Hash) und Chain stagen.
+func _sync_amended_entry_hash() -> Dictionary:
+	var chain: Dictionary = _chain_store.read()
+	var head: String = _git.head_hash_full()
+	var head_msg: String = _git.head_message()
+	var sync: Dictionary = amended_entry_hash_sync(chain, head, head_msg)
+	if not sync["ok"]:
+		return sync
+	if not bool(sync["changed"]):
+		return {"ok": true}
+	chain = sync["chain"]
+	_chain_store.save(chain)
+	var stage_res: Dictionary = _git.stage(["narrative_chain.json"])
+	if not stage_res["ok"]:
+		return {"ok": false, "error": "finalize: narrative_chain.json konnte nicht gestaged werden: %s" % str(stage_res.get("stderr", "?"))}
+	return {"ok": true}
+
+
+## Reine Hash-Sync-Entscheidung (git-frei, für Selfcheck testbar): Wenn der
+## letzte Chain-Eintrag denselben Composite trägt wie der aktuelle HEAD
+## (gleicher Commit, neuer Hash nach `git commit --amend`), Hash aktualisieren.
+## Rückgabe {ok, changed, chain} — save/stage macht der Caller.
+static func amended_entry_hash_sync(chain: Dictionary, head: String, head_msg: String) -> Dictionary:
+	var entries: Array = chain.get("entries", [])
+	if entries.is_empty():
+		return {"ok": true, "changed": false, "chain": chain}
+	var last: Dictionary = entries[entries.size() - 1]
+	var re := RegEx.new()
+	re.compile("\\[COMPOSITE:(c\\d+j\\d+n\\d+a\\d+p\\d+)\\]")
+	var m: RegExMatch = re.search(head_msg)
+	if m == null:
+		return {"ok": true, "changed": false, "chain": chain}
+	var head_composite: String = m.get_string(1)
+	if head_composite == str(last.get("composite", "")) and str(last.get("hash", "")) != head:
+		last["hash"] = head
+		entries[entries.size() - 1] = last
+		chain["entries"] = entries
+		return {"ok": true, "changed": true, "chain": chain}
+	return {"ok": true, "changed": false, "chain": chain}
 
 
 ## repair() → {ok, repaired:[...]}

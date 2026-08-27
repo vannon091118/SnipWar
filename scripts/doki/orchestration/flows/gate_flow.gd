@@ -5,7 +5,7 @@ extends RefCounted
 
 ## Auto-Managed narrative Dateien — beim Snapshot-Vergleich irrelevant
 ## (werden von finish/finalize selbst gestaged, nicht vom User).
-const AUTO_MANAGED: Array = ["narrative_chain.json", "change_index.json", "CHANGELOG.md", ".commit_msg.txt"]
+const AUTO_MANAGED: Array = ["narrative_chain.json", "change_index.json", "CHANGELOG.md", ".commit_msg.txt", "arcs.json"]
 
 var _repo_root: String
 var _session_store: DOKI_SessionStore

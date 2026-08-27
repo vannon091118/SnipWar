@@ -29,6 +29,21 @@ func read() -> Dictionary:
 		return _default()
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(_path))
 	if parsed is Dictionary:
+		# Godot 4.7 parst ALLE JSON-Zahlen als Float — hier normalisieren
+		# (first_p/last_p/p_id/line-Nummern müssen ganzzahlig sein).
+		for entity in (parsed as Dictionary).get("entities", {}).values():
+			for key in ["first_p", "last_p"]:
+				if entity.has(key):
+					entity[key] = int(entity[key])
+			for h in entity.get("history", []):
+				h["p_id"] = int(h.get("p_id", 0))
+				var line_numbers: Array = []
+				for x in h.get("lines", []):
+					line_numbers.append(int(x))
+				h["lines"] = line_numbers
+		for comm in (parsed as Dictionary).get("commits", {}).values():
+			comm["c"] = int(comm.get("c", 0))
+			comm["p_id"] = int(comm.get("p_id", 0))
 		return parsed
 	return _default()
 
@@ -62,6 +77,8 @@ func find_entity(index: Dictionary, path: String, type: String, name: String) ->
 
 
 ## Nächste freie ID: F-### bzw. C-###.
+## prefix kommt MIT Bindestrich ("F-"/"C-") → hier nicht nochmal formatieren,
+## sonst entsteht ein Doppel-Dash (F--001, bekanntes Format-Bug).
 func next_id(index: Dictionary, prefix: String) -> String:
 	var max_num: int = 0
 	for entity_id in index.get("entities", {}):
@@ -69,7 +86,7 @@ func next_id(index: Dictionary, prefix: String) -> String:
 			var num: int = int(str(entity_id).substr(prefix.length()))
 			if num > max_num:
 				max_num = num
-	return "%s-%03d" % [prefix, max_num + 1]
+	return "%s%03d" % [prefix, max_num + 1]
 
 
 ## Entität anlegen oder bestehende finden; returns entity_id.

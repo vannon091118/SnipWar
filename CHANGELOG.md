@@ -292,3 +292,14 @@ Doku nachgezogen: AGENTS.md erklärt Systemaufbau (14 Charaktere, Composite, Kat
 - change_index.json: Dokumentation aktualisiert (F-001).
 - narrative_chain.json: Dokumentation aktualisiert (F-001).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+
+## 2026-08-27 21:00:00 — p21 · c21j90n6a2p10 · Devin · sachlich
+
+**Devin sagt: DOKI-Datenmigration: Subject-Backfill in… — nach Squizzle**
+
+DOKI-Datenmigration: Subject-Backfill in narrative_chain (echte Git-Subjects + Kausal-Anker), int-Normalisierung, CHANGELOG-Rebuild
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).

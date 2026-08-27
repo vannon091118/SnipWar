@@ -19,7 +19,7 @@ func assemble(session: Dictionary, body: String, analyze: Dictionary) -> Diction
 	for e in analyze.get("entities", []):
 		if e.get("type") == "file":
 			file_count += 1
-	var subject: String = _voice.build_subject(narrator_name, str(session.get("impulse", "")), file_count)
+	var subject: String = _voice.build_subject(narrator_name, str(session.get("impulse", "")), file_count, str(session.get("prev_narrator", "")))
 	var composite: String = str(session.get("composite", ""))
 
 	var lines: Array = []

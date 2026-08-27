@@ -167,6 +167,47 @@ func finish(body: String) -> Dictionary:
 	return finish_flow.run(body)
 
 
+## ─── amend — DOKI-Message eines bestehenden Commits nachbearbeiten ────────
+## Ablauf: HEAD-Message lesen, nur den Narrator-Body ersetzen (Subject, Tokens,
+## Arc-Zeile, Begründungszeilen bleiben), chain-verankert verifizieren (Checks
+## 1-8; Check 9 braucht die Session und ist für Amend dokumentiert übersprungen),
+## .commit_msg.txt schreiben. Danach: `git commit --amend -F .commit_msg.txt`.
+func amend(body: String) -> Dictionary:
+	var head_msg: String = git.head_message()
+	if not head_msg.contains("[COMPOSITE:"):
+		return {"ok": false, "error": "HEAD ist kein DOKI-Commit — `doki amend` gilt nur für DOKI-Messages."}
+	var reconstruction: Dictionary = reconstruct_amend_message(head_msg, body)
+	if not reconstruction["ok"]:
+		return reconstruction
+	var new_message: String = str(reconstruction["message"])
+
+	# Chain-verankerte Verifikation (Checks 1-8)
+	var verify_result: Dictionary = verifier.validate_amend(new_message, chain_store.read(), git.unstaged_diffs())
+	if not verify_result["success"]:
+		return {"ok": false, "errors": verify_result["hard_errors"], "soft_errors": verify_result["soft_errors"], "phase": "verify", "message": new_message}
+
+	artifacts.write_commit_msg(new_message)
+	return {"ok": true, "message": new_message, "soft_errors": verify_result["soft_errors"]}
+
+
+## Reine String-Logik der Amend-Rekonstruktion (git-frei, für Selfcheck testbar):
+## Body-Sektion zwischen [NARRATOR:X] und der Zeile [MODEL: ersetzen; Subject,
+## Tokens, Arc-Zeile und Begründungszeilen bleiben. [MODEL: muss am Zeilenanfang
+## stehen — ein „[MODEL:" im Fließtext des Bodys darf die Sektion nicht
+## vorzeitig beenden (Regex-Fix, Regression im Selfcheck abgesichert).
+static func reconstruct_amend_message(head_msg: String, body: String) -> Dictionary:
+	if not head_msg.contains("[COMPOSITE:"):
+		return {"ok": false, "error": "HEAD ist kein DOKI-Commit — `doki amend` gilt nur für DOKI-Messages."}
+	var re := RegEx.new()
+	re.compile("(\\[NARRATOR:[^]]*\\])(?s)(.*?)(\\n\\[MODEL:)")
+	var m: RegExMatch = re.search(head_msg)
+	if m == null:
+		return {"ok": false, "error": "HEAD-Message hat keine parsebare Body-Sektion ([NARRATOR: … [MODEL:)."}
+	var prefix: String = head_msg.substr(0, m.get_start(1))  # Subject + Leerzeile
+	var new_message: String = prefix + m.get_string(1) + "\n\n" + body.strip_edges() + "\n\n[MODEL:" + head_msg.substr(m.get_end(3))
+	return {"ok": true, "message": new_message}
+
+
 func verify_only(message: String) -> Dictionary:
 	return finish_flow.verify_only(message)
 

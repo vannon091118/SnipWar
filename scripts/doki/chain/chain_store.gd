@@ -8,8 +8,10 @@ extends RefCounted
 ##   "genesis_date": "2026-08-26 00:00:00",   ← einmalig beim init gesetzt (danach fix)
 ##   "anchor": { "hash": "...", "subject": "...", "date": "..." },  ← Git-HEAD beim init
 ##   "entries": [ { seq, hash, composite, mood, narrator, model_id, summary,
-##                  prev_narrator, prev_model, date, data_changes } ]
+##                  subject, prev_narrator, prev_model, date, data_changes } ]
 ## }
+## subject = echter Git-Subject (build_subject, inkl. „— nach <Vorgänger>");
+## summary = erste Body-Zeile des Narrators (bewusst beides gespeichert).
 
 var _path: String
 
@@ -34,6 +36,13 @@ func read() -> Dictionary:
 		return _empty()
 	var parsed: Variant = JSON.parse_string(text)
 	if parsed is Dictionary:
+		# Godot 4.7 parst ALLE JSON-Zahlen als Float (JSON.parse_string → float) —
+		# daher hier am einzigen Lese-Punkt normalisieren, damit Verifier/Analyzer
+		# garantiert Ints sehen (c/p_id/seq müssen ganzzahlig sein).
+		for entry in (parsed as Dictionary).get("entries", []):
+			for key in ["seq", "c", "p_id", "j", "n", "a", "p"]:
+				if entry.has(key):
+					entry[key] = int(entry[key])
 		return parsed
 	return _empty()
 
@@ -58,7 +67,7 @@ func save(chain: Dictionary) -> void:
 
 
 ## Genesis einmalig setzen: Anker = aktueller HEAD, genesis_date = heute.
-## Danach ist alles deterministisch (Timestamps = genesis_date + seq Stunden).
+## Danach ist alles deterministisch (Timestamps = genesis_date-Tag + posmod(seq, 24) Uhrzeit).
 func init_genesis(head_hash: String, head_subject: String, head_date: String) -> Dictionary:
 	var chain: Dictionary = read()
 	if not chain.get("anchor", {}).is_empty():
@@ -85,7 +94,7 @@ func last_entry() -> Dictionary:
 	return all[all.size() - 1]
 
 
-## Deterministischer Timestamp: genesis_date + seq Stunden (kein DateTime.Now).
+## Deterministischer Timestamp: genesis_date-Tag, Stunde = posmod(seq, 24) (kein DateTime.Now).
 func entry_timestamp(seq: int) -> String:
 	var chain: Dictionary = read()
 	var genesis_date: String = str(chain.get("genesis_date", ""))
@@ -128,6 +137,7 @@ func append_entry(
 	narrator: String,
 	model_id: String,
 	summary: String,
+	subject: String,
 	prev_narrator: String,
 	prev_model: String,
 	data_changes: Array,
@@ -151,6 +161,7 @@ func append_entry(
 		"model_id": model_id,
 		"date": entry_timestamp(seq),
 		"summary": _truncate(summary, 200),
+		"subject": _truncate(subject, 200),
 		"arc": arc_id,
 		"p_id": seq,  # Plot-ID ist SEQUENZ (p1, p2, p3…) — wie im Original. Das
 		              # RNG-gezogene Composite-p bleibt als Referenz-Feld unten.
