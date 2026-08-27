@@ -62,6 +62,7 @@ Verbindlicher Vertrag für sichtbares Remote-Gameplay. Pro Ingame-Aktion genau e
 - `vision_worker.py` + `vision_worker.js` — lokale Bildanalyse-Instanzen (ohne Base64-Roundtrip; lesen
   die Context-Artefakte aus `user://mcp_context`); JS-Worker enthält **echtes OCR via Tesseract.js**
 - `remote_playout.py` — Remote-Playthrough über `runtime_ux_*` (agentengleich)
+- `mcp_file_driver.js` (`playthroughs/atomic/`) — **Standard-Transport für wiederholte sichtbare Läufe**: ein persistenter Prozess, ein Handshake pro Lauf, ein Tool-Call pro Befehlszeile (Datei-Queue statt Prozess-Neustart). Latenz ~4–16 ms pro Call statt 1–2 s Prozess-/Handshake-Overhead + ~30 s Hang durch zuvor unaufgeräumte Client-Timer (`mcp_lib.js` cleart die Timeouts jetzt in `settle()`).
 
 **MCP Resources (`resources/list`, `resources/read`)**:
 - `godot://scene/current` — Autoritative Live-Szenenhierarchie & Controls
@@ -247,6 +248,25 @@ Python/Node-Worker lesen die Artefakte direkt von Disk.
 Template-Tools akzeptieren weiterhin bewusst ein vom Agenten bereitgestelltes
 Template als Eingabe; das ist getrennt vom Screenshottransport.
 
+**OCR-Beschleunigung:** Worker-Pool (default 2, env `MCP_OCR_POOL`) verarbeitet
+OCR-Jobs parallel (round-robin, Serve-Loop awaited nicht seriell); `cacheMethod "write"` +
+lokaler `cachePath` (`node_modules/.cache/tesseract.js`, inkl. einmalig abgelegter
+`deu.traineddata.gz`) machen den Kaltstart komplett lokal (~2 s statt CDN-Download).
+Kein `workerPath` setzen (Browser-Variante crasht in Node — tesseract.js wählt sonst
+automatisch die Node-kompatible Worker-Variante).
+
+**PFLICHT: Bild-/OCR-Analyse bei unerwartetem Ergebnis — ENTKOPPELT** — Der
+Runtime-Server (`mcp_server.gd`) erkennt unerwartete Tool-Antworten (Fehler
+`ok:false`/`_error`/„Node not found", `clicked:false`, `moved:false`, `controls:[]`)
+und antwortet **sofort** mit `visual_evidence: {status: "pending"}` — die Aktion
+blockiert NIE auf Screenshot/OCR. Die Analyse (Screenshot + OCR) läuft als
+Fire-and-forget im Hintergrund in einen Cache (`_evidence_cache`); der Agent holt
+sie gezielt über das neue Host-Tool **`runtime_visual_evidence`** ab:
+`{"wait_ms": 3000}` pollt eine laufende Analyse (0 = sofortiger Stand),
+`{"capture": true}` startet frisch, wenn nichts gecacht ist. Antwort:
+`{status: none|pending|ready, evidence: {screenshot, ocr}}`. Rekursionsschutz:
+Screenshot-/Analyse-/Vision-/Status-Tools sind ausgenommen.
+
 ### Debug (12) — `runtime/tools/debug/`
 Perf, Rendering, Engine-Info, Frame-Timing, Projekt-Config, Files, ClassDB,
 Resource-UID, EventLog, Object-Counts, Memory, Profiling.
@@ -396,6 +416,13 @@ python addons/gdscript_mcp/client/mcp_client.py --port 9090 --one-shot
 # Für viele atomare Aktionen: einen persistenten Socket/Handshake nutzen
 node addons/gdscript_mcp/client/playthroughs/atomic/atomic_session.js
 # stdin: eine JSON-Zeile pro MCP-Call, z. B. {"tool":"runtime_ux_scan","args":{"max_controls":120}}
+# Empfohlen für viele atomare Aktionen — direkte Ausführung über mcp_file_driver
+# (ein Prozess + Handshake pro Lauf, eine Zeile = genau ein MCP-Call):
+MCP_PORT=9090 MCP_COMMANDS=/tmp/mcp_cmds.jsonl MCP_OUTPUT=/tmp/mcp_out.jsonl\
+  node addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js
+echo '{"tool":"runtime_ux_scan","args":{}}' >> /tmp/mcp_cmds.jsonl   # Befehle anhängen
+tail -1 /tmp/mcp_out.jsonl                                            # eine Ergebnis-Zeile pro Befehl
+echo '{"command":"close"}' >> /tmp/mcp_cmds.jsonl                     # sauber beenden
 
 # 3. Lifecycle abfragen:
 #    initialize → initialized → tools/call runtime_mcp_status

@@ -1,5 +1,5 @@
 {
-	"active": "a11",
+	"active": "a12",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -53,7 +53,36 @@
 		},
 		"a11": {
 			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
 			"id": "a11",
+			"name": "Nächster Akt",
+			"seen_entities": [
+				"F-002",
+				"F-042",
+				"F-043",
+				"F-044",
+				"F-003",
+				"F-004",
+				"F-001",
+				"C-068",
+				"C-069",
+				"C-070",
+				"C-071",
+				"C-072",
+				"C-073",
+				"C-074",
+				"C-075",
+				"C-076"
+			],
+			"span": "heute → offen",
+			"status": "completed",
+			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
+			"version": "",
+			"weight": 5.3
+		},
+		"a12": {
+			"climax_weight": 3.0,
+			"id": "a12",
 			"name": "Nächster Akt",
 			"span": "heute → offen",
 			"status": "active",

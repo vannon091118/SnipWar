@@ -432,3 +432,17 @@ OCR-Pipeline: tesseract.js installiert (Client-Ordner, node_modules in .gitignor
 - change_index.json: Tooling erweitert (F-003).
 - narrative_chain.json: Tooling erweitert (F-004).
 - scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+
+## 2026-08-27 06:00:00 — p30 · c30j58n11a7p15 · Null · trocken
+
+**Null: MCP-Server: Pflicht-Analyse bei unerwart… — nach Argos**
+
+MCP-Server: Pflicht-Analyse bei unerwarteten Ergebnissen (visual_evidence, Rekursionsschutz), ENTKOPPELT — Antwort sofort (4ms), Analyse Fire-and-forget in Cache, neues Host-Tool runtime_visual_evidence; Maus-Automatik smooth_travel (min 8 Steps, distanzbasiert); ux_analyze Parameter max_controls/root_path
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- addons/gdscript_mcp/runtime/host/mcp_server.gd: Implementiert und integriert (F-042).
+- addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd: Implementiert und integriert (F-043).
+- addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd: Implementiert und integriert (F-044).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).

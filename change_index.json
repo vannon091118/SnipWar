@@ -132,7 +132,7 @@
 			"p_id": 26.0
 		},
 		"a36707d4cf6285ad4e0ff2a6d1f348cbc6a343d0": {
-			"c": 29,
+			"c": 29.0,
 			"composite": "c29j35n7a7p26",
 			"entities": [
 				"F-037",
@@ -158,7 +158,7 @@
 				"C-066",
 				"C-067"
 			],
-			"p_id": 29
+			"p_id": 29.0
 		},
 		"a95a7ee437c739b97ceb60b66f5f4beb92f2bce1": {
 			"c": 11.0,
@@ -242,6 +242,29 @@
 				"C-032"
 			],
 			"p_id": 25.0
+		},
+		"cb69ee7ba579a50e90360ed6d7f800341bbf87e4": {
+			"c": 30,
+			"composite": "c30j58n11a7p15",
+			"entities": [
+				"F-002",
+				"F-042",
+				"F-043",
+				"F-044",
+				"F-003",
+				"F-004",
+				"F-001",
+				"C-068",
+				"C-069",
+				"C-070",
+				"C-071",
+				"C-072",
+				"C-073",
+				"C-074",
+				"C-075",
+				"C-076"
+			],
+			"p_id": 30
 		},
 		"e186c98431e04aeca11e227c7459fc3daa695ff0": {
 			"c": 12.0,
@@ -1443,6 +1466,159 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-068": {
+			"first_p": 30.0,
+			"history": [
+				{
+					"lines": [
+						759.0
+					],
+					"p_id": 30.0
+				}
+			],
+			"id": "C-068",
+			"last_p": 30.0,
+			"name": "UNEXPECTED_VISUAL_EXCLUSIONS",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-069": {
+			"first_p": 30.0,
+			"history": [
+				{
+					"lines": [
+						769.0
+					],
+					"p_id": 30.0
+				}
+			],
+			"id": "C-069",
+			"last_p": 30.0,
+			"name": "_is_unexpected_result",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-070": {
+			"first_p": 30.0,
+			"history": [
+				{
+					"lines": [
+						791.0
+					],
+					"p_id": 30.0
+				}
+			],
+			"id": "C-070",
+			"last_p": 30.0,
+			"name": "_send_tool_result_with_visual_evidence",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-071": {
+			"first_p": 30.0,
+			"history": [
+				{
+					"lines": [
+						802.0
+					],
+					"p_id": 30.0
+				}
+			],
+			"id": "C-071",
+			"last_p": 30.0,
+			"name": "_handle_visual_evidence",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-072": {
+			"first_p": 30.0,
+			"history": [
+				{
+					"lines": [
+						820.0
+					],
+					"p_id": 30.0
+				}
+			],
+			"id": "C-072",
+			"last_p": 30.0,
+			"name": "_start_background_evidence",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-073": {
+			"first_p": 30.0,
+			"history": [
+				{
+					"lines": [
+						827.0
+					],
+					"p_id": 30.0
+				}
+			],
+			"id": "C-073",
+			"last_p": 30.0,
+			"name": "_run_background_evidence",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-074": {
+			"first_p": 30.0,
+			"history": [
+				{
+					"lines": [
+						833.0
+					],
+					"p_id": 30.0
+				}
+			],
+			"id": "C-074",
+			"last_p": 30.0,
+			"name": "_capture_visual_evidence",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-075": {
+			"first_p": 30.0,
+			"history": [
+				{
+					"lines": [
+						149.0
+					],
+					"p_id": 30.0
+				}
+			],
+			"id": "C-075",
+			"last_p": 30.0,
+			"name": "analyze",
+			"path": "addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-076": {
+			"first_p": 30.0,
+			"history": [
+				{
+					"lines": [
+						215.0
+					],
+					"p_id": 30.0
+				}
+			],
+			"id": "C-076",
+			"last_p": 30.0,
+			"name": "analyze_async",
+			"path": "addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -1850,6 +2026,36 @@
 			"last_p": 29.0,
 			"name": "mcp_vision_worker.gd",
 			"path": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-042": {
+			"first_p": 30.0,
+			"history": [],
+			"id": "F-042",
+			"last_p": 30.0,
+			"name": "mcp_server.gd",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-043": {
+			"first_p": 30.0,
+			"history": [],
+			"id": "F-043",
+			"last_p": 30.0,
+			"name": "mcp_runtime_tools.gd",
+			"path": "addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-044": {
+			"first_p": 30.0,
+			"history": [],
+			"id": "F-044",
+			"last_p": 30.0,
+			"name": "mcp_ux_pipeline.gd",
+			"path": "addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
 			"status": "created",
 			"type": "file"
 		}

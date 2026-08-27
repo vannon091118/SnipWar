@@ -279,6 +279,8 @@ ConceptIndex.new().by_domain("ships")
 - Kleine, atomare Änderungen
 - Nach jeder logischen Einheit: `git add <dateien>` + `git commit` mit Begründungszeilen
 - Preflight läuft automatisch im Hook
+- **MCP-Läufe (sichtbar):** Standard-Transport ist `mcp_file_driver.js` (eine Befehlszeile = genau ein Tool-Call, Latenz ~4–16 ms; Nutzung siehe `MCP_INDEX.md` → Schnellstart). Kein FIFO-/Session-Basteln mehr.
+- **Nie bei unerwarteten Ergebnissen raten:** Fehler (`ok:false`, `_error`, „Node not found"), daneben gegangene Klicks (`clicked:false`) und leere Scans (`controls:[]`) hängt der MCP-Server **automatisch** `visual_evidence` an (Screenshot + OCR). Daraus den echten Bildschirmzustand ableiten — nicht spekulieren.
 
 ### AM ENDE (nach Arbeit)
 1. **Full Preflight**: `$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x`
@@ -289,6 +291,9 @@ ConceptIndex.new().by_domain("ships")
 ---
 
 ## 🔗 WEITERE DOKS
+- **`docs/FINDINGS.md` — ZENTRALE FINDINGS-DATEI (Pflicht, IMMER aktuell halten!)** —
+  Jeder QA-Lauf/Fix wird dort nachgetragen (Status ✅ GEFIXT / 🟡 OFFEN / 🔵 BEOBACHTET,
+  Beleg, Referenz). Die Datei ist Todo-Referenz der Befunde und wird **mitcommittet**.
 - `DESIGN.md` — Feature-Status, Umsetzungsplan
 - `VISION.md` — Spielkreislauf, Layer-Details
 - `scripts/testing/SCENARIO_LOADER_SPEC.md` — ScenarioLoader API

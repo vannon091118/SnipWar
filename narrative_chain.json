@@ -2121,6 +2121,63 @@
 			"seq": 29,
 			"subject": "Argos: 9 Dateien — OCR-Pipeline: tesseract.js ins… — nach Null",
 			"summary": "Moment — wieso eigentlich dauert das so lange? Genau diese Frage stand am Anfang, als der erste OCR-Lauf über sechzig Sekunden brauchte und dann im Leeren verpuffte, weil die Daten vom CDN kamen, d..."
+		},
+		{
+			"a": 7,
+			"arc": "a11",
+			"c": 30,
+			"composite": "c30j58n11a7p15",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+					"insertions": 114.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 308.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 67.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 37.0
+				}
+			],
+			"date": "2026-08-27 06:00:00",
+			"hash": "cb69ee7ba579a50e90360ed6d7f800341bbf87e4",
+			"j": 58,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 11,
+			"narrator": "Null",
+			"p": 15,
+			"p_id": 30,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Argos",
+			"seq": 30,
+			"subject": "Null: MCP-Server: Pflicht-Analyse bei unerwart… — nach Argos",
+			"summary": "Der Agent soll nicht raten. Das klingt selbstverständlich, war es aber nicht: Wenn ein Klick danebenging oder ein Scan leer zurückkam, stand da nur ein Fehlercode, und der Rest war Spekulation. Als..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
