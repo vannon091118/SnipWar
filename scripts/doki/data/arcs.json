@@ -349,13 +349,16 @@
 				"F-003",
 				"F-046",
 				"F-004",
-				"F-001"
+				"F-001",
+				"F-069",
+				"F-048",
+				"F-049"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Doku und Laufzeit im Gleichschritt, user://-Landkarte statt verstreuter Pfade.",
 			"version": "",
-			"weight": 3.9
+			"weight": 6.4
 		},
 		"a2": {
 			"climax_weight": 3.0,

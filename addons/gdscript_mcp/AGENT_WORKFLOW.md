@@ -252,7 +252,7 @@ Run-Trace (`user://mcp_traces/<run_id>.json`, Abruf über `runtime_run_trace
 status|snapshot|list|read`) — Tool-Calls, GameState-Fingerprints, Events und
 Verdict an EINER Trace-ID.
 
-## 🗂 Versionierte Chain-Manifeste (`res://mcp_chains/`)
+## 🗂 Versionierte Chain-Manifeste (`res://addons/gdscript_mcp/mcp_chains/`)
 
 Wiederholbare Testketten als JSON (F5). Katalog ansehen, laden, ausführen:
 ```bash

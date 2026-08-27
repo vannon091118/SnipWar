@@ -352,7 +352,7 @@ Diese Tools gehören zum automatisierten E2E-/Diagnosemodus und sind **kein** si
 ### Chain Controller (5 Tools) — `runtime/autonomy/mcp_chain_controller.gd`
 Dekaratve Kettenschritt-Orchestrierung für kombinierte Headless- und Visible-Testläufe:
 - `runtime_chain_validate` — Kette vor Validierung auf Atomgrenzen, sichtbare Verbote, Screenshot-Gründe und Context-Limits prüfen (auch per `chain_id`)
-- `runtime_chain_run` (async) — validierte Kette aus Preconditions, Tools, Assertions und Evidenzerfassung ausführen; `chain_id` lädt ein versioniertes Manifest (`res://mcp_chains/<id>.json`)
+- `runtime_chain_run` (async) — validierte Kette aus Preconditions, Tools, Assertions und Evidenzerfassung ausführen; `chain_id` lädt ein versioniertes Manifest (`res://addons/gdscript_mcp/mcp_chains/<id>.json`)
 - `runtime_chain_trace` — Letzten Ausführungs-Trace und Teilschritt-Verdicts abfragen
 - `runtime_chain_list` — Versionierte Chain-Manifeste im Katalog auflisten (id, name, description, mode, steps)
 - `runtime_chain_load` — Manifest laden + validieren, Definition für `runtime_chain_run` zurückgeben
@@ -362,7 +362,7 @@ Dekaratve Kettenschritt-Orchestrierung für kombinierte Headless- und Visible-Te
 GameState-Node als base_instance hat (z.B. `has_active_run()`). Alternativ
 deklarativ: `expect: {key, op, value}` gegen das Tool-Result.
 
-**Versionierte Chain-Manifeste (F5):** `res://mcp_chains/*.json`
+**Versionierte Chain-Manifeste (F5):** `res://addons/gdscript_mcp/mcp_chains/*.json`
 (überschreibbar über `application/mcp/chain_dir`). Jedes Manifest durchläuft
 `runtime_chain_validate`, bevor es ausgeführt wird — ein „PASS" ist nur echt,
 wenn die Kette wirklich so lief. Mitgeliefert: `preflight_core` (headless,

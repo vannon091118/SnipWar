@@ -27,106 +27,20 @@ script = ExtResource("1")
 theme_override_constants/separation = 8
 
 [node name="Title" type="Label" parent="Header"]
-text = "GDScript MCP Bridge"
+text = "🎮 SnipWar QA-Live"
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.9, 0.9, 0.95, 1)
 custom_minimum_size = Vector2(0, 28)
 
 [node name="StatusIndicator" type="Label" parent="Header"]
 unique_name_in_owner = true
-text = "● Stopped"
-theme_override_colors/font_color = Color(0.8, 0.3, 0.3, 1)
+text = "○ Editor-MCP startet …"
+theme_override_colors/font_color = Color(0.9, 0.7, 0.2, 1)
 theme_override_font_sizes/font_size = 12
-custom_minimum_size = Vector2(100, 28)
+custom_minimum_size = Vector2(150, 28)
 horizontal_alignment = 2
 
 [node name="Separator1" type="HSeparator" parent="."]
-theme_override_colors/separator_color = Color(0.2, 0.2, 0.25, 1)
-
-[node name="ConfigSection" type="VBoxContainer" parent="."]
-theme_override_constants/separation = 6
-margin_left = 8
-margin_right = 8
-margin_top = 8
-
-[node name="ConfigTitle" type="Label" parent="ConfigSection"]
-text = "✏️ Editor-Server (9091)"
-theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
-custom_minimum_size = Vector2(0, 20)
-
-[node name="TransportRow" type="HBoxContainer" parent="ConfigSection"]
-theme_override_constants/separation = 8
-
-[node name="TransportLabel" type="Label" parent="ConfigSection/TransportRow"]
-text = "Transport:"
-theme_override_font_sizes/font_size = 12
-custom_minimum_size = Vector2(80, 0)
-
-[node name="TransportSelect" type="OptionButton" parent="ConfigSection/TransportRow"]
-unique_name_in_owner = true
-items = [{
-"text": "stdio"
-}, {
-"text": "tcp"
-}]
-selected = 1
-
-[node name="PortRow" type="HBoxContainer" parent="ConfigSection"]
-theme_override_constants/separation = 8
-
-[node name="PortLabel" type="Label" parent="ConfigSection/PortRow"]
-text = "Port:"
-theme_override_font_sizes/font_size = 12
-custom_minimum_size = Vector2(80, 0)
-
-[node name="PortSpin" type="SpinBox" parent="ConfigSection/PortRow"]
-unique_name_in_owner = true
-min_value = 1024
-max_value = 65535
-value = 9091
-step = 1
-custom_minimum_size = Vector2(100, 0)
-
-[node name="AutoStartCheck" type="CheckButton" parent="ConfigSection"]
-unique_name_in_owner = true
-text = "Auto-start on editor launch"
-pressed = false
-
-[node name="AutoRestartCheck" type="CheckButton" parent="ConfigSection"]
-unique_name_in_owner = true
-text = "Auto-restart on config change"
-pressed = true
-
-[node name="AllowWritesCheck" type="CheckButton" parent="ConfigSection"]
-unique_name_in_owner = true
-text = "Allow editor write actions"
-pressed = false
-
-[node name="Separator2" type="HSeparator" parent="."]
-theme_override_colors/separator_color = Color(0.2, 0.2, 0.25, 1)
-
-[node name="ControlRow" type="HBoxContainer" parent="."]
-theme_override_constants/separation = 8
-margin_left = 8
-margin_right = 8
-
-[node name="StartBtn" type="Button" parent="ControlRow"]
-unique_name_in_owner = true
-text = "Start Server"
-theme_override_colors/font_color = Color(0.2, 0.8, 0.3, 1)
-theme_override_font_sizes/font_size = 12
-custom_minimum_size = Vector2(100, 32)
-
-[node name="StopBtn" type="Button" parent="ControlRow"]
-unique_name_in_owner = true
-text = "Stop Server"
-disabled = true
-theme_override_colors/font_color = Color(0.8, 0.3, 0.3, 1)
-theme_override_font_sizes/font_size = 12
-custom_minimum_size = Vector2(100, 32)
-
-[node name="Separator3" type="HSeparator" parent="."]
 theme_override_colors/separator_color = Color(0.2, 0.2, 0.25, 1)
 
 [node name="RuntimeSection" type="VBoxContainer" parent="."]
@@ -134,21 +48,16 @@ theme_override_constants/separation = 6
 margin_left = 8
 margin_right = 8
 
-[node name="RuntimeTitle" type="Label" parent="RuntimeSection"]
-text = "🎮 Runtime-Spiel (9090)"
-theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.7, 0.8, 0.7, 1)
-custom_minimum_size = Vector2(0, 20)
-
-[node name="ProfileRow" type="HBoxContainer" parent="RuntimeSection"]
+[node name="LaunchRow" type="HBoxContainer" parent="RuntimeSection"]
 theme_override_constants/separation = 8
 
-[node name="ProfileLabel" type="Label" parent="RuntimeSection/ProfileRow"]
-text = "Play-Goal:"
-theme_override_font_sizes/font_size = 11
-custom_minimum_size = Vector2(80, 0)
+[node name="LaunchGameBtn" type="Button" parent="RuntimeSection/LaunchRow"]
+unique_name_in_owner = true
+text = "▶ Spiel starten +MCP"
+theme_override_font_sizes/font_size = 12
+custom_minimum_size = Vector2(150, 32)
 
-[node name="ProfileSelect" type="OptionButton" parent="RuntimeSection/ProfileRow"]
+[node name="ProfileSelect" type="OptionButton" parent="RuntimeSection/LaunchRow"]
 unique_name_in_owner = true
 items = [{
 "text": "player"
@@ -159,34 +68,14 @@ items = [{
 }]
 selected = 0
 tooltip_text = "player = sichtbarer Spieler-Lauf (Spieler-Vertrag) · qa = Debug/QA · dev = Reparatur/Edit"
-
-[node name="LaunchRow" type="HBoxContainer" parent="RuntimeSection"]
-theme_override_constants/separation = 8
-
-[node name="LaunchGameBtn" type="Button" parent="RuntimeSection/LaunchRow"]
-unique_name_in_owner = true
-text = "▶ Spiel starten +MCP"
-theme_override_font_sizes/font_size = 11
-custom_minimum_size = Vector2(120, 28)
-
-[node name="ConnectRuntimeBtn" type="Button" parent="RuntimeSection/LaunchRow"]
-unique_name_in_owner = true
-text = "Verbinden"
-theme_override_font_sizes/font_size = 11
-custom_minimum_size = Vector2(80, 28)
+custom_minimum_size = Vector2(90, 32)
 
 [node name="DisconnectRuntimeBtn" type="Button" parent="RuntimeSection/LaunchRow"]
 unique_name_in_owner = true
 text = "Trennen"
 disabled = true
 theme_override_font_sizes/font_size = 11
-custom_minimum_size = Vector2(70, 28)
-
-[node name="OpenArtifactsBtn" type="Button" parent="RuntimeSection/LaunchRow"]
-unique_name_in_owner = true
-text = "Artefakte"
-theme_override_font_sizes/font_size = 11
-custom_minimum_size = Vector2(70, 28)
+custom_minimum_size = Vector2(70, 32)
 
 [node name="RuntimeStatus" type="Label" parent="RuntimeSection"]
 unique_name_in_owner = true
@@ -207,15 +96,36 @@ text = "🎯 Ziel: —"
 theme_override_font_sizes/font_size = 10
 autowrap_mode = 2
 
+[node name="GoalRow" type="HBoxContainer" parent="RuntimeSection"]
+theme_override_constants/separation = 6
+
+[node name="GoalInput" type="LineEdit" parent="RuntimeSection/GoalRow"]
+unique_name_in_owner = true
+placeholder_text = "Ziel vorgeben …"
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 28)
+
+[node name="GoalSetBtn" type="Button" parent="RuntimeSection/GoalRow"]
+unique_name_in_owner = true
+text = "Ziel setzen"
+custom_minimum_size = Vector2(92, 28)
+
 [node name="AgentStatsLabel" type="Label" parent="RuntimeSection"]
 unique_name_in_owner = true
 text = "Calls: 0 · ok: 0 · Fehler: 0"
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.6, 0.6, 0.7, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
+
+[node name="ContractRunBtn" type="Button" parent="RuntimeSection"]
+unique_name_in_owner = true
+text = "▶ Vertrags-Run (chain world_smoke — PASS erst bei echtem Durchlauf)"
+disabled = true
+theme_override_font_sizes/font_size = 11
+custom_minimum_size = Vector2(0, 30)
 
 [node name="ToolFeedScroll" type="ScrollContainer" parent="RuntimeSection"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 150)
+custom_minimum_size = Vector2(0, 170)
 v_size_flags = 3
 theme_override_styles/panel = SubResource("3")
 
@@ -227,10 +137,17 @@ scroll_active = false
 theme_override_font_sizes/normal_font_size = 10
 
 [node name="EvidenceTitle" type="Label" parent="RuntimeSection"]
-text = "🖼️ Visual Evidence (OCR)"
+text = "🖼 Live-Evidence (letzter Frame + OCR)"
 theme_override_font_sizes/font_size = 11
 theme_override_colors/font_color = Color(0.7, 0.8, 0.7, 1)
 custom_minimum_size = Vector2(0, 18)
+
+[node name="EvidenceImage" type="TextureRect" parent="RuntimeSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+expand_mode = 1
+stretch_mode = 5
+texture = null
 
 [node name="EvidenceLabel" type="Label" parent="RuntimeSection"]
 unique_name_in_owner = true
@@ -258,7 +175,7 @@ v_size_flags = 4
 [node name="LogTitle" type="HBoxContainer" parent="LogSection"]
 
 [node name="LogLabel" type="Label" parent="LogSection/LogTitle"]
-text = "Server Log"
+text = "Log"
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
 
@@ -266,13 +183,13 @@ theme_override_colors/font_color = Color(0.7, 0.7, 0.8, 1)
 unique_name_in_owner = true
 text = "Clear"
 custom_minimum_size = Vector2(60, 24)
-theme_override_font_sizes/font_size = 10
 
 [node name="LogScroll" type="ScrollContainer" parent="LogSection"]
 unique_name_in_owner = true
-v_size_flags = 4
-theme_override_styles/panel = SubResource("3")
+custom_minimum_size = Vector2(0, 90)
+theme_override_styles/panel = SubResource("2")
 
 [node name="LogContainer" type="VBoxContainer" parent="LogSection/LogScroll"]
 unique_name_in_owner = true
-theme_override_constants/separation = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0

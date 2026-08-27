@@ -32,7 +32,7 @@
 | Pfad | Inhalt | Garantie |
 |---|---|---|
 | `.mcp.json` | MCP-Client-Registrierung (stdio-Bridge → 9090) | wird mitcommittet; jeder Client kann das Spiel über `.mcp.json` registrieren |
-| `res://mcp_chains/*.json` | Versionierte Chain-Manifeste (F5) | PASS ist nur echt, wenn die Kette so lief; Manifeste sind wiederholbar und diffbar |
+| `res://addons/gdscript_mcp/mcp_chains/*.json` | Versionierte Chain-Manifeste (F5) | PASS ist nur echt, wenn die Kette so lief; Manifeste sind wiederholbar und diffbar |
 | `res://addons/gdscript_mcp/` | Addon-Code + Doku | komplett versioniert (inkl. `.gd.uid`-Sidecars) |
 | `res://addons/gdscript_mcp/client/node_modules/` | tesseract.js + OCR-Assets-Cache | ❌ gitignored — regenerierbar via `npm install`; `deu.traineddata` liegt im lokalen Cache |
 

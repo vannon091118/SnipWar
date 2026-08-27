@@ -13,13 +13,14 @@ const PREFLIGHT_POLL_MS := 400
 const PREFLIGHT_OUT_PATH := "user://mcp_preflight_result.json"
 
 # Versionierte Chain-Manifeste (F5): wiederholbare, deklarative Testketten als
-# JSON-Dateien unter res://mcp_chains/<id>.json (überschreibbar über
-# application/mcp/chain_dir). Jedes Manifest durchläuft runtime_chain_validate,
-# bevor es ausgeführt wird.
-const CHAIN_DIR := "res://mcp_chains"
+# JSON-Dateien unter addons/gdscript_mcp/mcp_chains/<id>.json (HARD SEPARATION:
+# MCP-Assets leben ausschließlich im Addon, nie im Spiel-Root; überschreibbar
+# über application/mcp/chain_dir).
+const CHAIN_DIR := "res://addons/gdscript_mcp/mcp_chains"
 
 var _registry: RefCounted = null
 var _lifecycle: RefCounted = null
+var _host_dispatch: Callable = Callable()
 var _last_trace: Dictionary = {}
 var _running := false
 
@@ -29,15 +30,22 @@ func setup(registry: RefCounted, lifecycle: RefCounted = null) -> void:
 	_lifecycle = lifecycle
 
 
+## Host-Tools (runtime_mcp_status, runtime_agent_activity, editor_logs_read, …)
+## leben nicht in der Registry — der Server meldet sich hiermit als Fallback,
+## damit Chain-Steps ALLE Server-Tools nutzen dürfen (kein "Unknown tool").
+func set_host_dispatch(dispatch: Callable) -> void:
+	_host_dispatch = dispatch
+
+
 static func get_tool_defs() -> Array:
 	return [
 		{
 			"name": "runtime_chain_run",
-			"description": "Execute a declarative multi-step test or feature verification chain. Pass chain_id to run a versioned manifest from the chain catalog (res://mcp_chains), or inline steps for ad-hoc chains",
+			"description": "Execute a declarative multi-step test or feature verification chain. Pass chain_id to run a versioned manifest from the chain catalog (res://addons/gdscript_mcp/mcp_chains), or inline steps for ad-hoc chains",
 			"inputSchema": {
 				"type": "object",
 				"properties": {
-					"chain_id": {"type": "string", "description": "Versioned chain manifest id (res://mcp_chains/<id>.json). Overrides inline steps"},
+					"chain_id": {"type": "string", "description": "Versioned chain manifest id (res://addons/gdscript_mcp/mcp_chains/<id>.json). Overrides inline steps"},
 					"name": {"type": "string", "description": "Human-readable chain name"},
 					"mode": {"type": "string", "enum": ["auto", "headless", "visible"], "default": "auto"},
 					"stop_on_failure": {"type": "boolean", "default": true},
@@ -73,7 +81,7 @@ static func get_tool_defs() -> Array:
 		},
 		{
 			"name": "runtime_chain_list",
-			"description": "List versioned chain manifests from the chain catalog (res://mcp_chains/*.json): id, name, description, mode, step count",
+			"description": "List versioned chain manifests from the chain catalog (res://addons/gdscript_mcp/mcp_chains/*.json): id, name, description, mode, step count",
 			"inputSchema": {"type": "object", "properties": {}},
 		},
 		{
@@ -261,12 +269,18 @@ func run_chain(chain_def: Dictionary) -> Dictionary:
 			if tool_name == "preflight_constraint":
 				action_result = await _run_preflight_constraint(str(tool_args.get("constraint", "")))
 			elif _registry != null:
-				if _is_async_tool(tool_name):
-					action_result = await _registry.dispatch_async(tool_name, tool_args)
+					if _is_async_tool(tool_name):
+						action_result = await _registry.dispatch_async(tool_name, tool_args)
+					else:
+						action_result = _registry.dispatch(tool_name, tool_args)
+					# Host-Tool-Fallback: "Unknown tool" aus der Registry heißt
+					# nicht tot — der Server dispatched Host-Tools direkt.
+					if action_result is Dictionary and str(action_result.get("error", "")).begins_with("Unknown tool") and _host_dispatch.is_valid():
+						action_result = _host_dispatch.call(tool_name, tool_args)
+					elif (action_result == null or (action_result is Dictionary and action_result.is_empty())) and _host_dispatch.is_valid():
+						action_result = _host_dispatch.call(tool_name, tool_args)
 				else:
-					action_result = _registry.dispatch(tool_name, tool_args)
-			else:
-				action_result = {"error": "registry unavailable"}
+					action_result = {"error": "registry unavailable"}
 			result["action_result"] = action_result
 
 		# 3. Assertion check (assertion expression with result binding, or the
@@ -468,7 +482,7 @@ static func _resolve_preflight_path() -> String:
 # ═══════════════════════════════════════════════════════════════════════════
 
 ## Löst das Manifest-Verzeichnis auf (application/mcp/chain_dir, Default
-## res://mcp_chains).
+## res://addons/gdscript_mcp/mcp_chains).
 static func _resolve_chain_dir() -> String:
 	var configured := str(ProjectSettings.get_setting("application/mcp/chain_dir", CHAIN_DIR))
 	if configured.begins_with("res://") or configured.begins_with("user://"):
@@ -476,7 +490,7 @@ static func _resolve_chain_dir() -> String:
 	return CHAIN_DIR
 
 
-## Lädt und validiert ein Manifest (res://mcp_chains/<id>.json).
+## Lädt und validiert ein Manifest (res://addons/gdscript_mcp/mcp_chains/<id>.json).
 func load_manifest(chain_id: String) -> Dictionary:
 	var id := chain_id.strip_edges()
 	if id == "":

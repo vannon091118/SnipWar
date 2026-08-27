@@ -24,9 +24,9 @@
     },
     {
       "name": "run_check",
-      "tool": "game_state_summary",
-      "args": { "faction": "a" },
-      "assertion": "has_active_run()"
+      "tool": "runtime_mcp_status",
+      "args": {},
+      "expect": { "key": "game_running", "op": "==", "value": true }
     }
   ]
 }

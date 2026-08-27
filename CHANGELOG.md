@@ -616,3 +616,17 @@ Persistenz-Pakt: PERSISTENCE.md als vollständige user://-Landkarte mit TTLs, To
 - docs/FINDINGS.md: Dokumentation aktualisiert (F-046).
 - narrative_chain.json: Dokumentation aktualisiert (F-004).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+
+## 2026-08-27 16:00:00 — p40 · c40j23n4a5p37 · Vannon · triumphierend
+
+**Live-Test-Fixes: Dock-Dropdowns leer weil. … — nach Basher**
+
+Live-Test-Fixes: Dock-Dropdowns leer weil .tscn items als String-Array geladen wurde (Godot 4 braucht Dictionary-Array) — Korrektformat plus idempotenter Code-Guard in _ready; .mcp.json auf absolute Bridge-Pfade umgestellt, damit der Connector das Modul findet
+
+- .mcp.json: Test-Assets ergänzt (F-069).
+- CHANGELOG.md: Test-Assets ergänzt (F-002).
+- addons/gdscript_mcp/editor/mcp_dock.gd: Test-Assets ergänzt (F-048).
+- addons/gdscript_mcp/editor/mcp_dock.tscn: Test-Assets ergänzt (F-049).
+- change_index.json: Test-Assets ergänzt (F-003).
+- narrative_chain.json: Test-Assets ergänzt (F-004).
+- scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).

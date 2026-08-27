@@ -36,6 +36,17 @@ var _playthrough: RefCounted = null
 var _game_systems: RefCounted = null
 var _gameplay: RefCounted = null
 var _custom_loader: RefCounted = null
+var _chain_host_dispatch: Callable = Callable()
+
+
+## Der Server meldet sich als Host-Tool-Dispatcher für Chain-Steps
+## (runtime_mcp_status, runtime_agent_activity, editor_logs_read & Co. leben
+## nicht in der Registry). Wird an den Chain-Controller weitergereicht —
+## auch nachträglich, falls der Controller lazy erst später entsteht.
+func set_chain_host_dispatch(dispatch: Callable) -> void:
+	_chain_host_dispatch = dispatch
+	if _chain_controller != null and _chain_controller.has_method("set_host_dispatch"):
+		_chain_controller.set_host_dispatch(dispatch)
 var _code_analyzer: RefCounted = null
 var _goal_player: RefCounted = null
 var _autonomy_planner: RefCounted = null
@@ -479,6 +490,8 @@ func _load_runtime_modules() -> void:
 				_chain_controller = instance
 				if _chain_controller.has_method("setup"):
 					_chain_controller.setup(self, _lifecycle)
+				if _chain_controller.has_method("set_host_dispatch") and _chain_host_dispatch.is_valid():
+					_chain_controller.set_host_dispatch(_chain_host_dispatch)
 			var td = cc.get_tool_defs()
 			if td is Array:
 				_tools.append_array(td)

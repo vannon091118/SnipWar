@@ -313,10 +313,37 @@ func _load_registry() -> bool:
 		_registry.set_context_store(_context_store)
 	if _registry.has_method("set_lifecycle"):
 		_registry.set_lifecycle(_lifecycle)
+	# Chain-Steps dürfen ALLE Tools nutzen: Der Server dispatched Host-Tools
+	# (runtime_mcp_status & Co.) als Fallback, wenn die Registry sie nicht kennt.
+	if _registry.has_method("set_chain_host_dispatch"):
+		_registry.set_chain_host_dispatch(Callable(self, "_dispatch_host_tool_for_chain"))
 	_tools = _registry.get_all_tools()
 	_rebuild_tool_index()
 	return _role == "editor" or not _tools.is_empty()
 
+
+## Host-Tool-Dispatcher für Chain-Steps (siehe set_chain_host_dispatch).
+## Synchron bewusst: Ketten-Steps sind kurze Beobachtungen, kein UI-Fluss.
+func _dispatch_host_tool_for_chain(tool_name: String, args: Dictionary) -> Variant:
+	if tool_name == "runtime_mcp_status":
+		return get_lifecycle_state()
+	if tool_name == "runtime_mcp_events":
+		var ev_cursor := int(args.get("cursor", 0))
+		var ev_limit := clampi(int(args.get("limit", 32)), 1, 128)
+		return _lifecycle.events_since(ev_cursor, ev_limit) if _lifecycle != null else {"entries": [], "count": 0, "next_cursor": ev_cursor}
+	if tool_name == "runtime_agent_activity":
+		return _agent_activity.get_feed(clampi(int(args.get("limit", 20)), 1, 100)) if _agent_activity != null else {"goal": "", "entries": [], "count": 0, "total_calls": 0}
+	if tool_name == "runtime_run_trace":
+		return _handle_run_trace(args)
+	if tool_name == "editor_logs_read":
+		var log_cursor := int(args.get("cursor", 0))
+		var log_limit := clampi(int(args.get("limit", 50)), 1, 200)
+		var events: Dictionary = _lifecycle.events_since(log_cursor, log_limit) if _lifecycle != null else {"entries": [], "count": 0, "next_cursor": log_cursor}
+		var chain_log: Dictionary = {"source": "mcp_runtime", "entries": events.get("entries", []), "next_cursor": events.get("next_cursor", log_cursor)}
+		if bool(args.get("include_file", true)):
+			chain_log["engine_log_tail"] = _read_engine_log_tail()
+		return chain_log
+	return {"error": "Unknown host tool: " + tool_name}
 
 func _register_host_tools() -> void:
 	var contracts = load("res://addons/gdscript_mcp/runtime/autonomy/mcp_autonomy_contracts.gd")

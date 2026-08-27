@@ -2911,6 +2911,63 @@
 			"seq": 39,
 			"subject": "Basher (13 files): Persistenz-Pakt: PERSISTENCE.md als vollständige… — nach Devin",
 			"summary": "doku sync. exit 0."
+		},
+		{
+			"a": 5,
+			"arc": "a16",
+			"c": 40,
+			"composite": "c40j23n4a5p37",
+			"data_changes": [
+				{
+					"deletions": 1.0,
+					"file": ".mcp.json",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 20.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/editor/mcp_dock.gd",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "addons/gdscript_mcp/editor/mcp_dock.tscn",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 82.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 87.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 16.0
+				}
+			],
+			"date": "2026-08-27 16:00:00",
+			"hash": "5bc899b56982f3b9676e93bc1c5d773c05c42f94",
+			"j": 23,
+			"model_id": "claude-sonnet-4",
+			"mood": "triumphierend",
+			"n": 4,
+			"narrator": "Vannon",
+			"p": 37,
+			"p_id": 40,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Basher",
+			"seq": 40,
+			"subject": "Live-Test-Fixes: Dock-Dropdowns leer weil. … — nach Basher",
+			"summary": "Leere Dropdowns sind kein Zustand, sie sind ein Fehler. Ein Live-Test, der im toten Dock endet, beweist nur eines: Man hat zu lange auf die Szene geglaubt und zu wenig auf den Loader. Basher hat de..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
