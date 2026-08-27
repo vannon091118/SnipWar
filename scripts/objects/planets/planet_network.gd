@@ -621,7 +621,7 @@ func get_modal_coordinator() -> ModalCoordinator:
 func get_message_feed() -> MessageFeed:
 	return _message_feed
 
-func _on_panel_visibility_changed(panel_open: bool) -> void:
+func _on_panel_visibility_changed(_panel_open: bool) -> void:
 	queue_redraw()
 
 func _on_workers_spawn_requested(source: Node2D, amount: int) -> void:

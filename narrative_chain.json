@@ -2968,6 +2968,138 @@
 			"seq": 40,
 			"subject": "Live-Test-Fixes: Dock-Dropdowns leer weil. … — nach Basher",
 			"summary": "Leere Dropdowns sind kein Zustand, sie sind ein Fehler. Ein Live-Test, der im toten Dock endet, beweist nur eines: Man hat zu lange auf die Szene geglaubt und zu wenig auf den Loader. Basher hat de..."
+		},
+		{
+			"a": 2,
+			"arc": "a16",
+			"c": 41,
+			"composite": "c41j59n3a2p13",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/findings.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/.mcp.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/gdscript_mcp/AGENT_WORKFLOW.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/gdscript_mcp/CONTEXT_AUTONOMY_AUDIT.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/HIGODOT_ADAPTATION_ANALYSIS.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "addons/gdscript_mcp/MCP_INDEX.md",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/gdscript_mcp/PERSISTENCE.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 574.0,
+					"file": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+					"insertions": 29.0
+				},
+				{
+					"deletions": 215.0,
+					"file": "addons/gdscript_mcp/editor/mcp_dock.gd",
+					"insertions": 146.0
+				},
+				{
+					"deletions": 132.0,
+					"file": "addons/gdscript_mcp/editor/mcp_dock.tscn",
+					"insertions": 49.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/mcp_chains/preflight_core.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "addons/gdscript_mcp/mcp_chains/world_smoke.json",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 14.0,
+					"file": "addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd",
+					"insertions": 28.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+					"insertions": 27.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/testing/portable/templates/.gdignore",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 57.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/legacy/preflight_v1.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/legacy/preflight_v1.gd.uid",
+					"insertions": 0.0
+				}
+			],
+			"date": "2026-08-27 17:00:00",
+			"hash": "ab080dcd1543ee47db628b2abba91fe7846cc852",
+			"j": 59,
+			"model_id": "claude-sonnet-4",
+			"mood": "warm",
+			"n": 3,
+			"narrator": "Thinker",
+			"p": 13,
+			"p_id": 41,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Vannon",
+			"seq": 41,
+			"subject": "Hard Separation abgeschlossen: MCP-Assets… [Analyse: Thinker] — nach Vannon",
+			"summary": "Ich zähle die Grenzen, die diese Runde gezogen hat, und komme auf genau eine, die zählt: die zwischen Spiel und Addon. Vannon hatte recht mit der Kritik, auch wenn sie unangenehm kam — Chain-Manife..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

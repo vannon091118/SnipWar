@@ -210,7 +210,7 @@ static func recompute_unit_stats(unit: Dictionary) -> void:
 	if unit == null:
 		return
 	var dps := FleetSnapshot.BASE_DPS
-	var range := FleetSnapshot.BASE_RANGE
+	var firing_range := FleetSnapshot.BASE_RANGE
 	var speed_mult := 1.0
 	var drives_alive := 0
 	var hull_alive := false
@@ -220,7 +220,7 @@ static func recompute_unit_stats(unit: Dictionary) -> void:
 			continue
 		var stat: Dictionary = mod.get("stat", {}) as Dictionary
 		dps += float(stat.get("dps", 0.0))
-		range += float(stat.get("range", 0.0))
+		firing_range += float(stat.get("range", 0.0))
 		speed_mult *= float(stat.get("speed_mult", 1.0))
 		total_hp += float(mod.get("hp", 0.0))
 		var slot_type: StringName = mod.get("slot_type", &"") as StringName
@@ -229,7 +229,7 @@ static func recompute_unit_stats(unit: Dictionary) -> void:
 		if slot_type == ShipPartDefinition.SLOT_HULL:
 			hull_alive = true
 	unit["dps"] = dps
-	unit["range"] = range
+	unit["range"] = firing_range
 	unit["speed"] = FleetSnapshot.BASE_SPEED * speed_mult if drives_alive > 0 else 0.0
 	unit["hp"] = total_hp
 	unit["alive"] = hull_alive and total_hp > 0.0
@@ -320,8 +320,8 @@ static func _advance_fleet(units: Array, target_center_x: float, tick: float, ti
 		var speed := float(unit.get("speed", 0.0))
 		if speed <= 0.0:
 			continue
-		var range := float(unit.get("range", FleetSnapshot.BASE_RANGE))
-		var firing_line := target_center_x - signf(target_center_x) * range
+		var firing_range := float(unit.get("range", FleetSnapshot.BASE_RANGE))
+		var firing_line := target_center_x - signf(target_center_x) * firing_range
 		if absf(firing_line - float(unit["pos"].x)) <= 1.0:
 			continue
 		var step := speed * tick

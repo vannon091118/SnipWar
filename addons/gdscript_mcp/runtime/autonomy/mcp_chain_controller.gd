@@ -171,13 +171,13 @@ func validate_chain(chain_def: Dictionary) -> Dictionary:
 		if tool_name.begins_with("runtime_") and step.get("args", {}) is not Dictionary:
 			errors.append("step %d args must be an object" % index)
 		if tool_name not in ["runtime_wait_ms", "runtime_wait_frames"] and not step.has("assertion") and not step.has("expect"):
-			warnings.append("step %d has no postcondition/assertion" % index)
+			errors.append("step %d has no postcondition/assertion (HART: kein blindes Tool-Feuer, kein Fake-Testing)" % index)
 		if tool_name == "runtime_ux_find" and str(step.get("args", {}).get("root_path", "/root")) == "/root":
-			warnings.append("step %d uses broad UI scope; prefer the current panel root_path" % index)
+			errors.append("step %d uses broad UI scope; prefer the current panel root_path (HART: bounded context required)" % index)
 	if mode == "visible" and exploratory:
 		errors.append("exploratory visible play must remain interactive; validate segments only after discovery")
 	if mode == "visible" and steps.size() > 20:
-		warnings.append("long visible chain; split at panel transitions to preserve player-like decisions")
+		errors.append("long visible chain (>20 steps); split at panel transitions to preserve player-like decisions (HART)")
 	return {
 		"ok": errors.is_empty(),
 		"verdict": "PASS" if errors.is_empty() else "BLOCKED",
@@ -269,18 +269,18 @@ func run_chain(chain_def: Dictionary) -> Dictionary:
 			if tool_name == "preflight_constraint":
 				action_result = await _run_preflight_constraint(str(tool_args.get("constraint", "")))
 			elif _registry != null:
-					if _is_async_tool(tool_name):
-						action_result = await _registry.dispatch_async(tool_name, tool_args)
-					else:
-						action_result = _registry.dispatch(tool_name, tool_args)
-					# Host-Tool-Fallback: "Unknown tool" aus der Registry heißt
-					# nicht tot — der Server dispatched Host-Tools direkt.
-					if action_result is Dictionary and str(action_result.get("error", "")).begins_with("Unknown tool") and _host_dispatch.is_valid():
-						action_result = _host_dispatch.call(tool_name, tool_args)
-					elif (action_result == null or (action_result is Dictionary and action_result.is_empty())) and _host_dispatch.is_valid():
-						action_result = _host_dispatch.call(tool_name, tool_args)
+				if _is_async_tool(tool_name):
+					action_result = await _registry.dispatch_async(tool_name, tool_args)
 				else:
-					action_result = {"error": "registry unavailable"}
+					action_result = _registry.dispatch(tool_name, tool_args)
+				# Host-Tool-Fallback: "Unknown tool" aus der Registry heißt
+				# nicht tot — der Server dispatched Host-Tools direkt.
+				if action_result is Dictionary and str(action_result.get("error", "")).begins_with("Unknown tool") and _host_dispatch.is_valid():
+					action_result = _host_dispatch.call(tool_name, tool_args)
+				elif (action_result == null or (action_result is Dictionary and action_result.is_empty())) and _host_dispatch.is_valid():
+					action_result = _host_dispatch.call(tool_name, tool_args)
+			else:
+				action_result = {"error": "registry unavailable"}
 			result["action_result"] = action_result
 
 		# 3. Assertion check (assertion expression with result binding, or the

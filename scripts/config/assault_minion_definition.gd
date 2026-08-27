@@ -44,9 +44,9 @@ static func from_ship(assembly: ShipAssembly, catalog: ShipPartCatalog, base_hp:
 		mod["hp"] = float(mod.get("max_hp", 0.0))
 		mod["alive"] = true
 		minion.modules.append(mod)
-	var repair := ModuleInfluence.repair_profile(_mounted_parts(assembly, cat), cfg)
-	minion.repair_rate = float(repair.get("rate", 0.0))
-	minion.repair_cap = float(repair.get("cap", 0.0))
+	var repair_result := ModuleInfluence.repair_profile(_mounted_parts(assembly, cat), cfg)
+	minion.repair_rate = float(repair_result.get("rate", 0.0))
+	minion.repair_cap = float(repair_result.get("cap", 0.0))
 	return minion
 
 
@@ -101,7 +101,7 @@ func is_alive() -> bool:
 ## Regenerates module HP up to the tier cap (never full) and returns the total
 ## amount healed. Destroyed modules are revived to the cap, keeping the ship
 ## "functional" without restoring full integrity.
-func repair(delta: float, rng: RandomNumberGenerator = null) -> float:
+func repair(delta: float, _rng: RandomNumberGenerator = null) -> float:
 	if modules.is_empty() or repair_rate <= 0.0 or repair_cap <= 0.0:
 		return 0.0
 	var healed := 0.0

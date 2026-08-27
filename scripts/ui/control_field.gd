@@ -24,5 +24,5 @@ func apply_bounds(bounds: Rect2) -> void:
 	position = bounds.position
 	size = bounds.size
 
-func fields_close(position: Vector2) -> bool:
-	return resolved_rect.has_point(position)
+func fields_close(point: Vector2) -> bool:
+	return resolved_rect.has_point(point)

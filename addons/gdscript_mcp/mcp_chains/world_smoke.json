@@ -20,7 +20,8 @@
       "name": "screenshot",
       "tool": "runtime_screenshot",
       "reason": "smoke evidence for the run trace",
-      "args": { "persist_context": true }
+      "args": { "persist_context": true },
+      "assertion": "result.context_id != \"\""
     },
     {
       "name": "run_check",

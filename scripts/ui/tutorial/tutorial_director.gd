@@ -347,10 +347,10 @@ func _planets_of(faction: StringName) -> Array[Node]:
 func _find_launcher_button(label: String) -> Control:
 	if _planet_network == null:
 		return null
-	var layer: Node = _planet_network.get_node_or_null("DossierLauncher")
-	if layer == null:
+	var dossier_launcher: Node = _planet_network.get_node_or_null("DossierLauncher")
+	if dossier_launcher == null:
 		return null
-	var box: Node = layer.get_node_or_null("LauncherBox")
+	var box: Node = dossier_launcher.get_node_or_null("LauncherBox")
 	if box == null:
 		return null
 	for child in box.get_children():

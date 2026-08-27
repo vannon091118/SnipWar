@@ -23,6 +23,9 @@ signal planet_unhovered(planet: Node2D)
 ## Emitted after a deterministic fleet/planet simulation produces a replayable
 ## result. ConflictManager consumes this handoff; Planet remains the authority
 ## that commits ownership and worker state.
+## Cross-class usage: PlanetArrivalResolver emits it via planet.conflict_simulated.emit(...)
+## and ConflictManager connects to it — hence the unused-in-class suppression.
+@warning_ignore("unused_signal")
 signal conflict_simulated(simulation_type: StringName, replay: CombatReplay)
 signal building_destroyed(planet_id: StringName, q: int, r: int)
 signal planet_neutralized(planet_id: StringName)
@@ -449,7 +452,7 @@ func _sync_groups() -> void:
 	add_to_group(_faction_group(get_faction()))
 	add_to_group(_role_group(planet_role))
 
-func _on_technology_researched(changed_faction: StringName, technology_id: StringName) -> void:
+func _on_technology_researched(changed_faction: StringName, _technology_id: StringName) -> void:
 	if changed_faction == get_faction():
 		_refresh_shipyard_hangar()
 
@@ -521,8 +524,8 @@ func _rebuild_composition_decals() -> void:
 ## and faction and applies the correct detail/size profiles. The caller
 ## (ChunkCoordinator) resolves the size profile, since the parent lookup does
 ## not exist yet before the node enters the tree.
-func configure_from_cache(data, size_profile: PlanetSizeProfile = null) -> void:
-	PlanetProcedural.configure_from_cache(self, data, size_profile)
+func configure_from_cache(data, size_profile_override: PlanetSizeProfile = null) -> void:
+	PlanetProcedural.configure_from_cache(self, data, size_profile_override)
 
 ## Returns the FoV radius (in chunk cells) this planet provides for the owning
 ## faction. Base radius + fov_radius_bonus from upgrades.

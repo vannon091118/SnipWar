@@ -142,17 +142,17 @@ func _maybe_build_and_dispatch_ship(source: Planet, config: CpuDispatchConfig) -
 	#    job finishes via GameState._process() (live) or advance_builds() (test).
 	var assemblies: Dictionary = state.get_ship_assemblies(source.planet_id)
 	for ship_id_value in assemblies:
-		var ship_id: StringName = ship_id_value as StringName
-		var assembly: ShipAssembly = state.get_ship_assembly(source.planet_id, ship_id)
+		var candidate_ship_id: StringName = ship_id_value as StringName
+		var assembly: ShipAssembly = state.get_ship_assembly(source.planet_id, candidate_ship_id)
 		if assembly == null:
 			continue
-		var target: Planet = _ship_target(source)
-		if target == null:
+		var dispatch_target: Planet = _ship_target(source)
+		if dispatch_target == null:
 			return false
-		var role: StringName = assembly.role if not String(assembly.role).is_empty() else GameState.MISSION_MILITARY
-		if target.get_faction() == GameState.FACTION_NEUTRAL:
-			role = GameState.MISSION_COLONY if state.has_scanned_planet(GameState.FACTION_CPU, target.planet_id) else GameState.MISSION_MILITARY
-		var ship: Node = conflict_manager.call("dispatch_ship", source, target, ship_id, role) as Node
+		var dispatch_role: StringName = assembly.role if not String(assembly.role).is_empty() else GameState.MISSION_MILITARY
+		if dispatch_target.get_faction() == GameState.FACTION_NEUTRAL:
+			dispatch_role = GameState.MISSION_COLONY if state.has_scanned_planet(GameState.FACTION_CPU, dispatch_target.planet_id) else GameState.MISSION_MILITARY
+		var ship: Node = conflict_manager.call("dispatch_ship", source, dispatch_target, candidate_ship_id, dispatch_role) as Node
 		if ship != null:
 			return true
 

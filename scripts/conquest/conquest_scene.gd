@@ -196,7 +196,7 @@ func _setup_battlefield() -> void:
 func _part_catalog() -> ShipPartCatalog:
 	return preload("res://resources/config/ship_part_catalog_default.tres")
 
-func _make_ship_minion(assembly: ShipAssembly, index: int, vertical_center: float) -> CompositeShipView:
+func _make_ship_minion(assembly: ShipAssembly, index: int, _vertical_center: float) -> CompositeShipView:
 	var view := CompositeShipView.new()
 	view.name = "Minion_%d" % index
 	view.scale = Vector2.ONE * 0.22
@@ -353,7 +353,7 @@ func _process_wave_event(event: BattleEvent) -> void:
 			if repair_bar != null and not repair_bar.is_empty():
 				repair_bar.heal_total(event.value)
 
-func _hide_minion_module(minion_id: StringName, module_part_id: StringName, module_slot_type: StringName) -> void:
+func _hide_minion_module(minion_id: StringName, module_part_id: StringName, _module_slot_type: StringName) -> void:
 	if not _minions_by_id.has(minion_id):
 		return
 	var view: CompositeShipView = _minions_by_id[minion_id] as CompositeShipView

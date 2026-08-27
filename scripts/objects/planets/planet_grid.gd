@@ -67,10 +67,10 @@ func get_neighbors(q: int, r: int) -> Array[PlanetGridCell]:
 			result.append(cell)
 	return result
 
-## BFS shortest path from (sq, sr) to (tq, tr) through passable cells.
-func find_path(sq: int, sr: int, tq: int, tr: int, blocked_states: Array[StringName] = [&"blocked"]) -> Array[Vector2i]:
+## BFS shortest path from (sq, sr) to (tq, target_row) through passable cells.
+func find_path(sq: int, sr: int, tq: int, target_row: int, blocked_states: Array[StringName] = [&"blocked"]) -> Array[Vector2i]:
 	var start := Vector2i(sq, sr)
-	var target := Vector2i(tq, tr)
+	var target := Vector2i(tq, target_row)
 	if not _cells.has(start) or not _cells.has(target):
 		return []
 	var frontier: Array[Vector2i] = [start]

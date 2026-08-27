@@ -219,7 +219,7 @@
 			"p_id": 33.0
 		},
 		"5bc899b56982f3b9676e93bc1c5d773c05c42f94": {
-			"c": 40,
+			"c": 40.0,
 			"composite": "c40j23n4a5p37",
 			"entities": [
 				"F-069",
@@ -230,7 +230,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 40
+			"p_id": 40.0
 		},
 		"5cac8a431844eea134b19fb331c438b86455ed8a": {
 			"c": 20.0,
@@ -297,6 +297,49 @@
 				"C-001"
 			],
 			"p_id": 11.0
+		},
+		"ab080dcd1543ee47db628b2abba91fe7846cc852": {
+			"c": 41,
+			"composite": "c41j59n3a2p13",
+			"entities": [
+				"F-002",
+				"F-097",
+				"F-098",
+				"F-092",
+				"F-093",
+				"F-099",
+				"F-045",
+				"F-095",
+				"F-083",
+				"F-048",
+				"F-049",
+				"F-100",
+				"F-101",
+				"F-086",
+				"F-102",
+				"F-042",
+				"F-103",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-104",
+				"F-105",
+				"C-201",
+				"C-202",
+				"C-203",
+				"C-204",
+				"C-205",
+				"C-206",
+				"C-207",
+				"C-208",
+				"C-209",
+				"C-210",
+				"C-179",
+				"C-211",
+				"C-212",
+				"C-213"
+			],
+			"p_id": 41
 		},
 		"aea99b31d8e999f5921e633b33c7ed89d49c719c": {
 			"c": 23.0,
@@ -3684,10 +3727,16 @@
 						16.0
 					],
 					"p_id": 38.0
+				},
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 41.0
 				}
 			],
 			"id": "C-179",
-			"last_p": 38.0,
+			"last_p": 41.0,
 			"name": "CHAIN_DIR",
 			"path": "addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd",
 			"status": "modified",
@@ -4047,6 +4096,227 @@
 			"last_p": 38.0,
 			"name": "_record",
 			"path": "addons/gdscript_mcp/runtime/context/mcp_run_trace.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-201": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						50.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-201",
+			"last_p": 41.0,
+			"name": "EDITOR_CONFIG_PATH",
+			"path": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-202": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						96.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-202",
+			"last_p": 41.0,
+			"name": "_dock_log",
+			"path": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-203": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						179.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-203",
+			"last_p": 41.0,
+			"name": "_read_editor_writes_enabled",
+			"path": "addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-204": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						15.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-204",
+			"last_p": 41.0,
+			"name": "EVIDENCE_ROOTS",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-205": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						328.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-205",
+			"last_p": 41.0,
+			"name": "_update_evidence_image",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-206": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						365.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-206",
+			"last_p": 41.0,
+			"name": "_on_logs_response",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-207": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						378.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-207",
+			"last_p": 41.0,
+			"name": "_on_goal_set_pressed",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-208": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						389.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-208",
+			"last_p": 41.0,
+			"name": "_on_goal_set_response",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-209": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						398.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-209",
+			"last_p": 41.0,
+			"name": "_on_contract_run_pressed",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-210": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						409.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-210",
+			"last_p": 41.0,
+			"name": "_on_contract_run_response",
+			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-211": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						33.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-211",
+			"last_p": 41.0,
+			"name": "set_host_dispatch",
+			"path": "addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-212": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						43.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-212",
+			"last_p": 41.0,
+			"name": "set_chain_host_dispatch",
+			"path": "addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-213": {
+			"first_p": 41.0,
+			"history": [
+				{
+					"lines": [
+						319.0
+					],
+					"p_id": 41.0
+				}
+			],
+			"id": "C-213",
+			"last_p": 41.0,
+			"name": "_dispatch_host_tool_for_chain",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -5007,6 +5277,96 @@
 			"last_p": 39.0,
 			"name": "PLAYTEST_HANDOFF.md",
 			"path": "addons/gdscript_mcp/PLAYTEST_HANDOFF.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-097": {
+			"first_p": 41.0,
+			"history": [],
+			"id": "F-097",
+			"last_p": 41.0,
+			"name": "findings.md",
+			"path": "addons/findings.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-098": {
+			"first_p": 41.0,
+			"history": [],
+			"id": "F-098",
+			"last_p": 41.0,
+			"name": ".mcp.json",
+			"path": "addons/gdscript_mcp/.mcp.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-099": {
+			"first_p": 41.0,
+			"history": [],
+			"id": "F-099",
+			"last_p": 41.0,
+			"name": "HIGODOT_ADAPTATION_ANALYSIS.md",
+			"path": "addons/gdscript_mcp/HIGODOT_ADAPTATION_ANALYSIS.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-100": {
+			"first_p": 41.0,
+			"history": [],
+			"id": "F-100",
+			"last_p": 41.0,
+			"name": "preflight_core.json",
+			"path": "addons/gdscript_mcp/mcp_chains/preflight_core.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-101": {
+			"first_p": 41.0,
+			"history": [],
+			"id": "F-101",
+			"last_p": 41.0,
+			"name": "world_smoke.json",
+			"path": "addons/gdscript_mcp/mcp_chains/world_smoke.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-102": {
+			"first_p": 41.0,
+			"history": [],
+			"id": "F-102",
+			"last_p": 41.0,
+			"name": "mcp_tool_registry.gd",
+			"path": "addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-103": {
+			"first_p": 41.0,
+			"history": [],
+			"id": "F-103",
+			"last_p": 41.0,
+			"name": ".gdignore",
+			"path": "addons/gdscript_mcp/testing/portable/templates/.gdignore",
+			"status": "created",
+			"type": "file"
+		},
+		"F-104": {
+			"first_p": 41.0,
+			"history": [],
+			"id": "F-104",
+			"last_p": 41.0,
+			"name": "preflight_v1.gd",
+			"path": "scripts/legacy/preflight_v1.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-105": {
+			"first_p": 41.0,
+			"history": [],
+			"id": "F-105",
+			"last_p": 41.0,
+			"name": "preflight_v1.gd.uid",
+			"path": "scripts/legacy/preflight_v1.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

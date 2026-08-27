@@ -151,8 +151,8 @@ static func sample_grid(img: Image, rows: int, cols: int, rect: Dictionary = {})
 		return {"error": "rows and cols must be >= 1"}
 
 	var sr: Dictionary = McpVisionHelpers.resolve_search_rect(img, rect)
-	var cell_w: int = maxi(1, sr.w / cols)
-	var cell_h: int = maxi(1, sr.h / rows)
+	var cell_w: int = maxi(1, int(sr.w / float(cols)))
+	var cell_h: int = maxi(1, int(sr.h / float(rows)))
 	var grid: Array = []
 
 	for row in rows:

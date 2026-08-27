@@ -181,11 +181,11 @@ func apply_paper_outline(config: PaperStyleConfig = null) -> void:
 	for sprite in sprites:
 		if sprite == null:
 			continue
-		var material := ShaderMaterial.new()
-		material.shader = PAPER_OUTLINE_SHADER
-		material.set_shader_parameter("outline_color", style.outline_color)
-		material.set_shader_parameter("outline_width", style.outline_width)
-		sprite.material = material
+		var outline_material := ShaderMaterial.new()
+		outline_material.shader = PAPER_OUTLINE_SHADER
+		outline_material.set_shader_parameter("outline_color", style.outline_color)
+		outline_material.set_shader_parameter("outline_width", style.outline_width)
+		sprite.material = outline_material
 
 func _hull_relative_scale(hull_tex: Texture2D) -> float:
 	if hull_tex == null:

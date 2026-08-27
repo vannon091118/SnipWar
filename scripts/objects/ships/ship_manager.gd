@@ -277,8 +277,8 @@ func _ship_readback_tooltip(catalog: ShipPartCatalog, assembly: ShipAssembly) ->
 	var influence_lines: Array[String] = []
 	for mod in stats.get("modules", []):
 		var part: ShipPartDefinition = catalog.resolve(mod.get("part_id", &"") as StringName)
-		var name: String = part.display_name if part != null else String(mod.get("part_id", ""))
-		influence_lines.append("%s %s" % [name, ModuleInfluence.percent(float(mod.get("weight", 0.0)))])
+		var part_label: String = part.display_name if part != null else String(mod.get("part_id", ""))
+		influence_lines.append("%s %s" % [part_label, ModuleInfluence.percent(float(mod.get("weight", 0.0)))])
 	if not influence_lines.is_empty():
 		lines.append("Einfluss: " + " · ".join(influence_lines))
 	return "\\n".join(lines)

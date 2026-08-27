@@ -38,7 +38,7 @@ else
 fi
 mkdir -p "$FIXTURE/addons"
 cp -r "$ADDON_DIR" "$FIXTURE/addons/gdscript_mcp"
-cp "$TPL_DIR/project.godot" "$FIXTURE/project.godot"
+cp "$TPL_DIR/project.godot.tpl" "$FIXTURE/project.godot"
 cp "$TPL_DIR/bootstrap_button.tscn" "$FIXTURE/bootstrap_button.tscn"
 
 # Portables Szenario für den sichtbaren Runner (liegt im Addon-Kopier-Ordner).

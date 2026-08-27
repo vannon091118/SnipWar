@@ -93,15 +93,15 @@ func _input_mouse_position() -> Vector2:
 		if mcp_runtime != null and mcp_runtime.has_method("get_virtual_mouse_status"):
 			var status: Dictionary = mcp_runtime.call("get_virtual_mouse_status")
 			if bool(status.get("active", false)):
-				var position: Dictionary = status.get("position", {})
-				return Vector2(float(position.get("x", 0.0)), float(position.get("y", 0.0)))
+				var raw_position: Dictionary = status.get("position", {})
+				return Vector2(float(raw_position.get("x", 0.0)), float(raw_position.get("y", 0.0)))
 		# 2) Standalone E2E driver mode — check McpInputScheduler directly.
 		var scheduler := root.get_node_or_null("McpInputScheduler")
 		if scheduler != null and scheduler.has_method("get_virtual_mouse_status"):
 			var status: Dictionary = scheduler.call("get_virtual_mouse_status")
 			if bool(status.get("active", false)):
-				var position: Dictionary = status.get("position", {})
-				return Vector2(float(position.get("x", 0.0)), float(position.get("y", 0.0)))
+				var raw_position: Dictionary = status.get("position", {})
+				return Vector2(float(raw_position.get("x", 0.0)), float(raw_position.get("y", 0.0)))
 	return get_viewport().get_mouse_position()
 
 func _edge_scroll_vector() -> Vector2:

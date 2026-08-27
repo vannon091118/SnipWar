@@ -630,3 +630,32 @@ Live-Test-Fixes: Dock-Dropdowns leer weil .tscn items als String-Array geladen w
 - change_index.json: Test-Assets ergänzt (F-003).
 - narrative_chain.json: Test-Assets ergänzt (F-004).
 - scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).
+
+## 2026-08-27 17:00:00 — p41 · c41j59n3a2p13 · Thinker · warm
+
+**Hard Separation abgeschlossen: MCP-Assets… [Analyse: Thinker] — nach Vannon**
+
+Hard Separation abgeschlossen: MCP-Assets (Chain-Manifeste, Connector-Config, findings) aus dem Spiel-Root ins Addon verschoben, CHAIN_DIR und Doku auf Addon-Pfade umgestellt; Editor-Server-Hosting entfernt (kein TCP im Editor — Runtime nur in-engine via Editor-Play); Dock zum QA-Live-Cockpit (Goal-Eingabe, Server-Log-Poll, Vertrags-Run-Button, endloser Auto-Connect, Evidence-Kachel); Chain-Steps nutzen Host-Tools per Server-Fallback; world_smoke-Assertion auf game_running korrigiert
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- addons/findings.md: Dokumentation aktualisiert (F-097).
+- addons/gdscript_mcp/.mcp.json: Dokumentation aktualisiert (F-098).
+- addons/gdscript_mcp/AGENT_WORKFLOW.md: Dokumentation aktualisiert (F-092).
+- addons/gdscript_mcp/CONTEXT_AUTONOMY_AUDIT.md: Dokumentation aktualisiert (F-093).
+- addons/gdscript_mcp/HIGODOT_ADAPTATION_ANALYSIS.md: Dokumentation aktualisiert (F-099).
+- addons/gdscript_mcp/MCP_INDEX.md: Dokumentation aktualisiert (F-045).
+- addons/gdscript_mcp/PERSISTENCE.md: Dokumentation aktualisiert (F-095).
+- addons/gdscript_mcp/editor/gdscript_mcp_plugin.gd: Dokumentation aktualisiert (F-083).
+- addons/gdscript_mcp/editor/mcp_dock.gd: Dokumentation aktualisiert (F-048).
+- addons/gdscript_mcp/editor/mcp_dock.tscn: Dokumentation aktualisiert (F-049).
+- addons/gdscript_mcp/mcp_chains/preflight_core.json: Dokumentation aktualisiert (F-100).
+- addons/gdscript_mcp/mcp_chains/world_smoke.json: Dokumentation aktualisiert (F-101).
+- addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd: Dokumentation aktualisiert (F-086).
+- addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd: Dokumentation aktualisiert (F-102).
+- addons/gdscript_mcp/runtime/host/mcp_server.gd: Dokumentation aktualisiert (F-042).
+- addons/gdscript_mcp/testing/portable/templates/.gdignore: Dokumentation aktualisiert (F-103).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- scripts/legacy/preflight_v1.gd: Dokumentation aktualisiert (F-104).
+- scripts/legacy/preflight_v1.gd.uid: Dokumentation aktualisiert (F-105).

@@ -65,14 +65,14 @@ static func create_module(
 	src: StringName,
 	tgt: StringName,
 	val: float,
-	module_part_id: StringName,
-	module_slot_type: StringName,
-	module_trait: StringName,
+	mod_part_id: StringName,
+	mod_slot_type: StringName,
+	mod_trait: StringName,
 	src_p: Vector2 = Vector2.ZERO,
 	tgt_p: Vector2 = Vector2.ZERO
 ) -> BattleEvent:
 	var event := create(time, type, src, tgt, val, src_p, tgt_p)
-	event.module_part_id = module_part_id
-	event.module_slot_type = module_slot_type
-	event.module_trait = module_trait
+	event.module_part_id = mod_part_id
+	event.module_slot_type = mod_slot_type
+	event.module_trait = mod_trait
 	return event

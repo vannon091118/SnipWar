@@ -150,7 +150,7 @@ func _visible_path_technologies(state: Node) -> Array:
 	if _catalog == null or state == null:
 		return []
 	var all: Array = _catalog.resolve_all()
-	var visible: Array = []
+	var visible_list: Array = []
 	var frontier: Array[StringName] = []
 	for technology in all:
 		var tech_state: StringName = UIStatusUtils.research_state(GameState.FACTION_PLAYER, technology, state, _catalog)
@@ -159,18 +159,18 @@ func _visible_path_technologies(state: Node) -> Array:
 	for technology in all:
 		var learned: StringName = UIStatusUtils.research_state(GameState.FACTION_PLAYER, technology, state, _catalog)
 		if learned == UIStatusUtils.STATE_LEARNED:
-			visible.append(technology)
+			visible_list.append(technology)
 	for technology_id in frontier:
 		var technology: TechnologyDefinition = _catalog.resolve(technology_id)
-		if technology != null and not visible.has(technology):
-			visible.append(technology)
+		if technology != null and not visible_list.has(technology):
+			visible_list.append(technology)
 	# Keep one readable next step per branch; locked distant nodes are hidden.
 	for technology in all:
-		if visible.size() >= 12:
+		if visible_list.size() >= 12:
 			break
-		if not visible.has(technology) and not String(technology.prerequisite_tech_id).is_empty() and visible.any(func(item): return item.id == technology.prerequisite_tech_id):
-			visible.append(technology)
-	return visible
+		if not visible_list.has(technology) and not String(technology.prerequisite_tech_id).is_empty() and visible_list.any(func(item): return item.id == technology.prerequisite_tech_id):
+			visible_list.append(technology)
+	return visible_list
 
 func _depth_of(tech_id: StringName, memo: Dictionary) -> int:
 	if memo.has(tech_id):

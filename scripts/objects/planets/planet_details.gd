@@ -59,11 +59,11 @@ func apply_paper_style(config: PaperStyleConfig = null) -> void:
 		var sprite := orbit.get_node_or_null("Sprite2D") as Sprite2D
 		if sprite == null:
 			continue
-		var material := ShaderMaterial.new()
-		material.shader = PAPER_CELL_SHADER
-		material.set_shader_parameter("cell_shading_levels", style.cell_shading_levels)
-		material.set_shader_parameter("halftone_density", style.halftone_density)
-		sprite.material = material
+		var outline_material := ShaderMaterial.new()
+		outline_material.shader = PAPER_CELL_SHADER
+		outline_material.set_shader_parameter("cell_shading_levels", style.cell_shading_levels)
+		outline_material.set_shader_parameter("halftone_density", style.halftone_density)
+		sprite.material = outline_material
 
 func get_detail_types() -> Array[StringName]:
 	return _selected_details.duplicate()

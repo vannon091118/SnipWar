@@ -521,7 +521,7 @@ func release_workers(planet_id: StringName, job_id: StringName) -> int:
 		workers_released.emit(planet_id, job_id, amount)
 	return amount
 
-func can_purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_workers: int = -1, catalog: PlanetUpgradeCatalog = null) -> bool:
+func can_purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_worker_count: int = -1, catalog: PlanetUpgradeCatalog = null) -> bool:
 	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
 	if effective_catalog == null or faction == GameState.FACTION_NEUTRAL or not faction_vaults.has(faction):
 		return false
@@ -532,17 +532,17 @@ func can_purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id
 		return false
 	if not effective_catalog.can_unlock(get_planet_upgrades(planet_id), upgrade_id):
 		return false
-	if available_workers >= 0 and available_workers < upgrade.workers_required:
+	if available_worker_count >= 0 and available_worker_count < upgrade.workers_required:
 		return false
 	return can_spend_cost(faction, upgrade.cost_resource, upgrade.cost_amount, upgrade.credit_cost)
 
-func purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_workers: int = -1, catalog: PlanetUpgradeCatalog = null) -> bool:
-	if not can_purchase_upgrade(faction, planet_id, upgrade_id, available_workers, catalog):
+func purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_worker_count: int = -1, catalog: PlanetUpgradeCatalog = null) -> bool:
+	if not can_purchase_upgrade(faction, planet_id, upgrade_id, available_worker_count, catalog):
 		return false
 	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
 	var upgrade: PlanetUpgradeDefinition = effective_catalog.resolve(upgrade_id)
 	var reservation_id := StringName("upgrade_%s_%s" % [String(planet_id), String(upgrade_id)])
-	if upgrade.workers_required > 0 and available_workers >= 0 and not reserve_workers(planet_id, reservation_id, upgrade.workers_required, available_workers):
+	if upgrade.workers_required > 0 and available_worker_count >= 0 and not reserve_workers(planet_id, reservation_id, upgrade.workers_required, available_worker_count):
 		return false
 	if not spend_cost(faction, upgrade.cost_resource, upgrade.cost_amount, upgrade.credit_cost):
 		release_workers(planet_id, reservation_id)

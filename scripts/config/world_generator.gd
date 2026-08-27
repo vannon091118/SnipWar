@@ -266,7 +266,7 @@ static func generate_chunk_planets(
 	chunk_seed_value: int,
 	chunk_size: int,
 	config: WorldConfig,
-	max_size_class: StringName
+	_max_size_class: StringName
 ) -> Array[PlanetDefinition]:
 	var definitions: Array[PlanetDefinition] = []
 	if base_catalog == null or base_catalog.planets.is_empty() or chunk_size <= 0 or config == null:
