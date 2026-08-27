@@ -924,3 +924,18 @@ Refactor GameState delegate methods into EconomyDomain overloads
 - scripts/doki/data/arcs.json: Umstrukturiert (F-001).
 - scripts/state/domains/economy_domain.gd: Umstrukturiert (F-121).
 - scripts/state/game_state.gd: Umstrukturiert (F-065).
+
+## 2026-08-27 06:00:00 — p54 · c54j27n10a8p27 · Glitch · alarmiert
+
+**Glitch ermittelt: refactor documentation: split technical specs… — nach Sage**
+
+refactor documentation: split technical specs into ARCHITECTURE.md and focus README.md on gameplay, immersion, irony and 4th wall
+
+- AGENTS.md: Dokumentation aktualisiert (F-019).
+- ARCHITECTURE.md: Dokumentation aktualisiert (F-199).
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- README.md: Dokumentation aktualisiert (F-068).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- docs/README.md: Dokumentation aktualisiert (F-200).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).

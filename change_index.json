@@ -331,8 +331,23 @@
 			],
 			"p_id": 17.0
 		},
+		"2e0c055b552f60ea1cce83d3270e0d114a23651e": {
+			"c": 54,
+			"composite": "c54j27n10a8p27",
+			"entities": [
+				"F-019",
+				"F-199",
+				"F-002",
+				"F-068",
+				"F-003",
+				"F-200",
+				"F-004",
+				"F-001"
+			],
+			"p_id": 54
+		},
 		"3a8ac091fc1b6ae5c795231d291a87c974dde55a": {
-			"c": 53,
+			"c": 53.0,
 			"composite": "c53j53n14a12p18",
 			"entities": [
 				"F-002",
@@ -382,7 +397,7 @@
 				"C-389",
 				"C-390"
 			],
-			"p_id": 53
+			"p_id": 53.0
 		},
 		"4483ceb09193b09566ee931b433a874fdc37c967": {
 			"c": 44.0,
@@ -9755,6 +9770,26 @@
 			"last_p": 52.0,
 			"name": "narrative_runtime_gate.gd.uid",
 			"path": "scripts/testing/narrative_runtime_gate.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-199": {
+			"first_p": 54.0,
+			"history": [],
+			"id": "F-199",
+			"last_p": 54.0,
+			"name": "ARCHITECTURE.md",
+			"path": "ARCHITECTURE.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-200": {
+			"first_p": 54.0,
+			"history": [],
+			"id": "F-200",
+			"last_p": 54.0,
+			"name": "README.md",
+			"path": "docs/README.md",
 			"status": "created",
 			"type": "file"
 		}

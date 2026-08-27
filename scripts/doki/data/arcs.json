@@ -831,11 +831,21 @@
 			"climax_weight": 3.0,
 			"id": "a24",
 			"name": "Domänen-Einkapselung",
+			"seen_entities": [
+				"F-019",
+				"F-199",
+				"F-002",
+				"F-068",
+				"F-003",
+				"F-200",
+				"F-004",
+				"F-001"
+			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Vollständige Übertragung der verbliebenen Monolithen-Logik in spezialisierte Sub-Domänen.",
 			"version": "",
-			"weight": 0.0
+			"weight": 2.4
 		},
 		"a3": {
 			"climax_weight": 3.0,

@@ -167,6 +167,11 @@ Die verbleibenden Isolation-Warnings anderer Constraints sind erwartete Mutation
   `MCP_INDEX.md`-Dateiübersicht aufgeräumt und auf eine Sprache (JS)
   korrigiert.
 
+### MCP-Findings — Client-Transport Stdio-Bridge (27.08.2026)
+| # | Befund | Status | Beleg |
+|---|--------|--------|-------|
+| MCP-08 | Freebuff-Client startet `mcp_stdio_bridge.js` mit relativem Pfad → `MODULE_NOT_FOUND` (Client-cwd = `%USERPROFILE%`, nicht Projektroot); MCP-Tools (`runtime_*`) unerreichbar | ✅ GEFIXT | cwd-immuner Wrapper `mcp_bridge.cmd` im Projektroot (`%~dp0`-Ableitung); Client-Konfiguration auf absoluten Pfad `C:\Users\Vannon\Documents\snippet-empire\snip-war\mcp_bridge.cmd` umgestellt; Doku: `addons/gdscript_mcp/AGENTS.md` §7. Wrapper-Start aus fremdem cwd verifiziert (graceful exit 0 statt `Cannot find module`). `kilo.json` (`--path .`) gleichfalls auf absoluten Projektroot gefixt |
+
 ## Offene Punkte (nächste Runden)
 | # | Punkt | Priorität |
 |---|-------|-----------|
