@@ -100,9 +100,9 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 		"runtime_click":
 			return _rt_click(args)
 		"runtime_key":
-			return _rt_key(_resolve_keycode(args.get("keycode", 0)), bool(args.get("pressed", true)))
+			return _rt_key(_resolve_keycode(args.get("keycode", 0)), bool(args.get("pressed", true)), bool(args.get("shift_pressed", false)))
 		"runtime_key_gesture":
-			return _rt_key_gesture(_resolve_keycode(args.get("keycode", 0)), int(args.get("hold_frames", 1)))
+			return _rt_key_gesture(_resolve_keycode(args.get("keycode", 0)), int(args.get("hold_frames", 1)), bool(args.get("shift_pressed", false)))
 		"runtime_mouse_move":
 			return _rt_mouse_move(int(args.get("x", 0)), int(args.get("y", 0)),
 				bool(args.get("smooth", true)), int(args.get("duration_ms", 120)))
@@ -543,15 +543,62 @@ static func _resolve_keycode(raw) -> int:
 			_: return 0
 	return 0
 
-func _make_key_event(keycode: int, pressed: bool) -> InputEventKey:
+func _make_key_event(keycode: int, pressed: bool, shift_pressed: bool = false) -> InputEventKey:
 	var event := InputEventKey.new()
 	event.keycode = keycode
 	event.physical_keycode = keycode
 	event.pressed = pressed
+	event.shift_pressed = shift_pressed
+	# LineEdit & Co. insert text from event.unicode; synthetic keys arrive with
+	# unicode == 0 and would silently do nothing in text fields. Derive the
+	# printable ASCII character from the keycode (with shift mapping for symbols
+	# and uppercase letters) so visible typing works in text fields.
+	if pressed and keycode >= 32 and keycode <= 126:
+		event.unicode = _keycode_to_unicode(keycode, shift_pressed)
 	return event
 
 
-func _rt_key(keycode: int, pressed: bool) -> Dictionary:
+# Map a printable ASCII keycode to its unicode character, honoring the shift
+# modifier. Letters flip case via +/- 32; symbols use a small explicit shift
+# table (covers US/DE QWERTZ common pairs). Unshifted chars leave the keycode
+# unchanged. Unknown shift-pairs fall back to the unshifted glyph.
+static func _keycode_to_unicode(keycode: int, shift_pressed: bool) -> int:
+	if not shift_pressed:
+		return keycode
+	# A-Z (65..90): bereits Großbuchstabe — bei Shift unverändert.
+	if keycode >= 65 and keycode <= 90:
+		return keycode
+	# a-z (97..122): Shift → Großbuchstabe (sonst unverändert).
+	if keycode >= 97 and keycode <= 122:
+		return keycode - 32
+	# Common symbol pairs (unshifted keycode -> shifted glyph code).
+	var shifted: Dictionary = {
+		49: 33,  # 1 -> !
+		50: 64,  # 2 -> @
+		51: 35,  # 3 -> #
+		52: 36,  # 4 -> $
+		53: 37,  # 5 -> %
+		54: 94,  # 6 -> ^
+		55: 38,  # 7 -> &
+		56: 42,  # 8 -> *
+		57: 40,  # 9 -> (
+		48: 41,  # 0 -> )
+		45: 95,  # - -> _
+		61: 43,  # = -> +
+		91: 123, # [ -> {
+		93: 125, # ] -> }
+		92: 124, # \ -> |
+		59: 58,  # ; -> :
+		39: 34,  # ' -> "
+		44: 60,  # , -> <
+		46: 62,  # . -> >
+		47: 63,  # / -> ?
+		96: 126, # ` -> ~
+	}
+	return int(shifted.get(keycode, keycode))
+
+
+func _rt_key(keycode: int, pressed: bool, shift_pressed: bool = false) -> Dictionary:
 	var tree = Engine.get_main_loop()
 	if not (tree is SceneTree):
 		return {"error": "No scene tree"}
@@ -559,7 +606,7 @@ func _rt_key(keycode: int, pressed: bool) -> Dictionary:
 		return {"error": "Invalid keycode", "sent": false}
 	var viewport: Window = (tree as SceneTree).root
 
-	var ke = _make_key_event(keycode, pressed)
+	var ke = _make_key_event(keycode, pressed, shift_pressed)
 	# Engine-level, focus-independent injection (remote testing while window unfocused).
 	var scheduler := _get_input_scheduler()
 	if scheduler == null:
@@ -569,7 +616,7 @@ func _rt_key(keycode: int, pressed: bool) -> Dictionary:
 	return {"keycode": keycode, "pressed": pressed, "sent": bool(scheduled.get("scheduled", false)), "scheduler": scheduled}
 
 
-func _rt_key_gesture(keycode: int, hold_frames: int = 1) -> Dictionary:
+func _rt_key_gesture(keycode: int, hold_frames: int = 1, shift_pressed: bool = false) -> Dictionary:
 	var tree := Engine.get_main_loop()
 	if not (tree is SceneTree):
 		return {"error": "No scene tree", "sent": false}
@@ -578,15 +625,15 @@ func _rt_key_gesture(keycode: int, hold_frames: int = 1) -> Dictionary:
 	var safe_hold := clampi(hold_frames, 1, 120)
 	var scheduler := _get_input_scheduler()
 	if scheduler == null:
-		var press := _rt_key(keycode, true)
-		var release := _rt_key(keycode, false)
+		var press := _rt_key(keycode, true, shift_pressed)
+		var release := _rt_key(keycode, false, shift_pressed)
 		return {"keycode": keycode, "sent": bool(press.get("sent", false)) and bool(release.get("sent", false)), "gesture": true, "hold_frames": safe_hold, "scheduler": "fallback"}
 	if not _input_capacity_available(1):
 		return {"keycode": keycode, "sent": false, "gesture": true, "error": "input queue full"}
-	var press_result: Dictionary = _rt_key(keycode, true)
+	var press_result: Dictionary = _rt_key(keycode, true, shift_pressed)
 	if not bool(press_result.get("sent", false)):
 		return {"keycode": keycode, "sent": false, "gesture": true, "press": press_result}
-	var release_event := _make_key_event(keycode, false)
+	var release_event := _make_key_event(keycode, false, shift_pressed)
 	var release_result: Dictionary = scheduler.call("schedule_key_event", release_event, safe_hold)
 	return {
 		"keycode": keycode,

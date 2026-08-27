@@ -637,9 +637,27 @@ func _resolve_project_adapter() -> Node:
 	return root.find_child("McpProjectAdapter", true, false)
 
 
+## Siehe mcp_server.gd::_is_game_running — gleiche Logik. Der Runtime-Server
+## läuft seit OFFEN-1 immer IM Spielprozess (current_scene entscheidet); der
+## EditorInterface-Fallback ist nur defensives Netz.
 func _is_game_running() -> bool:
-	var tree := Engine.get_main_loop()
-	return tree is SceneTree and (tree as SceneTree).current_scene != null
+	var main_loop := Engine.get_main_loop()
+	if not (main_loop is SceneTree):
+		return false
+	var tree: SceneTree = main_loop as SceneTree
+	if tree.current_scene != null:
+		return true
+	# Editor-Prozess-Fallback (defensiv, analog zu mcp_server.gd).
+	if not Engine.is_editor_hint():
+		return false
+	if not ClassDB.class_exists("EditorInterface"):
+		return false
+	var ei: Object = Engine.get_singleton("EditorInterface") if Engine.has_singleton("EditorInterface") else null
+	if ei == null:
+		return false
+	if ei.has_method("is_playing_scene") and bool(ei.call("is_playing_scene")):
+		return true
+	return false
 
 
 func _is_visible_renderer() -> bool:

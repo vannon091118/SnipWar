@@ -97,7 +97,7 @@
 			"p_id": 32.0
 		},
 		"24c93b5d06215f826ff304f560ff0a94240f45c4": {
-			"c": 35,
+			"c": 35.0,
 			"composite": "c35j41n5a8p34",
 			"entities": [
 				"F-002",
@@ -109,7 +109,7 @@
 				"F-067",
 				"F-031"
 			],
-			"p_id": 35
+			"p_id": 35.0
 		},
 		"26116836822ddb42740b7b848fac7ecae227a51b": {
 			"c": 27.0,
@@ -414,6 +414,76 @@
 				"F-001"
 			],
 			"p_id": 31.0
+		},
+		"fa2b7bbd7316ba058617513072f00afdf6e7dc93": {
+			"c": 36,
+			"composite": "c36j38n2a4p6",
+			"entities": [
+				"F-069",
+				"F-002",
+				"F-070",
+				"F-071",
+				"F-072",
+				"F-073",
+				"F-074",
+				"F-075",
+				"F-076",
+				"F-077",
+				"F-078",
+				"F-079",
+				"F-080",
+				"F-081",
+				"F-082",
+				"F-003",
+				"F-004",
+				"F-001",
+				"C-113",
+				"C-114",
+				"C-115",
+				"C-116",
+				"C-117",
+				"C-118",
+				"C-119",
+				"C-120",
+				"C-121",
+				"C-122",
+				"C-123",
+				"C-124",
+				"C-125",
+				"C-126",
+				"C-127",
+				"C-128",
+				"C-129",
+				"C-130",
+				"C-131",
+				"C-132",
+				"C-133",
+				"C-134",
+				"C-135",
+				"C-136",
+				"C-137",
+				"C-138",
+				"C-139",
+				"C-140",
+				"C-141",
+				"C-142",
+				"C-143",
+				"C-144",
+				"C-145",
+				"C-146",
+				"C-147",
+				"C-148",
+				"C-149",
+				"C-150",
+				"C-151",
+				"C-152",
+				"C-153",
+				"C-154",
+				"C-155",
+				"C-156",
+				"C-157"
+			],
+			"p_id": 36
 		},
 		"fdb32c6e2dfa34e9a7bd1736bfa29b202417b2d8": {
 			"c": 28.0,
@@ -2373,6 +2443,772 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-113": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-113",
+			"last_p": 36.0,
+			"name": "path",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-114": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						24.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-114",
+			"last_p": 36.0,
+			"name": "fs",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-115": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						27.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-115",
+			"last_p": 36.0,
+			"name": "PORT",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-116": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						30.0,
+						51.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-116",
+			"last_p": 36.0,
+			"name": "args",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-117": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						32.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-117",
+			"last_p": 36.0,
+			"name": "arg",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-118": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						46.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-118",
+			"last_p": 36.0,
+			"name": "parsed",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-119": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						53.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-119",
+			"last_p": 36.0,
+			"name": "client",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-120": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						60.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-120",
+			"last_p": 36.0,
+			"name": "baselineResp",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-121": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						73.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-121",
+			"last_p": 36.0,
+			"name": "wsBegin",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-122": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						79.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-122",
+			"last_p": 36.0,
+			"name": "sessionId",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-123": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						82.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-123",
+			"last_p": 36.0,
+			"name": "fail",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-124": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						84.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-124",
+			"last_p": 36.0,
+			"name": "rb",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-125": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						92.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-125",
+			"last_p": 36.0,
+			"name": "imp",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-126": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						94.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-126",
+			"last_p": 36.0,
+			"name": "patch",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-127": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						104.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-127",
+			"last_p": 36.0,
+			"name": "exp",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-128": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						109.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-128",
+			"last_p": 36.0,
+			"name": "chainSteps",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-129": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						112.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-129",
+			"last_p": 36.0,
+			"name": "chain",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-130": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						120.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-130",
+			"last_p": 36.0,
+			"name": "seqSteps",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-131": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						123.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-131",
+			"last_p": 36.0,
+			"name": "seq",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-132": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-132",
+			"last_p": 36.0,
+			"name": "path",
+			"path": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-133": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-133",
+			"last_p": 36.0,
+			"name": "PORT",
+			"path": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-134": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-134",
+			"last_p": 36.0,
+			"name": "client",
+			"path": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-135": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-135",
+			"last_p": 36.0,
+			"name": "status",
+			"path": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-136": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						28.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-136",
+			"last_p": 36.0,
+			"name": "listed",
+			"path": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-137": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						29.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-137",
+			"last_p": 36.0,
+			"name": "names",
+			"path": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-138": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						33.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-138",
+			"last_p": 36.0,
+			"name": "scan",
+			"path": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-139": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-139",
+			"last_p": 36.0,
+			"name": "net",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-140": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-140",
+			"last_p": 36.0,
+			"name": "readline",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-141": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-141",
+			"last_p": 36.0,
+			"name": "HOST",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-142": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-142",
+			"last_p": 36.0,
+			"name": "PORT",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-143": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-143",
+			"last_p": 36.0,
+			"name": "CONNECT_RETRY_MS",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-144": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-144",
+			"last_p": 36.0,
+			"name": "CONNECT_RETRY_MAX",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-145": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						46.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-145",
+			"last_p": 36.0,
+			"name": "line",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-146": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						76.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-146",
+			"last_p": 36.0,
+			"name": "rb",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-147": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						78.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-147",
+			"last_p": 36.0,
+			"name": "t",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-148": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-148",
+			"last_p": 36.0,
+			"name": "tool",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_player_atom.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-149": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-149",
+			"last_p": 36.0,
+			"name": "port",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_player_atom.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-150": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-150",
+			"last_p": 36.0,
+			"name": "client",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_player_atom.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-151": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-151",
+			"last_p": 36.0,
+			"name": "result",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_player_atom.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-152": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-152",
+			"last_p": 36.0,
+			"name": "port",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/scan_compact.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-153": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-153",
+			"last_p": 36.0,
+			"name": "client",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/scan_compact.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-154": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-154",
+			"last_p": 36.0,
+			"name": "scan",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/scan_compact.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-155": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-155",
+			"last_p": 36.0,
+			"name": "rect",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/scan_compact.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-156": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-156",
+			"last_p": 36.0,
+			"name": "cx",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/scan_compact.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-157": {
+			"first_p": 36.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 36.0
+				}
+			],
+			"id": "C-157",
+			"last_p": 36.0,
+			"name": "cy",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/scan_compact.js",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -3050,6 +3886,146 @@
 			"last_p": 35.0,
 			"name": "README.md",
 			"path": "README.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-069": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-069",
+			"last_p": 36.0,
+			"name": ".mcp.json",
+			"path": ".mcp.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-070": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-070",
+			"last_p": 36.0,
+			"name": "agent_playthrough.py",
+			"path": "addons/gdscript_mcp/client/agent_playthrough.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-071": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-071",
+			"last_p": 36.0,
+			"name": "agent_repair_loop.js",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-072": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-072",
+			"last_p": 36.0,
+			"name": "agent_repair_loop.py",
+			"path": "addons/gdscript_mcp/client/agent_repair_loop.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-073": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-073",
+			"last_p": 36.0,
+			"name": "agent_store.py",
+			"path": "addons/gdscript_mcp/client/agent_store.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-074": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-074",
+			"last_p": 36.0,
+			"name": "mcp_client.py",
+			"path": "addons/gdscript_mcp/client/mcp_client.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-075": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-075",
+			"last_p": 36.0,
+			"name": "mcp_connector_selftest.js",
+			"path": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-076": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-076",
+			"last_p": 36.0,
+			"name": "mcp_stdio_bridge.js",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-077": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-077",
+			"last_p": 36.0,
+			"name": "mcp_player_atom.js",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_player_atom.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-078": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-078",
+			"last_p": 36.0,
+			"name": "scan_compact.js",
+			"path": "addons/gdscript_mcp/client/playthroughs/atomic/scan_compact.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-079": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-079",
+			"last_p": 36.0,
+			"name": "_mcp_connect.bat",
+			"path": "addons/gdscript_mcp/client/playthroughs/legacy/_mcp_connect.bat",
+			"status": "created",
+			"type": "file"
+		},
+		"F-080": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-080",
+			"last_p": 36.0,
+			"name": "_mcp_connect.bat",
+			"path": "addons/gdscript_mcp/client/playthroughs/session_dumps/_mcp_connect.bat",
+			"status": "created",
+			"type": "file"
+		},
+		"F-081": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-081",
+			"last_p": 36.0,
+			"name": "remote_playout.py",
+			"path": "addons/gdscript_mcp/client/remote_playout.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-082": {
+			"first_p": 36.0,
+			"history": [],
+			"id": "F-082",
+			"last_p": 36.0,
+			"name": "vision_worker.py",
+			"path": "addons/gdscript_mcp/client/vision_worker.py",
 			"status": "created",
 			"type": "file"
 		}

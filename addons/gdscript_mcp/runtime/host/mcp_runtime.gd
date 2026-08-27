@@ -9,6 +9,18 @@ const MCP_SERVER_PATH := "res://addons/gdscript_mcp/runtime/host/mcp_server.gd"
 const INPUT_SCHEDULER_PATH := "res://addons/gdscript_mcp/runtime/tools/runtime/mcp_input_scheduler.gd"
 const PROFILE_CONFIG_PATH := "user://gdscript_mcp_profile.cfg"
 
+# Embedded-Modus (OFFEN-1): Der Editor startet das Spiel via play_main_scene
+# als SEPARATEN Prozess (Godot 4: EditorRun → create_instance) und setzt
+# diese Env-Flags; der Kind-Prozess erbt sie. Der Autoload bootet den
+# MCP-Server dann im echten Spiel-SceneTree — Engine.get_main_loop() zeigt
+# auf den SPIEL-Baum, und alle Scene-/UX-/Input-Tools arbeiten auf dem
+# echten Spiel (statt wie beim alten Editor-Kind-Server auf dem Editor-Tree
+# oder einem toten Gateway zu landen).
+const EMBEDDED_ENV := "MCP_EMBEDDED"
+const EMBEDDED_PORT_ENV := "MCP_EMBEDDED_PORT"
+const EMBEDDED_PROFILE_ENV := "MCP_EMBEDDED_PROFILE"
+const EMBEDDED_WRITES_ENV := "MCP_EMBEDDED_WRITES"
+
 var _server: Node
 var _transport := ""
 var _virtual_mouse_scheduler: Node
@@ -21,13 +33,17 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	# Im Editor läuft der Runtime-MCP-Server in-process über das Plugin
-	# (ein Godot-Prozess, kein separater Spielprozess). Der Autoload startet
-	# nur in eigenständigen Spiel-Läufen (godot -- --mcp ...).
-	if Engine.is_editor_hint():
+	# Drei Startwege:
+	# 1. Embedded (Editor-Play via Plugin): MCP_EMBEDDED=1 gesetzt → Server
+	#    startet im SPIEL-SceneTree des Kind-Prozesses (play_main_scene
+	#    startet das Spiel als separaten Prozess; die Env-Flags werden vererbt).
+	# 2. Standalone-Spiel: godot -- --mcp ... (kein Editor).
+	# 3. Editor-Session ohne Spiel: inert (der Autoload läuft dort nicht mal).
+	var embedded := OS.get_environment(EMBEDDED_ENV) == "1"
+	if not embedded and Engine.is_editor_hint():
 		return
 	var user_args := OS.get_cmdline_user_args()
-	if not "--mcp" in user_args:
+	if not embedded and not "--mcp" in user_args:
 		return
 	# Live-MCP requires a visible renderer. Headless / dummy renderers cannot
 	# produce screenshots and the server must refuse to start.
@@ -35,23 +51,25 @@ func _ready() -> void:
 		push_warning("[McpRuntime] MCP server requires a visible renderer (--headless is not supported)")
 		return
 	var port := _parse_int_arg(user_args, "--mcp-port", DEFAULT_PORT)
+	if embedded:
+		port = _parse_env_int(EMBEDDED_PORT_ENV, port)
 	_transport = _parse_string_arg(user_args, "--mcp-transport", "tcp")
 	var config := {
 		"role": "runtime",
 		"session_id": _parse_string_arg(user_args, "--mcp-session", "runtime_%d" % Time.get_ticks_msec()),
-		"profile": _resolve_profile(user_args),
+		"profile": _resolve_embedded_profile(embedded, user_args),
 		"frame_budget_ms": _parse_float_arg(user_args, "--mcp-frame-budget", 1.5),
 		"mcp_virtual_mouse": not ("--mcp-real-mouse" in user_args),
 		"mcp_block_physical_mouse": not ("--mcp-allow-physical-mouse" in user_args),
 		"mcp_virtual_mouse_cursor": not ("--mcp-hide-virtual-cursor" in user_args),
-		"vision_worker_enabled": not ("--mcp-no-vision-worker" in user_args),
+		"vision_worker_enabled": true if embedded else not ("--mcp-no-vision-worker" in user_args),
 		"vision_worker_command": _parse_string_arg(user_args, "--mcp-vision-command", "node"),
 		"vision_worker_script": _parse_string_arg(user_args, "--mcp-vision-script", "res://addons/gdscript_mcp/client/vision_worker.js"),
 		"vision_worker_port": _parse_int_arg(user_args, "--mcp-vision-port", port + 37),
-		"autonomy_writes": "--mcp-autonomy-writes" in user_args,
+		"autonomy_writes": (OS.get_environment(EMBEDDED_WRITES_ENV) == "1") if embedded else ("--mcp-autonomy-writes" in user_args),
 	}
-	# Defer BOTH the scheduler attach and the server boot: during autoload
-	# _ready() the SceneTree root is still setting up children, so a direct
+	# Defer BOTH the session attach and the server boot: during autoload
+	# _ready() the SceneTree is still starting up children, so a direct
 	# add_child() would fail and leave the virtual-mouse scheduler detached
 	# (with a second instance later created by the E2E driver's get_or_create).
 	call_deferred("_activate_virtual_mouse", config)
@@ -173,9 +191,25 @@ func _parse_float_arg(args: PackedStringArray, flag: String, default_value: floa
 	return default_value
 
 
-## Profil auflösen: CLI-Flag --mcp-profile=... gewinnt, sonst die vom
-## Editor-Dock geschriebene Datei (user://gdscript_mcp_profile.cfg), sonst
-## player (verbindlicher Spieler-Vertrag als Standard).
+func _parse_env_int(env_name: String, default_value: int) -> int:
+	var raw := OS.get_environment(env_name).strip_edges()
+	if raw == "":
+		return default_value
+	return int(raw)
+
+
+## Profil auflösen: Embedded → Env-Flag des Plugins (Dock-Auswahl),
+## Standalone → CLI-Flag --mcp-profile=..., sonst die vom Editor-Dock
+## geschriebene Datei (user://gdscript_mcp_profile.cfg), sonst player
+## (verbindlicher Spieler-Vertrag als Standard).
+func _resolve_embedded_profile(embedded: bool, user_args: PackedStringArray) -> String:
+	if embedded:
+		var embedded_profile := OS.get_environment(EMBEDDED_PROFILE_ENV).strip_edges().to_lower()
+		if embedded_profile != "":
+			return embedded_profile
+	return _resolve_profile(user_args)
+
+
 func _resolve_profile(user_args: PackedStringArray) -> String:
 	var parsed := _parse_string_arg(user_args, "--mcp-profile", "")
 	if parsed != "":

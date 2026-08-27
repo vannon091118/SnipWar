@@ -13,6 +13,7 @@ const LIFECYCLE_PATH := "res://addons/gdscript_mcp/runtime/lifecycle/mcp_lifecyc
 const PROTOCOL_PATH := "res://addons/gdscript_mcp/runtime/protocol/mcp_protocol.gd"
 const VISION_WORKER_PATH := "res://addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd"
 const AGENT_ACTIVITY_PATH := "res://addons/gdscript_mcp/runtime/tools/agent/mcp_agent_activity.gd"
+const RUN_TRACE_PATH := "res://addons/gdscript_mcp/runtime/context/mcp_run_trace.gd"
 
 const DEFAULT_PORT := 9090
 const RUNTIME_TICK_INTERVAL := 0.05
@@ -47,6 +48,7 @@ var _lifecycle: RefCounted
 var _protocol: RefCounted
 var _worker: Node
 var _agent_activity: RefCounted
+var _run_trace: RefCounted
 var _tools: Array = []
 var _tool_index: Dictionary = {}
 var _tick_accumulator := 0.0
@@ -102,14 +104,16 @@ func start_server(port: int = DEFAULT_PORT, transport: String = "tcp", config: D
 	var protocol_script: Resource = load(PROTOCOL_PATH)
 	var context_script: Resource = load(CONTEXT_STORE_PATH)
 	var agent_activity_script: Resource = load(AGENT_ACTIVITY_PATH)
-	if lifecycle_script == null or protocol_script == null or context_script == null or agent_activity_script == null:
+	var run_trace_script: Resource = load(RUN_TRACE_PATH)
+	if lifecycle_script == null or protocol_script == null or context_script == null or agent_activity_script == null or run_trace_script == null:
 		_log("Failed to load MCP core modules", true)
 		return false
 	_lifecycle = lifecycle_script.new()
 	_protocol = protocol_script.new()
 	_context_store = _provided_context_store if _provided_context_store != null else context_script.new()
 	_agent_activity = agent_activity_script.new()
-	if _lifecycle == null or _protocol == null or _context_store == null or _agent_activity == null:
+	_run_trace = run_trace_script.new()
+	if _lifecycle == null or _protocol == null or _context_store == null or _agent_activity == null or _run_trace == null:
 		_log("Failed to instantiate MCP core modules", true)
 		return false
 	if _provided_context_store == null:
@@ -245,6 +249,7 @@ func get_lifecycle_state() -> Dictionary:
 		"profile": _profile,
 		"contract_violations": _contract_gate.get_blocked_calls() if _contract_gate != null else 0,
 		"renderer": "visible" if _is_renderer_visible() else "unavailable",
+		"game_running": _is_game_running() if _role == "runtime" else false,
 		"client_count": _clients.size(),
 		"client_connected": _any_client_connected(),
 		"tick_interval_ms": int(CONNECTED_TICK_INTERVAL * 1000.0) if _any_client_connected() else int(IDLE_TICK_INTERVAL * 1000.0),
@@ -338,8 +343,18 @@ func _register_host_tools() -> void:
 		},
 		{
 			"name": "runtime_visual_evidence",
-			"description": "Return the latest automatic visual analysis (screenshot + OCR) that the server captured in the background after an unexpected tool result. status: none | pending | ready. wait_ms polls up to that many ms for an in-flight analysis (0 = return immediately). capture=true starts a fresh analysis when none is cached yet.",
+			"description": "Return the latest automated visual analysis (screenshot + OCR) that the server captured in the background after an unexpected tool result. status: none | pending | ready. wait_ms polls up to that many ms for an in-flight analysis (0 = return immediately). capture=true starts a fresh analysis when none is cached yet.",
 			"inputSchema": {"type": "object", "properties": {"wait_ms": {"type": "integer", "default": 0}, "capture": {"type": "boolean", "default": false}}},
+		},
+		{
+			"name": "runtime_run_trace",
+			"description": "Unified evidence record per run (F4): every tool call, GameState fingerprints, log events and the final verdict bound to one trace_id, exported to user://mcp_traces/<run_id>.json. Actions: status (active trace), begin (manual start), end (finish + export), snapshot, list (exported traces), read (one exported trace). Auto-starts on runtime_autonomy_workspace_begin and auto-ends on workspace_end.",
+			"inputSchema": {"type": "object", "properties": {
+				"action": {"type": "string", "enum": ["status", "begin", "end", "snapshot", "list", "read", "prune"], "default": "status"},
+				"run_id": {"type": "string", "default": ""},
+				"goal": {"type": "string", "default": ""},
+				"verdict": {"type": "string", "default": ""},
+				"max_days": {"type": "number", "default": 30.0, "description": "prune: Traces älter als N Tage löschen"}}},
 		},
 	]
 	for host_tool in host_tools:
@@ -662,6 +677,9 @@ func _handle_tool_call(client_id: int, id: Variant, params: Dictionary) -> void:
 	if tool_name == "runtime_visual_evidence":
 		_handle_visual_evidence(client_id, id, args, request_generation)
 		return
+	if tool_name == "runtime_run_trace":
+		_send_tool_result_atomic(client_id, id, _handle_run_trace(args))
+		return
 	if tool_name == "editor_logs_read":
 		# Kein Plugin-Kontext nötig: Session-Logs leben im Server (Lifecycle).
 		var log_cursor := int(args.get("cursor", 0))
@@ -745,6 +763,8 @@ func _handle_tool_call(client_id: int, id: Variant, params: Dictionary) -> void:
 			_lifecycle.note_error(str(result.get("error", "")))
 	if _agent_activity != null:
 		_agent_activity.record_tool(tool_name, args, float(Time.get_ticks_msec() - started_ms), not _protocol.result_is_error(result), str(result.get("error", "")) if _protocol.result_is_error(result) else "")
+	_record_trace_tool(tool_name, result, float(Time.get_ticks_msec() - started_ms))
+	_trace_handle_run_boundaries(tool_name, result)
 	if _clients.has(client_id) and request_generation == int(_clients[client_id]["generation"]):
 		_send_tool_result_with_visual_evidence(client_id, id, tool_name, result, request_generation)
 
@@ -758,6 +778,8 @@ func _run_async_tool(client_id: int, id: Variant, tool_name: String, args: Dicti
 			_lifecycle.note_error(str(result.get("error", "")))
 	if _agent_activity != null:
 		_agent_activity.record_tool(tool_name, args, float(Time.get_ticks_msec() - started_ms), not _protocol.result_is_error(result), str(result.get("error", "")) if _protocol.result_is_error(result) else "")
+	_record_trace_tool(tool_name, result, float(Time.get_ticks_msec() - started_ms))
+	_trace_handle_run_boundaries(tool_name, result)
 	if _clients.has(client_id) and generation == int(_clients[client_id]["generation"]):
 		_send_tool_result_atomic(client_id, id, result)
 	_async_busy = false
@@ -786,7 +808,8 @@ const UNEXPECTED_VISUAL_EXCLUSIONS: Array[String] = [
 	"runtime_wait_for_stable", "runtime_frame_changed", "runtime_find_template",
 	"runtime_context_release", "runtime_vision_worker_analyze", "runtime_vision_status",
 	"runtime_mcp_status", "runtime_mcp_events", "editor_logs_read",
-	"runtime_agent_goal_set", "runtime_agent_activity",
+	"runtime_agent_goal_set", "runtime_agent_activity", "runtime_run_trace",
+	"runtime_chain_validate", "runtime_chain_load", "runtime_chain_list",
 ]
 
 func _is_unexpected_result(result: Variant) -> bool:
@@ -926,9 +949,37 @@ func _is_editor_write_tool(tool_name: String) -> bool:
 	]
 
 
+## True when the game scene tree is reachable from THIS server's process.
+##
+## Der Runtime-Server läuft seit OFFEN-1 immer IM Spielprozess (McpRuntime-
+## Autoload, embedded via MCP_EMBEDDED oder Standalone via --mcp) —
+## `current_scene` des Game-SceneTree entscheidet. Der EditorInterface-
+## Fallback (Fall 2) bleibt als defensives Netz für exotische Aufrufe eines
+## Runtime-Servers aus dem Editor-Prozess heraus, ist im Normalbetrieb aber
+## tot: play_main_scene startet das Spiel als separaten Prozess.
+## 1. Spiel läuft: `current_scene` ist gesetzt, sobald die Hauptszene läuft.
+## 2. Editor-Prozess (nur Defensive): `is_playing_scene()` der EditorInterface.
+## 3. Headless / ohne Renderer: Spiel kann nicht laufen → `false`.
 func _is_game_running() -> bool:
 	var main_loop := Engine.get_main_loop()
-	return main_loop is SceneTree and (main_loop as SceneTree).current_scene != null
+	if not (main_loop is SceneTree):
+		return false
+	var tree: SceneTree = main_loop as SceneTree
+	if tree.current_scene != null:
+		return true
+	if _role != "runtime":
+		return false
+	if not Engine.is_editor_hint():
+		return false
+	if not ClassDB.class_exists("EditorInterface"):
+		return false
+	# EditorInterface Singleton-Zugriff ohne Script-Type (sonst zirkulärer Import)
+	var ei: Object = Engine.get_singleton("EditorInterface") if Engine.has_singleton("EditorInterface") else null
+	if ei == null:
+		return false
+	if ei.has_method("is_playing_scene") and bool(ei.call("is_playing_scene")):
+		return true
+	return false
 
 
 func _is_renderer_visible() -> bool:
@@ -1039,6 +1090,123 @@ func _first_ready_protocol_version() -> String:
 		if bool(_clients[client_id].get("protocol_ready", false)):
 			return str(_clients[client_id].get("protocol_version", ""))
 	return ""
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Run Trace (F4): einheitlicher Evidence-Record pro Run
+# ═══════════════════════════════════════════════════════════════════════════
+
+## Host-Tool runtime_run_trace: status | begin | end | snapshot | list | read.
+func _handle_run_trace(args: Dictionary) -> Dictionary:
+	if _run_trace == null:
+		return {"ok": false, "error": "run trace module unavailable"}
+	var action := str(args.get("action", "status"))
+	match action:
+		"status":
+			if _run_trace.active():
+				return {"ok": true, "active": true, "run_id": _run_trace.get_run_id(), "snapshot": _run_trace.snapshot()}
+			return {"ok": true, "active": false}
+		"begin":
+			return _run_trace.begin(str(args.get("run_id", "")), str(args.get("goal", "")))
+		"end":
+			if not _run_trace.active():
+				return {"ok": false, "error": "no active trace"}
+			_run_trace.fingerprint("final", _trace_fingerprint())
+			if _lifecycle != null:
+				_run_trace.record("events", {"events": _lifecycle.events_since(0, 300)})
+			return _run_trace.end(str(args.get("verdict", "")))
+		"snapshot":
+			if not _run_trace.active():
+				return {"ok": false, "error": "no active trace"}
+			return {"ok": true, "trace": _run_trace.snapshot()}
+		"list":
+			return {"ok": true, "traces": _run_trace.list_exported() as Array}
+		"read":
+			return _run_trace.read_exported(str(args.get("run_id", "")))
+		"prune":
+			return _run_trace.prune(float(args.get("max_days", 30.0)))
+		_:
+			return {"ok": false, "error": "unknown trace action: " + action}
+
+
+## Recorded jeden Tool-Call in den aktiven Trace (kompakte Summary).
+func _record_trace_tool(tool_name: String, result: Variant, latency_ms: float) -> void:
+	if _run_trace == null or not _run_trace.active():
+		return
+	var ok: bool = not bool(_protocol.result_is_error(result))
+	var error := ""
+	var summary: Variant = null
+	if result is Dictionary:
+		var data: Dictionary = result
+		error = str(data.get("error", ""))
+		var compact: Dictionary = {}
+		for key in data:
+			var key_text := str(key)
+			if key_text in ["visual_evidence", "context", "artifact", "_error"]:
+				continue
+			var value: Variant = data[key]
+			if value is Array:
+				compact[key_text] = "[array:%d]" % (value as Array).size()
+			elif value is Dictionary:
+				compact[key_text] = "[dict:%d]" % (value as Dictionary).size()
+			else:
+				compact[key_text] = value
+		summary = compact
+	_run_trace.record_tool(tool_name, ok, latency_ms, error, summary)
+
+
+## Auto-Begin/End an den Run-Grenzen des Autonomy-Workspace (+ Chain-Verdict).
+func _trace_handle_run_boundaries(tool_name: String, result: Variant) -> void:
+	if _run_trace == null:
+		return
+	if tool_name == "runtime_autonomy_workspace_begin":
+		if _protocol.result_is_error(result) or not (result is Dictionary):
+			return
+		var data: Dictionary = result
+		var workspace: Dictionary = data.get("workspace", {}) if data.get("workspace") is Dictionary else {}
+		var run_id := str(workspace.get("run_id", ""))
+		if run_id == "":
+			run_id = str(data.get("session_id", ""))
+		if run_id == "":
+			return
+		_run_trace.begin(run_id, str(data.get("goal", "")))
+		_run_trace.record("fingerprint", {"label": "baseline", "data": _trace_fingerprint()})
+	elif tool_name == "runtime_autonomy_workspace_end":
+		if not _run_trace.active():
+			return
+		_run_trace.record("fingerprint", {"label": "final", "data": _trace_fingerprint()})
+		if _lifecycle != null:
+			_run_trace.record("events", {"events": _lifecycle.events_since(0, 300)})
+		_run_trace.end("PASS" if not _protocol.result_is_error(result) else "FAIL")
+	elif tool_name == "runtime_chain_run":
+		# Chain-Verdict als strukturierter Eintrag (ohne Trace zu beenden —
+		# Ketten können Teil eines größeren Runs sein).
+		if result is Dictionary:
+			var chain_data: Dictionary = result
+			_run_trace.record("chain", {
+				"chain_name": str(chain_data.get("chain_name", "?")),
+				"verdict": str(chain_data.get("verdict", "?")),
+				"completed_steps": int(chain_data.get("completed_steps", 0)),
+				"failure_reason": str(chain_data.get("failure_reason", "")),
+			})
+
+
+## Kompakter GameState-Fingerprint über das bestehende game_state_summary-Tool.
+func _trace_fingerprint() -> Variant:
+	if _registry == null:
+		return {}
+	var summary: Variant = _registry.dispatch("game_state_summary", {"faction": "a"})
+	if summary is Dictionary:
+		var data: Dictionary = summary
+		return {
+			"faction": str(data.get("faction", "a")),
+			"resources": data.get("resources", {}),
+			"research": data.get("research", {}),
+			"ships": data.get("ships", {}),
+			"planet_census": data.get("planet_census", {}),
+			"homeworld": str(data.get("homeworld", "")),
+		}
+	return {}
 
 
 func _send_response(client_id: int, id: Variant, result: Variant, error_message: String, code: int) -> void:

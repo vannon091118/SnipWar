@@ -538,3 +538,28 @@ Rebranding: 'Eisen-Grenze' konsequent zu 'Rand der Galaxie' in LORE, README, Mai
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
 - scripts/ui/main_menu.gd: Dokumentation aktualisiert (F-067).
 - scripts/ui/tutorial/tutorial_director.gd: Dokumentation aktualisiert (F-031).
+
+## 2026-08-27 12:00:00 — p36 · c36j38n2a4p6 · Basher · trocken
+
+**Basher (18 files): Client-Konsolidierung: Python-Stack entfernt,… — nach Squizzle**
+
+Client-Konsolidierung: Python-Stack entfernt, einheitlicher JS-Client (stdio-Bridge mit Reconnect, Selftest, atomare Playthrough-Helfer, agent_repair_loop als JS-Port)
+
+- .mcp.json: Implementiert und integriert (F-069).
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- addons/gdscript_mcp/client/agent_playthrough.py: Implementiert und integriert (F-070).
+- addons/gdscript_mcp/client/agent_repair_loop.js: Implementiert und integriert (F-071).
+- addons/gdscript_mcp/client/agent_repair_loop.py: Implementiert und integriert (F-072).
+- addons/gdscript_mcp/client/agent_store.py: Implementiert und integriert (F-073).
+- addons/gdscript_mcp/client/mcp_client.py: Implementiert und integriert (F-074).
+- addons/gdscript_mcp/client/mcp_connector_selftest.js: Implementiert und integriert (F-075).
+- addons/gdscript_mcp/client/mcp_stdio_bridge.js: Implementiert und integriert (F-076).
+- addons/gdscript_mcp/client/playthroughs/atomic/mcp_player_atom.js: Implementiert und integriert (F-077).
+- addons/gdscript_mcp/client/playthroughs/atomic/scan_compact.js: Implementiert und integriert (F-078).
+- addons/gdscript_mcp/client/playthroughs/legacy/_mcp_connect.bat: Implementiert und integriert (F-079).
+- addons/gdscript_mcp/client/playthroughs/session_dumps/_mcp_connect.bat: Implementiert und integriert (F-080).
+- addons/gdscript_mcp/client/remote_playout.py: Implementiert und integriert (F-081).
+- addons/gdscript_mcp/client/vision_worker.py: Implementiert und integriert (F-082).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).

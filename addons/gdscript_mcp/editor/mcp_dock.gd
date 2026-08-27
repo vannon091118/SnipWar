@@ -80,9 +80,9 @@ func _ready() -> void:
 	_load_config()
 	_load_profile()
 	_update_runtime_buttons()
-	# Runtime-MCP läuft in-process (Plugin startet ihn auf 9090). Der Dock
-	# verbindet sich direkt, sobald der Editor geladen ist — kein separater
-	# Spielprozess, kein Warten auf einen externen Start.
+	# Runtime-MCP startet im SPIELprozess (McpRuntime-Autoload + MCP_EMBEDDED
+	# beim Editor-Play). Der Dock verbindet sich automatisch, sobald das Spiel
+	# läuft — bis dahin wird höflich mit Retry probiert (honest: gelb).
 	_auto_connect_in = 0.0
 	_auto_connect_deadline_ms = Time.get_ticks_msec() + AUTO_CONNECT_TIMEOUT_MS
 	_auto_connect_attempts = 0
@@ -109,6 +109,13 @@ func _process(_delta: float) -> void:
 			_connect_runtime()
 			_auto_connect_attempts += 1
 			_auto_connect_in = AUTO_CONNECT_RETRY_SECONDS
+
+# Hinweis: Sobald _runtime_client.is_ready() true ist, wird alle 1 s der Status
+# und alle 2 s die Agent-Pipeline aktualisiert — echte Live-Daten aus dem
+# Runtime-MCP-Server, keine statischen Platzhalter. Wenn der Server keine
+# Agent-Aktivität registriert hat, antwortet `runtime_agent_activity` mit
+# {entries:[]} und der Dock zeigt "— keine Tool-Calls sichtbar —". Das ist
+# ein ehrlicher Live-Zustand, kein Mock.
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Profile / Play-Goal
@@ -235,14 +242,28 @@ func _on_status_response(response: Dictionary) -> void:
 	parts.append("profile=" + str(data.get("profile", "?")))
 	parts.append("tools=" + str(data.get("tool_count", "?")))
 	parts.append("violations=" + str(data.get("contract_violations", 0)))
+	# Echte Live-Werte: renderer + clients zeigen, ob der Server tatsächlich
+	# im Spiel-Kontext läuft. Im Editor-In-Process ohne Spiel ist renderer
+	# trotzdem "visible" — aber game_running=false ist wichtig für den User.
+	if data.has("client_count"):
+		parts.append("clients=" + str(data.get("client_count", 0)))
 	var last_tool: Variant = data.get("last_tool", {})
 	if last_tool is Dictionary:
 		parts.append("last=" + str(last_tool.get("name", "?")) + " " + str(snappedf(float(last_tool.get("latency_ms", 0.0)), 0.1)) + "ms")
 	parts.append("avg=" + str(snappedf(float(data.get("tool_latency_avg_ms", 0.0)), 0.1)) + "ms")
-	if data.has("max") and data.get("max") is Dictionary:
-		parts.append("max=" + str(snappedf(float(data.get("max", {}).get("latency_ms", 0.0)), 0.1)) + "ms")
+	var max_dict: Variant = data.get("max", {})
+	if max_dict is Dictionary:
+		parts.append("max=" + str(snappedf(float((max_dict as Dictionary).get("latency_ms", 0.0)), 0.1)) + "ms")
 	_runtime_status_label.text = "● " + " · ".join(parts)
-	_runtime_status_label.add_theme_color_override("font_color", Color(0.2, 0.8, 0.3, 1))
+	# Farbcodierung: grün nur bei LAUFENDEM SPIEL (game_running), gelb wenn der
+	# Server lebt aber das Spiel nicht offen ist (Dock-Verbindung steht, Tools
+	# blockiert mit "Game not running"). game_running ist die echte Quelle —
+	# renderer ist im Editor-In-Process auch ohne Spiel "visible".
+	var is_live := bool(data.get("game_running", false)) and int(data.get("tool_count", 0)) > 0
+	_runtime_status_label.add_theme_color_override("font_color",
+		Color(0.2, 0.8, 0.3, 1) if is_live else Color(0.9, 0.7, 0.2, 1))
+	if not is_live:
+		_runtime_status_label.tooltip_text = "Server läuft, aber kein Spiel offen. Starte ein Spiel über ▶ Spiel starten +MCP."
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Runtime: sichtbare Aktionen
@@ -263,21 +284,30 @@ func _on_activity_response(response: Dictionary) -> void:
 	_agent_goal_label.text = "🎯 Ziel: " + (goal if goal != "" else "—")
 	_agent_goal_label.tooltip_text = goal
 	var entries: Array = data.get("entries", []) as Array
+	var total_calls := int(data.get("total_calls", entries.size()))
 	var ok_count := 0
 	var err_count := 0
-	var parts := PackedStringArray()
 	for entry in entries:
 		if entry is Dictionary:
 			if bool(entry.get("ok", false)):
 				ok_count += 1
 			else:
 				err_count += 1
-	parts.append("Calls: " + str(data.get("total_calls", entries.size())))
+	var parts := PackedStringArray()
+	parts.append("Calls: " + str(total_calls))
 	parts.append("ok: " + str(ok_count))
 	parts.append("Fehler: " + str(err_count))
 	_agent_stats_label.text = " · ".join(parts)
-	var bb := "[color=#9a9aa5]— keine Tool-Calls sichtbar —[/color]"
-	if not entries.is_empty():
+	var bb := ""
+	if entries.is_empty():
+		# Leerer Feed ≠ Platzhalter: ehrliches Live-Signal "noch nichts passiert".
+		# Der User weiß jetzt, dass er einen Agenten braucht (oder selbst Tools
+		# über die Bridge callen muss), damit hier etwas erscheint.
+		if total_calls == 0:
+			bb = "[color=#9a9aa5]⏳ Warte auf Agent-Aktivität …\n(MCP-Bridge starten oder Vision-Worker attachen)[/color]"
+		else:
+			bb = "[color=#9a9aa5]— keine Tool-Calls sichtbar —[/color]"
+	else:
 		var lines := PackedStringArray()
 		for entry in entries.slice(-10):
 			if not (entry is Dictionary):
@@ -293,8 +323,7 @@ func _on_activity_response(response: Dictionary) -> void:
 			if err != "":
 				line += " [color=#e57373]" + err.substr(0, 60) + "[/color]"
 			lines.append(line)
-		bb = "
-".join(lines)
+		bb = "\n".join(lines)
 	_tool_feed.text = bb
 
 

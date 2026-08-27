@@ -2573,6 +2573,118 @@
 			"seq": 35,
 			"subject": "Squizzles Fall: Rebranding: 'Eisen-Grenze' konsequent zu 'Rand… — nach Basher",
 			"summary": "FALL-AUFNAHME: Ein Name, der nicht mehr passt. Die Ermittlung begann, wie so oft, mit einer Unstimmigkeit: Das Universum hieß in der LORE „Eisen-Grenze“, während das Spiel selbst längst am Rand der..."
+		},
+		{
+			"a": 4,
+			"arc": "a13",
+			"c": 36,
+			"composite": "c36j38n2a4p6",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": ".mcp.json",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/agent_playthrough.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/agent_repair_loop.js",
+					"insertions": 140.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/agent_repair_loop.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/agent_store.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/mcp_client.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+					"insertions": 48.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/mcp_stdio_bridge.js",
+					"insertions": 92.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/playthroughs/atomic/mcp_player_atom.js",
+					"insertions": 35.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/playthroughs/atomic/scan_compact.js",
+					"insertions": 29.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/playthroughs/legacy/_mcp_connect.bat",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/playthroughs/session_dumps/_mcp_connect.bat",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/remote_playout.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/vision_worker.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 27.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 62.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 11.0
+				}
+			],
+			"date": "2026-08-27 12:00:00",
+			"hash": "fa2b7bbd7316ba058617513072f00afdf6e7dc93",
+			"j": 38,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 2,
+			"narrator": "Basher",
+			"p": 6,
+			"p_id": 36,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Squizzle",
+			"seq": 36,
+			"subject": "Basher (18 files): Client-Konsolidierung: Python-Stack entfernt,… — nach Squizzle",
+			"summary": "client/consolidate. exit 0."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
