@@ -1878,6 +1878,73 @@
 			"seq": 25,
 			"subject": "Stimmen gelebt statt genannt:. … — nach Squizzle",
 			"summary": "Squizzle hat die Kette sauber analysiert, deshalb konnte ich das hier gerade durchziehen: Die Stimmen wurden benannt, aber nicht gelebt — jeder Commit klang gleich, nur der Name wechselte. Das war ..."
+		},
+		{
+			"a": 5,
+			"arc": "a8",
+			"c": 26,
+			"composite": "c26j88n8a5p2",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "DESIGN.md",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 121.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 72.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/objects/planets/planet_network.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/state/event_log.gd",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/ui/touch_feedback_layer.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 103.0,
+					"file": "scripts/ui/tutorial/tutorial_director.gd",
+					"insertions": 64.0
+				}
+			],
+			"date": "2026-08-27 02:00:00",
+			"hash": "60c1d3dec9005e8bc53a14b24a400c4c231807d3",
+			"j": 88,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 8,
+			"narrator": "Ghost",
+			"p": 2,
+			"p_id": 26,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Vannon",
+			"seq": 26,
+			"subject": "Ghost verzeichnet: Tutorial-Doktrin rein präsentativ (Karte… — nach Vannon",
+			"summary": "Die Chronik verzeichnet einen stillen Nachmittag der Korrekturen, deren Notwendigkeit sich aus dem sichtbaren Lauf des Tutorials ergab. Vannons QA-Runde hatte offengelegt, was die Logs nicht zeigte..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

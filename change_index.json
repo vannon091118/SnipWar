@@ -94,6 +94,26 @@
 			],
 			"p_id": 20.0
 		},
+		"60c1d3dec9005e8bc53a14b24a400c4c231807d3": {
+			"c": 26,
+			"composite": "c26j88n8a5p2",
+			"entities": [
+				"F-002",
+				"F-020",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-028",
+				"F-029",
+				"F-030",
+				"F-031",
+				"C-033",
+				"C-034",
+				"C-035",
+				"C-036"
+			],
+			"p_id": 26
+		},
 		"a95a7ee437c739b97ceb60b66f5f4beb92f2bce1": {
 			"c": 11.0,
 			"composite": "c11j46n7a1p5",
@@ -157,7 +177,7 @@
 			"p_id": 19.0
 		},
 		"caeed225d6e93fbfd5c0160e8f62c616aefbbf31": {
-			"c": 25,
+			"c": 25.0,
 			"composite": "c25j76n4a8p3",
 			"entities": [
 				"F-002",
@@ -175,7 +195,7 @@
 				"C-031",
 				"C-032"
 			],
-			"p_id": 25
+			"p_id": 25.0
 		},
 		"e186c98431e04aeca11e227c7459fc3daa695ff0": {
 			"c": 12.0,
@@ -742,6 +762,74 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-033": {
+			"first_p": 26.0,
+			"history": [
+				{
+					"lines": [
+						552.0
+					],
+					"p_id": 26.0
+				}
+			],
+			"id": "C-033",
+			"last_p": 26.0,
+			"name": "_add_dossier_button",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-034": {
+			"first_p": 26.0,
+			"history": [
+				{
+					"lines": [
+						102.0
+					],
+					"p_id": 26.0
+				}
+			],
+			"id": "C-034",
+			"last_p": 26.0,
+			"name": "_on_technology_researched",
+			"path": "scripts/state/event_log.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-035": {
+			"first_p": 26.0,
+			"history": [
+				{
+					"lines": [
+						270.0
+					],
+					"p_id": 26.0
+				}
+			],
+			"id": "C-035",
+			"last_p": 26.0,
+			"name": "_refresh_marker_target",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-036": {
+			"first_p": 26.0,
+			"history": [
+				{
+					"lines": [
+						287.0
+					],
+					"p_id": 26.0
+				}
+			],
+			"id": "C-036",
+			"last_p": 26.0,
+			"name": "_position_card",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -1009,6 +1097,46 @@
 			"last_p": 25.0,
 			"name": "narrators.json",
 			"path": "scripts/doki/data/narrators.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-028": {
+			"first_p": 26.0,
+			"history": [],
+			"id": "F-028",
+			"last_p": 26.0,
+			"name": "planet_network.gd",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-029": {
+			"first_p": 26.0,
+			"history": [],
+			"id": "F-029",
+			"last_p": 26.0,
+			"name": "event_log.gd",
+			"path": "scripts/state/event_log.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-030": {
+			"first_p": 26.0,
+			"history": [],
+			"id": "F-030",
+			"last_p": 26.0,
+			"name": "touch_feedback_layer.gd",
+			"path": "scripts/ui/touch_feedback_layer.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-031": {
+			"first_p": 26.0,
+			"history": [],
+			"id": "F-031",
+			"last_p": 26.0,
+			"name": "tutorial_director.gd",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
 			"status": "created",
 			"type": "file"
 		}

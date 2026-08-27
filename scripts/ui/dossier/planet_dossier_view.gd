@@ -30,6 +30,7 @@ var _left_info: VBoxContainer
 var _slot_content: VBoxContainer
 var _build_bars: Array[ProgressBar] = []
 var _build_labels: Array[Label] = []
+var _build_scroll: ScrollContainer
 
 func setup(theme_config: UIThemeConfig = null, upgrade_catalog: PlanetUpgradeCatalog = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
@@ -77,6 +78,27 @@ func _on_state_changed(_a = null, _b = null, _c = null, _d = null, _e = null) ->
 
 # ── Aufbau ─────────────────────────────────────────────────────────────
 
+## Kontext-gated Sub-Menü-Navigation: Die Hotkeys feuern NUR, solange dieses
+## Dossier offen ist (die View existiert dann ausschließlich im Baum). [1]-[9]
+## wählen den n-ten eigenen Planeten, Bild Auf/Ab scrollt die Bau-Slots.
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey and event.pressed):
+		return
+	if event.keycode >= KEY_1 and event.keycode <= KEY_9:
+		if event.echo:
+			return
+		var index: int = int(event.keycode) - int(KEY_1)
+		if index < _own_planets.size():
+			_select_planet(_own_planets[index])
+			get_viewport().set_input_as_handled()
+	elif event.keycode == KEY_PAGEUP:
+		if _build_scroll != null:
+			_build_scroll.scroll_vertical = maxi(_build_scroll.scroll_vertical - int(_build_scroll.size.y * 0.8), 0)
+		get_viewport().set_input_as_handled()
+	elif event.keycode == KEY_PAGEDOWN:
+		if _build_scroll != null:
+			_build_scroll.scroll_vertical = mini(_build_scroll.scroll_vertical + int(_build_scroll.size.y * 0.8), _build_scroll.get_v_scroll_bar().max_value)
+		get_viewport().set_input_as_handled()
 func _build_ui() -> void:
 	# Linke Spalte: Planeten-Auswahl (Mitte) + Info (unten), oben bleibt die
 	# gezeichnete Planetenscheibe.
@@ -110,6 +132,7 @@ func _build_ui() -> void:
 	# Rechte Spalte: Bauplätze + Gebäude + planetare Forschung.
 	var scroll := ScrollContainer.new()
 	scroll.name = "BuildSlotsScroll"
+	_build_scroll = scroll
 	scroll.anchor_left = 0.48
 	scroll.anchor_top = 0.0
 	scroll.anchor_right = 1.0

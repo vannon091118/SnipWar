@@ -373,3 +373,19 @@ Stimmen gelebt statt genannt: Stil-Beispiele für alle 14 Charaktere, Mood-Ausdr
 - scripts/doki/data/narrators.json: Dokumentation aktualisiert (F-027).
 - scripts/doki/doki_selfcheck.gd: Dokumentation aktualisiert (F-017).
 - scripts/doki/prompt/voice_composer.gd: Dokumentation aktualisiert (F-016).
+
+## 2026-08-27 02:00:00 — p26 · c26j88n8a5p2 · Ghost · trocken
+
+**Ghost verzeichnet: Tutorial-Doktrin rein präsentativ (Karte… — nach Vannon**
+
+Tutorial-Doktrin rein präsentativ (Karte klickdurchlässig), Touch-Ripple nur noch bei Touch, CPU-Forschungs-Toast-Fix (nur Spieler-Forschung toastet), PLANET-Tooltip
+
+- CHANGELOG.md: Fehler behoben (F-002).
+- DESIGN.md: Fehler behoben (F-020).
+- change_index.json: Fehler behoben (F-003).
+- narrative_chain.json: Fehler behoben (F-004).
+- scripts/doki/data/arcs.json: Fehler behoben (F-001).
+- scripts/objects/planets/planet_network.gd: Fehler behoben (F-028).
+- scripts/state/event_log.gd: Fehler behoben (F-029).
+- scripts/ui/touch_feedback_layer.gd: Fehler behoben (F-030).
+- scripts/ui/tutorial/tutorial_director.gd: Fehler behoben (F-031).

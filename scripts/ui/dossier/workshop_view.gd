@@ -13,6 +13,7 @@ var _state: Node
 var _builder := TechShipBuilderView.new()
 var _research_ship_view := TechResearchShipView.new()
 var _content: VBoxContainer
+var _workshop_scroll: ScrollContainer
 var _refresh_accumulator := 0.0
 const REFRESH_INTERVAL := 0.5
 
@@ -63,9 +64,33 @@ func _process(delta: float) -> void:
 			_refresh_from_builder(_state, _ship_manager.get_planets() if _ship_manager != null else [])
 			return
 
+## Kontext-gated: Pfeile + Bild Auf/Ab scrollen die Werkstatt, solange sie
+## offen ist.
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey and event.pressed):
+		return
+	var handled := true
+	match event.keycode:
+		KEY_UP, KEY_W:
+			if _workshop_scroll != null:
+				_workshop_scroll.scroll_vertical = maxi(_workshop_scroll.scroll_vertical - 90, 0)
+		KEY_DOWN, KEY_S:
+			if _workshop_scroll != null:
+				_workshop_scroll.scroll_vertical = mini(_workshop_scroll.scroll_vertical + 90, _workshop_scroll.get_v_scroll_bar().max_value)
+		KEY_PAGEUP:
+			if _workshop_scroll != null:
+				_workshop_scroll.scroll_vertical = maxi(_workshop_scroll.scroll_vertical - int(_workshop_scroll.size.y * 0.8), 0)
+		KEY_PAGEDOWN:
+			if _workshop_scroll != null:
+				_workshop_scroll.scroll_vertical = mini(_workshop_scroll.scroll_vertical + int(_workshop_scroll.size.y * 0.8), _workshop_scroll.get_v_scroll_bar().max_value)
+		_:
+			handled = false
+	if handled:
+		get_viewport().set_input_as_handled()
 func _build_ui() -> void:
 	var scroll := ScrollContainer.new()
 	scroll.name = "WorkshopScroll"
+	_workshop_scroll = scroll
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	scroll.add_theme_stylebox_override("panel", _theme_config.make_style_box(Color(0, 0, 0, 0), Color.TRANSPARENT, 0, 0))
 	add_child(scroll)

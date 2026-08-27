@@ -20,6 +20,7 @@ var _state: Node
 var _canvas: Control
 var _positions: Dictionary = {}
 var _node_controls: Dictionary = {}
+var _tree_scroll: ScrollContainer
 
 func setup(ship_manager: ShipManager, theme_config: UIThemeConfig = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
@@ -43,9 +44,42 @@ func refresh(state: Node) -> void:
 	_layout_tree(state)
 	_canvas.queue_redraw()
 
+## Kontext-gated: WASD/Pfeile + Bild Auf/Ab scrollen den Baum, solange der
+## Forschungsbaum offen ist. Die Kamera ist waehrenddessen blockiert, WASD
+## kollidiert also nicht mit der Welt-Steuerung.
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey and event.pressed):
+		return
+	var handled := true
+	var step_x := 120
+	var step_y := 90
+	match event.keycode:
+		KEY_LEFT, KEY_A:
+			if _tree_scroll != null:
+				_tree_scroll.scroll_horizontal = maxi(_tree_scroll.scroll_horizontal - step_x, 0)
+		KEY_RIGHT, KEY_D:
+			if _tree_scroll != null:
+				_tree_scroll.scroll_horizontal = mini(_tree_scroll.scroll_horizontal + step_x, _tree_scroll.get_h_scroll_bar().max_value)
+		KEY_UP, KEY_W:
+			if _tree_scroll != null:
+				_tree_scroll.scroll_vertical = maxi(_tree_scroll.scroll_vertical - step_y, 0)
+		KEY_DOWN, KEY_S:
+			if _tree_scroll != null:
+				_tree_scroll.scroll_vertical = mini(_tree_scroll.scroll_vertical + step_y, _tree_scroll.get_v_scroll_bar().max_value)
+		KEY_PAGEUP:
+			if _tree_scroll != null:
+				_tree_scroll.scroll_vertical = maxi(_tree_scroll.scroll_vertical - int(_tree_scroll.size.y * 0.8), 0)
+		KEY_PAGEDOWN:
+			if _tree_scroll != null:
+				_tree_scroll.scroll_vertical = mini(_tree_scroll.scroll_vertical + int(_tree_scroll.size.y * 0.8), _tree_scroll.get_v_scroll_bar().max_value)
+		_:
+			handled = false
+	if handled:
+		get_viewport().set_input_as_handled()
 func _build_ui() -> void:
 	var scroll := ScrollContainer.new()
 	scroll.name = "TreeScroll"
+	_tree_scroll = scroll
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	scroll.add_theme_stylebox_override("panel", _theme_config.make_style_box(Color(0, 0, 0, 0), Color.TRANSPARENT, 0, 0))
 	add_child(scroll)
