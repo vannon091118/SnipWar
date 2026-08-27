@@ -260,6 +260,72 @@
 			],
 			"p_id": 26.0
 		},
+		"71357fdce9f50cb3ec7b0a709ca0d883416d712c": {
+			"c": 42,
+			"composite": "c42j82n11a6p37",
+			"entities": [
+				"F-002",
+				"F-101",
+				"F-086",
+				"F-106",
+				"F-107",
+				"F-108",
+				"F-003",
+				"F-004",
+				"F-109",
+				"F-110",
+				"F-111",
+				"F-112",
+				"F-113",
+				"F-001",
+				"F-114",
+				"F-058",
+				"F-115",
+				"F-116",
+				"F-028",
+				"F-117",
+				"F-118",
+				"F-119",
+				"F-120",
+				"F-121",
+				"F-122",
+				"F-123",
+				"F-124",
+				"F-032",
+				"F-031",
+				"C-214",
+				"C-215",
+				"C-216",
+				"C-217",
+				"C-218",
+				"C-219",
+				"C-220",
+				"C-221",
+				"C-222",
+				"C-223",
+				"C-224",
+				"C-225",
+				"C-226",
+				"C-227",
+				"C-228",
+				"C-229",
+				"C-230",
+				"C-231",
+				"C-232",
+				"C-233",
+				"C-234",
+				"C-235",
+				"C-236",
+				"C-237",
+				"C-238",
+				"C-239",
+				"C-240",
+				"C-241",
+				"C-242",
+				"C-243"
+			],
+			"p_id": 42
+		},
 		"a36707d4cf6285ad4e0ff2a6d1f348cbc6a343d0": {
 			"c": 29.0,
 			"composite": "c29j35n7a7p26",
@@ -299,7 +365,7 @@
 			"p_id": 11.0
 		},
 		"ab080dcd1543ee47db628b2abba91fe7846cc852": {
-			"c": 41,
+			"c": 41.0,
 			"composite": "c41j59n3a2p13",
 			"entities": [
 				"F-002",
@@ -339,7 +405,7 @@
 				"C-212",
 				"C-213"
 			],
-			"p_id": 41
+			"p_id": 41.0
 		},
 		"aea99b31d8e999f5921e633b33c7ed89d49c719c": {
 			"c": 23.0,
@@ -4320,6 +4386,516 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-214": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						101.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-214",
+			"last_p": 42.0,
+			"name": "repair",
+			"path": "scripts/config/assault_minion_definition.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-215": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						196.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-215",
+			"last_p": 42.0,
+			"name": "_make_ship_minion",
+			"path": "scripts/conquest/conquest_scene.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-216": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						353.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-216",
+			"last_p": 42.0,
+			"name": "_hide_minion_module",
+			"path": "scripts/conquest/conquest_scene.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-217": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						452.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-217",
+			"last_p": 42.0,
+			"name": "_on_technology_researched",
+			"path": "scripts/objects/planets/planet.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-218": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						524.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-218",
+			"last_p": 42.0,
+			"name": "configure_from_cache",
+			"path": "scripts/objects/planets/planet.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-219": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						68.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-219",
+			"last_p": 42.0,
+			"name": "find_path",
+			"path": "scripts/objects/planets/planet_grid.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-220": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						621.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-220",
+			"last_p": 42.0,
+			"name": "_on_panel_visibility_changed",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-221": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						521.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-221",
+			"last_p": 42.0,
+			"name": "can_purchase_upgrade",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-222": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						533.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-222",
+			"last_p": 42.0,
+			"name": "purchase_upgrade",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-223": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-223",
+			"last_p": 42.0,
+			"name": "CHAIN_DIR",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-224": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-224",
+			"last_p": 42.0,
+			"name": "SERVER_PATH",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-225": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						24.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-225",
+			"last_p": 42.0,
+			"name": "REGISTRY_PATH",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-226": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						26.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-226",
+			"last_p": 42.0,
+			"name": "EXPECT_OPS",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-227": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						27.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-227",
+			"last_p": 42.0,
+			"name": "SUPPORTED_MODES",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-228": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						28.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-228",
+			"last_p": 42.0,
+			"name": "WAIT_TOOLS",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-229": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						29.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-229",
+			"last_p": 42.0,
+			"name": "COMPOSITE_TOOLS",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-230": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						30.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-230",
+			"last_p": 42.0,
+			"name": "VISIBLE_MODE_TOOLS",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-231": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						31.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-231",
+			"last_p": 42.0,
+			"name": "CONTROLLER_SPECIAL",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-232": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						32.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-232",
+			"last_p": 42.0,
+			"name": "REQUIRED_HOST_TOOLS",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-233": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						36.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-233",
+			"last_p": 42.0,
+			"name": "_init",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-234": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						70.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-234",
+			"last_p": 42.0,
+			"name": "_derive_host_tools",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-235": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						85.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-235",
+			"last_p": 42.0,
+			"name": "_scan_directory",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-236": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						98.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-236",
+			"last_p": 42.0,
+			"name": "_validate_manifest",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-237": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						177.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-237",
+			"last_p": 42.0,
+			"name": "_check_skip_flags",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-238": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						198.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-238",
+			"last_p": 42.0,
+			"name": "_is_truthy",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-239": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						208.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-239",
+			"last_p": 42.0,
+			"name": "_finish",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-240": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-240",
+			"last_p": 42.0,
+			"name": "_init",
+			"path": "scripts/testing/compile_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-241": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						32.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-241",
+			"last_p": 42.0,
+			"name": "_collect",
+			"path": "scripts/testing/compile_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-242": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						47.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-242",
+			"last_p": 42.0,
+			"name": "_compile",
+			"path": "scripts/testing/compile_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-243": {
+			"first_p": 42.0,
+			"history": [
+				{
+					"lines": [
+						24.0
+					],
+					"p_id": 42.0
+				}
+			],
+			"id": "C-243",
+			"last_p": 42.0,
+			"name": "fields_close",
+			"path": "scripts/ui/control_field.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -5367,6 +5943,196 @@
 			"last_p": 41.0,
 			"name": "preflight_v1.gd.uid",
 			"path": "scripts/legacy/preflight_v1.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-106": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-106",
+			"last_p": 42.0,
+			"name": "mcp_vision_detect.gd",
+			"path": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision_detect.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-107": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-107",
+			"last_p": 42.0,
+			"name": "run_portable_smoke.sh",
+			"path": "addons/gdscript_mcp/testing/portable/run_portable_smoke.sh",
+			"status": "created",
+			"type": "file"
+		},
+		"F-108": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-108",
+			"last_p": 42.0,
+			"name": "project.godot.tpl",
+			"path": "addons/gdscript_mcp/testing/portable/templates/project.godot.tpl",
+			"status": "created",
+			"type": "file"
+		},
+		"F-109": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-109",
+			"last_p": 42.0,
+			"name": "map_camera.gd",
+			"path": "scripts/backgrounds/map_camera.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-110": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-110",
+			"last_p": 42.0,
+			"name": "assault_minion_definition.gd",
+			"path": "scripts/config/assault_minion_definition.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-111": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-111",
+			"last_p": 42.0,
+			"name": "ship_assembly.gd",
+			"path": "scripts/config/ship_assembly.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-112": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-112",
+			"last_p": 42.0,
+			"name": "world_generator.gd",
+			"path": "scripts/config/world_generator.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-113": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-113",
+			"last_p": 42.0,
+			"name": "conquest_scene.gd",
+			"path": "scripts/conquest/conquest_scene.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-114": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-114",
+			"last_p": 42.0,
+			"name": "cpu_dispatch_ai.gd",
+			"path": "scripts/objects/planets/cpu_dispatch_ai.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-115": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-115",
+			"last_p": 42.0,
+			"name": "planet_details.gd",
+			"path": "scripts/objects/planets/planet_details.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-116": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-116",
+			"last_p": 42.0,
+			"name": "planet_grid.gd",
+			"path": "scripts/objects/planets/planet_grid.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-117": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-117",
+			"last_p": 42.0,
+			"name": "composite_ship_view.gd",
+			"path": "scripts/objects/ships/composite_ship_view.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-118": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-118",
+			"last_p": 42.0,
+			"name": "ship_manager.gd",
+			"path": "scripts/objects/ships/ship_manager.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-119": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-119",
+			"last_p": 42.0,
+			"name": "battle_event.gd",
+			"path": "scripts/simulation/battle_event.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-120": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-120",
+			"last_p": 42.0,
+			"name": "fleet_battle_simulator.gd",
+			"path": "scripts/simulation/fleet_battle_simulator.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-121": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-121",
+			"last_p": 42.0,
+			"name": "economy_domain.gd",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-122": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-122",
+			"last_p": 42.0,
+			"name": "chain_manifest_gate.gd",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-123": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-123",
+			"last_p": 42.0,
+			"name": "compile_gate.gd",
+			"path": "scripts/testing/compile_gate.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-124": {
+			"first_p": 42.0,
+			"history": [],
+			"id": "F-124",
+			"last_p": 42.0,
+			"name": "control_field.gd",
+			"path": "scripts/ui/control_field.gd",
 			"status": "created",
 			"type": "file"
 		}

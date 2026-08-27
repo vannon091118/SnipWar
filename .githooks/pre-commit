@@ -16,10 +16,18 @@ if [ -z "$godot_bin" ] || [ ! -x "$godot_bin" ]; then
 	exit 1
 fi
 
-# 1) Bestehendes Preflight-Gate
+# 1) Preflight-Gate (Bestand)
 "$godot_bin" --headless --path "$repo_root" --script res://scripts/preflight.gd
 
-# 2) DOKI-Gate (nur wenn initialisiert)
+# 2) Mechanische Gates (unabhängig, jedes mit eigenem Evidence-Artfakt in user://mcp_evidence/)
+for gate in scripts/testing/chain_manifest_gate.gd scripts/testing/compile_gate.gd scripts/testing/chain_validate_entry_test.gd; do
+	if ! "$godot_bin" --headless --path "$repo_root" --script "res://$gate"; then
+		printf '\nGate blockiert den Commit: %s\nEvidence: user://mcp_evidence/\n' "$gate" >&2
+		exit 1
+	fi
+done
+
+# 3) DOKI-Gate (nur wenn initialisiert)
 if [ -f "$repo_root/scripts/doki/doki.gd" ]; then
 	if ! "$godot_bin" --headless --path "$repo_root" --script res://scripts/doki/doki.gd -- gate --repo "$repo_root"; then
 		printf '\nDOKI-Gate blockiert den Commit — Ablauf: git add → doki prepare → doki finish → git commit -F .commit_msg.txt\n' >&2

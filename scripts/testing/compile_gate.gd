@@ -11,6 +11,9 @@ extends SceneTree
 ## Usage:
 ##   "$GODOT_BIN" --headless --path . --script res://scripts/testing/compile_gate.gd
 
+const EVIDENCE_PATH := "user://mcp_evidence/compile_gate.json"
+const EVIDENCE_TMP := "user://mcp_evidence/compile_gate.tmp"
+
 var _files: Array[String] = []
 var _failures: Array[String] = []
 var _live_verified := 0
@@ -21,13 +24,37 @@ func _init() -> void:
 	print("COMPILE_GATE: scanning ", _files.size(), " files")
 	for path in _files:
 		_compile(path)
-	if _failures.is_empty():
+	var passed := _failures.is_empty()
+	var report := {
+		"gate": "compile_gate",
+		"result": "PASS" if passed else "FAIL",
+		"files_scanned": _files.size(),
+		"live_verified_at_startup": _live_verified,
+		"failures": _failures,
+	}
+	_write_evidence(report)
+	if passed:
 		print("COMPILE_GATE: PASS — all ", _files.size(), " scripts compile clean (", _live_verified, " live-verified at startup)")
+		print("EVIDENCE: ", ProjectSettings.globalize_path(EVIDENCE_PATH))
 	else:
 		print("COMPILE_GATE: FAIL — ", _failures.size(), " files:")
 		for failure in _failures:
 			print("  ", failure)
+		print("EVIDENCE: ", ProjectSettings.globalize_path(EVIDENCE_PATH))
 	quit(1 if not _failures.is_empty() else 0)
+
+func _write_evidence(data: Dictionary) -> void:
+	var dir := DirAccess.open("user://")
+	if dir == null or not dir.dir_exists("mcp_evidence"):
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://mcp_evidence"))
+	var file := FileAccess.open(EVIDENCE_TMP, FileAccess.WRITE)
+	if file == null:
+		push_error("Cannot write evidence (compile_gate): " + EVIDENCE_PATH)
+		return
+	file.store_string(JSON.stringify(data, "\t"))
+	file.close()
+	# atomar: erst tmp, dann rename — kein halbgeschriebener Befund
+	DirAccess.rename_absolute(ProjectSettings.globalize_path(EVIDENCE_TMP), ProjectSettings.globalize_path(EVIDENCE_PATH))
 
 func _collect(dir_path: String) -> void:
 	var dir := DirAccess.open(dir_path)

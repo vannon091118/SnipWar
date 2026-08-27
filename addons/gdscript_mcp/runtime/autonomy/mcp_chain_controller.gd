@@ -18,6 +18,18 @@ const PREFLIGHT_OUT_PATH := "user://mcp_preflight_result.json"
 # über application/mcp/chain_dir).
 const CHAIN_DIR := "res://addons/gdscript_mcp/mcp_chains"
 
+# Host-Tools leben NICHT in der Registry — der Server dispatched sie über
+# _dispatch_host_tool_for_chain als Fallback (set_host_dispatch). Die
+# Validierung muss sie kennen, sonst failt jede Kette, die den Server-Zustand
+# prüft (z.B. world_smoke mit runtime_mcp_status), beim Validate.
+const HOST_TOOLS := [
+	"runtime_mcp_status",
+	"runtime_mcp_events",
+	"runtime_agent_activity",
+	"runtime_run_trace",
+	"editor_logs_read",
+]
+
 var _registry: RefCounted = null
 var _lifecycle: RefCounted = null
 var _host_dispatch: Callable = Callable()
@@ -149,6 +161,16 @@ func validate_chain(chain_def: Dictionary) -> Dictionary:
 		for definition in _registry.get_all_tools():
 			if definition is Dictionary:
 				available[str(definition.get("name", ""))] = definition
+	# Host-Tools (Server-Dispatch-Fallback) sind valid — sonst failt jede
+	# Kette, die den Server-Zustand prüft (z.B. runtime_mcp_status), beim
+	# Validate, obwohl zur Laufzeit der Server sie dispatched.
+	for host_tool in HOST_TOOLS:
+		available[host_tool] = {}
+	# Host-Tools (Server-Dispatch-Fallback) sind valid — sonst failt jede
+	# Kette, die den Server-Zustand prüft (z.B. runtime_mcp_status), beim
+	# Validate, obwohl zur Laufzeit der Server sie dispatched.
+	for host_tool in HOST_TOOLS:
+		available[host_tool] = {}
 	var composite_tools := ["runtime_ux_click", "runtime_goal_play", "runtime_goal_sequence", "runtime_chain_run"]
 	for index in range(steps.size()):
 		var raw: Variant = steps[index]

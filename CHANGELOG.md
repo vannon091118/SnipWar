@@ -659,3 +659,39 @@ Hard Separation abgeschlossen: MCP-Assets (Chain-Manifeste, Connector-Config, fi
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
 - scripts/legacy/preflight_v1.gd: Dokumentation aktualisiert (F-104).
 - scripts/legacy/preflight_v1.gd.uid: Dokumentation aktualisiert (F-105).
+
+## 2026-08-27 18:00:00 — p42 · c42j82n11a6p37 · Null · erschöpft
+
+**Null: Manuelle Verifikations-Runde: 19 Spiel-S… — nach Thinker**
+
+Manuelle Verifikations-Runde: 19 Spiel-Skripte per Auge geprüft und repariert (Shadowing/Narrowing/tote Parameter), res→-Ordnermüll entfernt, project.godot-Nesting-Warnung via .tpl-Umbenennung, Integer-Division in mcp_vision_detect gefixt, Chain-Controller-Warnungen in harte Errors umgewandelt (Postcondition/broad-scope/long-chain), world_smoke-Screenshot-Step mit Evidence-Assertion, zwei mechanische Gates gebaut (compile_gate reload-basiert, chain_manifest_gate mit Skip-Flag-Verbot) und red-team-falsifiziert
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- addons/gdscript_mcp/mcp_chains/world_smoke.json: Implementiert und integriert (F-101).
+- addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd: Implementiert und integriert (F-086).
+- addons/gdscript_mcp/runtime/tools/vision/mcp_vision_detect.gd: Implementiert und integriert (F-106).
+- addons/gdscript_mcp/testing/portable/run_portable_smoke.sh: Implementiert und integriert (F-107).
+- addons/gdscript_mcp/testing/portable/templates/project.godot.tpl: Implementiert und integriert (F-108).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/backgrounds/map_camera.gd: Implementiert und integriert (F-109).
+- scripts/config/assault_minion_definition.gd: Implementiert und integriert (F-110).
+- scripts/config/ship_assembly.gd: Implementiert und integriert (F-111).
+- scripts/config/world_generator.gd: Implementiert und integriert (F-112).
+- scripts/conquest/conquest_scene.gd: Implementiert und integriert (F-113).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/objects/planets/cpu_dispatch_ai.gd: Implementiert und integriert (F-114).
+- scripts/objects/planets/planet.gd: Implementiert und integriert (F-058).
+- scripts/objects/planets/planet_details.gd: Implementiert und integriert (F-115).
+- scripts/objects/planets/planet_grid.gd: Implementiert und integriert (F-116).
+- scripts/objects/planets/planet_network.gd: Implementiert und integriert (F-028).
+- scripts/objects/ships/composite_ship_view.gd: Implementiert und integriert (F-117).
+- scripts/objects/ships/ship_manager.gd: Implementiert und integriert (F-118).
+- scripts/simulation/battle_event.gd: Implementiert und integriert (F-119).
+- scripts/simulation/fleet_battle_simulator.gd: Implementiert und integriert (F-120).
+- scripts/state/domains/economy_domain.gd: Implementiert und integriert (F-121).
+- scripts/testing/chain_manifest_gate.gd: Implementiert und integriert (F-122).
+- scripts/testing/compile_gate.gd: Implementiert und integriert (F-123).
+- scripts/ui/control_field.gd: Implementiert und integriert (F-124).
+- scripts/ui/dossier/parchment_tech_tree_view.gd: Implementiert und integriert (F-032).
+- scripts/ui/tutorial/tutorial_director.gd: Implementiert und integriert (F-031).

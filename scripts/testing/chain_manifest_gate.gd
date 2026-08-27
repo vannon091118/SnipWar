@@ -31,6 +31,9 @@ const VISIBLE_MODE_TOOLS := ["runtime_goal_check", "runtime_goal_history"]
 const CONTROLLER_SPECIAL := ["preflight_constraint"]
 const REQUIRED_HOST_TOOLS := ["runtime_mcp_status", "runtime_mcp_events", "runtime_agent_activity", "runtime_run_trace", "editor_logs_read"]
 
+const EVIDENCE_PATH := "user://mcp_evidence/chain_manifest_gate.json"
+const EVIDENCE_TMP := "user://mcp_evidence/chain_manifest_gate.tmp"
+
 var _failures: Array[String] = []
 
 func _init() -> void:
@@ -206,13 +209,33 @@ func _is_truthy(value: Variant) -> bool:
 	return value != null
 
 func _finish() -> void:
-	if not _failures.is_empty():
+	var passed := _failures.is_empty()
+	_write_evidence({
+		"gate": "chain_manifest_gate",
+		"result": "PASS" if passed else "FAIL",
+		"violations": _failures,
+	})
+	if not passed:
 		print("CHAIN_GATE: FAIL — ", _failures.size(), " violations:")
 		for failure in _failures:
 			print("  ✗ ", failure)
+		print("EVIDENCE: ", ProjectSettings.globalize_path(EVIDENCE_PATH))
 		print("CHAIN_GATE: exit=1")
 		quit(1)
 	else:
 		print("CHAIN_GATE: PASS — all manifests contract-clean, 0 warnings")
+		print("EVIDENCE: ", ProjectSettings.globalize_path(EVIDENCE_PATH))
 		print("CHAIN_GATE: exit=0")
 		quit(0)
+
+func _write_evidence(data: Dictionary) -> void:
+	var dir := DirAccess.open("user://")
+	if dir == null or not dir.dir_exists("mcp_evidence"):
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://mcp_evidence"))
+	var file := FileAccess.open(EVIDENCE_TMP, FileAccess.WRITE)
+	if file == null:
+		push_error("Cannot write evidence (chain_manifest_gate): " + EVIDENCE_PATH)
+		return
+	file.store_string(JSON.stringify(data, "\t"))
+	file.close()
+	DirAccess.rename_absolute(ProjectSettings.globalize_path(EVIDENCE_TMP), ProjectSettings.globalize_path(EVIDENCE_PATH))
