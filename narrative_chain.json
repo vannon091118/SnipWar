@@ -4065,6 +4065,158 @@
 			"seq": 51,
 			"subject": "Devin sagt: FEATURE: Lore komplett überarbeitet in… — nach Ghost",
 			"summary": "Man konnte die bisherige Dokumentation und Lore natürlich so stehen lassen, wenn man darauf stand, dass ein Universum nach sterilen Enzyklopädie-Einträgen aus dem Textbaukasten riecht. Weil aber ei..."
+		},
+		{
+			"a": 7,
+			"arc": "a22",
+			"c": 52,
+			"composite": "c52j40n6a7p27",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 26.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 57.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/README.md",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/gate.py",
+					"insertions": 112.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/gate_cli.py",
+					"insertions": 21.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "project.godot",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/concept_index.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/config/sector_anchor.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/config/sector_anchor.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "scripts/config/sector_classifier.gd",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/NARRATIVE_ENGINE_DESIGN.md",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "scripts/objects/chunk_coordinator.gd",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/objects/conflict_manager.gd",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/economy_domain.gd",
+					"insertions": 43.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/faction_domain.gd",
+					"insertions": 23.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/ship_domain.gd",
+					"insertions": 86.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/tech_domain.gd",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/event_bus.gd",
+					"insertions": 34.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/event_bus.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/state/event_log.gd",
+					"insertions": 41.0
+				},
+				{
+					"deletions": 198.0,
+					"file": "scripts/state/game_state.gd",
+					"insertions": 140.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/run_save_data.gd",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/narrative_runtime_gate.gd",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/narrative_runtime_gate.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 04:00:00",
+			"hash": "17df68a364026b9f8b51d90412f0c14b52997d6e",
+			"j": 40,
+			"model_id": "claude-sonnet-4",
+			"mood": "sachlich",
+			"n": 6,
+			"narrator": "Devin",
+			"p": 27,
+			"p_id": 52,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Ghost",
+			"seq": 52,
+			"subject": "Devin sagt: GameState für Domänen-Delegation refaktorieren… — nach Ghost",
+			"summary": "Der monolithische Aufbau von GameState lässt keine weitere Skalierung zu. Jede Zustandsänderung greift ohne Trennung in fremde Domänen ein, was zu einer hohen Instabilität führt. Deshalb ist die Ze..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

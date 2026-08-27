@@ -878,3 +878,36 @@ FEATURE: Lore komplett überarbeitet in Archiv-Fragment-Stil, Immersion ohne Wik
 - change_index.json: Dokumentation aktualisiert (F-003).
 - narrative_chain.json: Dokumentation aktualisiert (F-004).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+
+## 2026-08-27 04:00:00 — p52 · c52j40n6a7p27 · Devin · sachlich
+
+**Devin sagt: GameState für Domänen-Delegation refaktorieren… — nach Ghost**
+
+GameState für Domänen-Delegation refaktorieren und Narrative-Runtime-Gate integrieren
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- narrative_runtime/README.md: Implementiert und integriert (F-136).
+- narrative_runtime/gate.py: Implementiert und integriert (F-185).
+- narrative_runtime/gate_cli.py: Implementiert und integriert (F-186).
+- project.godot: Implementiert und integriert (F-187).
+- scripts/concept_index.gd: Implementiert und integriert (F-055).
+- scripts/config/sector_anchor.gd: Implementiert und integriert (F-188).
+- scripts/config/sector_anchor.gd.uid: Implementiert und integriert (F-189).
+- scripts/config/sector_classifier.gd: Implementiert und integriert (F-190).
+- scripts/doki/NARRATIVE_ENGINE_DESIGN.md: Implementiert und integriert (F-145).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/objects/chunk_coordinator.gd: Implementiert und integriert (F-131).
+- scripts/objects/conflict_manager.gd: Implementiert und integriert (F-057).
+- scripts/state/domains/economy_domain.gd: Implementiert und integriert (F-121).
+- scripts/state/domains/faction_domain.gd: Implementiert und integriert (F-191).
+- scripts/state/domains/ship_domain.gd: Implementiert und integriert (F-192).
+- scripts/state/domains/tech_domain.gd: Implementiert und integriert (F-193).
+- scripts/state/event_bus.gd: Implementiert und integriert (F-194).
+- scripts/state/event_bus.gd.uid: Implementiert und integriert (F-195).
+- scripts/state/event_log.gd: Implementiert und integriert (F-029).
+- scripts/state/game_state.gd: Implementiert und integriert (F-065).
+- scripts/state/run_save_data.gd: Implementiert und integriert (F-196).
+- scripts/testing/narrative_runtime_gate.gd: Implementiert und integriert (F-197).
+- scripts/testing/narrative_runtime_gate.gd.uid: Implementiert und integriert (F-198).

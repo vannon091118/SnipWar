@@ -28,6 +28,9 @@ signal local_resources_changed(planet_id: StringName, resource_id: StringName, n
 signal resource_transferred(from_planet: StringName, to_planet: StringName, resource_id: StringName, amount: int)
 signal building_placed(planet_id: StringName, building_id: StringName, q: int, r: int)
 signal building_removed(planet_id: StringName, q: int, r: int)
+signal worker_transport_started(transport_id: StringName, faction: StringName, amount: int)
+signal worker_transport_phase_changed(transport_id: StringName, phase: StringName)
+
 
 var faction_vaults: Dictionary = {}
 var faction_credits: Dictionary = {}
@@ -121,6 +124,7 @@ func begin_worker_transport(faction: StringName, source_planet_id: StringName, d
 		"route_path": route_path.duplicate(),
 		"escorted": false,
 	}
+	worker_transport_started.emit(transport_id, faction, amount)
 	return transport_id
 
 func update_worker_transport(transport_id: StringName, phase: StringName, cargo_resource_id: StringName = &"", cargo_amount: int = 0) -> bool:
@@ -132,6 +136,7 @@ func update_worker_transport(transport_id: StringName, phase: StringName, cargo_
 		record["cargo_resource_id"] = cargo_resource_id
 	record["cargo_amount"] = maxi(cargo_amount, 0)
 	worker_transport_records[transport_id] = record
+	worker_transport_phase_changed.emit(transport_id, phase)
 	return true
 
 func set_worker_transport_escorted(transport_id: StringName, escorted: bool = true) -> bool:
@@ -155,6 +160,7 @@ func complete_worker_transport(transport_id: StringName, delivered: bool = true)
 		return false
 	var record: Dictionary = worker_transport_records[transport_id]
 	record["phase"] = &"delivered" if delivered else &"cancelled"
+	worker_transport_phase_changed.emit(transport_id, record["phase"])
 	worker_transport_records.erase(transport_id)
 	return true
 
@@ -564,6 +570,67 @@ func purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: St
 		release_workers(planet_id, reservation_id)
 	return true
 
+
+## Domain-ref overload: tech-requirement check and starting-worker lookup run
+## inside EconomyDomain so GameState.can_purchase_upgrade() becomes a one-liner.
+## Priority (highest→lowest):
+##   1. available_worker_count >= 0  — explicit caller cap (e.g. test with 1 worker)
+##   2. faction_domain.starting_workers[planet_id] — known worker pool for planet
+##   3. -1 — planet not yet registered; worker check skipped (original behaviour)
+func can_purchase_upgrade_with_domains(
+	planet_id: StringName,
+	upgrade_id: StringName,
+	faction_domain: FactionDomain,
+	tech_domain: TechDomain,
+	catalog: PlanetUpgradeCatalog = null,
+	available_worker_count: int = -1
+) -> bool:
+	var faction: StringName = faction_domain.faction_of(planet_id)
+	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
+	var upgrade: PlanetUpgradeDefinition = effective_catalog.resolve(upgrade_id) if effective_catalog != null else null
+	if upgrade == null:
+		return false
+	if not String(upgrade.required_technology_id).is_empty() and not tech_domain.has_technology(faction, upgrade.required_technology_id):
+		return false
+	# Explicit cap takes priority. If absent, use the registered starting-worker
+	# pool. If the planet is unknown (e.g. after reset before seed_starting_workers),
+	# pass -1 so the flat can_purchase_upgrade skips the worker check entirely.
+	var workforce: int
+	if available_worker_count >= 0:
+		workforce = available_worker_count
+	elif faction_domain.starting_workers.has(planet_id):
+		workforce = int(faction_domain.starting_workers.get(planet_id, 0))
+	else:
+		workforce = -1
+	return can_purchase_upgrade(faction, planet_id, upgrade_id, workforce, effective_catalog)
+
+## Domain-ref overload: combines the tech/worker checks and the purchase in one
+## call so GameState.purchase_upgrade() becomes a one-liner delegation.
+## Same priority rules as can_purchase_upgrade_with_domains.
+func purchase_upgrade_with_domains(
+	planet_id: StringName,
+	upgrade_id: StringName,
+	faction_domain: FactionDomain,
+	tech_domain: TechDomain,
+	catalog: PlanetUpgradeCatalog = null,
+	available_worker_count: int = -1
+) -> bool:
+	if not can_purchase_upgrade_with_domains(planet_id, upgrade_id, faction_domain, tech_domain, catalog, available_worker_count):
+		return false
+	var faction: StringName = faction_domain.faction_of(planet_id)
+	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
+	# Same priority logic for the purchase call.
+	var workforce: int
+	if available_worker_count >= 0:
+		workforce = available_worker_count
+	elif faction_domain.starting_workers.has(planet_id):
+		workforce = int(faction_domain.starting_workers.get(planet_id, 0))
+	else:
+		workforce = -1
+	return purchase_upgrade(faction, planet_id, upgrade_id, workforce, effective_catalog)
+
+
+
 func upgrade_build_in_progress(planet_id: StringName, upgrade_id: StringName = &"") -> bool:
 	if not upgrade_build_jobs.has(planet_id):
 		return false
@@ -657,6 +724,71 @@ func build_worker_factory(
 	worker_factory_built.emit(planet_id)
 	return true
 
+## Domain-ref overload: queries faction + tech requirements via the domain
+## objects so GameState.can_build_worker_factory() becomes a one-liner.
+func can_build_worker_factory_with_domains(
+	planet_id: StringName,
+	faction_domain: FactionDomain,
+	tech_domain: TechDomain,
+	cost_resource: StringName = GameState.RES_MATERIAL,
+	cost_amount: int = 5,
+	credit_cost: int = 5
+) -> bool:
+	var faction: StringName = faction_domain.faction_of(planet_id)
+	return can_build_worker_factory(
+		faction,
+		planet_id,
+		has_planet_upgrade(planet_id, &"shipyard"),
+		faction_domain.has_scanned_planet(faction),
+		tech_domain.has_technology(faction, GameState.TECH_WORKER_AUTOMATION),
+		-1,
+		cost_resource,
+		cost_amount,
+		credit_cost
+	)
+
+## Domain-ref overload: same as can_build_worker_factory_with_domains but also
+## executes the build so GameState.build_worker_factory() becomes a one-liner.
+func build_worker_factory_with_domains(
+	planet_id: StringName,
+	faction_domain: FactionDomain,
+	tech_domain: TechDomain,
+	cost_resource: StringName = GameState.RES_MATERIAL,
+	cost_amount: int = 5,
+	credit_cost: int = 5
+) -> bool:
+	var faction: StringName = faction_domain.faction_of(planet_id)
+	return build_worker_factory(
+		faction,
+		planet_id,
+		has_planet_upgrade(planet_id, &"shipyard"),
+		faction_domain.has_scanned_planet(faction),
+		tech_domain.has_technology(faction, GameState.TECH_WORKER_AUTOMATION),
+		-1,
+		cost_resource,
+		cost_amount,
+		credit_cost
+	)
+
+## Encapsulates resource looting so GameState.steal_resources() becomes a
+## one-liner delegation. Transfers a fraction of the planet's local stock to
+## the attacker's faction vault.
+func steal_resources(planet_id: StringName, attacker_faction: StringName, percentage: float = 0.5) -> Dictionary:
+	var stolen: Dictionary = {}
+	var vault := local_vault(planet_id).duplicate()
+	for resource_id in vault:
+		var amount: int = int(vault[resource_id])
+		if amount <= 0:
+			continue
+		var take: int = maxi(1, int(round(float(amount) * clampf(percentage, 0.0, 1.0))))
+		if take <= 0:
+			continue
+		spend_local_resource(planet_id, resource_id as StringName, take)
+		add_faction_resource(attacker_faction, resource_id as StringName, take)
+		stolen[resource_id] = take
+	return stolen
+
+
 func register_gathering_workers(faction: StringName, planet_id: StringName, source_planet_id: StringName, count: int) -> void:
 	if String(faction).is_empty() or String(planet_id).is_empty() or count <= 0:
 		return
@@ -668,6 +800,25 @@ func register_gathering_workers(faction: StringName, planet_id: StringName, sour
 	gathering_workers[faction][planet_id] = current + count
 	gathering_sources[faction][planet_id] = source_planet_id
 	gathering_started.emit(faction, planet_id, count)
+
+## Domain-ref overload: guards (faction validity, planet ownership, scan) run
+## inside EconomyDomain so GameState.register_gathering_workers() becomes a
+## pure delegation call. Returns the new worker count on the target planet.
+func register_gathering_workers_with_domains(
+	faction: StringName,
+	planet_id: StringName,
+	worker_amount: int,
+	faction_domain: FactionDomain,
+	source_planet_id: StringName = &""
+) -> int:
+	if faction == GameState.FACTION_NEUTRAL or faction.is_empty():
+		return 0
+	if faction_domain.faction_of(planet_id) != GameState.FACTION_NEUTRAL:
+		return 0
+	if not faction_domain.has_scanned_planet(faction, planet_id):
+		return 0
+	register_gathering_workers(faction, planet_id, source_planet_id, worker_amount)
+	return gathering_workers_on(faction, planet_id)
 
 func get_gathering_source(faction: StringName, planet_id: StringName) -> StringName:
 	if not gathering_sources.has(faction):
@@ -941,6 +1092,52 @@ func remove_planet_building(planet_id: StringName, q: int, r: int) -> StringName
 	planet_buildings[planet_id].erase(key)
 	building_removed.emit(planet_id, q, r)
 	return removed
+
+func can_place_building(planet_id: StringName, building_id: StringName, faction_domain: FactionDomain, tech_domain: TechDomain, catalog: BuildingCatalog = null) -> bool:
+	var faction: StringName = faction_domain.faction_of(planet_id)
+	if faction == GameState.FACTION_NEUTRAL:
+		return false
+	var cat: BuildingCatalog = catalog if catalog != null else GameState.DEFAULT_BUILDING_CATALOG
+	if cat == null:
+		return false
+	var building: BuildingDefinition = cat.resolve(building_id)
+	if building == null:
+		return false
+	if not String(building.required_tech_id).is_empty() and not tech_domain.has_technology(faction, building.required_tech_id):
+		return false
+	return can_spend_building_cost(faction, building)
+
+func place_building(planet_id: StringName, building_id: StringName, q: int, r: int, faction_domain: FactionDomain, tech_domain: TechDomain, catalog: BuildingCatalog = null) -> bool:
+	if not can_place_building(planet_id, building_id, faction_domain, tech_domain, catalog):
+		return false
+	var cat: BuildingCatalog = catalog if catalog != null else GameState.DEFAULT_BUILDING_CATALOG
+	var building: BuildingDefinition = cat.resolve(building_id)
+	var faction: StringName = faction_domain.faction_of(planet_id)
+	var job_id := StringName("building_%s_%d_%d" % [String(building_id), q, r])
+	if building_job_in_progress(planet_id, q, r) or planet_building_at(planet_id, q, r) != &"":
+		return false
+	var total_workers: int = maxi(int(faction_domain.starting_workers.get(planet_id, 0)), building.workers_required)
+	if building.workers_required > 0 and not reserve_workers(planet_id, job_id, building.workers_required, total_workers):
+		return false
+	if not spend_building_cost(faction, building):
+		release_workers(planet_id, job_id)
+		return false
+	if building.build_time > 0.0:
+		var queued: bool = queue_planet_building(
+			planet_id, building_id, q, r, faction, job_id, building.build_time,
+			{"resources": building.cost_resources, "credits": building.credit_cost}
+		)
+		if queued:
+			return true
+		# Roll back an impossible queue without leaking costs or labor.
+		release_workers(planet_id, job_id)
+		for resource_id in building.cost_resources:
+			add_faction_resource(faction, resource_id as StringName, int(building.cost_resources[resource_id]))
+		add_faction_credits(faction, building.credit_cost)
+		return false
+	release_workers(planet_id, job_id)
+	record_planet_building(planet_id, building_id, q, r)
+	return true
 
 func planet_building_at(planet_id: StringName, q: int, r: int) -> StringName:
 	if not planet_buildings.has(planet_id):

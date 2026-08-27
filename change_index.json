@@ -110,6 +110,64 @@
 			],
 			"p_id": 50.0
 		},
+		"17df68a364026b9f8b51d90412f0c14b52997d6e": {
+			"c": 52,
+			"composite": "c52j40n6a7p27",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-136",
+				"F-185",
+				"F-186",
+				"F-187",
+				"F-055",
+				"F-188",
+				"F-189",
+				"F-190",
+				"F-145",
+				"F-001",
+				"F-131",
+				"F-057",
+				"F-121",
+				"F-191",
+				"F-192",
+				"F-193",
+				"F-194",
+				"F-195",
+				"F-029",
+				"F-065",
+				"F-196",
+				"F-197",
+				"F-198",
+				"C-326",
+				"C-327",
+				"C-328",
+				"C-329",
+				"C-330",
+				"C-331",
+				"C-332",
+				"C-333",
+				"C-334",
+				"C-335",
+				"C-336",
+				"C-337",
+				"C-338",
+				"C-339",
+				"C-340",
+				"C-341",
+				"C-342",
+				"C-343",
+				"C-344",
+				"C-345",
+				"C-346",
+				"C-347",
+				"C-348",
+				"C-349",
+				"C-350"
+			],
+			"p_id": 52
+		},
 		"193aa9dc36209b96d263cdd3fdb00a5f7fe9a0e3": {
 			"c": 18.0,
 			"composite": "c18j4n7a4p11",
@@ -819,7 +877,7 @@
 			"p_id": 39.0
 		},
 		"f4ad0a403215cec46c4054884825a1f0865419cc": {
-			"c": 51,
+			"c": 51.0,
 			"composite": "c51j51n6a19p16",
 			"entities": [
 				"F-002",
@@ -830,7 +888,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 51
+			"p_id": 51.0
 		},
 		"f5b933b14f7bb53a637cf6fc559569665288d2a8": {
 			"c": 38.0,
@@ -6562,6 +6620,431 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-326": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						6.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-326",
+			"last_p": 52.0,
+			"name": "Anchor",
+			"path": "scripts/config/sector_classifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-327": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						522.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-327",
+			"last_p": 52.0,
+			"name": "_get_sector_anchors",
+			"path": "scripts/objects/chunk_coordinator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-328": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						37.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-328",
+			"last_p": 52.0,
+			"name": "_dispatch_event",
+			"path": "scripts/objects/conflict_manager.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-329": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						1041.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-329",
+			"last_p": 52.0,
+			"name": "capture_snapshot",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-330": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						1062.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-330",
+			"last_p": 52.0,
+			"name": "restore_snapshot",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-331": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						214.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-331",
+			"last_p": 52.0,
+			"name": "capture_snapshot",
+			"path": "scripts/state/domains/faction_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-332": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						225.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-332",
+			"last_p": 52.0,
+			"name": "restore_snapshot",
+			"path": "scripts/state/domains/faction_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-333": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						637.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-333",
+			"last_p": 52.0,
+			"name": "capture_snapshot",
+			"path": "scripts/state/domains/ship_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-334": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						648.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-334",
+			"last_p": 52.0,
+			"name": "restore_snapshot",
+			"path": "scripts/state/domains/ship_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-335": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						660.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-335",
+			"last_p": 52.0,
+			"name": "_snapshot_persistent_ships",
+			"path": "scripts/state/domains/ship_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-336": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						676.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-336",
+			"last_p": 52.0,
+			"name": "_snapshot_research_missions",
+			"path": "scripts/state/domains/ship_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-337": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						691.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-337",
+			"last_p": 52.0,
+			"name": "_restore_persistent_ships",
+			"path": "scripts/state/domains/ship_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-338": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						708.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-338",
+			"last_p": 52.0,
+			"name": "_restore_research_missions",
+			"path": "scripts/state/domains/ship_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-339": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						144.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-339",
+			"last_p": 52.0,
+			"name": "capture_snapshot",
+			"path": "scripts/state/domains/tech_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-340": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						151.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-340",
+			"last_p": 52.0,
+			"name": "restore_snapshot",
+			"path": "scripts/state/domains/tech_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-341": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-341",
+			"last_p": 52.0,
+			"name": "GameEventBus",
+			"path": "scripts/state/event_bus.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-342": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-342",
+			"last_p": 52.0,
+			"name": "game_event",
+			"path": "scripts/state/event_bus.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-343": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-343",
+			"last_p": 52.0,
+			"name": "emit_event",
+			"path": "scripts/state/event_bus.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-344": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-344",
+			"last_p": 52.0,
+			"name": "subscribe",
+			"path": "scripts/state/event_bus.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-345": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						26.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-345",
+			"last_p": 52.0,
+			"name": "unsubscribe",
+			"path": "scripts/state/event_bus.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-346": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						33.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-346",
+			"last_p": 52.0,
+			"name": "clear_subscribers",
+			"path": "scripts/state/event_bus.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-347": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-347",
+			"last_p": 52.0,
+			"name": "_connect_event_bus",
+			"path": "scripts/state/event_log.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-348": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-348",
+			"last_p": 52.0,
+			"name": "_on_game_event",
+			"path": "scripts/state/event_log.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-349": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						147.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-349",
+			"last_p": 52.0,
+			"name": "_dispatch_event",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-350": {
+			"first_p": 52.0,
+			"history": [
+				{
+					"lines": [
+						3.0
+					],
+					"p_id": 52.0
+				}
+			],
+			"id": "C-350",
+			"last_p": 52.0,
+			"name": "_initialize",
+			"path": "scripts/testing/narrative_runtime_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -8399,6 +8882,146 @@
 			"last_p": 51.0,
 			"name": "snipwar_banner.jpg",
 			"path": "assets/ui/snipwar_banner.jpg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-185": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-185",
+			"last_p": 52.0,
+			"name": "gate.py",
+			"path": "narrative_runtime/gate.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-186": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-186",
+			"last_p": 52.0,
+			"name": "gate_cli.py",
+			"path": "narrative_runtime/gate_cli.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-187": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-187",
+			"last_p": 52.0,
+			"name": "project.godot",
+			"path": "project.godot",
+			"status": "created",
+			"type": "file"
+		},
+		"F-188": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-188",
+			"last_p": 52.0,
+			"name": "sector_anchor.gd",
+			"path": "scripts/config/sector_anchor.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-189": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-189",
+			"last_p": 52.0,
+			"name": "sector_anchor.gd.uid",
+			"path": "scripts/config/sector_anchor.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-190": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-190",
+			"last_p": 52.0,
+			"name": "sector_classifier.gd",
+			"path": "scripts/config/sector_classifier.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-191": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-191",
+			"last_p": 52.0,
+			"name": "faction_domain.gd",
+			"path": "scripts/state/domains/faction_domain.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-192": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-192",
+			"last_p": 52.0,
+			"name": "ship_domain.gd",
+			"path": "scripts/state/domains/ship_domain.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-193": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-193",
+			"last_p": 52.0,
+			"name": "tech_domain.gd",
+			"path": "scripts/state/domains/tech_domain.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-194": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-194",
+			"last_p": 52.0,
+			"name": "event_bus.gd",
+			"path": "scripts/state/event_bus.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-195": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-195",
+			"last_p": 52.0,
+			"name": "event_bus.gd.uid",
+			"path": "scripts/state/event_bus.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-196": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-196",
+			"last_p": 52.0,
+			"name": "run_save_data.gd",
+			"path": "scripts/state/run_save_data.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-197": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-197",
+			"last_p": 52.0,
+			"name": "narrative_runtime_gate.gd",
+			"path": "scripts/testing/narrative_runtime_gate.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-198": {
+			"first_p": 52.0,
+			"history": [],
+			"id": "F-198",
+			"last_p": 52.0,
+			"name": "narrative_runtime_gate.gd.uid",
+			"path": "scripts/testing/narrative_runtime_gate.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

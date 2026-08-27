@@ -155,126 +155,163 @@ func _dispatch_event(type: StringName, data: Dictionary) -> void:
 			bus.emit_event(type, data)
 
 func _connect_domain_signals() -> void:
-	# Typed signals in Godot 4.x must be forwarded with explicit arg lists.
-	# Also dispatched into EventBus for decoupled global subscribers.
+	# Connect domain signals to named callbacks to avoid anonymous lambda allocations.
 	faction_domain.faction_changed.connect(_on_domain_faction_changed)
-	faction_domain.planet_discovered.connect(func(f, p):
-		planet_discovered.emit(f, p)
-		_dispatch_event(&"planet_discovered", {"faction": f, "planet_id": p})
-	)
-	faction_domain.planet_scanned.connect(func(f, p, r, s, b):
-		planet_scanned.emit(f, p, r, s, b)
-		_dispatch_event(&"planet_scanned", {"faction": f, "planet_id": p, "resource_id": r, "size_id": s, "build_slots": b})
-	)
+	faction_domain.planet_discovered.connect(_on_domain_planet_discovered)
+	faction_domain.planet_scanned.connect(_on_domain_planet_scanned)
 	faction_domain.milestone_reached.connect(_on_domain_milestone_reached)
 
-	economy_domain.faction_resources_changed.connect(func(f, r, a):
-		faction_resources_changed.emit(f, r, a)
-		_dispatch_event(&"faction_resources_changed", {"faction": f, "resource_id": r, "new_amount": a})
-	)
-	economy_domain.credits_changed.connect(func(f, a):
-		credits_changed.emit(f, a)
-		_dispatch_event(&"credits_changed", {"faction": f, "new_amount": a})
-	)
-	economy_domain.workers_reserved.connect(func(p, j, a):
-		workers_reserved.emit(p, j, a)
-		_dispatch_event(&"workers_reserved", {"planet_id": p, "job_id": j, "amount": a})
-	)
-	economy_domain.workers_released.connect(func(p, j, a):
-		workers_released.emit(p, j, a)
-		_dispatch_event(&"workers_released", {"planet_id": p, "job_id": j, "amount": a})
-	)
-	economy_domain.planet_upgraded.connect(func(p, u):
-		planet_upgraded.emit(p, u)
-		_dispatch_event(&"planet_upgraded", {"planet_id": p, "upgrade_id": u})
-	)
-	economy_domain.resource_generated.connect(func(p, r, a):
-		resource_generated.emit(p, r, a)
-		_dispatch_event(&"resource_generated", {"planet_id": p, "resource_id": r, "amount": a})
-	)
-	economy_domain.resources_collected.connect(func(f, p, r, a):
-		resources_collected.emit(f, p, r, a)
-		_dispatch_event(&"resources_collected", {"faction": f, "planet_id": p, "resource_id": r, "amount": a})
-	)
-	economy_domain.gathering_started.connect(func(f, p, w):
-		gathering_started.emit(f, p, w)
-		_dispatch_event(&"gathering_started", {"faction": f, "planet_id": p, "workers": w})
-	)
-	economy_domain.gathering_withdrawn.connect(func(f, p, w):
-		gathering_withdrawn.emit(f, p, w)
-		_dispatch_event(&"gathering_withdrawn", {"faction": f, "planet_id": p, "workers": w})
-	)
-	economy_domain.worker_factory_built.connect(func(p):
-		worker_factory_built.emit(p)
-		_dispatch_event(&"worker_factory_built", {"planet_id": p})
-	)
-	economy_domain.refinery_converted.connect(func(p, f, c, pr):
-		refinery_converted.emit(p, f, c, pr)
-		_dispatch_event(&"refinery_converted", {"planet_id": p, "faction": f, "consumed": c, "produced": pr})
-	)
-	economy_domain.local_resources_changed.connect(func(p, r, a):
-		local_resources_changed.emit(p, r, a)
-		_dispatch_event(&"local_resources_changed", {"planet_id": p, "resource_id": r, "new_amount": a})
-	)
-	economy_domain.resource_transferred.connect(func(f, t, r, a):
-		resource_transferred.emit(f, t, r, a)
-		_dispatch_event(&"resource_transferred", {"from_planet": f, "to_planet": t, "resource_id": r, "amount": a})
-	)
-	economy_domain.building_placed.connect(func(p, b, q, r):
-		planet_building_placed.emit(p, q, r, b)
-		_dispatch_event(&"planet_building_placed", {"planet_id": p, "building_id": b, "q": q, "r": r})
-	)
-	economy_domain.building_removed.connect(func(p, q, r):
-		planet_building_destroyed.emit(p, q, r)
-		_dispatch_event(&"planet_building_destroyed", {"planet_id": p, "q": q, "r": r})
-	)
+	economy_domain.faction_resources_changed.connect(_on_domain_faction_resources_changed)
+	economy_domain.credits_changed.connect(_on_domain_credits_changed)
+	economy_domain.workers_reserved.connect(_on_domain_workers_reserved)
+	economy_domain.workers_released.connect(_on_domain_workers_released)
+	economy_domain.planet_upgraded.connect(_on_domain_planet_upgraded)
+	economy_domain.resource_generated.connect(_on_domain_resource_generated)
+	economy_domain.resources_collected.connect(_on_domain_resources_collected)
+	economy_domain.gathering_started.connect(_on_domain_gathering_started)
+	economy_domain.gathering_withdrawn.connect(_on_domain_gathering_withdrawn)
+	economy_domain.worker_factory_built.connect(_on_domain_worker_factory_built)
+	economy_domain.refinery_converted.connect(_on_domain_refinery_converted)
+	economy_domain.local_resources_changed.connect(_on_domain_local_resources_changed)
+	economy_domain.resource_transferred.connect(_on_domain_resource_transferred)
+	economy_domain.building_placed.connect(_on_domain_building_placed)
+	economy_domain.building_removed.connect(_on_domain_building_removed)
+	economy_domain.worker_transport_started.connect(_on_domain_worker_transport_started)
+	economy_domain.worker_transport_phase_changed.connect(_on_domain_worker_transport_phase_changed)
 
-	tech_domain.technology_researched.connect(func(f, t):
-		technology_researched.emit(f, t)
-		_dispatch_event(&"technology_researched", {"faction": f, "technology_id": t})
-	)
-	tech_domain.planet_technology_researched.connect(func(p, t):
-		planet_technology_researched.emit(p, t)
-		_dispatch_event(&"planet_technology_researched", {"planet_id": p, "technology_id": t})
-	)
-	tech_domain.research_started.connect(func(f, t, r):
-		research_started.emit(f, t, r)
-		_dispatch_event(&"research_started", {"faction": f, "technology_id": t, "remaining": r})
-	)
+	tech_domain.technology_researched.connect(_on_domain_technology_researched)
+	tech_domain.planet_technology_researched.connect(_on_domain_planet_technology_researched)
+	tech_domain.research_started.connect(_on_domain_research_started)
 
-	ship_domain.ship_part_purchased.connect(func(p, pt):
-		ship_part_purchased.emit(p, pt)
-		_dispatch_event(&"ship_part_purchased", {"planet_id": p, "part_id": pt})
-	)
+	ship_domain.ship_part_purchased.connect(_on_domain_ship_part_purchased)
 	ship_domain.ship_assembled.connect(_on_ship_assembled_domain)
-	ship_domain.ship_disassembled.connect(func(p, s):
-		ship_disassembled.emit(p, s)
-		_dispatch_event(&"ship_disassembled", {"planet_id": p, "ship_id": s})
-	)
-	ship_domain.ship_launched.connect(func(p, s, r):
-		ship_launched.emit(p, s, r)
-		_dispatch_event(&"ship_launched", {"planet_id": p, "ship_id": s, "role": r})
-	)
-	ship_domain.ship_lost.connect(func(p, s):
-		ship_lost.emit(p, s)
-		_dispatch_event(&"ship_lost", {"planet_id": p, "ship_id": s})
-	)
-	ship_domain.ship_build_started.connect(func(p, s, r):
-		ship_build_started.emit(p, s, r)
-		_dispatch_event(&"ship_build_started", {"planet_id": p, "ship_id": s, "remaining": r})
-	)
-	ship_domain.research_ship_task_completed.connect(func(m, p, t):
-		research_ship_task_completed.emit(m, p, t)
-		_dispatch_event(&"research_ship_task_completed", {"mission_id": m, "target_planet_id": p, "task_type": t})
-	)
-	ship_domain.research_ship_idle.connect(func(s, p):
-		research_ship_idle.emit(s, p)
-		_dispatch_event(&"research_ship_idle", {"ship_id": s, "planet_id": p})
-	)
-	ship_domain.persistent_ship_changed.connect(func(s, status):
-		persistent_ship_changed.emit(s, status)
-		_dispatch_event(&"persistent_ship_changed", {"ship_id": s, "status": status})
-	)
+	ship_domain.ship_disassembled.connect(_on_domain_ship_disassembled)
+	ship_domain.ship_launched.connect(_on_domain_ship_launched)
+	ship_domain.ship_lost.connect(_on_domain_ship_lost)
+	ship_domain.ship_build_started.connect(_on_domain_ship_build_started)
+	ship_domain.research_ship_task_completed.connect(_on_domain_research_ship_task_completed)
+	ship_domain.research_ship_idle.connect(_on_domain_research_ship_idle)
+	ship_domain.persistent_ship_changed.connect(_on_domain_persistent_ship_changed)
+
+func _on_domain_planet_discovered(faction: StringName, planet_id: StringName) -> void:
+	planet_discovered.emit(faction, planet_id)
+	_dispatch_event(&"planet_discovered", {"faction": faction, "planet_id": planet_id})
+
+func _on_domain_planet_scanned(faction: StringName, planet_id: StringName, resource_id: StringName, size_id: StringName, build_slots: int) -> void:
+	planet_scanned.emit(faction, planet_id, resource_id, size_id, build_slots)
+	_dispatch_event(&"planet_scanned", {"faction": faction, "planet_id": planet_id, "resource_id": resource_id, "size_id": size_id, "build_slots": build_slots})
+
+func _on_domain_faction_resources_changed(faction: StringName, resource_id: StringName, new_amount: int) -> void:
+	faction_resources_changed.emit(faction, resource_id, new_amount)
+	_dispatch_event(&"faction_resources_changed", {"faction": faction, "resource_id": resource_id, "new_amount": new_amount})
+
+func _on_domain_credits_changed(faction: StringName, new_amount: int) -> void:
+	credits_changed.emit(faction, new_amount)
+	_dispatch_event(&"credits_changed", {"faction": faction, "new_amount": new_amount})
+
+func _on_domain_workers_reserved(planet_id: StringName, job_id: StringName, amount: int) -> void:
+	workers_reserved.emit(planet_id, job_id, amount)
+	_dispatch_event(&"workers_reserved", {"planet_id": planet_id, "job_id": job_id, "amount": amount})
+
+func _on_domain_workers_released(planet_id: StringName, job_id: StringName, amount: int) -> void:
+	workers_released.emit(planet_id, job_id, amount)
+	_dispatch_event(&"workers_released", {"planet_id": planet_id, "job_id": job_id, "amount": amount})
+
+func _on_domain_planet_upgraded(planet_id: StringName, upgrade_id: StringName) -> void:
+	planet_upgraded.emit(planet_id, upgrade_id)
+	_dispatch_event(&"planet_upgraded", {"planet_id": planet_id, "upgrade_id": upgrade_id})
+
+func _on_domain_resource_generated(planet_id: StringName, resource_id: StringName, amount: int) -> void:
+	resource_generated.emit(planet_id, resource_id, amount)
+	_dispatch_event(&"resource_generated", {"planet_id": planet_id, "resource_id": resource_id, "amount": amount})
+
+func _on_domain_resources_collected(faction: StringName, planet_id: StringName, resource_id: StringName, amount: int) -> void:
+	resources_collected.emit(faction, planet_id, resource_id, amount)
+	_dispatch_event(&"resources_collected", {"faction": faction, "planet_id": planet_id, "resource_id": resource_id, "amount": amount})
+
+func _on_domain_gathering_started(faction: StringName, planet_id: StringName, workers: int) -> void:
+	gathering_started.emit(faction, planet_id, workers)
+	_dispatch_event(&"gathering_started", {"faction": faction, "planet_id": planet_id, "workers": workers})
+
+func _on_domain_gathering_withdrawn(faction: StringName, planet_id: StringName, workers: int) -> void:
+	gathering_withdrawn.emit(faction, planet_id, workers)
+	_dispatch_event(&"gathering_withdrawn", {"faction": faction, "planet_id": planet_id, "workers": workers})
+
+func _on_domain_worker_factory_built(planet_id: StringName) -> void:
+	worker_factory_built.emit(planet_id)
+	_dispatch_event(&"worker_factory_built", {"planet_id": planet_id})
+
+func _on_domain_refinery_converted(planet_id: StringName, faction: StringName, consumed: Dictionary, produced: Dictionary) -> void:
+	refinery_converted.emit(planet_id, faction, consumed, produced)
+	_dispatch_event(&"refinery_converted", {"planet_id": planet_id, "faction": faction, "consumed": consumed, "produced": produced})
+
+func _on_domain_local_resources_changed(planet_id: StringName, resource_id: StringName, new_amount: int) -> void:
+	local_resources_changed.emit(planet_id, resource_id, new_amount)
+	_dispatch_event(&"local_resources_changed", {"planet_id": planet_id, "resource_id": resource_id, "new_amount": new_amount})
+
+func _on_domain_resource_transferred(from_planet: StringName, to_planet: StringName, resource_id: StringName, amount: int) -> void:
+	resource_transferred.emit(from_planet, to_planet, resource_id, amount)
+	_dispatch_event(&"resource_transferred", {"from_planet": from_planet, "to_planet": to_planet, "resource_id": resource_id, "amount": amount})
+
+func _on_domain_building_placed(planet_id: StringName, building_id: StringName, q: int, r: int) -> void:
+	planet_building_placed.emit(planet_id, q, r, building_id)
+	_dispatch_event(&"planet_building_placed", {"planet_id": planet_id, "building_id": building_id, "q": q, "r": r})
+
+func _on_domain_building_removed(planet_id: StringName, q: int, r: int) -> void:
+	planet_building_destroyed.emit(planet_id, q, r)
+	_dispatch_event(&"planet_building_destroyed", {"planet_id": planet_id, "q": q, "r": r})
+
+func _on_domain_worker_transport_started(transport_id: StringName, faction: StringName, amount: int) -> void:
+	worker_transport_started.emit(transport_id, faction, amount)
+	_dispatch_event(&"worker_transport_started", {"transport_id": transport_id, "faction": faction, "amount": amount})
+
+func _on_domain_worker_transport_phase_changed(transport_id: StringName, phase: StringName) -> void:
+	worker_transport_phase_changed.emit(transport_id, phase)
+	_dispatch_event(&"worker_transport_phase_changed", {"transport_id": transport_id, "phase": phase})
+
+func _on_domain_technology_researched(faction: StringName, technology_id: StringName) -> void:
+	technology_researched.emit(faction, technology_id)
+	_dispatch_event(&"technology_researched", {"faction": faction, "technology_id": technology_id})
+
+func _on_domain_planet_technology_researched(planet_id: StringName, technology_id: StringName) -> void:
+	planet_technology_researched.emit(planet_id, technology_id)
+	_dispatch_event(&"planet_technology_researched", {"planet_id": planet_id, "technology_id": technology_id})
+
+func _on_domain_research_started(faction: StringName, technology_id: StringName, remaining: float) -> void:
+	research_started.emit(faction, technology_id, remaining)
+	_dispatch_event(&"research_started", {"faction": faction, "technology_id": technology_id, "remaining": remaining})
+
+func _on_domain_ship_part_purchased(planet_id: StringName, part_id: StringName) -> void:
+	ship_part_purchased.emit(planet_id, part_id)
+	_dispatch_event(&"ship_part_purchased", {"planet_id": planet_id, "part_id": part_id})
+
+func _on_domain_ship_disassembled(planet_id: StringName, ship_id: StringName) -> void:
+	ship_disassembled.emit(planet_id, ship_id)
+	_dispatch_event(&"ship_disassembled", {"planet_id": planet_id, "ship_id": ship_id})
+
+func _on_domain_ship_launched(planet_id: StringName, ship_id: StringName, role: StringName) -> void:
+	ship_launched.emit(planet_id, ship_id, role)
+	_dispatch_event(&"ship_launched", {"planet_id": planet_id, "ship_id": ship_id, "role": role})
+
+func _on_domain_ship_lost(planet_id: StringName, ship_id: StringName) -> void:
+	ship_lost.emit(planet_id, ship_id)
+	_dispatch_event(&"ship_lost", {"planet_id": planet_id, "ship_id": ship_id})
+
+func _on_domain_ship_build_started(planet_id: StringName, ship_id: StringName, remaining: float) -> void:
+	ship_build_started.emit(planet_id, ship_id, remaining)
+	_dispatch_event(&"ship_build_started", {"planet_id": planet_id, "ship_id": ship_id, "remaining": remaining})
+
+func _on_domain_research_ship_task_completed(mission_id: StringName, target_planet_id: StringName, task_type: StringName) -> void:
+	research_ship_task_completed.emit(mission_id, target_planet_id, task_type)
+	_dispatch_event(&"research_ship_task_completed", {"mission_id": mission_id, "target_planet_id": target_planet_id, "task_type": task_type})
+
+func _on_domain_research_ship_idle(ship_id: StringName, planet_id: StringName) -> void:
+	research_ship_idle.emit(ship_id, planet_id)
+	_dispatch_event(&"research_ship_idle", {"ship_id": ship_id, "planet_id": planet_id})
+
+func _on_domain_persistent_ship_changed(ship_id: StringName, status: StringName) -> void:
+	persistent_ship_changed.emit(ship_id, status)
+	_dispatch_event(&"persistent_ship_changed", {"ship_id": ship_id, "status": status})
 
 func _on_ship_assembled_domain(planet_id: StringName, ship_id: StringName) -> void:
 	economy_domain.release_workers(planet_id, ship_id)
@@ -585,16 +622,10 @@ func can_spend_faction_cost(faction: StringName, resource_id: StringName, resour
 	return economy_domain.can_spend_cost(faction, resource_id, resource_amount, credit_amount)
 
 func begin_worker_transport(faction: StringName, source_planet_id: StringName, destination_planet_id: StringName, amount: int, duration: float, route_path: Array[Vector2]) -> StringName:
-	var transport_id: StringName = economy_domain.begin_worker_transport(faction, source_planet_id, destination_planet_id, amount, duration, route_path)
-	if not String(transport_id).is_empty():
-		worker_transport_started.emit(transport_id, faction, amount)
-	return transport_id
+	return economy_domain.begin_worker_transport(faction, source_planet_id, destination_planet_id, amount, duration, route_path)
 
 func update_worker_transport(transport_id: StringName, phase: StringName, cargo_resource_id: StringName = &"", cargo_amount: int = 0) -> bool:
-	var updated: bool = economy_domain.update_worker_transport(transport_id, phase, cargo_resource_id, cargo_amount)
-	if updated:
-		worker_transport_phase_changed.emit(transport_id, phase)
-	return updated
+	return economy_domain.update_worker_transport(transport_id, phase, cargo_resource_id, cargo_amount)
 
 func set_worker_transport_escorted(transport_id: StringName, escorted: bool = true) -> bool:
 	return economy_domain.set_worker_transport_escorted(transport_id, escorted)
@@ -603,10 +634,7 @@ func get_worker_transport_records(faction: StringName = &"") -> Array[Dictionary
 	return economy_domain.get_worker_transport_records(faction)
 
 func complete_worker_transport(transport_id: StringName, delivered: bool = true) -> bool:
-	var completed: bool = economy_domain.complete_worker_transport(transport_id, delivered)
-	if completed:
-		worker_transport_phase_changed.emit(transport_id, &"delivered" if delivered else &"cancelled")
-	return completed
+	return economy_domain.complete_worker_transport(transport_id, delivered)
 
 func get_market_price(from_planet: StringName, to_planet: StringName, resource_id: StringName) -> float:
 	return economy_domain.get_market_price(from_planet, to_planet, resource_id)
@@ -663,25 +691,10 @@ func get_planet_upgrades(planet_id: StringName) -> Array[StringName]:
 	return economy_domain.get_planet_upgrades(planet_id)
 
 func can_purchase_upgrade(planet_id: StringName, upgrade_id: StringName, catalog: PlanetUpgradeCatalog = null, available_workers: int = -1) -> bool:
-	var faction: StringName = faction_of(planet_id)
-	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else DEFAULT_UPGRADE_CATALOG
-	var upgrade: PlanetUpgradeDefinition = effective_catalog.resolve(upgrade_id) if effective_catalog != null else null
-	if upgrade == null or (not String(upgrade.required_technology_id).is_empty() and not has_technology(faction, upgrade.required_technology_id)):
-		return false
-	var workforce: int = available_workers
-	if workforce < 0 and faction_domain.starting_workers.has(planet_id):
-		workforce = int(faction_domain.starting_workers.get(planet_id, 0))
-	return economy_domain.can_purchase_upgrade(faction, planet_id, upgrade_id, workforce, effective_catalog)
+	return economy_domain.can_purchase_upgrade_with_domains(planet_id, upgrade_id, faction_domain, tech_domain, catalog, available_workers)
 
 func purchase_upgrade(planet_id: StringName, upgrade_id: StringName, catalog: PlanetUpgradeCatalog = null, available_workers: int = -1) -> bool:
-	var faction: StringName = faction_of(planet_id)
-	if not can_purchase_upgrade(planet_id, upgrade_id, catalog, available_workers):
-		return false
-	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else DEFAULT_UPGRADE_CATALOG
-	var workforce: int = available_workers
-	if workforce < 0 and faction_domain.starting_workers.has(planet_id):
-		workforce = int(faction_domain.starting_workers.get(planet_id, 0))
-	return economy_domain.purchase_upgrade(faction, planet_id, upgrade_id, workforce, effective_catalog)
+	return economy_domain.purchase_upgrade_with_domains(planet_id, upgrade_id, faction_domain, tech_domain, catalog, available_workers)
 
 func add_planet_upgrade(planet_id: StringName, upgrade_id: StringName) -> void:
 	economy_domain.add_planet_upgrade(planet_id, upgrade_id)
@@ -690,41 +703,17 @@ func has_worker_factory(planet_id: StringName) -> bool:
 	return economy_domain.has_worker_factory(planet_id)
 
 func can_build_worker_factory(planet_id: StringName, cost_resource: StringName, cost_amount: int, credit_cost: int = 5) -> bool:
-	var faction: StringName = faction_of(planet_id)
-	return economy_domain.can_build_worker_factory(
-		faction,
-		planet_id,
-		has_planet_upgrade(planet_id, &"shipyard"),
-		has_scanned_planet(faction),
-		has_technology(faction, TECH_WORKER_AUTOMATION),
-		-1,
-		cost_resource,
-		cost_amount,
-		credit_cost
-	)
+	return economy_domain.can_build_worker_factory_with_domains(planet_id, faction_domain, tech_domain, cost_resource, cost_amount, credit_cost)
 
 func build_worker_factory(planet_id: StringName, cost_resource: StringName, cost_amount: int, credit_cost: int = 5) -> bool:
-	var faction: StringName = faction_of(planet_id)
-	var built: bool = economy_domain.build_worker_factory(
-		faction,
-		planet_id,
-		has_planet_upgrade(planet_id, &"shipyard"),
-		has_scanned_planet(faction),
-		has_technology(faction, TECH_WORKER_AUTOMATION),
-		-1,
-		cost_resource,
-		cost_amount,
-		credit_cost
-	)
+	var built: bool = economy_domain.build_worker_factory_with_domains(planet_id, faction_domain, tech_domain, cost_resource, cost_amount, credit_cost)
 	if built:
-		mark_milestone(faction, &"first_worker_factory")
+		mark_milestone(faction_of(planet_id), &"first_worker_factory")
 	return built
 
 func register_gathering_workers(faction: StringName, planet_id: StringName, worker_amount: int, source_planet_id: StringName = &"") -> int:
-	if faction == FACTION_NEUTRAL or faction.is_empty() or faction_of(planet_id) != FACTION_NEUTRAL or not has_scanned_planet(faction, planet_id):
-		return 0
-	economy_domain.register_gathering_workers(faction, planet_id, source_planet_id, worker_amount)
-	return economy_domain.gathering_workers_on(faction, planet_id)
+	return economy_domain.register_gathering_workers_with_domains(faction, planet_id, worker_amount, faction_domain, source_planet_id)
+
 
 func get_available_workers(planet_id: StringName, total_workers: int) -> int:
 	return economy_domain.available_workers(planet_id, total_workers)
@@ -907,50 +896,11 @@ func reconcile_defender_fleet(planet_id: StringName, defender_fleet: FleetSnapsh
 
 # --- GRID BUILDINGS, LOCAL RESOURCES & CAPTURE DELEGATES ---
 func can_place_planet_building(planet_id: StringName, building_id: StringName, catalog: BuildingCatalog = null) -> bool:
-	var faction: StringName = faction_of(planet_id)
-	if faction == FACTION_NEUTRAL:
-		return false
-	var cat: BuildingCatalog = catalog if catalog != null else DEFAULT_BUILDING_CATALOG
-	if cat == null:
-		return false
-	var building: BuildingDefinition = cat.resolve(building_id)
-	if building == null:
-		return false
-	if not String(building.required_tech_id).is_empty() and not has_technology(faction, building.required_tech_id):
-		return false
-	return economy_domain.can_spend_building_cost(faction, building)
+	return economy_domain.can_place_building(planet_id, building_id, faction_domain, tech_domain, catalog)
 
 func place_planet_building(planet_id: StringName, building_id: StringName, q: int, r: int, catalog: BuildingCatalog = null) -> bool:
-	if not can_place_planet_building(planet_id, building_id, catalog):
-		return false
-	var cat: BuildingCatalog = catalog if catalog != null else DEFAULT_BUILDING_CATALOG
-	var building: BuildingDefinition = cat.resolve(building_id)
-	var faction: StringName = faction_of(planet_id)
-	var job_id := StringName("building_%s_%d_%d" % [String(building_id), q, r])
-	if economy_domain.building_job_in_progress(planet_id, q, r) or economy_domain.planet_building_at(planet_id, q, r) != &"":
-		return false
-	var total_workers: int = maxi(int(faction_domain.starting_workers.get(planet_id, 0)), building.workers_required)
-	if building.workers_required > 0 and not economy_domain.reserve_workers(planet_id, job_id, building.workers_required, total_workers):
-		return false
-	if not economy_domain.spend_building_cost(faction, building):
-		economy_domain.release_workers(planet_id, job_id)
-		return false
-	if building.build_time > 0.0:
-		var queued: bool = economy_domain.queue_planet_building(
-			planet_id, building_id, q, r, faction, job_id, building.build_time,
-			{"resources": building.cost_resources, "credits": building.credit_cost}
-		)
-		if queued:
-			return true
-		# Roll back an impossible queue without leaking costs or labor.
-		economy_domain.release_workers(planet_id, job_id)
-		for resource_id in building.cost_resources:
-			economy_domain.add_faction_resource(faction, resource_id as StringName, int(building.cost_resources[resource_id]))
-		economy_domain.add_faction_credits(faction, building.credit_cost)
-		return false
-	economy_domain.release_workers(planet_id, job_id)
-	economy_domain.record_planet_building(planet_id, building_id, q, r)
-	return true
+	return economy_domain.place_building(planet_id, building_id, q, r, faction_domain, tech_domain, catalog)
+
 
 func remove_planet_building(planet_id: StringName, q: int, r: int) -> bool:
 	return not String(economy_domain.remove_planet_building(planet_id, q, r)).is_empty()
@@ -1001,19 +951,8 @@ func capture_planet(planet_id: StringName, decision: StringName, faction: String
 			set_faction(planet_id, faction)
 
 func steal_resources(planet_id: StringName, attacker_faction: StringName, percentage: float = 0.5) -> Dictionary:
-	var stolen: Dictionary = {}
-	var vault := economy_domain.local_vault(planet_id).duplicate()
-	for resource_id in vault:
-		var amount: int = int(vault[resource_id])
-		if amount <= 0:
-			continue
-		var take: int = maxi(1, int(round(float(amount) * clampf(percentage, 0.0, 1.0))))
-		if take <= 0:
-			continue
-		economy_domain.spend_local_resource(planet_id, resource_id as StringName, take)
-		economy_domain.add_faction_resource(attacker_faction, resource_id as StringName, take)
-		stolen[resource_id] = take
-	return stolen
+	return economy_domain.steal_resources(planet_id, attacker_faction, percentage)
+
 
 # --- SAVE / LOAD SNAPSHOTS ---
 
