@@ -163,13 +163,22 @@
 				"F-022",
 				"F-001",
 				"F-023",
-				"F-024"
+				"F-024",
+				"F-025",
+				"F-026",
+				"F-027",
+				"F-017",
+				"F-016",
+				"C-029",
+				"C-030",
+				"C-031",
+				"C-032"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
-			"weight": 3.0
+			"weight": 7.7
 		}
 	},
 	"description": "Arcs als abstrakte ID-Map (a1..aN). Jeder Arc repräsentiert eine Projekt-Phase. Der aktive Arc ist über 'active' referenziert. 'weight' ist der akkumulierte narrative Druck (deterministisch aus Chain + Diff berechnet), 'climax_weight' die Schwelle für ARC_CLIMAX. Port aus lore_arcs.json, erweitert um Gewichtsmodell.",

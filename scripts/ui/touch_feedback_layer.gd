@@ -13,9 +13,9 @@ func _ready() -> void:
 	add_child(_drawer)
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_spawn_ripple(event.position)
-	elif event is InputEventScreenTouch and event.pressed:
+	# Mouse is the primary control — a ripple "click indicator" on every mouse
+	# click reads as noise. Keep the feedback for actual touch input only.
+	if event is InputEventScreenTouch and event.pressed:
 		_spawn_ripple(event.position)
 
 func _spawn_ripple(pos: Vector2) -> void:

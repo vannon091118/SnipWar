@@ -362,7 +362,7 @@ func _create_dossier_launcher() -> void:
 	box.position = Vector2(12.0, 72.0)
 	box.add_theme_constant_override("separation", 6)
 	layer.add_child(box)
-	_add_dossier_button(box, "PLANET", _open_planet_dossier)
+	_add_dossier_button(box, "PLANET", _open_planet_dossier, "Planeten-Dossier: Gebäude, Hangar, planetare Forschung")
 	_add_dossier_button(box, "WERKSTATT", _open_workshop_dossier)
 	_add_dossier_button(box, "FORSCHUNG", _open_tech_tree_dossier)
 	_add_dossier_button(box, "ECONOMY", _toggle_economy_module)
@@ -552,10 +552,12 @@ func _create_input_hints() -> void:
 	add_child(_input_hints)
 	_input_hints.setup(ui_theme_config)
 
-func _add_dossier_button(box: VBoxContainer, text: String, pressed: Callable) -> void:
+func _add_dossier_button(box: VBoxContainer, text: String, pressed: Callable, tooltip: String = "") -> void:
 	var button := Button.new()
 	button.text = text
 	button.focus_mode = Control.FOCUS_NONE
+	if tooltip != "":
+		button.tooltip_text = tooltip
 	UIBaseUtils.apply_button_theme(button, ui_theme_config)
 	button.pressed.connect(pressed)
 	box.add_child(button)

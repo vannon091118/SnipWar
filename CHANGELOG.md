@@ -356,3 +356,20 @@ DOKI-Analyzer + Doku: Modul 3 strikt + Modul 8 bidirektional, Separation-of-Conc
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
 - scripts/doki/doki_analyze.gd: Dokumentation aktualisiert (F-023).
 - scripts/doki/doki_analyze.gd.uid: Dokumentation aktualisiert (F-024).
+
+## 2026-08-27 01:00:00 — p25 · c25j76n4a8p3 · Vannon · müde-zufrieden
+
+**Stimmen gelebt statt genannt:. … — nach Squizzle**
+
+Stimmen gelebt statt genannt: Stil-Beispiele für alle 14 Charaktere, Mood-Ausdruck pro Stimmung, Kategorie-Kalibrierung gegen Euphorie über Doku, Anti-Naming-Regel, Selfcheck-Regression
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/README.md: Dokumentation aktualisiert (F-022).
+- scripts/doki/character/mood_overlay.gd: Dokumentation aktualisiert (F-025).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- scripts/doki/data/moods.json: Dokumentation aktualisiert (F-026).
+- scripts/doki/data/narrators.json: Dokumentation aktualisiert (F-027).
+- scripts/doki/doki_selfcheck.gd: Dokumentation aktualisiert (F-017).
+- scripts/doki/prompt/voice_composer.gd: Dokumentation aktualisiert (F-016).

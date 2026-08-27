@@ -61,7 +61,7 @@
 			"p_id": 14.0
 		},
 		"1b717c4a66ae5426216eb9d7a1f57eddc8e21c1a": {
-			"c": 24,
+			"c": 24.0,
 			"composite": "c24j40n5a5p12",
 			"entities": [
 				"F-019",
@@ -75,7 +75,7 @@
 				"F-023",
 				"F-024"
 			],
-			"p_id": 24
+			"p_id": 24.0
 		},
 		"2bc5533d6b8bb9fd26723d1048947df8561e89f6": {
 			"c": 17.0,
@@ -155,6 +155,27 @@
 				"F-001"
 			],
 			"p_id": 19.0
+		},
+		"caeed225d6e93fbfd5c0160e8f62c616aefbbf31": {
+			"c": 25,
+			"composite": "c25j76n4a8p3",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-022",
+				"F-025",
+				"F-001",
+				"F-026",
+				"F-027",
+				"F-017",
+				"F-016",
+				"C-029",
+				"C-030",
+				"C-031",
+				"C-032"
+			],
+			"p_id": 25
 		},
 		"e186c98431e04aeca11e227c7459fc3daa695ff0": {
 			"c": 12.0,
@@ -653,6 +674,74 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-029": {
+			"first_p": 25.0,
+			"history": [
+				{
+					"lines": [
+						31.0
+					],
+					"p_id": 25.0
+				}
+			],
+			"id": "C-029",
+			"last_p": 25.0,
+			"name": "mood_expression",
+			"path": "scripts/doki/character/mood_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-030": {
+			"first_p": 25.0,
+			"history": [
+				{
+					"lines": [
+						37.0
+					],
+					"p_id": 25.0
+				}
+			],
+			"id": "C-030",
+			"last_p": 25.0,
+			"name": "category_calibration",
+			"path": "scripts/doki/character/mood_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-031": {
+			"first_p": 25.0,
+			"history": [
+				{
+					"lines": [
+						406.0
+					],
+					"p_id": 25.0
+				}
+			],
+			"id": "C-031",
+			"last_p": 25.0,
+			"name": "_test_prompt_voice_lived",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-032": {
+			"first_p": 25.0,
+			"history": [
+				{
+					"lines": [
+						449.0
+					],
+					"p_id": 25.0
+				}
+			],
+			"id": "C-032",
+			"last_p": 25.0,
+			"name": "_fixture_voice_ctx",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -890,6 +979,36 @@
 			"last_p": 24.0,
 			"name": "doki_analyze.gd.uid",
 			"path": "scripts/doki/doki_analyze.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-025": {
+			"first_p": 25.0,
+			"history": [],
+			"id": "F-025",
+			"last_p": 25.0,
+			"name": "mood_overlay.gd",
+			"path": "scripts/doki/character/mood_overlay.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-026": {
+			"first_p": 25.0,
+			"history": [],
+			"id": "F-026",
+			"last_p": 25.0,
+			"name": "moods.json",
+			"path": "scripts/doki/data/moods.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-027": {
+			"first_p": 25.0,
+			"history": [],
+			"id": "F-027",
+			"last_p": 25.0,
+			"name": "narrators.json",
+			"path": "scripts/doki/data/narrators.json",
 			"status": "created",
 			"type": "file"
 		}

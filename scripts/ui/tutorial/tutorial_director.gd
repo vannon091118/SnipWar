@@ -1,17 +1,17 @@
 class_name TutorialDirector
 extends CanvasLayer
 
-## Interaktives Onboarding: führt den Spieler Schritt für Schritt durch die
-## erste Partie (Kamera → Planetenwahl → Forschung → Bau → Werkstatt → Scout).
-## Jeder Schritt hat eine Karte mit Ziel-Marker (Weltposition oder UI-Button)
-## und eine Abschluss-Bedingung, die über GameState-Signale/Prädikate geprüft
-## wird. WEITER überspringt einen Schritt manuell; TUTORIAL-Button im
-## DossierLauncher startet neu. Es gibt bewusst KEINE vordefinierten
-## Test-Szenarien für den Ablauf — die MCP-Agenten entdecken die Oberfläche
-## selbst und erweitern ihre Bibliothek über das Playthrough-Archiv.
+## Reines Onboarding: führt den Spieler Schritt für Schritt durch die erste
+## Partie (Kamera → Planetenwahl → Forschung → Bau → Werkstatt → Scout).
+## Das Tutorial ist ausschließlich präsentativ — es startet, erkennt, wartet
+## oder vollzieht NICHTS im Hintergrund. Jeder Schritt zeigt eine Flyover-Karte
+## plus Ziel-Marker (Weltposition oder UI-Button) und erklärt, was der Spieler
+## tun soll; weiter geht es ausschließlich über den WEITER-Button.
+## TUTORIAL-Button im DossierLauncher startet neu. Es gibt bewusst KEINE
+## vordefinierten Test-Szenarien für den Ablauf — die MCP-Agenten entdecken die
+## Oberfläche selbst und erweitern ihre Bibliothek über das Playthrough-Archiv.
 
 const MAX_STEPS := 8
-const POLL_INTERVAL := 0.35
 
 var _theme_config: UIThemeConfig
 var _planet_network: Node
@@ -20,7 +20,6 @@ var _map_camera: Node
 var _state: Node
 var _steps: Array = []
 var _step_index := 0
-var _poll_accumulator := 0.0
 var _active := false
 var _auto_started := false
 
@@ -84,16 +83,16 @@ func _build_ui() -> void:
 
 	_card = PanelContainer.new()
 	_card.name = "TutorialCard"
-	_card.mouse_filter = Control.MOUSE_FILTER_STOP
+	_card.mouse_filter = Control.MOUSE_FILTER_IGNORE  # Flyover: Panel-Body schluckt keine Klicks; WEITER/ÜBERSPRINGEN behalten ihren eigenen Filter
 	_card.add_theme_stylebox_override(
 		"panel",
 		UIBaseUtils.texture_style_box(_theme_config, _theme_config.modal_background_texture, _theme_config.panel_background, float(_theme_config.card_padding))
 	)
-	_card.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	_card.offset_left = -320.0
-	_card.offset_right = 320.0
-	_card.offset_top = -150.0
-	_card.offset_bottom = -28.0
+	# Flyover card: floats near the current step's target (planet/button)
+	# instead of a fixed dialog zone. Position is managed per frame by
+	# _position_card() and clamped to the viewport, size follows content.
+	_card.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_card.position = Vector2(320.0, 380.0)
 	add_child(_card)
 
 	var margin := MarginContainer.new()
@@ -116,7 +115,7 @@ func _build_ui() -> void:
 	_text_label = Label.new()
 	_text_label.name = "TutorialText"
 	_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_text_label.custom_minimum_size = Vector2(600.0, 0.0)
+	_text_label.custom_minimum_size = Vector2(320.0, 0.0)
 	_text_label.add_theme_font_size_override("font_size", _theme_config.body_font_size)
 	_text_label.add_theme_color_override("font_color", _theme_config.secondary_text_color)
 	column.add_child(_text_label)
@@ -167,49 +166,48 @@ func _build_steps() -> void:
 		"id": "camera",
 		"title": "WILLKOMMEN BEI SNIPWAR",
 		"text": "Bewege die Kamera mit [W A S D] und zoome mit dem Mausrad. Deine Heimatwelt trägt den grünen Ring.",
-		"predicate": null,
 		"target": "planet",
 	})
 	_steps.append({
 		"id": "select_homeworld",
 		"title": "PLANET WÄHLEN",
 		"text": "Klicke deine Heimatwelt an. Rechts öffnet sich das Planeten-Panel für Missionen und Versand.",
-		"predicate": Callable(self, "_homeworld_selected"),
 		"target": "planet",
 	})
 	_steps.append({
 		"id": "research",
 		"title": "ERSTE FORSCHUNG",
-		"text": "Öffne links [F] FORSCHUNG und starte im Forschungsbaum „Orbitales Werft-Design“ (grüner Rahmen = lernbar).",
-		"predicate": Callable(self, "_research_started"),
+		"text": "Öffne links [F] FORSCHUNG und klicke im Forschungsbaum „Orbitales Werft-Design“ (grüner Rahmen = lernbar). Die Forschung läuft dann von selbst — du siehst den Fortschritt im Spinner.",
 		"target": "button:FORSCHUNG",
+	})
+	_steps.append({
+		"id": "open_dossier",
+		"title": "PLANETEN-DOSSIER",
+		"text": "Öffne [P] PLANETEN-DOSSIER (links PLANET) und wähle deine Heimatwelt — dort liegen Bau, Hangar und planetare Forschung.",
+		"target": "button:PLANET",
 	})
 	_steps.append({
 		"id": "build_shipyard",
 		"title": "ERSTES GEBÄUDE",
-		"text": "Öffne [P] PLANETEN-DOSSIER, wähle deinen Planeten und drücke BAUEN auf dem „Orbitalen Werft-Design“ (Kategorie INFRASTRUKTUR).",
-		"predicate": Callable(self, "_shipyard_building"),
+		"text": "Scrolle im Dossier zur Kategorie MILITARY, finde die „Orbitale Werft“ (20 Biomasse · 5 Credits) und drücke BAUEN.",
 		"target": "planet",
 	})
 	_steps.append({
 		"id": "workshop",
 		"title": "WERKSTATT & SCHIFF",
 		"text": "Öffne [W] WERKSTATT, kaufe Teile (Hülle, Antrieb, Schild, Scanner), wähle sie in der Montage und drücke KOMBINIEREN.",
-		"predicate": Callable(self, "_ship_in_build"),
 		"target": "button:WERKSTATT",
 	})
 	_steps.append({
 		"id": "scout",
 		"title": "FORSCHUNGSSCHIFF STARTEN",
 		"text": "In der WERKSTATT unten: Startplanet + unbekannter Nachbar wählen und FORSCHUNGSSCHIFF STARTEN drücken.",
-		"predicate": Callable(self, "_scout_launched"),
 		"target": "button:WERKSTATT",
 	})
 	_steps.append({
 		"id": "done",
 		"title": "BEREIT FÜR DIE STERNE",
 		"text": "Geschafft! Erkunde weitere Welten, sammle Ressourcen und erweitere deine Flotte. Viel Erfolg, Commander.",
-		"predicate": null,
 		"target": "",
 	})
 
@@ -221,19 +219,7 @@ func _present_step() -> void:
 	_title_label.text = String(step.get("title", ""))
 	_text_label.text = String(step.get("text", ""))
 	_counter_label.text = "Schritt %d / %d" % [_step_index + 1, _steps.size()]
-	_marker_target_valid = false
-	_marker_target = Vector2.ZERO
-	if String(step.get("target", "")) == "planet":
-		var target_planet := _target_planet()
-		if target_planet != null and is_instance_valid(target_planet):
-			_marker_target = _world_to_screen(target_planet.global_position)
-			_marker_target_valid = true
-	elif String(step.get("target", "")).begins_with("button:"):
-		var button := _find_launcher_button(String(step.get("target", "")).get_slice(":", 1))
-		if button != null and is_instance_valid(button):
-			var rect: Rect2 = button.get_global_rect()
-			_marker_target = rect.get_center()
-			_marker_target_valid = true
+	_refresh_marker_target()
 	_marker.queue_redraw()
 
 func _on_weiter_pressed() -> void:
@@ -243,60 +229,6 @@ func _on_weiter_pressed() -> void:
 func _finish() -> void:
 	_active = false
 	hide_overlay()
-
-# ── Prädikate ──────────────────────────────────────────────────────────
-
-func _homeworld_selected() -> bool:
-	if _planet_network == null or not is_instance_valid(_planet_network):
-		return false
-	var ui: Node = _planet_network.get("_ui") if _planet_network.get("_ui") != null else null
-	if ui == null or not ui.has_method("is_panel_visible"):
-		return false
-	return bool(ui.call("is_panel_visible"))
-
-func _research_started() -> bool:
-	if _state == null:
-		return false
-	return _state.has_technology(GameState.FACTION_PLAYER, &"shipyard_construction") or _state.research_in_progress(GameState.FACTION_PLAYER, &"shipyard_construction")
-
-func _shipyard_building() -> bool:
-	if _state == null:
-		return false
-	for planet in _planets_of(GameState.FACTION_PLAYER):
-		if planet == null:
-			continue
-		var planet_id: StringName = planet.get("planet_id")
-		if _state.has_planet_upgrade(planet_id, &"shipyard"):
-			return true
-		if _state.has_method("upgrade_build_in_progress") and _state.upgrade_build_in_progress(planet_id, &"shipyard"):
-			return true
-	return false
-
-func _ship_in_build() -> bool:
-	if _state == null:
-		return false
-	for planet in _planets_of(GameState.FACTION_PLAYER):
-		if planet == null:
-			continue
-		if _state.has_method("get_ship_build_jobs") and not _state.get_ship_build_jobs(planet.get("planet_id")).is_empty():
-			return true
-		if _state.has_method("get_ship_assemblies") and not _state.get_ship_assemblies(planet.get("planet_id")).is_empty():
-			return true
-	return false
-
-func _scout_launched() -> bool:
-	if _state == null:
-		return false
-	if _state.has_method("get_research_ship_records"):
-		var records: Array = _state.get_research_ship_records(GameState.FACTION_PLAYER)
-		if not records.is_empty():
-			return true
-	for planet in _planets_of(GameState.FACTION_PLAYER):
-		if planet == null:
-			continue
-		if _state.has_method("get_ship_assemblies") and not _state.get_ship_assemblies(planet.get("planet_id")).is_empty():
-			return true
-	return false
 
 # ── Helfer ─────────────────────────────────────────────────────────────
 
@@ -336,11 +268,45 @@ func _world_to_screen(world_position: Vector2) -> Vector2:
 		return _map_camera.get_canvas_transform() * world_position
 	return world_position
 
+## Re-resolves the current step's target to its live screen position, so the
+## marker ring (planet) or highlight (button) follows camera motion.
+func _refresh_marker_target() -> void:
+	var step: Dictionary = _steps[_step_index] if _step_index < _steps.size() else {}
+	_marker_target_valid = false
+	_marker_target = Vector2.ZERO
+	if String(step.get("target", "")) == "planet":
+		var target_planet := _target_planet()
+		if target_planet != null and is_instance_valid(target_planet):
+			_marker_target = _world_to_screen(target_planet.global_position)
+			_marker_target_valid = true
+	elif String(step.get("target", "")).begins_with("button:"):
+		var button := _find_launcher_button(String(step.get("target", "")).get_slice(":", 1))
+		if button != null and is_instance_valid(button):
+			_marker_target = button.get_global_rect().get_center()
+			_marker_target_valid = true
+
+## Flyover positioning: the card floats above the target when there is room,
+## otherwise below it, always clamped inside the viewport.
+func _position_card() -> void:
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+	var card_size: Vector2 = _card.size
+	if card_size.x <= 0.0 or card_size.y <= 0.0 or viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+		return
+	var margin := 10.0
+	var target: Vector2 = _marker_target if _marker_target_valid else Vector2(viewport_size.x * 0.5, viewport_size.y - 80.0)
+	var position := Vector2(target.x - card_size.x * 0.5, target.y + 16.0)
+	if target.y - card_size.y - margin >= 0.0:
+		position.y = target.y - card_size.y - margin
+	position.x = clampf(position.x, margin, maxf(margin, viewport_size.x - card_size.x - margin))
+	position.y = clampf(position.y, margin, maxf(margin, viewport_size.y - card_size.y - margin))
+	_card.position = position
+
 func _draw_marker() -> void:
 	if not _active or not _marker_target_valid:
 		return
 	var radius := 16.0 + 4.0 * sin(Time.get_ticks_msec() * 0.006)
-	var color := _theme_config.branch_tech_color
+	# The tutorial promises a GREEN ring around the homeworld — keep it green.
+	var color := Color(0.35, 0.85, 0.45)
 	color.a = 0.9
 	_marker.draw_arc(_marker_target, radius, 0.0, TAU, 48, color, 3.0, true)
 	_marker.draw_arc(_marker_target, radius + 6.0, 0.0, TAU, 48, Color(color.r, color.g, color.b, 0.35), 2.0, true)
@@ -348,13 +314,8 @@ func _draw_marker() -> void:
 func _process(delta: float) -> void:
 	if not _active:
 		return
+	# Präsentation only: Ring und Flyover-Karte kleben am Ziel, während die
+	# Kamera gleitet/pannt/zoomt. Das Tutorial selbst macht NICHTS automatisch.
+	_refresh_marker_target()
 	_marker.queue_redraw()
-	_poll_accumulator += delta
-	if _poll_accumulator < POLL_INTERVAL:
-		return
-	_poll_accumulator = 0.0
-	var step: Dictionary = _steps[_step_index] if _step_index < _steps.size() else {}
-	var predicate: Variant = step.get("predicate", Callable())
-	if predicate is Callable and predicate.is_valid() and bool(predicate.call()):
-		_step_index += 1
-		_present_step()
+	_position_card()

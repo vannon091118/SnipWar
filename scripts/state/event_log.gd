@@ -102,7 +102,14 @@ func _on_planet_scanned(_faction: StringName, planet_id: StringName, resource_id
 func _on_planet_upgraded(planet_id: StringName, upgrade_id: StringName) -> void:
 	push(&"economy", "%s: %s errichtet." % [_planet_name(planet_id), _upgrade_name(upgrade_id)])
 
-func _on_technology_researched(_faction: StringName, technology_id: StringName) -> void:
+func _on_technology_researched(faction: StringName, technology_id: StringName) -> void:
+	# Nur die eigene Forschung ist ein Spieler-Event: Die CPU erforscht parallel
+	# (z.B. "Orbitales Werft-Design" direkt nach Weltstart). Deren Abschluss darf
+	# nicht als "Forschung abgeschlossen"-Toast des Spielers erscheinen, sondern
+	# geht nur still ins Log ein.
+	if faction != &"a":
+		log_silent(&"tech", "Forschung abgeschlossen: %s (%s)." % [_technology_name(technology_id), _faction_name(faction)])
+		return
 	push(&"tech", "Forschung abgeschlossen: %s." % _technology_name(technology_id))
 
 func _on_planet_technology_researched(planet_id: StringName, technology_id: StringName) -> void:

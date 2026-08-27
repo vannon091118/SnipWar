@@ -247,6 +247,8 @@ Die AI läuft als Overworld-Dispatcher; sie simuliert keine Schiffs- oder Mech-K
 - MessageFeed zeigt nur sichtbare Einträge und begrenzt die Toast-Anzahl.
 - `EventLog` exportiert standardmäßig erst bei `NOTIFICATION_WM_CLOSE_REQUEST` nach `user://player.log`; Headless-Läufe schreiben nicht automatisch den echten Spielerlog.
 
+- `TutorialDirector` (CanvasLayer 92) ist **rein präsentatives Onboarding** — Doktrin: das Tutorial startet, erkennt, wartet oder vollzieht NICHTS im Hintergrund. Pro Schritt zeigt es eine Flyover-Karte (nahe am Ziel positioniert, im Viewport geclampt) und einen Ziel-Marker (grüner Ring um die Heimatwelt bzw. Button-Highlight), der der Kamera live folgt. Fortschritt passiert ausschließlich über den `WEITER ›`-Button; `ÜBERSPRINGEN` beendet das Tutorial. Keine Prädikate, kein Auto-Advance, kein GameState-Eingriff — die Spiellogik (Wirtschaftsticks, zeitgesteuerte Forschung) läuft unabhängig davon. 8 Schritte: Kamera → Planet wählen → erste Forschung → Planetendossier öffnen → Orbitale Werft bauen → Werkstatt & Schiff → Forschungsschiff starten → Fertig.
+
 ## 12. Präsentation und Rendering
 
 `Background` liegt auf z=-100, `PlanetField` auf z=20. Starfield-Sterne und Staub nutzen `MultiMeshInstance2D`; Folds und Grain werden über `draw_multiline()` mit konfigurierbaren Alpha-Buckets gezeichnet. Viewport-Resizes bauen die Batches neu auf.

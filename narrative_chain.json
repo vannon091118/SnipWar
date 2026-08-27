@@ -1806,6 +1806,78 @@
 			"seq": 24,
 			"subject": "Squizzles Fall: DOKI-Analyzer + Doku: Modul 3 strikt + Modul 8… — nach Buffy",
 			"summary": "Buffy hatte die Netze gespannt, aber ein Forensiker weiß: Die Messlatte selbst muss stimmen, sonst zählen die Checks das Falsche. Deshalb habe ich die Indizien gegen die Realität gehalten — und zwe..."
+		},
+		{
+			"a": 8,
+			"arc": "a8",
+			"c": 25,
+			"composite": "c25j76n4a8p3",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 79.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 72.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/README.md",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/character/mood_overlay.gd",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/moods.json",
+					"insertions": 24.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/narrators.json",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_selfcheck.gd",
+					"insertions": 72.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/voice_composer.gd",
+					"insertions": 15.0
+				}
+			],
+			"date": "2026-08-27 01:00:00",
+			"hash": "caeed225d6e93fbfd5c0160e8f62c616aefbbf31",
+			"j": 76,
+			"model_id": "claude-sonnet-4",
+			"mood": "müde-zufrieden",
+			"n": 4,
+			"narrator": "Vannon",
+			"p": 3,
+			"p_id": 25,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Squizzle",
+			"seq": 25,
+			"subject": "Stimmen gelebt statt genannt:. … — nach Squizzle",
+			"summary": "Squizzle hat die Kette sauber analysiert, deshalb konnte ich das hier gerade durchziehen: Die Stimmen wurden benannt, aber nicht gelebt — jeder Commit klang gleich, nur der Name wechselte. Das war ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
