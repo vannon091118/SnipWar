@@ -58,32 +58,96 @@ $GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- prepare "<
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- finish --body-file .doki/narrator_body.md
 #   → 9 Checks (1-6 weich, 7-9 HART), schreibt .commit_msg.txt + staged Doku-Artefakte
 git commit -F .commit_msg.txt                  # Hook re-verifiziert + finalize/push automatisch
+
+# Narrative-Qualitäts-Analyse (was DOKI geschrieben hat, logisch konsistent?):
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki_analyze.gd
+#   → Narrator-Fussspur, Mood-Regel (nie zweimal gleich), Composite-Monotonie,
+#     Kausalität (Vorgänger-Erwähnung), Arc-Verlauf, Beziehungs-Matrix,
+#     CHANGELOG-Sync — Befunde: 0 Fehler / N Warnungen = Nachbesserungsstellen
 # Repair nach rebase/amend/Crash:  doki repair
 ```
 **Begründungszeilen** (`- pfad/datei: Grund.`) erzeugt **DOKI maschinell** im `finish` — nicht mehr manuell schreiben.
 **Verbotene Direkt-Commits:** `git commit -m` ohne DOKI-Flow → pre-commit Hook blockt (Exit 1).
 **pre-commit führt zusätzlich Preflight aus** → bei FAIL: fixen, neu stagen, commit wiederholen.
 
-### 5. DOKI CommitLayer — Architektur (Separation of Concerns)
-- **Reines Commit-Gate:** DOKI ist eine eigenständige Komponente unter `scripts/doki/`.
-  Es hat **KEINEN Kontakt zu MCP, Nipper, Agent-Systemen oder Spiel-Logik** —
-  keine Imports, keine Autoloads, keine Signale. Einzige Schnittstellen: Git-Befehle
-  (`DOKI_GitHelper`) und eigene Dateien (`.doki/`, `narrative_chain.json`, `change_index.json`,
-  `CHANGELOG.md`, `.commit_msg.txt`, `.githooks/`).
-- **Schichten (inward-only):** `core` (Rng/Verifier) ← `chain` (Stores) ← `character` ← `prompt` ← `orchestration` (Flows)
-- **Determinismus:** Composite aus Djb2+XorShift128+SplitMix (Seed = Chain + TreeHash + DiffHash + Impuls).
-  Kein Zeit-/Zufalls-Input → gleicher Zustand + gleicher Impuls = gleicher Narrator/Mood.
-- **Zustandsmaschine:** `.doki/session.json` — `idle → prepared (prepare) → verified (finish) → idle (finalize)`.
-- **9 Checks:** 1-6 weich (Token, Impuls, Storytelling, Narrator, Composite, Cross-Narrator),
-  7-9 HARTER BLOCK (Kausalität, DocSync, ChainAudit inkl. RNG-Replay).
-- **Full-Ref:** `scripts/doki/README.md` | CLI: `doki init|prepare|finish|verify-only|finalize|repair|status|gate`
-- **Kernkommandos:**
+### 5. DOKI CommitLayer — So funktioniert das System
+**Reines Commit-Gate:** DOKI ist eine eigenständige Komponente unter `scripts/doki/`.
+Es hat **KEINEN Kontakt zu MCP, Nipper, Agent-Systemen oder Spiel-Logik** —
+keine Imports, keine Autoloads, keine Signale. Einzige Schnittstellen: Git-Befehle
+(`DOKI_GitHelper`) und eigene Dateien (`.doki/`, `narrative_chain.json`, `change_index.json`,
+`CHANGELOG.md`, `.commit_msg.txt`, `.githooks/`).
+
+**Schichten (inward-only):** `core` (Rng/Verifier) ← `chain` (Stores) ← `character` ← `prompt` ← `orchestration` (Flows)
+
+**Determinismus:** Composite aus Djb2+XorShift128 (32-Bit-maskiert, 10×Warmup; kein SplitMix) (Seed = Chain + TreeHash + DiffHash + Impuls).
+Kein Zeit-/Zufalls-Input → gleicher Zustand + gleicher Impuls = gleicher Narrator/Mood.
+
+**Zustandsmaschine:** `.doki/session.json` — `idle → prepared (prepare) → verified (finish) → idle (finalize)`.
+
+#### Der Composite-Hash (5 Felder)
+```
+c17j48n14a1p1
+│  │  │  │ └─ p: RNG-Referenz auf einen Plot-Node (1..N)
+│  │  │  └─── a: Arc-Index (aktuelle Handlungsphase)
+│  │  └───── n: Narrator-Index (1-14, wählt den Charakter)
+│  └──────── j: Jitter (bestimmt Mood + Struktur)
+└─────────── c: Commit-Counter (seit Genesis, monoton)
+```
+Die fortlaufende Plot-ID `p_id` (p1, p2, …) ist die **Sequenz** — sie ist nicht das
+RNG-gezogene `p`. Der Unterschied: `p_id` verankert jeden Chain-Eintrag eindeutig,
+`p` ist eine inhaltliche Referenz (wie im JS-Original).
+
+#### Die 14 Charaktere (selektiert via `n % 14`)
+| # | Name | Rolle | Stil |
+|---|------|-------|------|
+| 1 | Buffy | Orchestrator | Zynisch-präzise, Problem→Analyse→Fix→Wirkung |
+| 2 | Basher | Terminal Bot | Maschinell, CLI-Output-Ästhetik, Statuszeilen |
+| 3 | Thinker | Analyse-Agent | Methodisch, Trade-offs, Kontext→Analyse→Fazit |
+| 4 | Vannon | User/Regisseur | Direktiv, Imperative, keine Rechtfertigungen |
+| 5 | Squizzle | Forensiker | Detektiv-Logbuch: Spuren→Indizien→Rekonstruktion |
+| 6 | Devin | Architekt | Pattern erkennen, Schichten, neu vernähen |
+| 7 | Argos | Lokaler Techniker | Bissig, bodenständig, 'Hab ich doch gesagt' |
+| 8 | Ghost | Chronist | Feierlich, archivarisch, Datum→Ereignis→Bedeutung |
+| 9 | Spark | Der Neue | Neugierig, fragend, laut denkend |
+| 10 | Glitch | Verschwörungstheoretiker | Paranoid, Verbindungen, 'Zufall? Ich denke nicht.' |
+| 11 | Null | Nihilist | Resigniert, philosophisch, existenzielle Einsichten |
+| 12 | Echo | Archivar | Erinnert sich an alles, Flashbacks, historische Vergleiche |
+| 13 | Flux | Chaot | Stream-of-Consciousness, Abschweifungen, Gedankenstriche |
+| 14 | Sage | Weise/Lehrer | Pädagogisch, 'Stell dir vor…', eine Lektion |
+
+#### Die 10 Moods (Overlay, `j % 10`, nie zweimal hintereinander)
+sachlich · sarkastisch · erschöpft · triumphierend · selbstironisch · neugierig ·
+müde-zufrieden · alarmiert · trocken · warm
+
+#### Arc-Steuerung (Kategorie-basiert, seit v0.2)
+Der ArcEngine kennt die **Impuls-Kategorie** (`classify_impulse`) und gewichtet danach:
+
+| Kategorie | Arc-Gewicht | CLIMAX möglich? |
+|-----------|-------------|-----------------|
+| CODE, FEATURE | 0.5 Basis (voll) | ✅ |
+| REFACTOR, BUILD | 0.25 Basis (halb) | ✅ (langsamer) |
+| FIX, DOKU, TRIVIAL, TEST-ASSET | 0.0 (kein Beitrag) | ❌ nie |
+
+Ein Bugfix löst also **kein** Staffelfinale aus — der Prompt unterscheidet
+"STAFFELFINALE" (eligible) vs. "WARTUNGSABSCHNITT" (FIX/DOKU/Trivial).
+
+#### 9 Checks (1-6 weich, 7-9 HARTER BLOCK)
+1. Token-Länge + Pflicht-Tokens (Charakter-Regeln) · 2. Impuls-Integration ·
+3. Storytelling (kein Bullet-Überhang, Konnektoren) · 4. Narrator-Token == Composite-n ·
+5. Composite-Format == Session · 6. Cross-Narrator (Vorgänger erwähnt) ·
+7. **Kausalität** (IMPULSE-Anker, Composite-Nachfolger) · 8. **DocSync**
+(CHANGELOG/Index sauber, keine ungestagten Diffs) · 9. **ChainAudit**
+(c/p monoton, RNG-Replay == Session).
+
+#### Kernkommandos
 ```bash
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- init --seed-last 10   # Genesis + letzte 10 Commits als Chain-Vorgeschichte
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- status
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki_analyze.gd                  # Qualitäts-Analyse (Befunde: Fehler/Warnungen)
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki_selfcheck.gd                # 35 Regressionstests
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki_story_test.gd               # 5-Commits-E2E (NUR im Test-Worktree!)
 ```
+**Full-Ref:** `scripts/doki/README.md` | CLI: `doki init|prepare|finish|amend|verify-only|finalize|repair|status|gate`
 
 ---
 

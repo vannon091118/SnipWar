@@ -1682,6 +1682,58 @@
 			"seq": 22,
 			"subject": "Squizzles Fall: DOKI-Kern: transaktionales finalize… — nach Devin",
 			"summary": "FALL-NEUAUFNAHME: Devin hatte die Daten-Schicht genäht, aber der Kern hatte noch offene Wunden — und diesmal war der Befund alarmierend, weil er die Commit-Kette selbst betraf. Die Spuren: Ein fina..."
+		},
+		{
+			"a": 4,
+			"arc": "a7",
+			"c": 23,
+			"composite": "c23j3n1a4p16",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 23.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 343.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 102.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 37.0
+				},
+				{
+					"deletions": 16.0,
+					"file": "scripts/doki/doki_selfcheck.gd",
+					"insertions": 132.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/doki_story_test.gd",
+					"insertions": 124.0
+				}
+			],
+			"date": "2026-08-27 23:00:00",
+			"hash": "aea99b31d8e999f5921e633b33c7ed89d49c719c",
+			"j": 3,
+			"model_id": "claude-sonnet-4",
+			"mood": "triumphierend",
+			"n": 1,
+			"narrator": "Buffy",
+			"p": 16,
+			"p_id": 23,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Squizzle",
+			"seq": 23,
+			"subject": "[Buffy] DOKI-Tests: Amend-Regression im Selfcheck… — nach Squizzle",
+			"summary": "Squizzle hat den Kern gedichtet, aber ein Architekt weiß: Ohne Netze ist die Mauer nur Deko. Also habe ich die Regressionen gegossen, und diesmal mit triumphierendem Unterton, weil die Tests genau ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

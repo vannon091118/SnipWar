@@ -32,11 +32,17 @@ Idle ── prepare ──▶ Prepared ── finish ──▶ Verified ── g
 ### 1. `prepare "<impuls>"` (idle → prepared)
 - Ladet Chain-State aus `narrative_chain.json`
 - **Composite** deterministisch: `Djb2(prevComposite + TreeHash + DiffHash + Impuls)`
-  → XorShift128 (+ SplitMix-Avalanche, 32-Bit-Maskierung) → `cXjXnXaXpX`
+  → XorShift128 (32-Bit-maskiert, 10×Warmup — kein SplitMix) → `cXjXnXaXpX`
 - **Narrator** via `n % 14` (1-14), **Mood** via `j % 10` (nie zweimal hintereinander)
 - SidePlot-Erkennung bei Merge (`MERGE_HEAD`), Arc-Gewicht + ARC_CLIMAX-Trigger,
   Relationship-Sentiment zum Vorgänger-Narrator
 - Schreibt `.doki/prompt.txt` (System + User) für den Agenten
+
+**Arc-Gewicht ist Kategorie-basiert** (`classify_impulse`):
+- CODE/FEATURE → volles Gewicht, CLIMAX möglich
+- REFACTOR/BUILD → halbes Gewicht, CLIMAX möglich
+- FIX/DOKU/TRIVIAL/TEST-ASSET → kein Gewicht, **nie CLIMAX**
+  (Prompt: "WARTUNGSABSCHNITT" statt "STAFFELFINALE" via `arc_climax_eligible`)
 
 ### 2. Agent schreibt den Body
 Der Agent liest `prompt.txt` und schreibt die Commit-Erzählung **in der Rolle des
@@ -57,25 +63,69 @@ Charakters** als Fließtext (keine Bullets).
   7. **Kausalität:** IMPULSE-Anker + Composite ist Ketten-Nachfolger der Session
   8. **DocSync:** CHANGELOG/change_index existieren + keine ungestagten Diffs
   9. **ChainAudit:** c-Folge lückenlos, kein Doppel-Append, **RNG-Replay** == Session
-- Erst nach Erfolg: `CHANGELOG.md` + `change_index.json` + `.commit_msg.txt`
-  schreiben und stagen
-- `verify-only` (commit-msg Hook) = gleiche Checks, keine Nebenwirkungen
+- Nach Erfolg schreibt `finish` nur `.commit_msg.txt` (Fehlschlag = Disk unberührt).
+  `CHANGELOG.md`/`change_index.json` entstehen erst in `finalize` NACH dem Commit
+  (transaktional — kein Orphan-Eintrag mehr bei gescheitertem Commit)
+- `verify-only` (commit-msg Hook) = gleiche Checks, keine Nebenwirkungen; bei
+  idle + DOKI-HEAD-Message: chain-verankerter **Amend-Modus** (Checks 1-8)
 
 ### 4. `git commit -F .commit_msg.txt`
 - **pre-commit:** Preflight-Gate + DOKI-Gate (Session verified? Snapshot-Match?
   `.commit_msg.txt` da? — Rebase/Amend werden erkannt und übersprungen)
 - **commit-msg:** `verify-only` re-validiert
+- **post-commit:** finalize MUSS gelingen, sonst wird der Push abgebrochen (siehe §5)
+
+**Amend eines DOKI-Commits nach finalize:** `doki amend --body-file <f>` liest die
+HEAD-Message, ersetzt nur den Narrator-Body (Subject/Tokens/Arc/Reason-Zeilen
+bleiben), verifiziert chain-verankert (Checks 1-8) und schreibt `.commit_msg.txt`.
+Danach: `git commit --amend -F .commit_msg.txt`. finalize aktualisiert beim nächsten
+Lauf den Entry-Hash (Composite-Abgleich).
+
+> **Hooks ohne `GODOT_BIN` (asymmetrisch):** Fehlt die Godot-Binary (oder ist sie
+> nicht ausführbar), blockiert **pre-commit** mit Exit 1 (Preflight + DOKI-Gate
+> laufen nicht), während **commit-msg** mit Exit 0 durchlässt (Verifikation
+> übersprungen) und **post-commit** finalize überspringt, aber trotzdem pusht.
+> `GODOT_BIN` ist also Voraussetzung für das vollständige Commit-Gate.
 
 ### 5. `finalize` (post-commit Hook, automatisch)
-- Chain-Append: `{seq, hash, composite, mood, narrator, model_id, summary, data_changes}`
-- ChangeIndex `commits`-Map mit Git-Hash verknüpfen
-- Arc-Advance prüfen (ARC_CLIMAX → Phasenwechsel)
-- `narrative_chain.json` + `change_index.json` stagen (reisen mit dem nächsten Commit)
-- `.commit_msg.txt` aufräumen → kein Dirty-State. **Idempotent.**
+- Chain-Append: `{seq, hash, composite, mood, narrator, model_id, summary, subject,
+  data_changes}` (`summary` = erste Body-Zeile, `subject` = echter Git-Subject
+  inkl. „— nach <Vorgänger>" — Grundlage für die Kausalitäts-Analyse)
+- ChangeIndex `commits`-Map mit Git-Hash verknüpfen (analysierter Index aus der Session)
+- Arc-Advance prüfen (ARC_CLIMAX → Phasenwechsel); der NÄCHSTER-ARC-Vorschlag des
+  Narrators („NÄCHSTER ARC: <Name> — <Thema>" im Body-Epilog) wird als Name/Thema
+  des neuen Bogens übernommen
+- `narrative_chain.json` + `change_index.json` + `scripts/doki/data/arcs.json` +
+  `CHANGELOG.md` stagen (reisen mit dem nächsten Commit; CHANGELOG-Eintrag entsteht
+  erst HIER — nach dem Commit, kein Orphan)
+- `.commit_msg.txt`, `.doki/prompt.txt`, `.doki/narrator_body.md` aufräumen →
+  kein Dirty-State. **Idempotent.**
 
 ### 6. Determinismus
 Gleicher Chain-Zustand + gleicher Impuls + gleicher Diff = gleicher Narrator,
 gleicher Mood, gleicher Composite. **Kein** Zeit-/Zufalls-Input in prepare/derive.
+
+## 🔬 Narrative-Qualitäts-Analyse
+
+```bash
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki_analyze.gd
+```
+
+Prüft die **logische Konsistenz** dessen, was DOKI geschrieben hat:
+
+1. **Narrator-Fussspur** — wer erzählt wann (SEED vs. DOKI getrennt)
+2. **Mood-Progression** — Regel „nie zweimal gleich" (Verstoß = ERROR)
+3. **Composite-Integrität** — c/p-Folge **lückenlos** (`c == prev+1`, wie Check 9a) +
+   strikte Format-Validierung (`^c\d+j\d+n\d+a\d+p\d+$`)
+4. **Kausalität** — wird der Vorgänger-Narrator im echten Git-Subject erwähnt?
+   (Warnung wenn nicht; liest das `subject`-Feld der Chain, Fallback `summary`)
+5. **Arc-Verlauf** — Themen pro Bogen + `arcs.json`-Status (aktiv/completed)
+6. **Beziehungs-Matrix** — wer folgt auf wen (Übergänge)
+7. **Subject-Stile pro Erzähler** — Stimmen-Konsistenz sichtbar
+8. **CHANGELOG-Sync** — Einträge vs. echte DOKI-Commits, **bidirektional**
+   (weniger Einträge = Doku hinkt, mehr Einträge = Orphan-Verdacht)
+
+Befunde am Ende: `0 Fehler / N Warnungen` = Stellen für Nachbesserung.
 
 ## 🛠 Recovery
 
@@ -85,6 +135,7 @@ gleicher Mood, gleicher Composite. **Kein** Zeit-/Zufalls-Input in prepare/deriv
 | Abgebrochener prepare | `doki repair` (Session-Reset) |
 | rebase/amend/force-push | `doki repair` (Chain-Anker neu verankern) |
 | Stale `.commit_msg.txt` | Gate blockt (Snapshot-Mismatch) → `doki prepare` erneut |
+| Orphan im CHANGELOG | Analyzer-Modul 8 (mehr Einträge als Commits) → Migration `doki-tools/doki_migrate.py` |
 
 ## 🧪 Tests
 
@@ -93,6 +144,8 @@ gleicher Mood, gleicher Composite. **Kein** Zeit-/Zufalls-Input in prepare/deriv
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki_selfcheck.gd
 
 # 5-Commits-E2E mit echter Git-Historie (NUR im Test-Worktree, NIEMALS im Haupt-Worktree!):
+# Hard-Guard: der Test blockt im Haupt-Worktree (git-dir == <repo>/.git) —
+# Ausnahme nur mit Env-Flag DOKI_STORY_TEST_ALLOW=1.
 $GODOT_BIN --headless --path <test-worktree> --script <abs>/doki_story_test.gd --repo <pfad>
 ```
 
@@ -108,4 +161,4 @@ $GODOT_BIN --headless --path <test-worktree> --script <abs>/doki_story_test.gd -
 | orchestration | `commit_orchestrator.gd` (Koordinator), `session_builder.gd`, `message_builder.gd`, `artifact_writer.gd`, `git_helper.gd` | Flow-Wiring |
 | orchestration/flows | `prepare_flow.gd`, `finish_flow.gd`, `finalize_flow.gd`, `gate_flow.gd`, `status_flow.gd` | Zustandsübergänge |
 | data | `narrators.json`, `moods.json`, `arcs.json` | Charakter-/Mood-Daten |
-| Root | `doki.gd` (CLI), `doki_selfcheck.gd`, `doki_story_test.gd` | Einstieg + Tests |
+| Root | `doki.gd` (CLI), `doki_selfcheck.gd`, `doki_story_test.gd`, `doki_analyze.gd` | Einstieg + Tests + Analyse |

@@ -326,3 +326,16 @@ DOKI-Kern: transaktionales finalize (Artefakt-Writes nach Commit), Idempotenz-Gu
 - scripts/doki/orchestration/message_builder.gd: Tooling erweitert (F-014).
 - scripts/doki/prompt/arc_engine.gd: Tooling erweitert (F-015).
 - scripts/doki/prompt/voice_composer.gd: Tooling erweitert (F-016).
+
+## 2026-08-27 23:00:00 — p23 · c23j3n1a4p16 · Buffy · triumphierend
+
+**[Buffy] DOKI-Tests: Amend-Regression im Selfcheck… — nach Squizzle**
+
+DOKI-Tests: Amend-Regression im Selfcheck (Rekonstruktion + Hash-Sync, zentrale Fixtures) und finalize-Retry-Idempotenz im Story-Test
+
+- CHANGELOG.md: Tooling erweitert (F-002).
+- change_index.json: Tooling erweitert (F-003).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+- scripts/doki/doki_selfcheck.gd: Tooling erweitert (F-017).
+- scripts/doki/doki_story_test.gd: Tooling erweitert (F-018).

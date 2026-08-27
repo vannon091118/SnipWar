@@ -472,3 +472,74 @@ Ein Schritt gilt erst als abgeschlossen, wenn:
 4. die Szene nur über Methoden nach unten und Signals nach oben kommuniziert;
 5. Godot 4.7.2 Headless-Smoke und Preflight grün bleiben;
 6. die Feature-Matrix in Abschnitt 15 von „geplant/teilweise“ auf den korrekten Status aktualisiert wurde.
+
+---
+
+## 17. DOKI CommitLayer — Separation of Concerns (verifiziert)
+
+> **Regel:** DOKI ist ein reines Git-Commit-Gate. Läuft die Spiel- oder MCP-Runtime, ist DOKI **leise und nicht existent** — kein Autoload, kein Editor-Plugin, kein Node, kein Signal, kein Import in beide Richtungen. Die einzigen Schnittstellen nach außen sind **Git-Hooks** und die **CLI** (`--script`). Dieser Abschnitt ist gegen den Code verifiziert (Stand: Abschnitt 17, August 2026); bei Abweichung gilt der Code.
+
+### 17.1 Bidirektions-Diagramm (nur Git-Hooks + CLI)
+
+```
+                  ┌──────────────────────────────────────────────┐
+                  │            SPIEL- / MCP-RUNTIME             │
+                  │  Autoloads (GameState, McpRuntime, …)        │
+                  │  Szenen, Addons, Signale                     │
+                  └───────────────▲──────────────────▲──────────┘
+                                  │                  │
+                          KEINE Kopplung      KEINE Kopplung
+                          (0 Imports,          (0 Imports,
+                           0 Autoloads,          0 Signale)
+                           0 Plugins)
+                                  │                  │
+                  ┌───────────────┴──────────────────┴──────────┐
+                  │               DOKI COMMITLAYER              │
+                  │  scripts/doki/**  (24 Klassen, alle          │
+                  │  RefCounted oder SceneTree-CLI, kein Node)   │
+                  └───────────────▲──────────────────▲──────────┘
+                                  │                  │
+                    EINZIGE Schnittstellen:          │
+                                  │                  │
+   ┌──────────────────────────────┴───┐   ┌──────────┴──────────────┐
+   │          GIT-HOOKS               │   │           CLI            │
+   │  core.hooksPath = .githooks      │   │  godot --headless …       │
+   │  ├─ pre-commit  → Gate + Preflight│   │  --script res://scripts/  │
+   │  ├─ commit-msg  → verify-only     │   │  doki.gd                 │
+   │  └─ post-commit → finalize + Push │   │  doki_analyze.gd         │
+   └──────────────────────────────┬───┘   │  doki_selfcheck.gd        │
+                                  │       │  doki_story_test.gd       │
+                                  │       └──────────────────────────┘
+                                  ▼
+                     Git-Commit / Commit-Message
+                     (narrative_chain.json, change_index.json,
+                      CHANGELOG.md, arcs.json reisen mit dem Commit)
+```
+
+### 17.2 Verifizierte Constraints
+
+| # | Constraint | Quelle | Status |
+|---|-----------|--------|--------|
+| SO1 | **Kein DOKI-Autoload:** `project.godot [autoload]` enthält 8 Autoloads (GameState, GameCycleManager, SceneDirectorService, SaveGameService, EventLog, TouchFeedbackLayer, McpRuntime, McpProjectAdapter) — **kein DOKI-Eintrag** | `project.godot:24–33` | ✅ |
+| SO2 | **Kein DOKI-Editor-Plugin:** `[editor_plugins]` aktiviert nur `res://addons/gdscript_mcp/plugin.cfg` | `project.godot:43–45` | ✅ |
+| SO3 | **Keine DOKI-Klasse ist ein Node:** 20 von 24 Klassen `extends RefCounted` (können strukturell nicht im SceneTree hängen, kein `_ready`/`_process`); 4 `extends SceneTree` = reine CLI-Einstiege | grep über alle `scripts/doki/*.gd` | ✅ |
+| SO4 | **Keine Signale:** kein einziges `signal`/`emit_signal` in `scripts/doki/**` | grep | ✅ |
+| SO5 | **Keine Spiel-Referenzen auf DOKI:** `scenes/`, `scripts/` (außer Tooling), `addons/` referenzieren DOKI nirgends | grep | ✅ |
+| SO6 | **Keine DOKI-Referenzen im MCP-Addon** (`addons/gdscript_mcp/**`) | grep | ✅ |
+| SO7 | **Keine umgekehrten Imports:** `scripts/doki/**` referenziert `res://scenes`, `res://addons`, `GameState`, `McpRuntime` nirgends | grep | ✅ |
+| SO8 | **Aktivierung NUR via Git:** `core.hooksPath = .githooks` (Git-Config, nicht Godot) → pre-commit (Gate+Preflight), commit-msg (verify-only), post-commit (finalize+Push) | `.git/config` + `.githooks/*` | ✅ |
+| SO9 | **CLI-Einstiege nur `--script`:** `doki.gd`, `doki_analyze.gd`, `doki_selfcheck.gd`, `doki_story_test.gd` — niemals in einer Spiel-Session geladen | `extends SceneTree` | ✅ |
+| SO10 | **RefCounted-Klassen sind träge:** keine Instanz bei Spielstart; die globale Klasse existiert nur als Cache-Eintrag (nicht mal geladen) | Klassendefinitionen | ✅ |
+
+### 17.3 Konsequenz (logisch zwingend)
+
+- **Spielstart:** Lädt Autoloads + Szenen → kein Skript referenziert ein DOKI-Skript → **kein DOKI-Skript wird geladen, keine Instanz existiert** → NULL-Footprint in RAM, SceneTree und Signalverbindungen.
+- **MCP-Laufzeit:** `McpRuntime`/`McpProjectAdapter` laufen als Autoloads im Spiel — **null DOKI-Kopplung** (SO5/SO6). MCP weiß nichts von DOKI.
+- **Commit-Weg:** Der einzige Erzwingungsmechanismus ist Git (`hooksPath`), nicht Godot. Ohne Git-Commit existiert DOKI nicht; mit Commit ist der Weg versperrt, außer `--no-verify` (bewusste Umgehung).
+
+### 17.4 Zwei Grenzfälle (bewusst, keine Verstöße)
+
+1. **`scripts/concept_index.gd:235`** — das Agent-Tooling (ConceptIndex, kein Autoload) listet die DOKI-Klassennamen als **String-Literale** für die semantische Suche (`_add_concept("commit_layer", …)`). Das ist eine **Wissens-Referenz für Such-Tools, keine Runtime-Kopplung** — der Index läuft nur bei explizitem `--script`-Aufruf und importiert nichts. Es ist die einzige Nicht-DOKI-Datei, die DOKI namentlich kennt. Bewusst gewollt (der Konzept-Index soll Klassen finden), bricht SO1–SO7 nicht.
+2. **MCP → DOKI via CLI möglich:** Ein Agent im MCP-Kontext kann DOKI über die CLI anstoßen (z. B. `doki prepare` als Teil des Commit-Flows). Das ist eine **explizite Agent-Aktion**, keine automatische Kopplung — MCP selbst lädt und kennt DOKI nicht. Exakt so ist der Workflow in `AGENTS.md` vorgesehen: Agent nutzt DOKI über die CLI, das Spiel erfährt nichts davon.
+
+**Fazit:** „DOKI ist ein Git-Deckel, in der Godot-Basis nicht existent“ ist bidirektional vollständig verifiziert. Soll die Grenze noch schärfer, wäre der einzige weiche Punkt die String-Nennung im ConceptIndex — nach strenger Lesart eine ⚠️ Nuance (Namen bekannt, nur für Suche genutzt), kein Architektur-Verstoß.

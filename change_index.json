@@ -1,7 +1,7 @@
 {
 	"commits": {
 		"073dee1b9f32b45bece26eac87784e1282757144": {
-			"c": 22,
+			"c": 22.0,
 			"composite": "c22j27n5a2p6",
 			"entities": [
 				"F-002",
@@ -32,7 +32,7 @@
 				"C-011",
 				"C-012"
 			],
-			"p_id": 22
+			"p_id": 22.0
 		},
 		"0d3e994cdaff6003fe851ad638f06da48c6d57d9": {
 			"c": 15.0,
@@ -85,6 +85,35 @@
 				"C-001"
 			],
 			"p_id": 11.0
+		},
+		"aea99b31d8e999f5921e633b33c7ed89d49c719c": {
+			"c": 23,
+			"composite": "c23j3n1a4p16",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-017",
+				"F-018",
+				"C-013",
+				"C-014",
+				"C-015",
+				"C-016",
+				"C-017",
+				"C-018",
+				"C-019",
+				"C-020",
+				"C-021",
+				"C-022",
+				"C-023",
+				"C-024",
+				"C-025",
+				"C-026",
+				"C-027",
+				"C-028"
+			],
+			"p_id": 23
 		},
 		"b2558f9c0bfa80ae63804e06736aae668802e38f": {
 			"c": 13.0,
@@ -335,6 +364,278 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-013": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						130.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-013",
+			"last_p": 23.0,
+			"name": "_fixture_verifier",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-014": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						293.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-014",
+			"last_p": 23.0,
+			"name": "AMEND_SEQ",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-015": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						294.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-015",
+			"last_p": 23.0,
+			"name": "AMEND_C",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-016": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						295.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-016",
+			"last_p": 23.0,
+			"name": "AMEND_COMPOSITE",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-017": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						296.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-017",
+			"last_p": 23.0,
+			"name": "AMEND_HASH",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-018": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						297.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-018",
+			"last_p": 23.0,
+			"name": "AMEND_NARRATOR",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-019": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						298.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-019",
+			"last_p": 23.0,
+			"name": "AMEND_MOOD",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-020": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						299.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-020",
+			"last_p": 23.0,
+			"name": "AMEND_MODEL",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-021": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						300.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-021",
+			"last_p": 23.0,
+			"name": "AMEND_PREV",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-022": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						301.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-022",
+			"last_p": 23.0,
+			"name": "AMEND_SUBJECT",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-023": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						304.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-023",
+			"last_p": 23.0,
+			"name": "_fixture_amend_chain",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-024": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						319.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-024",
+			"last_p": 23.0,
+			"name": "_fixture_amend_head",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-025": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						323.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-025",
+			"last_p": 23.0,
+			"name": "_test_amend_reconstruction",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-026": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						367.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-026",
+			"last_p": 23.0,
+			"name": "_test_amend_hash_sync",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-027": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						123.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-027",
+			"last_p": 23.0,
+			"name": "_is_safe_worktree",
+			"path": "scripts/doki/doki_story_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-028": {
+			"first_p": 23.0,
+			"history": [
+				{
+					"lines": [
+						261.0
+					],
+					"p_id": 23.0
+				}
+			],
+			"id": "C-028",
+			"last_p": 23.0,
+			"name": "_run_finalize_retry",
+			"path": "scripts/doki/doki_story_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -492,6 +793,26 @@
 			"last_p": 22.0,
 			"name": "voice_composer.gd",
 			"path": "scripts/doki/prompt/voice_composer.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-017": {
+			"first_p": 23.0,
+			"history": [],
+			"id": "F-017",
+			"last_p": 23.0,
+			"name": "doki_selfcheck.gd",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-018": {
+			"first_p": 23.0,
+			"history": [],
+			"id": "F-018",
+			"last_p": 23.0,
+			"name": "doki_story_test.gd",
+			"path": "scripts/doki/doki_story_test.gd",
 			"status": "created",
 			"type": "file"
 		}

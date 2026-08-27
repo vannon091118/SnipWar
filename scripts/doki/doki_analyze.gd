@@ -132,12 +132,16 @@ func _analyze_mood_flow(entries: Array) -> void:
 
 
 func _analyze_composites(entries: Array) -> void:
-	print("─── 3. COMPOSITE-INTEGRITÄT (c/p monoton, Format) ───")
-	var prev_c: int = 0
-	var prev_p: int = 0
+	print("─── 3. COMPOSITE-INTEGRITÄT (c/p lückenlos, Format) ───")
+	# Lückenlos wie Verifier-Check 9a: jedes Entry c == vorheriges + 1 (Start 1).
+	# Eine Lücke (c: 5 → 7) heißt: ein Commit wurde nicht in die Chain geschrieben.
+	var expected_c: int = 0
+	var expected_p: int = 0
 	var c_ok: bool = true
 	var p_ok: bool = true
 	var fmt_ok: bool = true
+	var re := RegEx.new()
+	re.compile(DOKI_RngEngine.COMPOSITE_REGEX)
 
 	for e in entries:
 		var c: int = int(e.get("c", 0))
@@ -145,26 +149,25 @@ func _analyze_composites(entries: Array) -> void:
 		var composite: String = str(e.get("composite", ""))
 		var seq: int = int(e.get("seq", 0))
 
-		if c <= prev_c and prev_c > 0:
+		expected_c += 1
+		if c != expected_c:
 			c_ok = false
-			_findings.append({"level": "ERROR", "category": "Composite", "message": "seq %d: c=%d nicht streng monoton (vorher c=%d)" % [seq, c, prev_c]})
-		if p_id <= prev_p and prev_p > 0:
+			_findings.append({"level": "ERROR", "category": "Composite", "message": "seq %d: c=%d — Lücke (erwartet %d, finalize übersprungen?)" % [seq, c, expected_c]})
+		expected_p += 1
+		if p_id != expected_p:
 			p_ok = false
-			_findings.append({"level": "ERROR", "category": "Composite", "message": "seq %d: p_id=%d nicht monoton (vorher p_id=%d)" % [seq, p_id, prev_p]})
+			_findings.append({"level": "ERROR", "category": "Composite", "message": "seq %d: p_id=%d — Lücke (erwartet %d)" % [seq, p_id, expected_p]})
 
-		if not (composite.begins_with("c") and composite.contains("j") and composite.contains("n") and composite.contains("a") and composite.contains("p")):
+		if re.search(composite) == null:
 			fmt_ok = false
-			_findings.append({"level": "WARN", "category": "Composite", "message": "seq %d: '%s' hat unerwartetes Format (erwartet cNjX nY aZ pW)" % [seq, composite]})
-
-		prev_c = c
-		prev_p = p_id
+			_findings.append({"level": "WARN", "category": "Composite", "message": "seq %d: '%s' hat ungültiges Format (erwartet cXjXnXaXpX)" % [seq, composite]})
 
 	var c_first: int = int(entries[0].get("c", 0))
 	var c_last: int = int(entries[entries.size() - 1].get("c", 0))
 	var p_first: int = int(entries[0].get("p_id", 0))
 	var p_last: int = int(entries[entries.size() - 1].get("p_id", 0))
-	var c_state: String = "✓ monoton" if c_ok else "✗ LÜCKE"
-	var p_state: String = "✓ monoton" if p_ok else "✗ LÜCKE"
+	var c_state: String = "✓ lückenlos" if c_ok else "✗ LÜCKE"
+	var p_state: String = "✓ lückenlos" if p_ok else "✗ LÜCKE"
 	var fmt_state: String = "✓ alle ok" if fmt_ok else "✗ abweichend (siehe Findings)"
 	print("  c-Folge:  %d → %d  %s" % [c_first, c_last, c_state])
 	print("  p-Folge:  %d → %d  %s" % [p_first, p_last, p_state])
@@ -180,7 +183,9 @@ func _analyze_causality(entries: Array) -> void:
 		if e.get("seeded", false):
 			continue
 		var prev: String = str(e.get("prev_narrator", ""))
-		var summary: String = str(e.get("summary", ""))
+		# Echter Git-Subject (build_subject inkl. „— nach <Vorgänger>");
+		# Alt-/Seeded-Einträge ohne subject-Feld fallen auf summary zurück.
+		var summary: String = str(e.get("subject", str(e.get("summary", ""))))
 		var seq: int = int(e.get("seq", 0))
 		var name: String = str(e.get("narrator", "?"))
 		if prev.is_empty():
@@ -267,7 +272,7 @@ func _analyze_subjects(entries: Array) -> void:
 		if e.get("seeded", false):
 			continue
 		var name: String = str(e.get("narrator", "?"))
-		var summary: String = str(e.get("summary", ""))
+		var summary: String = str(e.get("subject", str(e.get("summary", ""))))
 		if not by_narrator.has(name):
 			by_narrator[name] = []
 		by_narrator[name].append(summary)
@@ -305,7 +310,9 @@ func _analyze_changelog(entries: Array) -> void:
 	print("  CHANGELOG-Einträge: %d (echte DOKI-Commits: %d)" % [entry_count, real_doki])
 	if entry_count < real_doki:
 		_findings.append({"level": "WARN", "category": "CHANGELOG", "message": "CHANGELOG hat %d Einträge, aber %d echte DOKI-Commits — Doku hinkt hinterher" % [entry_count, real_doki]})
-	elif entry_count == real_doki:
+	elif entry_count > real_doki:
+		_findings.append({"level": "WARN", "category": "CHANGELOG", "message": "CHANGELOG hat %d Einträge, aber nur %d echte DOKI-Commits — Orphan-Verdacht (Eintrag ohne Commit, z. B. gescheiterter finish). Migration/repair nötig." % [entry_count, real_doki]})
+	else:
 		print("  ✓ 1:1 Sync")
 	print("")
 
