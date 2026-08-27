@@ -29,6 +29,18 @@ func mood_example(narrator_name: String, mood: String) -> String:
 	return str(examples.get("%s+%s" % [narrator_name, mood], ""))
 
 
+## Wie der Mood IM TEXT gelebt wird (Stil, Wortwahl, Satzrhythmus) —
+## der Mood wird nie beim Namen genannt, er zeigt sich durch die Schreibweise.
+func mood_expression(mood: String) -> String:
+	return str(_data.get("mood_expression", {}).get(mood, ""))
+
+
+## Kategorie-Kalibrierung: Der Mood-Ausdruck wird an die tatsächliche Arbeit
+## angepasst (niemand ist euphorisch über Doku) — Dämpfung statt Ersatz.
+func category_calibration(impulse_class: String) -> String:
+	return str(_data.get("category_calibration", {}).get(impulse_class, ""))
+
+
 ## Fester Mood-Pool (Fallback, wenn moods.json fehlt).
 static func default_pool() -> Array:
 	return ["sachlich", "sarkastisch", "erschöpft", "triumphierend", "selbstironisch", "neugierig", "müde-zufrieden", "alarmiert", "trocken", "warm"]

@@ -60,6 +60,23 @@
 			],
 			"p_id": 14.0
 		},
+		"1b717c4a66ae5426216eb9d7a1f57eddc8e21c1a": {
+			"c": 24,
+			"composite": "c24j40n5a5p12",
+			"entities": [
+				"F-019",
+				"F-002",
+				"F-020",
+				"F-021",
+				"F-003",
+				"F-004",
+				"F-022",
+				"F-001",
+				"F-023",
+				"F-024"
+			],
+			"p_id": 24
+		},
 		"2bc5533d6b8bb9fd26723d1048947df8561e89f6": {
 			"c": 17.0,
 			"composite": "c17j48n14a1p1",
@@ -87,7 +104,7 @@
 			"p_id": 11.0
 		},
 		"aea99b31d8e999f5921e633b33c7ed89d49c719c": {
-			"c": 23,
+			"c": 23.0,
 			"composite": "c23j3n1a4p16",
 			"entities": [
 				"F-002",
@@ -113,7 +130,7 @@
 				"C-027",
 				"C-028"
 			],
-			"p_id": 23
+			"p_id": 23.0
 		},
 		"b2558f9c0bfa80ae63804e06736aae668802e38f": {
 			"c": 13.0,
@@ -813,6 +830,66 @@
 			"last_p": 23.0,
 			"name": "doki_story_test.gd",
 			"path": "scripts/doki/doki_story_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-019": {
+			"first_p": 24.0,
+			"history": [],
+			"id": "F-019",
+			"last_p": 24.0,
+			"name": "AGENTS.md",
+			"path": "AGENTS.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-020": {
+			"first_p": 24.0,
+			"history": [],
+			"id": "F-020",
+			"last_p": 24.0,
+			"name": "DESIGN.md",
+			"path": "DESIGN.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-021": {
+			"first_p": 24.0,
+			"history": [],
+			"id": "F-021",
+			"last_p": 24.0,
+			"name": "ROADMAP_VISUAL.html",
+			"path": "ROADMAP_VISUAL.html",
+			"status": "created",
+			"type": "file"
+		},
+		"F-022": {
+			"first_p": 24.0,
+			"history": [],
+			"id": "F-022",
+			"last_p": 24.0,
+			"name": "README.md",
+			"path": "scripts/doki/README.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-023": {
+			"first_p": 24.0,
+			"history": [],
+			"id": "F-023",
+			"last_p": 24.0,
+			"name": "doki_analyze.gd",
+			"path": "scripts/doki/doki_analyze.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-024": {
+			"first_p": 24.0,
+			"history": [],
+			"id": "F-024",
+			"last_p": 24.0,
+			"name": "doki_analyze.gd.uid",
+			"path": "scripts/doki/doki_analyze.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

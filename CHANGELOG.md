@@ -339,3 +339,20 @@ DOKI-Tests: Amend-Regression im Selfcheck (Rekonstruktion + Hash-Sync, zentrale 
 - scripts/doki/data/arcs.json: Tooling erweitert (F-001).
 - scripts/doki/doki_selfcheck.gd: Tooling erweitert (F-017).
 - scripts/doki/doki_story_test.gd: Tooling erweitert (F-018).
+
+## 2026-08-27 00:00:00 — p24 · c24j40n5a5p12 · Squizzle · sachlich
+
+**Squizzles Fall: DOKI-Analyzer + Doku: Modul 3 strikt + Modul 8… — nach Buffy**
+
+DOKI-Analyzer + Doku: Modul 3 strikt + Modul 8 bidirektional, Separation-of-Concerns-Kapitel in DESIGN.md, README/AGENTS-Doku nachgezogen, ROADMAP-Visual entfernt
+
+- AGENTS.md: Dokumentation aktualisiert (F-019).
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- DESIGN.md: Dokumentation aktualisiert (F-020).
+- ROADMAP_VISUAL.html: Dokumentation aktualisiert (F-021).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/README.md: Dokumentation aktualisiert (F-022).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- scripts/doki/doki_analyze.gd: Dokumentation aktualisiert (F-023).
+- scripts/doki/doki_analyze.gd.uid: Dokumentation aktualisiert (F-024).

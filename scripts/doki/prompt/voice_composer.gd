@@ -35,7 +35,20 @@ func _build_system_prompt(ctx: Dictionary) -> String:
 
 	var prompt: String = "DU BIST: %s (%s).\n" % [name, role]
 	prompt += "DEINE STIMME: %s\n" % voice
+	# Konkretes Stil-Beispiel — die Stimme wird GEZEIGT, nicht nur beschrieben.
+	var style_sample: String = str(narrator.get("style_sample", ""))
+	if not style_sample.is_empty():
+		prompt += "SO SCHREIBST DU (Stil-Beispiel): %s\n" % style_sample
 	prompt += "DEIN MOOD: %s\n" % mood
+	# Mood wird GELEBT, nicht genannt: konkrete Ausdrucks-Anleitung (Stil/Wortwahl).
+	var mood_expr: String = _moods.mood_expression(mood)
+	if not mood_expr.is_empty():
+		prompt += "SO LEBST DU DEN MOOD: %s\n" % mood_expr
+	# Kategorie-Kalibrierung: Emotion in Relation zur Arbeit (keine Euphorie über Doku).
+	var impulse_class: String = str(ctx.get("impulse_class", "CODE"))
+	var calib: String = _moods.category_calibration(impulse_class)
+	if not calib.is_empty():
+		prompt += "KALIBRIERUNG (Kategorie %s): %s\n" % [impulse_class, calib]
 	if not tone_brief.is_empty():
 		prompt += "DEINE DISPOSITION: %s\n" % tone_brief
 
@@ -68,6 +81,8 @@ func _build_system_prompt(ctx: Dictionary) -> String:
 
 	prompt += "\nSCHREIBREGELN:\n"
 	prompt += "- Erzähl eine GESCHICHTE, keinen Bericht. Zeig deine Persönlichkeit.\n"
+	prompt += "- Nenne deinen Mood oder deine Stimmung NIEMALS beim Namen (kein 'mit triumphierendem Unterton', kein 'diesmal war ich alarmiert'). Zeig sie durch Stil, Wortwahl und Satzrhythmus.\n"
+	prompt += "- Imitiere das Stil-Beispiel: Dein Text MUSS nach DIR klingen, nicht nach einem generischen Bericht.\n"
 	prompt += "- KEINE Bullet-Listen. KEINE technischen Auflistungen. Fließtext.\n"
 	prompt += "- Der Impuls war UNVERMEIDLICH. Formuliere die Kausalität natürlich, nicht als Protokoll.\n"
 	prompt += "- KEIN 'Der Grund war X. Die Wirkung: Y.' — stattdessen: 'X ließ keinen anderen Weg zu.'\n"

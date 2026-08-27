@@ -1734,6 +1734,78 @@
 			"seq": 23,
 			"subject": "[Buffy] DOKI-Tests: Amend-Regression im Selfcheck… — nach Squizzle",
 			"summary": "Squizzle hat den Kern gedichtet, aber ein Architekt weiß: Ohne Netze ist die Mauer nur Deko. Also habe ich die Regressionen gegossen, und diesmal mit triumphierendem Unterton, weil die Tests genau ..."
+		},
+		{
+			"a": 5,
+			"arc": "a8",
+			"c": 24,
+			"composite": "c24j40n5a5p12",
+			"data_changes": [
+				{
+					"deletions": 14.0,
+					"file": "AGENTS.md",
+					"insertions": 78.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "DESIGN.md",
+					"insertions": 71.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "ROADMAP_VISUAL.html",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 323.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 52.0
+				},
+				{
+					"deletions": 10.0,
+					"file": "scripts/doki/README.md",
+					"insertions": 63.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 36.0
+				},
+				{
+					"deletions": 17.0,
+					"file": "scripts/doki/doki_analyze.gd",
+					"insertions": 24.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_analyze.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 00:00:00",
+			"hash": "1b717c4a66ae5426216eb9d7a1f57eddc8e21c1a",
+			"j": 40,
+			"model_id": "claude-sonnet-4",
+			"mood": "sachlich",
+			"n": 5,
+			"narrator": "Squizzle",
+			"p": 12,
+			"p_id": 24,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Buffy",
+			"seq": 24,
+			"subject": "Squizzles Fall: DOKI-Analyzer + Doku: Modul 3 strikt + Modul 8… — nach Buffy",
+			"summary": "Buffy hatte die Netze gespannt, aber ein Forensiker weiß: Die Messlatte selbst muss stimmen, sonst zählen die Checks das Falsche. Deshalb habe ich die Indizien gegen die Realität gehalten — und zwe..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

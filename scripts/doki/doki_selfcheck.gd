@@ -20,6 +20,7 @@ func _init() -> void:
 	_test_checks_soft()
 	_test_amend_reconstruction()
 	_test_amend_hash_sync()
+	_test_prompt_voice_lived()
 
 	print("")
 	print("═══════════════════════════════════════")
@@ -398,6 +399,77 @@ func _test_amend_hash_sync() -> void:
 	# 5. Leere Chain → ok, kein Change
 	var r5: Dictionary = DOKI_FinalizeFlow.amended_entry_hash_sync({"entries": []}, "7c82f43", head_msg)
 	_expect("amend hash-sync: leere Chain ok", bool(r5.get("ok", false)) and not bool(r5.get("changed", true)))
+
+
+## ─── Stimmen gelebt (nicht genannt): Stil-Beispiel + Mood-Ausdruck + Kalibrierung ─
+## Regression für die Voice-Qualität: Der Prompt MUSS zeigen, wie die Stimme
+## klingt (Stil-Beispiel), wie der Mood gelebt wird (Mood-Ausdruck statt Name)
+## und wie die Emotion zur Arbeit steht (Kategorie-Kalibrierung — niemand ist
+## euphorisch über Doku).
+func _test_prompt_voice_lived() -> void:
+	var catalog := DOKI_NarratorCatalog.new("res://scripts/doki/data")
+	var moods := DOKI_MoodOverlay.new("res://scripts/doki/data")
+	var composer := DOKI_VoiceComposer.new(catalog, moods)
+
+	# 1. Jeder Mood im Pool hat eine Ausdrucks-Anleitung (gelebt, nicht nur benannt)
+	var missing_expr: Array = []
+	for m in moods.mood_pool():
+		if moods.mood_expression(str(m)).is_empty():
+			missing_expr.append(str(m))
+	_expect("voice-lived: alle 10 Moods haben mood_expression", missing_expr.is_empty())
+
+	# 2. Jeder Charakter hat ein konkretes Stil-Beispiel
+	var missing_sample: Array = []
+	for c in catalog.all():
+		if str(c.get("style_sample", "")).is_empty():
+			missing_sample.append(str(c.get("name", "?")))
+	_expect("voice-lived: alle 14 Charaktere haben style_sample", missing_sample.is_empty())
+
+	# 3. Jede Impuls-Kategorie hat eine Kalibrierung (Emotion ↔ Arbeit)
+	var classes: Array = ["CODE", "FEATURE", "REFACTOR", "BUILD", "FIX", "DOKU", "TRIVIAL", "TEST-ASSET"]
+	var missing_calib: Array = []
+	for cls in classes:
+		if moods.category_calibration(str(cls)).is_empty():
+			missing_calib.append(str(cls))
+	_expect("voice-lived: alle Kategorien haben category_calibration", missing_calib.is_empty())
+
+	# 4. Prompt lebt die Stimme: Beispiel + Mood-Ausdruck + Kalibrierung + Anti-Naming
+	var ctx: Dictionary = _fixture_voice_ctx(catalog, "Buffy", "sarkastisch", "CODE")
+	var sys: String = str(composer.build_prompts(ctx)["system"])
+	_expect("voice-lived: Stil-Beispiel im Prompt", sys.contains("SO SCHREIBST DU") and sys.contains(str(catalog.by_name("Buffy").get("style_sample", ""))))
+	_expect("voice-lived: Mood-Ausdruck statt nur Name", sys.contains("SO LEBST DU DEN MOOD") and sys.contains("passiv-aggressiv"))
+	_expect("voice-lived: Kategorie-Kalibrierung im Prompt", sys.contains("KALIBRIERUNG (Kategorie CODE)"))
+	_expect("voice-lived: Anti-Naming-Regel (nie 'mit triumphierendem Unterton')", sys.contains("NIEMALS beim Namen"))
+
+	# 5. Doku-Arbeit dämpft Euphorie: triumphierender Mood + DOKU-Kategorie → nüchtern
+	var ctx_doku: Dictionary = _fixture_voice_ctx(catalog, "Buffy", "triumphierend", "DOKU")
+	var sys_doku: String = str(composer.build_prompts(ctx_doku)["system"])
+	_expect("voice-lived: DOKU-Kalibrierung dämpft Euphorie", sys_doku.contains("KALIBRIERUNG (Kategorie DOKU)") and sys_doku.contains("niemand euphorisch"))
+	_expect("voice-lived: Mood-Ausdruck bleibt kategorie-tauglich", sys_doku.contains("Übertreibend, aber faktenbasiert"))
+
+
+## Minimaler Prompt-Kontext für die Stimmen-Tests (deterministisch, kein Git).
+func _fixture_voice_ctx(catalog: DOKI_NarratorCatalog, narrator_name: String, mood: String, impulse_class: String) -> Dictionary:
+	return {
+		"narrator": catalog.by_name(narrator_name),
+		"attitudes": {},
+		"impulse": "Ship-Logik erweitern und die Kette schließen",
+		"impulse_class": impulse_class,
+		"body_text": "",
+		"files": ["scripts/ship_manager.gd"],
+		"sidejoke": "",
+		"prev_narrator": "",
+		"prev_class": "",
+		"is_direction_change": false,
+		"is_arc_climax": false,
+		"arc_climax_eligible": true,
+		"arc_name": "a1",
+		"arc_id": "a1",
+		"relationship": {},
+		"sideplot": {},
+		"mood": mood,
+		"structure_info": {"structure": "chronologisch", "pattern": ""},
+	}
 
 
 static func _has_hard(result: Dictionary, check_prefix: String) -> bool:

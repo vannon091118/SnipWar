@@ -105,6 +105,23 @@ Lauf den Entry-Hash (Composite-Abgleich).
 Gleicher Chain-Zustand + gleicher Impuls + gleicher Diff = gleicher Narrator,
 gleicher Mood, gleicher Composite. **Kein** Zeit-/Zufalls-Input in prepare/derive.
 
+### 7. Stimmen gelebt (nicht genannt)
+Der Prompt zeigt jede Stimme konkret statt sie nur zu behaupten:
+
+- **Stil-Beispiel** (`narrators.json` → `style_sample`): ein konkreter Satzblock
+  pro Charakter, den der Narrator imitieren soll („Imitiere das Stil-Beispiel:
+  Dein Text MUSS nach DIR klingen").
+- **Mood-Ausdruck** (`moods.json` → `mood_expression`): Wie der gezogene Mood im
+  Text GELEBT wird — Stil, Wortwahl, Satzrhythmus, bewusst überzeichnet
+  (sarkastisch = gnadenlos passiv-aggressiv; triumphierend = übertreibend, aber
+  faktenbasiert und abschweifend).
+- **Kategorie-Kalibrierung** (`moods.json` → `category_calibration`): Die Emotion
+  steht in Relation zur Arbeit. CODE/FEATURE voll, REFACTOR/BUILD gedämpft,
+  FIX/DOKU/TRIVIAL/TEST-ASSET stark reduziert — über Doku ist niemand euphorisch.
+- **Anti-Naming-Regel** (SCHREIBREGELN): „Nenne deinen Mood NIEMALS beim Namen"
+  (kein „mit triumphierendem Unterton") — der Mood zeigt sich, er wird nicht
+  benannt. Selbstcheck-Modul `_test_prompt_voice_lived` sichert alle vier Punkte.
+
 ## 🔬 Narrative-Qualitäts-Analyse
 
 ```bash
