@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/main_menu.ogg" id="2_music"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -10,3 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_menu")
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_music")
+autoplay = true

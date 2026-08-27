@@ -172,6 +172,29 @@ Die verbleibenden Isolation-Warnings anderer Constraints sind erwartete Mutation
 |---|--------|--------|-------|
 | MCP-08 | Freebuff-Client startet `mcp_stdio_bridge.js` mit relativem Pfad → `MODULE_NOT_FOUND` (Client-cwd = `%USERPROFILE%`, nicht Projektroot); MCP-Tools (`runtime_*`) unerreichbar | ✅ GEFIXT | cwd-immuner Wrapper `mcp_bridge.cmd` im Projektroot (`%~dp0`-Ableitung); Client-Konfiguration auf absoluten Pfad `C:\Users\Vannon\Documents\snippet-empire\snip-war\mcp_bridge.cmd` umgestellt; Doku: `addons/gdscript_mcp/AGENTS.md` §7. Wrapper-Start aus fremdem cwd verifiziert (graceful exit 0 statt `Cannot find module`). `kilo.json` (`--path .`) gleichfalls auf absoluten Projektroot gefixt |
 
+
+## Audio-Vision-Schicht & Visual Evidence — 2026-08-28
+
+### MCP- & Audio-Findings (implementiert, live verifiziert)
+| # | Befund | Status | Beleg |
+|---|--------|--------|-------|
+| QA-AUDIO-1 | Keine Audio-Vision-Schicht (keine Spektrogramme, Waveform-Evidence, RMS/LUFS, Spectral Centroid/Flatness, Transienten, Audiovergleich, review) | ✅ GEFIXT | `audio_analyzer.py` komplett erweitert um stdlib-only Goertzel-Bands, K-Weighted LUFS, Transient-Delta-RMS, Similarity und BMP-Rendering. |
+| QA-AUDIO-2 | audio_synth.py Noise roh, papieruntypisch | ✅ GEFIXT | `audio_synth.py` erweitert um bandlimited_noise, paper_transient (Fingertip/Fold/Slide/Stamp), Wow/Flutter, Tape-Saturation und loudness_match. Neue Sounds: `paper_rustle_v2` und `old_radio_hiss`. |
+| QA-AUDIO-3 | Fehlende MCP-Tools für Audio-Vision/Review | ✅ GEFIXT | `mcp_audio_tools.gd` & `mcp_tool_registry.gd`: `runtime_audio_render_evidence`, `runtime_audio_compare` und `runtime_audio_review` implementiert und registriert. |
+| QA-AUDIO-4 | Entry-Test Abdeckung für neue Audio-Tools | ✅ GEFIXT | `audio_analyzer_entry_test.gd` um T3 (Evidence-Rendering), T4 (Compare) und T5 (Review) erweitert. |
+
+## Preflight Suite Performance & Zero-Gate-Skip Optimierung — 2026-08-28
+
+### Laufzeit- & I/O-Findings (implementiert, live verifiziert)
+| # | Befund | Status | Beleg |
+|---|--------|--------|-------|
+| QA-PERF-1 | Preflight Laufzeit ~70s durch redundante Dateisystem-Scans und String-Allokationen | ✅ GEFIXT | Laufzeit von **69,7s auf 29,7s** gesenkt (-57%), 42/42 Constraints PASS, 2.018/2.018 Assertions PASS. |
+| QA-PERF-2 | `concept_index` (10,6s): `_class_exists_in_addons` scannte Addons für jede ungemappte Klasse rekursiv neu | ✅ GEFIXT | `concept_index.gd`: Caching für Addon-Klassen + Early-Break bei Funktionsdefinitionen + `get_discovered_classes()` für `constraint_concept_index.gd` (10.625 ms ➔ 290 ms). |
+| QA-PERF-3 | `game_state_compatibility` (8,5s): `_mask_non_code` concatenierte zeichenweise Strings | ✅ GEFIXT | `constraint_game_state_compatibility.gd`: In-Place `PackedByteArray` Byte-Maskierung (8.567 ms ➔ 466 ms). |
+| QA-PERF-4 | `resources_and_seed` (6,7s): Mutierte Live-SceneTree und zerstörte aktive Chunks doppelt | ✅ GEFIXT | `constraint_resources_and_seed.gd`: Seed-Determinismus direkt über `WorldGenerator.generate_catalog` ohne SceneTree-Tear-Down geprüft (6.741 ms ➔ 3,7 ms). |
+| QA-PERF-5 | `global_search` (9,2s): Volltext-Scan führte ungeschützte RegExes über jede Zeile aus + `exclude` scannte alle Dateitypen | ✅ GEFIXT | `search_core.gd`: String-Guards vor RegEx + `String.findn()` statt lowercase Allokationen + `.gd`-Filter für Exclude-Test (9.231 ms ➔ 2.918 ms). |
+| QA-PERF-6 | `dead_code` (8,7s): Mega-String-Konkatenation über alle Quelldateien | ✅ GEFIXT | `constraint_dead_code.gd`: `FileAccess.get_file_as_string()` + Single-Pass-Zählung (8.786 ms ➔ 3.524 ms). |
+
 ## Offene Punkte (nächste Runden)
 | # | Punkt | Priorität |
 |---|-------|-----------|

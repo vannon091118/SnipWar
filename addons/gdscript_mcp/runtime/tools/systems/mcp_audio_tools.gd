@@ -127,6 +127,181 @@ func audio_set_stream(node_path: String, stream_path: String) -> Dictionary:
 	return {"ok": true, "path": String(player.get_path()), "stream": stream_path}
 
 
+func audio_analyze(audio_path: String, output_json_path: String = "") -> Dictionary:
+	var global_audio_path := ProjectSettings.globalize_path(audio_path)
+	if not FileAccess.file_exists(global_audio_path):
+		return {"ok": false, "error": "Audio file not found: " + audio_path}
+
+	var script_path := ProjectSettings.globalize_path("res://audio_analyzer.py")
+	var args: Array[String] = [script_path, "analyze", global_audio_path, "--quiet"]
+	if output_json_path != "":
+		var global_out_json := ProjectSettings.globalize_path(output_json_path)
+		args.append_array(["--output", global_out_json])
+
+	var output: Array = []
+	var exit_code := OS.execute("python", args, output, true)
+	if exit_code != 0 or output.is_empty():
+		return {"ok": false, "error": "Python audio_analyzer failed with exit code %d" % exit_code, "output": output}
+
+	var raw_text: String = str(output[0])
+	var json_parser := JSON.new()
+	var err := json_parser.parse(raw_text)
+	if err == OK and json_parser.data is Dictionary:
+		return json_parser.data
+	# Fallback: extract first JSON object from mixed output
+	var brace_start := raw_text.find("{\"ok\":")
+	if brace_start < 0:
+		brace_start = raw_text.find("{\"  \"ok\":")
+	if brace_start >= 0:
+		json_parser = JSON.new()
+		err = json_parser.parse(raw_text.substr(brace_start))
+		if err == OK and json_parser.data is Dictionary:
+			return json_parser.data
+	return {"ok": false, "error": "Failed to parse audio_analyze output", "raw": raw_text.left(200)}
+
+
+func audio_slice_auto(audio_path: String, output_dir: String = "assets/audio/sfx", config_json: String = "") -> Dictionary:
+	var global_audio_path := ProjectSettings.globalize_path(audio_path)
+	if not FileAccess.file_exists(global_audio_path):
+		return {"ok": false, "error": "Audio file not found: " + audio_path}
+
+	var script_path := ProjectSettings.globalize_path("res://audio_analyzer.py")
+	var global_out_dir := ProjectSettings.globalize_path(output_dir)
+	var args: Array[String] = [script_path, "slice", global_audio_path, "--auto", "--output-dir", global_out_dir, "--quiet"]
+	if config_json != "":
+		var global_config := ProjectSettings.globalize_path(config_json)
+		args.append_array(["--json", global_config])
+
+	var output: Array = []
+	var exit_code := OS.execute("python", args, output, true)
+	if exit_code != 0 or output.is_empty():
+		return {"ok": false, "error": "Python audio_analyzer slice failed with exit code %d" % exit_code, "output": output}
+
+	var raw_text: String = str(output[0])
+	var json_parser := JSON.new()
+	var err := json_parser.parse(raw_text)
+	if err == OK and json_parser.data is Dictionary:
+		return json_parser.data
+	# Fallback: extract first JSON object from mixed output
+	var brace_start := raw_text.find("{\"ok\":")
+	if brace_start >= 0:
+		json_parser = JSON.new()
+		err = json_parser.parse(raw_text.substr(brace_start))
+		if err == OK and json_parser.data is Dictionary:
+			return json_parser.data
+	return {"ok": false, "error": "Failed to parse audio_slice_auto output", "raw": raw_text.left(200)}
+
+
+func audio_render_evidence(audio_path: String, output_dir: String = "user://audio_evidence") -> Dictionary:
+	var global_audio_path := ProjectSettings.globalize_path(audio_path)
+	if not FileAccess.file_exists(global_audio_path):
+		return {"ok": false, "error": "Audio file not found: " + audio_path}
+
+	var script_path := ProjectSettings.globalize_path("res://audio_analyzer.py")
+	var global_out_dir := ProjectSettings.globalize_path(output_dir)
+	var args: Array[String] = [script_path, "render-evidence", global_audio_path, "--output-dir", global_out_dir, "--quiet"]
+
+	var output: Array = []
+	var exit_code := OS.execute("python", args, output, true)
+	if exit_code != 0 or output.is_empty():
+		return {"ok": false, "error": "Python audio_analyzer render-evidence failed with exit code %d" % exit_code, "output": output}
+
+	var raw_text: String = str(output[0])
+	var json_parser := JSON.new()
+	var err := json_parser.parse(raw_text)
+	if err == OK and json_parser.data is Dictionary:
+		return json_parser.data
+	var brace_start := raw_text.find("{\"ok\":")
+	if brace_start >= 0:
+		json_parser = JSON.new()
+		err = json_parser.parse(raw_text.substr(brace_start))
+		if err == OK and json_parser.data is Dictionary:
+			return json_parser.data
+	return {"ok": false, "error": "Failed to parse render-evidence output", "raw": raw_text.left(200)}
+
+
+func audio_compare(audio_path_a: String, audio_path_b: String) -> Dictionary:
+	var global_path_a := ProjectSettings.globalize_path(audio_path_a)
+	var global_path_b := ProjectSettings.globalize_path(audio_path_b)
+	if not FileAccess.file_exists(global_path_a):
+		return {"ok": false, "error": "Audio file A not found: " + audio_path_a}
+	if not FileAccess.file_exists(global_path_b):
+		return {"ok": false, "error": "Audio file B not found: " + audio_path_b}
+
+	var script_path := ProjectSettings.globalize_path("res://audio_analyzer.py")
+	var args: Array[String] = [script_path, "compare", global_path_a, global_path_b, "--quiet"]
+
+	var output: Array = []
+	var exit_code := OS.execute("python", args, output, true)
+	if exit_code != 0 or output.is_empty():
+		return {"ok": false, "error": "Python audio_analyzer compare failed with exit code %d" % exit_code, "output": output}
+
+	var raw_text: String = str(output[0])
+	var json_parser := JSON.new()
+	var err := json_parser.parse(raw_text)
+	if err == OK and json_parser.data is Dictionary:
+		return json_parser.data
+	var brace_start := raw_text.find("{\"ok\":")
+	if brace_start >= 0:
+		json_parser = JSON.new()
+		err = json_parser.parse(raw_text.substr(brace_start))
+		if err == OK and json_parser.data is Dictionary:
+			return json_parser.data
+	return {"ok": false, "error": "Failed to parse compare output", "raw": raw_text.left(200)}
+
+
+func audio_review(audio_path: String) -> Dictionary:
+	# Meta-tool: analyze + render_evidence + classification summary
+	var analysis := audio_analyze(audio_path, "")
+	if not analysis.get("ok", false):
+		return {"ok": false, "error": "Analysis failed: " + str(analysis.get("error", "unknown"))}
+
+	var evidence := audio_render_evidence(audio_path, "user://audio_evidence")
+
+	var recommendations: Array = []
+	var classification: Dictionary = analysis.get("classification", {})
+	var tags: Array = classification.get("tags", [])
+
+	# Generate recommendations based on classification
+	if "high_noise" in tags:
+		recommendations.append("High noise floor detected — consider noise gate or spectral denoising")
+	if "compressed" in tags:
+		recommendations.append("Very compressed dynamics — consider expanding dynamic range")
+	if "wide_dynamics" in tags:
+		recommendations.append("Wide dynamic range — may need compression for game audio")
+	if "white_noise_like" in tags:
+		recommendations.append("White noise character — consider bandpass filtering for texture")
+	if "sparse" in tags:
+		recommendations.append("High silence ratio — consider trimming or auto-slicing")
+
+	var paper_ratio: float = float(classification.get("paper_noise_ratio", 0.0))
+	if paper_ratio > 0.5:
+		recommendations.append("Significant paper/noise content (%.0f%%) — suitable as texture layer" % [paper_ratio * 100])
+	elif paper_ratio < 0.1:
+		recommendations.append("Very clean tonal content (paper ratio %.0f%%) — may need noise layer for warmth" % [paper_ratio * 100])
+
+	return {
+		"ok": true,
+		"file": analysis.get("file", ""),
+		"analysis": {
+			"technical": analysis.get("technical", {}),
+			"waveform": {
+				"lufs_integrated": analysis.get("waveform", {}).get("lufs_integrated", -96.0),
+				"peak_db": analysis.get("waveform", {}).get("peak_db", -96.0),
+				"dynamic_range_db": analysis.get("waveform", {}).get("dynamic_range_db", 0.0),
+			},
+			"spectrum": {
+				"spectral_centroid_hz": analysis.get("spectrum", {}).get("spectral_centroid_hz", 0.0),
+				"spectral_flatness": analysis.get("spectrum", {}).get("spectral_flatness", 0.0),
+			},
+			"transients": analysis.get("transients", {}),
+		},
+		"classification": classification,
+		"evidence_artifacts": evidence.get("artifacts", []),
+		"recommendations": recommendations,
+	}
+
+
 # ─── Animation Tools ────────────────────────────────────────────
 
 func animation_list(node_path: String = "") -> Dictionary:
@@ -393,6 +568,11 @@ static func get_tool_defs() -> Array:
 		_make("runtime_audio_set_volume", "Set audio bus volume in dB", {"bus_index": {"type": "integer"}, "volume_db": {"type": "number"}}, ["bus_index", "volume_db"]),
 		_make("runtime_audio_list_streams", "Find all AudioStreamPlayers in the running scene"),
 		_make("runtime_audio_set_stream", "Change the stream on an AudioStreamPlayer", {"node_path": {"type": "string"}, "stream_path": {"type": "string"}}, ["node_path", "stream_path"]),
+		_make("runtime_audio_analyze", "Analyze audio file (duration, sample rate, channels, peaks, silence ranges, recommended cuts) via Python CLI", {"audio_path": {"type": "string"}, "output_json_path": {"type": "string", "default": ""}}, ["audio_path"]),
+		_make("runtime_audio_slice_auto", "Auto-slice audio file using Python analysis into OGG slices", {"audio_path": {"type": "string"}, "output_dir": {"type": "string", "default": "assets/audio/sfx"}, "config_json": {"type": "string", "default": ""}}, ["audio_path"]),
+		_make("runtime_audio_render_evidence", "Render visual evidence artifacts (waveform, spectrum, transients, loudness) as PNG/BMP images", {"audio_path": {"type": "string"}, "output_dir": {"type": "string", "default": "user://audio_evidence"}}, ["audio_path"]),
+		_make("runtime_audio_compare", "Compare two audio files (spectral, loudness, transient similarity)", {"audio_path_a": {"type": "string"}, "audio_path_b": {"type": "string"}}, ["audio_path_a", "audio_path_b"]),
+		_make("runtime_audio_review", "Full audio review: analysis + visual evidence + classification + recommendations", {"audio_path": {"type": "string"}}, ["audio_path"]),
 
 		_make("runtime_animation_list", "List all animations on an AnimationPlayer", {"node_path": {"type": "string", "default": ""}}),
 		_make("runtime_animation_play", "Play an animation", {"node_path": {"type": "string", "default": ""}, "anim_name": {"type": "string", "default": ""}, "custom_speed": {"type": "number", "default": 1.0}}),
@@ -433,6 +613,11 @@ func dispatch_tool(tool_name: String, args: Dictionary) -> Variant:
 		"runtime_audio_set_volume": return audio_set_volume(int(args.get("bus_index", 0)), float(args.get("volume_db", 0.0)))
 		"runtime_audio_list_streams": return audio_list_streams()
 		"runtime_audio_set_stream": return audio_set_stream(str(args.get("node_path", "")), str(args.get("stream_path", "")))
+		"runtime_audio_analyze": return audio_analyze(str(args.get("audio_path", "")), str(args.get("output_json_path", "")))
+		"runtime_audio_slice_auto": return audio_slice_auto(str(args.get("audio_path", "")), str(args.get("output_dir", "assets/audio/sfx")), str(args.get("config_json", "")))
+		"runtime_audio_render_evidence": return audio_render_evidence(str(args.get("audio_path", "")), str(args.get("output_dir", "user://audio_evidence")))
+		"runtime_audio_compare": return audio_compare(str(args.get("audio_path_a", "")), str(args.get("audio_path_b", "")))
+		"runtime_audio_review": return audio_review(str(args.get("audio_path", "")))
 		"runtime_animation_list": return animation_list(str(args.get("node_path", "")))
 		"runtime_animation_play": return animation_play(str(args.get("node_path", "")), str(args.get("anim_name", "")), float(args.get("custom_speed", 1.0)))
 		"runtime_animation_stop": return animation_stop(str(args.get("node_path", "")))

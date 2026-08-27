@@ -299,6 +299,8 @@ static func _is_game_system_tool(name: String) -> bool:
 	return name in [
 		"runtime_audio_play", "runtime_audio_stop", "runtime_audio_bus_info",
 		"runtime_audio_set_volume", "runtime_audio_list_streams", "runtime_audio_set_stream",
+		"runtime_audio_analyze", "runtime_audio_slice_auto",
+		"runtime_audio_render_evidence", "runtime_audio_compare", "runtime_audio_review",
 		"runtime_animation_list", "runtime_animation_play", "runtime_animation_stop",
 		"runtime_animation_seek", "runtime_animation_get_info",
 		"runtime_animation_tree_travel", "runtime_animation_tree_set_param",

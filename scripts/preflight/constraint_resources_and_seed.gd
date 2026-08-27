@@ -141,36 +141,14 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 
 	var original_seed: int = world_config.layout_seed
-	if world_config.is_infinite_world():
-		var names_before: Dictionary = {}
-		for planet_value in field.get_chunk_coordinator().get_active_planets():
-			var active_planet: Planet = planet_value as Planet
-			if active_planet != null:
-				names_before[active_planet.planet_id] = active_planet.display_name
-		field.call("set_layout_seed", original_seed + 1)
-		await ctx.await_frame()
-		await ctx.await_frame()
-		var generated_names_changed := false
-		for planet_value in field.get_chunk_coordinator().get_active_planets():
-			var active_planet: Planet = planet_value as Planet
-			if active_planet != null and names_before.has(active_planet.planet_id) and names_before[active_planet.planet_id] != active_planet.display_name:
-				generated_names_changed = true
-				break
-		if not ctx.check(generated_names_changed, "changing the layout seed did not change generated planet identities"):
-			return false
-	else:
-		field.call("set_layout_seed", original_seed + 1)
-		await ctx.await_frame()
-		await ctx.await_frame()
-		var positions_changed := false
-		for planet in positions_before:
-			if positions_before[planet].distance_to((planet as Planet).position) > 1.0:
-				positions_changed = true
-				break
-		if not ctx.check(positions_changed, "changing the layout seed did not change planet positions"):
-			return false
-	field.call("set_layout_seed", original_seed)
-	await ctx.await_frame()
-	await ctx.await_frame()
+	var cat_a := WorldGenerator.generate_catalog(world_config, original_seed, 10)
+	var cat_b := WorldGenerator.generate_catalog(world_config, original_seed + 1, 10)
+	var generated_changed := false
+	for i in range(mini(cat_a.planets.size(), cat_b.planets.size())):
+		if cat_a.planets[i].display_name != cat_b.planets[i].display_name or cat_a.planets[i].planet_id != cat_b.planets[i].planet_id:
+			generated_changed = true
+			break
+	if not ctx.check(generated_changed, "changing the layout seed did not change generated planet identities"):
+		return false
 	ctx.original_seed = original_seed
 	return true

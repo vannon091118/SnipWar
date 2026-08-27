@@ -301,7 +301,7 @@ Agent kann echte Spielsysteme steuern (Audio, Video, Network, Gamepad/Touch,
 Shader, Partikel):
 | Kategorie | Tools |
 |---|---|
-| Audio (6) | `runtime_audio_play`, `_stop`, `_bus_info`, `_set_volume`, `_list_streams`, `_set_stream` |
+| Audio (11) | `runtime_audio_play`, `_stop`, `_bus_info`, `_set_volume`, `_list_streams`, `_set_stream`, `_analyze`, `_slice_auto`, `_render_evidence`, `_compare`, `_review` |
 | Animation (7) | `runtime_animation_list`, `_play`, `_stop`, `_seek`, `_get_info`, `_tree_travel`, `_tree_set_param` |
 | Gamepad/Touch (4) | `runtime_gamepad_button`, `_axis`, `runtime_touch_event`, `_drag` |
 | Shader/Particles (2) | `runtime_shader_set_param`, `runtime_particles_config` |

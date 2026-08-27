@@ -19,8 +19,15 @@ var _name_input: LineEdit
 var _profile_label: Label
 
 func _ready() -> void:
+	_setup_music()
 	_build_ui()
 	_refresh_continue()
+
+func _setup_music() -> void:
+	var music: AudioStreamPlayer = get_node_or_null("Music")
+	if music != null:
+		music.finished.connect(music.play)
+		music.volume_db = -6.0
 
 func _build_ui() -> void:
 	var overlay := ColorRect.new()
