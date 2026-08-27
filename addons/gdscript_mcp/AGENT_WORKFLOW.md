@@ -207,7 +207,11 @@ Agent 3 (Session 2026-08-26):
 
 ---
 
-## 🔁 Der vollautonome 8-Schritte Repair- & Feature-Loop (`agent_repair_loop.py`)
+## 🔁 Der vollautonome 8-Schritte Repair- & Feature-Loop (`agent_repair_loop.js`)
+
+> **Eine Sprache:** Der gesamte Client-Stack ist Node/JS (`mcp_lib.js` + Playthrough-Helfer).
+> Die früheren Python-Clients (`agent_repair_loop.py`, `mcp_client.py`, `remote_playout.py`,
+> `vision_worker.py`, …) wurden entfernt — kein zweiter Protokoll-Client mehr.
 
 Für geschlossene, vollautomatische Reparatur- und Feature-Entwicklungsläufe:
 
@@ -232,11 +236,32 @@ Für geschlossene, vollautomatische Reparatur- und Feature-Entwicklungsläufe:
 
 Ausführung via CLI:
 ```bash
-python addons/gdscript_mcp/client/agent_repair_loop.py \
+node addons/gdscript_mcp/client/agent_repair_loop.js \
   --file "res://scripts/..." \
   --old "old_code" \
   --new "new_code" \
   --goal "Feature oder Bugfix Beschreibung"
+# optional: --chain chain.json (runtime_chain_run-Schritte) und
+#           --sequence sequence.json (runtime_goal_sequence-Aktionen)
 ```
 
 Der Repair-Loop ist ein Code-/Workspace-Modus. Sein optionales `goal_sequence` darf nicht für sichtbares Spieler-Playtesting verwendet werden; Live-Gameplay folgt ausschließlich `PLAYTEST_HANDOFF.md`.
+
+**Evidence:** Jeder Workspace-Run erzeugt automatisch einen einheitlichen
+Run-Trace (`user://mcp_traces/<run_id>.json`, Abruf über `runtime_run_trace
+status|snapshot|list|read`) — Tool-Calls, GameState-Fingerprints, Events und
+Verdict an EINER Trace-ID.
+
+## 🗂 Versionierte Chain-Manifeste (`res://mcp_chains/`)
+
+Wiederholbare Testketten als JSON (F5). Katalog ansehen, laden, ausführen:
+```bash
+# Katalog + Validierung + Lauf (Profile qa|dev, sichtbares Spiel):
+runtime_chain_list
+runtime_chain_load  {"chain_id": "world_smoke"}
+runtime_chain_run   {"chain_id": "preflight_core"}   # headless Preflight-Kern
+runtime_chain_run   {"chain_id": "world_smoke"}      # visible Smoke am laufenden Spiel
+```
+Manifeste sind versioniert (git) und werden vor Ausführung validiert
+(`runtime_chain_validate`); Assertions binden das Tool-Result als `result`
+und dürfen zusätzlich GameState lesen (`has_active_run()` etc.).

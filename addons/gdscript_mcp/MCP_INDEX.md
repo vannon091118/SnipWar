@@ -56,12 +56,11 @@ externer Agent, sammeln EventLog-Anomalien.
 **Live-Spieler-Handoff (`PLAYTEST_HANDOFF.md`)**:
 Verbindlicher Vertrag für sichtbares Remote-Gameplay. Pro Ingame-Aktion genau ein separater MCP-Tool-Call; keine direkte GameState-Mutation und keine Goal-/Chain-Orchestrierung als Spielerersatz. Game-Mismatch, MCP-Mismatch und Diagnoseunsicherheit werden getrennt protokolliert.
 
-**Client (`client/`)**:
-- `agent_repair_loop.py` — Autonomer Repair- & Feature-Orchestrator für geschlossene Self-Healing-Läufe
-- `mcp_client.py` — Referenz-TCP-Client für Metadaten, Artefakte und Worker-Aufträge (interaktiv/auto/one-shot)
-- `vision_worker.py` + `vision_worker.js` — lokale Bildanalyse-Instanzen (ohne Base64-Roundtrip; lesen
-  die Context-Artefakte aus `user://mcp_context`); JS-Worker enthält **echtes OCR via Tesseract.js**
-- `remote_playout.py` — Remote-Playthrough über `runtime_ux_*` (agentengleich)
+**Client (`client/`)** — **eine Sprache: Node/JS** (Python-Clients wurden entfernt; der gesamte
+Client-Kern ist `mcp_lib.js` + die Playthrough-Helfer):
+- `agent_repair_loop.js` — Autonomer Repair- & Feature-Orchestrator für geschlossene Self-Healing-Läufe (8-Schritte-Loop, JS-Port)
+- `mcp_lib.js` — Referenz-TCP-Client für Metadaten, Artefakte und Worker-Aufträge (interaktiv/auto/one-shot)
+- `vision_worker.js` — lokale Bildanalyse-Instanz (ohne Base64-Roundtrip; liest die Context-Artefakte aus `user://mcp_context`); enthält **echtes OCR via Tesseract.js**
 - `mcp_file_driver.js` (`playthroughs/atomic/`) — **Standard-Transport für wiederholte sichtbare Läufe**: ein persistenter Prozess, ein Handshake pro Lauf, ein Tool-Call pro Befehlszeile (Datei-Queue statt Prozess-Neustart). Latenz ~4–16 ms pro Call statt 1–2 s Prozess-/Handshake-Overhead + ~30 s Hang durch zuvor unaufgeräumte Client-Timer (`mcp_lib.js` cleart die Timeouts jetzt in `settle()`).
 
 **MCP Resources (`resources/list`, `resources/read`)**:
@@ -188,9 +187,12 @@ SnipWar-Defaults zurück (`res://scripts/preflight.gd` bzw.
 ## Editor ↔ Ingame-Wechsel
 
 - `editor_run_project` — startet das Projekt aus dem Editor; `with_mcp=true`
-  aktiviert Runtime-MCP im selben Godot-Prozess (in-process). Ein eigenständiger
-  Spielstart kann alternativ über `-- --mcp` erfolgen; Ports sind konfigurierbar
-  und nur Defaults, keine Projektannahmen.
+  setzt `MCP_EMBEDDED=1` (+ Port/Profil/Writes-Env) und startet das Spiel als
+  separaten Prozess (`play_main_scene`). Der `McpRuntime`-Autoload bootet den
+  Runtime-Server im Spiel-SceneTree des Kind-Prozesses; das Plugin wartet auf
+  den Handshake. Ein eigenständiger Spielstart kann alternativ über
+  `-- --mcp` erfolgen. Ports sind konfigurierbar und nur Defaults, keine
+  Projektannahmen.
 - `editor_logs_read` — Editor-Session-Logs (Lifecycle-Cursor) + optionaler
   Engine-Log-Tail (`--log-file` beim Editor-Start), analog zu HiGodots `logs_read`.
 - Schreib-Gate vereinheitlicht: „Allow editor write actions" im Dock aktiviert
@@ -198,9 +200,14 @@ SnipWar-Defaults zurück (`res://scripts/preflight.gd` bzw.
   (`runtime_autonomy_write/patch/export`) — vorher blieben die Autonomy-Tools im
   Editor-Modus trotz aktiviertem Gate gesperrt.
 
-## Tool-Liste (Stand: 107 Tools + custom_*)
+## Tool-Liste (Stand: 143 Domain-Tools + 6 Host-Tools + custom_*; Editor-Session zusätzlich +17 editor_*-Tools)
 
-### Runtime (19) — `runtime/tools/runtime/mcp_runtime_tools.gd`
+> **Zählung autoritativ:** `scripts/tools_count.gd`-Methode — die Registry lädt
+> alle Domänen und liefert die echten Namen. 143 Domain + 6 Host (runtime_mcp_status,
+> runtime_mcp_events, runtime_agent_goal_set, runtime_agent_activity,
+> runtime_visual_evidence, runtime_run_trace).
+
+### Runtime/Input (22) — `runtime/tools/runtime/mcp_runtime_tools.gd`
 | Tool | Beschreibung |
 |---|---|
 | `runtime_get_scene_tree` | begrenzter Szenenbaum mit `root_path`, `max_depth`, `max_nodes` |
@@ -282,8 +289,15 @@ Resource-UID, EventLog, Object-Counts, Memory, Profiling.
 - `runtime_ux_logs` — EventLog-Einträge + Anomalien (error/warning) für
   Auffälligkeit-Lokalisierung während E2E-Läufen
 
+### Gameplay (11) — `runtime/tools/gameplay/mcp_gameplay_tools.gd`
+`game_state_snapshot`, `game_state_restore`, `game_faction_query`,
+`game_vault_snapshot`, `game_resources_all`, `game_planet_info`, `game_ship_list`,
+`game_research_status`, `game_upgrade_list`, `game_dispatch_info`,
+`game_state_summary` (kompakte One-Shot-Übersicht — bevorzugt gegenüber 5+
+Einzelcalls).
+
 ### Game Systems (24) — `runtime/tools/systems/mcp_audio_tools.gd`
-Agent kann echte Spielsysteme steuern (Audio, Animation, Network, Gamepad/Touch,
+Agent kann echte Spielsysteme steuern (Audio, Video, Network, Gamepad/Touch,
 Shader, Partikel):
 | Kategorie | Tools |
 |---|---|
@@ -293,11 +307,12 @@ Shader, Partikel):
 | Shader/Particles (2) | `runtime_shader_set_param`, `runtime_particles_config` |
 | Network (5) | `runtime_network_create_server`, `_create_client`, `_disconnect`, `_get_peers`, `_send_rpc` |
 
-### Autonomy Workspace (Slice D) — `runtime/autonomy/mcp_capability_planner.gd`
+### Autonomy Workspace (19) — `runtime/autonomy/mcp_capability_planner.gd`
 Journaled edit-workspace tools for autonomous repair. **Write-gated**: all mutating
 tools stay blocked until the host enables them (`--mcp-autonomy-writes`); every write
 lands in an isolated `user://mcp_workspaces/run_*` sandbox with preimage/hash journaling
-and explicit rollback. Probes remain read-only regardless of the gate.
+and explicit rollback. Probes remain read-only regardless of the gate. Persistenz:
+`PERSISTENCE.md` §B (Workspaces überleben Neustarts, Rollback hash-basiert).
 
 | Tool | Access | Beschreibung |
 |---|---|---|
@@ -334,11 +349,25 @@ Diese Tools gehören zum automatisierten E2E-/Diagnosemodus und sind **kein** si
 - `runtime_goal_check` — read-only Zielausdruck einmal auswerten
 - `runtime_goal_history` — letzte automatisierte Schritte inspizieren
 
-### Chain Controller (3) — `runtime/autonomy/mcp_chain_controller.gd`
-Deklarative Kettenschritt-Orchestrierung für kombinierte Headless- und Visible-Testläufe:
-- `runtime_chain_validate` — Kette vor Ausführung auf Atomgrenzen, sichtbare Verbote, Screenshot-Gründe und Context-Limits prüfen
-- `runtime_chain_run` (async) — validierte Kette aus Preconditions, Tools, Assertions und Evidenzerfassung ausführen
+### Chain Controller (5 Tools) — `runtime/autonomy/mcp_chain_controller.gd`
+Dekaratve Kettenschritt-Orchestrierung für kombinierte Headless- und Visible-Testläufe:
+- `runtime_chain_validate` — Kette vor Validierung auf Atomgrenzen, sichtbare Verbote, Screenshot-Gründe und Context-Limits prüfen (auch per `chain_id`)
+- `runtime_chain_run` (async) — validierte Kette aus Preconditions, Tools, Assertions und Evidenzerfassung ausführen; `chain_id` lädt ein versioniertes Manifest (`res://mcp_chains/<id>.json`)
 - `runtime_chain_trace` — Letzten Ausführungs-Trace und Teilschritt-Verdicts abfragen
+- `runtime_chain_list` — Versionierte Chain-Manifeste im Katalog auflisten (id, name, description, mode, steps)
+- `runtime_chain_load` — Manifest laden + validieren, Definition für `runtime_chain_run` zurückgeben
+
+**Assertions:** `assertion` ist ein GDScript-Ausdruck, der das Tool-Result als
+`result`-Variable bindet (z.B. `result.count > 0`) und zusätzlich den
+GameState-Node als base_instance hat (z.B. `has_active_run()`). Alternativ
+deklarativ: `expect: {key, op, value}` gegen das Tool-Result.
+
+**Versionierte Chain-Manifeste (F5):** `res://mcp_chains/*.json`
+(überschreibbar über `application/mcp/chain_dir`). Jedes Manifest durchläuft
+`runtime_chain_validate`, bevor es ausgeführt wird — ein „PASS" ist nur echt,
+wenn die Kette wirklich so lief. Mitgeliefert: `preflight_core` (headless,
+Preflight-Kernconstraints als echte Subprozess-Läufe) und `world_smoke`
+(visible: UI-Scan + Screenshot + aktiver Run).
 
 Neuer `preflight_constraint`-Schritt: startet das Preflight-Skript als Headless-
 Subprozess und pollt das `--mcp-json`-Ergebnis (`user://mcp_preflight_result.json`).
@@ -366,6 +395,19 @@ Statische Projektanalyse über Dateisystem + FileAccess:
 > GameState-Signale und persistieren gewonnene Abläufe als erweiterte Bibliothek
 > ins Playthrough-Archiv (`runtime_playthrough_success`).
 
+### Run Trace (F4) — `runtime/context/mcp_run_trace.gd`
+Einheitlicher Evidence-Record pro Run, automatisch an den Run-Grenzen des
+Autonomy-Workspace gestartet/beendet und nach `user://mcp_traces/<run_id>.json`
+exportiert. Bindet an EINE Trace-ID:
+- jeden Tool-Call (ok/Fehler, Latenz, kompakte Ergebnis-Summary)
+- GameState-Fingerprints (game_state_summary) zu Beginn und am Ende
+- Lifecycle-/Log-Events (Log-Delta)
+- Chain-Verdicts (runtime_chain_run) und Visual-Evidence-Hinweise
+
+Host-Tool `runtime_run_trace`: `status | begin | end | snapshot | list | read`.
+Manuelles `runtime_autonomy_workspace_begin/end` startet/beendet den Trace
+automatisch (Repair-Loop = fertiger Evidence-Trace ohne Zusatzaufwand).
+
 ### Playthrough-Archiv (8) — `runtime/tools/e2e/mcp_playthrough_tools.gd`
 Lokale Erfolgs-/Kontext-DB (`user://mcp_playthrough/playthrough.jsonl`,
 PNG-Frames `frames/`, Presets `snapshots/*.tres`) für autonomes Weiterspielen:
@@ -385,9 +427,9 @@ $GODOT_BIN --path . --script res://addons/gdscript_mcp/testing/e2e/mcp_playthrou
 $GODOT_BIN --path . --script ... --mcp-e2e=new_game_to_world
 $GODOT_BIN --path . --script ... --mcp-e2e-list
 
-# Denkbar synchron: Server im Spiel + remote_playout.py:
+# Denkbar synchron: Server im Spiel + mcp_file_driver.js (oder atomare Helfer):
 # Spiel:   $GODOT_BIN --path . -- --mcp --mcp-port 9090
-# Agent:   python client/remote_playout.py --port 9090 --flow full
+# Agent:   node client/playthroughs/atomic/mcp_file_driver.js
 ```
 
 E2E-Ergebnis enthält `steps[]` + `anomalies[]` (EventLog-Fehler/Warnungen
@@ -412,7 +454,7 @@ dann:
 $GODOT_BIN --path . -- --mcp --mcp-port 9090 --mcp-transport tcp
 
 # 2. Connecten (Python, Runtime-TCP):
-python addons/gdscript_mcp/client/mcp_client.py --port 9090 --one-shot
+node addons/gdscript_mcp/client/playthroughs/atomic/mcp_player_atom.js runtime_mcp_status '{}'
 # Für viele atomare Aktionen: einen persistenten Socket/Handshake nutzen
 node addons/gdscript_mcp/client/playthroughs/atomic/atomic_session.js
 # stdin: eine JSON-Zeile pro MCP-Call, z. B. {"tool":"runtime_ux_scan","args":{"max_controls":120}}
@@ -449,27 +491,34 @@ echo '{"command":"close"}' >> /tmp/mcp_cmds.jsonl                     # sauber b
 
 ```
 addons/gdscript_mcp/
+├── AGENTS.md                        MCP-Test-Doktrin (Pflicht-Lese)
+├── MCP_INDEX.md                     Diese Datei (Architektur & Tools)
+├── PERSISTENCE.md                   Persistenz-Landkarte (Pflicht-Lese)
+├── AGENT_WORKFLOW.md                Agent-Workflow-Doku (6-Schritte-Loop)
+├── PLAYTEST_HANDOFF.md              Spieler-Vertrag + Atom-Registry
+├── MCP_ANOMALIES.md                 GAME vs MCP-Mismatch-Referenz
 ├── runtime/
 │   ├── core/mcp_tool_registry.gd        Registry + Routing
+│   ├── core/mcp_project_adapter.gd      Optional cross-project adapter
+│   ├── core/mcp_custom_tool_loader.gd   Custom Tools (res://mcp_tools/, hot-reload)
 │   ├── lifecycle/mcp_lifecycle.gd       Server-Lifecycle (eigener Zustand)
 │   ├── protocol/mcp_protocol.gd         JSON-RPC/Content-Formatter
 │   ├── host/
 │   │   ├── mcp_server.gd                Server-Host (Transport, Queue, Status)
-│   │   └── mcp_runtime.gd               Autoload (--mcp CLI opt-in)
-│   ├── context/mcp_context_store.gd     Lokale Bild-Artefakte (TTL, Limit)
-│   ├── core/mcp_project_adapter.gd      Optional cross-project adapter
-│   ├── core/mcp_custom_tool_loader.gd   Custom Tools (res://mcp_tools/, hot-reload)
+│   │   └── mcp_runtime.gd               Autoload (--mcp CLI / MCP_EMBEDDED)
+│   ├── context/mcp_context_store.gd    Lokale Bild-Artefakte (TTL, Limit)
+│   ├── context/mcp_run_trace.gd        Einheitlicher Evidence-Record pro Run (F4)
+│   ├── autonomy/                       Contract-Gate, Capability-Planner (Workspace),
+│   │                                  Chain-Controller (Manifeste), Path-Validator, Journal
 │   └── tools/
-│       ├── runtime/ ...  Debug/ ...      Runtime/Input, Vision, Debug, UX, E2E
-│       ├── vision / mcp_vision_worker.gd Node/Python-Worker-Supervisor
-│       ├── debug/     ...
-│       ├── ux/        ...  mcp_ux_live, mcp_ux_pipeline, mcp_ux_*,
+│       ├── runtime/ ...  · Vision/ ... · Debug/ ... · UX/ ...
+│       ├── gameplay/  mcp_gameplay_tools.gd (11 game_*-Tools)
 │       ├── e2e/       mcp_e2e.gd, mcp_goal_player.gd, mcp_code_analyzer.gd, mcp_playthrough_tools.gd
-├── AGENT_WORKFLOW.md                  Agent-Workflow-Doku (6-Schritte-Loop)
 │       └── systems/   mcp_audio_tools.gd  (Audio, Animation, Network, Gamepad, Shader, Partikel)
-├── client/  (mcp_client.py, vision_worker.py, vision_worker.js, remote_playout.py, agent_store.py, agent_playthrough.py, mcp_stresstest.js)
-├── editor/  (Plugin + Dock — Pipeline-Visualisierung für den User: Agent-Ziel,
-│             Tool-Call-Feed mit Timing/Fehlern, OCR-Evidence, Event-Stream; KEINE
-│             Agenten-Steuerung mehr — die Aktionen macht der Agent über MCP)
+├── client/  (agent_repair_loop.js, mcp_lib.js, vision_worker.js, mcp_stresstest.js,
+│             mcp_stdio_bridge.js, mcp_connector_selftest.js — eine Sprache: Node/JS)
+├── mcp_chains/  (versionierte Chain-Manifeste: preflight_core.json, world_smoke.json)
+├── editor/  (Plugin + Dock — Pipeline-Visualisierung: Agent-Ziel, Tool-Call-Feed,
+│             OCR-Output, Event-Stream; KEINE Agenten-Steuerung — der Agent callt über MCP)
 └── testing/ (mcp_test_runner, mcp_test_scenario, scenarios/, e2e/playthrough_driver)
 ```

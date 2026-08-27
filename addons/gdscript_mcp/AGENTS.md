@@ -21,6 +21,7 @@
 | 4 | **`PLAYTEST_HANDOFF.md`** | Session-Profile (player/qa/dev) + verbindlicher Spieler-Vertrag + Atom-Registry |
 | 5 | **`MCP_ANOMALIES.md`** | GAME vs MCP-Mismatch-Referenz — trennt Spiel-Bugs von Tool-API-Problemen |
 | 6 | **`client/playthroughs/MCP_PLAYTEST_REPORT.md`** | Live-Playthrough-Archiv (was sichtbar verifiziert wurde) |
+| 7 | **`PERSISTENCE.md`** | Persistenz-Landkarte: was wohin persistiert, TTLs, Retention, Versionierung, Backup |
 
 **Projekt-Doku (nicht hier):** `DESIGN.md`, `VISION.md`, `docs/FINDINGS.md`,
 `docs/mcp_live_test_results.md` — Spiel-Findings und Session-Hergang. Die
@@ -67,10 +68,11 @@ Der Server hängt bei unerwarteten Lagen **automatisch** `visual_evidence` an:
   springt grundsätzlich nie.
 
 ### 6. Editor-Modus
-- Editor-Server = 9091, Runtime in-process = 9090 (`editor_run_project with_mcp=true`).
-- **Bekannte Grenze:** Der In-Process-Server als Editor-Kind sieht den
-  Spiel-SceneTree nicht („Game not running") — offen, Lösungskandidat in
-  `docs/FINDINGS.md` → OFFEN-1.
+- Editor-Server = 9091, Runtime = 9090 (`editor_run_project with_mcp=true`).
+- **OFFEN-1 gelöst:** `play_main_scene` startet das Spiel als separaten Prozess;
+  das Plugin setzt `MCP_EMBEDDED=1` (+ Port/Profil/Writes-Env) und der
+  `McpRuntime`-Autoload bootet den Server im Spiel-SceneTree des Kind-Prozesses.
+  Der Dock verbindet sich selbsttätig auf 9090, sobald das Spiel läuft.
 
 ---
 
@@ -95,6 +97,7 @@ Der Server hängt bei unerwarteten Lagen **automatisch** `visual_evidence` an:
 | MCP-Workflow & Modi | `addons/gdscript_mcp/AGENT_WORKFLOW.md` |
 | MCP-Spieler-Vertrag | `addons/gdscript_mcp/PLAYTEST_HANDOFF.md` |
 | MCP-Anomalien (GAME vs MCP) | `addons/gdscript_mcp/MCP_ANOMALIES.md` |
+| MCP-Persistenz (Landkarte, TTLs, Backup) | `addons/gdscript_mcp/PERSISTENCE.md` |
 | Live-Playthrough-Archiv | `addons/gdscript_mcp/client/playthroughs/MCP_PLAYTEST_REPORT.md` |
 | Zentrale Findings (Spiel + MCP, getrennt) | `docs/FINDINGS.md` |
 | Spiel-Doku | `DESIGN.md`, `VISION.md` |

@@ -62,7 +62,7 @@ Das Zielbild ist ein Agent, der ohne menschliche Interaktion neue Features bauen
 | **Phase 1** | Autonomy Contracts & Discovery | ✅ **Fertiggestellt** | `McpAutonomyContracts`, Capability-Metadata, normalized Receipts, read-only Probes. |
 | **Phase 2** | Edit Workspace & Journaling | ✅ **Fertiggestellt** | `McpWorkspaceJournal`, `McpProjectTools`, Sandbox `user://mcp_workspaces/run_*`, Preimage-Hashing, Single-Occurrence-Patching, Gated Export, Rollback, strukturierte Syntax-Diagnostik & `resource_barrier`. |
 | **Phase 3** | Declarative Chain Controller | ✅ **Fertiggestellt** | `McpChainController`: Verbindet Headless Preflight mit sichtbaren E2E-Szenarien in deklarativer Kette (`runtime_chain_run`, `runtime_chain_trace`). |
-| **Phase 4** | Autonomous Goal & Repair Loop | ✅ **Fertiggestellt** | `McpGoalPlayer`: Deterministisches Feature-Testing (`runtime_goal_sequence`), `agent_repair_loop.py` (geschlossener Self-Healing-Loop). |
+| **Phase 4** | Autonomous Goal & Repair Loop | ✅ **Fertiggestellt** | `McpGoalPlayer`: Deterministisches Feature-Testing (`runtime_goal_sequence`), `agent_repair_loop.js` (geschlossener Self-Healing-Loop, JS-Client). |
 | **Phase 5** | Unified Evidence & MCP Resources | ✅ **Fertiggestellt** | MCP Resources (`godot://scene/current`, `godot://logs/recent`, `godot://gameState/summary`, `godot://test/results`), Push-Notifications (`list_changed`) und standardisierter Evidence-Trace. |
 
 ---

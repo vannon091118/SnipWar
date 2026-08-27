@@ -3,6 +3,16 @@
 **Stand:** 2026-08-25  
 **Änderungsmodus:** Dieser Audit ist eine Dokumentation des bisherigen Read-only-Reviews. Er beschreibt keine implementierten Änderungen am MCP.
 
+> **Status-Update 2026-08-27:** Die im Audit als „Lücken" markierten Bereiche sind
+> inzwischen größtenteils geschlossen (Belege in `docs/FINDINGS.md`):
+> **A (Edit-Workspace)** → `runtime_autonomy_*` journaled Workspace + Gated
+> Export; **B (Chain-Modell)** → `runtime_chain_*` mit Versionierung
+> (`res://mcp_chains/`); **C (Headless+Visible in einer Chain)** →
+> `preflight_constraint`-Subprozess-Schritt; **D (Evidence-Trace)** →
+> `McpRunTrace` (`user://mcp_traces/`); **G (Impact-Graph)** bleibt offen
+> (Code-Analyzer liefert Muster, keinen vollständigen Impact-Graphen).
+> HiGodot bleibt Referenz; die Eigenimplementierung folgt dem bewiesenen Weg.
+
 ## 1. Zielbild des Projekts
 
 ### Zentrale Arbeitsannahme

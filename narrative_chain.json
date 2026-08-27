@@ -2757,6 +2757,73 @@
 			"seq": 37,
 			"subject": "Null: Embedded-Runtime: MCP_EMBEDDED-Env start… — nach Basher",
 			"summary": "Der Embedded-Lauf endet, wie er begann: mit der Frage, wo der Server eigentlich zu Hause ist. Lange Zeit stand er neben dem Spiel, nicht in ihm — der Editor hostete ihn, und das Spiel blieb ihm fre..."
+		},
+		{
+			"a": 14,
+			"arc": "a15",
+			"c": 38,
+			"composite": "c38j33n6a14p37",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 23.0,
+					"file": "addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd",
+					"insertions": 215.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/runtime/context/mcp_run_trace.gd",
+					"insertions": 218.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/runtime/context/mcp_run_trace.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 427.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "mcp_chains/preflight_core.json",
+					"insertions": 33.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "mcp_chains/world_smoke.json",
+					"insertions": 32.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 72.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 46.0
+				}
+			],
+			"date": "2026-08-27 14:00:00",
+			"hash": "f5b933b14f7bb53a637cf6fc559569665288d2a8",
+			"j": 33,
+			"model_id": "claude-sonnet-4",
+			"mood": "triumphierend",
+			"n": 6,
+			"narrator": "Devin",
+			"p": 37,
+			"p_id": 38,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Null",
+			"seq": 38,
+			"subject": "Devin sagt: Evidence-Protokoll: McpRunTrace bindet… — nach Null",
+			"summary": "Das Pattern war nicht neu — es war die fehlende Schicht an der Stelle, wo bisher nur lose Enden lagen. Jeder autonome Lauf produzierte Beweise: Frames, Logs, Verdicts, Zustände — und jeder Lauf ver..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

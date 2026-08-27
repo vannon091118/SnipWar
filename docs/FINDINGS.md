@@ -106,10 +106,71 @@ Die verbleibenden Isolation-Warnings anderer Constraints sind erwartete Mutation
 - ✅ GEFIXT — MCP Vor-/Nachlaufzeit: `runtime_ux_analyze` läuft standardmäßig direkt als DOM-Snapshot; Screenshot/OCR nur noch opt-in (`include_visual=true`) im vorhandenen `vision_worker`-Eigenprozess. Verbunden mit der Multi-Client/NODELAY-Runde ist damit kein Standardpfad mehr serialisiert auf OCR.
 - 🔵 BEOBACHTET — `user://saves/run_2.tres` meldet beim Boot einen veralteten Parse-Fehler aus Test-Slot 2 (Slots 1–7 sind Test-Slots); Constraint `save_game_slots` bleibt PASS. Bereinigung als Trivial-Kandidat.
 
+## Autonomie-Runde — 2026-08-27 (Client-Konsolidierung + OFFEN-1 + Dock-Ehrlichkeit)
+
+- ✅ GEFIXT — **F1 Client-Konsolidierung (eine Sprache):** `agent_repair_loop.py`
+  als `agent_repair_loop.js` portiert (8-Schritte-Loop identisch, nutzt
+  `mcp_lib.js` statt eigener `McpClientSession`); alle Python-Clients entfernt
+  (`agent_repair_loop.py`, `mcp_client.py`, `remote_playout.py`,
+  `agent_playthrough.py`, `agent_store.py`, `vision_worker.py`) + beide
+  `_mcp_connect.bat`. Client-Stack ist jetzt ausschließlich Node/JS
+  (`mcp_lib.js` + Playthrough-Helfer + `vision_worker.js`).
+- ✅ GEFIXT — **OFFEN-1 (Editor-Modus):** `play_main_scene` startet das Spiel in
+  Godot 4 als **separaten Prozess** (verifiziert im Godot-Quellcode 4.7.2:
+  `EditorInterface::play_main_scene` → `EditorRunBar` → `EditorRun::run` →
+  `OS::create_instance`). Das Plugin hostet keinen Runtime-Server mehr im
+  Editor; es setzt `MCP_EMBEDDED=1` + Port/Profil/Writes-Env vor dem Start,
+  der `McpRuntime`-Autoload bootet den Server im Spiel-SceneTree des
+  Kind-Prozesses (Env wird vererbt). `Engine.get_main_loop()` zeigt damit im
+  Server auf den echten Spielbaum — alle Scene-/UX-/Input-Tools arbeiten auf
+  dem Spiel. Plugin wartet auf Handshake (`_wait_for_runtime_mcp`),
+  Dock verbindet selbsttätig. `vision_worker_enabled` im Embedded-Config auf
+  `true` (OCR aktiv).
+- ✅ GEFIXT — **DOCK-2 (Farbcodierung ehrlich):** `runtime_mcp_status` liefert
+  jetzt `game_running`; der Dock färbt nur bei laufendem Spiel grün, sonst
+  gelb (vorher `renderer=="visible"` — im Editor immer wahr → grüner
+  Platzhalter trotz „Game not running").
+- ✅ GEFIXT — **F4 (einheitlicher Evidence-Record pro Run):** neues
+  `McpRunTrace` (`runtime/context/mcp_run_trace.gd`) bindet Tool-Calls
+  (ok/Latenz/Summary), GameState-Fingerprints (baseline/final),
+  Lifecycle-Events (Log-Delta), Chain-Verdicts und Visual-Evidence-Hinweise
+  an EINE Trace-ID und exportiert nach `user://mcp_traces/<run_id>.json`.
+  Auto-Begin/End an den Workspace-Grenzen (`runtime_autonomy_workspace_begin`/
+  `_end`), Host-Tool `runtime_run_trace` (status|begin|end|snapshot|list|read).
+  Headless-Selftest: PASSED.
+- ✅ GEFIXT — **F5 (versionierte Chain-Manifeste):** `res://mcp_chains/*.json`
+  (überschreibbar via `application/mcp/chain_dir`); neue Tools
+  `runtime_chain_list` + `runtime_chain_load`; `runtime_chain_run`/
+  `_validate` akzeptieren `chain_id` und validieren das Manifest vor dem Lauf.
+  Assertions binden jetzt das Tool-Result als `result` (z.B.
+  `result.count > 0`) zusätzlich zum GameState-Context; deklaratives
+  `expect: {key, op, value}` unterstützt. Mitgeliefert: `preflight_core`
+  (headless) + `world_smoke` (visible). Headless-Selftest: PASS.
+
+## Konsistenz- & Persistenz-Runde — 2026-08-27
+
+- ✅ GEFIXT — **Tool-Zahlen wahr gemacht:** Doku sagte „107 Tools", real sind
+  **143 Domain-Tools + 6 Host-Tools** (autoritativ via Registry-Zählung).
+  `MCP_INDEX.md` korrigiert; Domain-Zuordnungen präzisiert (Gameplay 11,
+  Runtime/Input 22, Chain 5).
+- ✅ GEFIXT — **Persistenz dokumentiert:** neue `PERSISTENCE.md` als Pflicht-
+  Lese (#7 in `AGENTS.md`) — vollständige Landkarte aller `res://`- vs
+  `user://`-Ablagen, TTLs (Kontext 45 s / 6 Records / 32 MB), Retention
+  (Run-Traces: `prune max_days`, Default 30), Backup-Hinweis, Garantien
+  (Traces überleben Neustarts, Workspace-Rollback hash-basiert).
+- ✅ GEFIXT — **Run-Trace-Retention:** `runtime_run_trace` unterstützt jetzt
+  `action=prune` (`max_days`, Default 30) — Traces akkumulieren nicht mehr
+  unbegrenzt.
+- ✅ GEFIXT — **Stale-Doku aktualisiert:** `MCP_ANOMALIES.md`,
+  `CONTEXT_AUTONOMY_AUDIT.md`, `PLAYTEST_HANDOFF.md` tragen Status-Header
+  (was ist gefixt, was bleibt historisch, aktuelle Referenzen);
+  `MCP_INDEX.md`-Dateiübersicht aufgeräumt und auf eine Sprache (JS)
+  korrigiert.
+
 ## Offene Punkte (nächste Runden)
 | # | Punkt | Priorität |
 |---|-------|-----------|
-| OFFEN-1 | **Editor-Modus: eingebettete Spiel-Tests.** Erkenntnis: Der Editor-Kind-Server (`_start_runtime_server_internal`) kann die Scene-Tools nie auf den Spielbaum richten (Godot hat keine öffentliche API für den laufenden Spiel-Tree; Tools nutzen `Engine.get_main_loop()` → Editor-Tree → „Game not running"). Lösungskandidat: `McpRuntime`-Autoload startet den Server **im Spiel-SceneTree** selbst, angestoßen durch Env-Flag vom Plugin (`MCP_EMBEDDED=1` vor `play_main_scene`); Plugin wartet auf den Spiel-Server statt selbst zu hosten. `vision_worker_enabled: false` im In-Process-Config auf `true` (OCR). | P1 |
+| OFFEN-1 | ~~Editor-Modus: eingebettete Spiel-Tests~~ → ✅ GEFIXT (siehe oben: `MCP_EMBEDDED`-Env + Server im Spiel-SceneTree des Kind-Prozesses) | ~~P1~~ |
 | OFFEN-2 | Tutorial-Schritt 2: grüner Ziel-Marker (Home-Planet) sichtbar machen | P1 |
 | OFFEN-3 | `runtime_visual_evidence` um Age/Zeitstempel-Filter erweitern (veralteter Cache ≠ aktueller Zustand) | P2 |
 | OFFEN-4 | `runtime_ux_analyze include_visual=true` vom seriellen Async-Pfad auf Fire-and-forget umstellen | P2 |

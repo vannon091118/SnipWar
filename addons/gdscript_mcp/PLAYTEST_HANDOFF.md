@@ -1,7 +1,13 @@
 # MCP Live Playtest Handoff
 
-Status: 2026-08-26
-Goal: `erstes schiff bauen`
+Status: 2026-08-26 · **Session-Handoff (historisch)** · Goal: `erstes schiff bauen`
+
+> **Status-Update 2026-08-27:** MCP-06 (30–60 s/Aktion) ist durch den
+> persistenten Standard-Transport `mcp_file_driver.js` (ein Prozess + ein
+> Handshake, eine Zeile = genau ein Tool-Call, 4–16 ms) behoben; MCP-07 ist
+> durch die entkoppelte `visual_evidence`-Analyse adressiert. Der Spieler-
+> Vertrag (Atom-Registry unten) bleibt unverändert verbindlich. Die
+> Tool-Zahlen sind in `MCP_INDEX.md` aktualisiert (143 Domain + 6 Host).
 
 ## Session-Profile (verbindlich, seit v4.1 erzwungen)
 

@@ -580,3 +580,19 @@ Embedded-Runtime: MCP_EMBEDDED-Env startet den Server im Spiel-SceneTree des Kin
 - change_index.json: Implementiert und integriert (F-003).
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 14:00:00 — p38 · c38j33n6a14p37 · Devin · triumphierend
+
+**Devin sagt: Evidence-Protokoll: McpRunTrace bindet… — nach Null**
+
+Evidence-Protokoll: McpRunTrace bindet Tool-Calls, Fingerprints, Log-Delta und Verdict an eine Trace-ID mit Auto-Begin/End und Export nach user://mcp_traces; versionierte Chain-Manifeste in res://mcp_chains mit Validierung vor dem Lauf
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd: Implementiert und integriert (F-086).
+- addons/gdscript_mcp/runtime/context/mcp_run_trace.gd: Implementiert und integriert (F-087).
+- addons/gdscript_mcp/runtime/context/mcp_run_trace.gd.uid: Implementiert und integriert (F-088).
+- change_index.json: Implementiert und integriert (F-003).
+- mcp_chains/preflight_core.json: Implementiert und integriert (F-089).
+- mcp_chains/world_smoke.json: Implementiert und integriert (F-090).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
