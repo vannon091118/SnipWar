@@ -489,3 +489,37 @@ Trennung MCP-Test-Doku vom Projekt: neues addons/gdscript_mcp/AGENTS.md als Pfli
 - change_index.json: Dokumentation aktualisiert (F-003).
 - narrative_chain.json: Dokumentation aktualisiert (F-004).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+
+## 2026-08-27 10:00:00 — p34 · c34j62n2a2p4 · Basher · erschöpft
+
+**Basher (27 files): Flyover-Onboarding: Tutorial-Schritte oeffnen… — nach Argos**
+
+Flyover-Onboarding: Tutorial-Schritte oeffnen ihre Menues, Heimatweltring mit Randpfeil, ResearchIndicator als Klick-Echo entfernt, MCP-Analyse direkte Ausfuehrung ohne OCR-Pflicht
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- LORE.md: Implementiert und integriert (F-051).
+- addons/gdscript_mcp/runtime/host/mcp_server.gd: Implementiert und integriert (F-042).
+- addons/gdscript_mcp/runtime/tools/ux/mcp_ux_live.gd: Implementiert und integriert (F-052).
+- addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd: Implementiert und integriert (F-044).
+- assets/ui/stickman/stickman_fracture.svg: Implementiert und integriert (F-053).
+- assets/ui/stickman/stickman_fracture.svg.import: Implementiert und integriert (F-054).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/FINDINGS.md: Implementiert und integriert (F-046).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/concept_index.gd: Implementiert und integriert (F-055).
+- scripts/config/ui_theme_config.gd: Implementiert und integriert (F-056).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/objects/conflict_manager.gd: Implementiert und integriert (F-057).
+- scripts/objects/planets/planet.gd: Implementiert und integriert (F-058).
+- scripts/objects/planets/planet_network.gd: Implementiert und integriert (F-028).
+- scripts/objects/planets/research_indicator.gd: Implementiert und integriert (F-059).
+- scripts/objects/planets/research_indicator.gd.uid: Implementiert und integriert (F-060).
+- scripts/preflight/constraint_dead_code.gd: Implementiert und integriert (F-061).
+- scripts/preflight/constraint_world_details_and_scale.gd: Implementiert und integriert (F-062).
+- scripts/preflight/preflight_fixture.gd: Implementiert und integriert (F-063).
+- scripts/preflight_v2/v2_fixture.gd: Implementiert und integriert (F-064).
+- scripts/state/game_state.gd: Implementiert und integriert (F-065).
+- scripts/ui/dossier/paper_dossier.gd: Implementiert und integriert (F-066).
+- scripts/ui/dossier/parchment_tech_tree_view.gd: Implementiert und integriert (F-032).
+- scripts/ui/main_menu.gd: Implementiert und integriert (F-067).
+- scripts/ui/tutorial/tutorial_director.gd: Implementiert und integriert (F-031).

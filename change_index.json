@@ -113,6 +113,74 @@
 			],
 			"p_id": 27.0
 		},
+		"2a1018160b75ec35334a1a56f55aa4daedc376da": {
+			"c": 34,
+			"composite": "c34j62n2a2p4",
+			"entities": [
+				"F-002",
+				"F-051",
+				"F-042",
+				"F-052",
+				"F-044",
+				"F-053",
+				"F-054",
+				"F-003",
+				"F-046",
+				"F-004",
+				"F-055",
+				"F-056",
+				"F-001",
+				"F-057",
+				"F-058",
+				"F-028",
+				"F-059",
+				"F-060",
+				"F-061",
+				"F-062",
+				"F-063",
+				"F-064",
+				"F-065",
+				"F-066",
+				"F-032",
+				"F-067",
+				"F-031",
+				"C-081",
+				"C-082",
+				"C-083",
+				"C-084",
+				"C-085",
+				"C-086",
+				"C-087",
+				"C-070",
+				"C-071",
+				"C-088",
+				"C-089",
+				"C-090",
+				"C-091",
+				"C-092",
+				"C-093",
+				"C-094",
+				"C-095",
+				"C-096",
+				"C-097",
+				"C-098",
+				"C-099",
+				"C-100",
+				"C-101",
+				"C-102",
+				"C-103",
+				"C-104",
+				"C-105",
+				"C-106",
+				"C-107",
+				"C-108",
+				"C-109",
+				"C-110",
+				"C-111",
+				"C-112"
+			],
+			"p_id": 34
+		},
 		"2bc5533d6b8bb9fd26723d1048947df8561e89f6": {
 			"c": 17.0,
 			"composite": "c17j48n14a1p1",
@@ -123,7 +191,7 @@
 			"p_id": 17.0
 		},
 		"4560e16ae80496534b8ce5eced53d3ae736217b6": {
-			"c": 33,
+			"c": 33.0,
 			"composite": "c33j17n7a4p5",
 			"entities": [
 				"F-019",
@@ -133,7 +201,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 33
+			"p_id": 33.0
 		},
 		"5cac8a431844eea134b19fb331c438b86455ed8a": {
 			"c": 20.0,
@@ -1555,10 +1623,16 @@
 						791.0
 					],
 					"p_id": 30.0
+				},
+				{
+					"lines": [
+						811.0
+					],
+					"p_id": 34.0
 				}
 			],
 			"id": "C-070",
-			"last_p": 30.0,
+			"last_p": 34.0,
 			"name": "_send_tool_result_with_visual_evidence",
 			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
 			"status": "modified",
@@ -1572,10 +1646,16 @@
 						802.0
 					],
 					"p_id": 30.0
+				},
+				{
+					"lines": [
+						815.0
+					],
+					"p_id": 34.0
 				}
 			],
 			"id": "C-071",
-			"last_p": 30.0,
+			"last_p": 34.0,
 			"name": "_handle_visual_evidence",
 			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
 			"status": "modified",
@@ -1731,6 +1811,550 @@
 			"last_p": 32.0,
 			"name": "_on_events_response",
 			"path": "addons/gdscript_mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-081": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						476.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-081",
+			"last_p": 34.0,
+			"name": "_process_buffer",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-082": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						484.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-082",
+			"last_p": 34.0,
+			"name": "_handle_line",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-083": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						487.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-083",
+			"last_p": 34.0,
+			"name": "_handle_request",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-084": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						526.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-084",
+			"last_p": 34.0,
+			"name": "_handle_resources_list",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-085": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						568.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-085",
+			"last_p": 34.0,
+			"name": "_handle_resources_read",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-086": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						633.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-086",
+			"last_p": 34.0,
+			"name": "_handle_tool_call",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-087": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						747.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-087",
+			"last_p": 34.0,
+			"name": "_run_async_tool",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-088": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						977.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-088",
+			"last_p": 34.0,
+			"name": "_send_tool_result_atomic",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-089": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						1019.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-089",
+			"last_p": 34.0,
+			"name": "_any_client_connected",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-090": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						1027.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-090",
+			"last_p": 34.0,
+			"name": "_any_client_ready",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-091": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						1034.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-091",
+			"last_p": 34.0,
+			"name": "_first_ready_protocol_version",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-092": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						1041.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-092",
+			"last_p": 34.0,
+			"name": "_send_response",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-093": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						5.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-093",
+			"last_p": 34.0,
+			"name": "KNOWN_RUNTIME_ENTRYPOINTS",
+			"path": "scripts/preflight/constraint_dead_code.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-094": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-094",
+			"last_p": 34.0,
+			"name": "KNOWN_PUBLIC_API_PREFIXES",
+			"path": "scripts/preflight/constraint_dead_code.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-095": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						54.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-095",
+			"last_p": 34.0,
+			"name": "_build_usage_tokens",
+			"path": "scripts/preflight/constraint_dead_code.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-096": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						62.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-096",
+			"last_p": 34.0,
+			"name": "_candidate_reason",
+			"path": "scripts/preflight/constraint_dead_code.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-097": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						71.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-097",
+			"last_p": 34.0,
+			"name": "_is_known_entrypoint",
+			"path": "scripts/preflight/constraint_dead_code.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-098": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						83.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-098",
+			"last_p": 34.0,
+			"name": "_usage_text",
+			"path": "scripts/preflight/constraint_dead_code.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-099": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						348.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-099",
+			"last_p": 34.0,
+			"name": "jobs_auto_advance_enabled",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-100": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						351.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-100",
+			"last_p": 34.0,
+			"name": "set_player_identity",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-101": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						355.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-101",
+			"last_p": 34.0,
+			"name": "player_identity",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-102": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						146.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-102",
+			"last_p": 34.0,
+			"name": "_visible_path_technologies",
+			"path": "scripts/ui/dossier/parchment_tech_tree_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-103": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						232.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-103",
+			"last_p": 34.0,
+			"name": "_process",
+			"path": "scripts/ui/dossier/parchment_tech_tree_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-104": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						265.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-104",
+			"last_p": 34.0,
+			"name": "_live_node_center",
+			"path": "scripts/ui/dossier/parchment_tech_tree_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-105": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						99.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-105",
+			"last_p": 34.0,
+			"name": "_show_identity_intro",
+			"path": "scripts/ui/main_menu.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-106": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						142.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-106",
+			"last_p": 34.0,
+			"name": "_select_profile",
+			"path": "scripts/ui/main_menu.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-107": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						157.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-107",
+			"last_p": 34.0,
+			"name": "_confirm_identity",
+			"path": "scripts/ui/main_menu.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-108": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						246.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-108",
+			"last_p": 34.0,
+			"name": "_schedule_open",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-109": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						256.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-109",
+			"last_p": 34.0,
+			"name": "_press_launcher",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-110": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						261.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-110",
+			"last_p": 34.0,
+			"name": "_current_step_id",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-111": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						268.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-111",
+			"last_p": 34.0,
+			"name": "_try_research_auto_scroll",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-112": {
+			"first_p": 34.0,
+			"history": [
+				{
+					"lines": [
+						293.0
+					],
+					"p_id": 34.0
+				}
+			],
+			"id": "C-112",
+			"last_p": 34.0,
+			"name": "_find_tree_scroll",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -2231,6 +2855,176 @@
 			"last_p": 33.0,
 			"name": "AGENTS.md",
 			"path": "addons/gdscript_mcp/AGENTS.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-051": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-051",
+			"last_p": 34.0,
+			"name": "LORE.md",
+			"path": "LORE.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-052": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-052",
+			"last_p": 34.0,
+			"name": "mcp_ux_live.gd",
+			"path": "addons/gdscript_mcp/runtime/tools/ux/mcp_ux_live.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-053": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-053",
+			"last_p": 34.0,
+			"name": "stickman_fracture.svg",
+			"path": "assets/ui/stickman/stickman_fracture.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-054": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-054",
+			"last_p": 34.0,
+			"name": "stickman_fracture.svg.import",
+			"path": "assets/ui/stickman/stickman_fracture.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-055": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-055",
+			"last_p": 34.0,
+			"name": "concept_index.gd",
+			"path": "scripts/concept_index.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-056": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-056",
+			"last_p": 34.0,
+			"name": "ui_theme_config.gd",
+			"path": "scripts/config/ui_theme_config.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-057": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-057",
+			"last_p": 34.0,
+			"name": "conflict_manager.gd",
+			"path": "scripts/objects/conflict_manager.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-058": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-058",
+			"last_p": 34.0,
+			"name": "planet.gd",
+			"path": "scripts/objects/planets/planet.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-059": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-059",
+			"last_p": 34.0,
+			"name": "research_indicator.gd",
+			"path": "scripts/objects/planets/research_indicator.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-060": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-060",
+			"last_p": 34.0,
+			"name": "research_indicator.gd.uid",
+			"path": "scripts/objects/planets/research_indicator.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-061": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-061",
+			"last_p": 34.0,
+			"name": "constraint_dead_code.gd",
+			"path": "scripts/preflight/constraint_dead_code.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-062": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-062",
+			"last_p": 34.0,
+			"name": "constraint_world_details_and_scale.gd",
+			"path": "scripts/preflight/constraint_world_details_and_scale.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-063": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-063",
+			"last_p": 34.0,
+			"name": "preflight_fixture.gd",
+			"path": "scripts/preflight/preflight_fixture.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-064": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-064",
+			"last_p": 34.0,
+			"name": "v2_fixture.gd",
+			"path": "scripts/preflight_v2/v2_fixture.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-065": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-065",
+			"last_p": 34.0,
+			"name": "game_state.gd",
+			"path": "scripts/state/game_state.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-066": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-066",
+			"last_p": 34.0,
+			"name": "paper_dossier.gd",
+			"path": "scripts/ui/dossier/paper_dossier.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-067": {
+			"first_p": 34.0,
+			"history": [],
+			"id": "F-067",
+			"last_p": 34.0,
+			"name": "main_menu.gd",
+			"path": "scripts/ui/main_menu.gd",
 			"status": "created",
 			"type": "file"
 		}

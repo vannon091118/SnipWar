@@ -9,7 +9,7 @@
 <td align="center" width="100%">
 <br/>
 <samp>
-<b>SNIPWAR — EISEN-GRENZE</b><br/>
+<b>SNIPWAR — RAND DER GALAXIE</b><br/>
 STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 34 PREFLIGHT-CONSTRAINTS · 0 SICHERE ORBITS
 </samp>
 <br/><br/>
@@ -33,7 +33,7 @@ STRATEGISCHE OVERWORLD · UNENDLICH WELTEN · 34 PREFLIGHT-CONSTRAINTS · 0 SICH
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ▓                                                          ▓
 ▓   EINGEHENDE TRANSMISSION // KANAL 7-DELTA               ▓
-▓   HERKUNFT: EISEN-GRENZE · SEKTOR [REDACTED]             ▓
+▓   HERKUNFT: RAND DER GALAXIE · SEKTOR [REDACTED]             ▓
 ▓   VERSCHLÜSSELUNG: KEINE (Zu teuer in der Anschaffung)   ▓
 ▓   EMPFÄNGER: Wer auch immer das Repository gerade klont  ▓
 ▓                                                          ▓
@@ -51,9 +51,9 @@ Der Rest hat keine Meinung — noch nicht."*
 
 > **AN:** Oberkommando & wer auch immer gerade die Konsole bewacht
 > **VON:** Einsatzleitung, Frontier-Basis *Ocean*
-> **BETREFF:** Lagebericht Eisen-Grenze. Bitte lesen, ignorieren, später bereuen.
+> **BETREFF:** Lagebericht Rand der Galaxie. Bitte lesen, ignorieren, später bereuen.
 
-Die **Eisen-Grenze** ist kein romantischer Name. Jemand hat die Karte gesehen, die Ressourcenverteilung kalkuliert und beschlossen, dass *„Hoffnungslos"* als Codename zu wenig Budget bewilligt bekommt.
+Der **Rand der Galaxie** ist kein romantischer Name. Jemand hat die Karte gesehen, die Ressourcenverteilung kalkuliert und beschlossen, dass *„Hoffnungslos"* als Codename zu wenig Budget bewilligt bekommt.
 
 Unendlich Welten. Fünf Rohstoffe. Zwei Fraktionen mit ausgeprägter Antipathie — und eine wachsende Zahl neutraler Planeten, die den großen Fehler begangen haben, genau im Transitkorridor zu liegen.
 
@@ -104,9 +104,9 @@ Die Hauptszene ist `scenes/main_menu/main_menu.tscn` (Neues Spiel / Weiter / Bee
 
 ---
 
-## 🪐 DIE WELTEN DER EISEN-GRENZE — Aufgeklärter Kartenausschnitt & Sektorstatus
+## 🪐 DIE WELTEN AM RAND DER GALAXIE — Aufgeklärter Kartenausschnitt & Sektorstatus
 
-<img src="assets/ui/readme_banner_overworld.jpg" alt="Die Welten der Eisen-Grenze" width="100%"/>
+<img src="assets/ui/readme_banner_overworld.jpg" alt="Die Welten am Rand der Galaxie" width="100%"/>
 
 <br/>
 
@@ -180,7 +180,7 @@ Im Default-Sektor gibt es **eine** L-Klasse-Welt (`large_count = 1`). L-Klasse-W
 
 ## ⚡ RESSOURCENLAGEBERICHT — Die fünf Säulen des Faction-Vaults
 
-<img src="assets/ui/readme_banner_resources.jpg" alt="Ressourcen der Eisen-Grenze" width="100%"/>
+<img src="assets/ui/readme_banner_resources.jpg" alt="Ressourcen am Rand der Galaxie" width="100%"/>
 
 <br/>
 
@@ -307,7 +307,7 @@ Vollständiger Loadout: `hull + drive + shield + scanner + optionale weapon + mo
 
 ---
 
-## 🛤️ TRANSIT & LOGISTIK — Die Physik der Eisen-Grenze
+## 🛤️ TRANSIT & LOGISTIK — Die Physik am Rand der Galaxie
 
 <img src="assets/ui/readme_banner_transit.jpg" alt="Routennetz und Cluster-Transit" width="100%"/>
 
@@ -381,7 +381,7 @@ Die KI simuliert keine Schiffs- oder Mech-Kämpfe. Sie ist ein Overworld-Dispatc
 
 ---
 
-## ⚔️ KONFLIKT-RESOLVE — Die Arithmetik der Eisen-Grenze
+## ⚔️ KONFLIKT-RESOLVE — Die Arithmetik am Rand der Galaxie
 
 <img src="assets/ui/banner_conflict.svg" alt="Konflikt-Resolve und Flottenbegegnungen" width="100%"/>
 

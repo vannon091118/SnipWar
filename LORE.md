@@ -1,23 +1,44 @@
 # SnipWar Lore
 
-## Die Stickmen
+## Die Welt
 
-Die Stickmen wurden nicht geboren, sondern aus den Resten einer alten Grenzverwaltung zusammengesetzt: Papierfasern, Notfalltinte und ein Protokoll, das niemand mehr lesen kann. Ihre Körper sind einfache Linien. Ihre Zivilisation ist es nicht.
+SnipWar spielt am Rand der Galaxie. Dort, wo das Licht schwächer wird und die Letzten Relais stehen, dort endet die Ordnung. Die Welt da draußen ist ein deterministisches, unendliches Netzwerk aus Planeten-Clustern und Void.
 
-Sie leben an der Eisen-Grenze, wo Planeten zu Akten, Schiffe zu Randnotizen und jede Ressource zu einer Entscheidung werden. Andere Völker halten sie für harmlos, bis ein Stickman mit einem Bleistift eine neue Frontlinie zieht.
+Die Cluster sind dichte Ansammlungen von Planeten — nah aneinander, voller Ressourcen und Konfliktpotenzial. Dazwischen liegt der Void: 30-50 Steps ohne Planeten. Nicht gefährlich wegen des Feindes. Gefährlich wegen der Leere.
 
-Ihre größte Stärke ist Anpassung. Jede Generation entscheidet neu, was sie sein will:
+Die fünf Ressourcen sind Überreste dessen, was hier einmal war. Keine Rohstoffe. Bruchstücke. Die Frage, die die Welt umschließt: Was war vor dem Kollaps? Die Akte ist unvollständig. Jede fehlende Seite wurde absichtlich entfernt.
 
-- **Gut:** Die Stickmen helfen zuerst und fragen später, warum die Rechnung so hoch ist.
-- **Böse:** Effizienz ist auch eine Moral. Meistens die einzige, die übrig bleibt.
-- **Militärisch:** Jede Linie wird zur Formation, jeder Planet zum Brückenkopf.
-- **Forscher:** Das Universum ist ein Rätsel. Die Stickmen besitzen leider bereits den Schraubenschlüssel.
-- **Baumeister:** Wo andere eine Ruine sehen, sehen sie drei Bauplätze und eine sehr optimistische Materialliste.
+→ Detaillierte Welt-Lore: [`res/lore/world_lore.md`](res/lore/world_lore.md)
 
-Der Name des Spielers wird in den ersten Grenzpass eingetragen. Die gewählte Haltung verändert zunächst Sprache, Akzentfarben und kleine Reaktionen der Fraktion; spätere Systeme können daraus Diplomatie, Boni und Konfliktentscheidungen ableiten.
+## Die Stickman
 
-## Die Eisen-Grenze
+Der Spieler wählt die Stickman. Weil es zum Stil passt. Weil er seine eigene Zivilisation unabhängig definieren will — ohne feste Vorlagen, ohne vorgegebenes Schicksal.
 
-Die Grenze ist ein zerknittertes Netzwerk aus Welten, Relais und alten Versorgungswegen. Die Papierdarstellung ist keine bloße Oberfläche: Die Bewohner planen auf Karten, falten Routen und markieren Gefahren mit farbiger Tinte. Die Reaper nutzen dasselbe Netz mit der Kälte einer Verwaltung, die nie Urlaub beantragt.
+Die Stickman entstanden über Generationen aus den zersplitterten Fetzen, die am Rand der Galaxie trieben. Papierfasern, Bruchstücke von Logdateien, Konturen von vergessenen Karten. Aus diesem Material bildeten sich Linien. Einfache Linien, die anfingen zu fragen.
 
-Forschung, Ausbau und Flottenbewegung sind deshalb keine abstrakten Menüpunkte. Jede Aktion verändert, was die Stickmen auf ihrer Karte überhaupt einzeichnen können.
+Manche behaupten, sie können die Dimensionen falten. Sie nennen es "Schnipseln". Im Spiel: Reaper-Essenzen + Schnipsel = bisher nicht existierende Gebäude.
+
+→ Detaillierte Stickman-Lore: [`res/lore/stickman.md`](res/lore/stickman.md)
+
+## Die Reaper Collective
+
+Die Reaper waren die Grenzverwaltung der Galaxis. Ein System, das nach dem Kollaps weiterlief — ohne Chef, ohne Halt. Angeführt von Lilith (Die Rechnerin) und Jenova (Die Ausführerin).
+
+Sie sehen alles als Ressource. Alles als optimierbar. Eroberte Worker werden nicht getötet, sondern reanimiert. Feindliche Schiffe werden konvertiert. Es ist kein Kampf. Es ist eine Verwaltungsoperation.
+
+→ Detaillierte Reaper-Lore: [`res/lore/reaper.md`](res/lore/reaper.md)
+
+## Die 4 Fraktionen
+
+Vier weitere Parteien am Rand der Galaxie. Jede mit eigener Lore, eigener Tech, eigenem Verhältnis zu Stickman und Reaper.
+
+- **Tideborn-Koalition** — Händler, die die alten Routen wiederbelebten
+- **Iron Coven** — Grenzsoldaten, die nicht aufhörten zu kämpfen
+- **Synthesis Orden** — Wissenschaftler und Artefaktsammler
+- **Remnant** — Niemand weiß, woher sie kommen
+
+→ Überblick über alle 4 Fraktionen: [`res/lore/factions_overview.md`](res/lore/factions_overview.md)
+
+## SnipWar: Cut or Die
+
+Schneid dich frei. Oder stirb.

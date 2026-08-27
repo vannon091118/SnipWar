@@ -2354,6 +2354,163 @@
 			"seq": 33,
 			"subject": "Argos: 6 Dateien — Trennung MCP-Test-Doku vom Pro… — nach Basher",
 			"summary": "Halt. Vorher war das ein Durcheinander: Die MCP-Test-Regeln standen im Projekt-AGENTS, während die eigentliche MCP-Doku im Addon lag. Wer einen Test laufen ließ, musste an zwei Orten lesen, und nie..."
+		},
+		{
+			"a": 2,
+			"arc": "a12",
+			"c": 34,
+			"composite": "c34j62n2a2p4",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 209.0,
+					"file": "LORE.md",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 126.0,
+					"file": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+					"insertions": 170.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/runtime/tools/ux/mcp_ux_live.gd",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "assets/ui/stickman/stickman_fracture.svg",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "assets/ui/stickman/stickman_fracture.svg.import",
+					"insertions": 43.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 30.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 52.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/concept_index.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/config/ui_theme_config.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/objects/conflict_manager.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 27.0,
+					"file": "scripts/objects/planets/planet.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/objects/planets/planet_network.gd",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/objects/planets/research_indicator.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/objects/planets/research_indicator.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 18.0,
+					"file": "scripts/preflight/constraint_dead_code.gd",
+					"insertions": 63.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/preflight/constraint_world_details_and_scale.gd",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/preflight_fixture.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/preflight_v2/v2_fixture.gd",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/game_state.gd",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "scripts/ui/dossier/paper_dossier.gd",
+					"insertions": 22.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/ui/dossier/parchment_tech_tree_view.gd",
+					"insertions": 64.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/ui/main_menu.gd",
+					"insertions": 80.0
+				},
+				{
+					"deletions": 34.0,
+					"file": "scripts/ui/tutorial/tutorial_director.gd",
+					"insertions": 168.0
+				}
+			],
+			"date": "2026-08-27 10:00:00",
+			"hash": "2a1018160b75ec35334a1a56f55aa4daedc376da",
+			"j": 62,
+			"model_id": "claude-sonnet-4",
+			"mood": "erschöpft",
+			"n": 2,
+			"narrator": "Basher",
+			"p": 4,
+			"p_id": 34,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Argos",
+			"seq": 34,
+			"subject": "Basher (27 files): Flyover-Onboarding: Tutorial-Schritte oeffnen… — nach Argos",
+			"summary": "Statuszeile vorab: der Ring musste weg, deshalb diese Runde. Ein pulsierender Punktkreis über der Heimatwelt, getriggert bei jeder gestarteten Forschung — von unten las sich das wie ein Maus-Echo, ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

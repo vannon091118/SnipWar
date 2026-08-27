@@ -228,7 +228,7 @@ func _build_steps() -> void:
 	_steps.append({
 		"id": "done",
 		"title": "READY, COMMANDER",
-		"text": "Fertig. Weitere Welten, mehr Ressourcen, größere Flotte — die Eisen-Grenze schreibt das alles in deine Akte. Das X oben rechts schließt dieses Fenster hier.",
+		"text": "Fertig. Weitere Welten, mehr Ressourcen, größere Flotte — der Rand der Galaxie schreibt das alles in deine Akte. Das X oben rechts schließt dieses Fenster hier.",
 		"target": "",
 		"width_min": 320.0,
 	})

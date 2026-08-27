@@ -45,7 +45,7 @@ func _build_ui() -> void:
 	content.add_child(_title)
 
 	var subtitle := Label.new()
-	subtitle.text = "EISEN-GRENZE"
+	subtitle.text = "RAND DER GALAXIE"
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	subtitle.add_theme_font_size_override("font_size", 18)
 	subtitle.add_theme_color_override("font_color", Color(0.7, 0.68, 0.6))
