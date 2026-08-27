@@ -3431,6 +3431,118 @@
 			"seq": 44,
 			"subject": "Makulatur: Cluster-Void Generierungssystem mit… [Analyse: Thinker] — nach Buffy",
 			"summary": "Ich zähle drei Schichten: Konzept, Architektur, Korrektur. Die erste war unvermeidlich."
+		},
+		{
+			"a": 18,
+			"arc": "a19",
+			"c": 45,
+			"composite": "c45j15n8a18p43",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": ".gitignore",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "AGENTS.md",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 22.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 942.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "narrative_chain.json",
+					"insertions": 104.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/README.md",
+					"insertions": 31.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/__init__.py",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/__main__.py",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/cli.py",
+					"insertions": 57.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/errors.py",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/observe.py",
+					"insertions": 259.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/store.py",
+					"insertions": 259.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/tests/__init__.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/tests/test_runtime.py",
+					"insertions": 137.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/NARRATIVE_ENGINE_DESIGN.md",
+					"insertions": 341.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 76.0
+				},
+				{
+					"deletions": 13.0,
+					"file": "scripts/objects/chunk_coordinator.gd",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/preflight/constraint_camera_and_input.gd",
+					"insertions": 16.0
+				}
+			],
+			"date": "2026-08-27 21:00:00",
+			"hash": "05e02790affe81c97c9a5adcdd8327748cc52da0",
+			"j": 15,
+			"model_id": "claude-sonnet-4",
+			"mood": "neugierig",
+			"n": 8,
+			"narrator": "Ghost",
+			"p": 43,
+			"p_id": 45,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Thinker",
+			"seq": 45,
+			"subject": "Ghost verzeichnet: MVP A Narrative Runtime implementiert und… — nach Thinker",
+			"summary": "Die Chronik musste diesen Eintrag aufnehmen, weil die bisherige Geschichte zwar zuverlässig festhielt, was DOKI schrieb, aber noch kein Gedächtnis besaß, das sich löschen und ohne Bedeutungsverlust..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

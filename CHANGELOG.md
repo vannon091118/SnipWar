@@ -733,3 +733,28 @@ Makulatur: Cluster-Void Generierungssystem mit organischer Planetplatzierung und
 - scripts/objects/sun.gd.uid: Implementiert und integriert (F-133).
 - scripts/preflight/constraint_cluster_generation.gd: Implementiert und integriert (F-134).
 - scripts/preflight/constraint_cluster_generation.gd.uid: Implementiert und integriert (F-135).
+
+## 2026-08-27 21:00:00 — p45 · c45j15n8a18p43 · Ghost · neugierig
+
+**Ghost verzeichnet: MVP A Narrative Runtime implementiert und… — nach Thinker**
+
+MVP A Narrative Runtime implementiert und verifiziert: deterministische ChainObservations, transaktionales SQLite-Archiv mit idempotentem Import und Chain-Ankern gegen Rewrites, Rebuild/Verify-Tests; außerdem Cluster-Ownership-Regression und Infinite-World-Kamera-Preflight root-cause-korrigiert
+
+- .gitignore: Dokumentation aktualisiert (F-037).
+- AGENTS.md: Dokumentation aktualisiert (F-019).
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- narrative_runtime/README.md: Dokumentation aktualisiert (F-136).
+- narrative_runtime/__init__.py: Dokumentation aktualisiert (F-137).
+- narrative_runtime/__main__.py: Dokumentation aktualisiert (F-138).
+- narrative_runtime/cli.py: Dokumentation aktualisiert (F-139).
+- narrative_runtime/errors.py: Dokumentation aktualisiert (F-140).
+- narrative_runtime/observe.py: Dokumentation aktualisiert (F-141).
+- narrative_runtime/store.py: Dokumentation aktualisiert (F-142).
+- narrative_runtime/tests/__init__.py: Dokumentation aktualisiert (F-143).
+- narrative_runtime/tests/test_runtime.py: Dokumentation aktualisiert (F-144).
+- scripts/doki/NARRATIVE_ENGINE_DESIGN.md: Dokumentation aktualisiert (F-145).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- scripts/objects/chunk_coordinator.gd: Dokumentation aktualisiert (F-131).
+- scripts/preflight/constraint_camera_and_input.gd: Dokumentation aktualisiert (F-146).

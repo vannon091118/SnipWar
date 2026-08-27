@@ -51,10 +51,11 @@
 ```text
 Top-Level: anchor{date,hash,subject}, entries[], genesis_composite, genesis_date, genesis_mood, repairs[]
 Entry (real): a, arc, c, composite, data_changes[], date, hash, j, model_id, mood, n, narrator,
-              p, p_id, prev_narrator (ab seq 2), seeded, seq, summary
+              p, p_id, prev_narrator (ab seq 2), seeded, seq, subject, summary
+              — `impulse_category` und `parent_hashes` sind im aktuellen Bestand nicht vorhanden
 data_changes[] (real): [{file, insertions, deletions}]   ← Dateien liegen IN der Chain
 repairs[] (real): [{at_hash, note}]  — 2× Re-Anchoring nach rebase/amend/force-push bereits vorhanden
-Sequenzen: kontiguierlich 1..43 (Stand: 43 Einträge)
+Sequenzen: kontiguierlich 1..44 (Stand: 44 Einträge nach dem genehmigten Sprint-0-Doku-Commit)
 ```
 
 ### 3.2 `change_index.json`
@@ -90,17 +91,22 @@ Daraus folgt:
 ### 4.2 Feldursprünge (zwei Klassen, zentral deklariert — nicht pro Datensatz)
 
 **Klasse A — Quellfakten** (1:1 aus Chain/Index übernommen):
-`seq`, `commit_hash`, `date`, `summary` (Rohtext, unverändert), `narrator`, `prev_narrator`, `mood`,
-`composite`, `composite_fields {c,n,j,a,p}`, `p_id`, `arc`, `impulse_category` (aus Chain-Eintrag),
-`seeded`, `model_id`, `data_changes[]` (Rohtext), `entities[]` (aus `change_index.commits[hash].entities`).
+`seq`, `commit_hash`, `date`, `subject` und `summary` (Rohtexte, unverändert), `narrator`,
+`prev_narrator`, `mood`, `composite`, `composite_fields {c,n,j,a,p}`,
+`parent_hashes` (falls vorhanden, sonst `[]`), `p_id`, `arc`, `impulse_category` (optional aus
+Chain-Eintrag, im aktuellen Bestand `null`), `seeded`, `model_id`, `data_changes[]` (Rohtext),
+`entities[]` (aus `change_index.commits[hash].entities`).
 
 **Klasse B — deterministische Projektionen** (jede mit Regelname + Version):
 
 | Feld | Regel | Version | Definition |
 |------|-------|---------|-----------|
-| `impulse_category_recomputed` | `classify_impulse/v1` | 1 | Port aus §3.3 auf `summary` |
-| `subject_term_flags` | `subject_terms/v1` | 1 | `{repair, doc, refactor, build, test, merge}` — Term-Gruppen 1:1 aus §3.3 (repair=FIX-Gruppe, doc=DOKU-Gruppe, refactor=REFACTOR-Gruppe, build=BUILD-Gruppe, test=TEST-Gruppe, merge=`summary` beginnt mit `merge`) |
-| `is_merge` | `merge_rule/v1` | 1 | erstes Token von `summary` (lowercase) == `merge` |
+| `impulse_category_recomputed` | `classify_impulse/v1` | 1 | Port aus §3.3 auf `subject`, Fallback `summary` |
+| `subject_term_flags` | `subject_terms/v1` | 1 | `{repair, doc, refactor, build, test, merge}` — Term-Gruppen 1:1 aus §3.3 (repair=FIX-Gruppe, doc=DOKU-Gruppe, refactor=REFACTOR-Gruppe, build=BUILD-Gruppe, test=TEST-Gruppe, merge=`subject` beginnt mit `merge`) |
+| `is_merge` | `merge_rule/v1` | 1 | erstes Token von `subject` (lowercase) == `merge` |
+| `sequence_facts` | `sequence_facts/v2` | 2 | nur bereits verarbeitete Sequenzen und frühere Subjects mit Repair-Term; keine Look-ahead-Daten, damit Append-Importe alte Observations nicht rückwirkend ändern |
+| `merge_facts` | `merge_facts/v1` | 1 | Merge-Präfix, Elternanzahl und Vorhandensein von `parent_hashes` |
+| `sideplot_facts` | `sideplot_facts/v1` | 1 | ausschließlich vorhandene Chain-`repairs[]`-Marker für diesen Hash |
 | `files` | `files_rule/v1` | 1 | sortierte, deduplizierte Pfade aus `data_changes[].file` |
 | `prior_file_touchers` | `prior_touchers/v1` | 1 | je Pfad: alle früheren `seq` mit gleichem Pfad, absteigend, **Fenster = 5**; fehlt, wenn keine Vorgänger |
 | `file_seq_gaps` | `seq_gap/v1` | 1 | je Pfad mit Vorgänger: `seq − letzte_Vorgänger_seq` |
@@ -122,7 +128,7 @@ Kanonische Serialisierung (bindend): `json.dumps(obj, sort_keys=True, separators
 
 ### 4.4 Backfill
 
-Backfill = Erzeugung aller Observations über die **komplette** bestehende Chain (.seq 1..N) mit identischen Regeln wie inkrementell. Gleiche Chain-Eingabe ⇒ identischer `observation_output_hash` (Abnahme Sprint 1).
+Backfill = Erzeugung aller Observations über die **komplette** bestehende Chain (aktuell .seq 1..44, allgemein .seq 1..N) mit identischen Regeln wie inkrementell. Gleiche Chain-Eingabe ⇒ identischer `observation_output_hash` (Abnahme Sprint 1).
 
 ---
 
@@ -332,7 +338,7 @@ G7  Rebuild ≠ Incremental-Result (Zustandsdifferenz)
 ## 15. Umsetzungsstand & Fahrplan
 
 **Nach MVP A (dieser Schnitt) existiert:** `narrative_runtime/` (stdlib-only, Python ≥ 3.11) mit
-`observe.py` (§4), `store.py` (§5–6), CLI (§6.5), Testsuite (Idempotenz, Anker/Amend, Rebuild-Determinismus, Atomicity, Purity, Gap, Incremental==Rebuild, Smoke gegen Kopie der echten Chain).
+`observe.py` (§4), `store.py` (§5–6), CLI (§6.5), Testsuite (Idempotenz, Anker/Amend, Rebuild-Determinismus, Atomicity, Purity, Gap, Incremental==Rebuild, Smoke gegen Kopie der echten Chain). Die reale Chain umfasst beim Abnahmelauf 44 Einträge.
 
 **Noch nicht implementiert (nur vertraglich):** Relationship-Deltas (§7), Beliefs/Evidence/Memory (Sprint 4), Threads (Sprint 5), Perspectives/Conflicts (Sprint 6), Bridge (§11, Sprint 7), Candidates/Slice Gate/Queue (Sprint 8–9), X (Sprint 10), Analytics (Sprint 11), Community (Sprint 12), Gate-Implementierung (§13, vor Sprint 7).
 

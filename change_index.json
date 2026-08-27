@@ -1,5 +1,38 @@
 {
 	"commits": {
+		"05e02790affe81c97c9a5adcdd8327748cc52da0": {
+			"c": 45,
+			"composite": "c45j15n8a18p43",
+			"entities": [
+				"F-037",
+				"F-019",
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-136",
+				"F-137",
+				"F-138",
+				"F-139",
+				"F-140",
+				"F-141",
+				"F-142",
+				"F-143",
+				"F-144",
+				"F-145",
+				"F-001",
+				"F-131",
+				"F-146",
+				"C-300",
+				"C-301",
+				"C-302",
+				"C-303",
+				"C-304",
+				"C-305",
+				"C-306",
+				"C-276"
+			],
+			"p_id": 45
+		},
 		"073dee1b9f32b45bece26eac87784e1282757144": {
 			"c": 22.0,
 			"composite": "c22j27n5a2p6",
@@ -206,7 +239,7 @@
 			"p_id": 17.0
 		},
 		"4483ceb09193b09566ee931b433a874fdc37c967": {
-			"c": 44,
+			"c": 44.0,
 			"composite": "c44j38n3a12p28",
 			"entities": [
 				"F-002",
@@ -271,7 +304,7 @@
 				"C-298",
 				"C-299"
 			],
-			"p_id": 44
+			"p_id": 44.0
 		},
 		"4560e16ae80496534b8ce5eced53d3ae736217b6": {
 			"c": 33.0,
@@ -5542,10 +5575,16 @@
 						441.0
 					],
 					"p_id": 44.0
+				},
+				{
+					"lines": [
+						445.0
+					],
+					"p_id": 45.0
 				}
 			],
 			"id": "C-276",
-			"last_p": 44.0,
+			"last_p": 45.0,
 			"name": "_assign_faction_from_cluster",
 			"path": "scripts/objects/chunk_coordinator.gd",
 			"status": "modified",
@@ -5939,6 +5978,125 @@
 			"last_p": 44.0,
 			"name": "run",
 			"path": "scripts/preflight/constraint_cluster_generation.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-300": {
+			"first_p": 45.0,
+			"history": [
+				{
+					"lines": [
+						4.0
+					],
+					"p_id": 45.0
+				}
+			],
+			"id": "C-300",
+			"last_p": 45.0,
+			"name": "NarrativeRuntimeError",
+			"path": "narrative_runtime/errors.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-301": {
+			"first_p": 45.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 45.0
+				}
+			],
+			"id": "C-301",
+			"last_p": 45.0,
+			"name": "ChainValidationError",
+			"path": "narrative_runtime/errors.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-302": {
+			"first_p": 45.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 45.0
+				}
+			],
+			"id": "C-302",
+			"last_p": 45.0,
+			"name": "HistoryChangedError",
+			"path": "narrative_runtime/errors.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-303": {
+			"first_p": 45.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 45.0
+				}
+			],
+			"id": "C-303",
+			"last_p": 45.0,
+			"name": "ImportAtomicityError",
+			"path": "narrative_runtime/errors.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-304": {
+			"first_p": 45.0,
+			"history": [
+				{
+					"lines": [
+						245.0
+					],
+					"p_id": 45.0
+				}
+			],
+			"id": "C-304",
+			"last_p": 45.0,
+			"name": "SourceSnapshot",
+			"path": "narrative_runtime/observe.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-305": {
+			"first_p": 45.0,
+			"history": [
+				{
+					"lines": [
+						81.0
+					],
+					"p_id": 45.0
+				}
+			],
+			"id": "C-305",
+			"last_p": 45.0,
+			"name": "Archive",
+			"path": "narrative_runtime/store.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-306": {
+			"first_p": 45.0,
+			"history": [
+				{
+					"lines": [
+						35.0
+					],
+					"p_id": 45.0
+				}
+			],
+			"id": "C-306",
+			"last_p": 45.0,
+			"name": "RuntimeTests",
+			"path": "narrative_runtime/tests/test_runtime.py",
 			"status": "modified",
 			"type": "component"
 		},
@@ -7289,6 +7447,116 @@
 			"last_p": 44.0,
 			"name": "constraint_cluster_generation.gd.uid",
 			"path": "scripts/preflight/constraint_cluster_generation.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-136": {
+			"first_p": 45.0,
+			"history": [],
+			"id": "F-136",
+			"last_p": 45.0,
+			"name": "README.md",
+			"path": "narrative_runtime/README.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-137": {
+			"first_p": 45.0,
+			"history": [],
+			"id": "F-137",
+			"last_p": 45.0,
+			"name": "__init__.py",
+			"path": "narrative_runtime/__init__.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-138": {
+			"first_p": 45.0,
+			"history": [],
+			"id": "F-138",
+			"last_p": 45.0,
+			"name": "__main__.py",
+			"path": "narrative_runtime/__main__.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-139": {
+			"first_p": 45.0,
+			"history": [],
+			"id": "F-139",
+			"last_p": 45.0,
+			"name": "cli.py",
+			"path": "narrative_runtime/cli.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-140": {
+			"first_p": 45.0,
+			"history": [],
+			"id": "F-140",
+			"last_p": 45.0,
+			"name": "errors.py",
+			"path": "narrative_runtime/errors.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-141": {
+			"first_p": 45.0,
+			"history": [],
+			"id": "F-141",
+			"last_p": 45.0,
+			"name": "observe.py",
+			"path": "narrative_runtime/observe.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-142": {
+			"first_p": 45.0,
+			"history": [],
+			"id": "F-142",
+			"last_p": 45.0,
+			"name": "store.py",
+			"path": "narrative_runtime/store.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-143": {
+			"first_p": 45.0,
+			"history": [],
+			"id": "F-143",
+			"last_p": 45.0,
+			"name": "__init__.py",
+			"path": "narrative_runtime/tests/__init__.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-144": {
+			"first_p": 45.0,
+			"history": [],
+			"id": "F-144",
+			"last_p": 45.0,
+			"name": "test_runtime.py",
+			"path": "narrative_runtime/tests/test_runtime.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-145": {
+			"first_p": 45.0,
+			"history": [],
+			"id": "F-145",
+			"last_p": 45.0,
+			"name": "NARRATIVE_ENGINE_DESIGN.md",
+			"path": "scripts/doki/NARRATIVE_ENGINE_DESIGN.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-146": {
+			"first_p": 45.0,
+			"history": [],
+			"id": "F-146",
+			"last_p": 45.0,
+			"name": "constraint_camera_and_input.gd",
+			"path": "scripts/preflight/constraint_camera_and_input.gd",
 			"status": "created",
 			"type": "file"
 		}

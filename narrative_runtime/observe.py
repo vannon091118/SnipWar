@@ -40,7 +40,7 @@ _TERM_GROUPS = {
 OBSERVATION_FIELDS = frozenset(
     {
         "schema", "schema_version", "seq", "commit_hash", "entry_digest", "date",
-        "subject", "summary", "narrator", "prev_narrator", "next_narrator", "mood", "composite",
+        "subject", "summary", "narrator", "prev_narrator", "mood", "composite",
         "composite_fields", "parent_hashes", "p_id", "arc", "impulse_category", "seeded", "model_id",
         "data_changes", "entities", "files", "impulse_category_recomputed",
         "subject_term_flags", "is_merge", "prior_file_touchers", "file_seq_gaps",
@@ -161,9 +161,6 @@ def build_observations(chain: dict[str, Any], index: dict[str, Any]) -> list[dic
         if not isinstance(parent_hashes, list):
             raise ChainValidationError(f"CHAIN_INVALID: parent_hashes at seq {seq} must be an array")
         parent_hashes = [str(value) for value in parent_hashes]
-        next_narrator = None
-        if entry_index + 1 < len(entries):
-            next_narrator = str(entries[entry_index + 1].get("narrator", ""))
         repair_markers = [
             repair for repair in chain.get("repairs", [])
             if isinstance(repair, dict) and str(repair.get("at_hash", "")) == commit_hash
@@ -179,7 +176,6 @@ def build_observations(chain: dict[str, Any], index: dict[str, Any]) -> list[dic
             "summary": summary,
             "narrator": str(entry.get("narrator", "")),
             "prev_narrator": entry.get("prev_narrator"),
-            "next_narrator": next_narrator,
             "mood": str(entry.get("mood", "")),
             "composite": composite,
             "composite_fields": composite_fields(composite),
@@ -199,7 +195,6 @@ def build_observations(chain: dict[str, Any], index: dict[str, Any]) -> list[dic
             "file_seq_gaps": file_seq_gaps,
             "shared_entities": shared_entities,
             "sequence_facts": {
-                "next_seq": seq + 1 if entry_index + 1 < len(entries) else None,
                 "prior_seqs": list(range(1, seq)),
                 "prior_repair_seqs": [
                     int(previous["seq"])
