@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-27 20:54:17 +0200",
-		"hash": "4885a0249af70c3329eb9da047711d4b53fac7dd",
-		"subject": "Squizzles Fall: MCP-Capture-Vertrag und deterministischeâ€¦ â€” nach Spark"
+		"date": "2026-08-27 21:00:46 +0200",
+		"hash": "fb79d22ee870a1661cbba007f8f09416a75a899a",
+		"subject": "Godot-Katalogressourcen serialisieren undâ€¦ [Analyse: Thinker] â€” nach Squizzle"
 	},
 	"entries": [
 		{
@@ -3687,6 +3687,143 @@
 			"seq": 47,
 			"subject": "Squizzles Fall: MCP-Capture-Vertrag und deterministische… — nach Spark",
 			"summary": "Warum war dieser Commit unvermeidlich? Weil die Spuren im Capture-Pfad nicht länger zusammenpassen durften. Aha — der Verdächtige war kein einzelner Screenshot, sondern die Lücke zwischen asynchron..."
+		},
+		{
+			"a": 13,
+			"arc": "a20",
+			"c": 48,
+			"composite": "c48j50n3a13p38",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 21.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 365.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "narrative_chain.json",
+					"insertions": 99.0
+				},
+				{
+					"deletions": 454.0,
+					"file": "resources/config/ship_part_catalog_default.tres",
+					"insertions": 517.0
+				},
+				{
+					"deletions": 88.0,
+					"file": "resources/config/technology_catalog_default.tres",
+					"insertions": 52.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/armor_lab.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 9.0,
+					"file": "resources/config/upgrades/automated_mine.tres",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/colony_hub.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/colony_shipyard.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 10.0,
+					"file": "resources/config/upgrades/comms_array.tres",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 9.0,
+					"file": "resources/config/upgrades/deep_space_scanner.tres",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/defense_grid.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/extractor.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/orbital_station.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/refinery.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/shipyard.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/tech_center.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 9.0,
+					"file": "resources/config/upgrades/trade_hub.tres",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/trade_network.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/trade_post.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/war_shipyard.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "resources/config/upgrades/weapon_lab.tres",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 31.0
+				}
+			],
+			"date": "2026-08-27 00:00:00",
+			"hash": "fb79d22ee870a1661cbba007f8f09416a75a899a",
+			"j": 50,
+			"model_id": "claude-sonnet-4",
+			"mood": "sachlich",
+			"n": 3,
+			"narrator": "Thinker",
+			"p": 38,
+			"p_id": 48,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Squizzle",
+			"seq": 48,
+			"subject": "Godot-Katalogressourcen serialisieren und… [Analyse: Thinker] — nach Squizzle",
+			"summary": "Es war unvermeidlich, weil selbst Kataloge irgendwann ihre Form verlieren und Godot sie dann neu sortiert. Squizzle hat die Spuren gepr�ft; �brig blieb keine neue Spielregel, sondern eine konsisten..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
@@ -3715,6 +3852,10 @@
 		},
 		{
 			"at_hash": "4885a0249af70c3329eb9da047711d4b53fac7dd",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		},
+		{
+			"at_hash": "fb79d22ee870a1661cbba007f8f09416a75a899a",
 			"note": "Anker nach rebase/amend/force-push neu verankert."
 		}
 	]

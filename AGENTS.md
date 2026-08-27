@@ -1,6 +1,8 @@
 # SnipWar Agent Notes
+EWS GIBT KEIN HARMLOS , IRRLEVANT, UNGEFÄährlich IN DIESER REPO KEINE SKIPS KEINE WORKAROUNDS UND AUUCH KEINE ERWARTTE FEHLER DIE NICHT DIREKT BEHOBEN WERDEN! WIR FÜHREN KEIN BACKLOG TOO ODER "SPÄER MACHEN" DIREKTE UMSEZUNG ALLER ROOT CAUSE ANALYSN INKL LANGFRISTIGE STABILE LÖSUNNFGS IMPLMETIERUNG AUSAHMLOS EGAL WIE TIVIAL
 
----
+SOBALD EIN VERTRAG oder REGEL EBROCHEN WUDE ROLLBACK NEU BEGINN AUSNAHMSLOS
+
 
 ## 🚀 QUICK START — WAS JEDER AGENT SOFORT WISSEN MUSS
 
@@ -38,10 +40,11 @@ $GODOT_BIN --headless --path . --script res://scripts/global_search.gd "runtime_
 $GODOT_BIN --headless --path . --script res://scripts/global_search.gd "func (_?[a-z_]+)" --regex  # Capture-Groups
 # 2 Tool-Calls füralles: Klassen + Abhängigkeiten + Verfügbarkeit in EINEM Output
 ```
+**Agent-code_search (Harness ripgrep):** `-t gd` wird nicht erkannt ("unrecognized file type") → Dateifilter immer als `-g *.gd`.
 
 ### 3. Preflight (Verbindlicher Qualitäts-Check)
 ```bash
-$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x   # Full Suite (38 Constraints, ~100s, V2 Architecture)
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x   # Full Suite (40 Constraints, ~100s, V2 Architecture)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd --filter=concept_index -v  # Einzelne Constraint
 ```
 **Verbindlich:** `RESULT: PASSED` — ERROR-Traces am Ende sind normales Headless-Rauschen.
@@ -169,6 +172,11 @@ $GODOT_BIN --headless --path . --script res://scripts/doki/doki_story_test.gd   
 - **Chunk-Welt:** Beide Shipped-Szenarien sind unendlich (`chunk_size > 0`)
 - **Sector-System:** Nur visuell (`planet_visual_scale`), nie `set_size_profile` ändern
 
+### MCP Sync/Async-Dispatch-Vertrag (verstecktes Routing)
+- `mcp_server.gd` routet per `_async`-Flag der Tool-Def: nicht-async → sync `dispatch`, async → `_run_async_tool`/`dispatch_async` (UX-Module haben **beide** Dispatch-Surfaces).
+- Handler, der suspendieren kann (Screenshot wartet auf `frame_post_draw`): `_async=true` + Arm in `dispatch_async` + sync-Arm lehnt mit "async-only"-Error ab — sonst liefert der Sync-Pfad ein `GDScriptFunctionState` statt Dictionary.
+- Neues `await` in einer Funktion macht ALLE Aufrufer ohne `await` still kaputt (FunctionState; folgendes `.get()/.has()` darauf bricht die Funktion → null, kein Crash). Gates: `mcp_capture_contract` + `scripts/testing/mcp_capture_entry_test.gd`.
+
 ### Narrative Runtime (Python) — abgeleitete State-Welt
 **Vertrag (verbindlich):** `scripts/doki/NARRATIVE_ENGINE_DESIGN.md` (Sprint 0, Rev. 2).
 - **Git/DOKI bleibt Wahrheit** (Git-Historie, `narrative_chain.json`, `change_index.json`, DOKI-Session). Die Runtime (`narrative_runtime/`, Python ≥ 3.11, **stdlib-only**) leitet nur ab: ChainObservations → später Relationships/Beliefs/Threads/Perspectives/Candidates. SQLite (`narrative_runtime/state/`, gitignored) ist rekonstruierbares Archiv, nie zweite Wahrheit.
@@ -226,14 +234,16 @@ ConceptIndex.new().by_domain("ships")
 | `-x, --fail-fast` | Abbruch bei erstem Fehler |
 | `-f, --filter=<name>` | Nur Constraints mit Substring (z.B. `fleet`, `save`) |
 | `--reverse` | Reverse-Execution (Testet Isolation) |
-| `-l, --list` | Alle 36 Constraints auflisten |
+| `--list` | Constraints auflisten — **Kurzform `-l` kollidiert mit Godots eigenem `-l/--language`** ("Missing language argument, aborting") → Langform nutzen |
 
-### Constraints (36, atomare Commit-Gruppen beachten!)
+### Constraints (40, atomare Commit-Gruppen beachten!)
 - `game_state_compatibility` — Reflection-Signaturen, Fassaden-Methoden
 - `concept_index` — **Nur funktional**: search/expand für Kern-Domänen
 - `save_game_roundtrip`, `save_game_slots` — Slot-Konvention beachten!
 - `mechanic_coverage` — Auto-Erkennung neuer Mechaniken
+- `mcp_capture_contract` — get_image() nur nach `frame_post_draw` in derselben Funktion, Sync-Umgehung `capture_screenshot_sync` verboten, Screenshot-Tools `_async=true`
 - ... (siehe `--list`)
+- **Quelltext-Scanner (Constraints/grep-Gates) müssen `#`-Kommentarzeilen überspringen** — sonst Fehlverstoß (Kommentarzeile als Code gelesen) oder false-pass (`frame_post_draw` nur im Kommentar)
 
 ---
 
@@ -273,6 +283,8 @@ ConceptIndex.new().by_domain("ships")
 - `is_instance_valid()` unzuverlässig bei gerade `free()` → `v.get_class()` crasht
 - `StreamPeerTCP.get_data()` → `Array[Error, Daten]`, nicht `PackedByteArray`
 - `RefCounted` hat **kein** `get_node_or_null()` → `Engine.get_main_loop().root.get_node_or_null()`
+- Headless: `get_visible_rect()` → (0,0), keine `current_scene` (`scene="unknown"`) → UI-Test-Assertions dürfen nicht von Fenstergeometrie/Scene-Namen abhängen
+- `McpVisionCapture.capture_screenshot` prüft Viewport-Textur VOR `await frame_post_draw` → headless deterministischer Capture-Error statt Hang; Await auf Coroutine, die ohne Suspension returned, resolved sofort
 
 ---
 
@@ -293,6 +305,8 @@ ConceptIndex.new().by_domain("ships")
   `visual_evidence`, Entkopplung, Atom-Vertrag) lebt **im MCP-Addon, getrennt
   vom Spiel**. Vor jedem MCP-Test-Lauf: diese Datei + die 6 Pflicht-Dokumente
   dort lesen. MCP-Findings → `docs/FINDINGS.md` (Abschnitt „MCP-Findings").
+
+- **Falsifizierungs-/Compile-Gates headless:** `scripts/testing/compile_gate.gd` kompiliert JEDE .gd in scripts+addons. Entry-Point-Falsifizierung über die ECHTE Registry: `scripts/testing/chain_validate_entry_test.gd`, `scripts/testing/mcp_capture_entry_test.gd` (Evidence-JSON → `user://mcp_evidence/` = `%APPDATA%/Godot/app_userdata/SnipWar/`; Exit 1 = Abweichung; Hang-Netz: `create_timer(N).timeout → quit(3)`).
 
 ### AM ENDE (nach Arbeit)
 1. **Full Preflight**: `$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x`

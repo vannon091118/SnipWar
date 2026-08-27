@@ -320,7 +320,7 @@
 			"p_id": 33.0
 		},
 		"4885a0249af70c3329eb9da047711d4b53fac7dd": {
-			"c": 47,
+			"c": 47.0,
 			"composite": "c47j54n5a9p26",
 			"entities": [
 				"F-002",
@@ -352,7 +352,7 @@
 				"C-319",
 				"C-320"
 			],
-			"p_id": 47
+			"p_id": 47.0
 		},
 		"5bc899b56982f3b9676e93bc1c5d773c05c42f94": {
 			"c": 40.0,
@@ -878,6 +878,36 @@
 				"C-157"
 			],
 			"p_id": 36.0
+		},
+		"fb79d22ee870a1661cbba007f8f09416a75a899a": {
+			"c": 48,
+			"composite": "c48j50n3a13p38",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-156",
+				"F-157",
+				"F-158",
+				"F-159",
+				"F-160",
+				"F-161",
+				"F-162",
+				"F-163",
+				"F-164",
+				"F-165",
+				"F-166",
+				"F-167",
+				"F-168",
+				"F-169",
+				"F-170",
+				"F-171",
+				"F-172",
+				"F-173",
+				"F-174",
+				"F-001"
+			],
+			"p_id": 48
 		},
 		"fdb32c6e2dfa34e9a7bd1736bfa29b202417b2d8": {
 			"c": 28.0,
@@ -7933,6 +7963,196 @@
 			"last_p": 47.0,
 			"name": "mcp_capture_entry_test.gd.uid",
 			"path": "scripts/testing/mcp_capture_entry_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-156": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-156",
+			"last_p": 48.0,
+			"name": "ship_part_catalog_default.tres",
+			"path": "resources/config/ship_part_catalog_default.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-157": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-157",
+			"last_p": 48.0,
+			"name": "technology_catalog_default.tres",
+			"path": "resources/config/technology_catalog_default.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-158": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-158",
+			"last_p": 48.0,
+			"name": "armor_lab.tres",
+			"path": "resources/config/upgrades/armor_lab.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-159": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-159",
+			"last_p": 48.0,
+			"name": "automated_mine.tres",
+			"path": "resources/config/upgrades/automated_mine.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-160": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-160",
+			"last_p": 48.0,
+			"name": "colony_hub.tres",
+			"path": "resources/config/upgrades/colony_hub.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-161": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-161",
+			"last_p": 48.0,
+			"name": "colony_shipyard.tres",
+			"path": "resources/config/upgrades/colony_shipyard.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-162": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-162",
+			"last_p": 48.0,
+			"name": "comms_array.tres",
+			"path": "resources/config/upgrades/comms_array.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-163": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-163",
+			"last_p": 48.0,
+			"name": "deep_space_scanner.tres",
+			"path": "resources/config/upgrades/deep_space_scanner.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-164": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-164",
+			"last_p": 48.0,
+			"name": "defense_grid.tres",
+			"path": "resources/config/upgrades/defense_grid.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-165": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-165",
+			"last_p": 48.0,
+			"name": "extractor.tres",
+			"path": "resources/config/upgrades/extractor.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-166": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-166",
+			"last_p": 48.0,
+			"name": "orbital_station.tres",
+			"path": "resources/config/upgrades/orbital_station.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-167": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-167",
+			"last_p": 48.0,
+			"name": "refinery.tres",
+			"path": "resources/config/upgrades/refinery.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-168": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-168",
+			"last_p": 48.0,
+			"name": "shipyard.tres",
+			"path": "resources/config/upgrades/shipyard.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-169": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-169",
+			"last_p": 48.0,
+			"name": "tech_center.tres",
+			"path": "resources/config/upgrades/tech_center.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-170": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-170",
+			"last_p": 48.0,
+			"name": "trade_hub.tres",
+			"path": "resources/config/upgrades/trade_hub.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-171": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-171",
+			"last_p": 48.0,
+			"name": "trade_network.tres",
+			"path": "resources/config/upgrades/trade_network.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-172": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-172",
+			"last_p": 48.0,
+			"name": "trade_post.tres",
+			"path": "resources/config/upgrades/trade_post.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-173": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-173",
+			"last_p": 48.0,
+			"name": "war_shipyard.tres",
+			"path": "resources/config/upgrades/war_shipyard.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-174": {
+			"first_p": 48.0,
+			"history": [],
+			"id": "F-174",
+			"last_p": 48.0,
+			"name": "weapon_lab.tres",
+			"path": "resources/config/upgrades/weapon_lab.tres",
 			"status": "created",
 			"type": "file"
 		}
