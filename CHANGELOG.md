@@ -303,3 +303,26 @@ DOKI-Datenmigration: Subject-Backfill in narrative_chain (echte Git-Subjects + K
 - change_index.json: Dokumentation aktualisiert (F-003).
 - narrative_chain.json: Dokumentation aktualisiert (F-004).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+
+## 2026-08-27 22:00:00 — p22 · c22j27n5a2p6 · Squizzle · alarmiert
+
+**Squizzles Fall: DOKI-Kern: transaktionales finalize… — nach Devin**
+
+DOKI-Kern: transaktionales finalize (Artefakt-Writes nach Commit), Idempotenz-Guard, doki amend-Flow, NÄCHSTER-ARC-Parsing, Check 6 body-only
+
+- CHANGELOG.md: Tooling erweitert (F-002).
+- change_index.json: Tooling erweitert (F-003).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scripts/doki/chain/chain_store.gd: Tooling erweitert (F-005).
+- scripts/doki/chain/change_index_store.gd: Tooling erweitert (F-006).
+- scripts/doki/core/verifier.gd: Tooling erweitert (F-007).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+- scripts/doki/doki.gd: Tooling erweitert (F-008).
+- scripts/doki/orchestration/artifact_writer.gd: Tooling erweitert (F-009).
+- scripts/doki/orchestration/commit_orchestrator.gd: Tooling erweitert (F-010).
+- scripts/doki/orchestration/flows/finalize_flow.gd: Tooling erweitert (F-011).
+- scripts/doki/orchestration/flows/finish_flow.gd: Tooling erweitert (F-012).
+- scripts/doki/orchestration/flows/gate_flow.gd: Tooling erweitert (F-013).
+- scripts/doki/orchestration/message_builder.gd: Tooling erweitert (F-014).
+- scripts/doki/prompt/arc_engine.gd: Tooling erweitert (F-015).
+- scripts/doki/prompt/voice_composer.gd: Tooling erweitert (F-016).

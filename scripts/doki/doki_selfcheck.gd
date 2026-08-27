@@ -18,6 +18,8 @@ func _init() -> void:
 	_test_verifier_positive()
 	_test_verifier_hard_blocks()
 	_test_checks_soft()
+	_test_amend_reconstruction()
+	_test_amend_hash_sync()
 
 	print("")
 	print("═══════════════════════════════════════")
@@ -122,23 +124,32 @@ func _test_classify_impulse() -> void:
 	_expect("classify TRIVIAL", DOKI_VoiceComposer.classify_impulse("kurz") == "TRIVIAL")
 
 
+## ═══ Zentrale Fixtures — EINE Basis für alle Regressionstests ════════════
+## Jede Verifier-/Amend-Prüfung nutzt diese Helfer statt eigener Dictionaries,
+## damit neue Tests dieselbe konsistente Grundlage erben (kein Schema-Drift).
+var _fixture_pool: Array = DOKI_MoodOverlay.default_pool()
+
+## Verifier auf zentraler Basis (Katalog + Instanz) — keine Test-Erfindung.
+func _fixture_verifier() -> DOKI_Verifier:
+	var catalog := DOKI_NarratorCatalog.new("res://scripts/doki/data")
+	return DOKI_Verifier.new(catalog, ".")
+
 ## ─── Verifier: Positivfall ──────────────────────────────────────────────
 ## Echte derive-basierte Fixtures: Chain-Eintrag 1 + Session (Eintrag 2) aus dem
 ##selben Inputstrom — so stimmt der RNG-Replay in Check 9.
-var _fixture_pool: Array = DOKI_MoodOverlay.default_pool()
-
 func _test_verifier_positive() -> void:
 	var chain: Dictionary = _fixture_chain()
 	var session: Dictionary = _fixture_session(chain)
 	var message: String = _fixture_message(session)
 
-	var catalog := DOKI_NarratorCatalog.new("res://scripts/doki/data")
-	var verifier := DOKI_Verifier.new(catalog, ".")
-	var result: Dictionary = verifier.validate(message, session, chain, ["CHANGELOG.md", "change_index.json", "scripts/x.gd"], [], {})
+	var verifier: DOKI_Verifier = _fixture_verifier()
+	var result: Dictionary = verifier.validate(message, session, chain, ["CHANGELOG.md", "change_index.json", "scripts/x.gd"], [])
 	_expect("verifier positiv: keine harten Fehler", result["hard_errors"].is_empty())
 	_expect("verifier positiv: Erfolg", result["success"])
 
 
+## Chain-Fixture 1 (Verifier-Positivfall): Eintrag 1, derive-basiert (Check 9
+## Replay stimmt, weil Session aus demselben Inputstrom kommt).
 func _fixture_chain() -> Dictionary:
 	var first: Dictionary = DOKI_RngEngine.derive("c0j0n0a0p0", "tree123", "777", "Start", {"j": 99, "n": 14, "a": 3, "p": 5}, "genesis", _fixture_pool)
 	return {
@@ -207,50 +218,48 @@ Arc: Der erste Stein (a1) — Gewicht: 1.2
 
 ## ─── Verifier: harte Blocks (7-9) ───────────────────────────────────────
 func _test_verifier_hard_blocks() -> void:
-	var catalog := DOKI_NarratorCatalog.new("res://scripts/doki/data")
-	var verifier := DOKI_Verifier.new(catalog, ".")
+	var verifier: DOKI_Verifier = _fixture_verifier()
 	var chain: Dictionary = _fixture_chain()
 	var session: Dictionary = _fixture_session(chain)
 	var good: String = _fixture_message(session)
 
 	# Check 7: Kausalität kaputt — [IMPULSE:] raus
 	var no_impulse: String = good.replace("[IMPULSE:%s]\n" % str(session["impulse"]), "")
-	var r7: Dictionary = verifier.validate(no_impulse, session, chain, ["CHANGELOG.md", "change_index.json", "scripts/x.gd"], [], {})
+	var r7: Dictionary = verifier.validate(no_impulse, session, chain, ["CHANGELOG.md", "change_index.json", "scripts/x.gd"], [])
 	_expect("CHECK 7 blockt (IMPULSE fehlt)", _has_hard(r7, "CHECK 7"))
 
 	# Check 7: Stale Message — c-Feld weicht ab (um 1 verringert)
 	var stale_composite: String = str(session["composite"]).replace("c%d" % int(session["c"]), "c%d" % (int(session["c"]) - 1))
 	var stale: String = good.replace("[COMPOSITE:%s]" % str(session["composite"]), "[COMPOSITE:%s]" % stale_composite)
-	var r7b: Dictionary = verifier.validate(stale, session, chain, ["CHANGELOG.md", "change_index.json", "scripts/x.gd"], [], {})
+	var r7b: Dictionary = verifier.validate(stale, session, chain, ["CHANGELOG.md", "change_index.json", "scripts/x.gd"], [])
 	_expect("CHECK 7 blockt (Stale Composite c-Feld)", _has_hard(r7b, "CHECK 7"))
 
 	# Check 8: DocSync — Staging-Zeitpunkt ist egal (Artefakte werden NACH den
 	# Checks geschrieben+gestaged). Ohne ungestagte Diffs → kein Block.
-	var r8: Dictionary = verifier.validate(good, session, chain, ["scripts/x.gd"], [], {})
+	var r8: Dictionary = verifier.validate(good, session, chain, ["scripts/x.gd"], [])
 	_expect("CHECK 8 pass (Staging-Zeitpunkt egal)", not _has_hard(r8, "CHECK 8"))
 
 	# Check 8: ungestagter Doku-Diff
-	var r8b: Dictionary = verifier.validate(good, session, chain, ["CHANGELOG.md", "change_index.json"], ["CHANGELOG.md"], {})
+	var r8b: Dictionary = verifier.validate(good, session, chain, ["CHANGELOG.md", "change_index.json"], ["CHANGELOG.md"])
 	_expect("CHECK 8 blockt (unstaged CHANGELOG-Diff)", _has_hard(r8b, "CHECK 8"))
 
 	# Check 9: ChainAudit — chain.last.c != session.c-1 (finalize fehlt)
 	var chain_bad: Dictionary = _fixture_chain()
 	var session_bad: Dictionary = _fixture_session(chain_bad)
 	session_bad["c"] = int(session_bad["c"]) + 3  # Sprung: chain.last.c=..., erwartet +1
-	var r9: Dictionary = verifier.validate(good, session_bad, chain_bad, ["CHANGELOG.md", "change_index.json", "scripts/x.gd"], [], {})
+	var r9: Dictionary = verifier.validate(good, session_bad, chain_bad, ["CHANGELOG.md", "change_index.json", "scripts/x.gd"], [])
 	_expect("CHECK 9 blockt (Chain-Lücke)", _has_hard(r9, "CHECK 9"))
 
 	# Check 9: RNG-Manipulation — Session-Composite nachgebaut aber seed-Inputs geändert
 	var session_tamper: Dictionary = _fixture_session(chain)
 	session_tamper["tree_hash"] = "andertree"
-	var r9b: Dictionary = verifier.validate(good, session_tamper, chain, ["CHANGELOG.md", "change_index.json", "scripts/x.gd"], [], {})
+	var r9b: Dictionary = verifier.validate(good, session_tamper, chain, ["CHANGELOG.md", "change_index.json", "scripts/x.gd"], [])
 	_expect("CHECK 9 blockt (Manipulation: Replay mismatch)", _has_hard(r9b, "CHECK 9"))
 
 
 ## ─── Verifier: weiche Checks melden, blocken nicht ─────────────────────
 func _test_checks_soft() -> void:
-	var catalog := DOKI_NarratorCatalog.new("res://scripts/doki/data")
-	var verifier := DOKI_Verifier.new(catalog, ".")
+	var verifier: DOKI_Verifier = _fixture_verifier()
 	var chain: Dictionary = _fixture_chain()
 	var session: Dictionary = _fixture_session(chain)
 
@@ -278,10 +287,117 @@ Navigation umgebaut. Alte Logik raus, neue rein. Weiter so.
 
 Arc: Der erste Stein (a1) — Gewicht: 1.2
 """ % [narrator, composite]
-	var r: Dictionary = verifier.validate(weak, session, chain, ["CHANGELOG.md", "change_index.json"], [], {})
+	var r: Dictionary = verifier.validate(weak, session, chain, ["CHANGELOG.md", "change_index.json"], [])
 	_expect("weiche Checks: hard_errors leer", r["hard_errors"].is_empty())
 	_expect("weiche Checks: soft_errors vorhanden", not r["soft_errors"].is_empty())
 	_expect("weiche Checks: success trotzdem", r["success"])
+
+
+## ═══ Zentrale Amend-Fixtures (Chain + HEAD-Message aus EINER Quelle) ══════
+## Reale DOKI-HEAD-Struktur (wie `git log -1 --format=%B`): Subject, Leerzeile,
+## [NARRATOR:X], Body, [MODEL:...], Tokens, Arc-Zeile, Begründungszeilen.
+## Chain und HEAD-Message entstehen aus denselben Konstanten — sie können
+## nicht auseinanderlaufen (Schema-Drift ist damit strukturell unmöglich).
+const AMEND_SEQ: int = 20
+const AMEND_C: int = 20
+const AMEND_COMPOSITE: String = "c20j45n5a5p16"
+const AMEND_HASH: String = "2bc5533"
+const AMEND_NARRATOR: String = "Squizzle"
+const AMEND_MOOD: String = "neugierig"
+const AMEND_MODEL: String = "claude-sonnet-4"
+const AMEND_PREV: String = "Buffy"
+const AMEND_SUBJECT: String = "Squizzles Fall: Doku nachgezogen: AGENTS.md erklärt Systemaufbau"
+
+## Chain-Fixture 2 (Amend-Fälle): letzter Eintrag = der zu amen-dende Commit.
+func _fixture_amend_chain() -> Dictionary:
+	return {
+		"genesis_composite": "c0j0n0a0p0",
+		"genesis_mood": "genesis",
+		"entries": [{
+			"seq": AMEND_SEQ, "c": AMEND_C, "p_id": AMEND_SEQ, "hash": AMEND_HASH,
+			"composite": AMEND_COMPOSITE, "mood": AMEND_MOOD, "narrator": AMEND_NARRATOR,
+			"model_id": AMEND_MODEL, "prev_narrator": AMEND_PREV,
+			"summary": "FALL-AUFNAHME: Ein System...",
+		}],
+	}
+
+
+## Reale DOKI-HEAD-Message des zu amen-denden Commits (Subject, Body-Sektion,
+## Tokens, Arc-Zeile, Begründungszeile) — gebaut aus den AMEND_-Konstanten.
+func _fixture_amend_head() -> String:
+	return "%s\n\n[NARRATOR:%s]\n\nFALL-AUFNAHME: Der alte Body wird durch den Amend-Body ersetzt.\n\n[MODEL:%s]\n[IMPULSE:Amend-Flow: Body nachbearbeiten ohne Tokens zu verlieren]\n[COMPOSITE:%s]\n[PREV_NARRATOR:%s]\n\nArc: Nächster Akt (a6) — Gewicht: 1.1\n\n- scripts/x.gd: Fehler behoben (F-001).\n" % [AMEND_SUBJECT, AMEND_NARRATOR, AMEND_MODEL, AMEND_COMPOSITE, AMEND_PREV]
+
+
+func _test_amend_reconstruction() -> void:
+	# 1. Normaler Fall: Body ersetzen, Subject + Tokens + Arc + Reason bleiben
+	var head_msg: String = _fixture_amend_head()
+	var body: String = "FALL-NEUAUFNAHME: Der Amend korrigiert den Body, weil die Kausalität im Text fehlte. Deshalb bleibt die Struktur erhalten — der Rest der Message ist unangetastet, denn nur die Erzählung war zu dünn."
+	var result: Dictionary = DOKI_CommitOrchestrator.reconstruct_amend_message(head_msg, body)
+	_expect("amend reconstruct: ok", result.get("ok", false))
+	if result.get("ok", false):
+		var msg: String = str(result["message"])
+		_expect("amend reconstruct: Subject bleibt", msg.begins_with(AMEND_SUBJECT))
+		_expect("amend reconstruct: neuer Body drin", msg.contains("FALL-NEUAUFNAHME: Der Amend korrigiert"))
+		_expect("amend reconstruct: alter Body weg", not msg.contains("Der alte Body wird durch den Amend-Body ersetzt"))
+		_expect("amend reconstruct: Tokens bleiben", msg.contains("[MODEL:%s]" % AMEND_MODEL) and msg.contains("[COMPOSITE:%s]" % AMEND_COMPOSITE) and msg.contains("[IMPULSE:"))
+		_expect("amend reconstruct: Arc-Zeile bleibt", msg.contains("Arc: Nächster Akt (a6)"))
+		_expect("amend reconstruct: Reason-Zeile bleibt", msg.contains("- scripts/x.gd: Fehler behoben (F-001)."))
+
+	# 2. REGRESSION: „[MODEL:" im Fließtext des neuen Bodys darf die Sektion
+	#    NICHT vorzeitig beenden (Regex-Fix: [MODEL: nur am Zeilenanfang).
+	var tricky_body: String = "Der Fix betraf das [MODEL: was hier als Text steht und nicht als Token. Weil die alte Regex am ersten Vorkommen stoppte, wurde die Message korrupt neu zusammengesetzt. Deshalb steht der Anker jetzt am Zeilenanfang."
+	var tricky: Dictionary = DOKI_CommitOrchestrator.reconstruct_amend_message(head_msg, tricky_body)
+	_expect("amend reconstruct: Fließtext-[MODEL: ok", tricky.get("ok", false))
+	if tricky.get("ok", false):
+		var tricky_msg: String = str(tricky["message"])
+		_expect("amend reconstruct: Fließtext bleibt komplett", tricky_msg.contains("betraf das [MODEL: was hier als Text steht"))
+		_expect("amend reconstruct: echter MODEL-Token noch da", tricky_msg.contains("\n[MODEL:%s]" % AMEND_MODEL))
+		# COMPOSITE-Token darf nie dupliziert werden; [MODEL: kommt 2× vor —
+		# einmal als Fließtext-Erwähnung im Body, einmal als echter Token am
+		# Zeilenanfang (genau 1×). Verdopplung des echten Tokens wäre der Fehler.
+		_expect("amend reconstruct: COMPOSITE-Token nicht dupliziert", tricky_msg.count("[COMPOSITE:") == 1)
+		_expect("amend reconstruct: echter MODEL-Token genau 1×", tricky_msg.count("\n[MODEL:") == 1)
+
+	# 3. Fehlerfall: HEAD ohne [COMPOSITE: → kein DOKI-Commit
+	var plain_head: String = "Refactor: Flugzeit-Modul verallgemeinern\n\nNur ein normaler Commit ohne DOKI-Tokens.\n"
+	var plain: Dictionary = DOKI_CommitOrchestrator.reconstruct_amend_message(plain_head, body)
+	_expect("amend reconstruct: Nicht-DOKI-HEAD blockt", not plain.get("ok", false))
+
+	# 4. Runder Pfad: rekonstruierte Message besteht validate_amend (Checks 1-8,
+	#    chain-verankert am letzten Eintrag). Kein Git, keine Session nötig.
+	var verifier: DOKI_Verifier = _fixture_verifier()
+	var amended: Dictionary = DOKI_CommitOrchestrator.reconstruct_amend_message(head_msg, body)
+	var vr: Dictionary = verifier.validate_amend(str(amended["message"]), _fixture_amend_chain(), [])
+	_expect("amend reconstruct: validate_amend besteht", vr["success"])
+
+
+## ─── Amend-Flow: Hash-Sync (Regression) ─────────────────────────────────
+func _test_amend_hash_sync() -> void:
+	var chain: Dictionary = _fixture_amend_chain()
+	var head_msg: String = _fixture_amend_head()
+
+	# 1. Gleicher Composite, neuer Hash (nach git commit --amend) → Hash-Sync
+	var r1: Dictionary = DOKI_FinalizeFlow.amended_entry_hash_sync(chain, "7c82f43", head_msg)
+	_expect("amend hash-sync: changed", bool(r1.get("changed", false)))
+	var synced_entries: Array = r1["chain"]["entries"]
+	_expect("amend hash-sync: Hash aktualisiert", str(synced_entries[0]["hash"]) == "7c82f43")
+	_expect("amend hash-sync: Composite unverändert", str(synced_entries[0]["composite"]) == AMEND_COMPOSITE)
+
+	# 2. Idempotenz: gleicher Hash schon drin → kein Change
+	var r2: Dictionary = DOKI_FinalizeFlow.amended_entry_hash_sync(r1["chain"], "7c82f43", head_msg)
+	_expect("amend hash-sync: idempotent", not bool(r2.get("changed", true)))
+
+	# 3. Composite weicht ab (fremder Commit) → kein Change
+	var r3: Dictionary = DOKI_FinalizeFlow.amended_entry_hash_sync(chain, "7c82f43", head_msg.replace(AMEND_COMPOSITE, "c21j99n9a1p2"))
+	_expect("amend hash-sync: fremder Composite → kein Sync", not bool(r3.get("changed", true)))
+
+	# 4. Kein COMPOSITE-Token im HEAD → kein Change
+	var r4: Dictionary = DOKI_FinalizeFlow.amended_entry_hash_sync(chain, "7c82f43", "Kein DOKI-Commit")
+	_expect("amend hash-sync: Nicht-DOKI-HEAD → kein Sync", not bool(r4.get("changed", true)))
+
+	# 5. Leere Chain → ok, kein Change
+	var r5: Dictionary = DOKI_FinalizeFlow.amended_entry_hash_sync({"entries": []}, "7c82f43", head_msg)
+	_expect("amend hash-sync: leere Chain ok", bool(r5.get("ok", false)) and not bool(r5.get("changed", true)))
 
 
 static func _has_hard(result: Dictionary, check_prefix: String) -> bool:

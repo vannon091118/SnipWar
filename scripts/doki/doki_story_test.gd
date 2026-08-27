@@ -69,6 +69,16 @@ var _chain_line: Array = []  # pro Commit: {c, p, narrator, mood, seq}
 
 func _init() -> void:
 	_repo_root = _resolve_repo_root()
+
+	# HARD-GUARD: niemals im Haupt-Worktree ausführen (der Test macht 5 echte
+	# Git-Commits!). Erlaubt nur in einem Linked Worktree oder mit explizitem
+	# Env-Flag DOKI_STORY_TEST_ALLOW=1.
+	if not _is_safe_worktree() and OS.get_environment("DOKI_STORY_TEST_ALLOW").is_empty():
+		print("✗ Story-Test blockiert: %s ist der Haupt-Worktree." % _repo_root)
+		print("  Nutze einen Linked Worktree (`git worktree add`) oder setze DOKI_STORY_TEST_ALLOW=1.")
+		quit(1)
+		return  # quit() stoppt den _init()-Flow NICHT sofort — ohne return läuft der Test weiter!
+
 	print("DOKI Story-Test in: %s" % _repo_root)
 
 	var orchestrator := DOKI_CommitOrchestrator.new(_repo_root)
@@ -91,12 +101,15 @@ func _init() -> void:
 		if not _run_commit(orchestrator, step, i):
 			_failures += 1
 
+	# 6. finalize-Retry nach simuliertem Stage-Fehler — Idempotenz-Guard
+	_run_finalize_retry(orchestrator)
+
 	_story_coherence(orchestrator)
 
 	print("")
 	print("═══════════════════════════════════════")
 	print(" Story-Test: %d Checks, %d Fehler" % [_checks, _failures])
-	print(" RESULT: %s" % ("PASSED — die 5 Commits erzählen eine kohärente Geschichte" if _failures == 0 else "FAILED"))
+	print(" RESULT: %s" % ("PASSED — die Story-Commits erzählen eine kohärente Geschichte" if _failures == 0 else "FAILED"))
 	print("═══════════════════════════════════════")
 	_finish()
 
@@ -106,6 +119,19 @@ func _resolve_repo_root() -> String:
 		if arg.begins_with("--repo="):
 			return arg.trim_prefix("--repo=")
 	return ProjectSettings.globalize_path("res://")
+
+
+## Hard-Guard: Haupt-Worktree erkennen (git-dir == <repo>/.git) vs. Linked
+## Worktree (git-dir zeigt auf .git/worktrees/<name>). Rückgabe true = sicher.
+func _is_safe_worktree() -> bool:
+	var result: Dictionary = _run_git(["rev-parse", "--git-dir"])
+	if not result["ok"]:
+		return false
+	var git_dir: String = str(result["stdout"]).strip_edges().replace("\\", "/")
+	if not git_dir.is_absolute_path():
+		git_dir = _repo_root.replace("\\", "/").trim_suffix("/") + "/" + git_dir.trim_prefix("./")
+	var main_dot_git: String = _repo_root.replace("\\", "/").trim_suffix("/") + "/.git"
+	return git_dir != main_dot_git
 
 
 ## Ein kompletter Commit-Zyklus: Dateien bauen → stagen → prepare → finish → finalize.
@@ -227,6 +253,103 @@ func _run_commit(orchestrator: DOKI_CommitOrchestrator, step: Dictionary, index:
 		_expect("Commit %d: Begründungszeile für %s" % [index + 1, file_path], has_line)
 
 	return ok
+
+
+## finalize-Retry nach simuliertem Stage-Fehler — Idempotenz-Guard.
+## Szenario: `git commit` ist durchgelaufen, aber finalize wurde zwischen
+## Chain-Append und Session-Reset unterbrochen (Stage-Fehler / Crash). Die
+## Session steht dann noch auf `verified`, die Chain hat den Eintrag bereits.
+## Ein zweiter finalize-Lauf darf KEINEN Doppel-Eintrag erzeugen (sonst riss
+## die c-Folge und Check 9a blockierte alle künftigen Commits).
+func _run_finalize_retry(orchestrator: DOKI_CommitOrchestrator) -> void:
+	print("")
+	print("──────── Schritt 6: finalize-Retry (Idempotenz-Guard) ──")
+	var impulse: String = "Retry-Test: finalize darf nach Stage-Fehler nicht doppelt appenden (BUILD)"
+
+	# 1. Datei bauen + stagen (echter Diff)
+	var test_file: String = "scripts/retry_guard_test.gd"
+	var full_path: String = _repo_root.path_join(test_file)
+	DirAccess.make_dir_recursive_absolute(full_path.get_base_dir())
+	var f := FileAccess.open(full_path, FileAccess.WRITE)
+	if f != null:
+		f.store_string("class_name RetryGuardTest\nextends RefCounted\nfunc guard() -> bool:\n\treturn true\n")
+		f.close()
+	var stage := ["add", test_file]
+	var stage_result := _run_git(stage)
+	if not stage_result["ok"]:
+		print("✗ git add fehlgeschlagen")
+		_failures += 1
+		return
+
+	# 2. prepare + finish (regulärer Flow)
+	var prepare_result: Dictionary = orchestrator.prepare(impulse, "claude-sonnet-4")
+	if not prepare_result["ok"]:
+		print("✗ prepare fehlgeschlagen: %s" % str(prepare_result.get("error", "?")))
+		_failures += 1
+		return
+	var session: Dictionary = prepare_result["session"]
+	var finish_result: Dictionary = orchestrator.finish("Der Guard war die fehlende Naht: Riss der Flow zwischen Commit und Reset ab, hätte der nächste finalize denselben Commit doppelt in die Chain geschrieben. Weil die Kette lückenlos bleiben muss, prüft finalize jetzt, ob der letzte Eintrag schon diesen Hash+Composite trägt — und holt dann nur Stage und Reset nach. Deshalb ist der Retry idempotent und die Geschichte reißt nicht.")
+	if not finish_result["ok"]:
+		print("✗ finish fehlgeschlagen:")
+		for e in finish_result.get("errors", []):
+			print("    harte: %s" % str(e))
+		_failures += 1
+		return
+
+	# 3. Echter Commit
+	var msg_path: String = _repo_root.path_join(".commit_msg.txt")
+	var commit_result := _run_git(["commit", "-F", msg_path])
+	if not commit_result["ok"]:
+		print("✗ git commit fehlgeschlagen: %s" % str(commit_result["stderr"]))
+		_failures += 1
+		return
+
+	# 4. finish-Session sichern (Composite intakt, state=verified) — VOR finalize,
+	#    denn finalize verbraucht die Session (Reset auf idle) und der Composite
+	#    wäre danach weg. Diese Kopie = Zustand, wenn finalize zwischen Chain-Append
+	#    und Reset unterbrochen würde (Stage-Fehler/Crash).
+	var session_path: String = _repo_root.path_join(".doki").path_join("session.json")
+	var restored: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(session_path))
+
+	# 5. finalize Lauf 1 (normal): Session wird verbraucht → idle
+	var fin1: Dictionary = orchestrator.finalize_flow_run()
+	if not fin1["ok"]:
+		print("✗ finalize 1 fehlgeschlagen: %s" % str(fin1.get("error", "?")))
+		_failures += 1
+		return
+	var chain_after1: int = orchestrator.chain_store.entries().size()
+
+	# 6. Stage-Fehler simulieren: gesicherte finish-Session zurück auf verified
+	#    schreiben (Chain hat den Eintrag, Session wurde nie resettet — exakt der
+	#    Unterbrechungs-Zustand zwischen Commit und Reset).
+	restored["state"] = DOKI_SessionStore.STATE_VERIFIED
+	restored["git_head_before"] = ""  # HEAD hat sich geändert → Guard-Pfad greift
+	var sf := FileAccess.open(session_path, FileAccess.WRITE)
+	sf.store_string(JSON.stringify(restored, "\t"))
+	sf.close()
+
+	# 7. finalize Lauf 2 (Retry) — Idempotenz-Guard muss greifen
+	var fin2: Dictionary = orchestrator.finalize_flow_run()
+	if not fin2["ok"]:
+		print("✗ finalize 2 (Retry) fehlgeschlagen: %s" % str(fin2.get("error", "?")))
+		_failures += 1
+		return
+	var chain_after2: int = orchestrator.chain_store.entries().size()
+	_expect("finalize-Retry: kein Doppel-Append (%d == %d Einträge)" % [chain_after2, chain_after1], chain_after2 == chain_after1)
+	_expect("finalize-Retry: idempotent gemeldet", bool(fin2.get("idempotent", false)))
+	_expect("finalize-Retry: Entry identisch", str(fin2.get("entry", {}).get("hash", "")) == str(fin1.get("entry", {}).get("hash", "")))
+
+	# 8. Session nach Retry wieder idle + CHANGELOG nur 1× (kein Doppel-Eintrag)
+	var session_after: Dictionary = orchestrator.session_store.read()
+	_expect("finalize-Retry: Session wieder idle", str(session_after.get("state", "?")) == DOKI_SessionStore.STATE_IDLE)
+	var changelog: String = FileAccess.get_file_as_string(_repo_root.path_join("CHANGELOG.md"))
+	var composite: String = str(fin1.get("entry", {}).get("composite", ""))
+	var comp_count: int = changelog.split(composite).size() - 1
+	_expect("finalize-Retry: CHANGELOG-Eintrag genau 1× (nicht %d×)" % comp_count, comp_count == 1)
+
+	# 9. Aufräumen: Testdatei entfernen (nicht Teil der Geschichte)
+	_run_git(["rm", "-f", test_file, "--quiet"])
+	DirAccess.remove_absolute(full_path)
 
 
 ## Kohärenz der 5er-Geschichte.

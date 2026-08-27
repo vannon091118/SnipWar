@@ -1580,6 +1580,108 @@
 			"seq": 21,
 			"subject": "Devin sagt: DOKI-Datenmigration: Subject-Backfill in… — nach Squizzle",
 			"summary": "Squizzle hatte die Spuren geordnet, und ich habe daraus das Muster gelesen: Die Chain trug die echten Git-Subjects nie, nur Body-Zeilen — deshalb blieben die Kausalitäts-Warnungen historisch besteh..."
+		},
+		{
+			"a": 2,
+			"arc": "a6",
+			"c": 22,
+			"composite": "c22j27n5a2p6",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 27.0,
+					"file": "change_index.json",
+					"insertions": 68.0
+				},
+				{
+					"deletions": 21.0,
+					"file": "narrative_chain.json",
+					"insertions": 63.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/chain/chain_store.gd",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/chain/change_index_store.gd",
+					"insertions": 18.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "scripts/doki/core/verifier.gd",
+					"insertions": 62.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki.gd",
+					"insertions": 23.0
+				},
+				{
+					"deletions": 20.0,
+					"file": "scripts/doki/orchestration/artifact_writer.gd",
+					"insertions": 29.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/commit_orchestrator.gd",
+					"insertions": 41.0
+				},
+				{
+					"deletions": 11.0,
+					"file": "scripts/doki/orchestration/flows/finalize_flow.gd",
+					"insertions": 82.0
+				},
+				{
+					"deletions": 8.0,
+					"file": "scripts/doki/orchestration/flows/finish_flow.gd",
+					"insertions": 33.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/orchestration/flows/gate_flow.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/orchestration/message_builder.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/prompt/arc_engine.gd",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 16.0,
+					"file": "scripts/doki/prompt/voice_composer.gd",
+					"insertions": 23.0
+				}
+			],
+			"date": "2026-08-27 22:00:00",
+			"hash": "073dee1b9f32b45bece26eac87784e1282757144",
+			"j": 27,
+			"model_id": "claude-sonnet-4",
+			"mood": "alarmiert",
+			"n": 5,
+			"narrator": "Squizzle",
+			"p": 6,
+			"p_id": 22,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Devin",
+			"seq": 22,
+			"subject": "Squizzles Fall: DOKI-Kern: transaktionales finalize… — nach Devin",
+			"summary": "FALL-NEUAUFNAHME: Devin hatte die Daten-Schicht genäht, aber der Kern hatte noch offene Wunden — und diesmal war der Befund alarmierend, weil er die Commit-Kette selbst betraf. Die Spuren: Ein fina..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

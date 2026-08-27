@@ -1,5 +1,39 @@
 {
 	"commits": {
+		"073dee1b9f32b45bece26eac87784e1282757144": {
+			"c": 22,
+			"composite": "c22j27n5a2p6",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-005",
+				"F-006",
+				"F-007",
+				"F-001",
+				"F-008",
+				"F-009",
+				"F-010",
+				"F-011",
+				"F-012",
+				"F-013",
+				"F-014",
+				"F-015",
+				"F-016",
+				"C-002",
+				"C-003",
+				"C-004",
+				"C-005",
+				"C-006",
+				"C-007",
+				"C-008",
+				"C-009",
+				"C-010",
+				"C-011",
+				"C-012"
+			],
+			"p_id": 22
+		},
 		"0d3e994cdaff6003fe851ad638f06da48c6d57d9": {
 			"c": 15.0,
 			"composite": "c15j38n3a2p11",
@@ -85,7 +119,7 @@
 			"p_id": 12.0
 		},
 		"e1d46d4d543369c3b363cef96e8da47c3ada7784": {
-			"c": 21,
+			"c": 21.0,
 			"composite": "c21j90n6a2p10",
 			"entities": [
 				"F-002",
@@ -93,7 +127,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 21
+			"p_id": 21.0
 		}
 	},
 	"entities": {
@@ -111,6 +145,193 @@
 			"last_p": 18.0,
 			"name": "_read_file",
 			"path": "scripts/doki/doki_analyze.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-002": {
+			"first_p": 22.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 22.0
+				}
+			],
+			"id": "C-002",
+			"last_p": 22.0,
+			"name": "validate",
+			"path": "scripts/doki/core/verifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-003": {
+			"first_p": 22.0,
+			"history": [
+				{
+					"lines": [
+						51.0
+					],
+					"p_id": 22.0
+				}
+			],
+			"id": "C-003",
+			"last_p": 22.0,
+			"name": "validate_amend",
+			"path": "scripts/doki/core/verifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-004": {
+			"first_p": 22.0,
+			"history": [
+				{
+					"lines": [
+						277.0
+					],
+					"p_id": 22.0
+				}
+			],
+			"id": "C-004",
+			"last_p": 22.0,
+			"name": "check_8_docsync",
+			"path": "scripts/doki/core/verifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-005": {
+			"first_p": 22.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 22.0
+				}
+			],
+			"id": "C-005",
+			"last_p": 22.0,
+			"name": "write_commit_msg",
+			"path": "scripts/doki/orchestration/artifact_writer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-006": {
+			"first_p": 22.0,
+			"history": [
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 22.0
+				}
+			],
+			"id": "C-006",
+			"last_p": 22.0,
+			"name": "apply_finalize_artifacts",
+			"path": "scripts/doki/orchestration/artifact_writer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-007": {
+			"first_p": 22.0,
+			"history": [
+				{
+					"lines": [
+						33.0
+					],
+					"p_id": 22.0
+				}
+			],
+			"id": "C-007",
+			"last_p": 22.0,
+			"name": "_changelog_entry",
+			"path": "scripts/doki/orchestration/artifact_writer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-008": {
+			"first_p": 22.0,
+			"history": [
+				{
+					"lines": [
+						172.0
+					],
+					"p_id": 22.0
+				}
+			],
+			"id": "C-008",
+			"last_p": 22.0,
+			"name": "amend",
+			"path": "scripts/doki/orchestration/commit_orchestrator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-009": {
+			"first_p": 22.0,
+			"history": [
+				{
+					"lines": [
+						129.0
+					],
+					"p_id": 22.0
+				}
+			],
+			"id": "C-009",
+			"last_p": 22.0,
+			"name": "_sync_amended_entry_hash",
+			"path": "scripts/doki/orchestration/flows/finalize_flow.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-010": {
+			"first_p": 22.0,
+			"history": [
+				{
+					"lines": [
+						5.0
+					],
+					"p_id": 22.0
+				}
+			],
+			"id": "C-010",
+			"last_p": 22.0,
+			"name": "AUTO_MANAGED",
+			"path": "scripts/doki/orchestration/flows/gate_flow.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-011": {
+			"first_p": 22.0,
+			"history": [
+				{
+					"lines": [
+						107.0
+					],
+					"p_id": 22.0
+				}
+			],
+			"id": "C-011",
+			"last_p": 22.0,
+			"name": "advance",
+			"path": "scripts/doki/prompt/arc_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-012": {
+			"first_p": 22.0,
+			"history": [
+				{
+					"lines": [
+						187.0
+					],
+					"p_id": 22.0
+				}
+			],
+			"id": "C-012",
+			"last_p": 22.0,
+			"name": "build_subject",
+			"path": "scripts/doki/prompt/voice_composer.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -151,6 +372,126 @@
 			"last_p": 21.0,
 			"name": "narrative_chain.json",
 			"path": "narrative_chain.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-005": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-005",
+			"last_p": 22.0,
+			"name": "chain_store.gd",
+			"path": "scripts/doki/chain/chain_store.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-006": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-006",
+			"last_p": 22.0,
+			"name": "change_index_store.gd",
+			"path": "scripts/doki/chain/change_index_store.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-007": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-007",
+			"last_p": 22.0,
+			"name": "verifier.gd",
+			"path": "scripts/doki/core/verifier.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-008": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-008",
+			"last_p": 22.0,
+			"name": "doki.gd",
+			"path": "scripts/doki/doki.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-009": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-009",
+			"last_p": 22.0,
+			"name": "artifact_writer.gd",
+			"path": "scripts/doki/orchestration/artifact_writer.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-010": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-010",
+			"last_p": 22.0,
+			"name": "commit_orchestrator.gd",
+			"path": "scripts/doki/orchestration/commit_orchestrator.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-011": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-011",
+			"last_p": 22.0,
+			"name": "finalize_flow.gd",
+			"path": "scripts/doki/orchestration/flows/finalize_flow.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-012": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-012",
+			"last_p": 22.0,
+			"name": "finish_flow.gd",
+			"path": "scripts/doki/orchestration/flows/finish_flow.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-013": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-013",
+			"last_p": 22.0,
+			"name": "gate_flow.gd",
+			"path": "scripts/doki/orchestration/flows/gate_flow.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-014": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-014",
+			"last_p": 22.0,
+			"name": "message_builder.gd",
+			"path": "scripts/doki/orchestration/message_builder.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-015": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-015",
+			"last_p": 22.0,
+			"name": "arc_engine.gd",
+			"path": "scripts/doki/prompt/arc_engine.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-016": {
+			"first_p": 22.0,
+			"history": [],
+			"id": "F-016",
+			"last_p": 22.0,
+			"name": "voice_composer.gd",
+			"path": "scripts/doki/prompt/voice_composer.gd",
 			"status": "created",
 			"type": "file"
 		}
