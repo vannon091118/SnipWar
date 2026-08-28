@@ -5193,6 +5193,83 @@
 			"seq": 60,
 			"subject": "Harden the DOKI commit. … — nach Ghost",
 			"summary": "Dieser Commit war unvermeidlich, weil ein Commit-Gate nur dann Vertrauen verdient, wenn seine Grenzen selbst überprüfbar sind. Die vorherigen Slices haben gezeigt, wie schnell ein veralteter Zustan..."
+		},
+		{
+			"a": 9,
+			"arc": "a28",
+			"c": 61,
+			"composite": "c61j52n1a9p5",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 18.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 92.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 77.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/config/planet_grid_config.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/config/world_generator.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 26.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/game_cycle_manager.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/objects/ships/ship_base.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/ui/dossier/parchment_tech_tree_view.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/ui/dossier/planet_dossier_view.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/ui/dossier/workshop_view.gd",
+					"insertions": 2.0
+				}
+			],
+			"date": "2026-08-27 13:00:00",
+			"hash": "daa6e00cd4b6b9923b37c05bfc75315a9d159986",
+			"j": 52,
+			"model_id": "claude-sonnet-4",
+			"mood": "erschöpft",
+			"n": 1,
+			"narrator": "Buffy",
+			"p": 5,
+			"p_id": 61,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Vannon",
+			"seq": 61,
+			"subject": "[Buffy] Tighten deterministic world generation and UI… — nach Vannon",
+			"summary": "Die kleinen Abweichungen waren nicht klein genug, um sie zu ignorieren. Ganzzahlige Grenzen in der Weltgenerierung, ein Schattenparameter im Replay-Pfad und UI-Scrollwerte mit ungeklärtem Typ erzeu..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

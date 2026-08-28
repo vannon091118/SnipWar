@@ -1,5 +1,5 @@
 {
-	"active": "a28",
+	"active": "a29",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -1152,11 +1152,36 @@
 		},
 		"a28": {
 			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
 			"id": "a28",
 			"name": "Betriebsfestigkeit",
+			"seen_entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-292",
+				"F-112",
+				"F-001",
+				"F-293",
+				"F-294",
+				"F-032",
+				"F-033",
+				"F-034",
+				"C-543"
+			],
+			"span": "heute → offen",
+			"status": "completed",
+			"theme": "Recovery und verlässliche Werkzeuge",
+			"version": "",
+			"weight": 4.1
+		},
+		"a29": {
+			"climax_weight": 3.0,
+			"id": "a29",
+			"name": "Sichtbare Geschichte",
 			"span": "heute → offen",
 			"status": "active",
-			"theme": "Recovery und verlässliche Werkzeuge",
+			"theme": "die Chronik erhält ihr eigenes Fenster",
 			"version": "",
 			"weight": 0.0
 		},

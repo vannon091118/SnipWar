@@ -1127,3 +1127,21 @@ Harden the DOKI commit gate and deterministic narrative verification
 - scripts/doki/doki_selfcheck.gd: Tooling erweitert (F-017).
 - scripts/doki/orchestration/flows/finish_flow.gd: Tooling erweitert (F-012).
 - scripts/doki/orchestration/flows/prepare_flow.gd: Tooling erweitert (F-181).
+
+## 2026-08-27 13:00:00 — p61 · c61j52n1a9p5 · Buffy · erschöpft
+
+**[Buffy] Tighten deterministic world generation and UI… — nach Vannon**
+
+Tighten deterministic world generation and UI input compatibility
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/config/planet_grid_config.gd: Implementiert und integriert (F-292).
+- scripts/config/world_generator.gd: Implementiert und integriert (F-112).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/game_cycle_manager.gd: Implementiert und integriert (F-293).
+- scripts/objects/ships/ship_base.gd: Implementiert und integriert (F-294).
+- scripts/ui/dossier/parchment_tech_tree_view.gd: Implementiert und integriert (F-032).
+- scripts/ui/dossier/planet_dossier_view.gd: Implementiert und integriert (F-033).
+- scripts/ui/dossier/workshop_view.gd: Implementiert und integriert (F-034).

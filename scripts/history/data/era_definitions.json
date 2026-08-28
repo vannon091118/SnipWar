@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "description": "Epochen-Definitionen für die historische Simulation. Die Epochen sind historische Phasen über die Simulation gelegt — nicht vorgegebenes Skript.",
+  "eras": [
+    {
+      "index": 0,
+      "name": "Die Ära der Ersten",
+      "start_year": -300,
+      "end_year": -200,
+      "description": "Die ersten Siedler betreten die Welt. Kolonien entstehen, Forschung beginnt.",
+      "typical_moods": ["balanced", "expansionist"],
+      "event_probability_modifier": 1.0
+    },
+    {
+      "index": 1,
+      "name": "Der Große Zwist",
+      "start_year": -200,
+      "end_year": -50,
+      "description": "Spannungen entladen sich. Kriege, Bündnisse und Rivalitäten formen die Welt.",
+      "typical_moods": ["aggressive", "defensive", "diplomatic"],
+      "event_probability_modifier": 1.3
+    },
+    {
+      "index": 2,
+      "name": "Die Stille",
+      "start_year": -50,
+      "end_year": 0,
+      "description": "Nach dem großen Konflikt beginnt eine Phase des Wiederaufbaus und der Stagnation.",
+      "typical_moods": ["defensive", "balanced"],
+      "event_probability_modifier": 0.7
+    }
+  ]
+}

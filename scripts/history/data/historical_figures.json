@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "description": "Historische Figuren-Muster für die Weltchronik. Pattern analog zu DOKI's narrators.json. Jede Fraktion bekommt bei der Simulation 2-4 Figuren aus diesen Mustern.",
+  "selection_rule": "Seed-basierte Auswahl. Jede Fraktion bekommt 2-4 Figuren je nach Ressourcen/Bevölkerung.",
+  "figures": [
+    {
+      "index": 1,
+      "name": "Kolonist",
+      "role": "Siedler",
+      "voice_traits": "Entdecker, mutig, unerfahren. Spricht in Visionen und Zukunftsplänen.",
+      "style_sample": "Wir haben Krypton betreten — unfassbar. Die Ressourcen hier könnten unsere Zivilisation verändern.",
+      "initial_rank": "Siedler",
+      "career_path": ["Siedler", "Gouverneur", "Ältester"],
+      "attitudes": {
+        "courage": 8,
+        "caution": 3,
+        "ambition": 9,
+        "loyalty": 7
+      }
+    },
+    {
+      "index": 2,
+      "name": "Krieger",
+      "role": "Militärführer",
+      "voice_traits": "Kalt, berechnend, strategisch. Spricht in Taktiken und Risiken.",
+      "style_sample": "Angriff auf Nereidopsis ist möglich. Aber der Preis: 40% Verluste. Alternative: Blockade.",
+      "initial_rank": "Wache",
+      "career_path": ["Wache", "Kommandant", "Feldherr", "Kriegsherr"],
+      "attitudes": {
+        "courage": 9,
+        "caution": 5,
+        "ambition": 7,
+        "loyalty": 8
+      }
+    },
+    {
+      "index": 3,
+      "name": "Gelehrter",
+      "role": "Forscher",
+      "voice_traits": "Neugierig, methodisch, geduldig. Spricht in Hypothesen und Experimenten.",
+      "style_sample": "Die Analyse der Volatilen-Einzelschicht deutet auf eine bisher unbekannte Reaktionskette hin.",
+      "initial_rank": "Student",
+      "career_path": ["Student", "Forscher", "Direktor", "Weiser"],
+      "attitudes": {
+        "courage": 4,
+        "caution": 7,
+        "ambition": 6,
+        "loyalty": 5
+      }
+    },
+    {
+      "index": 4,
+      "name": "Händler",
+      "role": "Diplomat",
+      "voice_traits": "Geschmeidig, verbindlich, rechnend. Spricht in Deals und Gelegenheiten.",
+      "style_sample": "Ein Handelsabkommen mit Krypton wäre vorteilhaft. Die Biomasse-Quote allein könnte unser Corpus verdoppeln.",
+      "initial_rank": "Kaufmann",
+      "career_path": ["Kaufmann", "Händler", "Botschafter", "Ratsmitglied"],
+      "attitudes": {
+        "courage": 5,
+        "caution": 6,
+        "ambition": 8,
+        "loyalty": 4
+      }
+    },
+    {
+      "index": 5,
+      "name": "Techniker",
+      "role": "Ingenieur",
+      "voice_traits": "Pragmatisch, lösungsorientiert, direkt. Spricht in Funktionen und Fehlerquellen.",
+      "style_sample": "Das Raffinerie-Modul läuft mit 73% Effizienz. Ein Thermal-Upgrade auf Slot C würde das auf 89% bringen.",
+      "initial_rank": "Lehrling",
+      "career_path": ["Lehrling", "Techniker", "Meister", "Chefingenieur"],
+      "attitudes": {
+        "courage": 5,
+        "caution": 8,
+        "ambition": 5,
+        "loyalty": 6
+      }
+    }
+  ]
+}

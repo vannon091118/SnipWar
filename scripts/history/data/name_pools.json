@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "description": "Name-Pools für historische Figuren, Artefakte und Orte. Seed-basierte Auswahl.",
+  "first_names": [
+    "Kael", "Nera", "Theron", "Lyra", "Orion", "Vex", "Sera", "Draven",
+    "Asha", "Zane", "Mira", "Rune", "Ilya", "Kora", "Fenn", "Ashka",
+    "Torrin", "Vessa", "Drex", "Nyla", "Garron", "Pyra", "Silas", "Vren",
+    "Axel", "Thera", "Knox", "Yara", "Brenn", "Lira", "Hawk", "Syl"
+  ],
+  "surnames": [
+    "von Krypton", "der Erste", "von Nereidopsis", "Stahlhart",
+    "Sternenfeuer", "Eisenfaust", "Nachtblut", "Lichtweber",
+    "Erzwlter", "Gründer", "Weltenwanderer", "Sternenbote",
+    "Kriegsherr", "Friedensstifter", "Schattenlauf", "Feuerstaub"
+  ],
+  "titles": [
+    "Siedler", "Wache", "Student", "Kaufmann", "Lehrling",
+    "Kommandant", "Forscher", "Händler", "Techniker",
+    "Feldherr", "Direktor", "Botschafter", "Meister",
+    "Kriegsherr", "Weiser", "Ratsmitglied", "Chefingenieur",
+    "Gouverneur", "Ältester", "Anführerin", "Verteidiger",
+    "Späherin", "Architektin", "Chronist"
+  ],
+  "artifact_names": [
+    "Der Erste Stein", "Das Sternenfeuer", "Die Letzte Hoffnung",
+    "Kryptons Erbe", "Der Eisenwald", "Das Nachtglas",
+    "Die Weltachse", "Der Zeitkern", "Das Lichtband",
+    "Nereidopsis' Schwur", "Der Rote Kristall", "Die Stille Klinge"
+  ],
+  "era_names": [
+    "Die Ära der Ersten",
+    "Der Große Zwist",
+    "Die Stille",
+    "Die Wiederbelebung"
+  ],
+  "chain_titles": [
+    "Der Krieg um {planet}",
+    "Der Bruch der Allianz",
+    "Die Forschung von {technology}",
+    "Der Fall von {planet}",
+    "Die Rückeroberung",
+    "Das Bündnis der Gegner",
+    "Die Kolonisierungswelle",
+    "Der Aufstieg von {faction}",
+    "Die Große Dürre",
+    "Der Technologische Sprung"
+  ]
+}

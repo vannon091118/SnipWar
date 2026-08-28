@@ -1034,6 +1034,25 @@
 			],
 			"p_id": 37.0
 		},
+		"daa6e00cd4b6b9923b37c05bfc75315a9d159986": {
+			"c": 61,
+			"composite": "c61j52n1a9p5",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-292",
+				"F-112",
+				"F-001",
+				"F-293",
+				"F-294",
+				"F-032",
+				"F-033",
+				"F-034",
+				"C-543"
+			],
+			"p_id": 61
+		},
 		"ddb4e5accc2fdd0e52a45b3194e4fa627ac9672b": {
 			"c": 57.0,
 			"composite": "c57j88n3a7p31",
@@ -1243,7 +1262,7 @@
 			"p_id": 31.0
 		},
 		"e959757a93e8cd5ce9b8c1e0ec32519b010e4e71": {
-			"c": 60,
+			"c": 60.0,
 			"composite": "c60j27n4a6p15",
 			"entities": [
 				"F-002",
@@ -1262,7 +1281,7 @@
 				"C-541",
 				"C-542"
 			],
-			"p_id": 60
+			"p_id": 60.0
 		},
 		"efc07a25345c759262292b4f6e5ae67f846412a7": {
 			"c": 39.0,
@@ -10717,6 +10736,23 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-543": {
+			"first_p": 61.0,
+			"history": [
+				{
+					"lines": [
+						104.0
+					],
+					"p_id": 61.0
+				}
+			],
+			"id": "C-543",
+			"last_p": 61.0,
+			"name": "_show_route",
+			"path": "scripts/objects/ships/ship_base.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -13624,6 +13660,36 @@
 			"last_p": 59.0,
 			"name": "test_relationship_sprint.py",
 			"path": "narrative_runtime/tests/test_relationship_sprint.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-292": {
+			"first_p": 61.0,
+			"history": [],
+			"id": "F-292",
+			"last_p": 61.0,
+			"name": "planet_grid_config.gd",
+			"path": "scripts/config/planet_grid_config.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-293": {
+			"first_p": 61.0,
+			"history": [],
+			"id": "F-293",
+			"last_p": 61.0,
+			"name": "game_cycle_manager.gd",
+			"path": "scripts/game_cycle_manager.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-294": {
+			"first_p": 61.0,
+			"history": [],
+			"id": "F-294",
+			"last_p": 61.0,
+			"name": "ship_base.gd",
+			"path": "scripts/objects/ships/ship_base.gd",
 			"status": "created",
 			"type": "file"
 		}
