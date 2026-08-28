@@ -959,3 +959,84 @@ Docs-Integrity-Constraint: zentrale Doku mechanisch auf Duplikate und kaputte Ta
 - scripts/preflight/constraint_docs_integrity.gd.uid: Dokumentation aktualisiert (F-204).
 - scripts/testing/docs_integrity_entry_test.gd: Dokumentation aktualisiert (F-205).
 - scripts/testing/docs_integrity_entry_test.gd.uid: Dokumentation aktualisiert (F-206).
+
+## 2026-08-27 08:00:00 — p56 · c56j53n14a6p51 · Sage · triumphierend
+
+**Sage lehrt: Audio-Pipeline: OGG-Assets für Musik und UI-SFX,… — nach Vannon**
+
+Audio-Pipeline: OGG-Assets für Musik und UI-SFX, MCP-Tools runtime_audio_analyze/slice/review/compare, Main-Menu-Music-Loop -6dB, Preflight-Constraint-Optimierung (resources_and_seed 6.7s→3.7ms), Lore-Rebrand Die Eisen-Grenze, Developer-Tools in scripts/tools/
+
+- README.md: Tooling erweitert (F-068).
+- addons/gdscript_mcp/MCP_INDEX.md: Tooling erweitert (F-045).
+- addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd: Tooling erweitert (F-102).
+- addons/gdscript_mcp/runtime/tools/systems/mcp_audio_tools.gd: Tooling erweitert (F-207).
+- assets/audio/music/main_menu.ogg: Tooling erweitert (F-208).
+- assets/audio/music/main_menu.ogg.import: Tooling erweitert (F-209).
+- assets/audio/music/where_empires_take_root.ogg: Tooling erweitert (F-210).
+- assets/audio/music/where_empires_take_root.ogg.import: Tooling erweitert (F-211).
+- assets/audio/sfx/ambient_intro.ogg: Tooling erweitert (F-212).
+- assets/audio/sfx/ambient_intro.ogg.import: Tooling erweitert (F-213).
+- assets/audio/sfx/ambient_pad_01.ogg: Tooling erweitert (F-214).
+- assets/audio/sfx/ambient_pad_01.ogg.import: Tooling erweitert (F-215).
+- assets/audio/sfx/ambient_pad_02.ogg: Tooling erweitert (F-216).
+- assets/audio/sfx/ambient_pad_02.ogg.import: Tooling erweitert (F-217).
+- assets/audio/sfx/ambient_pad_03.ogg: Tooling erweitert (F-218).
+- assets/audio/sfx/ambient_pad_03.ogg.import: Tooling erweitert (F-219).
+- assets/audio/sfx/ambient_resolve.ogg: Tooling erweitert (F-220).
+- assets/audio/sfx/ambient_resolve.ogg.import: Tooling erweitert (F-221).
+- assets/audio/sfx/ambient_swell.ogg: Tooling erweitert (F-222).
+- assets/audio/sfx/ambient_swell.ogg.import: Tooling erweitert (F-223).
+- assets/audio/sfx/ambient_tension.ogg: Tooling erweitert (F-224).
+- assets/audio/sfx/ambient_tension.ogg.import: Tooling erweitert (F-225).
+- assets/audio/sfx/menu_transition.ogg: Tooling erweitert (F-226).
+- assets/audio/sfx/menu_transition.ogg.import: Tooling erweitert (F-227).
+- assets/audio/sfx/old_radio_hiss.ogg: Tooling erweitert (F-228).
+- assets/audio/sfx/old_radio_hiss.ogg.import: Tooling erweitert (F-229).
+- assets/audio/sfx/paper_rustle.ogg: Tooling erweitert (F-230).
+- assets/audio/sfx/paper_rustle.ogg.import: Tooling erweitert (F-231).
+- assets/audio/sfx/paper_rustle_v2.ogg: Tooling erweitert (F-232).
+- assets/audio/sfx/paper_rustle_v2.ogg.import: Tooling erweitert (F-233).
+- assets/audio/sfx/space_noise.ogg: Tooling erweitert (F-234).
+- assets/audio/sfx/space_noise.ogg.import: Tooling erweitert (F-235).
+- assets/audio/sfx/toast_note.ogg: Tooling erweitert (F-236).
+- assets/audio/sfx/toast_note.ogg.import: Tooling erweitert (F-237).
+- assets/audio/sfx/ui_alert.ogg: Tooling erweitert (F-238).
+- assets/audio/sfx/ui_alert.ogg.import: Tooling erweitert (F-239).
+- assets/audio/sfx/ui_back.ogg: Tooling erweitert (F-240).
+- assets/audio/sfx/ui_back.ogg.import: Tooling erweitert (F-241).
+- assets/audio/sfx/ui_click.ogg: Tooling erweitert (F-242).
+- assets/audio/sfx/ui_click.ogg.import: Tooling erweitert (F-243).
+- assets/audio/sfx/ui_confirm.ogg: Tooling erweitert (F-244).
+- assets/audio/sfx/ui_confirm.ogg.import: Tooling erweitert (F-245).
+- assets/audio/sfx/ui_confirm_01.ogg: Tooling erweitert (F-246).
+- assets/audio/sfx/ui_confirm_01.ogg.import: Tooling erweitert (F-247).
+- assets/audio/sfx/ui_confirm_02.ogg: Tooling erweitert (F-248).
+- assets/audio/sfx/ui_confirm_02.ogg.import: Tooling erweitert (F-249).
+- assets/audio/sfx/ui_hover.ogg: Tooling erweitert (F-250).
+- assets/audio/sfx/ui_hover.ogg.import: Tooling erweitert (F-251).
+- assets/audio/sfx/ui_sting_mid.ogg: Tooling erweitert (F-252).
+- assets/audio/sfx/ui_sting_mid.ogg.import: Tooling erweitert (F-253).
+- assets/audio/sfx/ui_sting_soft.ogg: Tooling erweitert (F-254).
+- assets/audio/sfx/ui_sting_soft.ogg.import: Tooling erweitert (F-255).
+- assets/audio/sfx/ui_transition_a.ogg: Tooling erweitert (F-256).
+- assets/audio/sfx/ui_transition_a.ogg.import: Tooling erweitert (F-257).
+- assets/audio/sfx/ui_transition_b.ogg: Tooling erweitert (F-258).
+- assets/audio/sfx/ui_transition_b.ogg.import: Tooling erweitert (F-259).
+- assets/audio/sfx/ui_transition_c.ogg: Tooling erweitert (F-260).
+- assets/audio/sfx/ui_transition_c.ogg.import: Tooling erweitert (F-261).
+- assets/audio/sfx/warning.ogg: Tooling erweitert (F-262).
+- assets/audio/sfx/warning.ogg.import: Tooling erweitert (F-263).
+- assets/audio/sfx_test/slice_01.ogg: Tooling erweitert (F-264).
+- assets/audio/sfx_test/slice_01.ogg.import: Tooling erweitert (F-265).
+- docs/FINDINGS.md: Tooling erweitert (F-046).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scenes/main_menu/main_menu.tscn: Tooling erweitert (F-266).
+- scripts/preflight/constraint_resources_and_seed.gd: Tooling erweitert (F-267).
+- scripts/testing/audio_analyzer_entry_test.gd: Tooling erweitert (F-268).
+- scripts/testing/audio_analyzer_entry_test.gd.uid: Tooling erweitert (F-269).
+- scripts/tools/audio_analyzer.py: Tooling erweitert (F-270).
+- scripts/tools/audio_slicer.py: Tooling erweitert (F-271).
+- scripts/tools/audio_synth.py: Tooling erweitert (F-272).
+- scripts/tools/kill_godot.cmd: Tooling erweitert (F-273).
+- scripts/tools/kill_godot.ps1: Tooling erweitert (F-274).
+- scripts/ui/main_menu.gd: Tooling erweitert (F-067).

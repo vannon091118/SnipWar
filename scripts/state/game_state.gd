@@ -978,6 +978,9 @@ func snapshot_run() -> RunSaveData:
 	# Chunk world + timers
 	data.chunk_data = _capture_chunk_data()
 	data.timers = _capture_timers().duplicate()
+	var chronicle: Node = _get_world_chronicle()
+	if chronicle != null and chronicle.has_method("snapshot"):
+		data.chronicle = chronicle.call("snapshot") as ChronicleSaveData
 	return data
 
 ## Restores a snapshot into the domains and marks the world for reconnect on
@@ -1015,7 +1018,14 @@ func restore_run(data: RunSaveData) -> bool:
 	# Chunk world + timers (consumed by the world scene on boot)
 	_pending_chunk_data = data.chunk_data
 	_pending_timers = data.timers.duplicate()
+	var chronicle: Node = _get_world_chronicle()
+	if chronicle != null and chronicle.has_method("restore") and data.chronicle != null:
+		chronicle.call("restore", data.chronicle)
 	return true
+
+func _get_world_chronicle() -> Node:
+	var root: Node = get_tree().root if get_tree() != null else null
+	return root.get_node_or_null("WorldChronicle") if root != null else null
 
 func pending_chunk_data() -> ChunkSaveData:
 	return _pending_chunk_data

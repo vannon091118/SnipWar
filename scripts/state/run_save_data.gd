@@ -69,6 +69,11 @@ const SAVE_VERSION: int = 1
 # --- Pacing timers (economy/gather tick remaining, seconds) ---
 @export var timers: Dictionary = {}
 
+# --- World chronicle ---
+## Historical backstory and live event archive for this run. Kept inside the
+## canonical RunSaveData so chronicle state cannot diverge from GameState.
+@export var chronicle: ChronicleSaveData
+
 ## Canonical, comparable representation of the snapshot. Normalizes
 ## String/StringName differences and float precision introduced by the .tres
 ## roundtrip, so save_game_roundtrip can assert lossless equality.

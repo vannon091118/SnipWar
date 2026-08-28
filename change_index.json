@@ -68,7 +68,7 @@
 			"p_id": 22.0
 		},
 		"085e7e0018665fd0bb3c8104de1c827556f75c67": {
-			"c": 55,
+			"c": 55.0,
 			"composite": "c55j40n4a13p50",
 			"entities": [
 				"F-002",
@@ -101,7 +101,7 @@
 				"C-405",
 				"C-406"
 			],
-			"p_id": 55
+			"p_id": 55.0
 		},
 		"0d3e994cdaff6003fe851ad638f06da48c6d57d9": {
 			"c": 15.0,
@@ -592,6 +592,96 @@
 				"C-036"
 			],
 			"p_id": 26.0
+		},
+		"699a67a5be9d59f7b6264a718b7869196b5dd8a3": {
+			"c": 56,
+			"composite": "c56j53n14a6p51",
+			"entities": [
+				"F-068",
+				"F-045",
+				"F-102",
+				"F-207",
+				"F-208",
+				"F-209",
+				"F-210",
+				"F-211",
+				"F-212",
+				"F-213",
+				"F-214",
+				"F-215",
+				"F-216",
+				"F-217",
+				"F-218",
+				"F-219",
+				"F-220",
+				"F-221",
+				"F-222",
+				"F-223",
+				"F-224",
+				"F-225",
+				"F-226",
+				"F-227",
+				"F-228",
+				"F-229",
+				"F-230",
+				"F-231",
+				"F-232",
+				"F-233",
+				"F-234",
+				"F-235",
+				"F-236",
+				"F-237",
+				"F-238",
+				"F-239",
+				"F-240",
+				"F-241",
+				"F-242",
+				"F-243",
+				"F-244",
+				"F-245",
+				"F-246",
+				"F-247",
+				"F-248",
+				"F-249",
+				"F-250",
+				"F-251",
+				"F-252",
+				"F-253",
+				"F-254",
+				"F-255",
+				"F-256",
+				"F-257",
+				"F-258",
+				"F-259",
+				"F-260",
+				"F-261",
+				"F-262",
+				"F-263",
+				"F-264",
+				"F-265",
+				"F-046",
+				"F-004",
+				"F-266",
+				"F-267",
+				"F-268",
+				"F-269",
+				"F-270",
+				"F-271",
+				"F-272",
+				"F-273",
+				"F-274",
+				"F-067",
+				"C-407",
+				"C-408",
+				"C-409",
+				"C-410",
+				"C-411",
+				"C-412",
+				"C-413",
+				"C-414",
+				"C-415"
+			],
+			"p_id": 56
 		},
 		"71357fdce9f50cb3ec7b0a709ca0d883416d712c": {
 			"c": 42.0,
@@ -8101,6 +8191,159 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-407": {
+			"first_p": 56.0,
+			"history": [
+				{
+					"lines": [
+						127.0
+					],
+					"p_id": 56.0
+				}
+			],
+			"id": "C-407",
+			"last_p": 56.0,
+			"name": "audio_analyze",
+			"path": "addons/gdscript_mcp/runtime/tools/systems/mcp_audio_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-408": {
+			"first_p": 56.0,
+			"history": [
+				{
+					"lines": [
+						160.0
+					],
+					"p_id": 56.0
+				}
+			],
+			"id": "C-408",
+			"last_p": 56.0,
+			"name": "audio_slice_auto",
+			"path": "addons/gdscript_mcp/runtime/tools/systems/mcp_audio_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-409": {
+			"first_p": 56.0,
+			"history": [
+				{
+					"lines": [
+						192.0
+					],
+					"p_id": 56.0
+				}
+			],
+			"id": "C-409",
+			"last_p": 56.0,
+			"name": "audio_render_evidence",
+			"path": "addons/gdscript_mcp/runtime/tools/systems/mcp_audio_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-410": {
+			"first_p": 56.0,
+			"history": [
+				{
+					"lines": [
+						220.0
+					],
+					"p_id": 56.0
+				}
+			],
+			"id": "C-410",
+			"last_p": 56.0,
+			"name": "audio_compare",
+			"path": "addons/gdscript_mcp/runtime/tools/systems/mcp_audio_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-411": {
+			"first_p": 56.0,
+			"history": [
+				{
+					"lines": [
+						250.0
+					],
+					"p_id": 56.0
+				}
+			],
+			"id": "C-411",
+			"last_p": 56.0,
+			"name": "audio_review",
+			"path": "addons/gdscript_mcp/runtime/tools/systems/mcp_audio_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-412": {
+			"first_p": 56.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 56.0
+				}
+			],
+			"id": "C-412",
+			"last_p": 56.0,
+			"name": "EVIDENCE_PATH",
+			"path": "scripts/testing/audio_analyzer_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-413": {
+			"first_p": 56.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 56.0
+				}
+			],
+			"id": "C-413",
+			"last_p": 56.0,
+			"name": "_check",
+			"path": "scripts/testing/audio_analyzer_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-414": {
+			"first_p": 56.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 56.0
+				}
+			],
+			"id": "C-414",
+			"last_p": 56.0,
+			"name": "_init",
+			"path": "scripts/testing/audio_analyzer_entry_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-415": {
+			"first_p": 56.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 56.0
+				}
+			],
+			"id": "C-415",
+			"last_p": 56.0,
+			"name": "_setup_music",
+			"path": "scripts/ui/main_menu.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -10158,6 +10401,686 @@
 			"last_p": 55.0,
 			"name": "docs_integrity_entry_test.gd.uid",
 			"path": "scripts/testing/docs_integrity_entry_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-207": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-207",
+			"last_p": 56.0,
+			"name": "mcp_audio_tools.gd",
+			"path": "addons/gdscript_mcp/runtime/tools/systems/mcp_audio_tools.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-208": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-208",
+			"last_p": 56.0,
+			"name": "main_menu.ogg",
+			"path": "assets/audio/music/main_menu.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-209": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-209",
+			"last_p": 56.0,
+			"name": "main_menu.ogg.import",
+			"path": "assets/audio/music/main_menu.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-210": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-210",
+			"last_p": 56.0,
+			"name": "where_empires_take_root.ogg",
+			"path": "assets/audio/music/where_empires_take_root.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-211": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-211",
+			"last_p": 56.0,
+			"name": "where_empires_take_root.ogg.import",
+			"path": "assets/audio/music/where_empires_take_root.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-212": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-212",
+			"last_p": 56.0,
+			"name": "ambient_intro.ogg",
+			"path": "assets/audio/sfx/ambient_intro.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-213": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-213",
+			"last_p": 56.0,
+			"name": "ambient_intro.ogg.import",
+			"path": "assets/audio/sfx/ambient_intro.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-214": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-214",
+			"last_p": 56.0,
+			"name": "ambient_pad_01.ogg",
+			"path": "assets/audio/sfx/ambient_pad_01.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-215": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-215",
+			"last_p": 56.0,
+			"name": "ambient_pad_01.ogg.import",
+			"path": "assets/audio/sfx/ambient_pad_01.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-216": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-216",
+			"last_p": 56.0,
+			"name": "ambient_pad_02.ogg",
+			"path": "assets/audio/sfx/ambient_pad_02.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-217": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-217",
+			"last_p": 56.0,
+			"name": "ambient_pad_02.ogg.import",
+			"path": "assets/audio/sfx/ambient_pad_02.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-218": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-218",
+			"last_p": 56.0,
+			"name": "ambient_pad_03.ogg",
+			"path": "assets/audio/sfx/ambient_pad_03.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-219": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-219",
+			"last_p": 56.0,
+			"name": "ambient_pad_03.ogg.import",
+			"path": "assets/audio/sfx/ambient_pad_03.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-220": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-220",
+			"last_p": 56.0,
+			"name": "ambient_resolve.ogg",
+			"path": "assets/audio/sfx/ambient_resolve.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-221": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-221",
+			"last_p": 56.0,
+			"name": "ambient_resolve.ogg.import",
+			"path": "assets/audio/sfx/ambient_resolve.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-222": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-222",
+			"last_p": 56.0,
+			"name": "ambient_swell.ogg",
+			"path": "assets/audio/sfx/ambient_swell.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-223": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-223",
+			"last_p": 56.0,
+			"name": "ambient_swell.ogg.import",
+			"path": "assets/audio/sfx/ambient_swell.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-224": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-224",
+			"last_p": 56.0,
+			"name": "ambient_tension.ogg",
+			"path": "assets/audio/sfx/ambient_tension.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-225": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-225",
+			"last_p": 56.0,
+			"name": "ambient_tension.ogg.import",
+			"path": "assets/audio/sfx/ambient_tension.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-226": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-226",
+			"last_p": 56.0,
+			"name": "menu_transition.ogg",
+			"path": "assets/audio/sfx/menu_transition.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-227": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-227",
+			"last_p": 56.0,
+			"name": "menu_transition.ogg.import",
+			"path": "assets/audio/sfx/menu_transition.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-228": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-228",
+			"last_p": 56.0,
+			"name": "old_radio_hiss.ogg",
+			"path": "assets/audio/sfx/old_radio_hiss.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-229": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-229",
+			"last_p": 56.0,
+			"name": "old_radio_hiss.ogg.import",
+			"path": "assets/audio/sfx/old_radio_hiss.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-230": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-230",
+			"last_p": 56.0,
+			"name": "paper_rustle.ogg",
+			"path": "assets/audio/sfx/paper_rustle.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-231": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-231",
+			"last_p": 56.0,
+			"name": "paper_rustle.ogg.import",
+			"path": "assets/audio/sfx/paper_rustle.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-232": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-232",
+			"last_p": 56.0,
+			"name": "paper_rustle_v2.ogg",
+			"path": "assets/audio/sfx/paper_rustle_v2.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-233": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-233",
+			"last_p": 56.0,
+			"name": "paper_rustle_v2.ogg.import",
+			"path": "assets/audio/sfx/paper_rustle_v2.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-234": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-234",
+			"last_p": 56.0,
+			"name": "space_noise.ogg",
+			"path": "assets/audio/sfx/space_noise.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-235": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-235",
+			"last_p": 56.0,
+			"name": "space_noise.ogg.import",
+			"path": "assets/audio/sfx/space_noise.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-236": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-236",
+			"last_p": 56.0,
+			"name": "toast_note.ogg",
+			"path": "assets/audio/sfx/toast_note.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-237": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-237",
+			"last_p": 56.0,
+			"name": "toast_note.ogg.import",
+			"path": "assets/audio/sfx/toast_note.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-238": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-238",
+			"last_p": 56.0,
+			"name": "ui_alert.ogg",
+			"path": "assets/audio/sfx/ui_alert.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-239": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-239",
+			"last_p": 56.0,
+			"name": "ui_alert.ogg.import",
+			"path": "assets/audio/sfx/ui_alert.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-240": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-240",
+			"last_p": 56.0,
+			"name": "ui_back.ogg",
+			"path": "assets/audio/sfx/ui_back.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-241": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-241",
+			"last_p": 56.0,
+			"name": "ui_back.ogg.import",
+			"path": "assets/audio/sfx/ui_back.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-242": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-242",
+			"last_p": 56.0,
+			"name": "ui_click.ogg",
+			"path": "assets/audio/sfx/ui_click.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-243": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-243",
+			"last_p": 56.0,
+			"name": "ui_click.ogg.import",
+			"path": "assets/audio/sfx/ui_click.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-244": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-244",
+			"last_p": 56.0,
+			"name": "ui_confirm.ogg",
+			"path": "assets/audio/sfx/ui_confirm.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-245": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-245",
+			"last_p": 56.0,
+			"name": "ui_confirm.ogg.import",
+			"path": "assets/audio/sfx/ui_confirm.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-246": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-246",
+			"last_p": 56.0,
+			"name": "ui_confirm_01.ogg",
+			"path": "assets/audio/sfx/ui_confirm_01.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-247": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-247",
+			"last_p": 56.0,
+			"name": "ui_confirm_01.ogg.import",
+			"path": "assets/audio/sfx/ui_confirm_01.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-248": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-248",
+			"last_p": 56.0,
+			"name": "ui_confirm_02.ogg",
+			"path": "assets/audio/sfx/ui_confirm_02.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-249": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-249",
+			"last_p": 56.0,
+			"name": "ui_confirm_02.ogg.import",
+			"path": "assets/audio/sfx/ui_confirm_02.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-250": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-250",
+			"last_p": 56.0,
+			"name": "ui_hover.ogg",
+			"path": "assets/audio/sfx/ui_hover.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-251": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-251",
+			"last_p": 56.0,
+			"name": "ui_hover.ogg.import",
+			"path": "assets/audio/sfx/ui_hover.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-252": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-252",
+			"last_p": 56.0,
+			"name": "ui_sting_mid.ogg",
+			"path": "assets/audio/sfx/ui_sting_mid.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-253": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-253",
+			"last_p": 56.0,
+			"name": "ui_sting_mid.ogg.import",
+			"path": "assets/audio/sfx/ui_sting_mid.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-254": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-254",
+			"last_p": 56.0,
+			"name": "ui_sting_soft.ogg",
+			"path": "assets/audio/sfx/ui_sting_soft.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-255": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-255",
+			"last_p": 56.0,
+			"name": "ui_sting_soft.ogg.import",
+			"path": "assets/audio/sfx/ui_sting_soft.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-256": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-256",
+			"last_p": 56.0,
+			"name": "ui_transition_a.ogg",
+			"path": "assets/audio/sfx/ui_transition_a.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-257": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-257",
+			"last_p": 56.0,
+			"name": "ui_transition_a.ogg.import",
+			"path": "assets/audio/sfx/ui_transition_a.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-258": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-258",
+			"last_p": 56.0,
+			"name": "ui_transition_b.ogg",
+			"path": "assets/audio/sfx/ui_transition_b.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-259": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-259",
+			"last_p": 56.0,
+			"name": "ui_transition_b.ogg.import",
+			"path": "assets/audio/sfx/ui_transition_b.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-260": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-260",
+			"last_p": 56.0,
+			"name": "ui_transition_c.ogg",
+			"path": "assets/audio/sfx/ui_transition_c.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-261": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-261",
+			"last_p": 56.0,
+			"name": "ui_transition_c.ogg.import",
+			"path": "assets/audio/sfx/ui_transition_c.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-262": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-262",
+			"last_p": 56.0,
+			"name": "warning.ogg",
+			"path": "assets/audio/sfx/warning.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-263": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-263",
+			"last_p": 56.0,
+			"name": "warning.ogg.import",
+			"path": "assets/audio/sfx/warning.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-264": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-264",
+			"last_p": 56.0,
+			"name": "slice_01.ogg",
+			"path": "assets/audio/sfx_test/slice_01.ogg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-265": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-265",
+			"last_p": 56.0,
+			"name": "slice_01.ogg.import",
+			"path": "assets/audio/sfx_test/slice_01.ogg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-266": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-266",
+			"last_p": 56.0,
+			"name": "main_menu.tscn",
+			"path": "scenes/main_menu/main_menu.tscn",
+			"status": "created",
+			"type": "file"
+		},
+		"F-267": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-267",
+			"last_p": 56.0,
+			"name": "constraint_resources_and_seed.gd",
+			"path": "scripts/preflight/constraint_resources_and_seed.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-268": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-268",
+			"last_p": 56.0,
+			"name": "audio_analyzer_entry_test.gd",
+			"path": "scripts/testing/audio_analyzer_entry_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-269": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-269",
+			"last_p": 56.0,
+			"name": "audio_analyzer_entry_test.gd.uid",
+			"path": "scripts/testing/audio_analyzer_entry_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-270": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-270",
+			"last_p": 56.0,
+			"name": "audio_analyzer.py",
+			"path": "scripts/tools/audio_analyzer.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-271": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-271",
+			"last_p": 56.0,
+			"name": "audio_slicer.py",
+			"path": "scripts/tools/audio_slicer.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-272": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-272",
+			"last_p": 56.0,
+			"name": "audio_synth.py",
+			"path": "scripts/tools/audio_synth.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-273": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-273",
+			"last_p": 56.0,
+			"name": "kill_godot.cmd",
+			"path": "scripts/tools/kill_godot.cmd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-274": {
+			"first_p": 56.0,
+			"history": [],
+			"id": "F-274",
+			"last_p": 56.0,
+			"name": "kill_godot.ps1",
+			"path": "scripts/tools/kill_godot.ps1",
 			"status": "created",
 			"type": "file"
 		}
