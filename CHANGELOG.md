@@ -1092,3 +1092,20 @@ Migrate MCP transport and vision tooling to the Python stdlib worker with verifi
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
 - scripts/testing/mcp_capture_entry_test.gd: Implementiert und integriert (F-154).
+
+## 2026-08-27 11:00:00 — p59 · c59j92n8a7p15 · Ghost · erschöpft
+
+**Ghost verzeichnet: Harden the narrative runtime gate and… — nach Squizzle**
+
+Harden the narrative runtime gate and relationship archive with reproducible tests
+
+- CHANGELOG.md: Test-Assets ergänzt (F-002).
+- change_index.json: Test-Assets ergänzt (F-003).
+- narrative_chain.json: Test-Assets ergänzt (F-004).
+- narrative_runtime/README.md: Test-Assets ergänzt (F-136).
+- narrative_runtime/gate.py: Test-Assets ergänzt (F-185).
+- narrative_runtime/observe.py: Test-Assets ergänzt (F-141).
+- narrative_runtime/relationships.py: Test-Assets ergänzt (F-179).
+- narrative_runtime/store.py: Test-Assets ergänzt (F-142).
+- narrative_runtime/tests/test_relationship_sprint.py: Test-Assets ergänzt (F-291).
+- scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).

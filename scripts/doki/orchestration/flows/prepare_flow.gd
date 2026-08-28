@@ -65,6 +65,16 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	if staged.is_empty():
 		return {"ok": false, "error": "Keine gestagten Änderungen — erst `git add <dateien>`, dann prepare."}
 
+	# Atomicity-Gate (früh, wie Check 10): ein Commit = EINE logische Einheit.
+	# Mehr als MAX_FILES_PER_COMMIT User-Dateien → sofort blocken, bevor der
+	# Prompt geschrieben wird (Mega-Commits fressen Story-Platz und Info).
+	var user_files: Array = []
+	for f in staged:
+		if not DOKI_Verifier.AUTO_MANAGED.has(str(f).get_file()):
+			user_files.append(str(f))
+	if user_files.size() > DOKI_Verifier.MAX_FILES_PER_COMMIT:
+		return {"ok": false, "error": "Atomicity-Gate: %d Dateien gestaged (max %d). Bitte in atomare Commits aufteilen — ein Commit = eine logische Einheit." % [user_files.size(), DOKI_Verifier.MAX_FILES_PER_COMMIT]}
+
 	var chain: Dictionary = _chain_store.read()
 	if chain.get("anchor", {}).is_empty():
 		return {"ok": false, "error": "DOKI nicht initialisiert — erst `doki init`."}

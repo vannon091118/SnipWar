@@ -1,7 +1,7 @@
 class_name DOKI_FinishFlow
 extends RefCounted
 ## Zuständigkeit: finish-Schritt — prepared → verified.
-## Baut Message, orchestriert die 9 Checks (1-6 weich / 7-9 hart) und schreibt
+## Baut Message, orchestriert die 10 Checks (1-6 weich / 7-10 hart) und schreibt
 ## Artefakte ERST nach Erfolg (Retry ohne Disk-Nebenwirkungen). Dazu verify_only
 ## für den commit-msg Hook.
 
@@ -59,7 +59,7 @@ func run(body: String) -> Dictionary:
 	var full_message: String = str(message["full_message"])
 	var subject_line: String = str(message["subject"])
 
-	# 9 Checks
+	# 10 Checks
 	var verify_result: Dictionary = _verifier.validate(full_message, session, _chain_store.read(), staged.duplicate(), _git.unstaged_diffs())
 	var hard_errors: Array = verify_result["hard_errors"]
 	if not hard_errors.is_empty():
@@ -98,7 +98,7 @@ static func _parse_next_arc(body: String) -> Dictionary:
 	return {"name": m.get_string(1).strip_edges(), "theme": m.get_string(2).strip_edges()}
 
 
-## verify_only(message) — für den commit-msg Hook (Checks 1-9, keine Nebenwirkungen).
+## verify_only(message) — für den commit-msg Hook (Checks 1-10, keine Nebenwirkungen).
 func verify_only(message: String) -> Dictionary:
 	var session: Dictionary = _session_store.read()
 	if session.get("state") != DOKI_SessionStore.STATE_VERIFIED:

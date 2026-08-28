@@ -5,7 +5,7 @@ extends SceneTree
 ##   init                    Genesis: Chain am HEAD verankern (einmalig)
 ##   prepare "<impuls>"      idle → prepared (nach `git add`; schreibt .doki/prompt.txt)
 ##   finish                  prepared → verified (Body via --body, --body-file oder stdin)
-##   verify-only <msgfile>   Checks 1-9 auf Message (commit-msg Hook)
+##   verify-only <msgfile>   Checks 1-10 auf Message (commit-msg Hook)
 ##   finalize                verified → idle (post-commit Hook; idempotent)
 ##   repair                  Recovery: Crash / rebase / amend
 ##   status                  Zustand + Chain-Info
@@ -69,7 +69,7 @@ func _main(args: PackedStringArray) -> int:
 			var result: Dictionary = orchestrator.finish(body)
 			if not result["ok"]:
 				if result.get("phase") == "verify":
-					print("✗ HARTE BLOCKS (Checks 7-9):")
+					print("✗ HARTE BLOCKS (Checks 7-10):")
 					for e in result.get("errors", []):
 						print("  ✗ %s" % str(e))
 					if not result.get("soft_errors", []).is_empty():
@@ -81,7 +81,7 @@ func _main(args: PackedStringArray) -> int:
 			if _json_output:
 				_print_json({"ok": true, "message": result["message"]})
 				return 0
-			print("✓ finish: 9 Checks — Message geschrieben nach .commit_msg.txt")
+			print("✓ finish: 10 Checks — Message geschrieben nach .commit_msg.txt")
 			for e in result.get("soft_errors", []):
 				print("  ⚠ %s" % str(e))
 			print("  → git commit -F .commit_msg.txt")
@@ -111,7 +111,7 @@ func _main(args: PackedStringArray) -> int:
 					for e in result.get("soft_errors", []):
 						print("  ⚠ %s" % str(e))
 				return 1
-			print("✓ verify-only: Alle harten Checks (7-9) bestanden.")
+			print("✓ verify-only: Alle harten Checks (7-10) bestanden.")
 			return 0
 		"finalize":
 			var result: Dictionary = orchestrator.finalize_flow_run()
@@ -262,7 +262,7 @@ func _print_help() -> void:
 	print("  prepare \"<impuls>\"      Nach `git add` — schreibt .doki/prompt.txt (Narrator+Mood deterministisch)")
 	print("  finish                  Body via --body \"<text>\" / --body-file <pfad> / --stdin (explizit)")
 	print("  amend                   DOKI-Message des letzten Commits nachbearbeiten (Body ersetzen)")
-	print("  verify-only <msgfile>   Checks 1-9 (commit-msg Hook)")
+	print("  verify-only <msgfile>   Checks 1-10 (commit-msg Hook)")
 	print("  gate                    pre-commit Gate (Session + Snapshot + .commit_msg.txt)")
 	print("  finalize                Chain-Append nach Commit (post-commit Hook)")
 	print("  repair                  Recovery nach Crash / rebase / amend")

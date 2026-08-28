@@ -1,8 +1,8 @@
 class_name DOKI_Verifier
 extends RefCounted
-## Verifikation der Commit-Message — 9 Checks:
+## Verifikation der Commit-Message — 10 Checks:
 ## Checks 1-6 (weich): Token, Impuls, Storytelling, Narrator, Composite, Cross-Narrator
-## Checks 7-9 (HART):  Kausalität, DocSync, ChainAudit
+## Checks 7-10 (HART): Kausalität, DocSync, ChainAudit, Datei-Limit (Atomicity)
 ##
 ## Portiert aus VerifyEngine.cs, aber mit sauberer soft/hard-Trennung
 ## (das alte System blockte bei JEDEM Fehler — auch bei weichen).
@@ -13,6 +13,13 @@ var _changelog_path: String
 
 const CAUSAL_CONNECTORS: String = "\\b(weil|deshalb|daher|dadurch|folglich|somit|Ursache|Wirkung)\\b"
 const COMPOSITE_TOKEN_REGEX: String = "\\[COMPOSITE:(c\\d+j\\d+n\\d+a\\d+p\\d+)\\]"
+## Atomicity-Gate (Check 10): max. Dateien pro Commit (ohne Auto-Managed
+## narrative Dateien, die finalize selbst staged). Ein Commit = EINE logische
+## Einheit — Mega-Commits (74+ Dateien) fressen Story-Platz und Info.
+const MAX_FILES_PER_COMMIT: int = 30
+## Von finish/finalize selbst gestagte narrative Dateien — zählen beim
+## Datei-Limit nicht mit (identisch zu GateFlow.AUTO_MANAGED).
+const AUTO_MANAGED: Array = ["narrative_chain.json", "change_index.json", "CHANGELOG.md", ".commit_msg.txt", "arcs.json"]
 
 
 func _init(catalog: DOKI_NarratorCatalog, repo_root: String) -> void:
@@ -37,6 +44,7 @@ func validate(message: String, session: Dictionary, chain: Dictionary, staged_fi
 	_append(check_7_causality(message, session), checks, hard_errors, soft_errors)
 	_append(check_8_docsync(message, session, staged_file_names, unstaged_doc_diffs), checks, hard_errors, soft_errors)
 	_append(check_9_chain_audit(message, session, chain), checks, hard_errors, soft_errors)
+	_append(check_10_file_limit(staged_file_names), checks, hard_errors, soft_errors)
 
 	return {
 		"success": hard_errors.is_empty(),
@@ -349,6 +357,20 @@ func check_9_chain_audit(message: String, session: Dictionary, chain: Dictionary
 		problems.append("RNG-Replay erzeugt '%s' statt Session-Composite '%s' (Manipulation?)." % [str(replayed["composite"]), composite])
 
 	return _result("CHECK 9", true, ok, " ".join(problems) if not ok else "")
+
+
+## ─── Check 10: Datei-Limit / Atomicity (HARTER BLOCK) ───────────────────
+## Ein Commit = eine logische Einheit. Werden mehr als MAX_FILES_PER_COMMIT
+## Dateien gestaged, ist der Commit zu groß — der Diff muss in atomare
+## Commits aufgeteilt werden. Auto-managed narrative Dateien (finalize staged
+## sie selbst) zählen nicht mit.
+func check_10_file_limit(staged_file_names: Array) -> Dictionary:
+	var user_files: Array = []
+	for f in staged_file_names:
+		if not AUTO_MANAGED.has(str(f).get_file()):
+			user_files.append(str(f))
+	var ok: bool = user_files.size() <= MAX_FILES_PER_COMMIT
+	return _result("CHECK 10", true, ok, "Commit umfasst %d Dateien (max %d). Bitte in atomare Commits aufteilen — ein Commit = eine logische Einheit." % [user_files.size(), MAX_FILES_PER_COMMIT] if not ok else "")
 
 
 ## ─── Helfer ─────────────────────────────────────────────────────────────

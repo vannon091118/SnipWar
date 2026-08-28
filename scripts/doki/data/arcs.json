@@ -1119,11 +1119,24 @@
 			"climax_weight": 3.0,
 			"id": "a27",
 			"name": "Vertragsprüfung",
+			"seen_entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-136",
+				"F-185",
+				"F-141",
+				"F-179",
+				"F-142",
+				"F-291",
+				"F-001",
+				"C-538"
+			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Laufzeit, Belege und Grenzen",
 			"version": "",
-			"weight": 0.0
+			"weight": 3.3
 		},
 		"a3": {
 			"climax_weight": 3.0,

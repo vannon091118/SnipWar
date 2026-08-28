@@ -5044,6 +5044,78 @@
 			"seq": 58,
 			"subject": "Squizzles Fall: Migrate MCP transport and vision tooling to the… — nach Thinker",
 			"summary": "Squizzle folgt den Spuren eines Werkzeugs, das seinen alten Pfad verlassen hat. Die Node-Brücke und der frühere Vision-Worker wurden nicht aus Laune entfernt; der aktuelle Transport führt nun über ..."
+		},
+		{
+			"a": 7,
+			"arc": "a27",
+			"c": 59,
+			"composite": "c59j92n8a7p15",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 29.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 199.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 132.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "narrative_runtime/README.md",
+					"insertions": 18.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/gate.py",
+					"insertions": 67.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "narrative_runtime/observe.py",
+					"insertions": 21.0
+				},
+				{
+					"deletions": 69.0,
+					"file": "narrative_runtime/relationships.py",
+					"insertions": 152.0
+				},
+				{
+					"deletions": 15.0,
+					"file": "narrative_runtime/store.py",
+					"insertions": 56.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/tests/test_relationship_sprint.py",
+					"insertions": 114.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 43.0
+				}
+			],
+			"date": "2026-08-27 11:00:00",
+			"hash": "68b89819ebedb3c8f535c585cf85ad077a3d448e",
+			"j": 92,
+			"model_id": "claude-sonnet-4",
+			"mood": "erschöpft",
+			"n": 8,
+			"narrator": "Ghost",
+			"p": 15,
+			"p_id": 59,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Squizzle",
+			"seq": 59,
+			"subject": "Ghost verzeichnet: Harden the narrative runtime gate and… — nach Squizzle",
+			"summary": "Die nächste Spur führt aus der Spielsimulation in das abgeleitete Archiv. Der Runtime-Code darf die Git-Historie nicht ersetzen, deshalb werden Beobachtungen, Beziehungen und Prüfungen reproduzierb..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

@@ -53,7 +53,7 @@ Charakters** als Fließtext (keine Bullets).
   (mit Zeilennummern, stabile IDs über Commits)
 - **CommitOrchestrator** baut die Message (`[NARRATOR:]`, `[MODEL:]`, `[IMPULSE:]`,
   `[COMPOSITE:]`, Arc-Block, maschinengenerierte Begründungszeilen je Datei)
-- **9 Checks** (1-6 weich, 7-9 HARTER BLOCK):
+- **10 Checks** (1-6 weich, 7-10 HARTER BLOCK):
   1. Pflicht-Tokens + Wortzahl (Charakter-Regeln)
   2. Impuls-Integration im Body
   3. Storytelling (kein Bullet-Überhang, kausale Konnektoren)
@@ -63,6 +63,10 @@ Charakters** als Fließtext (keine Bullets).
   7. **Kausalität:** IMPULSE-Anker + Composite ist Ketten-Nachfolger der Session
   8. **DocSync:** CHANGELOG/change_index existieren + keine ungestagten Diffs
   9. **ChainAudit:** c-Folge lückenlos, kein Doppel-Append, **RNG-Replay** == Session
+  10. **Datei-Limit (Atomicity):** max. `MAX_FILES_PER_COMMIT` (30) User-Dateien
+      pro Commit — ein Commit = eine logische Einheit; Auto-Managed narrative
+      Dateien (narrative_chain.json, change_index.json, CHANGELOG.md,
+      .commit_msg.txt, arcs.json) zählen nicht mit (identisch zu GateFlow)
 - Nach Erfolg schreibt `finish` nur `.commit_msg.txt` (Fehlschlag = Disk unberührt).
   `CHANGELOG.md`/`change_index.json` entstehen erst in `finalize` NACH dem Commit
   (transaktional — kein Orphan-Eintrag mehr bei gescheitertem Commit)
@@ -171,7 +175,7 @@ $GODOT_BIN --headless --path <test-worktree> --script <abs>/doki_story_test.gd -
 | Bereich | Datei | Zuständigkeit |
 |---------|-------|---------------|
 | core | `xorshift128.gd`, `rng_engine.gd` | PRNG + Composite-Derivation |
-| core | `verifier.gd` | 9 Checks (soft/hard) |
+| core | `verifier.gd` | 10 Checks (soft/hard) |
 | chain | `chain_store.gd`, `session_store.gd`, `change_index_store.gd` | Persistenz |
 | character | `narrator_catalog.gd`, `mood_overlay.gd` | 14 Charaktere × 10 Moods |
 | prompt | `voice_composer.gd`, `relationship_engine.gd`, `sideplot_engine.gd`, `arc_engine.gd` | Prompt-Engine |

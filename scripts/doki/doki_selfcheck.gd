@@ -17,6 +17,7 @@ func _init() -> void:
 	_test_classify_impulse()
 	_test_verifier_positive()
 	_test_verifier_hard_blocks()
+	_test_verifier_file_limit()
 	_test_checks_soft()
 	_test_amend_reconstruction()
 	_test_amend_hash_sync()
@@ -256,6 +257,42 @@ func _test_verifier_hard_blocks() -> void:
 	session_tamper["tree_hash"] = "andertree"
 	var r9b: Dictionary = verifier.validate(good, session_tamper, chain, ["CHANGELOG.md", "change_index.json", "scripts/x.gd"], [])
 	_expect("CHECK 9 blockt (Manipulation: Replay mismatch)", _has_hard(r9b, "CHECK 9"))
+
+
+## ─── Verifier: Check 10 — Datei-Limit / Atomicity (HARTER BLOCK) ──────
+func _test_verifier_file_limit() -> void:
+	var verifier: DOKI_Verifier = _fixture_verifier()
+	var chain: Dictionary = _fixture_chain()
+	var session: Dictionary = _fixture_session(chain)
+	var good: String = _fixture_message(session)
+
+	# Unter dem Limit (inkl. Auto-Managed narrative Dateien) → pass
+	var small: Array = ["scripts/x.gd", "scripts/y.gd", "CHANGELOG.md", "change_index.json", "narrative_chain.json"]
+	var r_ok: Dictionary = verifier.validate(good, session, chain, small, [])
+	_expect("CHECK 10 pass (unter Limit)", not _has_hard(r_ok, "CHECK 10"))
+
+	# Exakt am Limit → pass (Grenzwert ist inklusiv)
+	var at_limit: Array = []
+	for i in DOKI_Verifier.MAX_FILES_PER_COMMIT:
+		at_limit.append("scripts/mod_%02d.gd" % i)
+	var r_at: Dictionary = verifier.validate(good, session, chain, at_limit, [])
+	_expect("CHECK 10 pass (exakt am Limit)", not _has_hard(r_at, "CHECK 10"))
+
+	# Ein Datei über dem Limit → blockt
+	var over: Array = at_limit.duplicate()
+	over.append("scripts/extra.gd")
+	var r_over: Dictionary = verifier.validate(good, session, chain, over, [])
+	_expect("CHECK 10 blockt (über Limit)", _has_hard(r_over, "CHECK 10"))
+
+	# Auto-Managed narrative Dateien zählen nicht mit: 35 narrative + 1 User
+	var with_narrative: Array = at_limit.duplicate()
+	with_narrative.append("narrative_chain.json")
+	with_narrative.append("change_index.json")
+	with_narrative.append("CHANGELOG.md")
+	with_narrative.append(".commit_msg.txt")
+	with_narrative.append("arcs.json")
+	var r_narr: Dictionary = verifier.validate(good, session, chain, with_narrative, [])
+	_expect("CHECK 10: Auto-Managed narrative Dateien zählen nicht", not _has_hard(r_narr, "CHECK 10"))
 
 
 ## ─── Verifier: weiche Checks melden, blocken nicht ─────────────────────

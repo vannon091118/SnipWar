@@ -221,7 +221,7 @@ Exit-Codes: 0 ok · 2 HISTORY CHANGED (Rebuild erforderlich) · 3 Chain ungülti
 
 ---
 
-## 7. Beziehungsmodell RELATIONSHIP[A][B] (Sprint 3 implementiert)
+## 7. Beziehungsmodell RELATIONSHIP[A][B] (Relationship-Sprint implementiert)
 
 - **Gerichtet, ausnahmslos:** `RELATIONSHIP[A][B] ≠ RELATIONSHIP[B][A]`, keine automatische Spiegelung. 14 × 13 = **182 gerichtete Beziehungen** × 8 Achsen = **1.456 relationale State-Werte**.
 - **Achsen mit gerichteter Semantik pro Träger:** `trust` („Wie sehr glaube ich ihm?"), `respect` („Wie hoch schätze ich seine Kompetenz?"), `irritation`, `affinity`, `competence_confidence`, `resentment`, `curiosity`, `defensiveness`.
@@ -234,7 +234,10 @@ Exit-Codes: 0 ok · 2 HISTORY CHANGED (Rebuild erforderlich) · 3 Chain ungülti
 - **Ein Event darf beide Richtungen unterschiedlich schreiben** (Fixture c37/c43: Thinker editiert AGENTS.md, Buffy fixt Folgen → `Buffy→Thinker: trust −0.018, competence_confidence −0.022, irritation +0.011`; `Thinker→Buffy: trust +0.002, respect +0.014`).
 - **Kein pauschaler Zeit-Decay** („Emotionen dürfen abklingen. Erinnerungen nicht."): `irritation` decayt schnell, `resentment` langsam, `trust`-Schäden bleiben stärker bestehen, Beliefs bleiben mit Evidenz bestehen. Decay-Profil pro Achse, als Projektion — Roh-Events bleiben unveränderlich.
 - **Knowledge ebenfalls gerichtet:** `RELATIONSHIP[A][B]` trägt zusätzlich `known_traits / known_events / known_beliefs` (was A über B weiß) und `interpretation` / `expectations`. „Buffy believes: Thinker ignored my warning" vs. „Thinker remembers: Buffy never actually warned me" → Missverständnisse werden modellierbar; genau daraus entstehen Konflikte beiderseitiger Rationalität.
-- **Jede Änderung** wird als `relationship_event` mit Begründung + Event-/Observations-Referenz gespeichert. Keine monolithische Gesamtzahl.
+- **Jede Änderung** wird als gerichteter `relationship_effect` mit eigener `effect_id`, zugrunde liegender `event_id`, Begründung, Evidence-Level, Evidence-Refs und Regelversion gespeichert. Das narrative Ereignis und seine A→B/B→A-Effects bleiben getrennt auditierbar.
+- Die vollständige Matrix wird strukturell materialisiert: für jeden der 14 Narratoren existiert genau eine Kante zu jedem anderen Narrator (`14 × 13 = 182`), niemals eine Selbstkante und niemals eine implizite Rückrichtung.
+- Die Evidence-Ladder lautet `DIRECT_FACT` → `DETERMINISTIC_DERIVATION` → `CANDIDATE` → `CONFIRMED_BY_LATER_EVIDENCE`. Ein Fix allein bestätigt weder Regression noch Admission. Unterschiedliche Stances sind zunächst nur `STANCE_DIFFERENCE`; Disagreement erfordert explizite Interaktion oder Widerspruchs-Evidence.
+- Relationship-State trägt achsenspezifische, versionierte Decays. Roh-Effects werden nie gelöscht. Knowledge-State bleibt je Richtung Evidence-gebunden (`known_traits`, `known_events`, `known_beliefs`, `interpretation`, `expectations`).
 
 ---
 
@@ -289,7 +292,7 @@ Die Runtime erzeugt daraus einen `contradicts`-Belief-Übergang mit `evidence_se
 
 ## 12. Arc-Kompatibilität
 
-- `scripts/doki/data/arcs.json` (18 Arcs) bleibt **Legacy-/Vergleichsquelle** — Referenzierbarkeit aller 18 Arcs ist Abnahmekriterium der Thread-Migration (Sprint 5).
+- `scripts/doki/data/arcs.json` bleibt **Legacy-/Vergleichsquelle** — die tatsächlich vorhandene Arc-Anzahl ist dynamisch und darf nicht als veralteter fixer Wert dokumentiert werden.
 - `arc_engine.gd` bleibt unangetastet, bis Thread-Backfill validiert ist. Kein blindes Ersetzen.
 - **Composite-Narrator-Auswahl bleibt unverändert:** keine Schicht der Runtime berührt `n`, `j` oder den Composite-Hash.
 - Bestehende DOKI-Verifier- und Preflight-Verträge dürfen durch Migration nicht brechen (65 Selfchecks bleiben grün).
@@ -298,7 +301,7 @@ Die Runtime erzeugt daraus einen `contradicts`-Belief-Übergang mit `evidence_se
 
 ## 11. DOKI-Bridge-Vertrag (Sprint 7, read-only Export implementiert)
 
-Aktueller DOKI-Fluss bleibt exakt: `prepare` (Hash/Narrator/Mood/Prompt) → `finish` (Body-Verifikation, 9 Checks) → `finalize` (Chain-Append, ChangeIndex, Artefakte).
+Aktueller DOKI-Fluss bleibt exakt: `prepare` (Hash/Narrator/Mood/Prompt) → `finish` (Body-Verifikation, 10 Checks) → `finalize` (Chain-Append, ChangeIndex, Artefakte).
 
 **Bridge liefert zusätzlich** per `python -m narrative_runtime context` ein read-only JSON mit: `schema`, `chain_seq`, `chain_hash`, `observation_output_hash`, `facts`, `current_character`, `current_state`, `relevant_relationships`, `beliefs`, `memory_refs`, `threads`, `conflicts`, `allowed_interpretations`. Der Export wird nur bei exakter SQLite-Verifikation gegen Chain und Change Index erzeugt.
 
@@ -365,8 +368,8 @@ G7  Rebuild ≠ Incremental-Result (Zustandsdifferenz)
 **Nach MVP A (dieser Schnitt) existiert:** `narrative_runtime/` (stdlib-only, Python ≥ 3.11) mit
 `observe.py` (§4), `store.py` (§5–6), CLI (§6.5), Testsuite (Idempotenz, Anker/Amend, Rebuild-Determinismus, Atomicity, Purity, Gap, Incremental==Rebuild, Smoke gegen Kopie der echten Chain). Die reale Chain umfasst beim Abnahmelauf 49 Einträge.
 
-**Implementiert:** Relationship-Deltas (§7), begrenzter Character State, konservative Belief-/Memory-Projektionen, Threads, Perspectives, Conflicts (Sprint 3–6-Kern), read-only Context-Export (§11) und das lokale NARRATIVE_RUNTIME_GATE G1–G7. **Noch nicht implementiert:** produktive DOKI-Prepare-Bridge, Candidates/Slice Gate/Queue (Sprint 8–9), X (Sprint 10), Analytics (Sprint 11), Community (Sprint 12).
+**Implementiert:** Relationship-Deltas und Classification-History (§7), vollständige 182-Paar-Matrix, acht Achsen, Evidence-gebundener Knowledge-State, achsenspezifischer Decay, begrenzter Character State, konservative Belief-/Memory-Projektionen, Threads, Perspectives, Conflicts (Sprint 3–6-Kern), read-only Context-Export (§11) und das lokale NARRATIVE_RUNTIME_GATE G1–G17. **Noch nicht implementiert:** produktive DOKI-Prepare-Bridge, Candidates/Slice Gate/Queue (Sprint 8–9), X (Sprint 10), Analytics (Sprint 11), Community (Sprint 12).
 
-**Fahrplan (bindende Reihenfolge):** Observation contract ✅ → SQLite archive ✅ → Backfill ✅ → Rebuild/Idempotency-Tests ✅ → Relationship + State-Deltas ✅ → Beliefs + Memory ✅ → Threads ✅ → Perspectives/Conflicts ✅ → Runtime-Gate G1–G7 ✅ → read-only Context-Export ✅ → produktive DOKI-Context-Bridge ⏳ → Social candidates → Slice Gate/Queue → X adapter → Analytics → Community interactions.
+**Fahrplan (bindende Reihenfolge):** Observation contract ✅ → SQLite archive ✅ → Backfill ✅ → Rebuild/Idempotency-Tests ✅ → Relationship + State-Deltas ✅ → vollständige Evidence-/Classification- und 182-Paar-Matrix ✅ → Beliefs + Memory ✅ → Threads ✅ → Perspectives/Conflicts ✅ → Runtime-Gate G1–G17 ✅ → read-only Context-Export ✅ → produktive DOKI-Context-Bridge ⏳ → Social candidates → Slice Gate/Queue → X adapter → Analytics → Community interactions.
 
 **Der wichtigste erste Erfolg (Abnahme von MVP A):** die bestehende Chain lässt sich in die neue Narrative Runtime importieren, der Zustand lässt sich löschen und identisch wiederherstellen, und DOKI bleibt technisch exakt so zuverlässig wie vorher.
