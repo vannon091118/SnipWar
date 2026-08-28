@@ -75,8 +75,8 @@ Der Server hängt bei unerwarteten Lagen **automatisch** `visual_evidence` an:
   Der Dock verbindet sich selbsttätig auf 9090, sobald das Spiel läuft.
 
 ### 7. Externe MCP-Clients (stdio_bridge) — absolute Pfade Pflicht
-- Externe Clients (z. B. Freebuff „choose tools") starten
-  `node addons/gdscript_mcp/client/mcp_stdio_bridge.js` oft mit **ihrem eigenen
+- Externe Clients (z. B. Freebuff „choose tools“) starten
+  `python addons/gdscript_mcp/client/mcp_stdio_bridge.py` oft mit **ihrem eigenen
   cwd** (z. B. `%USERPROFILE%`) — relative Pfade lösen dann gegen
   `C:\Users\<User>\addons\...` auf → `MODULE_NOT_FOUND`, der Server startet
   nie (Befund MCP-08 in `docs/FINDINGS.md`).
@@ -85,9 +85,10 @@ Der Server hängt bei unerwarteten Lagen **automatisch** `visual_evidence` an:
   `C:\Users\Vannon\Documents\snippet-empire\snip-war\mcp_bridge.cmd`
   (Wrapper leitet den Bridge-Pfad über `%~dp0` ab — immer Projektroot, cwd
   des Clients egal).
-- Der Bridge ist zero-dependency (nur node-core `net`/`readline`), verbindet
+- Der Bridge ist zero-dependency (Python stdlib: `socket`/`select`), verbindet
   TCP `127.0.0.1:9090` (Runtime; Editor-Kontext: 9091) und nutzt kein
-  `process.cwd()` — nur der Startpfad selbst ist die Falle.
+  `os.getcwd()` — nur der Startpfad selbst ist die Falle.
+  Legacy: `mcp_stdio_bridge_legacy.js` (Node.js), archiviert.
 
 ---
 

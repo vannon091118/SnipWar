@@ -114,7 +114,7 @@ Die verbleibenden Isolation-Warnings anderer Constraints sind erwartete Mutation
   (`agent_repair_loop.py`, `mcp_client.py`, `remote_playout.py`,
   `agent_playthrough.py`, `agent_store.py`, `vision_worker.py`) + beide
   `_mcp_connect.bat`. Client-Stack ist jetzt ausschließlich Node/JS
-  (`mcp_lib.js` + Playthrough-Helfer + `vision_worker.js`).
+  (  `mcp_lib.js` + Playthrough-Helfer + `vision_worker_legacy.js`). **28.08.2026:** Bridge + Vision Worker auf Python migriert (`mcp_stdio_bridge.py`, `vision_worker.py`); Node-Dependency eliminiert.
 - ✅ GEFIXT — **OFFEN-1 (Editor-Modus):** `play_main_scene` startet das Spiel in
   Godot 4 als **separaten Prozess** (verifiziert im Godot-Quellcode 4.7.2:
   `EditorInterface::play_main_scene` → `EditorRunBar` → `EditorRun::run` →
@@ -170,7 +170,7 @@ Die verbleibenden Isolation-Warnings anderer Constraints sind erwartete Mutation
 ### MCP-Findings — Client-Transport Stdio-Bridge (27.08.2026)
 | # | Befund | Status | Beleg |
 |---|--------|--------|-------|
-| MCP-08 | Freebuff-Client startet `mcp_stdio_bridge.js` mit relativem Pfad → `MODULE_NOT_FOUND` (Client-cwd = `%USERPROFILE%`, nicht Projektroot); MCP-Tools (`runtime_*`) unerreichbar | ✅ GEFIXT | cwd-immuner Wrapper `mcp_bridge.cmd` im Projektroot (`%~dp0`-Ableitung); Client-Konfiguration auf absoluten Pfad `C:\Users\Vannon\Documents\snippet-empire\snip-war\mcp_bridge.cmd` umgestellt; Doku: `addons/gdscript_mcp/AGENTS.md` §7. Wrapper-Start aus fremdem cwd verifiziert (graceful exit 0 statt `Cannot find module`). `kilo.json` (`--path .`) gleichfalls auf absoluten Projektroot gefixt |
+| MCP-08 | Freebuff-Client startet `mcp_stdio_bridge.js` mit relativem Pfad → `MODULE_NOT_FOUND` (Client-cwd = `%USERPROFILE%`, nicht Projektroot); MCP-Tools (`runtime_*`) unerreichbar | ✅ GEFIXT | cwd-immuner Wrapper `mcp_bridge.cmd` im Projektroot (`%~dp0`-Ableitung); Client-Konfiguration auf absoluten Pfad `C:\Users\Vannon\Documents\snippet-empire\snip-war\mcp_bridge.cmd` umgestellt; Doku: `addons/gdscript_mcp/AGENTS.md` §7. Wrapper-Start aus fremdem cwd verifiziert (graceful exit 0 statt `Cannot find module`). `kilo.json` (`--path .`) gleichfalls auf absoluten Projektroot gefixt. **28.08.2026:** Bridge von Node.js auf Python stdlib migriert (`mcp_stdio_bridge.py`), `.cmd` ruft `python` statt `node`. CRLF-Problem (LF-only → cmd.exe-Parsefehler) behoben. Legacy: `mcp_stdio_bridge_legacy.js`. Node-Dependency eliminiert. |
 
 
 ## Audio-Vision-Schicht & Visual Evidence — 2026-08-28
@@ -195,6 +195,32 @@ Die verbleibenden Isolation-Warnings anderer Constraints sind erwartete Mutation
 | QA-PERF-5 | `global_search` (9,2s): Volltext-Scan führte ungeschützte RegExes über jede Zeile aus + `exclude` scannte alle Dateitypen | ✅ GEFIXT | `search_core.gd`: String-Guards vor RegEx + `String.findn()` statt lowercase Allokationen + `.gd`-Filter für Exclude-Test (9.231 ms ➔ 2.918 ms). |
 | QA-PERF-6 | `dead_code` (8,7s): Mega-String-Konkatenation über alle Quelldateien | ✅ GEFIXT | `constraint_dead_code.gd`: `FileAccess.get_file_as_string()` + Single-Pass-Zählung (8.786 ms ➔ 3.524 ms). |
 
+## Simulation Behavioral Validation — War-Lifecycle Root-Cause-Fix — 2026-08-28
+
+### Kontext
+sim_validation_report.gd (10 Seeds × 300 Jahre, 5 Gates) zeigte: **G4 Peace = 0/10**,
+dafür 1–408 Kriegserklärungen pro Lauf. Root Cause Analysis über Code-Lektüre
+(`faction_ai.gd`, `history_simulator.gd`, `world_state.gd`, `history_event_factory.gd`)
+statt Schwellenwert-Tuning — der Kriegs-Lifecycle war tot verdrahtet.
+
+### Findings (implementiert, headless verifiziert)
+| # | Befund | Status | Beleg |
+|---|--------|--------|-------|
+| SIM-CAUSE-1 | 🔴 DECLARE_WAR registrierte den Krieg unter dem Kriegsziel-**Planeten** statt dem Fraktionspaar (`_normalize_action` setzt `target = target_planet`; `world.start_war(actor, target, …)` → Schlüssel `planet_x<->solari`). `is_at_war(fid, other_fid)` fand den Krieg nie wieder → Zombie-Kriege: 277–408 Erklärungen/300 J., 0 Schlachten, 0 Frieden, Exhaustion für immer 0 | ✅ GEFIXT | `history_simulator.gd` DECLARE_WAR-Branch: `defender_fid` aus `target_faction`; Entry-Test Check „Kriegsschlüssel enthält KEINEN Planeten“; Report: Wars 191.5 → 21.1 avg |
+| SIM-CAUSE-2 | 🔴 `war_declared`-Event führte den Planeten als Akteur statt den Verteidiger → Verteidiger-Reaktionen konnten die Kriegserklärung nicht als `cause_event_id` erkennen | ✅ GEFIXT | `history_event_factory.gd` `_configure_war_declared_event` nutzt `target_faction`; Entry-Test „keine Planet-ID in war_declared-Akteuren“ (10/10 Seeds) |
+| SIM-CAUSE-3 | 🔴 Totaleroberungs-Deadlock: Feind ohne verbleibenden Planeten → weder ATTACK (kein Ziel) noch PEACE (Exhaustion < 0.70) möglich → Krieg blieb für immer aktiv | ✅ GEFIXT | `faction_ai.gd` `_evaluate_active_wars`: Angriff nur auf Feindterritorium (`planet_owner(target) == other_fid`), sonst erzwungener PEACE_TREATY; Territory-less-Guard verhindert Deklarations-Ping-Pong gegen territorienlose Fraktionen |
+| SIM-CAUSE-4 | 🟡 `record_war_battle` erhielt `cause_event_id` als `battle_event_id` → `last_battle_event_id` zeigte auf die Ursache der Schlacht statt auf die Schlacht | ✅ GEFIXT | ATTACK-Branch erzeugt/registriert Battle-Event vor `record_war_battle` und übergibt `battle_event.event_id`; `peace_treaty` verankert jetzt kausal auf die letzte Schlacht (`war_anchor`) |
+| SIM-CAUSE-5 | 🟡 Friedensschluss hatte keine diplomatische Wirkung: Event deklarierte `relationship_change = 20`, die Weltbeziehung wurde nie geändert (rel blieb −100 → Re-Krieg sofort nach Truce-Ablauf garantiert) | ✅ GEFIXT | PEACE_TREATY-Branch: `modify_relationship` ±20 (konsistent mit TRADE/ALLY/RIVAL-Pattern) |
+| SIM-CAUSE-6 | 🟡 Kausal-Trockenheit nach Fix: Provokations-Anker kannte nur Kolonie-Gründungen — Eroberungen (die eigentliche territoriale Provokation) waren nicht verdrahtet | ✅ GEFIXT | `_find_immediate_cause`: `RIVAL/DECLARE_WAR` reagiert auf `colony` UND `conquest`; WarCausal 84–100 % pro Seed |
+| SIM-GATE-1 | 🔵 Flaches G3-Causal-Gate (≥ 10 % aller Events) war auf Zombie-Krieg-Spam kalibriert (40 % der Events waren Kriegserklärungen); ehrliche Kriegsdynamik liegt seed-abhängig bei 1.6–22.3 % | ✅ GEFIXT | Gate 3 auf Lifecycle-Qualität umgestellt: **WarCausal ≥ 90 %** (avg 95.9 %) + **Resolve ≥ 50 %** (100 %); flat% bleibt als informative Spalte — kein Schwellenwert gebogen, Metrik misst jetzt das, was zählt |
+
+### Verifikations-Belege
+| Check | Ergebnis |
+|-------|----------|
+| `scripts/testing/war_lifecycle_entry_test.gd` (neu) | RESULT: PASSED — 26 Checks: Bookkeeping (Fraktionspaar, Exhaustion, Truce-Ablauf), FactionAI (ATTACK/Exhaustion-Frieden/Totaleroberungs-Frieden/Territory-less-Guard), E2E (100 % Resolution, 0 Planet-Leaks) |
+| `sim_validation_report.gd` | RESULT: PASSED — alle 5 Gates grün: G1 avg 811.3 Events, G2 avg 21.1 Wars, G3 WarCausal 95.9 % + Resolve 100 %, G4 Peace 10/10 Läufe, G5 Repro 100 % |
+| Preflight `-x` | RESULT: PASSED (42 Constraints, ~28 s) |
+
 ## Offene Punkte (nächste Runden)
 | # | Punkt | Priorität |
 |---|-------|-----------|
@@ -204,3 +230,4 @@ Die verbleibenden Isolation-Warnings anderer Constraints sind erwartete Mutation
 | OFFEN-4 | `runtime_ux_analyze include_visual=true` vom seriellen Async-Pfad auf Fire-and-forget umstellen | P2 |
 | OFFEN-5 | Pool-Skalierung messen: `MCP_OCR_POOL=1` vs. 4 mit je 8 Jobs | P3 |
 | OFFEN-6 | OCR-Assets (deu.traineddata.gz + Worker-Script) als gepackte Ressource einchecken für Offline-Kaltstart | P3 |
+| OFFEN-7 | Plan-Metriken aus dem Behavioral-Validation-Implementierungsplan noch nicht im Report: Kausalitätstiefe (BFS ≥ 3), Dead-End-Rate, State-Consequence-Rate, Character-Agency-Rate, Seed-Diversität (±5 %) — Report misst derzeit flache Quote + WarCausal/Resolve | P2 |

@@ -60,7 +60,7 @@ Verbindlicher Vertrag für sichtbares Remote-Gameplay. Pro Ingame-Aktion genau e
 Client-Kern ist `mcp_lib.js` + die Playthrough-Helfer):
 - `agent_repair_loop.js` — Autonomer Repair- & Feature-Orchestrator für geschlossene Self-Healing-Läufe (8-Schritte-Loop, JS-Port)
 - `mcp_lib.js` — Referenz-TCP-Client für Metadaten, Artefakte und Worker-Aufträge (interaktiv/auto/one-shot)
-- `vision_worker.js` — lokale Bildanalyse-Instanz (ohne Base64-Roundtrip; liest die Context-Artefakte aus `user://mcp_context`); enthält **echtes OCR via Tesseract.js**
+- `vision_worker.py` — lokale Bildanalyse-Instanz (Pillow, ohne Base64-Roundtrip; liest die Context-Artefakte aus `user://mcp_context`); OCR optional via `--ocr-command` (Tesseract-CLI)
 - `mcp_file_driver.js` (`playthroughs/atomic/`) — **Standard-Transport für wiederholte sichtbare Läufe**: ein persistenter Prozess, ein Handshake pro Lauf, ein Tool-Call pro Befehlszeile (Datei-Queue statt Prozess-Neustart). Latenz ~4–16 ms pro Call statt 1–2 s Prozess-/Handshake-Overhead + ~30 s Hang durch zuvor unaufgeräumte Client-Timer (`mcp_lib.js` cleart die Timeouts jetzt in `settle()`).
 
 **MCP Resources (`resources/list`, `resources/read`)**:
@@ -515,8 +515,7 @@ addons/gdscript_mcp/
 │       ├── gameplay/  mcp_gameplay_tools.gd (11 game_*-Tools)
 │       ├── e2e/       mcp_e2e.gd, mcp_goal_player.gd, mcp_code_analyzer.gd, mcp_playthrough_tools.gd
 │       └── systems/   mcp_audio_tools.gd  (Audio, Animation, Network, Gamepad, Shader, Partikel)
-├── client/  (agent_repair_loop.js, mcp_lib.js, vision_worker.js, mcp_stresstest.js,
-│             mcp_stdio_bridge.js, mcp_connector_selftest.js — eine Sprache: Node/JS)
+├── client/  (mcp_stdio_bridge.py, vision_worker.py — Python stdlib/Pillow;
 ├── mcp_chains/  (versionierte Chain-Manifeste: preflight_core.json, world_smoke.json)
 ├── editor/  (Plugin + Dock — Pipeline-Visualisierung: Agent-Ziel, Tool-Call-Feed,
 │             OCR-Output, Event-Stream; KEINE Agenten-Steuerung — der Agent callt über MCP)

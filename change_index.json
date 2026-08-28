@@ -594,7 +594,7 @@
 			"p_id": 26.0
 		},
 		"699a67a5be9d59f7b6264a718b7869196b5dd8a3": {
-			"c": 56,
+			"c": 56.0,
 			"composite": "c56j53n14a6p51",
 			"entities": [
 				"F-068",
@@ -681,7 +681,7 @@
 				"C-414",
 				"C-415"
 			],
-			"p_id": 56
+			"p_id": 56.0
 		},
 		"71357fdce9f50cb3ec7b0a709ca0d883416d712c": {
 			"c": 42.0,
@@ -1015,6 +1015,145 @@
 				"C-178"
 			],
 			"p_id": 37.0
+		},
+		"ddb4e5accc2fdd0e52a45b3194e4fa627ac9672b": {
+			"c": 57,
+			"composite": "c57j88n3a7p31",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-275",
+				"F-276",
+				"F-277",
+				"F-278",
+				"F-279",
+				"F-280",
+				"F-281",
+				"F-282",
+				"F-283",
+				"F-284",
+				"F-065",
+				"F-196",
+				"C-416",
+				"C-417",
+				"C-418",
+				"C-419",
+				"C-420",
+				"C-421",
+				"C-422",
+				"C-423",
+				"C-424",
+				"C-425",
+				"C-426",
+				"C-427",
+				"C-428",
+				"C-429",
+				"C-430",
+				"C-431",
+				"C-432",
+				"C-433",
+				"C-434",
+				"C-435",
+				"C-436",
+				"C-437",
+				"C-438",
+				"C-439",
+				"C-440",
+				"C-441",
+				"C-442",
+				"C-443",
+				"C-444",
+				"C-445",
+				"C-446",
+				"C-447",
+				"C-448",
+				"C-449",
+				"C-450",
+				"C-451",
+				"C-452",
+				"C-453",
+				"C-454",
+				"C-455",
+				"C-456",
+				"C-457",
+				"C-458",
+				"C-459",
+				"C-460",
+				"C-461",
+				"C-462",
+				"C-463",
+				"C-464",
+				"C-465",
+				"C-466",
+				"C-467",
+				"C-468",
+				"C-469",
+				"C-470",
+				"C-471",
+				"C-472",
+				"C-473",
+				"C-474",
+				"C-475",
+				"C-476",
+				"C-477",
+				"C-478",
+				"C-479",
+				"C-480",
+				"C-481",
+				"C-482",
+				"C-483",
+				"C-484",
+				"C-485",
+				"C-486",
+				"C-487",
+				"C-488",
+				"C-489",
+				"C-490",
+				"C-491",
+				"C-492",
+				"C-493",
+				"C-494",
+				"C-495",
+				"C-496",
+				"C-497",
+				"C-498",
+				"C-499",
+				"C-500",
+				"C-501",
+				"C-502",
+				"C-503",
+				"C-504",
+				"C-505",
+				"C-506",
+				"C-507",
+				"C-508",
+				"C-509",
+				"C-510",
+				"C-511",
+				"C-512",
+				"C-513",
+				"C-514",
+				"C-515",
+				"C-516",
+				"C-517",
+				"C-518",
+				"C-519",
+				"C-520",
+				"C-521",
+				"C-522",
+				"C-523",
+				"C-524",
+				"C-525",
+				"C-526",
+				"C-527",
+				"C-528",
+				"C-529",
+				"C-530",
+				"C-531"
+			],
+			"p_id": 57
 		},
 		"e186c98431e04aeca11e227c7459fc3daa695ff0": {
 			"c": 12.0,
@@ -8344,6 +8483,1978 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-416": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-416",
+			"last_p": 57.0,
+			"name": "FactionAI",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-417": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						14.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-417",
+			"last_p": 57.0,
+			"name": "WAR_THRESHOLD",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-418": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						15.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-418",
+			"last_p": 57.0,
+			"name": "ALLIANCE_THRESHOLD",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-419": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-419",
+			"last_p": 57.0,
+			"name": "decide_turn",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-420": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						56.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-420",
+			"last_p": 57.0,
+			"name": "_evaluate_active_wars",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-421": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						115.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-421",
+			"last_p": 57.0,
+			"name": "_evaluate_crisis_dilemma",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-422": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						171.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-422",
+			"last_p": 57.0,
+			"name": "_apply_character_agency_weights",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-423": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						213.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-423",
+			"last_p": 57.0,
+			"name": "_calculate_action_weights",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-424": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						244.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-424",
+			"last_p": 57.0,
+			"name": "_weighted_choice",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-425": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						260.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-425",
+			"last_p": 57.0,
+			"name": "_build_action_payload",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-426": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						366.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-426",
+			"last_p": 57.0,
+			"name": "_resolve_acting_character",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-427": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-427",
+			"last_p": 57.0,
+			"name": "HistoryEventFactory",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-428": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-428",
+			"last_p": 57.0,
+			"name": "create_event",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-429": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						64.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-429",
+			"last_p": 57.0,
+			"name": "_configure_colonize_event",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-430": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						76.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-430",
+			"last_p": 57.0,
+			"name": "_configure_build_event",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-431": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						86.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-431",
+			"last_p": 57.0,
+			"name": "_configure_research_event",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-432": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						96.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-432",
+			"last_p": 57.0,
+			"name": "_configure_trade_event",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-433": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						112.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-433",
+			"last_p": 57.0,
+			"name": "_configure_attack_event",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-434": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						142.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-434",
+			"last_p": 57.0,
+			"name": "_configure_war_declared_event",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-435": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						154.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-435",
+			"last_p": 57.0,
+			"name": "_configure_ally_event",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-436": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						164.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-436",
+			"last_p": 57.0,
+			"name": "_configure_rival_event",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-437": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						174.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-437",
+			"last_p": 57.0,
+			"name": "_configure_peace_treaty_event",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-438": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-438",
+			"last_p": 57.0,
+			"name": "HistorySimulator",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-439": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-439",
+			"last_p": 57.0,
+			"name": "_init",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-440": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						26.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-440",
+			"last_p": 57.0,
+			"name": "simulate",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-441": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						88.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-441",
+			"last_p": 57.0,
+			"name": "_spawn_initial_characters",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-442": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						95.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-442",
+			"last_p": 57.0,
+			"name": "_create_character_for_role",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-443": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						137.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-443",
+			"last_p": 57.0,
+			"name": "_process_character_lifecycle",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-444": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						173.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-444",
+			"last_p": 57.0,
+			"name": "_normalize_action",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-445": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						209.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-445",
+			"last_p": 57.0,
+			"name": "_execute_action",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-446": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						369.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-446",
+			"last_p": 57.0,
+			"name": "_find_immediate_cause",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-447": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						390.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-447",
+			"last_p": 57.0,
+			"name": "_handle_combat_casualties",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-448": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						428.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-448",
+			"last_p": 57.0,
+			"name": "_record_character_achievement",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-449": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						433.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-449",
+			"last_p": 57.0,
+			"name": "_record_character_failure",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-450": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						438.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-450",
+			"last_p": 57.0,
+			"name": "_record_event",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-451": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						450.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-451",
+			"last_p": 57.0,
+			"name": "_update_faction_moods",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-452": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						470.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-452",
+			"last_p": 57.0,
+			"name": "_sync_biographies",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-453": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-453",
+			"last_p": 57.0,
+			"name": "WorldState",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-454": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						33.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-454",
+			"last_p": 57.0,
+			"name": "reset",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-455": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						67.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-455",
+			"last_p": 57.0,
+			"name": "next_event_id",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-456": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						72.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-456",
+			"last_p": 57.0,
+			"name": "next_char_id",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-457": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						77.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-457",
+			"last_p": 57.0,
+			"name": "next_chain_id",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-458": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						84.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-458",
+			"last_p": 57.0,
+			"name": "faction_ids",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-459": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						93.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-459",
+			"last_p": 57.0,
+			"name": "is_faction_alive",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-460": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						97.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-460",
+			"last_p": 57.0,
+			"name": "faction_territory",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-461": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						101.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-461",
+			"last_p": 57.0,
+			"name": "faction_military",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-462": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						105.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-462",
+			"last_p": 57.0,
+			"name": "faction_economy",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-463": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						109.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-463",
+			"last_p": 57.0,
+			"name": "faction_science",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-464": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						113.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-464",
+			"last_p": 57.0,
+			"name": "faction_mood",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-465": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						117.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-465",
+			"last_p": 57.0,
+			"name": "get_pressures",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-466": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						121.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-466",
+			"last_p": 57.0,
+			"name": "get_pressure",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-467": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						125.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-467",
+			"last_p": 57.0,
+			"name": "set_pressure",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-468": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						130.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-468",
+			"last_p": 57.0,
+			"name": "set_faction_attribute",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-469": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						143.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-469",
+			"last_p": 57.0,
+			"name": "add_faction_territory",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-470": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						152.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-470",
+			"last_p": 57.0,
+			"name": "_war_key",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-471": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						158.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-471",
+			"last_p": 57.0,
+			"name": "is_at_war",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-472": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						162.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-472",
+			"last_p": 57.0,
+			"name": "get_active_war",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-473": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						166.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-473",
+			"last_p": 57.0,
+			"name": "start_war",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-474": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						184.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-474",
+			"last_p": 57.0,
+			"name": "record_war_battle",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-475": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						197.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-475",
+			"last_p": 57.0,
+			"name": "end_war",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-476": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						205.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-476",
+			"last_p": 57.0,
+			"name": "has_truce",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-477": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						212.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-477",
+			"last_p": 57.0,
+			"name": "set_truce",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-478": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						219.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-478",
+			"last_p": 57.0,
+			"name": "process_economy_turn",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-479": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						239.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-479",
+			"last_p": 57.0,
+			"name": "update_pressures",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-480": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						296.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-480",
+			"last_p": 57.0,
+			"name": "get_relationship",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-481": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						301.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-481",
+			"last_p": 57.0,
+			"name": "set_relationship",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-482": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						306.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-482",
+			"last_p": 57.0,
+			"name": "modify_relationship",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-483": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						313.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-483",
+			"last_p": 57.0,
+			"name": "planet_owner",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-484": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						317.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-484",
+			"last_p": 57.0,
+			"name": "set_planet_owner",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-485": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						325.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-485",
+			"last_p": 57.0,
+			"name": "owned_planets",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-486": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						333.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-486",
+			"last_p": 57.0,
+			"name": "unowned_planets",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-487": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						343.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-487",
+			"last_p": 57.0,
+			"name": "create_character",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-488": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						378.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-488",
+			"last_p": 57.0,
+			"name": "kill_character",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-489": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						386.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-489",
+			"last_p": 57.0,
+			"name": "alive_characters",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-490": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						395.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-490",
+			"last_p": 57.0,
+			"name": "alive_characters_by_role",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-491": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						404.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-491",
+			"last_p": 57.0,
+			"name": "character_name",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-492": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						408.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-492",
+			"last_p": 57.0,
+			"name": "character_faction",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-493": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						412.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-493",
+			"last_p": 57.0,
+			"name": "character_role",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-494": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						416.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-494",
+			"last_p": 57.0,
+			"name": "character_rank",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-495": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						420.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-495",
+			"last_p": 57.0,
+			"name": "character_traits",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-496": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						424.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-496",
+			"last_p": 57.0,
+			"name": "promote_character",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-497": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						429.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-497",
+			"last_p": 57.0,
+			"name": "wound_character",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-498": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						437.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-498",
+			"last_p": 57.0,
+			"name": "has_technology",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-499": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						442.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-499",
+			"last_p": 57.0,
+			"name": "add_technology",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-500": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						450.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-500",
+			"last_p": 57.0,
+			"name": "faction_technology_count",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-501": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-501",
+			"last_p": 57.0,
+			"name": "DATA_DIR",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-502": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-502",
+			"last_p": 57.0,
+			"name": "LOCALE_DIR",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-503": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-503",
+			"last_p": 57.0,
+			"name": "SIMULATION_YEARS",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-504": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-504",
+			"last_p": 57.0,
+			"name": "chronicle_ready",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-505": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						14.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-505",
+			"last_p": 57.0,
+			"name": "live_event_recorded",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-506": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						31.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-506",
+			"last_p": 57.0,
+			"name": "_ready",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-507": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						44.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-507",
+			"last_p": 57.0,
+			"name": "_connect_event_bus",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-508": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						65.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-508",
+			"last_p": 57.0,
+			"name": "reset",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-509": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						125.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-509",
+			"last_p": 57.0,
+			"name": "_on_game_event",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-510": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						135.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-510",
+			"last_p": 57.0,
+			"name": "_on_faction_changed",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-511": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						151.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-511",
+			"last_p": 57.0,
+			"name": "_on_technology_researched",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-512": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						166.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-512",
+			"last_p": 57.0,
+			"name": "_on_milestone_reached",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-513": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						181.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-513",
+			"last_p": 57.0,
+			"name": "_record_live_event",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-514": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						188.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-514",
+			"last_p": 57.0,
+			"name": "set_locale",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-515": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						195.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-515",
+			"last_p": 57.0,
+			"name": "get_locale",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-516": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						199.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-516",
+			"last_p": 57.0,
+			"name": "get_save",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-517": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						203.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-517",
+			"last_p": 57.0,
+			"name": "get_events",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-518": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						228.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-518",
+			"last_p": 57.0,
+			"name": "get_chains",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-519": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						232.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-519",
+			"last_p": 57.0,
+			"name": "get_biography",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-520": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						236.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-520",
+			"last_p": 57.0,
+			"name": "get_biographies",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-521": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						240.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-521",
+			"last_p": 57.0,
+			"name": "get_eras",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-522": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						244.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-522",
+			"last_p": 57.0,
+			"name": "get_relationships",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-523": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						248.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-523",
+			"last_p": 57.0,
+			"name": "resolve_text",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-524": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						257.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-524",
+			"last_p": 57.0,
+			"name": "is_ready",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-525": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						263.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-525",
+			"last_p": 57.0,
+			"name": "snapshot",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-526": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						267.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-526",
+			"last_p": 57.0,
+			"name": "restore",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-527": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						275.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-527",
+			"last_p": 57.0,
+			"name": "_load_eras",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-528": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						284.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-528",
+			"last_p": 57.0,
+			"name": "_build_world_names",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-529": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						292.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-529",
+			"last_p": 57.0,
+			"name": "_default_factions",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-530": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						321.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-530",
+			"last_p": 57.0,
+			"name": "_default_planets",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-531": {
+			"first_p": 57.0,
+			"history": [
+				{
+					"lines": [
+						1021.0
+					],
+					"p_id": 57.0
+				}
+			],
+			"id": "C-531",
+			"last_p": 57.0,
+			"name": "_get_world_chronicle",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -11081,6 +13192,106 @@
 			"last_p": 56.0,
 			"name": "kill_godot.ps1",
 			"path": "scripts/tools/kill_godot.ps1",
+			"status": "created",
+			"type": "file"
+		},
+		"F-275": {
+			"first_p": 57.0,
+			"history": [],
+			"id": "F-275",
+			"last_p": 57.0,
+			"name": "faction_ai.gd",
+			"path": "scripts/history/simulation/faction_ai.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-276": {
+			"first_p": 57.0,
+			"history": [],
+			"id": "F-276",
+			"last_p": 57.0,
+			"name": "faction_ai.gd.uid",
+			"path": "scripts/history/simulation/faction_ai.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-277": {
+			"first_p": 57.0,
+			"history": [],
+			"id": "F-277",
+			"last_p": 57.0,
+			"name": "history_event_factory.gd",
+			"path": "scripts/history/simulation/history_event_factory.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-278": {
+			"first_p": 57.0,
+			"history": [],
+			"id": "F-278",
+			"last_p": 57.0,
+			"name": "history_event_factory.gd.uid",
+			"path": "scripts/history/simulation/history_event_factory.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-279": {
+			"first_p": 57.0,
+			"history": [],
+			"id": "F-279",
+			"last_p": 57.0,
+			"name": "history_simulator.gd",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-280": {
+			"first_p": 57.0,
+			"history": [],
+			"id": "F-280",
+			"last_p": 57.0,
+			"name": "history_simulator.gd.uid",
+			"path": "scripts/history/simulation/history_simulator.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-281": {
+			"first_p": 57.0,
+			"history": [],
+			"id": "F-281",
+			"last_p": 57.0,
+			"name": "world_state.gd",
+			"path": "scripts/history/simulation/world_state.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-282": {
+			"first_p": 57.0,
+			"history": [],
+			"id": "F-282",
+			"last_p": 57.0,
+			"name": "world_state.gd.uid",
+			"path": "scripts/history/simulation/world_state.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-283": {
+			"first_p": 57.0,
+			"history": [],
+			"id": "F-283",
+			"last_p": 57.0,
+			"name": "world_chronicle.gd",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-284": {
+			"first_p": 57.0,
+			"history": [],
+			"id": "F-284",
+			"last_p": 57.0,
+			"name": "world_chronicle.gd.uid",
+			"path": "scripts/history/world_chronicle.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

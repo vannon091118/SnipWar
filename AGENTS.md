@@ -59,7 +59,7 @@ $GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- prepare "<
 #   → liest .doki/prompt.txt: Narrator + Mood + Composite (deterministisch)
 #   → Agent schreibt den Commit-Body in der Rolle des Narrators (Fließtext)
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- finish --body-file .doki/narrator_body.md
-#   → 9 Checks (1-6 weich, 7-9 HART), schreibt .commit_msg.txt + staged Doku-Artefakte
+#   → 10 Checks (1-6 weich, 7-10 HART), schreibt .commit_msg.txt + staged Doku-Artefakte
 git commit -F .commit_msg.txt                  # Hook re-verifiziert + finalize/push automatisch
 
 # Narrative-Qualitäts-Analyse (was DOKI geschrieben hat, logisch konsistent?):
@@ -134,13 +134,14 @@ Der ArcEngine kennt die **Impuls-Kategorie** (`classify_impulse`) und gewichtet 
 Ein Bugfix löst also **kein** Staffelfinale aus — der Prompt unterscheidet
 "STAFFELFINALE" (eligible) vs. "WARTUNGSABSCHNITT" (FIX/DOKU/Trivial).
 
-#### 9 Checks (1-6 weich, 7-9 HARTER BLOCK)
+#### 10 Checks (1-6 weich, 7-10 HARTER BLOCK)
 1. Token-Länge + Pflicht-Tokens (Charakter-Regeln) · 2. Impuls-Integration ·
 3. Storytelling (kein Bullet-Überhang, Konnektoren) · 4. Narrator-Token == Composite-n ·
 5. Composite-Format == Session · 6. Cross-Narrator (Vorgänger erwähnt) ·
 7. **Kausalität** (IMPULSE-Anker, Composite-Nachfolger) · 8. **DocSync**
 (CHANGELOG/Index sauber, keine ungestagten Diffs) · 9. **ChainAudit**
-(c/p monoton, RNG-Replay == Session).
+(c/p monoton, RNG-Replay == Session) · 10. **Datei-Limit/Atomicity**
+(max. 30 User-Dateien pro Commit; Auto-Managed narrative Dateien zählen nicht).
 
 #### Kernkommandos
 ```bash

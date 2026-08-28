@@ -155,6 +155,16 @@ func analyze(include_visual: bool = true, root_path: String = "/root", max_contr
 	return await analyze_async(include_visual, root_path, max_controls, max_depth)
 
 
+## Live-only-Analyse OHNE Coroutine (suspendiert nie → aus dem Sync-Dispatch
+## sicher aufrufbar). Fire-and-forget-Pfad des Servers (OFFEN-4):
+## runtime_ux_analyze include_visual=true antwortet mit diesem Ergebnis sofort,
+## die visuelle Analyse (Screenshot + OCR) läuft als Hintergrund-Job und wird
+## über runtime_visual_evidence abgeholt.
+func analyze_live_only(root_path: String = "/root", max_controls: int = 300, max_depth: int = 32) -> Dictionary:
+	var live := McpUxLive.build_snapshot(root_path, max_controls, max_depth)
+	return _build_analysis_result(live, {}, {}, 0, 0, false)
+
+
 func _build_analysis_result(live: Dictionary, visual: Dictionary, image_context: Dictionary, width: int, height: int, include_visual: bool, capture: Dictionary = {}) -> Dictionary:
 	var elements: Array = visual.get("elements", [])
 	var interactables: Array = McpUxLive.interactables(live.get("controls", []))
@@ -652,7 +662,7 @@ func dispatch_async(tool_name: String, args: Dictionary) -> Variant:
 
 static func get_tool_defs() -> Array:
 	return [
-		_make("runtime_ux_analyze", "Run the live-control UX pipeline directly; screenshots/OCR only when include_visual=true", {"include_visual": {"type": "boolean", "description": "Optional screenshot/OCR via separate vision_worker process", "default": false}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, [], true),
+		_make("runtime_ux_analyze", "Live-control UX pipeline: responds immediately with the live analysis. With include_visual=true the screenshot/OCR analysis runs as a background job (fire-and-forget) — fetch it via runtime_visual_evidence (wait_ms, max_age_ms). Module-internal direct dispatch keeps the inline path.", {"include_visual": {"type": "boolean", "description": "Run screenshot/OCR as background evidence job (decoupled; fetch via runtime_visual_evidence)", "default": false}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, [], true),
 		_make("runtime_ux_scan", "Fast bounded live scan of clickable controls and exact labels", {"root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}),
 		_make("runtime_ux_find", "Find an interactable in a bounded visible scope by exact text, node name, type, or position", {"description": {"type": "string"}, "rect": {"type": "object"}, "root_path": {"type": "string", "default": "/root"}, "max_controls": {"type": "integer", "default": 300}, "max_depth": {"type": "integer", "default": 32}}, ["description"], true),
 		_make("runtime_ux_read", "Read a visual region and return local context metadata", {"rect": {"type": "object"}}, ["rect"], true),

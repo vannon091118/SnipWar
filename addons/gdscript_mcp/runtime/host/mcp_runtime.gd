@@ -63,8 +63,8 @@ func _ready() -> void:
 		"mcp_block_physical_mouse": not ("--mcp-allow-physical-mouse" in user_args),
 		"mcp_virtual_mouse_cursor": not ("--mcp-hide-virtual-cursor" in user_args),
 		"vision_worker_enabled": true if embedded else not ("--mcp-no-vision-worker" in user_args),
-		"vision_worker_command": _parse_string_arg(user_args, "--mcp-vision-command", "node"),
-		"vision_worker_script": _parse_string_arg(user_args, "--mcp-vision-script", "res://addons/gdscript_mcp/client/vision_worker.js"),
+		"vision_worker_command": _parse_string_arg(user_args, "--mcp-vision-command", "python"),
+		"vision_worker_script": _parse_string_arg(user_args, "--mcp-vision-script", "res://addons/gdscript_mcp/client/vision_worker.py"),
 		"vision_worker_port": _parse_int_arg(user_args, "--mcp-vision-port", port + 37),
 		"autonomy_writes": (OS.get_environment(EMBEDDED_WRITES_ENV) == "1") if embedded else ("--mcp-autonomy-writes" in user_args),
 	}

@@ -370,8 +370,8 @@ func _register_host_tools() -> void:
 		},
 		{
 			"name": "runtime_visual_evidence",
-			"description": "Return the latest automated visual analysis (screenshot + OCR) that the server captured in the background after an unexpected tool result. status: none | pending | ready. wait_ms polls up to that many ms for an in-flight analysis (0 = return immediately). capture=true starts a fresh analysis when none is cached yet.",
-			"inputSchema": {"type": "object", "properties": {"wait_ms": {"type": "integer", "default": 0}, "capture": {"type": "boolean", "default": false}}},
+			"description": "Return the latest automated visual analysis (screenshot + OCR) that the server captured in the background after an unexpected tool result or a decoupled runtime_ux_analyze(include_visual=true). status: none | pending | ready. wait_ms polls up to that many ms for an in-flight analysis (0 = return immediately). capture=true starts a fresh analysis when none is cached yet — or, with max_age_ms > 0, when the cached evidence is older than that. Every non-empty cache reports captured_at_ms/age_ms/stale so stale evidence can never pass as current state.",
+			"inputSchema": {"type": "object", "properties": {"wait_ms": {"type": "integer", "default": 0}, "capture": {"type": "boolean", "default": false}, "max_age_ms": {"type": "integer", "default": 0, "description": "Treat cached evidence older than this as stale (0 = disabled)"}}},
 		},
 		{
 			"name": "runtime_run_trace",
@@ -770,6 +770,13 @@ func _handle_tool_call(client_id: int, id: Variant, params: Dictionary) -> void:
 		return
 	var tool: Dictionary = _tool_index[tool_name]
 	if bool(tool.get("_async", false)):
+		# OFFEN-4: runtime_ux_analyze(include_visual=true) blockiert die
+		# Async-Queue nicht mehr (früher: Screenshot-Await seriell → BUSY für
+		# alle Folge-Calls). Live-Analyse antwortet sofort, die visuelle
+		# Analyse läuft als Fire-and-forget-Job → runtime_visual_evidence.
+		if is_ux_analyze_decoupled(tool_name, args):
+			_handle_ux_analyze_decoupled(client_id, id, args, request_generation)
+			return
 		if _async_busy:
 			if _pending_async.size() >= MAX_ASYNC_QUEUE:
 				_note_error("async queue full")
@@ -874,8 +881,14 @@ func _send_tool_result_with_visual_evidence(client_id: int, id: Variant, tool_na
 
 func _handle_visual_evidence(client_id: int, id: Variant, args: Dictionary, generation: int) -> void:
 	var wait_ms := clampi(int(args.get("wait_ms", 0)), 0, 10000)
-	if bool(args.get("capture", false)) and not _evidence_inflight and _evidence_cache.is_empty():
-		_start_background_evidence()
+	var max_age_ms := maxi(0, int(args.get("max_age_ms", 0)))
+	# OFFEN-3: capture=true startet frisch, wenn der Cache leer ODER — bei
+	# geforderter Frische (max_age_ms > 0) — veraltet ist. Ohne max_age_ms gilt
+	# der alte Vertrag (nur leerer Cache → Neuaufnahme), keine Verhaltensänderung.
+	if bool(args.get("capture", false)) and not _evidence_inflight:
+		var current := evidence_freshness(_evidence_cache, Time.get_ticks_msec(), max_age_ms)
+		if _evidence_cache.is_empty() or bool(current.get("stale", false)):
+			_start_background_evidence()
 	var waited := 0
 	while _evidence_inflight and waited < wait_ms:
 		await get_tree().create_timer(0.05).timeout
@@ -884,10 +897,63 @@ func _handle_visual_evidence(client_id: int, id: Variant, args: Dictionary, gene
 			return
 	var status := "none"
 	if not _evidence_cache.is_empty():
-		status = "ready"
+		status = "pending" if _evidence_inflight else "ready"
 	elif _evidence_inflight:
 		status = "pending"
-	_send_tool_result_atomic(client_id, id, {"ok": true, "status": status, "evidence": _evidence_cache})
+	var result: Dictionary = {"ok": true, "status": status, "evidence": _evidence_cache}
+	if not _evidence_cache.is_empty():
+		# OFFEN-3: Alter immer mitliefern — veralteter Cache ist am
+		# stale-Flag erkennbar, statt als aktueller Zustand durchzugehen.
+		var info := evidence_freshness(_evidence_cache, Time.get_ticks_msec(), max_age_ms)
+		result["captured_at_ms"] = int(info.get("captured_at_ms", 0))
+		result["age_ms"] = int(info.get("age_ms", -1))
+		result["stale"] = bool(info.get("stale", false))
+	_send_tool_result_atomic(client_id, id, result)
+
+
+## OFFEN-3: Frische-Entscheidung für den Evidence-Cache — PURE, headless testbar.
+## captured_at_ms <= 0 (Eintrag ohne Zeitstempel) heißt: Alter unbekannt —
+## bei geforderter Frische (max_age_ms > 0) nicht garantierbar → stale.
+static func evidence_freshness(cached: Dictionary, now_ms: int, max_age_ms: int) -> Dictionary:
+	var captured_at_ms := int(cached.get("captured_at_ms", 0))
+	var age_ms := -1
+	var stale := false
+	if captured_at_ms > 0:
+		age_ms = maxi(0, now_ms - captured_at_ms)
+		stale = max_age_ms > 0 and age_ms > max_age_ms
+	else:
+		stale = max_age_ms > 0 and not cached.is_empty()
+	return {"captured_at_ms": captured_at_ms, "age_ms": age_ms, "stale": stale}
+
+
+## OFFEN-4: Diese Kombination wird entkoppelt (Fire-and-forget) ausgeführt —
+## PURE, headless testbar.
+static func is_ux_analyze_decoupled(tool_name: String, args: Dictionary) -> bool:
+	return tool_name == "runtime_ux_analyze" and bool(args.get("include_visual", false))
+
+
+## OFFEN-4: Entkoppeltes runtime_ux_analyze(include_visual=true).
+## Antwortet SOFORT mit der Live-Analyse (Szenenbaum, Interactables, Kontext)
+## und stößt Screenshot + OCR als Hintergrund-Job an — derselbe Evidence-Cache,
+## den die automatische Analyse nach unerwarteten Ergebnissen nutzt. Abholung
+## über runtime_visual_evidence (wait_ms/max_age_ms).
+func _handle_ux_analyze_decoupled(client_id: int, id: Variant, args: Dictionary, generation: int) -> void:
+	var started_ms: int = _lifecycle.begin_tool("runtime_ux_analyze") if _lifecycle != null else 0
+	var result: Dictionary = {}
+	var ux: RefCounted = _registry.get_ux_pipeline()
+	if ux != null and ux.has_method("analyze_live_only"):
+		result = ux.analyze_live_only(str(args.get("root_path", "/root")), int(args.get("max_controls", 300)), int(args.get("max_depth", 32)))
+	else:
+		result = {"error": "UX pipeline not loaded"}
+	_start_background_evidence()
+	result["visual_evidence"] = {"status": "pending", "hint": "call runtime_visual_evidence (wait_ms, max_age_ms) to fetch the analysis"}
+	if _lifecycle != null:
+		_lifecycle.end_tool("runtime_ux_analyze", started_ms)
+	if _agent_activity != null:
+		_agent_activity.record_tool("runtime_ux_analyze", args, float(Time.get_ticks_msec() - started_ms), not _protocol.result_is_error(result), str(result.get("error", "")) if _protocol.result_is_error(result) else "")
+	_record_trace_tool("runtime_ux_analyze", result, float(Time.get_ticks_msec() - started_ms))
+	if _clients.has(client_id) and generation == int(_clients[client_id]["generation"]):
+		_send_tool_result_atomic(client_id, id, result)
 
 
 func _start_background_evidence() -> void:
@@ -916,6 +982,7 @@ func _capture_visual_evidence() -> Dictionary:
 			"quality": str(quality.get("quality", "")),
 		}
 		var context_id := str(shot_data.get("context_id", ""))
+		evidence["captured_at_ms"] = Time.get_ticks_msec()  # OFFEN-3: Frische belegbar machen
 		if context_id != "" and _worker != null and is_instance_valid(_worker) and _worker.has_method("request"):
 			var ocr_result: Variant = await _worker.request("ocr", {"context_id": context_id})
 			if ocr_result is Dictionary:
@@ -1047,8 +1114,8 @@ func _create_vision_worker(config: Dictionary) -> void:
 	if _worker.has_method("configure"):
 		_worker.configure({
 			"vision_worker_enabled": bool(config.get("vision_worker_enabled", true)),
-			"vision_worker_command": str(config.get("vision_worker_command", "node")),
-			"vision_worker_script": str(config.get("vision_worker_script", "res://addons/gdscript_mcp/client/vision_worker.js")),
+			"vision_worker_command": str(config.get("vision_worker_command", "python")),
+			"vision_worker_script": str(config.get("vision_worker_script", "res://addons/gdscript_mcp/client/vision_worker.py")),
 			"vision_worker_port": int(config.get("vision_worker_port", 9127)),
 			"vision_worker_ocr_command": str(config.get("vision_worker_ocr_command", "")),
 			"context_root": _context_store.get_root_path() if _context_store != null else "",

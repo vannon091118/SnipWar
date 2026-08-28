@@ -87,6 +87,31 @@ func _init() -> void:
 	evidence.append({"id": "t8_async_markers", "state": async_state})
 	_check(t8_ok, "T8 exactly {analyze, find, read, click} carry _async=true among UX tools")
 
+	# T9 — OFFEN-3/4 contracts: fire-and-forget routing decision + evidence
+	# freshness (pure statics on the real server script) + the pipeline's
+	# non-coroutine live-only path used by the decoupled analyze.
+	var server_script: GDScript = load("res://addons/gdscript_mcp/runtime/host/mcp_server.gd")
+	var decoupled_hit: bool = server_script.is_ux_analyze_decoupled("runtime_ux_analyze", {"include_visual": true})
+	var decoupled_miss_a: bool = server_script.is_ux_analyze_decoupled("runtime_ux_analyze", {"include_visual": false})
+	var decoupled_miss_b: bool = server_script.is_ux_analyze_decoupled("runtime_click", {"include_visual": true})
+	evidence.append({"id": "t9_decoupled_routing", "hit": decoupled_hit, "miss_a": decoupled_miss_a, "miss_b": decoupled_miss_b})
+	_check(decoupled_hit and not decoupled_miss_a and not decoupled_miss_b, "T9a is_ux_analyze_decoupled: only (runtime_ux_analyze, include_visual=true) routes to fire-and-forget")
+
+	var fresh_disabled: Dictionary = server_script.evidence_freshness({"captured_at_ms": 1000}, 5000, 0)
+	var fresh_old: Dictionary = server_script.evidence_freshness({"captured_at_ms": 1000}, 5000, 200)
+	var fresh_current: Dictionary = server_script.evidence_freshness({"captured_at_ms": 4800}, 5000, 200)
+	var fresh_unknown: Dictionary = server_script.evidence_freshness({"legacy": true}, 5000, 200)
+	evidence.append({"id": "t9_freshness", "disabled": fresh_disabled, "old": fresh_old, "current": fresh_current, "unknown": fresh_unknown})
+	_check(not bool(fresh_disabled.get("stale", true)) and bool(fresh_old.get("stale", false)) and not bool(fresh_current.get("stale", true)) and bool(fresh_unknown.get("stale", false)),
+		"T9b evidence_freshness: max_age_ms=0 disabled, stale by age, fresh within budget, unknown stamp → stale")
+
+	var ux: RefCounted = registry.get_ux_pipeline()
+	_check(ux != null and ux.has_method("analyze_live_only"), "T9c registry.get_ux_pipeline exposes analyze_live_only (OFFEN-4 live path)")
+	var live_only: Dictionary = ux.analyze_live_only("/root", 50, 8)
+	evidence.append({"id": "t9_live_only", "scene": live_only.get("scene", ""), "has_error": live_only.has("error"), "has_artifact": live_only.has("artifact")})
+	_check(live_only is Dictionary and not live_only.has("error") and live_only.has("agent_context") and not live_only.has("artifact"),
+		"T9d analyze_live_only → live analysis dict without artifact, no coroutine suspension")
+
 	DirAccess.make_dir_recursive_absolute("user://mcp_evidence")
 	var evidence_file := FileAccess.open(EVIDENCE_PATH, FileAccess.WRITE)
 	if evidence_file != null:

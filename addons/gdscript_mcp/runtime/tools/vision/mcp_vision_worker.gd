@@ -3,9 +3,9 @@ extends Node
 ## Supervises one local Python vision worker per MCP runtime session.
 ## The worker reads local context artifacts; image bytes never cross MCP.
 
-const DEFAULT_COMMAND := "node"
+const DEFAULT_COMMAND := "python"
 const DEFAULT_PORT := 9127
-const DEFAULT_SCRIPT := "res://addons/gdscript_mcp/client/vision_worker.js"
+const DEFAULT_SCRIPT := "res://addons/gdscript_mcp/client/vision_worker.py"
 
 var _script_path := DEFAULT_SCRIPT
 var _context_root := ""

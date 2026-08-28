@@ -108,6 +108,15 @@ func get_autonomy_planner() -> RefCounted:
 	return _autonomy_planner
 
 
+## Direkter Modulzugriff für Server-Host-Logik, die NICHT über den
+## Tool-Dispatch läuft (OFFEN-4: Fire-and-forget-Live-Analyse aus dem
+## entkoppelten runtime_ux_analyze-Pfad).
+func get_ux_pipeline() -> RefCounted:
+	if not _loaded:
+		_load_all()
+	return _ux
+
+
 func get_watch_status() -> Dictionary:
 	if _ux != null and _ux.has_method("get_watch_status"):
 		return _ux.get_watch_status()
