@@ -17,6 +17,7 @@ var _hint: Label
 var _intro: PanelContainer
 var _name_input: LineEdit
 var _profile_label: Label
+var _identity_hint: Label
 
 func _ready() -> void:
 	_setup_music()
@@ -130,6 +131,7 @@ func _show_identity_intro() -> void:
 	_name_input = LineEdit.new()
 	_name_input.name = "PlayerNameInput"
 	_name_input.placeholder_text = "Dein Name, Commander"
+	_name_input.text = "Stickman"
 	box.add_child(_name_input)
 	_profile_label = UIBaseUtils.make_label("Profil: noch unentschieden", DEFAULT_THEME.muted_text_color, 12)
 	box.add_child(_profile_label)
@@ -142,6 +144,8 @@ func _show_identity_intro() -> void:
 		profile_button.pressed.connect(_select_profile.bind(profile))
 		profile_row.add_child(profile_button)
 	box.add_child(profile_row)
+	_identity_hint = UIBaseUtils.make_label("", Color(0.95, 0.62, 0.35), 11)
+	box.add_child(_identity_hint)
 	var confirm := Button.new()
 	confirm.text = "IDENTITÄT FESTLEGEN"
 	UIBaseUtils.apply_button_theme(confirm, DEFAULT_THEME)
@@ -166,7 +170,11 @@ func _select_profile(profile: String) -> void:
 
 func _confirm_identity() -> void:
 	if _name_input == null or _name_input.text.strip_edges().is_empty():
+		if _identity_hint != null:
+			_identity_hint.text = "Name erforderlich — das Protokoll akzeptiert keine anonymen Commander."
 		return
+	if _identity_hint != null:
+		_identity_hint.text = ""
 	var profile := str(_profile_label.get_meta("profile", "FORSCHER"))
 	var state: Node = get_node_or_null("/root/GameState")
 	if state != null:

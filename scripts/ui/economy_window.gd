@@ -46,7 +46,7 @@ func open() -> void:
 	if _visible:
 		return
 	_state = GameStateAccess.autoload(self)
-	_economy_manager = _find_economy_manager()
+	_economy_manager = _economy_manager_from_state()
 	_build_content()
 	_bind_signals()
 	show()
@@ -99,18 +99,13 @@ func _grow_shell() -> void:
 
 	add_child(_panel)
 
-func _find_economy_manager() -> Node:
-	# Walk up: CanvasLayer → PlanetNetwork → SeededLayout → EconomyManager
-	var ancestor: Node = self
-	while ancestor != null:
-		if ancestor is CanvasLayer:
-			ancestor = ancestor.get_parent()
-			continue
-		var em: Node = ancestor.get_node_or_null("EconomyManager") if ancestor != null else null
-		if em != null:
-			return em
-		ancestor = ancestor.get_parent() if ancestor != null else null
-	return null
+func _economy_manager_from_state() -> Node:
+	# Explizite Dependency: Die Welt-Szene registriert den EconomyManager bei
+	# GameState (Scene-Boundary) — kein Szenenbaum-Scan mehr in der UI.
+	var state: Node = GameStateAccess.autoload(self)
+	if state == null or not state.has_method("get_economy_manager"):
+		return null
+	return state.get_economy_manager()
 
 # ── content (per open) ───────────────────────────────────────────────
 
@@ -168,7 +163,7 @@ func refresh() -> void:
 	if not _visible or not _content_built:
 		return
 	_state = GameStateAccess.autoload(self)
-	_economy_manager = _find_economy_manager()
+	_economy_manager = _economy_manager_from_state()
 	_build_content()
 
 # ── signal binding ───────────────────────────────────────────────────
@@ -273,16 +268,6 @@ func _income_sources_text(resource_id: StringName) -> String:
 	if parts.is_empty():
 		return "Keine laufende Produktion"
 	return " ·  ".join(parts)
-
-func _find_seeded_layout() -> Node:
-	# EconomyWindow → CanvasLayer → PlanetNetwork → SeededLayout
-	var layer: Node = get_parent()
-	if layer == null:
-		return null
-	var network: Node = layer.get_parent()
-	if network == null:
-		return null
-	return network.get_parent()
 
 func _make_credit_label() -> Label:
 	var label := Label.new()

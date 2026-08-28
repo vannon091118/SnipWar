@@ -35,7 +35,12 @@ func setup(planets: Array[Node2D], theme_config: UIThemeConfig = null) -> void:
 	_theme_config = theme_config if theme_config != null else DEFAULT_THEME
 	_ensure_node_references()
 	_apply_theme()
-	var economy_manager: Node = get_parent().get_node_or_null("EconomyManager") if get_parent() != null else null
+	# Explizite Dependency: EconomyManager kommt aus der GameState-Registrierung
+	# (Scene-Boundary), nicht aus einem Szenenbaum-Lookup.
+	var economy_manager: Node = null
+	var state: Node = GameStateAccess.autoload(self)
+	if state != null and state.has_method("get_economy_manager"):
+		economy_manager = state.get_economy_manager()
 	_vault_bar.setup(_theme_config, economy_manager)
 	if not _vault_bar.economy_requested.is_connected(_on_economy_requested):
 		_vault_bar.economy_requested.connect(_on_economy_requested)

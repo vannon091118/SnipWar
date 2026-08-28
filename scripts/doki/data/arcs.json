@@ -1,5 +1,5 @@
 {
-	"active": "a31",
+	"active": "a32",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -1395,6 +1395,7 @@
 		},
 		"a31": {
 			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
 			"id": "a31",
 			"name": "Visuelle Beweise",
 			"seen_entities": [
@@ -1427,13 +1428,31 @@
 				"F-299",
 				"F-301",
 				"F-310",
-				"F-316"
+				"F-316",
+				"F-187",
+				"F-055",
+				"F-029",
+				"F-065",
+				"C-700",
+				"C-701",
+				"C-702",
+				"C-703"
 			],
 			"span": "heute → offen",
-			"status": "active",
+			"status": "completed",
 			"theme": "Geschichte im Spiel verifizieren",
 			"version": "",
-			"weight": 12.2
+			"weight": 16.45
+		},
+		"a32": {
+			"climax_weight": 3.0,
+			"id": "a32",
+			"name": "Nächster Akt",
+			"span": "heute → offen",
+			"status": "active",
+			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
+			"version": "",
+			"weight": 0.0
 		},
 		"a4": {
 			"climax_weight": 3.0,

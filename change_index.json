@@ -1,7 +1,7 @@
 {
 	"commits": {
 		"046757c67245b48a78f03679463d648c4d32440b": {
-			"c": 66,
+			"c": 66.0,
 			"composite": "c66j74n2a26p28",
 			"entities": [
 				"F-002",
@@ -13,7 +13,7 @@
 				"F-310",
 				"F-316"
 			],
-			"p_id": 66
+			"p_id": 66.0
 		},
 		"05e02790affe81c97c9a5adcdd8327748cc52da0": {
 			"c": 45.0,
@@ -1018,6 +1018,25 @@
 				"F-001"
 			],
 			"p_id": 46.0
+		},
+		"a0e0702ce8c7660eb22f04ac0e09478336ee6689": {
+			"c": 67,
+			"composite": "c67j75n12a23p47",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-187",
+				"F-055",
+				"F-001",
+				"F-029",
+				"F-065",
+				"C-700",
+				"C-701",
+				"C-702",
+				"C-703"
+			],
+			"p_id": 67
 		},
 		"a36707d4cf6285ad4e0ff2a6d1f348cbc6a343d0": {
 			"c": 29.0,
@@ -13652,6 +13671,74 @@
 			"last_p": 65.0,
 			"name": "ALL_RESOURCES",
 			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-700": {
+			"first_p": 67.0,
+			"history": [
+				{
+					"lines": [
+						570.0
+					],
+					"p_id": 67.0
+				}
+			],
+			"id": "C-700",
+			"last_p": 67.0,
+			"name": "faction_planet_snapshot",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-701": {
+			"first_p": 67.0,
+			"history": [
+				{
+					"lines": [
+						1070.0
+					],
+					"p_id": 67.0
+				}
+			],
+			"id": "C-701",
+			"last_p": 67.0,
+			"name": "register_chunk_coordinator",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-702": {
+			"first_p": 67.0,
+			"history": [
+				{
+					"lines": [
+						1073.0
+					],
+					"p_id": 67.0
+				}
+			],
+			"id": "C-702",
+			"last_p": 67.0,
+			"name": "register_economy_manager",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-703": {
+			"first_p": 67.0,
+			"history": [
+				{
+					"lines": [
+						1079.0
+					],
+					"p_id": 67.0
+				}
+			],
+			"id": "C-703",
+			"last_p": 67.0,
+			"name": "get_economy_manager",
+			"path": "scripts/state/game_state.gd",
 			"status": "modified",
 			"type": "component"
 		},

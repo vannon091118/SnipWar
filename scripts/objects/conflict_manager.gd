@@ -270,7 +270,8 @@ func dispatch_research_ship(source: Planet, destination: Planet) -> ShipBase:
 	transit.route_path = route_path.duplicate()
 	transit.duration = duration
 	state.register_transit(transit)
-	state.ship_domain.mark_research_ship_departed(record.ship_id)
+	# Öffentliche GameState-Facade statt direktem Domain-Zugriff.
+	state.mark_research_ship_departed(record.ship_id)
 	var ship: ShipBase = SHIP_BASE_SCENE.instantiate() as ShipBase
 	ship.name = "ResearchTransit_%s" % String(record.ship_id)
 	ship.transit_id = transit.transit_id

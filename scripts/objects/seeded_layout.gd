@@ -147,6 +147,11 @@ func _create_runtime_modules() -> void:
 	economy_manager.name = "EconomyManager"
 	economy_manager.set("economy_config", economy_config if economy_config != null else DEFAULT_ECONOMY_CONFIG)
 	add_child(economy_manager)
+	# Explizite Dependency statt SceneTree-Suche: GameState kennt den Manager
+	# für Timer-Snapshots direkt (kein Klassennamen-Scan mehr nötig).
+	var gs := GameStateAccess.autoload(self)
+	if gs != null and gs.has_method("register_economy_manager"):
+		gs.register_economy_manager(economy_manager)
 
 	var cpu_ai: Node = CPU_DISPATCH_AI_SCRIPT.new()
 	cpu_ai.name = "CpuDispatchAI"
@@ -347,6 +352,10 @@ func _setup_chunk_coordinator() -> void:
 	var state: Node = GameStateAccess.autoload(self)
 	if state != null and not state.faction_changed.is_connected(_chunk_coordinator._on_faction_changed):
 		state.faction_changed.connect(_chunk_coordinator._on_faction_changed)
+	# Explizite Dependency statt SceneTree-Suche: GameState kennt den
+	# Coordinator für Chunk-Snapshots direkt.
+	if state != null and state.has_method("register_chunk_coordinator"):
+		state.register_chunk_coordinator(_chunk_coordinator)
 
 func _initial_fov_regions() -> Array:
 	if world_config == null:

@@ -5675,6 +5675,68 @@
 			"seq": 66,
 			"subject": "Basher (8 files): fix: typed deserialization in Chronicle save/load… — nach Argos",
 			"summary": "git add. 4 files. finish. No drama — except the 489 SCRIPT ERRORS, obviously. Array.map() liefert untypisierte Arrays. Typisiertes Feld kriegt untypisiertes Array. Laufzeit crasht. Natürlich war es..."
+		},
+		{
+			"a": 23,
+			"arc": "a31",
+			"c": 67,
+			"composite": "c67j75n12a23p47",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 62.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "project.godot",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/concept_index.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 36.0,
+					"file": "scripts/state/event_log.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/state/game_state.gd",
+					"insertions": 47.0
+				}
+			],
+			"date": "2026-08-27 19:00:00",
+			"hash": "a0e0702ce8c7660eb22f04ac0e09478336ee6689",
+			"j": 75,
+			"model_id": "claude-sonnet-4",
+			"mood": "neugierig",
+			"n": 12,
+			"narrator": "Echo",
+			"p": 47,
+			"p_id": 67,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Basher",
+			"seq": 67,
+			"subject": "Echo erinnert: refactor: decouple WorldChronicle and EventLog… — nach Basher",
+			"summary": "Ich erinnere mich an den Moment, als WorldChronicle zum ersten Mal direkt an GameState.faction_changed gehangen hat — ein Notbehelf, der funktionierte, weil die Welt noch klein war. Basher hat gera..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

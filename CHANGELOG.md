@@ -1239,3 +1239,18 @@ fix: typed deserialization in Chronicle save/load to prevent Array.map runtime c
 - scripts/history/chronicle_save_data.gd: Fehler behoben (F-301).
 - scripts/history/event_chain.gd: Fehler behoben (F-310).
 - scripts/history/history_event.gd: Fehler behoben (F-316).
+
+## 2026-08-27 19:00:00 — p67 · c67j75n12a23p47 · Echo · neugierig
+
+**Echo erinnert: refactor: decouple WorldChronicle and EventLog… — nach Basher**
+
+refactor: decouple WorldChronicle and EventLog from direct GameState signals via EventBus
+
+- CHANGELOG.md: Umstrukturiert (F-002).
+- change_index.json: Umstrukturiert (F-003).
+- narrative_chain.json: Umstrukturiert (F-004).
+- project.godot: Umstrukturiert (F-187).
+- scripts/concept_index.gd: Umstrukturiert (F-055).
+- scripts/doki/data/arcs.json: Umstrukturiert (F-001).
+- scripts/state/event_log.gd: Umstrukturiert (F-029).
+- scripts/state/game_state.gd: Umstrukturiert (F-065).
