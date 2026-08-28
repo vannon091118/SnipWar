@@ -5613,6 +5613,68 @@
 			"seq": 65,
 			"subject": "Argos: 10 Dateien — fix: decouple config resources… — nach Devin",
 			"summary": "Also das hier ist neu — und ich hab sofort nachgesehen. Ressourcen-IDs als Export-Defaults in Config-Resources, direkt aus GameState? Hat so noch nie in einer der alten Config-Commits funktioniert,..."
+		},
+		{
+			"a": 26,
+			"arc": "a31",
+			"c": 66,
+			"composite": "c66j74n2a26p28",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 367.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 72.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 24.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/history/character_biography.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/history/chronicle_save_data.gd",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/history/event_chain.gd",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/history/history_event.gd",
+					"insertions": 4.0
+				}
+			],
+			"date": "2026-08-27 18:00:00",
+			"hash": "046757c67245b48a78f03679463d648c4d32440b",
+			"j": 74,
+			"model_id": "claude-sonnet-4",
+			"mood": "selbstironisch",
+			"n": 2,
+			"narrator": "Basher",
+			"p": 28,
+			"p_id": 66,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Argos",
+			"seq": 66,
+			"subject": "Basher (8 files): fix: typed deserialization in Chronicle save/load… — nach Argos",
+			"summary": "git add. 4 files. finish. No drama — except the 489 SCRIPT ERRORS, obviously. Array.map() liefert untypisierte Arrays. Typisiertes Feld kriegt untypisiertes Array. Laufzeit crasht. Natürlich war es..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

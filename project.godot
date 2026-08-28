@@ -25,6 +25,7 @@ mcp/game_state_script=""
 
 EventBus="*res://scripts/state/event_bus.gd"
 GameState="*res://scripts/state/game_state.gd"
+WorldChronicle="*res://scripts/history/world_chronicle.gd"
 GameCycleManager="*res://scripts/game_cycle_manager.gd"
 SceneDirectorService="*res://scripts/ui/scene_director.gd"
 SaveGameService="*res://scripts/state/save_game_service.gd"

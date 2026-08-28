@@ -18,12 +18,13 @@ func _notification(what: int) -> void:
 		export_to_player_log()
 
 func _connect_event_bus() -> void:
+	# Einziger Event-Weg: EventBus.game_event. Kein direkter GameState-Fallback
+	# mehr — EventBus ist Autoload #1 und damit immer verfügbar, wenn EventLog
+	# (Autoload #10) initialisiert. Die Event-Boundary bleibt konsistent.
 	var bus: Node = get_node_or_null("/root/EventBus")
 	if bus != null and bus.has_signal("game_event"):
 		if not bus.game_event.is_connected(_on_game_event):
 			bus.game_event.connect(_on_game_event)
-		return
-	_connect_game_state()
 
 func _on_game_event(type: StringName, data: Dictionary) -> void:
 	match type:
@@ -57,40 +58,7 @@ func _on_game_event(type: StringName, data: Dictionary) -> void:
 			_on_ship_lost(data.get("planet_id", &""), data.get("ship_id", &""))
 		&"milestone_reached":
 			_on_milestone_reached(data.get("faction", &""), data.get("milestone_id", &""))
-func _connect_game_state() -> void:
-	var state: Node = get_node_or_null("/root/GameState")
-	if state == null:
-		return
-	if not state.faction_changed.is_connected(_on_faction_changed):
-		state.faction_changed.connect(_on_faction_changed)
-	if not state.planet_discovered.is_connected(_on_planet_discovered):
-		state.planet_discovered.connect(_on_planet_discovered)
-	if state.has_signal("planet_scanned") and not state.planet_scanned.is_connected(_on_planet_scanned):
-		state.planet_scanned.connect(_on_planet_scanned)
-	if not state.planet_upgraded.is_connected(_on_planet_upgraded):
-		state.planet_upgraded.connect(_on_planet_upgraded)
-	if not state.technology_researched.is_connected(_on_technology_researched):
-		state.technology_researched.connect(_on_technology_researched)
-	if state.has_signal("planet_technology_researched") and not state.planet_technology_researched.is_connected(_on_planet_technology_researched):
-		state.planet_technology_researched.connect(_on_planet_technology_researched)
-	if not state.resource_generated.is_connected(_on_resource_generated):
-		state.resource_generated.connect(_on_resource_generated)
-	if state.has_signal("resources_collected") and not state.resources_collected.is_connected(_on_resources_collected):
-		state.resources_collected.connect(_on_resources_collected)
-	if state.has_signal("gathering_started") and not state.gathering_started.is_connected(_on_gathering_started):
-		state.gathering_started.connect(_on_gathering_started)
-	if state.has_signal("gathering_withdrawn") and not state.gathering_withdrawn.is_connected(_on_gathering_withdrawn):
-		state.gathering_withdrawn.connect(_on_gathering_withdrawn)
-	if state.has_signal("worker_factory_built") and not state.worker_factory_built.is_connected(_on_worker_factory_built):
-		state.worker_factory_built.connect(_on_worker_factory_built)
-	if state.has_signal("ship_assembled") and not state.ship_assembled.is_connected(_on_ship_assembled):
-		state.ship_assembled.connect(_on_ship_assembled)
-	if state.has_signal("ship_launched") and not state.ship_launched.is_connected(_on_ship_launched):
-		state.ship_launched.connect(_on_ship_launched)
-	if state.has_signal("ship_lost") and not state.ship_lost.is_connected(_on_ship_lost):
-		state.ship_lost.connect(_on_ship_lost)
-	if state.has_signal("milestone_reached") and not state.milestone_reached.is_connected(_on_milestone_reached):
-		state.milestone_reached.connect(_on_milestone_reached)
+
 
 # Push = toast + log. Use for discrete, meaningful events.
 func push(category: StringName, text: String) -> void:

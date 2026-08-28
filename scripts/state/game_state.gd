@@ -368,6 +368,10 @@ func begin_new_game(catalog: PlanetCatalog, scenario_id: StringName, layout_seed
 	var player_homeworld: StringName = faction_domain.homeworld_for(FACTION_PLAYER)
 	ship_domain.ensure_starter_research_ship(FACTION_PLAYER, player_homeworld, DEFAULT_SHIP_PART_CATALOG)
 	run_started.emit(_run_id, _run_layout_seed)
+	# Event-Boundary: run_started zusätzlich über den zentralen EventBus ausliefern,
+	# damit Konsumenten (WorldChronicle, EventLog, …) nicht direkt an GameState
+	# hängen müssen. Das direkte Signal bleibt als Compatibility-API erhalten.
+	_dispatch_event(&"run_started", {"run_id": _run_id, "layout_seed": _run_layout_seed})
 
 ## Reconnects a newly loaded world scene to this run without mutating any
 ## faction, economy, technology, or ship-domain data.
@@ -561,6 +565,21 @@ func get_ownership_count(faction: StringName) -> int:
 
 func all_owned_planets(faction: StringName) -> Array[StringName]:
 	return faction_domain.all_owned_planets(faction)
+
+## Explizite, stabile Input-Schnittstelle für externe Systeme (z.B. WorldChronicle),
+## die Weltfakten lesen müssen, ohne in Domain-Interna zu greifen.
+## Liefert {faction_id: [planet_ids]} für alle besiedelten Fraktionen
+## (neutral/uninhabited ausgeschlossen).
+func faction_planet_snapshot() -> Dictionary:
+	var result := {}
+	for pid in faction_domain.ownership:
+		var fid: StringName = faction_domain.ownership[pid] as StringName
+		if String(fid).is_empty() or fid == FACTION_NEUTRAL or fid == FACTION_UNINHABITED:
+			continue
+		if not result.has(fid):
+			result[fid] = []
+		result[fid].append(pid)
+	return result
 
 func starting_workers_of(planet_id: StringName) -> int:
 	return int(faction_domain.starting_workers.get(planet_id, 0))
@@ -1043,14 +1062,40 @@ func consume_pending_timers() -> Dictionary:
 	_pending_timers.clear()
 	return timers
 
+## Explizite Dependency-Registrierung: Die Welt-Szene meldet ihre
+## ChunkCoordinator-/EconomyManager-Instanz hier an, statt dass GameState den
+## Szenenbaum nach Klassennamen durchsuchen muss (Scene-Boundary). Die
+## _find_*-Fallbacks bleiben nur für Aufrufer ohne Registrierung (z.B. isolierte
+## Fixtures) erhalten.
+var _registered_chunk_coordinator: Node = null
+var _registered_economy_manager: Node = null
+
+func register_chunk_coordinator(node: Node) -> void:
+	_registered_chunk_coordinator = node
+
+func register_economy_manager(node: Node) -> void:
+	_registered_economy_manager = node
+
+## Expliziter Zugriff auf den registrierten EconomyManager (Scene-Boundary).
+## Fallback auf den Szenenbaum-Scan nur für Aufrufer ohne Registrierung
+## (isolierte Fixtures/Tests).
+func get_economy_manager() -> Node:
+	if _registered_economy_manager != null and is_instance_valid(_registered_economy_manager):
+		return _registered_economy_manager
+	return _find_economy_manager()
+
 func _capture_chunk_data() -> ChunkSaveData:
-	var coordinator: Node = _find_chunk_coordinator()
+	var coordinator: Node = _registered_chunk_coordinator
+	if coordinator == null or not is_instance_valid(coordinator):
+		coordinator = _find_chunk_coordinator()
 	if coordinator != null and coordinator.has_method("save_state"):
 		return coordinator.call("save_state") as ChunkSaveData
 	return null
 
 func _capture_timers() -> Dictionary:
-	var economy_manager: Node = _find_economy_manager()
+	var economy_manager: Node = _registered_economy_manager
+	if economy_manager == null or not is_instance_valid(economy_manager):
+		economy_manager = _find_economy_manager()
 	if economy_manager == null:
 		return {}
 	var result: Dictionary = {}

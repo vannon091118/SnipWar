@@ -1224,3 +1224,18 @@ fix: decouple config resources from GameState via dependency-free GameConstants
 - scripts/config/ship_part_definition.gd: Fehler behoben (F-328).
 - scripts/config/technology_definition.gd: Fehler behoben (F-329).
 - scripts/doki/data/arcs.json: Fehler behoben (F-001).
+
+## 2026-08-27 18:00:00 — p66 · c66j74n2a26p28 · Basher · selbstironisch
+
+**Basher (8 files): fix: typed deserialization in Chronicle save/load… — nach Argos**
+
+fix: typed deserialization in Chronicle save/load to prevent Array.map runtime crashes
+
+- CHANGELOG.md: Fehler behoben (F-002).
+- change_index.json: Fehler behoben (F-003).
+- narrative_chain.json: Fehler behoben (F-004).
+- scripts/doki/data/arcs.json: Fehler behoben (F-001).
+- scripts/history/character_biography.gd: Fehler behoben (F-299).
+- scripts/history/chronicle_save_data.gd: Fehler behoben (F-301).
+- scripts/history/event_chain.gd: Fehler behoben (F-310).
+- scripts/history/history_event.gd: Fehler behoben (F-316).

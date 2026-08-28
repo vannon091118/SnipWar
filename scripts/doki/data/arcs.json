@@ -1423,13 +1423,17 @@
 				"C-696",
 				"C-697",
 				"C-698",
-				"C-699"
+				"C-699",
+				"F-299",
+				"F-301",
+				"F-310",
+				"F-316"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Geschichte im Spiel verifizieren",
 			"version": "",
-			"weight": 9.4
+			"weight": 12.2
 		},
 		"a4": {
 			"climax_weight": 3.0,
