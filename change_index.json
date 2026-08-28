@@ -112,7 +112,7 @@
 			"p_id": 15.0
 		},
 		"0f165c9190d56fb9c313d3e60fb7d73390f44ec9": {
-			"c": 62,
+			"c": 62.0,
 			"composite": "c62j56n2a2p12",
 			"entities": [
 				"F-002",
@@ -250,7 +250,7 @@
 				"C-647",
 				"C-648"
 			],
-			"p_id": 62
+			"p_id": 62.0
 		},
 		"12f27b1e4053869400cc79ab34622ff8b2d7596b": {
 			"c": 50.0,
@@ -841,6 +841,56 @@
 				"C-415"
 			],
 			"p_id": 56.0
+		},
+		"6f217472d4c54cdb0a3fe25149a2ace63e0c376e": {
+			"c": 63,
+			"composite": "c63j36n11a20p19",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-320",
+				"F-321",
+				"F-322",
+				"F-323",
+				"C-649",
+				"C-650",
+				"C-651",
+				"C-652",
+				"C-653",
+				"C-654",
+				"C-655",
+				"C-656",
+				"C-657",
+				"C-658",
+				"C-659",
+				"C-660",
+				"C-661",
+				"C-662",
+				"C-663",
+				"C-664",
+				"C-665",
+				"C-666",
+				"C-667",
+				"C-668",
+				"C-669",
+				"C-670",
+				"C-671",
+				"C-672",
+				"C-673",
+				"C-674",
+				"C-675",
+				"C-676",
+				"C-677",
+				"C-678",
+				"C-679",
+				"C-680",
+				"C-681",
+				"C-682",
+				"C-683"
+			],
+			"p_id": 63
 		},
 		"71357fdce9f50cb3ec7b0a709ca0d883416d712c": {
 			"c": 42.0,
@@ -12679,6 +12729,601 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-649": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-649",
+			"last_p": 63.0,
+			"name": "ChronicleArchiveView",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-650": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-650",
+			"last_p": 63.0,
+			"name": "DEFAULT_THEME",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-651": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						41.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-651",
+			"last_p": 63.0,
+			"name": "setup",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-652": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						47.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-652",
+			"last_p": 63.0,
+			"name": "populate",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-653": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						67.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-653",
+			"last_p": 63.0,
+			"name": "_build_ui",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-654": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						96.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-654",
+			"last_p": 63.0,
+			"name": "_switch_tab",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-655": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						101.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-655",
+			"last_p": 63.0,
+			"name": "_rebuild_active_tab",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-656": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						126.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-656",
+			"last_p": 63.0,
+			"name": "_build_chronicle_tab",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-657": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						184.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-657",
+			"last_p": 63.0,
+			"name": "_refresh_events_list",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-658": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						227.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-658",
+			"last_p": 63.0,
+			"name": "_create_event_card",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-659": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						274.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-659",
+			"last_p": 63.0,
+			"name": "_resolve_event_text",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-660": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						284.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-660",
+			"last_p": 63.0,
+			"name": "_build_relations_tab",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-661": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						339.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-661",
+			"last_p": 63.0,
+			"name": "_build_figures_tab",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-662": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						368.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-662",
+			"last_p": 63.0,
+			"name": "_populate_figures_list",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-663": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						392.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-663",
+			"last_p": 63.0,
+			"name": "_show_figure_details",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-664": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-664",
+			"last_p": 63.0,
+			"name": "SimulationOverlay",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-665": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-665",
+			"last_p": 63.0,
+			"name": "year_changed",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-666": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-666",
+			"last_p": 63.0,
+			"name": "playback_finished",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-667": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-667",
+			"last_p": 63.0,
+			"name": "turning_point_triggered",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-668": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-668",
+			"last_p": 63.0,
+			"name": "DEFAULT_THEME",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-669": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						34.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-669",
+			"last_p": 63.0,
+			"name": "setup",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-670": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						43.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-670",
+			"last_p": 63.0,
+			"name": "_process",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-671": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						59.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-671",
+			"last_p": 63.0,
+			"name": "set_year",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-672": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						71.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-672",
+			"last_p": 63.0,
+			"name": "play",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-673": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						76.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-673",
+			"last_p": 63.0,
+			"name": "pause",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-674": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						81.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-674",
+			"last_p": 63.0,
+			"name": "toggle_play",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-675": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						86.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-675",
+			"last_p": 63.0,
+			"name": "set_speed",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-676": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						92.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-676",
+			"last_p": 63.0,
+			"name": "skip_to_end",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-677": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						99.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-677",
+			"last_p": 63.0,
+			"name": "_build_ui",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-678": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						193.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-678",
+			"last_p": 63.0,
+			"name": "_update_play_button",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-679": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						198.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-679",
+			"last_p": 63.0,
+			"name": "_on_speed_toggle",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-680": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						207.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-680",
+			"last_p": 63.0,
+			"name": "_update_era_badge",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-681": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						218.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-681",
+			"last_p": 63.0,
+			"name": "_update_ticker_for_year",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-682": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						230.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-682",
+			"last_p": 63.0,
+			"name": "_push_ticker_item",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-683": {
+			"first_p": 63.0,
+			"history": [
+				{
+					"lines": [
+						251.0
+					],
+					"p_id": 63.0
+				}
+			],
+			"id": "C-683",
+			"last_p": 63.0,
+			"name": "_show_turning_point_flash",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -15866,6 +16511,46 @@
 			"last_p": 62.0,
 			"name": "importance_evaluator.gd.uid",
 			"path": "scripts/history/importance_evaluator.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-320": {
+			"first_p": 63.0,
+			"history": [],
+			"id": "F-320",
+			"last_p": 63.0,
+			"name": "chronicle_archive_view.gd",
+			"path": "scripts/ui/history/chronicle_archive_view.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-321": {
+			"first_p": 63.0,
+			"history": [],
+			"id": "F-321",
+			"last_p": 63.0,
+			"name": "chronicle_archive_view.gd.uid",
+			"path": "scripts/ui/history/chronicle_archive_view.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-322": {
+			"first_p": 63.0,
+			"history": [],
+			"id": "F-322",
+			"last_p": 63.0,
+			"name": "simulation_overlay.gd",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-323": {
+			"first_p": 63.0,
+			"history": [],
+			"id": "F-323",
+			"last_p": 63.0,
+			"name": "simulation_overlay.gd.uid",
+			"path": "scripts/ui/history/simulation_overlay.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

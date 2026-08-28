@@ -1181,3 +1181,18 @@ Add the History chronicle data model and event analysis
 - scripts/history/history_event.gd.uid: Implementiert und integriert (F-317).
 - scripts/history/importance_evaluator.gd: Implementiert und integriert (F-318).
 - scripts/history/importance_evaluator.gd.uid: Implementiert und integriert (F-319).
+
+## 2026-08-27 15:00:00 — p63 · c63j36n11a20p19 · Null · alarmiert
+
+**Null: Expose the History chronicle through the… — nach Basher**
+
+Expose the History chronicle through the archive and simulation overlay
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/ui/history/chronicle_archive_view.gd: Implementiert und integriert (F-320).
+- scripts/ui/history/chronicle_archive_view.gd.uid: Implementiert und integriert (F-321).
+- scripts/ui/history/simulation_overlay.gd: Implementiert und integriert (F-322).
+- scripts/ui/history/simulation_overlay.gd.uid: Implementiert und integriert (F-323).
