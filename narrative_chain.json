@@ -5270,6 +5270,173 @@
 			"seq": 61,
 			"subject": "[Buffy] Tighten deterministic world generation and UI… — nach Vannon",
 			"summary": "Die kleinen Abweichungen waren nicht klein genug, um sie zu ignorieren. Ganzzahlige Grenzen in der Weltgenerierung, ein Schattenparameter im Replay-Pfad und UI-Scrollwerte mit ungeklärtem Typ erzeu..."
+		},
+		{
+			"a": 2,
+			"arc": "a29",
+			"c": 62,
+			"composite": "c62j56n2a2p12",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 18.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 68.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 77.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 27.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/cause_tracker.gd",
+					"insertions": 120.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/cause_tracker.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/chain_detector.gd",
+					"insertions": 239.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/chain_detector.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/character_biography.gd",
+					"insertions": 142.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/character_biography.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/chronicle_save_data.gd",
+					"insertions": 133.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/chronicle_save_data.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/chronicle_template_resolver.gd",
+					"insertions": 117.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/chronicle_template_resolver.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/data/era_definitions.json",
+					"insertions": 33.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/data/historical_figures.json",
+					"insertions": 82.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/data/name_pools.json",
+					"insertions": 48.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/era_classifier.gd",
+					"insertions": 97.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/era_classifier.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/event_chain.gd",
+					"insertions": 87.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/event_chain.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/figure_catalog.gd",
+					"insertions": 81.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/figure_catalog.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/historical_perspective.gd",
+					"insertions": 96.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/historical_perspective.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/history_event.gd",
+					"insertions": 137.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/history_event.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/importance_evaluator.gd",
+					"insertions": 88.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/importance_evaluator.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 14:00:00",
+			"hash": "0f165c9190d56fb9c313d3e60fb7d73390f44ec9",
+			"j": 56,
+			"model_id": "claude-sonnet-4",
+			"mood": "müde-zufrieden",
+			"n": 2,
+			"narrator": "Basher",
+			"p": 12,
+			"p_id": 62,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Buffy",
+			"seq": 62,
+			"subject": "Basher (29 files): Add the History chronicle data model and event analysis — nach Buffy",
+			"summary": "Die Geschichte braucht zuerst ihre Begriffe, bevor sie sichtbar werden kann. Ereignisse, Kausalitäten, Figuren, Epochen und Ketten erhalten deshalb ein gemeinsames Datenmodell, das nicht von einer ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

@@ -1145,3 +1145,39 @@ Tighten deterministic world generation and UI input compatibility
 - scripts/ui/dossier/parchment_tech_tree_view.gd: Implementiert und integriert (F-032).
 - scripts/ui/dossier/planet_dossier_view.gd: Implementiert und integriert (F-033).
 - scripts/ui/dossier/workshop_view.gd: Implementiert und integriert (F-034).
+
+## 2026-08-27 14:00:00 — p62 · c62j56n2a2p12 · Basher · müde-zufrieden
+
+**Basher (29 files): Add the History chronicle data model and event analysis — nach Buffy**
+
+Add the History chronicle data model and event analysis
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/history/cause_tracker.gd: Implementiert und integriert (F-295).
+- scripts/history/cause_tracker.gd.uid: Implementiert und integriert (F-296).
+- scripts/history/chain_detector.gd: Implementiert und integriert (F-297).
+- scripts/history/chain_detector.gd.uid: Implementiert und integriert (F-298).
+- scripts/history/character_biography.gd: Implementiert und integriert (F-299).
+- scripts/history/character_biography.gd.uid: Implementiert und integriert (F-300).
+- scripts/history/chronicle_save_data.gd: Implementiert und integriert (F-301).
+- scripts/history/chronicle_save_data.gd.uid: Implementiert und integriert (F-302).
+- scripts/history/chronicle_template_resolver.gd: Implementiert und integriert (F-303).
+- scripts/history/chronicle_template_resolver.gd.uid: Implementiert und integriert (F-304).
+- scripts/history/data/era_definitions.json: Implementiert und integriert (F-305).
+- scripts/history/data/historical_figures.json: Implementiert und integriert (F-306).
+- scripts/history/data/name_pools.json: Implementiert und integriert (F-307).
+- scripts/history/era_classifier.gd: Implementiert und integriert (F-308).
+- scripts/history/era_classifier.gd.uid: Implementiert und integriert (F-309).
+- scripts/history/event_chain.gd: Implementiert und integriert (F-310).
+- scripts/history/event_chain.gd.uid: Implementiert und integriert (F-311).
+- scripts/history/figure_catalog.gd: Implementiert und integriert (F-312).
+- scripts/history/figure_catalog.gd.uid: Implementiert und integriert (F-313).
+- scripts/history/historical_perspective.gd: Implementiert und integriert (F-314).
+- scripts/history/historical_perspective.gd.uid: Implementiert und integriert (F-315).
+- scripts/history/history_event.gd: Implementiert und integriert (F-316).
+- scripts/history/history_event.gd.uid: Implementiert und integriert (F-317).
+- scripts/history/importance_evaluator.gd: Implementiert und integriert (F-318).
+- scripts/history/importance_evaluator.gd.uid: Implementiert und integriert (F-319).

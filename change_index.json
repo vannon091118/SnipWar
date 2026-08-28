@@ -111,6 +111,147 @@
 			],
 			"p_id": 15.0
 		},
+		"0f165c9190d56fb9c313d3e60fb7d73390f44ec9": {
+			"c": 62,
+			"composite": "c62j56n2a2p12",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-295",
+				"F-296",
+				"F-297",
+				"F-298",
+				"F-299",
+				"F-300",
+				"F-301",
+				"F-302",
+				"F-303",
+				"F-304",
+				"F-305",
+				"F-306",
+				"F-307",
+				"F-308",
+				"F-309",
+				"F-310",
+				"F-311",
+				"F-312",
+				"F-313",
+				"F-314",
+				"F-315",
+				"F-316",
+				"F-317",
+				"F-318",
+				"F-319",
+				"C-544",
+				"C-545",
+				"C-546",
+				"C-547",
+				"C-548",
+				"C-549",
+				"C-550",
+				"C-551",
+				"C-552",
+				"C-553",
+				"C-554",
+				"C-555",
+				"C-556",
+				"C-557",
+				"C-558",
+				"C-559",
+				"C-560",
+				"C-561",
+				"C-562",
+				"C-563",
+				"C-564",
+				"C-565",
+				"C-566",
+				"C-567",
+				"C-568",
+				"C-569",
+				"C-570",
+				"C-571",
+				"C-572",
+				"C-573",
+				"C-574",
+				"C-575",
+				"C-576",
+				"C-577",
+				"C-578",
+				"C-579",
+				"C-580",
+				"C-581",
+				"C-582",
+				"C-583",
+				"C-584",
+				"C-585",
+				"C-586",
+				"C-587",
+				"C-588",
+				"C-589",
+				"C-590",
+				"C-591",
+				"C-592",
+				"C-593",
+				"C-594",
+				"C-595",
+				"C-596",
+				"C-597",
+				"C-598",
+				"C-599",
+				"C-600",
+				"C-601",
+				"C-602",
+				"C-603",
+				"C-604",
+				"C-605",
+				"C-606",
+				"C-607",
+				"C-608",
+				"C-609",
+				"C-610",
+				"C-611",
+				"C-612",
+				"C-613",
+				"C-614",
+				"C-615",
+				"C-616",
+				"C-617",
+				"C-618",
+				"C-619",
+				"C-620",
+				"C-621",
+				"C-622",
+				"C-623",
+				"C-624",
+				"C-625",
+				"C-626",
+				"C-627",
+				"C-628",
+				"C-629",
+				"C-630",
+				"C-631",
+				"C-632",
+				"C-633",
+				"C-634",
+				"C-635",
+				"C-636",
+				"C-637",
+				"C-638",
+				"C-639",
+				"C-640",
+				"C-641",
+				"C-642",
+				"C-643",
+				"C-644",
+				"C-645",
+				"C-646",
+				"C-647",
+				"C-648"
+			],
+			"p_id": 62
+		},
 		"12f27b1e4053869400cc79ab34622ff8b2d7596b": {
 			"c": 50.0,
 			"composite": "c50j22n8a11p47",
@@ -1035,7 +1176,7 @@
 			"p_id": 37.0
 		},
 		"daa6e00cd4b6b9923b37c05bfc75315a9d159986": {
-			"c": 61,
+			"c": 61.0,
 			"composite": "c61j52n1a9p5",
 			"entities": [
 				"F-002",
@@ -1051,7 +1192,7 @@
 				"F-034",
 				"C-543"
 			],
-			"p_id": 61
+			"p_id": 61.0
 		},
 		"ddb4e5accc2fdd0e52a45b3194e4fa627ac9672b": {
 			"c": 57.0,
@@ -10753,6 +10894,1791 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-544": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-544",
+			"last_p": 62.0,
+			"name": "CauseTracker",
+			"path": "scripts/history/cause_tracker.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-545": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-545",
+			"last_p": 62.0,
+			"name": "auto_link",
+			"path": "scripts/history/cause_tracker.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-546": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						30.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-546",
+			"last_p": 62.0,
+			"name": "get_successors",
+			"path": "scripts/history/cause_tracker.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-547": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						39.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-547",
+			"last_p": 62.0,
+			"name": "get_chain",
+			"path": "scripts/history/cause_tracker.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-548": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						71.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-548",
+			"last_p": 62.0,
+			"name": "_find_cause",
+			"path": "scripts/history/cause_tracker.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-549": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						84.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-549",
+			"last_p": 62.0,
+			"name": "_is_likely_cause",
+			"path": "scripts/history/cause_tracker.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-550": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						99.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-550",
+			"last_p": 62.0,
+			"name": "_infer_cause_type",
+			"path": "scripts/history/cause_tracker.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-551": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						109.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-551",
+			"last_p": 62.0,
+			"name": "_share_actors",
+			"path": "scripts/history/cause_tracker.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-552": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						116.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-552",
+			"last_p": 62.0,
+			"name": "_find_by_id",
+			"path": "scripts/history/cause_tracker.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-553": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-553",
+			"last_p": 62.0,
+			"name": "ChainDetector",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-554": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-554",
+			"last_p": 62.0,
+			"name": "MAX_CHAIN_GAP",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-555": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-555",
+			"last_p": 62.0,
+			"name": "detect_chains",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-556": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						42.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-556",
+			"last_p": 62.0,
+			"name": "_detect_causal_chains",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-557": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						77.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-557",
+			"last_p": 62.0,
+			"name": "_detect_war_chains",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-558": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						124.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-558",
+			"last_p": 62.0,
+			"name": "_detect_diplomatic_chains",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-559": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						158.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-559",
+			"last_p": 62.0,
+			"name": "_detect_character_chains",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-560": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						193.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-560",
+			"last_p": 62.0,
+			"name": "_name_chains",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-561": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						220.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-561",
+			"last_p": 62.0,
+			"name": "_extract_factions",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-562": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						228.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-562",
+			"last_p": 62.0,
+			"name": "_share_actors",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-563": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						235.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-563",
+			"last_p": 62.0,
+			"name": "_find_event_by_id",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-564": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						2.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-564",
+			"last_p": 62.0,
+			"name": "CharacterBiography",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-565": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						46.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-565",
+			"last_p": 62.0,
+			"name": "is_alive",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-566": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						50.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-566",
+			"last_p": 62.0,
+			"name": "is_dead_at",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-567": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						54.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-567",
+			"last_p": 62.0,
+			"name": "lifetime_years",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-568": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						60.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-568",
+			"last_p": 62.0,
+			"name": "add_rank",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-569": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						65.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-569",
+			"last_p": 62.0,
+			"name": "add_event",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-570": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						70.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-570",
+			"last_p": 62.0,
+			"name": "add_achievement",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-571": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						75.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-571",
+			"last_p": 62.0,
+			"name": "add_failure",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-572": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						80.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-572",
+			"last_p": 62.0,
+			"name": "set_relationship",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-573": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						84.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-573",
+			"last_p": 62.0,
+			"name": "get_relationship",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-574": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						88.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-574",
+			"last_p": 62.0,
+			"name": "die",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-575": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						93.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-575",
+			"last_p": 62.0,
+			"name": "copy",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-576": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						110.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-576",
+			"last_p": 62.0,
+			"name": "to_dict",
+			"path": "scripts/history/character_biography.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-577": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						2.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-577",
+			"last_p": 62.0,
+			"name": "ChronicleSaveData",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-578": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						37.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-578",
+			"last_p": 62.0,
+			"name": "copy",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-579": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						41.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-579",
+			"last_p": 62.0,
+			"name": "all_events",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-580": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						48.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-580",
+			"last_p": 62.0,
+			"name": "events_sorted",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-581": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						54.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-581",
+			"last_p": 62.0,
+			"name": "events_by_era",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-582": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						62.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-582",
+			"last_p": 62.0,
+			"name": "events_by_type",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-583": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						70.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-583",
+			"last_p": 62.0,
+			"name": "events_by_faction",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-584": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						78.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-584",
+			"last_p": 62.0,
+			"name": "biography_for",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-585": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						85.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-585",
+			"last_p": 62.0,
+			"name": "chain_for",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-586": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						92.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-586",
+			"last_p": 62.0,
+			"name": "add_live_event",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-587": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						99.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-587",
+			"last_p": 62.0,
+			"name": "next_live_event_id",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-588": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						104.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-588",
+			"last_p": 62.0,
+			"name": "snapshot_dict",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-589": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-589",
+			"last_p": 62.0,
+			"name": "ChronicleTemplateResolver",
+			"path": "scripts/history/chronicle_template_resolver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-590": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-590",
+			"last_p": 62.0,
+			"name": "_init",
+			"path": "scripts/history/chronicle_template_resolver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-591": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						27.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-591",
+			"last_p": 62.0,
+			"name": "_load_locale",
+			"path": "scripts/history/chronicle_template_resolver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-592": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						68.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-592",
+			"last_p": 62.0,
+			"name": "resolve",
+			"path": "scripts/history/chronicle_template_resolver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-593": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						86.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-593",
+			"last_p": 62.0,
+			"name": "_substitute",
+			"path": "scripts/history/chronicle_template_resolver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-594": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						96.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-594",
+			"last_p": 62.0,
+			"name": "available_locales",
+			"path": "scripts/history/chronicle_template_resolver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-595": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						104.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-595",
+			"last_p": 62.0,
+			"name": "has_template",
+			"path": "scripts/history/chronicle_template_resolver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-596": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						111.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-596",
+			"last_p": 62.0,
+			"name": "template_keys",
+			"path": "scripts/history/chronicle_template_resolver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-597": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-597",
+			"last_p": 62.0,
+			"name": "EraClassifier",
+			"path": "scripts/history/era_classifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-598": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-598",
+			"last_p": 62.0,
+			"name": "classify_eras",
+			"path": "scripts/history/era_classifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-599": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						30.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-599",
+			"last_p": 62.0,
+			"name": "_evaluate_segment",
+			"path": "scripts/history/era_classifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-600": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						2.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-600",
+			"last_p": 62.0,
+			"name": "EventChain",
+			"path": "scripts/history/event_chain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-601": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						31.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-601",
+			"last_p": 62.0,
+			"name": "duration_years",
+			"path": "scripts/history/event_chain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-602": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						35.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-602",
+			"last_p": 62.0,
+			"name": "add_event",
+			"path": "scripts/history/event_chain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-603": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						44.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-603",
+			"last_p": 62.0,
+			"name": "is_active_at",
+			"path": "scripts/history/event_chain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-604": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						48.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-604",
+			"last_p": 62.0,
+			"name": "event_count",
+			"path": "scripts/history/event_chain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-605": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						52.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-605",
+			"last_p": 62.0,
+			"name": "copy",
+			"path": "scripts/history/event_chain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-606": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						64.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-606",
+			"last_p": 62.0,
+			"name": "to_dict",
+			"path": "scripts/history/event_chain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-607": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-607",
+			"last_p": 62.0,
+			"name": "FigureCatalog",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-608": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-608",
+			"last_p": 62.0,
+			"name": "_init",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-609": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-609",
+			"last_p": 62.0,
+			"name": "_load_figures",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-610": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						26.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-610",
+			"last_p": 62.0,
+			"name": "_load_name_pools",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-611": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						35.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-611",
+			"last_p": 62.0,
+			"name": "all",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-612": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						39.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-612",
+			"last_p": 62.0,
+			"name": "by_index",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-613": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						46.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-613",
+			"last_p": 62.0,
+			"name": "by_name",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-614": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						53.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-614",
+			"last_p": 62.0,
+			"name": "name_by_index",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-615": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						57.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-615",
+			"last_p": 62.0,
+			"name": "get_name_pool",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-616": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						62.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-616",
+			"last_p": 62.0,
+			"name": "pick_random_name",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-617": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						69.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-617",
+			"last_p": 62.0,
+			"name": "pick_random_title",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-618": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						76.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-618",
+			"last_p": 62.0,
+			"name": "figure_count",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-619": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						80.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-619",
+			"last_p": 62.0,
+			"name": "validate",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-620": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-620",
+			"last_p": 62.0,
+			"name": "HistoricalPerspective",
+			"path": "scripts/history/historical_perspective.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-621": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-621",
+			"last_p": 62.0,
+			"name": "perspective_key",
+			"path": "scripts/history/historical_perspective.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-622": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						15.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-622",
+			"last_p": 62.0,
+			"name": "build_context",
+			"path": "scripts/history/historical_perspective.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-623": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						58.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-623",
+			"last_p": 62.0,
+			"name": "_categorize_event",
+			"path": "scripts/history/historical_perspective.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-624": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						82.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-624",
+			"last_p": 62.0,
+			"name": "_importance_tier",
+			"path": "scripts/history/historical_perspective.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-625": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						93.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-625",
+			"last_p": 62.0,
+			"name": "_resolve_name",
+			"path": "scripts/history/historical_perspective.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-626": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						2.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-626",
+			"last_p": 62.0,
+			"name": "HistoryEvent",
+			"path": "scripts/history/history_event.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-627": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						60.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-627",
+			"last_p": 62.0,
+			"name": "is_empty",
+			"path": "scripts/history/history_event.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-628": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						64.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-628",
+			"last_p": 62.0,
+			"name": "is_conflict",
+			"path": "scripts/history/history_event.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-629": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						68.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-629",
+			"last_p": 62.0,
+			"name": "is_diplomatic",
+			"path": "scripts/history/history_event.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-630": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						72.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-630",
+			"last_p": 62.0,
+			"name": "is_cultural",
+			"path": "scripts/history/history_event.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-631": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						76.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-631",
+			"last_p": 62.0,
+			"name": "copy",
+			"path": "scripts/history/history_event.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-632": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						97.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-632",
+			"last_p": 62.0,
+			"name": "to_dict",
+			"path": "scripts/history/history_event.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-633": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-633",
+			"last_p": 62.0,
+			"name": "ImportanceEvaluator",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-634": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-634",
+			"last_p": 62.0,
+			"name": "W_TERRITORY",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-635": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-635",
+			"last_p": 62.0,
+			"name": "W_CASUALTIES",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-636": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-636",
+			"last_p": 62.0,
+			"name": "W_FACTION_CHANGE",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-637": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-637",
+			"last_p": 62.0,
+			"name": "W_TECH_SIGNIFICANCE",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-638": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-638",
+			"last_p": 62.0,
+			"name": "W_CHARACTER_SIGNIFICANCE",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-639": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-639",
+			"last_p": 62.0,
+			"name": "W_RELATIONSHIP",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-640": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-640",
+			"last_p": 62.0,
+			"name": "THRESHOLD_INVISIBLE",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-641": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-641",
+			"last_p": 62.0,
+			"name": "THRESHOLD_MINOR",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-642": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-642",
+			"last_p": 62.0,
+			"name": "THRESHOLD_NORMAL",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-643": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-643",
+			"last_p": 62.0,
+			"name": "THRESHOLD_MAJOR",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-644": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-644",
+			"last_p": 62.0,
+			"name": "evaluate",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-645": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						58.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-645",
+			"last_p": 62.0,
+			"name": "evaluate_all",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-646": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						64.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-646",
+			"last_p": 62.0,
+			"name": "categorize",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-647": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						78.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-647",
+			"last_p": 62.0,
+			"name": "should_include",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-648": {
+			"first_p": 62.0,
+			"history": [
+				{
+					"lines": [
+						83.0
+					],
+					"p_id": 62.0
+				}
+			],
+			"id": "C-648",
+			"last_p": 62.0,
+			"name": "relevant_events",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -13690,6 +15616,256 @@
 			"last_p": 61.0,
 			"name": "ship_base.gd",
 			"path": "scripts/objects/ships/ship_base.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-295": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-295",
+			"last_p": 62.0,
+			"name": "cause_tracker.gd",
+			"path": "scripts/history/cause_tracker.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-296": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-296",
+			"last_p": 62.0,
+			"name": "cause_tracker.gd.uid",
+			"path": "scripts/history/cause_tracker.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-297": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-297",
+			"last_p": 62.0,
+			"name": "chain_detector.gd",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-298": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-298",
+			"last_p": 62.0,
+			"name": "chain_detector.gd.uid",
+			"path": "scripts/history/chain_detector.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-299": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-299",
+			"last_p": 62.0,
+			"name": "character_biography.gd",
+			"path": "scripts/history/character_biography.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-300": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-300",
+			"last_p": 62.0,
+			"name": "character_biography.gd.uid",
+			"path": "scripts/history/character_biography.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-301": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-301",
+			"last_p": 62.0,
+			"name": "chronicle_save_data.gd",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-302": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-302",
+			"last_p": 62.0,
+			"name": "chronicle_save_data.gd.uid",
+			"path": "scripts/history/chronicle_save_data.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-303": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-303",
+			"last_p": 62.0,
+			"name": "chronicle_template_resolver.gd",
+			"path": "scripts/history/chronicle_template_resolver.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-304": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-304",
+			"last_p": 62.0,
+			"name": "chronicle_template_resolver.gd.uid",
+			"path": "scripts/history/chronicle_template_resolver.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-305": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-305",
+			"last_p": 62.0,
+			"name": "era_definitions.json",
+			"path": "scripts/history/data/era_definitions.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-306": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-306",
+			"last_p": 62.0,
+			"name": "historical_figures.json",
+			"path": "scripts/history/data/historical_figures.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-307": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-307",
+			"last_p": 62.0,
+			"name": "name_pools.json",
+			"path": "scripts/history/data/name_pools.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-308": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-308",
+			"last_p": 62.0,
+			"name": "era_classifier.gd",
+			"path": "scripts/history/era_classifier.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-309": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-309",
+			"last_p": 62.0,
+			"name": "era_classifier.gd.uid",
+			"path": "scripts/history/era_classifier.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-310": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-310",
+			"last_p": 62.0,
+			"name": "event_chain.gd",
+			"path": "scripts/history/event_chain.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-311": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-311",
+			"last_p": 62.0,
+			"name": "event_chain.gd.uid",
+			"path": "scripts/history/event_chain.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-312": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-312",
+			"last_p": 62.0,
+			"name": "figure_catalog.gd",
+			"path": "scripts/history/figure_catalog.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-313": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-313",
+			"last_p": 62.0,
+			"name": "figure_catalog.gd.uid",
+			"path": "scripts/history/figure_catalog.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-314": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-314",
+			"last_p": 62.0,
+			"name": "historical_perspective.gd",
+			"path": "scripts/history/historical_perspective.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-315": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-315",
+			"last_p": 62.0,
+			"name": "historical_perspective.gd.uid",
+			"path": "scripts/history/historical_perspective.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-316": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-316",
+			"last_p": 62.0,
+			"name": "history_event.gd",
+			"path": "scripts/history/history_event.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-317": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-317",
+			"last_p": 62.0,
+			"name": "history_event.gd.uid",
+			"path": "scripts/history/history_event.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-318": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-318",
+			"last_p": 62.0,
+			"name": "importance_evaluator.gd",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-319": {
+			"first_p": 62.0,
+			"history": [],
+			"id": "F-319",
+			"last_p": 62.0,
+			"name": "importance_evaluator.gd.uid",
+			"path": "scripts/history/importance_evaluator.gd.uid",
 			"status": "created",
 			"type": "file"
 		}
