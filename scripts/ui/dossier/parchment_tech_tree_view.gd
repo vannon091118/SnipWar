@@ -61,19 +61,19 @@ func _unhandled_input(event: InputEvent) -> void:
 				_tree_scroll.scroll_horizontal = maxi(_tree_scroll.scroll_horizontal - step_x, 0)
 		KEY_RIGHT, KEY_D:
 			if _tree_scroll != null:
-				_tree_scroll.scroll_horizontal = mini(_tree_scroll.scroll_horizontal + step_x, _tree_scroll.get_h_scroll_bar().max_value)
+				_tree_scroll.scroll_horizontal = mini(_tree_scroll.scroll_horizontal + step_x, int(_tree_scroll.get_h_scroll_bar().max_value))
 		KEY_UP, KEY_W:
 			if _tree_scroll != null:
 				_tree_scroll.scroll_vertical = maxi(_tree_scroll.scroll_vertical - step_y, 0)
 		KEY_DOWN, KEY_S:
 			if _tree_scroll != null:
-				_tree_scroll.scroll_vertical = mini(_tree_scroll.scroll_vertical + step_y, _tree_scroll.get_v_scroll_bar().max_value)
+				_tree_scroll.scroll_vertical = mini(_tree_scroll.scroll_vertical + step_y, int(_tree_scroll.get_v_scroll_bar().max_value))
 		KEY_PAGEUP:
 			if _tree_scroll != null:
 				_tree_scroll.scroll_vertical = maxi(_tree_scroll.scroll_vertical - int(_tree_scroll.size.y * 0.8), 0)
 		KEY_PAGEDOWN:
 			if _tree_scroll != null:
-				_tree_scroll.scroll_vertical = mini(_tree_scroll.scroll_vertical + int(_tree_scroll.size.y * 0.8), _tree_scroll.get_v_scroll_bar().max_value)
+				_tree_scroll.scroll_vertical = mini(_tree_scroll.scroll_vertical + int(_tree_scroll.size.y * 0.8), int(_tree_scroll.get_v_scroll_bar().max_value))
 		_:
 			handled = false
 	if handled:

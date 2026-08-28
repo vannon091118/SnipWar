@@ -276,7 +276,6 @@ static func generate_clusters(
 
 	# Calculate target cluster count based on planet count and cluster sizes
 	var target_clusters := config.resolved_cluster_count(planet_count)
-	var target_void_area := world_size.x * world_size.y * config.void_ratio
 	var target_cluster_area := world_size.x * world_size.y * (1.0 - config.void_ratio)
 	var area_per_cluster := target_cluster_area / float(target_clusters)
 
@@ -395,11 +394,11 @@ static func _distribute_planets_to_clusters(
 		var weight := rng.randf()
 		var cluster_size: int
 		if weight < 0.3:  # 30% chance: small cluster
-			cluster_size = rng.randi_range(config.min_cluster_size, maxi(config.min_cluster_size, config.max_cluster_size / 2))
+			cluster_size = rng.randi_range(config.min_cluster_size, maxi(config.min_cluster_size, int(config.max_cluster_size * 0.5)))
 		elif weight < 0.7:  # 40% chance: medium cluster
-			cluster_size = rng.randi_range(config.max_cluster_size / 3, config.max_cluster_size * 2 / 3)
+			cluster_size = rng.randi_range(int(config.max_cluster_size * 0.333), int(config.max_cluster_size * 0.666))
 		else:  # 30% chance: large cluster
-			cluster_size = rng.randi_range(config.max_cluster_size * 2 / 3, config.max_cluster_size)
+			cluster_size = rng.randi_range(int(config.max_cluster_size * 0.666), config.max_cluster_size)
 
 		cluster_size = mini(cluster_size, remaining)
 		distribution.append(cluster_size)

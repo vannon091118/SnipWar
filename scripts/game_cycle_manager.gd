@@ -171,7 +171,6 @@ func _on_replay_requested(simulation_type: StringName, replay: CombatReplay) -> 
 	if replay == null:
 		return
 	# Only player-initiated replays need visual playback.
-	var state: Node = _game_state()
 	var is_player := false
 	if replay.is_battle():
 		is_player = replay.winner == GameState.FACTION_PLAYER

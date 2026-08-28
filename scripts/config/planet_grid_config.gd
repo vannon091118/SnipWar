@@ -23,7 +23,7 @@ func cell_to_pixel(q: int, r: int) -> Vector2:
 	return Vector2(x, y)
 
 func axial_distance(aq: int, ar: int, bq: int, br: int) -> int:
-	return (absi(aq - bq) + absi(aq + ar - bq - br) + absi(ar - br)) / 2
+	return int((absi(aq - bq) + absi(aq + ar - bq - br) + absi(ar - br)) * 0.5)
 
 func in_bounds(q: int, r: int) -> bool:
 	if grid_type == "rectangular":

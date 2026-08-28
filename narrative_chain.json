@@ -5116,6 +5116,83 @@
 			"seq": 59,
 			"subject": "Ghost verzeichnet: Harden the narrative runtime gate and… — nach Squizzle",
 			"summary": "Die nächste Spur führt aus der Spielsimulation in das abgeleitete Archiv. Der Runtime-Code darf die Git-Historie nicht ersetzen, deshalb werden Beobachtungen, Beziehungen und Prüfungen reproduzierb..."
+		},
+		{
+			"a": 6,
+			"arc": "a27",
+			"c": 60,
+			"composite": "c60j27n4a6p15",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 47.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 72.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "scripts/doki/NARRATIVE_ENGINE_DESIGN.md",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/README.md",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/core/verifier.gd",
+					"insertions": 24.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "scripts/doki/doki.gd",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_selfcheck.gd",
+					"insertions": 37.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/orchestration/flows/finish_flow.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 10.0
+				}
+			],
+			"date": "2026-08-27 12:00:00",
+			"hash": "e959757a93e8cd5ce9b8c1e0ec32519b010e4e71",
+			"j": 27,
+			"model_id": "claude-sonnet-4",
+			"mood": "alarmiert",
+			"n": 4,
+			"narrator": "Vannon",
+			"p": 15,
+			"p_id": 60,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Ghost",
+			"seq": 60,
+			"subject": "Harden the DOKI commit. … — nach Ghost",
+			"summary": "Dieser Commit war unvermeidlich, weil ein Commit-Gate nur dann Vertrauen verdient, wenn seine Grenzen selbst überprüfbar sind. Die vorherigen Slices haben gezeigt, wie schnell ein veralteter Zustan..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

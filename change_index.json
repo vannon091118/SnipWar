@@ -594,7 +594,7 @@
 			"p_id": 26.0
 		},
 		"68b89819ebedb3c8f535c585cf85ad077a3d448e": {
-			"c": 59,
+			"c": 59.0,
 			"composite": "c59j92n8a7p15",
 			"entities": [
 				"F-002",
@@ -609,7 +609,7 @@
 				"F-001",
 				"C-538"
 			],
-			"p_id": 59
+			"p_id": 59.0
 		},
 		"699a67a5be9d59f7b6264a718b7869196b5dd8a3": {
 			"c": 56.0,
@@ -1241,6 +1241,28 @@
 				"F-001"
 			],
 			"p_id": 31.0
+		},
+		"e959757a93e8cd5ce9b8c1e0ec32519b010e4e71": {
+			"c": 60,
+			"composite": "c60j27n4a6p15",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-145",
+				"F-022",
+				"F-007",
+				"F-001",
+				"F-008",
+				"F-017",
+				"F-012",
+				"F-181",
+				"C-539",
+				"C-540",
+				"C-541",
+				"C-542"
+			],
+			"p_id": 60
 		},
 		"efc07a25345c759262292b4f6e5ae67f846412a7": {
 			"c": 39.0,
@@ -10624,6 +10646,74 @@
 			"last_p": 59.0,
 			"name": "RelationshipSprintTests",
 			"path": "narrative_runtime/tests/test_relationship_sprint.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-539": {
+			"first_p": 60.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 60.0
+				}
+			],
+			"id": "C-539",
+			"last_p": 60.0,
+			"name": "MAX_FILES_PER_COMMIT",
+			"path": "scripts/doki/core/verifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-540": {
+			"first_p": 60.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 60.0
+				}
+			],
+			"id": "C-540",
+			"last_p": 60.0,
+			"name": "AUTO_MANAGED",
+			"path": "scripts/doki/core/verifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-541": {
+			"first_p": 60.0,
+			"history": [
+				{
+					"lines": [
+						364.0
+					],
+					"p_id": 60.0
+				}
+			],
+			"id": "C-541",
+			"last_p": 60.0,
+			"name": "check_10_file_limit",
+			"path": "scripts/doki/core/verifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-542": {
+			"first_p": 60.0,
+			"history": [
+				{
+					"lines": [
+						260.0
+					],
+					"p_id": 60.0
+				}
+			],
+			"id": "C-542",
+			"last_p": 60.0,
+			"name": "_test_verifier_file_limit",
+			"path": "scripts/doki/doki_selfcheck.gd",
 			"status": "modified",
 			"type": "component"
 		},

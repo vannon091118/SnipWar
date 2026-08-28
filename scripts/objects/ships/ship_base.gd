@@ -104,11 +104,11 @@ func set_selected(enabled: bool) -> void:
 func is_selected() -> bool:
 	return _selected
 
-func _show_route(show: bool) -> void:
+func _show_route(p_visible: bool) -> void:
 	if is_instance_valid(_route_line) and not _selected:
-		_route_line.visible = show
+		_route_line.visible = p_visible
 	if is_instance_valid(_transit_label) and not _selected:
-		_transit_label.visible = show
+		_transit_label.visible = p_visible
 
 func _update_transit_label() -> void:
 	if _transit_label == null:

@@ -1109,3 +1109,21 @@ Harden the narrative runtime gate and relationship archive with reproducible tes
 - narrative_runtime/store.py: Test-Assets ergänzt (F-142).
 - narrative_runtime/tests/test_relationship_sprint.py: Test-Assets ergänzt (F-291).
 - scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).
+
+## 2026-08-27 12:00:00 — p60 · c60j27n4a6p15 · Vannon · alarmiert
+
+**Harden the DOKI commit. … — nach Ghost**
+
+Harden the DOKI commit gate and deterministic narrative verification
+
+- CHANGELOG.md: Tooling erweitert (F-002).
+- change_index.json: Tooling erweitert (F-003).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scripts/doki/NARRATIVE_ENGINE_DESIGN.md: Tooling erweitert (F-145).
+- scripts/doki/README.md: Tooling erweitert (F-022).
+- scripts/doki/core/verifier.gd: Tooling erweitert (F-007).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+- scripts/doki/doki.gd: Tooling erweitert (F-008).
+- scripts/doki/doki_selfcheck.gd: Tooling erweitert (F-017).
+- scripts/doki/orchestration/flows/finish_flow.gd: Tooling erweitert (F-012).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Tooling erweitert (F-181).

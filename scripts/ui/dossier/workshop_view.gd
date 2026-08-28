@@ -76,13 +76,13 @@ func _unhandled_input(event: InputEvent) -> void:
 				_workshop_scroll.scroll_vertical = maxi(_workshop_scroll.scroll_vertical - 90, 0)
 		KEY_DOWN, KEY_S:
 			if _workshop_scroll != null:
-				_workshop_scroll.scroll_vertical = mini(_workshop_scroll.scroll_vertical + 90, _workshop_scroll.get_v_scroll_bar().max_value)
+				_workshop_scroll.scroll_vertical = mini(_workshop_scroll.scroll_vertical + 90, int(_workshop_scroll.get_v_scroll_bar().max_value))
 		KEY_PAGEUP:
 			if _workshop_scroll != null:
 				_workshop_scroll.scroll_vertical = maxi(_workshop_scroll.scroll_vertical - int(_workshop_scroll.size.y * 0.8), 0)
 		KEY_PAGEDOWN:
 			if _workshop_scroll != null:
-				_workshop_scroll.scroll_vertical = mini(_workshop_scroll.scroll_vertical + int(_workshop_scroll.size.y * 0.8), _workshop_scroll.get_v_scroll_bar().max_value)
+				_workshop_scroll.scroll_vertical = mini(_workshop_scroll.scroll_vertical + int(_workshop_scroll.size.y * 0.8), int(_workshop_scroll.get_v_scroll_bar().max_value))
 		_:
 			handled = false
 	if handled:

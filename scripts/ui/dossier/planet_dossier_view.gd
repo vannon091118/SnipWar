@@ -96,8 +96,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_build_scroll.scroll_vertical = maxi(_build_scroll.scroll_vertical - int(_build_scroll.size.y * 0.8), 0)
 		get_viewport().set_input_as_handled()
 	elif event.keycode == KEY_PAGEDOWN:
-		if _build_scroll != null:
-			_build_scroll.scroll_vertical = mini(_build_scroll.scroll_vertical + int(_build_scroll.size.y * 0.8), _build_scroll.get_v_scroll_bar().max_value)
+		if _build_scroll != null:				_build_scroll.scroll_vertical = mini(_build_scroll.scroll_vertical + int(_build_scroll.size.y * 0.8), int(_build_scroll.get_v_scroll_bar().max_value))
 		get_viewport().set_input_as_handled()
 func _build_ui() -> void:
 	# Linke Spalte: Planeten-Auswahl (Mitte) + Info (unten), oben bleibt die
@@ -156,7 +155,7 @@ func _collect_own_planets() -> void:
 	_own_planets.clear()
 	if _state == null:
 		return
-	if get_tree() != null:
+	if is_inside_tree():
 		for node in get_tree().get_nodes_in_group("planets"):
 			var candidate: Planet = node as Planet
 			if candidate == null:

@@ -1,5 +1,5 @@
 {
-	"active": "a27",
+	"active": "a28",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -1117,6 +1117,7 @@
 		},
 		"a27": {
 			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
 			"id": "a27",
 			"name": "Vertragsprüfung",
 			"seen_entities": [
@@ -1130,13 +1131,34 @@
 				"F-142",
 				"F-291",
 				"F-001",
-				"C-538"
+				"C-538",
+				"F-145",
+				"F-022",
+				"F-007",
+				"F-008",
+				"F-017",
+				"F-012",
+				"F-181",
+				"C-539",
+				"C-540",
+				"C-541",
+				"C-542"
 			],
 			"span": "heute → offen",
-			"status": "active",
+			"status": "completed",
 			"theme": "Laufzeit, Belege und Grenzen",
 			"version": "",
-			"weight": 3.3
+			"weight": 8.45
+		},
+		"a28": {
+			"climax_weight": 3.0,
+			"id": "a28",
+			"name": "Betriebsfestigkeit",
+			"span": "heute → offen",
+			"status": "active",
+			"theme": "Recovery und verlässliche Werkzeuge",
+			"version": "",
+			"weight": 0.0
 		},
 		"a3": {
 			"climax_weight": 3.0,
