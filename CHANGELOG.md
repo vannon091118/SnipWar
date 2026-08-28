@@ -1196,3 +1196,14 @@ Expose the History chronicle through the archive and simulation overlay
 - scripts/ui/history/chronicle_archive_view.gd.uid: Implementiert und integriert (F-321).
 - scripts/ui/history/simulation_overlay.gd: Implementiert und integriert (F-322).
 - scripts/ui/history/simulation_overlay.gd.uid: Implementiert und integriert (F-323).
+
+## 2026-08-27 16:00:00 — p64 · c64j83n6a18p55 · Devin · triumphierend
+
+**Devin sagt: chore: sync DOKI artifacts for c63 (CHANGELOG,… — nach Null**
+
+chore: sync DOKI artifacts for c63 (CHANGELOG, chain, index, arcs)
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).

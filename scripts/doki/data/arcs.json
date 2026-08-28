@@ -1397,11 +1397,17 @@
 			"climax_weight": 3.0,
 			"id": "a31",
 			"name": "Visuelle Beweise",
+			"seen_entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001"
+			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Geschichte im Spiel verifizieren",
 			"version": "",
-			"weight": 0.0
+			"weight": 1.2
 		},
 		"a4": {
 			"climax_weight": 3.0,

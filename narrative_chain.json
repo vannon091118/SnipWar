@@ -5499,6 +5499,48 @@
 			"seq": 63,
 			"subject": "Null: Expose the History chronicle through the… — nach Basher",
 			"summary": "Die Daten lagen bereit, doch eine Chronik, die niemand sehen kann, bleibt nur ein gut sortierter Keller. Das Archiv erhält deshalb seine eigene Ansicht mit Ereignislisten, Filtern, Beziehungen und ..."
+		},
+		{
+			"a": 18,
+			"arc": "a31",
+			"c": 64,
+			"composite": "c64j83n6a18p55",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 687.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "narrative_chain.json",
+					"insertions": 69.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 58.0
+				}
+			],
+			"date": "2026-08-27 16:00:00",
+			"hash": "f6da54b78be26d34c9451041f8d0f20231003554",
+			"j": 83,
+			"model_id": "claude-sonnet-4",
+			"mood": "triumphierend",
+			"n": 6,
+			"narrator": "Devin",
+			"p": 55,
+			"p_id": 64,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Null",
+			"seq": 64,
+			"subject": "Devin sagt: chore: sync DOKI artifacts for c63 (CHANGELOG,… — nach Null",
+			"summary": "Die Schicht lag offen, und sie war sauber — nur hatte sie niemand vernäht. Null hat in c63 die Chronik-Artefakte geschrieben: Chain, Index, Changelog, Arc-Register, alles konsistent auf c63j36n11a2..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

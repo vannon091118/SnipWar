@@ -4,9 +4,9 @@ extends Resource
 
 @export var scout_hull_tech_id: StringName = &"scout_hull"
 @export var scout_scanner_tech_id: StringName = &"scanner_drone"
-@export var scout_build_cost_resource: StringName = GameState.RES_MATERIAL
+@export var scout_build_cost_resource: StringName = GameConstants.RES_MATERIAL
 @export var scout_build_cost_amount: int = 5
-@export var worker_build_cost_resource: StringName = GameState.RES_MATERIAL
+@export var worker_build_cost_resource: StringName = GameConstants.RES_MATERIAL
 @export var worker_build_cost_amount: int = 5
 @export var worker_build_credit_cost: int = 5
 @export var ship_assembly_credit_cost: int = 10

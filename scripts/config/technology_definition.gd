@@ -11,7 +11,7 @@ const CATEGORY_DRONES := &"drones"
 @export var category: StringName = CATEGORY_SHIPS
 @export var display_name: String = ""
 @export var description: String = ""
-@export var cost_resource: StringName = GameState.RES_ENERGY
+@export var cost_resource: StringName = GameConstants.RES_ENERGY
 @export var cost_amount: int = 10
 @export var credit_cost: int = 5
 ## Player-facing strategic category used to scan the technology tree quickly.
