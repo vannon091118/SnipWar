@@ -24,10 +24,19 @@ invalid or gapped chain.
 
 - Chain observations and deterministic projections.
 - Transactional, idempotent SQLite archive with amend/rebase anchors.
-- Sparse directed relationship events across eight independent axes; reverse
-  relationships are never inferred.
-- Relationship state snapshots clamped to `0.0..1.0` and tied to observation
-  sequences.
+- Evidence-aware directed relationship effects across eight independent axes;
+  reverse relationships are never inferred and narrative event IDs are distinct
+  from directed effect IDs.
+- The relationship state materializes exactly 14 × 13 = 182 directed pairs,
+  with every axis clamped to `0.0..1.0` and every snapshot tied to an observation
+  sequence and versioned decay rule.
+- Relationship classifications remain separate from observations and support
+  `REPAIR_AFTER_CHANGE`, `REGRESSION_CONFIRMED`, `DISAGREEMENT`, and
+  `EXPLICIT_ADMISSION` when deterministic evidence exists. Later evidence may
+  upgrade a classification without mutating the original observation.
+- Knowledge state is evidence-bound through `known_traits`, `known_events`,
+  `known_beliefs`, `interpretation`, and `expectations`. No look-ahead evidence
+  is stored in observations.
 - Conservative beliefs: only explicit structural claims are projected, and each
   transition carries an observation evidence sequence.
 - Immutable event memory with a derived emotional weight that decays without
@@ -51,4 +60,8 @@ use its existing fallback without changing Composite or narrator selection.
 The local NARRATIVE_RUNTIME_GATE validates G1–G7: stdlib-only imports, observation purity, reproducible IDs, contiguous chains, no source-truth writes, idempotent imports, and rebuild/incremental equality. Run it with `python -m narrative_runtime.gate_cli --root .`.
 
 The runtime does not yet implement social candidates, X, analytics, or community
-features. Threads, perspectives, and conflict projections are deterministic local state.
+features. Threads, perspectives, conflict projections, and relationship
+classification/effect projections are deterministic local state. The local gate
+now validates G1–G17, including eight-axis coverage, 182-pair structure,
+evidence-bound effects, no-look-ahead observations, deterministic state, and
+batch-independent projections.

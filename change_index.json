@@ -1017,7 +1017,7 @@
 			"p_id": 37.0
 		},
 		"ddb4e5accc2fdd0e52a45b3194e4fa627ac9672b": {
-			"c": 57,
+			"c": 57.0,
 			"composite": "c57j88n3a7p31",
 			"entities": [
 				"F-002",
@@ -1153,7 +1153,42 @@
 				"C-530",
 				"C-531"
 			],
-			"p_id": 57
+			"p_id": 57.0
+		},
+		"e0bfa4d6bc8f1da7c8727c8c98a38f9a6f27d6d4": {
+			"c": 58,
+			"composite": "c58j65n5a23p17",
+			"entities": [
+				"F-285",
+				"F-019",
+				"F-002",
+				"F-050",
+				"F-045",
+				"F-286",
+				"F-287",
+				"F-288",
+				"F-082",
+				"F-289",
+				"F-290",
+				"F-102",
+				"F-085",
+				"F-042",
+				"F-044",
+				"F-041",
+				"F-003",
+				"F-046",
+				"F-202",
+				"F-004",
+				"F-001",
+				"F-154",
+				"C-532",
+				"C-533",
+				"C-534",
+				"C-535",
+				"C-536",
+				"C-537"
+			],
+			"p_id": 58
 		},
 		"e186c98431e04aeca11e227c7459fc3daa695ff0": {
 			"c": 12.0,
@@ -10455,6 +10490,108 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-532": {
+			"first_p": 58.0,
+			"history": [
+				{
+					"lines": [
+						81.0
+					],
+					"p_id": 58.0
+				}
+			],
+			"id": "C-532",
+			"last_p": 58.0,
+			"name": "WorkerClient",
+			"path": "addons/gdscript_mcp/client/vision_worker_benchmark.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-533": {
+			"first_p": 58.0,
+			"history": [
+				{
+					"lines": [
+						111.0
+					],
+					"p_id": 58.0
+				}
+			],
+			"id": "C-533",
+			"last_p": 58.0,
+			"name": "get_ux_pipeline",
+			"path": "addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-534": {
+			"first_p": 58.0,
+			"history": [
+				{
+					"lines": [
+						935.0
+					],
+					"p_id": 58.0
+				}
+			],
+			"id": "C-534",
+			"last_p": 58.0,
+			"name": "_handle_ux_analyze_decoupled",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-535": {
+			"first_p": 58.0,
+			"history": [
+				{
+					"lines": [
+						160.0
+					],
+					"p_id": 58.0
+				}
+			],
+			"id": "C-535",
+			"last_p": 58.0,
+			"name": "analyze_live_only",
+			"path": "addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-536": {
+			"first_p": 58.0,
+			"history": [
+				{
+					"lines": [
+						3.0
+					],
+					"p_id": 58.0
+				}
+			],
+			"id": "C-536",
+			"last_p": 58.0,
+			"name": "DEFAULT_COMMAND",
+			"path": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-537": {
+			"first_p": 58.0,
+			"history": [
+				{
+					"lines": [
+						4.0
+					],
+					"p_id": 58.0
+				}
+			],
+			"id": "C-537",
+			"last_p": 58.0,
+			"name": "DEFAULT_SCRIPT",
+			"path": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -13292,6 +13429,66 @@
 			"last_p": 57.0,
 			"name": "world_chronicle.gd.uid",
 			"path": "scripts/history/world_chronicle.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-285": {
+			"first_p": 58.0,
+			"history": [],
+			"id": "F-285",
+			"last_p": 58.0,
+			"name": ".gitattributes",
+			"path": ".gitattributes",
+			"status": "created",
+			"type": "file"
+		},
+		"F-286": {
+			"first_p": 58.0,
+			"history": [],
+			"id": "F-286",
+			"last_p": 58.0,
+			"name": "mcp_stdio_bridge.py",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-287": {
+			"first_p": 58.0,
+			"history": [],
+			"id": "F-287",
+			"last_p": 58.0,
+			"name": "mcp_stdio_bridge_legacy.js",
+			"path": "addons/gdscript_mcp/client/mcp_stdio_bridge_legacy.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-288": {
+			"first_p": 58.0,
+			"history": [],
+			"id": "F-288",
+			"last_p": 58.0,
+			"name": "test_mcp_python.py",
+			"path": "addons/gdscript_mcp/client/test_mcp_python.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-289": {
+			"first_p": 58.0,
+			"history": [],
+			"id": "F-289",
+			"last_p": 58.0,
+			"name": "vision_worker_benchmark.py",
+			"path": "addons/gdscript_mcp/client/vision_worker_benchmark.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-290": {
+			"first_p": 58.0,
+			"history": [],
+			"id": "F-290",
+			"last_p": 58.0,
+			"name": "vision_worker_legacy.js",
+			"path": "addons/gdscript_mcp/client/vision_worker_legacy.js",
 			"status": "created",
 			"type": "file"
 		}

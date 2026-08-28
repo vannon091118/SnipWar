@@ -25,6 +25,10 @@ PROJECTION_RULES = {
     "prior_file_touchers": "prior_touchers/v1",
     "file_seq_gaps": "seq_gap/v1",
     "shared_entities": "shared_entities/v1",
+    "relationship_facts": "relationship_facts/v1",
+    "admission_markers": "admission_markers/v1",
+    "stance_markers": "stance_markers/v1",
+    "revert_markers": "revert_markers/v1",
 }
 
 # This is the exact precedence and vocabulary of DOKI_VoiceComposer.classify_impulse.
@@ -44,7 +48,7 @@ OBSERVATION_FIELDS = frozenset(
         "composite_fields", "parent_hashes", "p_id", "arc", "impulse_category", "seeded", "model_id",
         "data_changes", "entities", "files", "impulse_category_recomputed",
         "subject_term_flags", "is_merge", "prior_file_touchers", "file_seq_gaps",
-        "shared_entities", "sequence_facts", "merge_facts", "sideplot_facts",        "projection_rules", "counter_evidence",
+        "shared_entities", "sequence_facts", "merge_facts", "sideplot_facts", "relationship_facts", "projection_rules", "counter_evidence",
     }
 )
 
@@ -99,6 +103,12 @@ def _raw_files(entry: dict[str, Any]) -> list[str]:
     )
 
 
+_ADMISSION_RE = re.compile(r"\\b(i was wrong|my mistake|i missed|i broke|i forgot|i caused|mein fehler|habe übersehen|habe kaputt gemacht|ich lag falsch)\\b", re.IGNORECASE)
+_DISAGREEMENT_RE = re.compile(r"\\b(reject|against|contrary|not acceptable|disagree|widerspruch|lehne ab|nicht akzeptabel)\\b", re.IGNORECASE)
+_REVERT_RE = re.compile(r"\\b(revert|restore|restored|rollback|zurücksetzen|wiederherstellen)\\b|\\b(broken|caused)\\s+by\\b", re.IGNORECASE)
+_STANCE_RE = re.compile(r"\\b(minimal|explicit|detailed|ausführlich|kompakt|simple|komplex)\\b", re.IGNORECASE)
+
+
 def _subject_flags(subject: str) -> dict[str, bool]:
     lower = subject.lower()
     return {
@@ -108,6 +118,15 @@ def _subject_flags(subject: str) -> dict[str, bool]:
         "build": re.search(_TERM_GROUPS["build"], lower) is not None,
         "test": re.search(_TERM_GROUPS["test"], lower) is not None,
         "merge": lower.startswith("merge"),
+    }
+
+
+def _relationship_facts(subject: str) -> dict[str, Any]:
+    return {
+        "explicit_admission": bool(_ADMISSION_RE.search(subject)),
+        "explicit_disagreement": bool(_DISAGREEMENT_RE.search(subject)),
+        "explicit_revert": bool(_REVERT_RE.search(subject)),
+        "stance": _STANCE_RE.search(subject).group(0).lower() if _STANCE_RE.search(subject) else None,
     }
 
 
@@ -190,6 +209,7 @@ def build_observations(chain: dict[str, Any], index: dict[str, Any]) -> list[dic
             "files": files,
             "impulse_category_recomputed": classify_impulse(subject),
             "subject_term_flags": _subject_flags(subject),
+            "relationship_facts": _relationship_facts(subject),
             "is_merge": is_merge,
             "prior_file_touchers": prior_file_touchers,
             "file_seq_gaps": file_seq_gaps,

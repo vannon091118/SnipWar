@@ -1063,3 +1063,32 @@ Implement the History simulation war lifecycle and persist its chronicle state
 - scripts/history/world_chronicle.gd.uid: Implementiert und integriert (F-284).
 - scripts/state/game_state.gd: Implementiert und integriert (F-065).
 - scripts/state/run_save_data.gd: Implementiert und integriert (F-196).
+
+## 2026-08-27 10:00:00 — p58 · c58j65n5a23p17 · Squizzle · neugierig
+
+**Squizzles Fall: Migrate MCP transport and vision tooling to the… — nach Thinker**
+
+Migrate MCP transport and vision tooling to the Python stdlib worker with verified async evidence routing
+
+- .gitattributes: Implementiert und integriert (F-285).
+- AGENTS.md: Implementiert und integriert (F-019).
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- addons/gdscript_mcp/AGENTS.md: Implementiert und integriert (F-050).
+- addons/gdscript_mcp/MCP_INDEX.md: Implementiert und integriert (F-045).
+- addons/gdscript_mcp/client/mcp_stdio_bridge.py: Implementiert und integriert (F-286).
+- addons/gdscript_mcp/client/mcp_stdio_bridge_legacy.js: Implementiert und integriert (F-287).
+- addons/gdscript_mcp/client/test_mcp_python.py: Implementiert und integriert (F-288).
+- addons/gdscript_mcp/client/vision_worker.py: Implementiert und integriert (F-082).
+- addons/gdscript_mcp/client/vision_worker_benchmark.py: Implementiert und integriert (F-289).
+- addons/gdscript_mcp/client/vision_worker_legacy.js: Implementiert und integriert (F-290).
+- addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd: Implementiert und integriert (F-102).
+- addons/gdscript_mcp/runtime/host/mcp_runtime.gd: Implementiert und integriert (F-085).
+- addons/gdscript_mcp/runtime/host/mcp_server.gd: Implementiert und integriert (F-042).
+- addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd: Implementiert und integriert (F-044).
+- addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd: Implementiert und integriert (F-041).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/FINDINGS.md: Implementiert und integriert (F-046).
+- mcp_bridge.cmd: Implementiert und integriert (F-202).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/testing/mcp_capture_entry_test.gd: Implementiert und integriert (F-154).

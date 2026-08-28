@@ -4912,6 +4912,138 @@
 			"seq": 57,
 			"subject": "Implement the History simulation war lifecycle… [Analyse: Thinker] — nach Sage",
 			"summary": "Die Chronik verzeichnet diesen Schritt, weil der bisherige Kriegsablauf unter falschen Zeichen geführt wurde. Ein Kriegsziel ist ein Planet, ein Kriegsgegner ist eine Fraktion; solange beides verwe..."
+		},
+		{
+			"a": 23,
+			"arc": "a26",
+			"c": 58,
+			"composite": "c58j65n5a23p17",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": ".gitattributes",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "AGENTS.md",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 23.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "addons/gdscript_mcp/AGENTS.md",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "addons/gdscript_mcp/MCP_INDEX.md",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/mcp_stdio_bridge.py",
+					"insertions": 159.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/mcp_stdio_bridge_legacy.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/test_mcp_python.py",
+					"insertions": 518.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/vision_worker.py",
+					"insertions": 370.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/vision_worker_benchmark.py",
+					"insertions": 226.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/vision_worker_legacy.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 8.0,
+					"file": "addons/gdscript_mcp/runtime/host/mcp_server.gd",
+					"insertions": 75.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/gdscript_mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 132.0,
+					"file": "change_index.json",
+					"insertions": 2343.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 29.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "mcp_bridge.cmd",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 102.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 147.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/mcp_capture_entry_test.gd",
+					"insertions": 25.0
+				}
+			],
+			"date": "2026-08-27 10:00:00",
+			"hash": "e0bfa4d6bc8f1da7c8727c8c98a38f9a6f27d6d4",
+			"j": 65,
+			"model_id": "claude-sonnet-4",
+			"mood": "neugierig",
+			"n": 5,
+			"narrator": "Squizzle",
+			"p": 17,
+			"p_id": 58,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Thinker",
+			"seq": 58,
+			"subject": "Squizzles Fall: Migrate MCP transport and vision tooling to the… — nach Thinker",
+			"summary": "Squizzle folgt den Spuren eines Werkzeugs, das seinen alten Pfad verlassen hat. Die Node-Brücke und der frühere Vision-Worker wurden nicht aus Laune entfernt; der aktuelle Transport führt nun über ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

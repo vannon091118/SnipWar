@@ -5,12 +5,12 @@ from __future__ import annotations
 import json
 import sqlite3
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from . import SCHEMA_VERSION
-from .errors import ChainValidationError, HistoryChangedError, ImportAtomicityError
+from .errors import HistoryChangedError, ImportAtomicityError
 from .observe import SourceSnapshot, canonical_json, event_id, observation_digest
-from .relationships import build_relationship_events, build_relationship_state, build_character_state
+from .relationships import build_relationship_effects, build_relationship_state, build_character_state, classify_events
 from .beliefs import build_beliefs, build_memory
 from .threads import build_threads, current_threads
 from .perspectives import build_perspectives, build_conflicts
@@ -71,16 +71,34 @@ CREATE TABLE IF NOT EXISTS file_touches (
     PRIMARY KEY(seq, path),
     FOREIGN KEY(event_id) REFERENCES events(event_id) ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS relationship_classifications (
+    event_id TEXT PRIMARY KEY,
+    origin_observation_seq INTEGER NOT NULL,
+    event_type TEXT NOT NULL,
+    classification TEXT NOT NULL,
+    evidence_level TEXT NOT NULL,
+    evidence_refs TEXT NOT NULL,
+    status TEXT NOT NULL,
+    superseded_by TEXT,
+    upgraded_classification TEXT,
+    upgrade_evidence_refs TEXT,
+    rule_version TEXT NOT NULL,
+    FOREIGN KEY(origin_observation_seq) REFERENCES observations(seq) ON DELETE CASCADE
+);
 CREATE TABLE IF NOT EXISTS relationship_events (
-    relationship_event_id TEXT PRIMARY KEY,
+    effect_id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
     observation_seq INTEGER NOT NULL,
     source TEXT NOT NULL,
     target TEXT NOT NULL,
     axis TEXT NOT NULL,
     delta REAL NOT NULL,
+    classification TEXT NOT NULL,
+    evidence_level TEXT NOT NULL,
+    evidence_refs TEXT NOT NULL,
     reason TEXT NOT NULL,
-    evidence_type TEXT NOT NULL,
     rule_version TEXT NOT NULL,
+    FOREIGN KEY(event_id) REFERENCES relationship_classifications(event_id) ON DELETE CASCADE,
     FOREIGN KEY(observation_seq) REFERENCES observations(seq) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS relationship_state_history (
@@ -89,7 +107,9 @@ CREATE TABLE IF NOT EXISTS relationship_state_history (
     source TEXT NOT NULL,
     target TEXT NOT NULL,
     values_json TEXT NOT NULL,
+    knowledge_json TEXT NOT NULL DEFAULT '{}',
     rule_version TEXT NOT NULL,
+    decay_rule_version TEXT NOT NULL DEFAULT 'relationship_decay/v1',
     FOREIGN KEY(observation_seq) REFERENCES observations(seq) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS character_state_history (
@@ -244,7 +264,25 @@ class Archive:
             if stored_seq == len(snapshot.observations):
                 try:
                     connection.execute("BEGIN")
-                    self._write_derived(connection, snapshot.observations)
+                    if snapshot.observations:
+                        self._write_derived(connection, snapshot.observations)
+                        last = snapshot.observations[-1]
+                        meta_values = {
+                            "schema_version": SCHEMA_VERSION,
+                            "last_processed_chain_seq": stored_seq,
+                            "last_processed_chain_hash": last["commit_hash"],
+                            "last_processed_entry_digest": last["entry_digest"],
+                            "observation_output_hash": snapshot.output_hash,
+                        }
+                    else:
+                        meta_values = {
+                            "schema_version": SCHEMA_VERSION,
+                            "last_processed_chain_seq": 0,
+                            "last_processed_chain_hash": "",
+                            "last_processed_entry_digest": "",
+                            "observation_output_hash": snapshot.output_hash,
+                        }
+                    self._set_meta(connection, meta_values)
                     connection.commit()
                 except Exception:
                     connection.rollback()
@@ -316,15 +354,18 @@ class Archive:
             )
 
     def _write_derived(self, connection: sqlite3.Connection, observations: list[dict[str, Any]]) -> None:
-        for table in ("relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts"):
+        for table in ("relationship_classifications", "relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts"):
             connection.execute(f"DELETE FROM {table}")
-        for item in build_relationship_events(observations):
-            connection.execute("INSERT INTO relationship_events VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (item["relationship_event_id"], item["observation_seq"], item["source"], item["target"], item["axis"], item["delta"], item["reason"], item["evidence_type"], item["rule_version"]))
-        for item in build_relationship_state(observations):
-            connection.execute("INSERT INTO relationship_state_history(observation_seq, source, target, values_json, rule_version) VALUES (?, ?, ?, ?, ?)", (item["observation_seq"], item["source"], item["target"], canonical_json(item["values"]), item["rule_version"]))
+        for item in classify_events(observations):
+            connection.execute("INSERT INTO relationship_classifications VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (item["event_id"], item["origin_observation_seq"], item["event_type"], item["classification"], item["evidence_level"], canonical_json(item["evidence_refs"]), item["status"], item.get("superseded_by"), item.get("upgraded_classification"), canonical_json(item.get("upgrade_evidence_refs", [])), item["rule_version"]))
+        for item in build_relationship_effects(observations):
+            connection.execute("INSERT INTO relationship_events VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (item["effect_id"], item["event_id"], item["observation_seq"], item["source"], item["target"], item["axis"], item["delta"], item["classification"], item["evidence_level"], canonical_json(item["evidence_refs"]), item["reason"], item["rule_version"]))
+        belief_data = build_beliefs(observations)
+        for item in build_relationship_state(observations, belief_data):
+            connection.execute("INSERT INTO relationship_state_history(observation_seq, source, target, values_json, knowledge_json, rule_version, decay_rule_version) VALUES (?, ?, ?, ?, ?, ?, ?)", (item["observation_seq"], item["source"], item["target"], canonical_json(item["values"]), canonical_json(item.get("knowledge", {})), item["rule_version"], item.get("decay_rule_version", "relationship_decay/v1")))
         for item in build_character_state(observations):
             connection.execute("INSERT INTO character_state_history VALUES (?, ?, ?, ?)", (item["observation_seq"], item["character"], canonical_json(item["values"]), item["rule_version"]))
-        for item in build_beliefs(observations):
+        for item in belief_data:
             connection.execute("INSERT INTO beliefs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tuple(item.values()))
         for item in build_memory(observations):
             connection.execute("INSERT INTO memory VALUES (?, ?, ?, ?, ?, ?, ?, ?)", tuple(item.values()))
@@ -375,7 +416,7 @@ class Archive:
         if int(values.get("last_processed_chain_seq", "0")) != len(snapshot.observations):
             return False
         if not snapshot.observations:
-            return not values.get("last_processed_chain_seq")
+            return values.get("last_processed_chain_seq", "0") == "0" and values.get("observation_output_hash") == snapshot.output_hash
         return (
             values.get("last_processed_chain_hash") == snapshot.observations[-1]["commit_hash"]
             and values.get("last_processed_entry_digest") == snapshot.observations[-1]["entry_digest"]
@@ -385,7 +426,7 @@ class Archive:
         connection = self.connect()
         try:
             self.initialize(connection)
-            return {table: int(connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]) for table in ("relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts")}
+            return {table: int(connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]) for table in ("relationship_classifications", "relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts")}
         finally:
             connection.close()
 
@@ -395,7 +436,7 @@ class Archive:
             self.initialize(connection)
             meta = dict(connection.execute("SELECT key, value FROM meta"))
             counts = {}
-            for table in ("observations", "events", "file_touches", "concept_touches", "relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts"):
+            for table in ("observations", "events", "file_touches", "concept_touches", "relationship_classifications", "relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts"):
                 counts[table] = int(connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
             return {"meta": meta, "counts": counts, "db_path": str(self.db_path)}
         finally:
