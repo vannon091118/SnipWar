@@ -5541,6 +5541,78 @@
 			"seq": 64,
 			"subject": "Devin sagt: chore: sync DOKI artifacts for c63 (CHANGELOG,… — nach Null",
 			"summary": "Die Schicht lag offen, und sie war sauber — nur hatte sie niemand vernäht. Null hat in c63 die Chronik-Artefakte geschrieben: Chain, Index, Changelog, Arc-Register, alles konsistent auf c63j36n11a2..."
+		},
+		{
+			"a": 29,
+			"arc": "a31",
+			"c": 65,
+			"composite": "c65j75n7a29p24",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 42.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/config/game_constants.gd",
+					"insertions": 34.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/config/game_constants.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/config/planet_upgrade_definition.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/config/ship_config.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/config/ship_part_definition.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/config/technology_definition.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 7.0
+				}
+			],
+			"date": "2026-08-27 17:00:00",
+			"hash": "23a393a36b55b464f4042b41643927ef966713f1",
+			"j": 75,
+			"model_id": "claude-sonnet-4",
+			"mood": "neugierig",
+			"n": 7,
+			"narrator": "Argos",
+			"p": 24,
+			"p_id": 65,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Devin",
+			"seq": 65,
+			"subject": "Argos: 10 Dateien — fix: decouple config resources… — nach Devin",
+			"summary": "Also das hier ist neu — und ich hab sofort nachgesehen. Ressourcen-IDs als Export-Defaults in Config-Resources, direkt aus GameState? Hat so noch nie in einer der alten Config-Commits funktioniert,..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

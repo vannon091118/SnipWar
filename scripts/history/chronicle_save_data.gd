@@ -118,13 +118,25 @@ func snapshot_dict() -> Dictionary:
 static func from_snapshot_dict(data: Dictionary) -> ChronicleSaveData:
 	var save := ChronicleSaveData.new()
 	var raw_backstory: Array = data.get("backstory_events", [])
-	save.backstory_events = raw_backstory.map(func(d): return HistoryEvent.from_dict(d))
+	var typed_backstory: Array[HistoryEvent] = []
+	for d in raw_backstory:
+		typed_backstory.append(HistoryEvent.from_dict(d))
+	save.backstory_events = typed_backstory
 	var raw_live: Array = data.get("live_events", [])
-	save.live_events = raw_live.map(func(d): return HistoryEvent.from_dict(d))
+	var typed_live: Array[HistoryEvent] = []
+	for d in raw_live:
+		typed_live.append(HistoryEvent.from_dict(d))
+	save.live_events = typed_live
 	var raw_bios: Array = data.get("biographies", [])
-	save.biographies = raw_bios.map(func(d): return CharacterBiography.from_dict(d))
+	var typed_bios: Array[CharacterBiography] = []
+	for d in raw_bios:
+		typed_bios.append(CharacterBiography.from_dict(d))
+	save.biographies = typed_bios
 	var raw_chains: Array = data.get("chains", [])
-	save.chains = raw_chains.map(func(d): return EventChain.from_dict(d))
+	var typed_chains: Array[EventChain] = []
+	for d in raw_chains:
+		typed_chains.append(EventChain.from_dict(d))
+	save.chains = typed_chains
 	save.eras = data.get("eras", []).duplicate(true)
 	save.relationships = data.get("relationships", {}).duplicate(true)
 	save.last_event_year = int(data.get("last_event_year", 0))

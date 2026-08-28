@@ -133,7 +133,10 @@ static func from_dict(data: Dictionary) -> CharacterBiography:
 	b.death_year = int(data.get("death_year", -99999))
 	b.rank_history = data.get("rank_history", []).duplicate(true)
 	var raw_events: Array = data.get("known_events", [])
-	b.known_events = raw_events.map(func(e): return StringName(str(e)))
+	var typed_events: Array[StringName] = []
+	for e in raw_events:
+		typed_events.append(StringName(str(e)))
+	b.known_events = typed_events
 	b.achievements = data.get("achievements", []).duplicate()
 	b.failures = data.get("failures", []).duplicate()
 	b.relationships = data.get("relationships", {}).duplicate(true)

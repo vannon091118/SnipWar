@@ -121,7 +121,10 @@ static func from_dict(data: Dictionary) -> HistoryEvent:
 	e.year = int(data.get("year", 0))
 	e.event_type = StringName(str(data.get("event_type", "")))
 	var raw_actors: Array = data.get("actors", [])
-	e.actors = raw_actors.map(func(a): return StringName(str(a)))
+	var typed_actors: Array[StringName] = []
+	for a in raw_actors:
+		typed_actors.append(StringName(str(a)))
+	e.actors = typed_actors
 	e.target = StringName(str(data.get("target", "")))
 	e.winner = StringName(str(data.get("winner", "")))
 	e.loser = StringName(str(data.get("loser", "")))

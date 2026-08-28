@@ -78,10 +78,16 @@ static func from_dict(data: Dictionary) -> EventChain:
 	c.chain_id = StringName(str(data.get("chain_id", "")))
 	c.title = str(data.get("title", ""))
 	var raw_events: Array = data.get("events", [])
-	c.events = raw_events.map(func(e): return StringName(str(e)))
+	var typed_events: Array[StringName] = []
+	for e in raw_events:
+		typed_events.append(StringName(str(e)))
+	c.events = typed_events
 	c.start_year = int(data.get("start_year", 0))
 	c.end_year = int(data.get("end_year", 0))
 	c.resolution = StringName(str(data.get("resolution", "")))
 	var raw_participants: Array = data.get("participants", [])
-	c.participants = raw_participants.map(func(p): return StringName(str(p)))
+	var typed_participants: Array[StringName] = []
+	for p in raw_participants:
+		typed_participants.append(StringName(str(p)))
+	c.participants = typed_participants
 	return c

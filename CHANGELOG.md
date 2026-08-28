@@ -1207,3 +1207,20 @@ chore: sync DOKI artifacts for c63 (CHANGELOG, chain, index, arcs)
 - change_index.json: Dokumentation aktualisiert (F-003).
 - narrative_chain.json: Dokumentation aktualisiert (F-004).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+
+## 2026-08-27 17:00:00 — p65 · c65j75n7a29p24 · Argos · neugierig
+
+**Argos: 10 Dateien — fix: decouple config resources… — nach Devin**
+
+fix: decouple config resources from GameState via dependency-free GameConstants
+
+- CHANGELOG.md: Fehler behoben (F-002).
+- change_index.json: Fehler behoben (F-003).
+- narrative_chain.json: Fehler behoben (F-004).
+- scripts/config/game_constants.gd: Fehler behoben (F-324).
+- scripts/config/game_constants.gd.uid: Fehler behoben (F-325).
+- scripts/config/planet_upgrade_definition.gd: Fehler behoben (F-326).
+- scripts/config/ship_config.gd: Fehler behoben (F-327).
+- scripts/config/ship_part_definition.gd: Fehler behoben (F-328).
+- scripts/config/technology_definition.gd: Fehler behoben (F-329).
+- scripts/doki/data/arcs.json: Fehler behoben (F-001).

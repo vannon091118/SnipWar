@@ -399,6 +399,39 @@
 			],
 			"p_id": 32.0
 		},
+		"23a393a36b55b464f4042b41643927ef966713f1": {
+			"c": 65,
+			"composite": "c65j75n7a29p24",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-324",
+				"F-325",
+				"F-326",
+				"F-327",
+				"F-328",
+				"F-329",
+				"F-001",
+				"C-684",
+				"C-685",
+				"C-686",
+				"C-687",
+				"C-688",
+				"C-689",
+				"C-690",
+				"C-691",
+				"C-692",
+				"C-693",
+				"C-694",
+				"C-695",
+				"C-696",
+				"C-697",
+				"C-698",
+				"C-699"
+			],
+			"p_id": 65
+		},
 		"24c93b5d06215f826ff304f560ff0a94240f45c4": {
 			"c": 35.0,
 			"composite": "c35j41n5a8p34",
@@ -1547,7 +1580,7 @@
 			"p_id": 38.0
 		},
 		"f6da54b78be26d34c9451041f8d0f20231003554": {
-			"c": 64,
+			"c": 64.0,
 			"composite": "c64j83n6a18p55",
 			"entities": [
 				"F-002",
@@ -1555,7 +1588,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 64
+			"p_id": 64.0
 		},
 		"fa2b7bbd7316ba058617513072f00afdf6e7dc93": {
 			"c": 36.0,
@@ -13335,6 +13368,278 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-684": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						2.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-684",
+			"last_p": 65.0,
+			"name": "GameConstants",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-685": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-685",
+			"last_p": 65.0,
+			"name": "FACTION_PLAYER",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-686": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-686",
+			"last_p": 65.0,
+			"name": "FACTION_CPU",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-687": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-687",
+			"last_p": 65.0,
+			"name": "FACTION_NEUTRAL",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-688": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-688",
+			"last_p": 65.0,
+			"name": "FACTION_UNINHABITED",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-689": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-689",
+			"last_p": 65.0,
+			"name": "MISSION_MILITARY",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-690": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						14.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-690",
+			"last_p": 65.0,
+			"name": "MISSION_CARGO",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-691": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						15.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-691",
+			"last_p": 65.0,
+			"name": "MISSION_COLONY",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-692": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-692",
+			"last_p": 65.0,
+			"name": "MISSION_COLLECT",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-693": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-693",
+			"last_p": 65.0,
+			"name": "TECH_WORKER_AUTOMATION",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-694": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-694",
+			"last_p": 65.0,
+			"name": "RES_ENERGY",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-695": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-695",
+			"last_p": 65.0,
+			"name": "RES_BIOMASS",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-696": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-696",
+			"last_p": 65.0,
+			"name": "RES_RARE",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-697": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-697",
+			"last_p": 65.0,
+			"name": "RES_MATERIAL",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-698": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-698",
+			"last_p": 65.0,
+			"name": "RES_VOLATILE",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-699": {
+			"first_p": 65.0,
+			"history": [
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 65.0
+				}
+			],
+			"id": "C-699",
+			"last_p": 65.0,
+			"name": "ALL_RESOURCES",
+			"path": "scripts/config/game_constants.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -16562,6 +16867,66 @@
 			"last_p": 63.0,
 			"name": "simulation_overlay.gd.uid",
 			"path": "scripts/ui/history/simulation_overlay.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-324": {
+			"first_p": 65.0,
+			"history": [],
+			"id": "F-324",
+			"last_p": 65.0,
+			"name": "game_constants.gd",
+			"path": "scripts/config/game_constants.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-325": {
+			"first_p": 65.0,
+			"history": [],
+			"id": "F-325",
+			"last_p": 65.0,
+			"name": "game_constants.gd.uid",
+			"path": "scripts/config/game_constants.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-326": {
+			"first_p": 65.0,
+			"history": [],
+			"id": "F-326",
+			"last_p": 65.0,
+			"name": "planet_upgrade_definition.gd",
+			"path": "scripts/config/planet_upgrade_definition.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-327": {
+			"first_p": 65.0,
+			"history": [],
+			"id": "F-327",
+			"last_p": 65.0,
+			"name": "ship_config.gd",
+			"path": "scripts/config/ship_config.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-328": {
+			"first_p": 65.0,
+			"history": [],
+			"id": "F-328",
+			"last_p": 65.0,
+			"name": "ship_part_definition.gd",
+			"path": "scripts/config/ship_part_definition.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-329": {
+			"first_p": 65.0,
+			"history": [],
+			"id": "F-329",
+			"last_p": 65.0,
+			"name": "technology_definition.gd",
+			"path": "scripts/config/technology_definition.gd",
 			"status": "created",
 			"type": "file"
 		}
