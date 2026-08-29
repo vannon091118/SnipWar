@@ -1596,3 +1596,17 @@ R-009: Test-Orchestrator test_all.gd — 8 Entry-Tests + Preflight -x, 9/9 PASS,
 - scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).
 - scripts/testing/test_all.gd: Test-Assets ergänzt (F-384).
 - scripts/testing/test_all.gd.uid: Test-Assets ergänzt (F-385).
+
+## 2026-08-27 15:00:00 — p87 · c87j97n1a37p2 · Buffy · alarmiert
+
+**[Buffy] R-005: CODEBASE_AUDIT.md als HISTORISCH markiert,… — nach Squizzle**
+
+R-005: CODEBASE_AUDIT.md als HISTORISCH markiert, widelegte Claims (HistoricalWorld fehlt) korrigiert, F-203 geschlossen
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- ROADMAP.md: Implementiert und integriert (F-376).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/CODEBASE_AUDIT.md: Implementiert und integriert (F-369).
+- docs/FINDINGS.md: Implementiert und integriert (F-046).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).

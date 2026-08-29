@@ -111,11 +111,11 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DEPENDS:** R-050 · **BLOCKS:** —
 - **STATUS:** `VERIFIED`
 
-### R-052 — HistoricalWorld-Kontext-Übergabe (Jahr-0-Snapshot → Weltstart) — **P1**
-- **WHY:** Chronik fällt ohne echte Daten auf `_default_planets()` zurück; die Vorstart-Welt ist eine Parallel-Erzählung ohne Rückkopplung in die Spielwelt.
+### R-052 — HistoricalWorld-Kontext-Übergabe (Jahr-0-Snapshot → Weltstart) — **P1** ✅ VERIFIED
+- **WHY:** Chronik-Endzustand wurde nicht auf die Spielwelt übertragen; WorldBootstrap nutzte Katalog-Defaults statt historischer Ownership.
+- **ERGEBNIS:** GameState.set_historical_handoff() / get_and_clear_historical_handoff() (R-052 API); HistoricalWorldBootstrap extrahiert Ownership aus letztem Snapshot; WorldBootstrap wendet Handoff nach Planet-Creation an (set_faction pro Planet). Compile 317/317, Flow-Test 11/11, Lifecycle 21/21, historical_world-Constraint 11/11 PASS.
 - **DEPENDS:** R-050 · **BLOCKS:** —
-- **DoD:** Jahr-0-Ownership/Faction-State wird Basis des Weltstarts; `faction_planet_snapshot()` == Chronik-Endzustand; keine zweite Simulation.
-- **STATUS:** `TODO`
+- **STATUS:** `VERIFIED`
 
 ### R-006 — Tote-Signal-Befund klassifizieren — **P1** ✅ VERIFIED (revidiert)
 - **WHY (ursprünglich):** `battle_context_changed` + `run_started`/`ship_launched`/`milestone_reached` galten als Legacy-Altlasten.

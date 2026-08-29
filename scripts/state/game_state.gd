@@ -145,6 +145,10 @@ var _session: RunSession
 # Pending chunk/timer payload handed to the world scene after a save restore.
 var _pending_chunk_data: ChunkSaveData
 var _pending_timers: Dictionary = {}
+# R-052: Historical handoff — ownership data from the final snapshot at year 0.
+# Set by HistoricalWorldBootstrap before requesting reconnect; consumed by
+# WorldBootstrap after planet creation to override catalog defaults.
+var _historical_handoff_ownership: Dictionary = {}
 
 func _init() -> void:
 	_connect_domain_signals()
@@ -396,6 +400,18 @@ func consume_world_reconnect_request() -> bool:
 	var requested := _reconnect_requested
 	_reconnect_requested = false
 	return requested
+
+## R-052: Stores the final historical ownership (year 0) so the world can
+## apply it instead of catalog defaults after reconnect.
+func set_historical_handoff(ownership: Dictionary) -> void:
+	_historical_handoff_ownership = ownership.duplicate()
+
+## R-052: Returns and clears the stored historical ownership. Returns an
+## empty dictionary if no handoff was stored (non-historical path).
+func get_and_clear_historical_handoff() -> Dictionary:
+	var data: Dictionary = _historical_handoff_ownership
+	_historical_handoff_ownership = {}
+	return data
 
 func has_active_run() -> bool:
 	return _run_active

@@ -39,6 +39,7 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	_disable_collision_debug_overlay()
 	_apply_pending_timers()
+	_apply_historical_handoff()
 
 func _apply_active_scenario() -> void:
 	var state: Node = get_node_or_null("/root/GameState")
@@ -205,3 +206,26 @@ func _apply_pending_timers() -> void:
 			float(timers.get("economy_remaining", -1.0)),
 			float(timers.get("gather_remaining", -1.0))
 		)
+
+## R-052: Wendet den historischen Endzustand (Jahr 0) an, der von der
+## HistoricalWorld-Szene über GameState als Handoff-Daten übergeben wurde.
+## Überschreibt die Katalog-Defaults mit den tatsächlich simulierten Werten.
+func _apply_historical_handoff() -> void:
+	var state: Node = get_node_or_null("/root/GameState")
+	if state == null or not state.has_method("get_and_clear_historical_handoff"):
+		return
+	var ownership: Dictionary = state.get_and_clear_historical_handoff()
+	if ownership.is_empty():
+		return
+	# Alle Planeten im Szenenbaum durchlaufen und Ownership anwenden.
+	var planet_field: Node = get_node_or_null("PlanetField")
+	if planet_field == null:
+		return
+	var planets: Array = planet_field.get_tree().get_nodes_in_group("planets")
+	for planet in planets:
+		var pid: String = String(planet.get("planet_id")) if planet.has_method("get") else ""
+		if pid.is_empty():
+			continue
+		var new_owner: StringName = ownership.get(pid, &"") as StringName
+		if not String(new_owner).is_empty() and planet.has_method("set_faction"):
+			planet.set_faction(new_owner)

@@ -64,6 +64,19 @@ func _on_playback_finished() -> void:
 	# begin_new_game() neu erzeugen (Doppel-Simulation). Der Flag veranlasst
 	# WorldBootstrap, über reconnect_world() denselben Run fortzusetzen.
 	var state: Node = get_node_or_null("/root/GameState")
+	# R-052: Speichere den finalen Ownership (Jahr 0) als Handoff-Daten,
+	# damit die Welt den historischen Endzustand statt der Katalog-Defaults übernimmt.
+	if state != null and _playback != null:
+		var snapshots: Array = _playback.get("snapshots") if _playback.has_method("get") else []
+		if snapshots.size() > 0:
+			var final_snapshot = snapshots[snapshots.size() - 1]
+			var ownership: Dictionary = {}
+			if final_snapshot != null and final_snapshot.has("planets"):
+				for p in final_snapshot.planets:
+					if p != null and p.has("planet_id") and p.has("owner"):
+						ownership[String(p.planet_id)] = p.owner
+			if ownership.size() > 0 and state.has_method("set_historical_handoff"):
+				state.set_historical_handoff(ownership)
 	if state != null and state.has_active_run() and state.has_method("request_world_reconnect"):
 		state.request_world_reconnect()
 	var director: Node = get_node_or_null("/root/SceneDirectorService")
