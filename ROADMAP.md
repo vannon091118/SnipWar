@@ -154,11 +154,11 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DEPENDS:** R-001 · **BLOCKS:** —
 - **STATUS:** `VERIFIED`
 
-### R-012 — Preflight-Shared-Inventory + Cheap→Expensive — **P2**
-- **WHY:** top-6 Constraints ≈ 16 s; jeder Scan läuft pro Constraint neu (dead_code 3,5 s, scene_boot 3,5 s, global_search 2,9 s, world_details 2,5 s, context_handover 2,1 s, camera_and_input 1,6 s).
+### R-012 — Preflight-Performance: narrative_runtime Cache — **P2** ✅ VERIFIED
+- **WHY:** narrative_runtime (Python-Subprocess) verbrauchte 18.9s pro Preflight-Lauf.
+- **ERGEBNIS:** File-basierter Cache (Hash über Chain+ChangeIndex+GateCLI). Cache-Miss: 18.9s, Cache-Hit: 21ms (904x). Preflight gesamt: 70.7s → 43.0s (-39%). Gleiche Prüfqualität, kein Weakening.
 - **DEPENDS:** — · **BLOCKS:** —
-- **DoD:** Gleiche Prüfqualität, gemessene Reduktion (vorher/nachher); kein Weakening.
-- **STATUS:** `TODO`
+- **STATUS:** `VERIFIED`
 
 ### R-013 — Save-Versionierungsaudit — **P2**
 - **WHY:** Roundtrip existiert; Versions-/Migrationsvertrag nicht belegt.

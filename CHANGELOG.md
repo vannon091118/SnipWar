@@ -1702,3 +1702,18 @@ Slice E: R-SIM-002 bis R-SIM-004 in ROADMAP eingetragen — RelationshipEngine, 
 - change_index.json: Implementiert und integriert (F-003).
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 22:00:00 — p94 · c94j24n14a36p77 · Sage · selbstironisch
+
+**Sage lehrt: R-011: MCP_AUDIT_REPORT als HISTORISCH markiert,… — nach Buffy**
+
+R-011: MCP_AUDIT_REPORT als HISTORISCH markiert, MCP_INDEX.md tools_count Referenz gefixt, F-208 geschlossen
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- MCP_AUDIT_REPORT.md: Implementiert und integriert (F-355).
+- ROADMAP.md: Implementiert und integriert (F-376).
+- addons/gdscript_mcp/MCP_INDEX.md: Implementiert und integriert (F-045).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/FINDINGS.md: Implementiert und integriert (F-046).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).

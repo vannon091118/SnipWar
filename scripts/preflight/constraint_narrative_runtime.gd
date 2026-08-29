@@ -19,10 +19,26 @@ func constraint_description() -> String:
 func requires_scene() -> bool:
 	return false
 
+const CACHE_PATH := "user://narrative_runtime_cache.json"
+const CHAIN_PATH := "res://narrative_chain.json"
+const CHANGE_INDEX_PATH := "res://change_index.json"
+const GATE_CLI_PATH := "res://narrative_runtime/gate_cli.py"
+
 func run(ctx: PreflightContext) -> bool:
 	var root := ProjectSettings.globalize_path("res://")
+	# --- R-012: File-based cache ---
+	# Hash über Chain + ChangeIndex + Gate-CLI-Code. Bei Cache-Hit:
+	# Python-Subprocess überspringen (~20s Ersparnis).
+	var current_hash := _compute_hash()
+	var cached := _read_cache()
+	if cached.get("hash", "") == current_hash and cached.has("result"):
+		var result: Dictionary = cached["result"]
+		var all_pass: bool = result.get("all_pass", false)
+		var checks: int = result.get("checks", 0)
+		var msg: String = "Narrative Runtime Gate: %d checks — %s (cached)" % [checks, "all PASS" if all_pass else "FAIL"]
+		return ctx.check(all_pass, msg, result)
+	# --- Cache miss: Python-Subprocess ausführen ---
 	var output: Array = []
-	# Try python3 first (avoids Windows Store shim), then python.
 	var py_bin := "python3"
 	var exit_code: int = OS.execute(py_bin, ["-m", "narrative_runtime.gate_cli", "--root", root], output, true)
 	if exit_code != OK:
@@ -49,6 +65,33 @@ func run(ctx: PreflightContext) -> bool:
 			if String(parsed[gate_name]) != "PASS":
 				all_pass = false
 				failed_gates.append(String(gate_name))
+	var result: Dictionary = {"all_pass": all_pass, "checks": parsed.size(), "gates": parsed}
+	_write_cache(current_hash, result)
 	return ctx.check(all_pass,
 		"Narrative Runtime Gate: %d checks — %s" % [parsed.size(), "all PASS" if all_pass else "FAIL: %s" % ", ".join(failed_gates)],
 		{"gates": parsed})
+
+func _compute_hash() -> String:
+	var parts: PackedStringArray = []
+	for path in [CHAIN_PATH, CHANGE_INDEX_PATH, GATE_CLI_PATH]:
+		var f := FileAccess.open(path, FileAccess.READ)
+		if f != null:
+			parts.append(f.get_as_text())
+			f.close()
+	return str("".join(parts).hash())
+
+func _read_cache() -> Dictionary:
+	var f := FileAccess.open(CACHE_PATH, FileAccess.READ)
+	if f == null:
+		return {}
+	var raw: String = f.get_as_text()
+	f.close()
+	var parsed = JSON.parse_string(raw)
+	return parsed if parsed is Dictionary else {}
+
+func _write_cache(hash_value: String, result: Dictionary) -> void:
+	var data: Dictionary = {"hash": hash_value, "result": result}
+	var f := FileAccess.open(CACHE_PATH, FileAccess.WRITE)
+	if f != null:
+		f.store_string(JSON.stringify(data))
+		f.close()
