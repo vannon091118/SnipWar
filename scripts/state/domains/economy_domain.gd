@@ -12,18 +12,34 @@ var trade_volumes: Dictionary = {}
 var worker_transport_records: Dictionary = {}
 var _next_worker_transport_index: int = 0
 
+# These signals are emitted by the economy unit files (vault_core, upgrade_unit,
+# refinery_trade_unit) via _owner.<signal>.emit(...); the linter only sees the
+# declarations here and flags them as unused. worker_factory_built/building_* are
+# emitted in-class and therefore not annotated.
+@warning_ignore("unused_signal")
 signal faction_resources_changed(faction: StringName, resource_id: StringName, new_amount: int)
+@warning_ignore("unused_signal")
 signal credits_changed(faction: StringName, new_amount: int)
+@warning_ignore("unused_signal")
 signal workers_reserved(planet_id: StringName, job_id: StringName, amount: int)
+@warning_ignore("unused_signal")
 signal workers_released(planet_id: StringName, job_id: StringName, amount: int)
+@warning_ignore("unused_signal")
 signal planet_upgraded(planet_id: StringName, upgrade_id: StringName)
+@warning_ignore("unused_signal")
 signal resource_generated(planet_id: StringName, resource_id: StringName, amount: int)
+@warning_ignore("unused_signal")
 signal resources_collected(faction: StringName, planet_id: StringName, resource_id: StringName, amount: int)
+@warning_ignore("unused_signal")
 signal gathering_started(faction: StringName, planet_id: StringName, workers: int)
+@warning_ignore("unused_signal")
 signal gathering_withdrawn(faction: StringName, planet_id: StringName, workers: int)
 signal worker_factory_built(planet_id: StringName)
+@warning_ignore("unused_signal")
 signal refinery_converted(planet_id: StringName, faction: StringName, consumed: Dictionary, produced: Dictionary)
+@warning_ignore("unused_signal")
 signal local_resources_changed(planet_id: StringName, resource_id: StringName, new_amount: int)
+@warning_ignore("unused_signal")
 signal resource_transferred(from_planet: StringName, to_planet: StringName, resource_id: StringName, amount: int)
 signal building_placed(planet_id: StringName, building_id: StringName, q: int, r: int)
 signal building_removed(planet_id: StringName, q: int, r: int)

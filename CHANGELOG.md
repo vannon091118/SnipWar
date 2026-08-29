@@ -1834,3 +1834,18 @@ E3: refinery_trade_unit aus economy_domain.gd extrahiert — Refinery, Trade-Rou
 - scripts/state/domains/economy/refinery_trade_unit.gd: Implementiert und integriert (F-407).
 - scripts/state/domains/economy/refinery_trade_unit.gd.uid: Implementiert und integriert (F-408).
 - scripts/state/domains/economy_domain.gd: Implementiert und integriert (F-121).
+
+## 2026-08-27 08:00:00 — p104 · c104j45n2a39p40 · Basher · neugierig
+
+**Basher (8 files): Dead-Code-Removal: _trade_tick_index war nur… — nach Spark**
+
+Dead-Code-Removal: _trade_tick_index war nur geschrieben, nie gelesen. Entfernt aus economy_domain.gd (Deklaration), vault_core.gd (Reset) und refinery_trade_unit.gd (tick_trade_routes). Plus DOKI chain sync Artefakte der E3-Extraktion nachgetragen.
+
+- CHANGELOG.md: Tooling erweitert (F-002).
+- change_index.json: Tooling erweitert (F-003).
+- docs/METRICS_TRACKER.md: Tooling erweitert (F-357).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+- scripts/state/domains/economy/refinery_trade_unit.gd: Tooling erweitert (F-407).
+- scripts/state/domains/economy/vault_core.gd: Tooling erweitert (F-399).
+- scripts/state/domains/economy_domain.gd: Tooling erweitert (F-121).
