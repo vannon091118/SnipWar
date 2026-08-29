@@ -1610,3 +1610,18 @@ R-005: CODEBASE_AUDIT.md als HISTORISCH markiert, widelegte Claims (HistoricalWo
 - docs/FINDINGS.md: Implementiert und integriert (F-046).
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 16:00:00 — p88 · c88j28n1a25p54 · Buffy · trocken
+
+**[Buffy] R-052: Year-0 Handoff — historischer Endzustand… — nach Squizzle**
+
+R-052: Year-0 Handoff — historischer Endzustand wird auf Spielwelt übertragen (set_historical_handoff + WorldBootstrap wendet Ownership an); Compile 317/317, Tests grün
+
+- CHANGELOG.md: Test-Assets ergänzt (F-002).
+- ROADMAP.md: Test-Assets ergänzt (F-376).
+- change_index.json: Test-Assets ergänzt (F-003).
+- narrative_chain.json: Test-Assets ergänzt (F-004).
+- scripts/bootstrap/historical_world_bootstrap.gd: Test-Assets ergänzt (F-371).
+- scripts/bootstrap/world_bootstrap.gd: Test-Assets ergänzt (F-386).
+- scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).
+- scripts/state/game_state.gd: Test-Assets ergänzt (F-065).

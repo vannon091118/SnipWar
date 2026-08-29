@@ -1296,6 +1296,24 @@
 			],
 			"p_id": 46.0
 		},
+		"9bef54275f45baf63d207203a0f636c6121947b4": {
+			"c": 88,
+			"composite": "c88j28n1a25p54",
+			"entities": [
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-004",
+				"F-371",
+				"F-386",
+				"F-001",
+				"F-065",
+				"C-846",
+				"C-847",
+				"C-848"
+			],
+			"p_id": 88
+		},
 		"a0e0702ce8c7660eb22f04ac0e09478336ee6689": {
 			"c": 67.0,
 			"composite": "c67j75n12a23p47",
@@ -1837,7 +1855,7 @@
 			"p_id": 57.0
 		},
 		"e04364638d66968d25e47cc00c1afa400646e0fd": {
-			"c": 87,
+			"c": 87.0,
 			"composite": "c87j97n1a37p2",
 			"entities": [
 				"F-002",
@@ -1848,7 +1866,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 87
+			"p_id": 87.0
 		},
 		"e0bfa4d6bc8f1da7c8727c8c98a38f9a6f27d6d4": {
 			"c": 58.0,
@@ -16675,6 +16693,57 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-846": {
+			"first_p": 88.0,
+			"history": [
+				{
+					"lines": [
+						210.0
+					],
+					"p_id": 88.0
+				}
+			],
+			"id": "C-846",
+			"last_p": 88.0,
+			"name": "_apply_historical_handoff",
+			"path": "scripts/bootstrap/world_bootstrap.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-847": {
+			"first_p": 88.0,
+			"history": [
+				{
+					"lines": [
+						403.0
+					],
+					"p_id": 88.0
+				}
+			],
+			"id": "C-847",
+			"last_p": 88.0,
+			"name": "set_historical_handoff",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-848": {
+			"first_p": 88.0,
+			"history": [
+				{
+					"lines": [
+						408.0
+					],
+					"p_id": 88.0
+				}
+			],
+			"id": "C-848",
+			"last_p": 88.0,
+			"name": "get_and_clear_historical_handoff",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -20522,6 +20591,16 @@
 			"last_p": 86.0,
 			"name": "test_all.gd.uid",
 			"path": "scripts/testing/test_all.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-386": {
+			"first_p": 88.0,
+			"history": [],
+			"id": "F-386",
+			"last_p": 88.0,
+			"name": "world_bootstrap.gd",
+			"path": "scripts/bootstrap/world_bootstrap.gd",
 			"status": "created",
 			"type": "file"
 		}

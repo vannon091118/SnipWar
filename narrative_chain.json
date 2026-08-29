@@ -7257,6 +7257,68 @@
 			"seq": 87,
 			"subject": "[Buffy] R-005: CODEBASE_AUDIT.md als HISTORISCH markiert,… — nach Squizzle",
 			"summary": "Buffy alarmiert:"
+		},
+		{
+			"a": 25,
+			"arc": "a42",
+			"c": 88,
+			"composite": "c88j28n1a25p54",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "ROADMAP.md",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 57.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/bootstrap/historical_world_bootstrap.gd",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/bootstrap/world_bootstrap.gd",
+					"insertions": 24.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/game_state.gd",
+					"insertions": 16.0
+				}
+			],
+			"date": "2026-08-27 16:00:00",
+			"hash": "9bef54275f45baf63d207203a0f636c6121947b4",
+			"j": 28,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 1,
+			"narrator": "Buffy",
+			"p": 54,
+			"p_id": 88,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Squizzle",
+			"seq": 88,
+			"subject": "[Buffy] R-052: Year-0 Handoff — historischer Endzustand… — nach Squizzle",
+			"summary": "Buffy trocken:"
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

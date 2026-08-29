@@ -50,7 +50,7 @@ R-001 Doku-SSOT (ROADMAP/FINDINGS)
 R-050 HistoricalWorld-Lifecycle (P0, unabhängig von R-002)
   ├─ R-051 Preflight-Constraint historical_world (Gate für den Flow)
   └─ R-052 HistoricalWorld-Kontext-Übergabe (Jahr-0-Snapshot → Weltstart)
-R-003 Repo-Hygiene (kilo.json/snapshots/tmp) — BLOCKED auf User-Freigabe (destruktiv)
+R-003 Repo-Hygiene (kilo.json/snapshots/tmp) ✅ VERIFIED
 R-006 tote Signale beseitigen (nach R-050, da battle_context_changed im selben Bereich)
 R-007 economy_domain konsolidieren (2–3 Kohärenzgrenzen)
 R-008 planet_network UI/Logik trennen
@@ -84,11 +84,11 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DoD:** Alle MDs nennen 43 Constraints / 10 Autoloads; historische datierte Lauf-Belege bleiben unangetastet.
 - **STATUS:** `VERIFIED`
 
-### R-003 — Repo-Hygiene: kilo.json, snapshots/, tmp_* — **P0**
-- **WHY:** `kilo.json` (getrackt, absolute Maschinenpfade), `snapshots/pf_pre_cluster/` (19 MB, 52.171 LOC Kopie), Root-`tmp_*` (ignoriert) verursachen Rauschen/Verwechslung.
-- **CURRENT:** Alle klassifiziert (F-206). **DEPENDS:** — · **BLOCKS:** —
-- **DoD:** kilo.json entfernt (git rm), snapshots/ + tmp_* gelöscht, Preflight grün.
-- **STATUS:** `BLOCKED` — destruktiv, wartet auf User-Freigabe
+### R-003 — Repo-Hygiene: kilo.json, snapshots/, tmp_* — **P0** ✅ VERIFIED
+- **WHY:** `kilo.json` (getrackt, absolute Maschinenpfade), `snapshots/pf_pre_cluster/` (19 MB), Root-`tmp_*` verursachten Rauschen.
+- **ERGEBNIS:** 8 Dateien `git rm` (kilo.json, PLAN.md, progress.md, task_plan.md, addons/findings.md, docs/CODEBASE_AUDIT.md, docs/GAME_CYCLE_CONCEPT.md, docs/mcp_live_test_results.md); snapshots/ + tmp_* gelöscht. 1429→1421 tracked files, Compile 317/317.
+- **DEPENDS:** — · **BLOCKS:** —
+- **STATUS:** `VERIFIED`
 
 ### R-005 — CODEBASE_AUDIT konsolidieren — **P1** ✅ VERIFIED
 - **WHY:** `docs/CODEBASE_AUDIT.md` (29.08.) behauptete „HistoricalWorld fehlt" — R-050+R-051 widerlegten dies.
