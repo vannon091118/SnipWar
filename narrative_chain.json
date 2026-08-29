@@ -7029,6 +7029,63 @@
 			"seq": 83,
 			"subject": "Devin sagt: R-051: Preflight-Gate für historical_world-Flow —… — nach Sage",
 			"summary": "Devin spricht:"
+		},
+		{
+			"a": 27,
+			"arc": "a40",
+			"c": 84,
+			"composite": "c84j76n10a27p54",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 19.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "ROADMAP.md",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 185.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 82.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/concept_index.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 16.0
+				}
+			],
+			"date": "2026-08-27 12:00:00",
+			"hash": "26d2624e9e1793ff8f535c38291ea6c641732d7d",
+			"j": 76,
+			"model_id": "claude-sonnet-4",
+			"mood": "müde-zufrieden",
+			"n": 10,
+			"narrator": "Glitch",
+			"p": 54,
+			"p_id": 84,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Devin",
+			"seq": 84,
+			"subject": "Glitch ermittelt: R-010: ConceptIndex 5 unmapped Klassen mappen —… — nach Devin",
+			"summary": "Glitch murmelt:"
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

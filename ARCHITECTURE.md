@@ -31,7 +31,7 @@
 # Smoke-Test (Bootet Hauptszene, beendet nach 2 Sekunden)
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Vollständige Preflight-Prüfung (43 Constraints)
+# Vollständige Preflight-Prüfung (44 Constraints)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x
 ```
 
@@ -346,7 +346,7 @@ Jeder Commit läuft unumgehbar durch folgende Stufen:
 | Szenen (`.tscn`) | **16** |
 | Textur- & Audio-Assets | **419** |
 | Engine-Ressourcen (`.tres`) | **91** |
-| Preflight Coverage | **43 / 43 Constraints PASS** |
+| Preflight Coverage | **44 / 44 Constraints PASS** |
 
 ---
 

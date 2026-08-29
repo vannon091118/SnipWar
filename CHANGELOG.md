@@ -1554,3 +1554,17 @@ R-051: Preflight-Gate für historical_world-Flow — Constraint bootet Szene mit
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
 - scripts/preflight/constraint_historical_world.gd: Dokumentation aktualisiert (F-382).
 - scripts/preflight/constraint_historical_world.gd.uid: Dokumentation aktualisiert (F-383).
+
+## 2026-08-27 12:00:00 — p84 · c84j76n10a27p54 · Glitch · müde-zufrieden
+
+**Glitch ermittelt: R-010: ConceptIndex 5 unmapped Klassen mappen —… — nach Devin**
+
+R-010: ConceptIndex 5 unmapped Klassen mappen — RunPreparation/GameConstants/FactionAI/PreflightConstraintHistoricalWorld/PreflightCodeIndex zugeordnet, --unmapped=0, 16/16 PASS
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- ROADMAP.md: Implementiert und integriert (F-376).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/FINDINGS.md: Implementiert und integriert (F-046).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/concept_index.gd: Implementiert und integriert (F-055).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
