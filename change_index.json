@@ -1284,7 +1284,7 @@
 			"p_id": 82.0
 		},
 		"82a932e56b1b866061e767b88e86db85e86eee66": {
-			"c": 91,
+			"c": 91.0,
 			"composite": "c91j39n1a28p90",
 			"entities": [
 				"F-002",
@@ -1296,7 +1296,7 @@
 				"F-391",
 				"F-392"
 			],
-			"p_id": 91
+			"p_id": 91.0
 		},
 		"8cab9f7ab5cebf83cdcdbf4e2af085a2da35ea7f": {
 			"c": 76.0,
@@ -1318,6 +1318,21 @@
 				"C-475"
 			],
 			"p_id": 76.0
+		},
+		"8d0d27cebc5d8953e1382a0329d9fd3ff27868f3": {
+			"c": 92,
+			"composite": "c92j72n4a1p74",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-371",
+				"F-386",
+				"F-001",
+				"F-283",
+				"C-851"
+			],
+			"p_id": 92
 		},
 		"8d9d9f4ad24a1baba88e4c08fe114bd1767178e9": {
 			"c": 46.0,
@@ -16835,6 +16850,23 @@
 			"last_p": 90.0,
 			"name": "PROFILES_PATH",
 			"path": "scripts/history/simulation/faction_profiles.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-851": {
+			"first_p": 92.0,
+			"history": [
+				{
+					"lines": [
+						350.0
+					],
+					"p_id": 92.0
+				}
+			],
+			"id": "C-851",
+			"last_p": 92.0,
+			"name": "final_year0_ownership",
+			"path": "scripts/history/world_chronicle.gd",
 			"status": "modified",
 			"type": "component"
 		},

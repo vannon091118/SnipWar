@@ -184,6 +184,24 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DEPENDS:** — · **BLOCKS:** R-SIM-002
 - **STATUS:** `VERIFIED`
 
+### R-SIM-002 — FactionRelationshipEngine — **P2**
+- **WHY:** Beziehungsdeltas zwischen Fraktionen werden aktuell nicht simuliert. Trade-Compatibility aus Planet-Besitz-Diversität, kein Live-GameState-Zugriff.
+- **DEPENDS:** R-SIM-001 · **BLOCKS:** R-SIM-004
+- **DoD:** `WorldState.relationships` mit ressourcengetriebenen Deltas; In-Memory, kein JSON, kein SSOT-Risiko.
+- **STATUS:** `TODO`
+
+### R-SIM-003 — HistoricalEpochEngine — **P2**
+- **WHY:** DOKI-Arc-Mathematik (BASE 0.5 / NEW 0.3 / RECUR 0.4) auf Simulations-Events anwenden. Prüft gegen `era_classifier.gd` + `importance_evaluator.gd` auf Überlappung.
+- **DEPENDS:** R-SIM-001 · **BLOCKS:** —
+- **DoD:** In-Memory, kein JSON, kein SSOT-Risiko; Epoch-Transitions deterministisch.
+- **STATUS:** `TODO`
+
+### R-SIM-004 — Trade Window — **P2**
+- **WHY:** `resource_portfolio` + `resource_demand` in WorldState, Ring-Adjazenz aus Planet-IDs, event-getriggerter Cache. Diplomatik-Signal, kein echte Gütertransfer.
+- **DEPENDS:** R-SIM-002 · **BLOCKS:** —
+- **DoD:** Trade-Events in HistoricalSimulation; keine Live-GameState-Mutation.
+- **STATUS:** `TODO`
+
 ### R-016 — Refinery serialisierbar / mech_frame entscheiden — **P3**
 - **WHY:** Konvertierung hartcodiert in economy_domain; `mech_frame` inert.
 - **DEPENDS:** R-007 · **BLOCKS:** —

@@ -1676,3 +1676,17 @@ Slice C: docs/README 43→44 letzte Restdrift, test_determinism.gd nach scripts/
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
 - scripts/testing/test_determinism.gd: Dokumentation aktualisiert (F-391).
 - scripts/testing/test_determinism.gd.uid: Dokumentation aktualisiert (F-392).
+
+## 2026-08-27 20:00:00 — p92 · c92j72n4a1p74 · Vannon · erschöpft
+
+**R-052: final_year0_ownership() auf WorldChronicle… — nach Buffy**
+
+R-052: final_year0_ownership() auf WorldChronicle — WorldBootstrap liest Snapshot direkt, HistoricalWorldBootstrap Handoff-Code entfernt, 318/318
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/bootstrap/historical_world_bootstrap.gd: Implementiert und integriert (F-371).
+- scripts/bootstrap/world_bootstrap.gd: Implementiert und integriert (F-386).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/history/world_chronicle.gd: Implementiert und integriert (F-283).
