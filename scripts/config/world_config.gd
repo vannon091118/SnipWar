@@ -11,6 +11,9 @@ const ROUTE_MODE_NEIGHBORS_ONLY := "neighbors_only"
 # 0 = derive the column count from design_size aspect ratio and planet count.
 @export_range(0, 256, 1) var columns: int
 @export_range(0, 100000, 1) var target_planet_count: int = 0
+## Number of deterministic future start candidates prepared for a new run.
+## Zero uses the default roster size without changing finite-world behavior.
+@export_range(0, 100, 1) var start_roster_count: int = 10
 ## Multiplicative world-area growth. 1.0 keeps the authored size/planet count
 ## (sqrt-scaled design_size + linearly-scaled target_planet_count are applied to
 ## a runtime duplicate before the live tree reads them; the authored .tres is

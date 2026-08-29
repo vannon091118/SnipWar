@@ -105,6 +105,7 @@ func _print_result() -> void:
 	if _failures == 0:
 		print("RESULT: PASSED")
 		quit(0)
+		return
 	else:
 		print("RESULT: FAILED")
 	quit(1)

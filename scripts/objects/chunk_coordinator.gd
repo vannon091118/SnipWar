@@ -209,13 +209,6 @@ func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
 	var cell_base := _chunk_to_cell_base(chunk_coord)
 	var data_array: Array = []
 
-	# Per-chunk RNG for organic placement (breaks grid pattern)
-	var chunk_rng := RandomNumberGenerator.new()
-	chunk_rng.seed = c_seed + 99999  # Separate from planet composition seed
-
-	# Track cluster-local slot usage per overlapping cluster
-	var cluster_slot_counters: Dictionary = {}  # cluster_id -> next free slot index
-
 	for slot in definitions.size():
 		var def: PlanetDefinition = definitions[slot]
 		if def == null:
@@ -224,61 +217,13 @@ func _generate_chunk(chunk_coord: Vector2i, max_size_class: StringName) -> void:
 		var local_row := int(slot / float(cs))
 		var cell := Vector2i(cell_base.x + local_col, cell_base.y + local_row)
 		var base_pos := _cell_center(cell)
-		var world_pos := base_pos
+		var world_pos := WorldGenerator.deterministic_chunk_position(_world_config, _layout_seed, chunk_coord.x, chunk_coord.y, slot, cs)
 
-		# --- Cluster-aware organic positioning ---
-		if _world_config.is_cluster_generation_enabled() and not _clusters.is_empty():
-			# Find the NEAREST cluster (not just contained — attraction model)
-			var nearest_cluster = null
-			var nearest_dist := INF
-			for cluster in _clusters:
-				var dist: float = base_pos.distance_to(cluster.center_position)
-				if dist < nearest_dist:
-					nearest_dist = dist
-					nearest_cluster = cluster
-
-			if nearest_cluster != null:
-				var in_cluster_radius: bool = nearest_dist <= nearest_cluster.radius
-
-				if in_cluster_radius:
-					# Inside cluster: use next available cluster-local slot
-					var cid: StringName = nearest_cluster.cluster_id
-					if not cluster_slot_counters.has(cid):
-						cluster_slot_counters[cid] = 0
-					var slot_idx: int = cluster_slot_counters[cid]
-					if slot_idx < nearest_cluster.planet_slots.size():
-						world_pos = nearest_cluster.planet_slots[slot_idx]
-					else:
-						# Overflow: place around cluster center with organic jitter
-						var angle: float = chunk_rng.randf() * TAU
-						var dist_r: float = chunk_rng.randf_range(10.0, nearest_cluster.radius * 0.9)
-						world_pos = nearest_cluster.center_position + Vector2(cos(angle), sin(angle)) * dist_r
-					cluster_slot_counters[cid] = slot_idx + 1
-					# Cluster resource bias must never assign ownership. Homeworld
-					# identities come from the origin catalog; procedural planets
-					# remain neutral until an explicit colonization action.
-					if def.planet_role != &"homeworld":
-						def.faction = _assign_faction_from_cluster(nearest_cluster, def.planet_role)
-				else:
-					# Outside cluster but attracted toward it — organic drift
-					var to_cluster: Vector2 = nearest_cluster.center_position - base_pos
-					var attract_strength: float = clampf(1.0 - (nearest_dist / (nearest_cluster.radius * 3.0)), 0.0, 0.4)
-					var drift: Vector2 = to_cluster * attract_strength
-
-					# Heavy organic jitter to break grid
-					var cell_size: Vector2 = _world_config.resolved_cell_size()
-					var jitter_x: float = chunk_rng.randf_range(-cell_size.x * 0.6, cell_size.x * 0.6)
-					var jitter_y: float = chunk_rng.randf_range(-cell_size.y * 0.6, cell_size.y * 0.6)
-					world_pos = base_pos + drift + Vector2(jitter_x, jitter_y)
-			else:
-				# No clusters at all — pure organic jitter
-				var cell_size_fallback: Vector2 = _world_config.resolved_cell_size()
-				var jx: float = chunk_rng.randf_range(-cell_size_fallback.x * 0.6, cell_size_fallback.x * 0.6)
-				var jy: float = chunk_rng.randf_range(-cell_size_fallback.y * 0.6, cell_size_fallback.y * 0.6)
-				world_pos = base_pos + Vector2(jx, jy)
-		else:
-			# Cluster system disabled — legacy grid (unchanged)
-			pass
+		# Position is fully resolved by WorldGenerator.deterministic_chunk_position.
+		# Cluster resource bias must never assign ownership; homeworld identities
+		# come from the origin catalog and procedural planets remain neutral.
+		if _world_config.is_cluster_generation_enabled() and def.planet_role != &"homeworld":
+			def.faction = _assign_faction_from_cluster(null, def.planet_role)
 
 		var data := ChunkPlanetData.new()
 		data.planet_id = def.planet_id

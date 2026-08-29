@@ -178,6 +178,49 @@ static func _edge_key(first: Node2D, second: Node2D) -> String:
 
 ## --- Infinite chunk-grid world ---
 
+## Pure position for one chunk slot. Cluster membership and slot assignment are
+## derived from layout seed, chunk coordinate, and slot; no generation-order
+## state participates.
+static func deterministic_chunk_position(
+	config: WorldConfig,
+	layout_seed: int,
+	chunk_x: int,
+	chunk_y: int,
+	slot: int,
+	chunk_size: int
+) -> Vector2:
+	var cell := Vector2i(chunk_x * chunk_size + slot % chunk_size, chunk_y * chunk_size + int(slot / float(chunk_size)))
+	var cell_size := config.resolved_cell_size()
+	var base_pos := Vector2((float(cell.x) + 0.5) * cell_size.x, (float(cell.y) + 0.5) * cell_size.y)
+	if config == null or not config.is_cluster_generation_enabled():
+		return base_pos
+	var clusters := generate_clusters(config, layout_seed, config.resolved_design_size(), chunk_size * chunk_size)
+	if clusters.is_empty():
+		return base_pos
+	var nearest = null
+	var nearest_dist := INF
+	for cluster in clusters:
+		var distance: float = base_pos.distance_to(cluster.center_position)
+		if distance < nearest_dist:
+			nearest_dist = distance
+			nearest = cluster
+	if nearest == null or nearest_dist > nearest.radius:
+		var jitter_rng := RandomNumberGenerator.new()
+		jitter_rng.seed = slot_seed(chunk_seed(layout_seed, chunk_x, chunk_y), slot) + 99999
+		return base_pos + Vector2(
+			jitter_rng.randf_range(-cell_size.x * 0.6, cell_size.x * 0.6),
+			jitter_rng.randf_range(-cell_size.y * 0.6, cell_size.y * 0.6)
+		)
+	var local_seed := slot_seed(chunk_seed(layout_seed, chunk_x, chunk_y), slot)
+	var slot_index := int(local_seed % nearest.planet_slots.size()) if not nearest.planet_slots.is_empty() else 0
+	if slot_index < nearest.planet_slots.size():
+		return nearest.planet_slots[slot_index]
+	var overflow_rng := RandomNumberGenerator.new()
+	overflow_rng.seed = local_seed + 17791
+	var angle: float = overflow_rng.randf() * TAU
+	var radius: float = overflow_rng.randf_range(10.0, nearest.radius * 0.9)
+	return nearest.center_position + Vector2(cos(angle), sin(angle)) * radius
+
 ## LCNG-based chunk seed. Avoids XOR/abs() overflow pitfalls; int64 math with
 ## positive masking so the result is always a valid RNG seed.
 static func chunk_seed(layout_seed: int, chunk_x: int, chunk_y: int) -> int:

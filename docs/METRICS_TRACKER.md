@@ -1,6 +1,6 @@
 # 🔢 NARRATIVE METRICS TRACKER
 > Automatisch aktualisiert nach jedem DOKI-Commit.
-> Letzte Aktualisierung: `2026-08-29T23:30:16` | Chain-Eintrag: `c104` | Arc: `a49`
+> Letzte Aktualisierung: `2026-08-30T00:41:51` | Chain-Eintrag: `c107` | Arc: `a50`
 
 ---
 
@@ -8,8 +8,8 @@
 
 | Metrik | Wert |
 |--------|------|
-| **Gesamt-Commits (Chain)** | 104 |
-| **Aktiver Arc** | `a49` |
+| **Gesamt-Commits (Chain)** | 107 |
+| **Aktiver Arc** | `a50` |
 | **Narratoren aktiv** | 14 |
 | **Letzter Sentiment** | 10.0/10 |
 
@@ -19,11 +19,11 @@
 
 | Narrator | Commits | Bugs | Clean | Fixes | Score |
 |----------|---------|------|-------|-------|-------|
-| 🟢 Devin | 8 | 0 | 8 | 0 | **+4.0** |
-| 🟢 Squizzle | 8 | 0 | 8 | 0 | **+4.0** |
+| 🟢 Devin | 9 | 0 | 9 | 0 | **+4.5** |
+| 🟢 Squizzle | 9 | 0 | 9 | 0 | **+4.5** |
 | 🟢 Buffy | 11 | 1 | 10 | 0 | **+3.8** |
+| 🟢 Sage | 12 | 0 | 11 | 1 | **+3.1** |
 | 🟢 Spark | 6 | 0 | 6 | 0 | **+3.0** |
-| 🟢 Sage | 11 | 0 | 10 | 1 | **+2.6** |
 | 🟢 Basher | 8 | 1 | 7 | 0 | **+2.3** |
 | 🟢 Glitch | 4 | 0 | 4 | 0 | **+2.0** |
 | 🟢 Argos | 9 | 0 | 8 | 1 | **+1.6** |
@@ -40,15 +40,15 @@
 
 | Mood | Anzahl | % |
 |------|--------|---|
-| triumphierend | 14 | 13% |
-| trocken | 13 | 13% |
-| alarmiert | 13 | 13% |
-| neugierig | 12 | 12% |
-| müde-zufrieden | 10 | 10% |
-| erschöpft | 10 | 10% |
-| sachlich | 9 | 9% |
-| sarkastisch | 8 | 8% |
-| warm | 8 | 8% |
+| triumphierend | 15 | 14% |
+| trocken | 14 | 13% |
+| alarmiert | 13 | 12% |
+| neugierig | 12 | 11% |
+| erschöpft | 11 | 10% |
+| müde-zufrieden | 10 | 9% |
+| sachlich | 9 | 8% |
+| sarkastisch | 8 | 7% |
+| warm | 8 | 7% |
 | selbstironisch | 7 | 7% |
 
 ---
@@ -60,13 +60,13 @@
 | Ghost > Sage | 3 |
 | Squizzle > Buffy | 3 |
 | Flux > Spark | 3 |
-| Argos > Basher | 2 |
-| Basher > Null | 2 |
-| Sage > Buffy | 2 |
-| Null > Devin | 2 |
-| Thinker > Vannon | 2 |
-| Vannon > Ghost | 2 |
 | Buffy > Squizzle | 2 |
+| Buffy > Sage | 2 |
+| Vannon > Ghost | 2 |
+| Sage > Devin | 2 |
+| Thinker > Vannon | 2 |
+| Sage > Buffy | 2 |
+| Argos > Basher | 2 |
 
 ---
 
@@ -81,37 +81,37 @@
   6 │█
   7 │██
   8 │█
-  9 │██
- 10 │███
- 11 │████
- 12 │█████
- 13 │██████
+  9 │███
+ 10 │████
+ 11 │█████
+ 12 │██████
+ 13 │████
  14 │█████
  15 │████
- 16 │██
- 17 │███
- 18 │████
- 19 │█████
+ 16 │███
+ 17 │████
+ 18 │█████
+ 19 │██████
  20 │█████
- 21 │██████
- 22 │██
- 23 │███
- 24 │████
- 25 │█████
+ 21 │████
+ 22 │███
+ 23 │████
+ 24 │█████
+ 25 │██████
  26 │███████
  27 │████████
  28 │█████████
  29 │██████████
  30 │██████████
  31 │██████████
- 32 │██████████
- 33 │█████████
+ 32 │█████████
+ 33 │██████████
  34 │██████████
  35 │██████████
  36 │██████████
- 37 │██████████
- 38 │██████████
- 39 │█████████
+ 37 │████████
+ 38 │█████████
+ 39 │██████████
  40 │██████████
  41 │██████████
  42 │██████████

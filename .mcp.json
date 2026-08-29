@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "snipwar-runtime": {
+      "command": "C:/Users/Vannon/Documents/snippet-empire/snip-war/mcp_bridge.cmd",
+      "args": [],
+      "env": {
+        "MCP_HOST": "127.0.0.1",
+        "MCP_PORT": "9090"
+      }
+    }
+  }
+}

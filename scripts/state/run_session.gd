@@ -16,6 +16,9 @@ extends Resource
 @export var started_at: int = 0
 ## Save slot this run was restored from (-1 = not bound to a slot).
 @export var save_slot: int = -1
+## Deterministic future start candidates for the active run. Candidates do not
+## imply ownership or a selected homeworld.
+@export var start_roster: Array[Dictionary] = []
 
 func copy() -> RunSession:
 	return duplicate(true) as RunSession

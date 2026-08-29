@@ -1889,3 +1889,22 @@ R-007 E4: EconomyDomain final konsolidiert - Gathering+Worker-Transport in gathe
 - scripts/testing/e1_vault_core_semantics_test.gd.uid: Test-Assets ergänzt (F-416).
 - scripts/testing/e2_e4_economy_units_test.gd: Test-Assets ergänzt (F-417).
 - scripts/testing/e2_e4_economy_units_test.gd.uid: Test-Assets ergänzt (F-418).
+
+## 2026-08-27 11:00:00 — p107 · c107j62n6a16p12 · Devin · erschöpft
+
+**Devin sagt: R-008: planet_network UI/Logik getrennt - neue… — nach Sage**
+
+R-008: planet_network UI/Logik getrennt - neue planet_world_ui.gd orchestriert Context-Menue, Dossier-Launcher, Hotkeys, Fleet-Overview, Economy-Window, Message-Feed, Modal/Layout, Tutorial, Dispatch-Vorschau; planet_network.gd auf Network/Selection/Fog/Rendering/Dispatch reduziert mit duennen _world_ui-Shims; r008_world_ui_boundary_test verankert die Grenze
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- ROADMAP.md: Implementiert und integriert (F-376).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/FINDINGS.md: Implementiert und integriert (F-046).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/concept_index.gd: Implementiert und integriert (F-055).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/objects/planets/planet_network.gd: Implementiert und integriert (F-028).
+- scripts/testing/r008_world_ui_boundary_test.gd: Implementiert und integriert (F-419).
+- scripts/testing/r008_world_ui_boundary_test.gd.uid: Implementiert und integriert (F-420).
+- scripts/ui/world/planet_world_ui.gd: Implementiert und integriert (F-421).
+- scripts/ui/world/planet_world_ui.gd.uid: Implementiert und integriert (F-422).

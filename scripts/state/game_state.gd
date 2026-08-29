@@ -376,6 +376,9 @@ func begin_new_game(catalog: PlanetCatalog, scenario_id: StringName, layout_seed
 		reset_for_infinite_world()
 	else:
 		reset_from_catalog(catalog)
+	# The prepared roster lives in the session bridge. The infinite-world reset
+	# clears faction state but does not clear the session, so WorldChronicle sees
+	# the roster after reset and before run_started.
 	var player_homeworld: StringName = faction_domain.homeworld_for(FACTION_PLAYER)
 	ship_domain.ensure_starter_research_ship(FACTION_PLAYER, player_homeworld, DEFAULT_SHIP_PART_CATALOG)
 	run_started.emit(_run_id, _run_layout_seed)
@@ -448,7 +451,22 @@ func world_session_context() -> Dictionary:
 		"scenario_id": _run_scenario_id,
 		"layout_seed": _run_layout_seed,
 		"infinite_world": _run_infinite_world,
+		"start_roster": _copy_start_roster(_session.start_roster if _session != null else []),
 	}
+
+func prepare_start_roster(roster: Array[Dictionary]) -> void:
+	if _session == null:
+		_session = RunSession.new()
+	_session.start_roster = _copy_start_roster(roster)
+
+func start_roster_snapshot() -> Array[Dictionary]:
+	return _copy_start_roster(_session.start_roster if _session != null else [])
+
+func _copy_start_roster(source: Array[Dictionary]) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for candidate in source:
+		result.append(candidate.duplicate(true))
+	return result
 
 func _sync_session() -> void:
 	if _session == null:

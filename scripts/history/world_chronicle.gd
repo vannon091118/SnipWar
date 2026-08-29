@@ -228,14 +228,24 @@ func _extract_real_planets(state: Node) -> Dictionary:
 		for pid in snapshot[fid]:
 			# --- ECHTE DATEN (aus GameState) ---
 			#   planet_id, owner
-
-			# --- SIMULATIONS-BASELINES (nicht aus GameState) ---
-			#   SnipWar hat heute keine planetaren Population/Strategische-Werte,
-			#   die der History-Simulation bekannt sind.
 			planets[pid] = {
-				"owner": fid,                  # ECHT
-				"population": 100,             # SIM Baseline
-				"strategic_value": 1.0,        # SIM Baseline
+				"owner": fid,
+				"population": 100,
+				"strategic_value": 1.0,
+			}
+
+	# A prepared infinite-world roster is intentionally ownership-neutral. It is
+	# still a real historical input, unlike the explicit headless defaults.
+	if state.has_method("start_roster_snapshot"):
+		var roster: Array[Dictionary] = state.start_roster_snapshot()
+		for candidate in roster:
+			var planet_id: StringName = candidate.get("planet_id", &"") as StringName
+			if String(planet_id).is_empty() or planets.has(planet_id):
+				continue
+			planets[planet_id] = {
+				"owner": &"",
+				"population": 0,
+				"strategic_value": 1.0,
 			}
 
 	return planets if not planets.is_empty() else _default_planets()

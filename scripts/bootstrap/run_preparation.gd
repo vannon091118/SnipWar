@@ -12,6 +12,7 @@ extends RefCounted
 ## und reconnected statt ein zweites Mal `begin_new_game()` zu rufen.
 
 const DEFAULT_SCENARIO_CATALOG: ScenarioCatalog = preload("res://resources/config/scenario_catalog.tres")
+const DEFAULT_PLANET_CATALOG: PlanetCatalog = preload("res://resources/config/planet_catalog.tres")
 const ASSET_LIBRARY_SCRIPT: Script = preload("res://scripts/config/asset_library.gd")
 
 ## Erzeugt einen frischen Run im GameState. Liefert bei Erfolg
@@ -37,6 +38,11 @@ static func prepare_new_run(seed_override: int = 0) -> Dictionary:
 	var infinite_world: bool = runtime_world.is_infinite_world()
 	var target_count: int = 1 if infinite_world else WorldGenerator.target_planet_count(runtime_world, null)
 	var active_catalog: PlanetCatalog = WorldGenerator.generate_catalog(runtime_world, layout_seed, target_count)
+	var roster: Array[Dictionary] = []
+	if infinite_world:
+		roster = StartRosterGenerator.generate(layout_seed, runtime_world.start_roster_count, runtime_world, active_catalog)
+	if state.has_method("prepare_start_roster"):
+		state.prepare_start_roster(roster)
 	state.begin_new_game(active_catalog, scenario.id, layout_seed, infinite_world)
 	return {
 		"ok": true,

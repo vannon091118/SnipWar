@@ -1776,7 +1776,7 @@
 			"p_id": 90.0
 		},
 		"b8df1e40599991172ff55fddfc235c33623b7e1a": {
-			"c": 106,
+			"c": 106.0,
 			"composite": "c106j23n14a1p72",
 			"entities": [
 				"F-002",
@@ -1848,7 +1848,7 @@
 				"C-983",
 				"C-984"
 			],
-			"p_id": 106
+			"p_id": 106.0
 		},
 		"ba8f048015e26b4d428c7575b2f1642005ad4118": {
 			"c": 78.0,
@@ -2288,6 +2288,129 @@
 				"F-001"
 			],
 			"p_id": 21.0
+		},
+		"e20b5a61d9e52f362897cc9cab64b77acdbd9b23": {
+			"c": 107,
+			"composite": "c107j62n6a16p12",
+			"entities": [
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-046",
+				"F-004",
+				"F-055",
+				"F-001",
+				"F-028",
+				"F-419",
+				"F-420",
+				"F-421",
+				"F-422",
+				"C-985",
+				"C-986",
+				"C-987",
+				"C-988",
+				"C-989",
+				"C-990",
+				"C-991",
+				"C-992",
+				"C-993",
+				"C-994",
+				"C-995",
+				"C-996",
+				"C-997",
+				"C-998",
+				"C-999",
+				"C-1000",
+				"C-1001",
+				"C-1002",
+				"C-1003",
+				"C-1004",
+				"C-1005",
+				"C-1006",
+				"C-1007",
+				"C-1008",
+				"C-1009",
+				"C-1010",
+				"C-220",
+				"C-1011",
+				"C-1012",
+				"C-1013",
+				"C-1014",
+				"C-1015",
+				"C-1016",
+				"C-1017",
+				"C-1018",
+				"C-1019",
+				"C-1020",
+				"C-1021",
+				"C-1022",
+				"C-1023",
+				"C-1024",
+				"C-1025",
+				"C-1026",
+				"C-1027",
+				"C-1028",
+				"C-1029",
+				"C-1030",
+				"C-1031",
+				"C-1032",
+				"C-1033",
+				"C-1034",
+				"C-1035",
+				"C-1036",
+				"C-1037",
+				"C-1038",
+				"C-1039",
+				"C-1040",
+				"C-1041",
+				"C-1042",
+				"C-1043",
+				"C-1044",
+				"C-1045",
+				"C-1046",
+				"C-1047",
+				"C-1048",
+				"C-1049",
+				"C-1050",
+				"C-1051",
+				"C-1052",
+				"C-1053",
+				"C-1054",
+				"C-1055",
+				"C-1056",
+				"C-1057",
+				"C-1058",
+				"C-1059",
+				"C-1060",
+				"C-1061",
+				"C-1062",
+				"C-1063",
+				"C-1064",
+				"C-1065",
+				"C-1066",
+				"C-1067",
+				"C-1068",
+				"C-1069",
+				"C-1070",
+				"C-1071",
+				"C-1072",
+				"C-1073",
+				"C-1074",
+				"C-1075",
+				"C-1076",
+				"C-1077",
+				"C-1078",
+				"C-1079",
+				"C-1080",
+				"C-1081",
+				"C-1082",
+				"C-1083",
+				"C-1084",
+				"C-1085",
+				"C-1086",
+				"C-1087"
+			],
+			"p_id": 107
 		},
 		"e2a63b42c45eb9c8bacf1affd41387ac902daa56": {
 			"c": 31.0,
@@ -4398,6 +4521,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1000": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						395.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1000",
+			"last_p": 107.0,
+			"name": "_on_worker_count_changed",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1001": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						477.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1001",
+			"last_p": 107.0,
+			"name": "get_active_planet",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1002": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						481.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1002",
+			"last_p": 107.0,
+			"name": "get_active_destinations",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1003": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						489.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1003",
+			"last_p": 107.0,
+			"name": "get_ship_flight_preview",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1004": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						645.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1004",
+			"last_p": 107.0,
+			"name": "_connect_map_camera",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1005": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						650.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1005",
+			"last_p": 107.0,
+			"name": "_connect_conflict_ships",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1006": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						664.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1006",
+			"last_p": 107.0,
+			"name": "_connect_ship_selection",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1007": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						669.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1007",
+			"last_p": 107.0,
+			"name": "_on_ship_dispatched",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1008": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						674.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1008",
+			"last_p": 107.0,
+			"name": "_on_ship_arrived",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1009": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						679.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1009",
+			"last_p": 107.0,
+			"name": "_on_planet_drag_dropped",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-101": {
 			"first_p": 34.0,
 			"history": [
@@ -4412,6 +4705,176 @@
 			"last_p": 34.0,
 			"name": "player_identity",
 			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1010": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						691.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1010",
+			"last_p": 107.0,
+			"name": "_on_workers_spawn_requested",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1011": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1011",
+			"last_p": 107.0,
+			"name": "NETWORK_PATH",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1012": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1012",
+			"last_p": 107.0,
+			"name": "WORLD_UI_PATH",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1013": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						24.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1013",
+			"last_p": 107.0,
+			"name": "UI_CONSTRUCTORS",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1014": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						36.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1014",
+			"last_p": 107.0,
+			"name": "NETWORK_API",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1015": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						47.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1015",
+			"last_p": 107.0,
+			"name": "WORLD_UI_API",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1016": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						62.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1016",
+			"last_p": 107.0,
+			"name": "_init",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1017": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						66.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1017",
+			"last_p": 107.0,
+			"name": "_fail",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1018": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						70.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1018",
+			"last_p": 107.0,
+			"name": "_read",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1019": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						79.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1019",
+			"last_p": 107.0,
+			"name": "_run",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -4432,6 +4895,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1020": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						130.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1020",
+			"last_p": 107.0,
+			"name": "preload_marker",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1021": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1021",
+			"last_p": 107.0,
+			"name": "PlanetWorldUI",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1022": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						15.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1022",
+			"last_p": 107.0,
+			"name": "_FlightTime",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1023": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1023",
+			"last_p": 107.0,
+			"name": "_Dispatch",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1024": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1024",
+			"last_p": 107.0,
+			"name": "PLANET_NETWORK_UI_SCRIPT",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1025": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1025",
+			"last_p": 107.0,
+			"name": "MESSAGE_FEED_SCENE",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1026": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1026",
+			"last_p": 107.0,
+			"name": "SELECTION_ACTION_TOOLTIP_SCRIPT",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1027": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1027",
+			"last_p": 107.0,
+			"name": "FLEET_OVERVIEW_SCRIPT",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1028": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1028",
+			"last_p": 107.0,
+			"name": "ECONOMY_WINDOW_SCRIPT",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1029": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1029",
+			"last_p": 107.0,
+			"name": "LAYOUT_COORDINATOR_SCRIPT",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-103": {
 			"first_p": 34.0,
 			"history": [
@@ -4446,6 +5079,176 @@
 			"last_p": 34.0,
 			"name": "_process",
 			"path": "scripts/ui/dossier/parchment_tech_tree_view.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1030": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1030",
+			"last_p": 107.0,
+			"name": "INPUT_HINT_OVERLAY_SCRIPT",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1031": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						24.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1031",
+			"last_p": 107.0,
+			"name": "TUTORIAL_DIRECTOR_SCRIPT",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1032": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						53.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1032",
+			"last_p": 107.0,
+			"name": "setup",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1033": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						85.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1033",
+			"last_p": 107.0,
+			"name": "_create_context_menu",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1034": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						94.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1034",
+			"last_p": 107.0,
+			"name": "_create_action_tooltip",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1035": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						103.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1035",
+			"last_p": 107.0,
+			"name": "show_context_menu",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1036": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						115.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1036",
+			"last_p": 107.0,
+			"name": "build_context_menu_for",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1037": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						137.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1037",
+			"last_p": 107.0,
+			"name": "on_context_item_focused",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1038": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						147.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1038",
+			"last_p": 107.0,
+			"name": "on_context_action",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1039": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						175.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1039",
+			"last_p": 107.0,
+			"name": "open_mission_for_target",
+			"path": "scripts/ui/world/planet_world_ui.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -4466,6 +5269,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1040": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						188.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1040",
+			"last_p": 107.0,
+			"name": "show_action_tooltip",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1041": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						198.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1041",
+			"last_p": 107.0,
+			"name": "_create_message_feed",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1042": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						210.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1042",
+			"last_p": 107.0,
+			"name": "_create_modal_coordinator",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1043": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						227.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1043",
+			"last_p": 107.0,
+			"name": "_create_layout_coordinator",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1044": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						246.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1044",
+			"last_p": 107.0,
+			"name": "_create_dossier_launcher",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1045": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						269.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1045",
+			"last_p": 107.0,
+			"name": "_create_tutorial",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1046": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						286.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1046",
+			"last_p": 107.0,
+			"name": "restart_tutorial",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1047": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						293.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1047",
+			"last_p": 107.0,
+			"name": "_create_fleet_overview",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1048": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						317.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1048",
+			"last_p": 107.0,
+			"name": "_create_economy_module",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1049": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						338.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1049",
+			"last_p": 107.0,
+			"name": "get_economy_window",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-105": {
 			"first_p": 34.0,
 			"history": [
@@ -4480,6 +5453,176 @@
 			"last_p": 34.0,
 			"name": "_show_identity_intro",
 			"path": "scripts/ui/main_menu.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1050": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						342.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1050",
+			"last_p": 107.0,
+			"name": "_toggle_economy_module",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1051": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						347.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1051",
+			"last_p": 107.0,
+			"name": "open_economy_module",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1052": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						352.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1052",
+			"last_p": 107.0,
+			"name": "_create_input_hints",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1053": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						359.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1053",
+			"last_p": 107.0,
+			"name": "_add_dossier_button",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1054": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						373.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1054",
+			"last_p": 107.0,
+			"name": "_close_overlay_panels",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1055": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						378.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1055",
+			"last_p": 107.0,
+			"name": "open_planet_dossier",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1056": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						391.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1056",
+			"last_p": 107.0,
+			"name": "open_workshop_dossier",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1057": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						404.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1057",
+			"last_p": 107.0,
+			"name": "open_tech_tree_dossier",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1058": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						422.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1058",
+			"last_p": 107.0,
+			"name": "_unhandled_input",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1059": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						442.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1059",
+			"last_p": 107.0,
+			"name": "connect_ship_selection",
+			"path": "scripts/ui/world/planet_world_ui.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -4500,6 +5643,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1060": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						449.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1060",
+			"last_p": 107.0,
+			"name": "on_ship_dispatched",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1061": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						454.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1061",
+			"last_p": 107.0,
+			"name": "on_ship_arrived",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1062": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						458.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1062",
+			"last_p": 107.0,
+			"name": "update_fleet_overview",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1063": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						479.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1063",
+			"last_p": 107.0,
+			"name": "_on_fleet_overview_focus",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1064": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						495.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1064",
+			"last_p": 107.0,
+			"name": "_on_ship_drop_requested",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1065": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						522.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1065",
+			"last_p": 107.0,
+			"name": "_find_planet_by_id",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1066": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						532.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1066",
+			"last_p": 107.0,
+			"name": "_on_ship_clicked",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1067": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						541.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1067",
+			"last_p": 107.0,
+			"name": "_deselect_current_ship",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1068": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						550.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1068",
+			"last_p": 107.0,
+			"name": "on_planet_selected",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1069": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						564.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1069",
+			"last_p": 107.0,
+			"name": "update_count",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-107": {
 			"first_p": 34.0,
 			"history": [
@@ -4517,6 +5830,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1070": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						569.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1070",
+			"last_p": 107.0,
+			"name": "refresh_selected_count",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1071": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						573.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1071",
+			"last_p": 107.0,
+			"name": "_update_selected_count",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1072": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						580.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1072",
+			"last_p": 107.0,
+			"name": "on_selection_group_changed",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1073": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						589.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1073",
+			"last_p": 107.0,
+			"name": "set_selection_count",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1074": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						596.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1074",
+			"last_p": 107.0,
+			"name": "close_panel",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1075": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						601.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1075",
+			"last_p": 107.0,
+			"name": "update_preview",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1076": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						666.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1076",
+			"last_p": 107.0,
+			"name": "refresh_slider_bounds",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1077": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						675.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1077",
+			"last_p": 107.0,
+			"name": "refresh_dispatch_lock",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1078": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						691.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1078",
+			"last_p": 107.0,
+			"name": "on_planet_hovered",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1079": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						696.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1079",
+			"last_p": 107.0,
+			"name": "on_planet_unhovered",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-108": {
 			"first_p": 34.0,
 			"history": [
@@ -4531,6 +6014,142 @@
 			"last_p": 34.0,
 			"name": "_schedule_open",
 			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1080": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						704.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1080",
+			"last_p": 107.0,
+			"name": "get_context_menu",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1081": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						708.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1081",
+			"last_p": 107.0,
+			"name": "get_context_disabled_reasons",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1082": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						712.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1082",
+			"last_p": 107.0,
+			"name": "get_context_active_planet",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1083": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						716.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1083",
+			"last_p": 107.0,
+			"name": "set_context_active_planet",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1084": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						720.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1084",
+			"last_p": 107.0,
+			"name": "get_modal_coordinator",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1085": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						724.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1085",
+			"last_p": 107.0,
+			"name": "get_message_feed",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1086": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						728.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1086",
+			"last_p": 107.0,
+			"name": "get_fleet_overview",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1087": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						732.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-1087",
+			"last_p": 107.0,
+			"name": "_game_state",
+			"path": "scripts/ui/world/planet_world_ui.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -6436,10 +8055,16 @@
 						621.0
 					],
 					"p_id": 42.0
+				},
+				{
+					"lines": [
+						695.0
+					],
+					"p_id": 107.0
 				}
 			],
 			"id": "C-220",
-			"last_p": 42.0,
+			"last_p": 107.0,
 			"name": "_on_panel_visibility_changed",
 			"path": "scripts/objects/planets/planet_network.gd",
 			"status": "modified",
@@ -19463,6 +21088,261 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-985": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-985",
+			"last_p": 107.0,
+			"name": "PLANET_WORLD_UI_SCRIPT",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-986": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						178.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-986",
+			"last_p": 107.0,
+			"name": "_create_world_ui",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-987": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						242.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-987",
+			"last_p": 107.0,
+			"name": "_on_context_action",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-988": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						247.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-988",
+			"last_p": 107.0,
+			"name": "_on_context_item_focused",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-989": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						256.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-989",
+			"last_p": 107.0,
+			"name": "_center_camera_on",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-990": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						262.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-990",
+			"last_p": 107.0,
+			"name": "_show_action_tooltip",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-991": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						292.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-991",
+			"last_p": 107.0,
+			"name": "_open_planet_dossier",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-992": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						295.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-992",
+			"last_p": 107.0,
+			"name": "_open_workshop_dossier",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-993": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						298.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-993",
+			"last_p": 107.0,
+			"name": "_open_tech_tree_dossier",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-994": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						301.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-994",
+			"last_p": 107.0,
+			"name": "_on_economy_overview_requested",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-995": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						306.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-995",
+			"last_p": 107.0,
+			"name": "_restart_tutorial",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-996": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						311.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-996",
+			"last_p": 107.0,
+			"name": "get_modal_coordinator",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-997": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						313.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-997",
+			"last_p": 107.0,
+			"name": "get_message_feed",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-998": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						354.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-998",
+			"last_p": 107.0,
+			"name": "_on_selection_group_changed",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-999": {
+			"first_p": 107.0,
+			"history": [
+				{
+					"lines": [
+						377.0
+					],
+					"p_id": 107.0
+				}
+			],
+			"id": "C-999",
+			"last_p": 107.0,
+			"name": "_on_planet_selected",
+			"path": "scripts/objects/planets/planet_network.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -23640,6 +25520,46 @@
 			"last_p": 106.0,
 			"name": "e2_e4_economy_units_test.gd.uid",
 			"path": "scripts/testing/e2_e4_economy_units_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-419": {
+			"first_p": 107.0,
+			"history": [],
+			"id": "F-419",
+			"last_p": 107.0,
+			"name": "r008_world_ui_boundary_test.gd",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-420": {
+			"first_p": 107.0,
+			"history": [],
+			"id": "F-420",
+			"last_p": 107.0,
+			"name": "r008_world_ui_boundary_test.gd.uid",
+			"path": "scripts/testing/r008_world_ui_boundary_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-421": {
+			"first_p": 107.0,
+			"history": [],
+			"id": "F-421",
+			"last_p": 107.0,
+			"name": "planet_world_ui.gd",
+			"path": "scripts/ui/world/planet_world_ui.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-422": {
+			"first_p": 107.0,
+			"history": [],
+			"id": "F-422",
+			"last_p": 107.0,
+			"name": "planet_world_ui.gd.uid",
+			"path": "scripts/ui/world/planet_world_ui.gd.uid",
 			"status": "created",
 			"type": "file"
 		}
