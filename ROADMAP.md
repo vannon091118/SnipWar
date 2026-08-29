@@ -178,6 +178,12 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DoD:** Kompaktes Format (Datum, Slice-ID, Änderung, Verification).
 - **STATUS:** `TODO`
 
+### R-SIM-001 — Dynamische Fraktionsprofile — **P1** ✅ VERIFIED
+- **WHY:** Hartkodierte `if fid == &"a"` / `elif fid == &"b"` Profile in world_chronicle.gd verletzten den Stickman-Regel und erzeugten keine Variabilität.
+- **ERGEBNIS:** `simulation_profiles.json` (14 Profile, 0.0–1.0 normalisiert) + `FactionProfiles.gd` (deterministisch: `(sim_seed + fid.hash()) % 14`). `_extract_real_factions` nutzt jetzt dynamische Profile statt Hardcoded. Determinismus-Test: Event count match, 87/87 Bio names. Compile 318/318.
+- **DEPENDS:** — · **BLOCKS:** R-SIM-002
+- **STATUS:** `VERIFIED`
+
 ### R-016 — Refinery serialisierbar / mech_frame entscheiden — **P3**
 - **WHY:** Konvertierung hartcodiert in economy_domain; `mech_frame` inert.
 - **DEPENDS:** R-007 · **BLOCKS:** —

@@ -1,0 +1,18 @@
+{
+  "profiles": [
+    {"index":1,"militarism":0.75,"diplomacy":0.39,"science":0.89,"expansion":0.67,"caution":0.78,"mood":"aggressive"},
+    {"index":2,"militarism":0.15,"diplomacy":0.33,"science":0.56,"expansion":0.11,"caution":0.00,"mood":"balanced"},
+    {"index":3,"militarism":0.45,"diplomacy":0.56,"science":0.78,"expansion":0.22,"caution":0.67,"mood":"diplomatic"},
+    {"index":4,"militarism":0.75,"diplomacy":0.39,"science":0.44,"expansion":1.00,"caution":0.11,"mood":"aggressive"},
+    {"index":5,"militarism":0.55,"diplomacy":0.44,"science":0.67,"expansion":0.33,"caution":0.67,"mood":"balanced"},
+    {"index":6,"militarism":0.50,"diplomacy":0.56,"science":0.89,"expansion":0.33,"caution":0.78,"mood":"scientific"},
+    {"index":7,"militarism":1.00,"diplomacy":0.22,"science":0.56,"expansion":0.89,"caution":0.33,"mood":"aggressive"},
+    {"index":8,"militarism":0.28,"diplomacy":0.50,"science":0.44,"expansion":0.00,"caution":0.89,"mood":"diplomatic"},
+    {"index":9,"militarism":0.22,"diplomacy":1.00,"science":1.00,"expansion":0.11,"caution":0.56,"mood":"scientific"},
+    {"index":10,"militarism":0.75,"diplomacy":0.11,"science":0.56,"expansion":0.56,"caution":0.89,"mood":"aggressive"},
+    {"index":11,"militarism":0.50,"diplomacy":0.00,"science":0.11,"expansion":0.44,"caution":0.44,"mood":"balanced"},
+    {"index":12,"militarism":0.39,"diplomacy":0.50,"science":0.44,"expansion":0.11,"caution":0.78,"mood":"diplomatic"},
+    {"index":13,"militarism":0.55,"diplomacy":0.67,"science":0.78,"expansion":1.00,"caution":1.00,"mood":"expansionist"},
+    {"index":14,"militarism":0.33,"diplomacy":0.83,"science":0.67,"expansion":0.00,"caution":0.89,"mood":"diplomatic"}
+  ]
+}

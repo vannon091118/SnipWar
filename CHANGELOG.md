@@ -1625,3 +1625,24 @@ R-052: Year-0 Handoff — historischer Endzustand wird auf Spielwelt übertragen
 - scripts/bootstrap/world_bootstrap.gd: Test-Assets ergänzt (F-386).
 - scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).
 - scripts/state/game_state.gd: Test-Assets ergänzt (F-065).
+
+## 2026-08-27 17:00:00 — p89 · c89j15n14a9p79 · Sage · neugierig
+
+**Sage lehrt: R-003: Repo-Hygiene — 8 veraltete Tracked-Files… — nach Buffy**
+
+R-003: Repo-Hygiene — 8 veraltete Tracked-Files entfernt (kilo.json, PLAN.md, progress.md, task_plan.md, addons/findings.md, CODEBASE_AUDIT.md, GAME_CYCLE_CONCEPT.md, mcp_live_test_results.md), snapshots/ + tmp_* bereinigt, 1429→1421
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- PLAN.md: Dokumentation aktualisiert (F-091).
+- ROADMAP.md: Dokumentation aktualisiert (F-376).
+- addons/findings.md: Dokumentation aktualisiert (F-097).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- docs/CODEBASE_AUDIT.md: Dokumentation aktualisiert (F-369).
+- docs/FINDINGS.md: Dokumentation aktualisiert (F-046).
+- docs/GAME_CYCLE_CONCEPT.md: Dokumentation aktualisiert (F-381).
+- docs/mcp_live_test_results.md: Dokumentation aktualisiert (F-047).
+- kilo.json: Dokumentation aktualisiert (F-201).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- progress.md: Dokumentation aktualisiert (F-387).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- task_plan.md: Dokumentation aktualisiert (F-388).

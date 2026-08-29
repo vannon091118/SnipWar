@@ -1916,13 +1916,22 @@
 				"F-065",
 				"C-846",
 				"C-847",
-				"C-848"
+				"C-848",
+				"F-091",
+				"F-097",
+				"F-369",
+				"F-046",
+				"F-381",
+				"F-047",
+				"F-201",
+				"F-387",
+				"F-388"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
-			"weight": 3.3
+			"weight": 8.0
 		},
 		"a5": {
 			"climax_weight": 3.0,

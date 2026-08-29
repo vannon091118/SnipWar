@@ -612,6 +612,27 @@
 			],
 			"p_id": 74.0
 		},
+		"29f116052982103192d22e4236c9028f888eba1d": {
+			"c": 89,
+			"composite": "c89j15n14a9p79",
+			"entities": [
+				"F-002",
+				"F-091",
+				"F-376",
+				"F-097",
+				"F-003",
+				"F-369",
+				"F-046",
+				"F-381",
+				"F-047",
+				"F-201",
+				"F-004",
+				"F-387",
+				"F-001",
+				"F-388"
+			],
+			"p_id": 89
+		},
 		"2a1018160b75ec35334a1a56f55aa4daedc376da": {
 			"c": 34.0,
 			"composite": "c34j62n2a2p4",
@@ -1297,7 +1318,7 @@
 			"p_id": 46.0
 		},
 		"9bef54275f45baf63d207203a0f636c6121947b4": {
-			"c": 88,
+			"c": 88.0,
 			"composite": "c88j28n1a25p54",
 			"entities": [
 				"F-002",
@@ -1312,7 +1333,7 @@
 				"C-847",
 				"C-848"
 			],
-			"p_id": 88
+			"p_id": 88.0
 		},
 		"a0e0702ce8c7660eb22f04ac0e09478336ee6689": {
 			"c": 67.0,
@@ -20601,6 +20622,26 @@
 			"last_p": 88.0,
 			"name": "world_bootstrap.gd",
 			"path": "scripts/bootstrap/world_bootstrap.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-387": {
+			"first_p": 89.0,
+			"history": [],
+			"id": "F-387",
+			"last_p": 89.0,
+			"name": "progress.md",
+			"path": "progress.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-388": {
+			"first_p": 89.0,
+			"history": [],
+			"id": "F-388",
+			"last_p": 89.0,
+			"name": "task_plan.md",
+			"path": "task_plan.md",
 			"status": "created",
 			"type": "file"
 		}

@@ -96,7 +96,7 @@ func _on_run_started(run_id: StringName, layout_seed: int) -> void:
 		return
 
 	# Echte Fraktionen und Planeten aus GameState extrahieren
-	var faction_data := _extract_real_factions(state)
+	var faction_data := _extract_real_factions(state, layout_seed)
 	var planet_data := _extract_real_planets(state)
 
 	reset(layout_seed, faction_data, planet_data)
@@ -175,7 +175,7 @@ func reset(seed: int, faction_data: Dictionary = {}, planet_data: Dictionary = {
 ## Was nur Simulationsinitialisierung ist: military, economy, science, mood Baselines.
 ## Nutzt die explizite GameState-Schnittstelle faction_planet_snapshot() —
 ## kein direkter Zugriff auf Domain-Interna.
-func _extract_real_factions(state: Node) -> Dictionary:
+func _extract_real_factions(state: Node, sim_seed: int = 0) -> Dictionary:
 	var factions := {}
 	var snapshot: Dictionary = state.faction_planet_snapshot()
 
@@ -196,16 +196,12 @@ func _extract_real_factions(state: Node) -> Dictionary:
 		var science: float = 25.0 + float(territory) * 3.0
 		var mood: StringName = &"balanced"
 
-		# Spezielle Profilierung für bekannte Fraktionen
-		if fid == &"a":
-			military = 35.0
-			economy = 40.0
-			science = 30.0
-		elif fid == &"b":
-			military = 50.0
-			economy = 25.0
-			science = 20.0
-			mood = &"aggressive"
+		# R-SIM-001: Dynamisches Profil aus sim_seed + Fraktions-ID
+		var profile: Dictionary = FactionProfiles.get_profile(fid, sim_seed)
+		military = 30.0 + float(territory) * 5.0 + profile.get("militarism", 0.5) * 20.0
+		economy = 30.0 + float(territory) * 5.0 + profile.get("diplomacy", 0.5) * 15.0
+		science = 25.0 + float(territory) * 3.0 + profile.get("science", 0.5) * 15.0
+		mood = StringName(profile.get("mood", "balanced"))
 
 		factions[fid] = {
 			"territory": territory,      # ECHT
