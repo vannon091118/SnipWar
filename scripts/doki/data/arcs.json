@@ -2017,13 +2017,17 @@
 			"id": "a46",
 			"name": "Nächster Akt",
 			"seen_entities": [
-				"F-019"
+				"F-019",
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
-			"weight": 0.55
+			"weight": 2.0
 		},
 		"a5": {
 			"climax_weight": 3.0,

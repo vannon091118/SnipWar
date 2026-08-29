@@ -7780,6 +7780,48 @@
 			"seq": 96,
 			"subject": "Glitch ermittelt: AGENTS.md: Pflicht-Workflow als verbindlicher… — nach Vannon",
 			"summary": "Zufall? Ich denke nicht. Jemand — oder etwas — hat in dieser Session 14 Commits durchgewunken, und bei jedem einzelnen wurde der DOKI-Flow eingehalten. Bis auf EINEN. Einen einzigen Commit, der mit..."
+		},
+		{
+			"a": 34,
+			"arc": "a46",
+			"c": 97,
+			"composite": "c97j43n14a34p46",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 27.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 4.0
+				}
+			],
+			"date": "2026-08-27 01:00:00",
+			"hash": "a888cbd9072c1ddd6630c5b92bbb0abdc03eece0",
+			"j": 43,
+			"model_id": "claude-sonnet-4",
+			"mood": "triumphierend",
+			"n": 14,
+			"narrator": "Sage",
+			"p": 46,
+			"p_id": 97,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Glitch",
+			"seq": 97,
+			"subject": "Sage lehrt: DOKI artifacts nach AGENTS.md Pflicht-Workflow Commit — nach Glitch",
+			"summary": "Stell dir vor, du hast ein Haus gebaut. Die Fundamente stehen, die Wände sind gerade, das Dach trägt. Aber zwischen den Wänden fehlte ein Raum — der Raum, in dem alle Bewohner wissen, wie sie sich ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

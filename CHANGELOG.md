@@ -1738,3 +1738,14 @@ R-012: narrative_runtime Cache — 18.9s→21ms (904x), Preflight 70.7s→43.0s 
 AGENTS.md: Pflicht-Workflow als verbindlicher 7-Schritte-Loop — kein Commit ohne DOKI, kein --no-verify
 
 - AGENTS.md: Tooling erweitert (F-019).
+
+## 2026-08-27 01:00:00 — p97 · c97j43n14a34p46 · Sage · triumphierend
+
+**Sage lehrt: DOKI artifacts nach AGENTS.md Pflicht-Workflow Commit — nach Glitch**
+
+DOKI artifacts nach AGENTS.md Pflicht-Workflow Commit
+
+- CHANGELOG.md: Tooling erweitert (F-002).
+- change_index.json: Tooling erweitert (F-003).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
