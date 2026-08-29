@@ -733,6 +733,30 @@
 			],
 			"p_id": 75.0
 		},
+		"2d7fba9c87200b4d777a8b9fe0c71c474746b384": {
+			"c": 86,
+			"composite": "c86j71n5a30p76",
+			"entities": [
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-046",
+				"F-004",
+				"F-001",
+				"F-384",
+				"F-385",
+				"C-837",
+				"C-838",
+				"C-839",
+				"C-840",
+				"C-841",
+				"C-842",
+				"C-843",
+				"C-844",
+				"C-845"
+			],
+			"p_id": 86
+		},
 		"2e0c055b552f60ea1cce83d3270e0d114a23651e": {
 			"c": 54.0,
 			"composite": "c54j27n10a8p27",
@@ -1096,7 +1120,7 @@
 			"p_id": 56.0
 		},
 		"6c0a3a6d1ed4ef18bb53e398f3996a4db449125c": {
-			"c": 85,
+			"c": 85.0,
 			"composite": "c85j95n4a5p66",
 			"entities": [
 				"F-199",
@@ -1106,7 +1130,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 85
+			"p_id": 85.0
 		},
 		"6f217472d4c54cdb0a3fe25149a2ace63e0c376e": {
 			"c": 63.0,
@@ -16484,6 +16508,159 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-837": {
+			"first_p": 86.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 86.0
+				}
+			],
+			"id": "C-837",
+			"last_p": 86.0,
+			"name": "DEFAULT_TIMEOUT",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-838": {
+			"first_p": 86.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 86.0
+				}
+			],
+			"id": "C-838",
+			"last_p": 86.0,
+			"name": "PREFLIGHT_TIMEOUT",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-839": {
+			"first_p": 86.0,
+			"history": [
+				{
+					"lines": [
+						24.0
+					],
+					"p_id": 86.0
+				}
+			],
+			"id": "C-839",
+			"last_p": 86.0,
+			"name": "_process",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-840": {
+			"first_p": 86.0,
+			"history": [
+				{
+					"lines": [
+						35.0
+					],
+					"p_id": 86.0
+				}
+			],
+			"id": "C-840",
+			"last_p": 86.0,
+			"name": "_run_all",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-841": {
+			"first_p": 86.0,
+			"history": [
+				{
+					"lines": [
+						77.0
+					],
+					"p_id": 86.0
+				}
+			],
+			"id": "C-841",
+			"last_p": 86.0,
+			"name": "_discover_tests",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-842": {
+			"first_p": 86.0,
+			"history": [
+				{
+					"lines": [
+						95.0
+					],
+					"p_id": 86.0
+				}
+			],
+			"id": "C-842",
+			"last_p": 86.0,
+			"name": "_run_subprocess",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-843": {
+			"first_p": 86.0,
+			"history": [
+				{
+					"lines": [
+						129.0
+					],
+					"p_id": 86.0
+				}
+			],
+			"id": "C-843",
+			"last_p": 86.0,
+			"name": "_print_summary",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-844": {
+			"first_p": 86.0,
+			"history": [
+				{
+					"lines": [
+						152.0
+					],
+					"p_id": 86.0
+				}
+			],
+			"id": "C-844",
+			"last_p": 86.0,
+			"name": "_resolve_godot_bin",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-845": {
+			"first_p": 86.0,
+			"history": [
+				{
+					"lines": [
+						163.0
+					],
+					"p_id": 86.0
+				}
+			],
+			"id": "C-845",
+			"last_p": 86.0,
+			"name": "_exit",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -20311,6 +20488,26 @@
 			"last_p": 83.0,
 			"name": "constraint_historical_world.gd.uid",
 			"path": "scripts/preflight/constraint_historical_world.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-384": {
+			"first_p": 86.0,
+			"history": [],
+			"id": "F-384",
+			"last_p": 86.0,
+			"name": "test_all.gd",
+			"path": "scripts/testing/test_all.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-385": {
+			"first_p": 86.0,
+			"history": [],
+			"id": "F-385",
+			"last_p": 86.0,
+			"name": "test_all.gd.uid",
+			"path": "scripts/testing/test_all.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

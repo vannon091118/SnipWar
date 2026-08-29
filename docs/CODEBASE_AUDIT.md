@@ -1,6 +1,8 @@
 # SnipWar — Vollständiger Codebasis-Audit
 
-**Stand:** 2026-08-29
+> ⚠️ **HISTORISCH** — Dieses Dokument wurde am 29.08.2026 erstellt und部分weise durch neuere Commits (R-050, R-051) überholt. Die aktuelle Wahrheit lebt in `ROADMAP.md`, `docs/FINDINGS.md` und `ARCHITECTURE.md`. Einzigartige Inhalte (Datenfluss, Verantwortungsgrenzen, Simulationsmodell) bleiben als historische Referenz gültig.
+
+**Stand:** 2026-08-29 (historisch,部分weise veraltet)
 **Scope:** Gesamtprojekt, mit Schwerpunkt auf deterministischer Vorgeschichte, Chronik, Playback, Weltprojektion und Übergang in Live-Gameplay.
 
 ## 1. Executive Summary
@@ -19,7 +21,7 @@ GameState → EventBus → WorldChronicle → HistorySimulator
 
 Die Simulation ist keine Lore-Textmaschine. `HistorySimulator` erzeugt aus einem temporären `WorldState` strukturierte Fakten. `ChronicleTemplateResolver` projiziert diese Fakten anschließend sprachabhängig auf Templates. `GameState` bleibt die autoritative laufende Spielwelt; `WorldState` ist nur ein temporärer Sandkasten für die Vorgeschichte.
 
-Der wesentliche verbleibende Produktabstand liegt nicht mehr im Simulationskern, sondern in der fehlenden echten Vorstart-World-Scene und in der noch unvollständigen Verbindung von Snapshot-Playback, SVG-Komposition und sichtbarem Startfluss. Die vorhandenen Presentation-Klassen sind testbar, aber noch nicht in `SceneDirector`/Main-Menu als eigenständiger Nutzerfluss registriert.
+Der wesentliche verbleibende Produktabstand lag (bis R-050) in der fehlenden echten Vorstart-World-Scene. **Aktueller Stand:** HistoricalWorld ist implementiert, verdrahtet und durch Preflight-Gate abgesichert (R-050+R-051). Verbleibende Lücken: Year-0-Handoff (R-052), SVG-Komposition, vollständige Verbindung von Snapshot-Playback zu sichtbarem Startfluss. Die vorhandenen Presentation-Klassen sind testbar, aber noch nicht in `SceneDirector`/Main-Menu als eigenständiger Nutzerfluss registriert.
 
 ## 2. Repository-Architektur
 
@@ -37,7 +39,7 @@ Der wesentliche verbleibende Produktabstand liegt nicht mehr im Simulationskern,
 | historische Simulation | `HistorySimulator`, `WorldState`, `FactionAI`, `HistoryEventFactory` | vorhanden, deterministisch |
 | Projektion | `HistoricalSnapshot`, `PlaybackController`, `HistoricalRenderer` | vorhanden, isoliert getestet |
 | Archiv-UI | `ChronicleArchiveView` | vorhanden, nicht als sichtbarer Hauptfluss verdrahtet |
-| Vorstart-Welt | eigenständige `HistoricalWorld.tscn` | fehlt |
+| Vorstart-Welt | eigenständige `HistoricalWorld.tscn` | **FIXED** (R-050: RunPreparation + Bootstrap + Reconnect; R-051: Preflight-Gate 44/44) |
 | DOKI Runtime | Python `narrative_runtime` | getrennt, nicht mit Game-History vermischen |
 
 ### 2.2 Autoloads

@@ -90,12 +90,11 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DoD:** kilo.json entfernt (git rm), snapshots/ + tmp_* gelöscht, Preflight grün.
 - **STATUS:** `BLOCKED` — destruktiv, wartet auf User-Freigabe
 
-### R-005 — CODEBASE_AUDIT konsolidieren — **P1**
-- **WHY:** `docs/CODEBASE_AUDIT.md` (29.08.) ist durch neueren Code widerlegt („HistoricalWorld fehlt“ — existiert und ist verdrahtet).
+### R-005 — CODEBASE_AUDIT konsolidieren — **P1** ✅ VERIFIED
+- **WHY:** `docs/CODEBASE_AUDIT.md` (29.08.) behauptete „HistoricalWorld fehlt" — R-050+R-051 widerlegten dies.
+- **ERGEBNIS:** HISTORISCHER-Header angefügt; „fehlt" → FIXED (R-050+R-051); einzigartige Inhalte bleiben als historische Referenz.
 - **DEPENDS:** R-001 · **BLOCKS:** —
-- **MODULES:** Doku/Chronik
-- **DoD:** Einzigartige Inhalte → FINDINGS/Modul-Doku; Rest archiviert.
-- **STATUS:** `TODO`
+- **STATUS:** `VERIFIED`
 
 ### R-050 — HistoricalWorld-Lifecycle & Handover — **P0** ✅ VERIFIED
 - **WHY:** Spielerfluss „NEUES SPIEL“ endete in toter Szene (leere Chronik); Doppel-Simulation drohte (zweites `begin_new_game`).

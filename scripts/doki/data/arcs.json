@@ -1878,13 +1878,26 @@
 				"F-020",
 				"F-003",
 				"F-004",
-				"F-001"
+				"F-001",
+				"F-376",
+				"F-046",
+				"F-384",
+				"F-385",
+				"C-837",
+				"C-838",
+				"C-839",
+				"C-840",
+				"C-841",
+				"C-842",
+				"C-843",
+				"C-844",
+				"C-845"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
-			"weight": 2.3
+			"weight": 7.8
 		},
 		"a5": {
 			"climax_weight": 3.0,
