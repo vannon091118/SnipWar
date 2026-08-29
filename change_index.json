@@ -1034,7 +1034,7 @@
 			"p_id": 47.0
 		},
 		"4e94181088affdb32405b27a4d0f39eaa04ff6e2": {
-			"c": 101,
+			"c": 101.0,
 			"composite": "c101j92n9a12p37",
 			"entities": [
 				"F-002",
@@ -1079,7 +1079,7 @@
 				"C-891",
 				"C-892"
 			],
-			"p_id": 101
+			"p_id": 101.0
 		},
 		"5bc899b56982f3b9676e93bc1c5d773c05c42f94": {
 			"c": 40.0,
@@ -1847,6 +1847,47 @@
 				"C-076"
 			],
 			"p_id": 30.0
+		},
+		"d19b775622e2d9a68e34a6924bbd52875597579c": {
+			"c": 102,
+			"composite": "c102j43n1a30p16",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-403",
+				"F-404",
+				"F-405",
+				"F-406",
+				"F-121",
+				"C-893",
+				"C-894",
+				"C-895",
+				"C-896",
+				"C-897",
+				"C-898",
+				"C-899",
+				"C-900",
+				"C-901",
+				"C-902",
+				"C-903",
+				"C-904",
+				"C-905",
+				"C-906",
+				"C-907",
+				"C-908",
+				"C-909",
+				"C-910",
+				"C-911",
+				"C-912",
+				"C-913",
+				"C-914",
+				"C-915",
+				"C-916",
+				"C-917"
+			],
+			"p_id": 102
 		},
 		"d5cd2f9e7af8ca65c73e5625c8f9bdbee626d9f5": {
 			"c": 37.0,
@@ -17722,6 +17763,431 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-893": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-893",
+			"last_p": 102.0,
+			"name": "EconomyDealUnit",
+			"path": "scripts/state/domains/economy/deal_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-894": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-894",
+			"last_p": 102.0,
+			"name": "_init",
+			"path": "scripts/state/domains/economy/deal_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-895": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						24.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-895",
+			"last_p": 102.0,
+			"name": "deal_resources",
+			"path": "scripts/state/domains/economy/deal_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-896": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						117.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-896",
+			"last_p": 102.0,
+			"name": "deal_resources_for_planets",
+			"path": "scripts/state/domains/economy/deal_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-897": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						187.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-897",
+			"last_p": 102.0,
+			"name": "validate_resources",
+			"path": "scripts/state/domains/economy/deal_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-898": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						228.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-898",
+			"last_p": 102.0,
+			"name": "_shuffle",
+			"path": "scripts/state/domains/economy/deal_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-899": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						236.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-899",
+			"last_p": 102.0,
+			"name": "_homeworld_data_sort",
+			"path": "scripts/state/domains/economy/deal_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-900": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						243.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-900",
+			"last_p": 102.0,
+			"name": "_build_resource_id_list",
+			"path": "scripts/state/domains/economy/deal_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-901": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						258.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-901",
+			"last_p": 102.0,
+			"name": "_least_used_resource",
+			"path": "scripts/state/domains/economy/deal_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-902": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-902",
+			"last_p": 102.0,
+			"name": "EconomyUpgradeUnit",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-903": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-903",
+			"last_p": 102.0,
+			"name": "_init",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-904": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-904",
+			"last_p": 102.0,
+			"name": "has_planet_upgrade",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-905": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						29.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-905",
+			"last_p": 102.0,
+			"name": "get_planet_upgrades",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-906": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						38.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-906",
+			"last_p": 102.0,
+			"name": "add_planet_upgrade",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-907": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						50.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-907",
+			"last_p": 102.0,
+			"name": "can_purchase_upgrade",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-908": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						66.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-908",
+			"last_p": 102.0,
+			"name": "purchase_upgrade",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-909": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						101.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-909",
+			"last_p": 102.0,
+			"name": "can_purchase_upgrade_with_domains",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-910": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						132.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-910",
+			"last_p": 102.0,
+			"name": "purchase_upgrade_with_domains",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-911": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						155.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-911",
+			"last_p": 102.0,
+			"name": "upgrade_build_in_progress",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-912": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						163.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-912",
+			"last_p": 102.0,
+			"name": "upgrade_build_remaining",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-913": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						169.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-913",
+			"last_p": 102.0,
+			"name": "advance_upgrade_builds",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-914": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						189.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-914",
+			"last_p": 102.0,
+			"name": "abort_upgrade_build",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-915": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						181.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-915",
+			"last_p": 102.0,
+			"name": "resource_snapshot",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-916": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						238.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-916",
+			"last_p": 102.0,
+			"name": "has_planet_upgrade",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-917": {
+			"first_p": 102.0,
+			"history": [
+				{
+					"lines": [
+						242.0
+					],
+					"p_id": 102.0
+				}
+			],
+			"id": "C-917",
+			"last_p": 102.0,
+			"name": "get_planet_upgrades",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -21739,6 +22205,46 @@
 			"last_p": 101.0,
 			"name": "e1_vault_core_semantics_check.gd.uid",
 			"path": "scripts/testing/e1_vault_core_semantics_check.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-403": {
+			"first_p": 102.0,
+			"history": [],
+			"id": "F-403",
+			"last_p": 102.0,
+			"name": "deal_unit.gd",
+			"path": "scripts/state/domains/economy/deal_unit.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-404": {
+			"first_p": 102.0,
+			"history": [],
+			"id": "F-404",
+			"last_p": 102.0,
+			"name": "deal_unit.gd.uid",
+			"path": "scripts/state/domains/economy/deal_unit.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-405": {
+			"first_p": 102.0,
+			"history": [],
+			"id": "F-405",
+			"last_p": 102.0,
+			"name": "upgrade_unit.gd",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-406": {
+			"first_p": 102.0,
+			"history": [],
+			"id": "F-406",
+			"last_p": 102.0,
+			"name": "upgrade_unit.gd.uid",
+			"path": "scripts/state/domains/economy/upgrade_unit.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

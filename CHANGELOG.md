@@ -1804,3 +1804,19 @@ R-007 E1: EconomyDomain aufgeteilt — Vault-, Credit-, Local-Vault- und Worker-
 - scripts/state/domains/economy_domain.gd: Test-Assets ergänzt (F-121).
 - scripts/testing/e1_vault_core_semantics_check.gd: Test-Assets ergänzt (F-401).
 - scripts/testing/e1_vault_core_semantics_check.gd.uid: Test-Assets ergänzt (F-402).
+
+## 2026-08-27 06:00:00 — p102 · c102j43n1a30p16 · Buffy · triumphierend
+
+**[Buffy] E2: deal_unit und upgrade_unit aus… — nach Spark**
+
+E2: deal_unit und upgrade_unit aus economy_domain.gd extrahiert — gleiche Methode wie E1 mit _owner-Rückverweis
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/state/domains/economy/deal_unit.gd: Implementiert und integriert (F-403).
+- scripts/state/domains/economy/deal_unit.gd.uid: Implementiert und integriert (F-404).
+- scripts/state/domains/economy/upgrade_unit.gd: Implementiert und integriert (F-405).
+- scripts/state/domains/economy/upgrade_unit.gd.uid: Implementiert und integriert (F-406).
+- scripts/state/domains/economy_domain.gd: Implementiert und integriert (F-121).
