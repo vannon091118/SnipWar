@@ -55,8 +55,12 @@ def build_context(archive: Any, snapshot: SourceSnapshot) -> dict[str, Any]:
         "memory_refs": {"count": derived["memory"]},
         "threads": {"count": derived["threads"], "thread_events": derived["thread_events"]},
         "conflicts": {"count": derived["conflicts"]},
+        "public_state": {"count": derived["public_state_history"]},
+        "spotlight": {"count": derived["spotlight_selections"]},
         "allowed_interpretations": [
             "Use only the supplied facts and evidence references.",
             "Do not alter the Composite or narrator selection.",
+            "Public state is SOCIAL truth, never FACT.",
+            "Spotlight balance modifies candidate weights, not the hash.",
         ],
     }

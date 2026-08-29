@@ -27,6 +27,7 @@ var _last_error := ""
 var _started_at_ms := 0
 var _enabled := true
 var _starting := false
+var _start_mutex := Mutex.new()  # MCP-006: serialize worker start to avoid duplicate processes
 
 
 func _init() -> void:
@@ -127,9 +128,22 @@ func _ensure_connected() -> bool:
 
 
 func _start_worker_and_connect() -> bool:
+	# MCP-006: serialize start to avoid duplicate worker processes
+	_start_mutex.lock()
+	if _starting:
+		_start_mutex.unlock()
+		var start_deadline := Time.get_ticks_msec() + CONNECT_TIMEOUT_MS
+		while _starting and Time.get_ticks_msec() < start_deadline:
+			_try_connect()
+			if _peer != null and _peer.get_status() == StreamPeerTCP.STATUS_CONNECTED:
+				return true
+			await get_tree().process_frame
+		return _peer != null and _peer.get_status() == StreamPeerTCP.STATUS_CONNECTED
+	_starting = true
+	_start_mutex.unlock()
+
 	_reset_worker_transport()
 	_pending.clear()
-	_starting = true
 	_last_error = ""
 	var script_path := _script_path
 	if script_path.begins_with("res://"):

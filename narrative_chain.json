@@ -5804,6 +5804,138 @@
 			"seq": 68,
 			"subject": "refactor: replace scene-tree scans with explicit… [Analyse: Thinker] — nach Echo",
 			"summary": "Ich zähle sechs Stellen, an denen der Code den Szenenbaum nach Klassennamen durchsucht hat — economy_manager via get_parent(), seeded_layout via node tree, chunk_coordinator via find. Echo hat gera..."
+		},
+		{
+			"a": 16,
+			"arc": "a33",
+			"c": 69,
+			"composite": "c69j6n5a16p59",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": ".githooks/post-commit",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 1.0,
+					"file": ".githooks/pre-commit",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "AGENTS.md",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 41.0,
+					"file": "ARCHITECTURE.md",
+					"insertions": 87.0
+				},
+				{
+					"deletions": 10.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 71.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/metrics_updater.gd",
+					"insertions": 259.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/metrics_updater.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/orchestration/flows/finalize_flow.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/orchestration/flows/finish_flow.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/git_helper.gd",
+					"insertions": 62.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/prompt/voice_composer.gd",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/historical_snapshot.gd",
+					"insertions": 30.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/historical_snapshot.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/playback_controller.gd",
+					"insertions": 76.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/playback_controller.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/history/simulation/history_simulator.gd",
+					"insertions": 49.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/test_determinism.gd",
+					"insertions": 132.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/test_determinism.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 59.0,
+					"file": "scripts/history/world_chronicle.gd",
+					"insertions": 171.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/preflight.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_save_game_roundtrip.gd",
+					"insertions": 10.0
+				}
+			],
+			"date": "2026-08-27 21:00:00",
+			"hash": "af3a017280c27611b9d6ad6eecaead1b8104c97b",
+			"j": 6,
+			"model_id": "claude-sonnet-4",
+			"mood": "alarmiert",
+			"n": 5,
+			"narrator": "Squizzle",
+			"p": 59,
+			"p_id": 69,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Thinker",
+			"seq": 69,
+			"subject": "Squizzles Fall: DOKI- und Preflight-Gates auf exakten staged… — nach Thinker",
+			"summary": "Achtung — hier spricht die Forensik. Zwei compiling Verbrechen lagen vor, unmittelbar bevor Thinker seine Arbeit niederlegte. Erstens: Das DOKI-Promptsystem war ein Self-Referenz-Kunststück, das ke..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

@@ -20,6 +20,7 @@ import json
 import os
 import pathlib
 import re
+import shutil
 import socket
 import subprocess
 import sys
@@ -30,6 +31,11 @@ try:
     from PIL import Image
 except ImportError:
     Image = None  # type: ignore[assignment]
+
+try:
+    import pytesseract
+except ImportError:
+    pytesseract = None  # type: ignore[assignment]
 
 # ---------------------------------------------------------------------------
 # CLI arguments
@@ -215,36 +221,129 @@ def compare_images(first_path: pathlib.Path, second_path: pathlib.Path) -> dict[
 # OCR (optional)
 # ---------------------------------------------------------------------------
 
-def run_ocr(file_path: pathlib.Path, ocr_command: str) -> dict[str, Any]:
-    """Run OCR on an image. Returns OCR result dict."""
-    if not ocr_command:
-        return {"available": False, "text": "", "reason": "No --ocr-command configured"}
+_TESSERACT_CANDIDATES = [
+    "tesseract",
+    r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+    r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+]
 
+
+def _find_tesseract_cmd() -> str | None:
+    """Return the first working tesseract path, or None."""
+    for candidate in _TESSERACT_CANDIDATES:
+        try:
+            subprocess.run([candidate, "--version"], capture_output=True, timeout=5)
+            return candidate
+        except Exception:
+            continue
+    return None
+
+
+def _ocr_via_pytesseract(file_path: pathlib.Path) -> dict[str, Any] | None:
+    """Try pytesseract in-process OCR. Returns None if unavailable."""
+    if pytesseract is None or Image is None:
+        return None
+    # Auto-detect: verify that the configured tesseract_cmd actually works
+    current_cmd = getattr(pytesseract.pytesseract, "tesseract_cmd", "tesseract")
     try:
-        # Write to temp file, run command, read output
-        result = subprocess.run(
-            [ocr_command, str(file_path)],
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-        if result.returncode != 0:
-            return {"available": False, "text": "", "reason": result.stderr.strip() or f"OCR command exited {result.returncode}"}
-
-        text = result.stdout.strip()
+        subprocess.run([current_cmd, "--version"], capture_output=True, timeout=5)
+    except Exception:
+        found = _find_tesseract_cmd()
+        if found is None:
+            return None
+        pytesseract.pytesseract.tesseract_cmd = found
+    try:
+        img = Image.open(file_path).convert("RGB")
+        data = pytesseract.image_to_data(img, output_type=pytesseract.Output.DICT)
+        words: list[str] = []
+        confs: list[int] = []
+        for i, conf_raw in enumerate(data.get("conf", [])):
+            try:
+                conf_val = int(conf_raw)
+            except (TypeError, ValueError):
+                conf_val = -1
+            if conf_val < 0:
+                continue
+            text = str(data["text"][i]).strip()
+            if text:
+                words.append(text)
+                confs.append(conf_val)
+        text = " ".join(words)
         lines = [l.strip() for l in text.split("\n") if l.strip()]
+        avg_conf = round(sum(confs) / len(confs), 1) if confs else 0.0
         return {
             "available": True,
             "text": text,
             "lines": lines,
-            "confidence": -1,  # unknown without tesseract API
+            "confidence": avg_conf,
+            "engine": "pytesseract",
         }
-    except subprocess.TimeoutExpired:
-        return {"available": False, "text": "", "reason": "OCR timed out (60s)"}
-    except FileNotFoundError:
-        return {"available": False, "text": "", "reason": f"OCR command not found: {ocr_command}"}
-    except Exception as e:
-        return {"available": False, "text": "", "reason": str(e)}
+    except Exception:
+        return None
+
+
+def _detect_tesseract_command() -> str:
+    """Auto-detect the Tesseract CLI (stdlib-only): PATH first, then common
+    Windows install locations. Returns "" when nothing is found."""
+    found = shutil.which("tesseract")
+    if found:
+        return found
+    local_app = os.environ.get("LOCALAPPDATA", "")
+    candidates = [
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+        os.path.join(local_app, "Programs", "Tesseract-OCR", "tesseract.exe") if local_app else "",
+    ]
+    for cand in candidates:
+        if cand and os.path.isfile(cand):
+            return cand
+    return ""
+
+
+def run_ocr(file_path: pathlib.Path, ocr_command: str) -> dict[str, Any]:
+    """Run OCR on an image. Returns OCR result dict."""
+    # 0) No explicit command — auto-detect the Tesseract CLI so OCR works
+    #    without flags whenever Tesseract is installed (PATH or default dirs).
+    if not ocr_command:
+        ocr_command = _detect_tesseract_command()
+    # 1) Explicit (or auto-detected) CLI command takes precedence
+    if ocr_command:
+        try:
+            # Tesseract CLI needs an output target: "stdout" prints the text
+            # instead of writing an output base file. Engine default language
+            # (eng) is intentional — OCR must be robust, not bilingual.
+            result = subprocess.run(
+                [ocr_command, str(file_path), "stdout"],
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+            if result.returncode != 0:
+                return {"available": False, "text": "", "reason": result.stderr.strip() or f"OCR command exited {result.returncode}"}
+            text = result.stdout.strip()
+            lines = [l.strip() for l in text.split("\n") if l.strip()]
+            return {
+                "available": True,
+                "text": text,
+                "lines": lines,
+                "confidence": -1,
+                "engine": "cli",
+            }
+        except subprocess.TimeoutExpired:
+            return {"available": False, "text": "", "reason": "OCR timed out (60s)"}
+        except FileNotFoundError:
+            # Fall through to pytesseract
+            pass
+        except Exception:
+            pass
+
+    # 2) pytesseract in-process fallback
+    pt_result = _ocr_via_pytesseract(file_path)
+    if pt_result is not None:
+        return pt_result
+
+    # 3) Nothing available
+    return {"available": False, "text": "", "reason": "No --ocr-command configured, no Tesseract found (PATH/common installs), pytesseract unavailable"}
 
 
 # ---------------------------------------------------------------------------

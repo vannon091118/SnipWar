@@ -126,6 +126,7 @@ def _relationship_facts(subject: str) -> dict[str, Any]:
         "explicit_admission": bool(_ADMISSION_RE.search(subject)),
         "explicit_disagreement": bool(_DISAGREEMENT_RE.search(subject)),
         "explicit_revert": bool(_REVERT_RE.search(subject)),
+        "explicit_causality": bool(re.compile(r"\b(broken|caused)\s+by\b", re.IGNORECASE).search(subject)),
         "stance": _STANCE_RE.search(subject).group(0).lower() if _STANCE_RE.search(subject) else None,
     }
 

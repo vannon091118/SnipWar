@@ -26,6 +26,7 @@ def observation(seq: int, subject: str, narrator: str = "Buffy", previous: str =
             "explicit_admission": "my mistake" in subject.lower(),
             "explicit_disagreement": "disagree" in subject.lower(),
             "explicit_revert": "revert" in subject.lower(),
+            "explicit_causality": "broken by" in subject.lower() or "caused by" in subject.lower(),
             "stance": "minimal" if "minimal" in subject.lower() else None,
         },
         "is_merge": False,
@@ -71,6 +72,32 @@ class RelationshipSprintTests(unittest.TestCase):
         later = observation(2, "revert: restore b", files=["b.gd"])
         events = classify_events([first, later])
         self.assertNotIn("upgraded_classification", events[0])
+
+    def test_revert_without_causality_is_candidate_only(self):
+        # V2 ladder: a revert without explicit causality is only a CANDIDATE,
+        # never an instant REGRESSION_CONFIRMED.
+        events = classify_events([
+            observation(1, "feat: add docs", files=["a.gd"]),
+            observation(2, "revert: restore docs", files=["a.gd"]),
+        ])
+        self.assertEqual(events[1]["classification"], "REGRESSION_CANDIDATE")
+        self.assertEqual(events[1]["evidence_level"], "CANDIDATE")
+        self.assertNotIn("upgraded_classification", events[1])
+
+    def test_candidate_upgraded_by_later_confirmed_evidence(self):
+        # A later REGRESSION_CONFIRMED on the same files upgrades the candidate
+        # without mutating the underlying observation.
+        obs = [
+            observation(1, "feat: add docs", files=["a.gd"]),
+            observation(2, "revert: restore docs", files=["a.gd"]),
+            observation(3, "revert: restore docs broken by prior change", narrator="Devin", previous="Buffy", files=["a.gd"]),
+        ]
+        before = canonical_json(obs[1])
+        events = classify_events(obs)
+        self.assertEqual(canonical_json(obs[1]), before)
+        upgraded = [e for e in events if e.get("upgraded_classification") == "REGRESSION_CONFIRMED"]
+        self.assertTrue(upgraded)
+        self.assertEqual(upgraded[0]["evidence_level"], "CONFIRMED_BY_LATER_EVIDENCE")
 
     def test_later_revert_upgrades_prior_repair_without_mutating_observation(self):
         first = observation(1, "feat: add docs")

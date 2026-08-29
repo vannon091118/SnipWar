@@ -20,6 +20,7 @@ const EMBEDDED_ENV := "MCP_EMBEDDED"
 const EMBEDDED_PORT_ENV := "MCP_EMBEDDED_PORT"
 const EMBEDDED_PROFILE_ENV := "MCP_EMBEDDED_PROFILE"
 const EMBEDDED_WRITES_ENV := "MCP_EMBEDDED_WRITES"
+const EMBEDDED_OCR_ENV := "MCP_EMBEDDED_OCR"
 
 var _server: Node
 var _transport := ""
@@ -66,6 +67,7 @@ func _ready() -> void:
 		"vision_worker_command": _parse_string_arg(user_args, "--mcp-vision-command", "python"),
 		"vision_worker_script": _parse_string_arg(user_args, "--mcp-vision-script", "res://addons/gdscript_mcp/client/vision_worker.py"),
 		"vision_worker_port": _parse_int_arg(user_args, "--mcp-vision-port", port + 37),
+		"vision_worker_ocr_command": _parse_string_arg(user_args, "--mcp-ocr-command", OS.get_environment(EMBEDDED_OCR_ENV)),
 		"autonomy_writes": (OS.get_environment(EMBEDDED_WRITES_ENV) == "1") if embedded else ("--mcp-autonomy-writes" in user_args),
 	}
 	# Defer BOTH the session attach and the server boot: during autoload

@@ -31,7 +31,7 @@ und `runtime_click` interpolieren den Cursor über mehrere Frames (`smooth=true`
 `duration_ms`), statt zu springen. Agenten, die den Cursor „teleportieren“,
 verhalten sich damit wie echte Spieler und Hover-Effekte feuern korrekt.
 
-## Verbindlicher Spieler-Vertrag
+## Verbinderlicher Spieler-Vertrag
 
 Ein sichtbarer Playtest wird wie ein Spieler ausgefuehrt. Der Agent entscheidet den naechsten Zug erst nach der letzten Live-Beobachtung.
 
@@ -42,7 +42,7 @@ Ein sichtbarer Playtest wird wie ein Spieler ausgefuehrt. Der Agent entscheidet 
 5. Separat beobachten, falls Hover fuer die Diagnose relevant ist.
 6. Genau einen Klick mit einem eigenen Atom senden: `runtime_click`.
 7. Separat warten, sofern ein UI-Uebergang erwartet wird.
-8. Separat scannen; Screenshot nur bei Unklarheit, Widerspruch, Scroll-Nachweis oder fehlender sichtbarer Evidenz.
+8. Separat scannen; Screenshot nur bei Unklarheit, Widerspruch, Scroll-Nachweis oder fehlender sichtbaren Evidenz.
 9. Erst danach den naechsten Spielerzug bestimmen.
 
 Ein Ingame-Script darf genau einen MCP-Tool-Call ausfuehren. Es darf keine Zielsuche, Mausbewegung, Klick, Wartezeit, Folgeaktion oder GameState-Mutation verstecken. `runtime_game_state_summary` ist in diesem Vertrag nur eine read-only Beobachtung und kein Steuerungsweg. `atomic_session.js` darf den Transport persistent halten, aber jede JSON-Zeile bleibt genau ein MCP-Call.
@@ -55,6 +55,20 @@ Nicht erlaubt fuer sichtbare Spielerlaeufe:
 - `runtime_ux_click`, weil Find+Click fuer diesen Vertrag zwei Aktionen in einem Tool verbirgt (im player-Profil serverseitig gesperrt)
 - Freeze/Step, Goal-Player, Chains und E2E-Szenarien (im player-Profil serverseitig gesperrt)
 - Forschung, Werftbau, Teilekauf oder Schiffmontage ueber Funktions-Calls
+
+### `runtime_ux_click` Verdict-Semantik (MCP-007)
+
+`runtime_ux_click` liefert bei Erfolg **kein** `SOLVED`-Verdict, sondern `TO_CHECK`:
+
+| Verdict | Bedeutung |
+|---------|-----------|
+| `MCP_ISSUE` | Klick dispatched aber SceneTree-Signatur unverändert — Input landete nicht |
+| `INCONCLUSIVE` | Live-State geaendert aber Screenshot-Capture fehlgeschlagen |
+| `TO_CHECK` | **Live-State UND Screenshot bestaetigen Aenderung** — Agent muss manuell bestaetigen, dass das gewuenschte UI-Ergebnis eingetreten ist (z.B. Panel geoeffnet, Button disabled, Text geandert) |
+
+**Grund:** Nur der Agent kennt die *Intent* der Aktion (\"Forschung starten\" vs \"Panel schliessen\"). Der Server kann nur technisch bestaetigen, dass sich der Zustand geandert hat, nicht ob die Aenderung der *Intent* entspricht.
+
+**Workflow:** Nach `runtime_ux_click` → `verdict: "TO_CHECK"` → Agent prüft `receipt.after_live` / `receipt.artifact` → bei Bestätigung nächsten Zug planen.
 
 Autonomie-Repair, Headless-Vertragstests und Editor-Operationen sind eigene Modi. Sie duerfen nicht als sichtbares Spielergebnis gemeldet werden.
 

@@ -14,6 +14,8 @@ from .relationships import build_relationship_effects, build_relationship_state,
 from .beliefs import build_beliefs, build_memory
 from .threads import build_threads, current_threads
 from .perspectives import build_perspectives, build_conflicts
+from .public_state import build_public_state
+from .spotlight import derive_spotlight
 
 META_KEYS = (
     "schema_version",
@@ -107,6 +109,9 @@ CREATE TABLE IF NOT EXISTS relationship_state_history (
     source TEXT NOT NULL,
     target TEXT NOT NULL,
     values_json TEXT NOT NULL,
+    previous_values_json TEXT NOT NULL DEFAULT '{}',
+    deltas_json TEXT NOT NULL DEFAULT '{}',
+    evidence_refs TEXT NOT NULL DEFAULT '[]',
     knowledge_json TEXT NOT NULL DEFAULT '{}',
     rule_version TEXT NOT NULL,
     decay_rule_version TEXT NOT NULL DEFAULT 'relationship_decay/v1',
@@ -128,8 +133,11 @@ CREATE TABLE IF NOT EXISTS beliefs (
     confidence REAL NOT NULL,
     formed_at INTEGER NOT NULL,
     last_updated INTEGER NOT NULL,
+    last_reinforced INTEGER NOT NULL,
     evidence_seq INTEGER NOT NULL,
     evidence_type TEXT NOT NULL,
+    basis TEXT NOT NULL,
+    status TEXT NOT NULL,
     impact REAL NOT NULL,
     rule_version TEXT NOT NULL,
     PRIMARY KEY(belief_id, evidence_seq),
@@ -143,6 +151,9 @@ CREATE TABLE IF NOT EXISTS memory (
     memory_type TEXT NOT NULL,
     emotional_weight REAL NOT NULL,
     retention_weight REAL NOT NULL,
+    involved TEXT NOT NULL DEFAULT '[]',
+    recall_count INTEGER NOT NULL DEFAULT 0,
+    last_recalled INTEGER,
     rule_version TEXT NOT NULL,
     FOREIGN KEY(event_seq) REFERENCES observations(seq) ON DELETE CASCADE
 );
@@ -163,6 +174,7 @@ CREATE TABLE IF NOT EXISTS thread_events (
     evidence_type TEXT NOT NULL,
     evidence_refs TEXT NOT NULL,
     is_reactivation INTEGER NOT NULL,
+    relevance REAL NOT NULL DEFAULT 0.0,
     rule_version TEXT NOT NULL,
     PRIMARY KEY(thread_id, observation_seq),
     FOREIGN KEY(observation_seq) REFERENCES observations(seq) ON DELETE CASCADE
@@ -195,6 +207,25 @@ CREATE TABLE IF NOT EXISTS concept_touches (
     prior_touch_seqs TEXT NOT NULL,
     PRIMARY KEY(seq, entity_id),
     FOREIGN KEY(event_id) REFERENCES events(event_id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS public_state_history (
+    observation_seq INTEGER PRIMARY KEY,
+    public_states_json TEXT NOT NULL,
+    rule_version TEXT NOT NULL,
+    FOREIGN KEY(observation_seq) REFERENCES observations(seq) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS spotlight_selections (
+    observation_seq INTEGER PRIMARY KEY,
+    composite TEXT NOT NULL,
+    selected_narrator TEXT NOT NULL,
+    actual_narrator TEXT NOT NULL,
+    match INTEGER NOT NULL,
+    seed INTEGER NOT NULL,
+    random_value REAL NOT NULL,
+    candidates_json TEXT NOT NULL,
+    audit_json TEXT NOT NULL,
+    rule_version TEXT NOT NULL,
+    FOREIGN KEY(observation_seq) REFERENCES observations(seq) ON DELETE CASCADE
 );
 """
 
@@ -354,7 +385,7 @@ class Archive:
             )
 
     def _write_derived(self, connection: sqlite3.Connection, observations: list[dict[str, Any]]) -> None:
-        for table in ("relationship_classifications", "relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts"):
+        for table in ("relationship_classifications", "relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts", "public_state_history", "spotlight_selections"):
             connection.execute(f"DELETE FROM {table}")
         for item in classify_events(observations):
             connection.execute("INSERT INTO relationship_classifications VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (item["event_id"], item["origin_observation_seq"], item["event_type"], item["classification"], item["evidence_level"], canonical_json(item["evidence_refs"]), item["status"], item.get("superseded_by"), item.get("upgraded_classification"), canonical_json(item.get("upgrade_evidence_refs", [])), item["rule_version"]))
@@ -362,25 +393,47 @@ class Archive:
             connection.execute("INSERT INTO relationship_events VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (item["effect_id"], item["event_id"], item["observation_seq"], item["source"], item["target"], item["axis"], item["delta"], item["classification"], item["evidence_level"], canonical_json(item["evidence_refs"]), item["reason"], item["rule_version"]))
         belief_data = build_beliefs(observations)
         for item in build_relationship_state(observations, belief_data):
-            connection.execute("INSERT INTO relationship_state_history(observation_seq, source, target, values_json, knowledge_json, rule_version, decay_rule_version) VALUES (?, ?, ?, ?, ?, ?, ?)", (item["observation_seq"], item["source"], item["target"], canonical_json(item["values"]), canonical_json(item.get("knowledge", {})), item["rule_version"], item.get("decay_rule_version", "relationship_decay/v1")))
+            connection.execute("INSERT INTO relationship_state_history(observation_seq, source, target, values_json, previous_values_json, deltas_json, evidence_refs, knowledge_json, rule_version, decay_rule_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (item["observation_seq"], item["source"], item["target"], canonical_json(item["values"]), canonical_json(item.get("previous_values", {})), canonical_json(item.get("deltas", {})), canonical_json(item.get("evidence_refs", [])), canonical_json(item.get("knowledge", {})), item["rule_version"], item.get("decay_rule_version", "relationship_decay/v1")))
         for item in build_character_state(observations):
             connection.execute("INSERT INTO character_state_history VALUES (?, ?, ?, ?)", (item["observation_seq"], item["character"], canonical_json(item["values"]), item["rule_version"]))
         for item in belief_data:
-            connection.execute("INSERT INTO beliefs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tuple(item.values()))
+            connection.execute("INSERT INTO beliefs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tuple(item.values()))
         for item in build_memory(observations):
-            connection.execute("INSERT INTO memory VALUES (?, ?, ?, ?, ?, ?, ?, ?)", tuple(item.values()))
+            connection.execute(
+                "INSERT INTO memory VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (item["memory_id"], item["character"], item["event_seq"], item["subject"],
+                 item["memory_type"], item["emotional_weight"], item["retention_weight"],
+                 canonical_json(list(item["involved"])), item["recall_count"], item["last_recalled"],
+                 item["rule_version"]),
+            )
         thread_history = build_threads(observations)
         thread_data = build_threads(observations)
         current_thread_map = {item["thread_id"]: item for item in current_threads(observations)}
         for item in thread_data:
             current = current_thread_map[item["thread_id"]]
             connection.execute("INSERT INTO threads VALUES (?, ?, ?, ?, ?, ?)", (item["thread_id"], item["observation_seq"], current["topic"], item["status"], item["observation_seq"], item["rule_version"]))
-            connection.execute("INSERT INTO thread_events VALUES (?, ?, ?, ?, ?, ?, ?)", (item["thread_id"], item["observation_seq"], item["status"], item["evidence_type"], canonical_json(item["evidence_refs"]), int(item["is_reactivation"]), item["rule_version"]))
+            connection.execute("INSERT INTO thread_events VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (item["thread_id"], item["observation_seq"], item["status"], item["evidence_type"], canonical_json(item["evidence_refs"]), int(item["is_reactivation"]), float(item.get("relevance", 0.0)), item["rule_version"]))
         perspectives = build_perspectives(observations, build_beliefs(observations), thread_history)
         for item in perspectives:
             connection.execute("INSERT INTO perspectives VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (item["perspective_id"], item["character"], item["thread_id"], item["claim"], item["stance"], item["confidence"], canonical_json(item["supporting_evidence"]), canonical_json(item["contradicting_evidence"]), item["rule_version"]))
         for item in build_conflicts(perspectives):
             connection.execute("INSERT INTO conflicts VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (item["conflict_id"], item["thread_id"], canonical_json(item["actors"]), item["trigger"], item["contradiction"], item["intensity"], canonical_json(item["evidence_refs"]), item["rule_version"]))
+        # Public State (full snapshot incl. audit updates)
+        for item in build_public_state(observations):
+            connection.execute("INSERT INTO public_state_history VALUES (?, ?, ?)", (item["observation_seq"], canonical_json({"public_states": item["public_states"], "updates": item["updates"]}), item["rule_version"]))
+        # Spotlight Selections
+        public_states = build_public_state(observations)
+        ps_lookup = {int(ps["observation_seq"]): ps for ps in public_states}
+        spotlight_result = derive_spotlight(observations, public_states)
+        for item in spotlight_result.get("spotlight_selections", []):
+            seq = int(item["observation_seq"])
+            connection.execute(
+                "INSERT INTO spotlight_selections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (seq, item.get("composite", ""), item.get("selected", ""), item.get("actual_narrator", ""),
+                 int(item.get("match", False)), item.get("seed", 0), item.get("random_value", 0.0),
+                 canonical_json(item.get("candidates", [])), canonical_json(item.get("audit", {})),
+                 "spotlight/v1")
+            )
 
     def _set_meta(self, connection: sqlite3.Connection, values: dict[str, Any]) -> None:
         connection.executemany(
@@ -426,7 +479,7 @@ class Archive:
         connection = self.connect()
         try:
             self.initialize(connection)
-            return {table: int(connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]) for table in ("relationship_classifications", "relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts")}
+            return {table: int(connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]) for table in ("relationship_classifications", "relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts", "public_state_history", "spotlight_selections")}
         finally:
             connection.close()
 
@@ -436,7 +489,7 @@ class Archive:
             self.initialize(connection)
             meta = dict(connection.execute("SELECT key, value FROM meta"))
             counts = {}
-            for table in ("observations", "events", "file_touches", "concept_touches", "relationship_classifications", "relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts"):
+            for table in ("observations", "events", "file_touches", "concept_touches", "relationship_classifications", "relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts", "public_state_history", "spotlight_selections"):
                 counts[table] = int(connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
             return {"meta": meta, "counts": counts, "db_path": str(self.db_path)}
         finally:

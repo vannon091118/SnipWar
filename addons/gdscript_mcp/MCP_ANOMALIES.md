@@ -1,15 +1,15 @@
 # MCP-Anomalien — GAME vs MCP Mismatch-Referenz
-**Stand:** 2026-08-24 · **Session:** Playtest-Durchlauf SnipWar
+**Stand:** 2026-08-29 · **Session:** Playtest-Durchlauf SnipWar
 
-> **Status-Update 2026-08-27 (Konsistenz-Runde):** Die meisten hier gelisteten
-> MCP-Mismatches sind inzwischen GEFIXT und in `docs/FINDINGS.md` mit Beleg
+> **Status-Update 2026-08-29 (Phase B Repair):** Die meisten hier gelisteten
+> MCP-Mismatches sind inzwischen **GEFIXT** und in `docs/FINDINGS.md` mit Beleg
 > nachgeführt: M1 (Response-Budget/Trimming), M2 (rekursive Planetensuche),
 > M3 (Click auf Nicht-Control via Koordinaten), M4 (`--mcp-developer` dokumentiert),
-> M5 (Reconnect in `mcp_stdio_bridge.js`/Dock), M6 (`runtime_camera_move_to`
+> M5 (Reconnect in `mcp_stdio_bridge.py`/Dock), M6 (`runtime_camera_move_to`
 > existiert), MCP-01 (Transport 30→90 s Timeout + selftest), MCP-05 (smooth
 > cursor travel), MCP-06 (persistenter Transport `mcp_file_driver.js`),
-> MCP-07 (entkoppelte `visual_evidence`). Dieses Dokument bleibt als
-> **historische Referenz** erhalten; der aktuelle Stand steht in
+> MCP-07 (entkoppelte `visual_evidence`), **MCP-006 (Vision Worker Start Race - Mutex hinzugefügt)**.
+> Dieses Dokument bleibt als **historische Referenz** erhalten; der aktuelle Stand steht in
 > `docs/FINDINGS.md` (MCP-Findings) + `MCP_INDEX.md`.
 
 Dieses Dokument trennt klar zwischen **GAME-Bugs** (Spiel-Logik/UI-Fehler) und **MCP-Mismatches** (Tool-API-Probleme, die MCP-Agent-Tests behindern).

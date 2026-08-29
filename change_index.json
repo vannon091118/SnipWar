@@ -1160,6 +1160,75 @@
 			],
 			"p_id": 23.0
 		},
+		"af3a017280c27611b9d6ad6eecaead1b8104c97b": {
+			"c": 69,
+			"composite": "c69j6n5a16p59",
+			"entities": [
+				"F-333",
+				"F-125",
+				"F-019",
+				"F-199",
+				"F-046",
+				"F-334",
+				"F-335",
+				"F-011",
+				"F-012",
+				"F-181",
+				"F-336",
+				"F-016",
+				"F-337",
+				"F-338",
+				"F-339",
+				"F-340",
+				"F-279",
+				"F-341",
+				"F-342",
+				"F-283",
+				"F-343",
+				"F-344",
+				"C-705",
+				"C-706",
+				"C-707",
+				"C-708",
+				"C-709",
+				"C-710",
+				"C-711",
+				"C-712",
+				"C-713",
+				"C-714",
+				"C-715",
+				"C-716",
+				"C-717",
+				"C-718",
+				"C-719",
+				"C-720",
+				"C-721",
+				"C-722",
+				"C-723",
+				"C-724",
+				"C-725",
+				"C-726",
+				"C-727",
+				"C-728",
+				"C-729",
+				"C-730",
+				"C-731",
+				"C-732",
+				"C-733",
+				"C-734",
+				"C-735",
+				"C-736",
+				"C-737",
+				"C-738",
+				"C-739",
+				"C-740",
+				"C-741",
+				"C-742",
+				"C-743",
+				"C-744"
+			],
+			"p_id": 69
+		},
 		"b2558f9c0bfa80ae63804e06736aae668802e38f": {
 			"c": 13.0,
 			"composite": "c13j62n9a2p5",
@@ -1542,7 +1611,7 @@
 			"p_id": 60.0
 		},
 		"ee61de447792fbdc82e85061df4e6157293bef42": {
-			"c": 68,
+			"c": 68.0,
 			"composite": "c68j96n3a24p24",
 			"entities": [
 				"F-002",
@@ -1556,7 +1625,7 @@
 				"F-067",
 				"C-704"
 			],
-			"p_id": 68
+			"p_id": 68.0
 		},
 		"efc07a25345c759262292b4f6e5ae67f846412a7": {
 			"c": 39.0,
@@ -13776,6 +13845,686 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-705": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-705",
+			"last_p": 69.0,
+			"name": "CHAIN_PATH",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-706": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-706",
+			"last_p": 69.0,
+			"name": "CHANGE_INDEX_PATH",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-707": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-707",
+			"last_p": 69.0,
+			"name": "ARCS_PATH",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-708": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-708",
+			"last_p": 69.0,
+			"name": "TRACKER_PATH",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-709": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						14.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-709",
+			"last_p": 69.0,
+			"name": "FRUSTRATION_WEIGHT",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-710": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						15.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-710",
+			"last_p": 69.0,
+			"name": "RESPECT_WEIGHT",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-711": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-711",
+			"last_p": 69.0,
+			"name": "DECAY_FACTOR",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-712": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-712",
+			"last_p": 69.0,
+			"name": "_init",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-713": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						55.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-713",
+			"last_p": 69.0,
+			"name": "_calculate_metrics",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-714": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						139.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-714",
+			"last_p": 69.0,
+			"name": "_generate_markdown",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-715": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						231.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-715",
+			"last_p": 69.0,
+			"name": "_has_term",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-716": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						238.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-716",
+			"last_p": 69.0,
+			"name": "_read_json",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-717": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						257.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-717",
+			"last_p": 69.0,
+			"name": "_err",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-718": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						84.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-718",
+			"last_p": 69.0,
+			"name": "search_context",
+			"path": "scripts/doki/orchestration/git_helper.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-719": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						111.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-719",
+			"last_p": 69.0,
+			"name": "_run_search_tool",
+			"path": "scripts/doki/orchestration/git_helper.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-720": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-720",
+			"last_p": 69.0,
+			"name": "HistoricalSnapshot",
+			"path": "scripts/history/historical_snapshot.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-721": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-721",
+			"last_p": 69.0,
+			"name": "event_count",
+			"path": "scripts/history/historical_snapshot.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-722": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-722",
+			"last_p": 69.0,
+			"name": "owner_of",
+			"path": "scripts/history/historical_snapshot.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-723": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-723",
+			"last_p": 69.0,
+			"name": "faction_planets",
+			"path": "scripts/history/historical_snapshot.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-724": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-724",
+			"last_p": 69.0,
+			"name": "PlaybackController",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-725": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-725",
+			"last_p": 69.0,
+			"name": "snapshot_changed",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-726": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-726",
+			"last_p": 69.0,
+			"name": "load_snapshots",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-727": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-727",
+			"last_p": 69.0,
+			"name": "set_tick_seconds",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-728": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						29.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-728",
+			"last_p": 69.0,
+			"name": "seek",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-729": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						36.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-729",
+			"last_p": 69.0,
+			"name": "current",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-730": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						42.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-730",
+			"last_p": 69.0,
+			"name": "play",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-731": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						50.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-731",
+			"last_p": 69.0,
+			"name": "pause",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-732": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						54.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-732",
+			"last_p": 69.0,
+			"name": "next",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-733": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						60.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-733",
+			"last_p": 69.0,
+			"name": "prev",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-734": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						66.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-734",
+			"last_p": 69.0,
+			"name": "_process",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-735": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						37.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-735",
+			"last_p": 69.0,
+			"name": "simulate_with_snapshots",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-736": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						48.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-736",
+			"last_p": 69.0,
+			"name": "_simulate_internal",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-737": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						118.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-737",
+			"last_p": 69.0,
+			"name": "_capture_snapshot",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-738": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						3.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-738",
+			"last_p": 69.0,
+			"name": "_init",
+			"path": "scripts/history/test_determinism.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-739": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						48.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-739",
+			"last_p": 69.0,
+			"name": "_connect_signals",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-740": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						54.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-740",
+			"last_p": 69.0,
+			"name": "_get_game_state",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-741": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						67.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-741",
+			"last_p": 69.0,
+			"name": "_get_event_bus",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-742": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						80.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-742",
+			"last_p": 69.0,
+			"name": "_on_run_started",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-743": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						170.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-743",
+			"last_p": 69.0,
+			"name": "_extract_real_factions",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-744": {
+			"first_p": 69.0,
+			"history": [
+				{
+					"lines": [
+						219.0
+					],
+					"p_id": 69.0
+				}
+			],
+			"id": "C-744",
+			"last_p": 69.0,
+			"name": "_extract_real_planets",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -17093,6 +17842,126 @@
 			"last_p": 68.0,
 			"name": "economy_window.gd",
 			"path": "scripts/ui/economy_window.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-333": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-333",
+			"last_p": 69.0,
+			"name": "post-commit",
+			"path": ".githooks/post-commit",
+			"status": "created",
+			"type": "file"
+		},
+		"F-334": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-334",
+			"last_p": 69.0,
+			"name": "metrics_updater.gd",
+			"path": "scripts/doki/metrics_updater.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-335": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-335",
+			"last_p": 69.0,
+			"name": "metrics_updater.gd.uid",
+			"path": "scripts/doki/metrics_updater.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-336": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-336",
+			"last_p": 69.0,
+			"name": "git_helper.gd",
+			"path": "scripts/doki/orchestration/git_helper.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-337": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-337",
+			"last_p": 69.0,
+			"name": "historical_snapshot.gd",
+			"path": "scripts/history/historical_snapshot.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-338": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-338",
+			"last_p": 69.0,
+			"name": "historical_snapshot.gd.uid",
+			"path": "scripts/history/historical_snapshot.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-339": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-339",
+			"last_p": 69.0,
+			"name": "playback_controller.gd",
+			"path": "scripts/history/playback_controller.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-340": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-340",
+			"last_p": 69.0,
+			"name": "playback_controller.gd.uid",
+			"path": "scripts/history/playback_controller.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-341": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-341",
+			"last_p": 69.0,
+			"name": "test_determinism.gd",
+			"path": "scripts/history/test_determinism.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-342": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-342",
+			"last_p": 69.0,
+			"name": "test_determinism.gd.uid",
+			"path": "scripts/history/test_determinism.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-343": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-343",
+			"last_p": 69.0,
+			"name": "preflight.gd",
+			"path": "scripts/preflight.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-344": {
+			"first_p": 69.0,
+			"history": [],
+			"id": "F-344",
+			"last_p": 69.0,
+			"name": "constraint_save_game_roundtrip.gd",
+			"path": "scripts/preflight/constraint_save_game_roundtrip.gd",
 			"status": "created",
 			"type": "file"
 		}

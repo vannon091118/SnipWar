@@ -33,10 +33,11 @@ unter „Spielfindings" — getrennt, wie hier.
 
 ## 🚀 MCP-Test-Doktrin (verbindlich)
 
-### 1. Standard-Transport: `mcp_file_driver.js`
-- Eine Befehlszeile = **genau ein Tool-Call**; ein Prozess + ein Handshake pro Lauf.
-- Latenz ~4–16 ms. Kein FIFO-/Session-Basteln, keine `atomic_session`-Skripte.
-- Nutzung: `MCP_COMMANDS=<file> MCP_OUTPUT=<file> node addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js`
+### 1. Standard-Transport: Python-Bridge
+- Der externe MCP-Transport läuft über `mcp_stdio_bridge.py` und den cwd-immunen Wrapper `mcp_bridge.cmd`.
+- Eine Befehlszeile = genau ein MCP-Tool-Call; Diagnose geht ausschließlich nach stderr.
+- Für atomare Live-Testläufe bleibt `mcp_file_driver.js` ein interner Datei-Queue-Treiber; externe MCP-Clients verwenden die Python-Bridge.
+- Nutzung: `C:\Users\Vannon\Documents\snippet-empire\snip-war\mcp_bridge.cmd`
 - Port: Editor-Server = **9091**, Runtime (Spiel) = **9090** — nicht verwechseln.
 
 ### 2. Nie bei unerwarteten Ergebnissen raten
@@ -99,6 +100,9 @@ Der Server hängt bei unerwarteten Lagen **automatisch** `visual_evidence` an:
    kein Headless — der Server verweigert Headless).
 3. **Driver:** `mcp_file_driver.js` auf Port 9090 (Runtime) starten.
 4. **Aktionen:** Scan → Move → Klick atomar; bei Abweichung `runtime_visual_evidence`.
+   **Warten zustandsbasiert (verbindlich):** nie fixe Sleeps — pollen bis die
+   erwartete Bedingung erfüllt ist (Port lauscht, Szene/Control sichtbar,
+   Evidence-Status `ready`), mit hartem Deadline-Cap pro Call und global.
 5. **Befunde:** In `docs/FINDINGS.md` nachtragen (Status ✅/🟡/🔵 + Beleg) —
    MCP-Findings getrennt von Spiel-Findings. Mitcommitten.
 

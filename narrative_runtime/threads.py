@@ -70,6 +70,27 @@ def _pressure(unresolved_events: int) -> float:
     return round(min(1.0, unresolved_events / float(unresolved_events + 3)), 6) if unresolved_events > 0 else 0.0
 
 
+def _relevance(thread: dict[str, Any], seq: int, facts: dict[str, Any]) -> float:
+    """Deterministic relevance, separate from pressure.
+
+    pressure = how unresolved the thread is (unresolved evidence)
+    relevance = how important the thread is for THIS observation:
+      - recency (gap since last activity)
+      - participant count (more actors → broader thread)
+      - linked threads (network size)
+      - arc continuity (same arc as the current observation)
+
+    No free LLM relevance: every component is derived from chain facts.
+    """
+    gap = max(0, seq - int(thread["last_activity"]))
+    recency = round(1.0 / (1.0 + gap), 6)
+    participants = round(min(1.0, len(thread["participants"]) / 2.0), 6)
+    links = round(min(1.0, len(thread["linked_threads"]) / 3.0), 6)
+    pressure = _pressure(int(thread["unresolved_events"]) + 1)
+    arc_continuity = 1.0 if facts["arc"] and thread["arc"] == facts["arc"] else 0.0
+    return round(0.35 * recency + 0.2 * participants + 0.15 * links + 0.15 * pressure + 0.15 * arc_continuity, 6)
+
+
 def _new_thread(seq: int, facts: dict[str, Any]) -> dict[str, Any]:
     topic = _topic(facts)
     return {"thread_id": _thread_id(seq, topic), "topic": topic, "participants": set(), "files": set(), "entities": set(), "file_last": {}, "entity_last": {}, "arc": facts["arc"], "created_at": seq, "last_activity": seq, "unresolved_events": 0, "status": OPEN, "linked_threads": set()}
@@ -115,16 +136,19 @@ def _derive(observations: Iterable[dict[str, Any]]) -> tuple[list[dict[str, Any]
         for path in facts["files"]: thread["file_last"][path] = seq
         for entity in facts["entities"]: thread["entity_last"][entity] = seq
         thread["arc"] = thread["arc"] or facts["arc"]
-        thread["last_activity"], thread["status"], thread["unresolved_events"] = seq, status, unresolved_events
+        # Relevance uses the PRE-update last_activity (gap since the thread was
+        # last touched before this observation).
+        relevance = _relevance(thread, seq, facts)
+        thread["last_activity"], thread["status"], thread["unresolved_events"], thread["relevance"] = seq, status, unresolved_events, relevance
         refs = sorted({seq} | {int(item["prior_seq"]) for item in evidence})
-        thread_events.append({"thread_id": thread["thread_id"], "observation_seq": seq, "status": status, "evidence_type": evidence_type, "evidence_refs": refs, "is_reactivation": reactivated, "rule_version": THREAD_RULE_VERSION})
+        thread_events.append({"thread_id": thread["thread_id"], "observation_seq": seq, "status": status, "evidence_type": evidence_type, "evidence_refs": refs, "is_reactivation": reactivated, "relevance": relevance, "rule_version": THREAD_RULE_VERSION})
 
     head_seq = int(ordered[-1]["seq"]) if ordered else 0
     current = []
     for thread in working.values():
         status = str(thread["status"])
         if status in (OPEN, REACTIVATED) and head_seq - int(thread["last_activity"]) > DORMANT_AFTER: status = DORMANT
-        current.append({"thread_id": thread["thread_id"], "topic": thread["topic"], "participants": sorted(thread["participants"]), "pressure": _pressure(int(thread["unresolved_events"]) if status != RESOLVED else 0), "created_at": int(thread["created_at"]), "last_activity": int(thread["last_activity"]), "unresolved_events": int(thread["unresolved_events"]) if status != RESOLVED else 0, "status": status, "linked_threads": sorted(thread["linked_threads"]), "rule_version": THREAD_RULE_VERSION})
+        current.append({"thread_id": thread["thread_id"], "topic": thread["topic"], "participants": sorted(thread["participants"]), "pressure": _pressure(int(thread["unresolved_events"]) if status != RESOLVED else 0), "relevance": round(float(thread.get("relevance", 0.0)), 6), "created_at": int(thread["created_at"]), "last_activity": int(thread["last_activity"]), "unresolved_events": int(thread["unresolved_events"]) if status != RESOLVED else 0, "status": status, "linked_threads": sorted(thread["linked_threads"]), "rule_version": THREAD_RULE_VERSION})
     current.sort(key=lambda item: item["thread_id"])
     thread_events.sort(key=lambda item: (int(item["observation_seq"]), item["thread_id"]))
     return current, thread_events

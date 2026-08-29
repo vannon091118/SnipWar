@@ -1270,3 +1270,32 @@ refactor: replace scene-tree scans with explicit GameState registrations and fac
 - scripts/objects/seeded_layout.gd: Umstrukturiert (F-331).
 - scripts/ui/economy_window.gd: Umstrukturiert (F-332).
 - scripts/ui/main_menu.gd: Umstrukturiert (F-067).
+
+## 2026-08-27 21:00:00 — p69 · c69j6n5a16p59 · Squizzle · alarmiert
+
+**Squizzles Fall: DOKI- und Preflight-Gates auf exakten staged… — nach Thinker**
+
+DOKI- und Preflight-Gates auf exakten staged Scope begrenzen, automatischen Suchkontext in Prompts integrieren, History-System mit Snapshot und Playback, Doku-Updates
+
+- .githooks/post-commit: Dokumentation aktualisiert (F-333).
+- .githooks/pre-commit: Dokumentation aktualisiert (F-125).
+- AGENTS.md: Dokumentation aktualisiert (F-019).
+- ARCHITECTURE.md: Dokumentation aktualisiert (F-199).
+- docs/FINDINGS.md: Dokumentation aktualisiert (F-046).
+- scripts/doki/metrics_updater.gd: Dokumentation aktualisiert (F-334).
+- scripts/doki/metrics_updater.gd.uid: Dokumentation aktualisiert (F-335).
+- scripts/doki/orchestration/flows/finalize_flow.gd: Dokumentation aktualisiert (F-011).
+- scripts/doki/orchestration/flows/finish_flow.gd: Dokumentation aktualisiert (F-012).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Dokumentation aktualisiert (F-181).
+- scripts/doki/orchestration/git_helper.gd: Dokumentation aktualisiert (F-336).
+- scripts/doki/prompt/voice_composer.gd: Dokumentation aktualisiert (F-016).
+- scripts/history/historical_snapshot.gd: Dokumentation aktualisiert (F-337).
+- scripts/history/historical_snapshot.gd.uid: Dokumentation aktualisiert (F-338).
+- scripts/history/playback_controller.gd: Dokumentation aktualisiert (F-339).
+- scripts/history/playback_controller.gd.uid: Dokumentation aktualisiert (F-340).
+- scripts/history/simulation/history_simulator.gd: Dokumentation aktualisiert (F-279).
+- scripts/history/test_determinism.gd: Dokumentation aktualisiert (F-341).
+- scripts/history/test_determinism.gd.uid: Dokumentation aktualisiert (F-342).
+- scripts/history/world_chronicle.gd: Dokumentation aktualisiert (F-283).
+- scripts/preflight.gd: Dokumentation aktualisiert (F-343).
+- scripts/preflight/constraint_save_game_roundtrip.gd: Dokumentation aktualisiert (F-344).

@@ -61,7 +61,8 @@ Client-Kern ist `mcp_lib.js` + die Playthrough-Helfer):
 - `agent_repair_loop.js` — Autonomer Repair- & Feature-Orchestrator für geschlossene Self-Healing-Läufe (8-Schritte-Loop, JS-Port)
 - `mcp_lib.js` — Referenz-TCP-Client für Metadaten, Artefakte und Worker-Aufträge (interaktiv/auto/one-shot)
 - `vision_worker.py` — lokale Bildanalyse-Instanz (Pillow, ohne Base64-Roundtrip; liest die Context-Artefakte aus `user://mcp_context`); OCR optional via `--ocr-command` (Tesseract-CLI)
-- `mcp_file_driver.js` (`playthroughs/atomic/`) — **Standard-Transport für wiederholte sichtbare Läufe**: ein persistenter Prozess, ein Handshake pro Lauf, ein Tool-Call pro Befehlszeile (Datei-Queue statt Prozess-Neustart). Latenz ~4–16 ms pro Call statt 1–2 s Prozess-/Handshake-Overhead + ~30 s Hang durch zuvor unaufgeräumte Client-Timer (`mcp_lib.js` cleart die Timeouts jetzt in `settle()`).
+- `mcp_stdio_bridge.py` + `mcp_bridge.cmd` — **externer Standard-Transport** für MCP-Clients; Python stdlib-only, cwd-immuner Wrapper, TCP Runtime 9090.
+- `mcp_file_driver.js` (`playthroughs/atomic/`) — interner Datei-Queue-Treiber für atomare Testläufe; nicht der externe Bridge-Client.
 
 **MCP Resources (`resources/list`, `resources/read`)**:
 - `godot://scene/current` — Autoritative Live-Szenenhierarchie & Controls
@@ -429,7 +430,7 @@ $GODOT_BIN --path . --script ... --mcp-e2e-list
 
 # Denkbar synchron: Server im Spiel + mcp_file_driver.js (oder atomare Helfer):
 # Spiel:   $GODOT_BIN --path . -- --mcp --mcp-port 9090
-# Agent:   node client/playthroughs/atomic/mcp_file_driver.js
+# Agent:   Python-Bridge über mcp_bridge.cmd oder mcp_stdio_bridge.py
 ```
 
 E2E-Ergebnis enthält `steps[]` + `anomalies[]` (EventLog-Fehler/Warnungen
