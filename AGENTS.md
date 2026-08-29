@@ -237,7 +237,7 @@ ConceptIndex.new().by_domain("ships")
 | `--reverse` | Reverse-Execution (Testet Isolation) |
 | `--list` | Constraints auflisten — **Kurzform `-l` kollidiert mit Godots eigenem `-l/--language`** ("Missing language argument, aborting") → Langform nutzen |
 
-### Constraints (43, atomare Commit-Gruppen beachten!)
+### Constraints (44, atomare Commit-Gruppen beachten!)
 - `game_state_compatibility` — Reflection-Signaturen, Fassaden-Methoden
 - `concept_index` — **Nur funktional**: search/expand für Kern-Domänen
 - `save_game_roundtrip`, `save_game_slots` — Slot-Konvention beachten!
@@ -292,31 +292,116 @@ ConceptIndex.new().by_domain("ships")
 
 ---
 
-## 📋 WORKFLOW ZUSAMMENFASSUNG
+## 📋 PFLICHT-WORKFLOW (erzwungen, keine Ausnahmen)
 
-### AM ANFANG (jeder Task)
-1. `GODOT_BIN` setzen
-2. **ConceptIndex** nutzen: `concept_search.gd --domain <xyz>` / `--class <Name>` / `--free-slots`
-3. **Global Search** für Volltext: `global_search.gd "term" --type tres,tscn`
-4. Relevante Dateien lesen (`read_file`), **nicht** raten
+### Grundregel
+```
+JEDER Commit MUSS durch den DOKI-Flow laufen.
+KEIN git commit -m, KEIN --no-verify, KEIN Skip.
+Pre-commit Hook blockt Verstöße (Exit 1).
+```
 
-### ZWISCHENDURCH
-- Kleine, atomare Änderungen
-- Nach jeder logischen Einheit: `git add <dateien>` + `git commit` mit Begründungszeilen
-- Preflight läuft automatisch im Hook
-- **MCP-Tests (sichtbar):** **Pflicht-Lektüre** ist `addons/gdscript_mcp/AGENTS.md` —
-  die MCP-Test-Doktrin (Standard-Transport `mcp_file_driver.js`, OCR-Pflicht/
-  `visual_evidence`, Entkopplung, Atom-Vertrag) lebt **im MCP-Addon, getrennt
-  vom Spiel**. Vor jedem MCP-Test-Lauf: diese Datei + die 6 Pflicht-Dokumente
-  dort lesen. MCP-Findings → `docs/FINDINGS.md` (Abschnitt „MCP-Findings").
+### Der Workflow-Loop
+```
+┌─────────────────────────────────────────────────────┐
+│  1. SELECT    Roadmap lesen → nächsten Slice wählen │
+│  2. VERIFY-*  Vorher-Zustand prüfen (grep/read)     │
+│  3. IMPLEMENT Minimale Änderung für den Slice       │
+│  4. GATE      compile_gate → Tests → Preflight      │
+│  5. DOCS      ROADMAP + FINDINGS aktualisieren      │
+│  6. DOKI      prepare → body → finish → commit      │
+│  7. RE-AUDIT  git status, Regression, nächster Loop  │
+└─────────────────────────────────────────────────────┘
+```
 
-- **Falsifizierungs-/Compile-Gates headless:** `scripts/testing/compile_gate.gd` kompiliert JEDE .gd in scripts+addons. Entry-Point-Falsifizierung über die ECHTE Registry: `scripts/testing/chain_validate_entry_test.gd`, `scripts/testing/mcp_capture_entry_test.gd` (Evidence-JSON → `user://mcp_evidence/` = `%APPDATA%/Godot/app_userdata/SnipWar/`; Exit 1 = Abweichung; Hang-Netz: `create_timer(N).timeout → quit(3)`).
+### 1. SELECT — Slice aus Roadmap wählen
+```bash
+cat ROADMAP.md  # Offene Tasks nach PRIORITY/DEPENDENCY lesen
+```
+- Höchste Priorität ohne Blocker wählen
+- Nicht automatisch den ältesten Task nehmen
+- Bei Ambiguität: STOP + Bericht
 
-### AM ENDE (nach Arbeit)
-1. **Full Preflight**: `$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x`
-2. `git status` / `git diff` prüfen (Headless formatiert .tscn/.tres, injects uids)
-3. `.uid`-Sidecars für neue Scripts mitcommitten
-4. Push erfolgt via `post-commit` Hook automatisch
+### 2. VERIFY-* — Vorher-Zustand dokumentieren
+```bash
+# ConceptIndex für Architektur:
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --domain <xyz>
+$GODOT_BIN --headless --path . --script res://scripts/concept_search.gd --class <Name>
+# Global Search für Volltext:
+$GODOT_BIN --headless --path . --script res://scripts/global_search.gd "term" --type tres,tscn
+# Dateien lesen, NICHT raten:
+read_file der betroffenen Dateien
+```
+
+### 3. IMPLEMENT — Minimale atomare Änderung
+- NUR den gewählten Slice implementieren
+- Keine parallelen Refactors, keine Kosmetik
+- Neue `.class_name` → Editor-Scan: `$GODOT_BIN --headless --path . --editor --quit`
+- `.uid`-Sidecars für neue Scripts erzeugen
+
+### 4. GATE — Verifikation (PFLICHT, keine Ausnahmen)
+```bash
+# a) Compile (alle Scripts):
+$GODOT_BIN --headless --path . --script res://scripts/testing/compile_gate.gd
+# b) Spezifische Tests:
+$GODOT_BIN --headless --path . --script res://scripts/testing/test_all.gd
+# c) Preflight (44 Constraints):
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x
+```
+- **RESULT: PASSED** ist Pflicht
+- ERROR-Traces am Ende sind Headless-Rauschen, ignorieren
+- Bei FAIL: fixen, neu stagen, Gate wiederholen
+
+### 5. DOCS — ROADMAP + FINDINGS synchron halten
+- ROADMAP: Status des Slices → `VERIFIED`
+- FINDINGS: geschlossene Findings → `GEFIXT`, neue → `OFFEN`
+- Constraint-Zahlen in allen Docs aktuell (aktuell: 44)
+
+### 6. DOKI — Commit-Flow (UNTERBRECHUNGSLOS)
+```bash
+# a) Stagen (NIEMALS git add -A):
+git add <datei1> <datei2> ...
+
+# b) DOKI prepare:
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- prepare "<impuls>"
+
+# c) Narrator-Body schreiben (Fließtext, keine Bullets):
+# → .doki/narrator_body.md
+
+# d) DOKI finish:
+$GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- finish --body-file .doki/narrator_body.md
+
+# e) Commit (DOKI erzeugt .commit_msg.txt):
+git commit -F .commit_msg.txt
+```
+- **VERBOTEN:** `git commit -m "..."` ohne DOKI-Flow
+- **VERBOTEN:** `--no-verify` (bypassed DOKI + Preflight-Hook)
+- **VERBOTEN:** Direkt-Commits ohne prepare/finish
+- Begründungszeilen (`- pfad/datei: Grund.`) erzeugt DOKI maschinell
+- DOKI-Artefakte (CHANGELOG, change_index, narrative_chain, arcs) werden
+  vom post-commit-Hook aktualisiert — diese NÄCHSTEN Commit mitnehmen
+
+### 7. RE-AUDIT — Nach jedem Commit
+```bash
+git status          # Working Tree sauber?
+git log --oneline -1 # Commit korrekt?
+```
+- Neue Dead-Code-Kandidaten?
+- Neue Doku-Drift?
+- Regression in Consumers/Producers?
+- Bei neuen Problemen: neues Finding in FINDINGS.md
+
+### Compile-Gates (headless, Pflicht)
+`scripts/testing/compile_gate.gd` kompiliert JEDE .gd in scripts+addons.
+Entry-Point-Falsifizierung über die ECHTE Registry:
+`scripts/testing/chain_validate_entry_test.gd`,
+`scripts/testing/mcp_capture_entry_test.gd`
+(Evidence-JSON → `user://mcp_evidence/`; Exit 1 = Abweichung)
+
+### MCP-Tests (sichtbar)
+**Pflicht-Lektüre:** `addons/gdscript_mcp/AGENTS.md`
+(MCP-Test-Doktrin: Standard-Transport, OCR-Pflicht, Entkopplung, Atom-Vertrag)
+MCP-Findings → `docs/FINDINGS.md` (Abschnitt „MCP-Findings")
 
 ---
 
