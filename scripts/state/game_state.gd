@@ -70,6 +70,10 @@ signal ship_build_started(planet_id: StringName, ship_id: StringName, remaining:
 signal research_ship_task_completed(mission_id: StringName, target_planet_id: StringName, task_type: StringName)
 signal research_ship_idle(ship_id: StringName, planet_id: StringName)
 signal persistent_ship_changed(ship_id: StringName, status: StringName)
+# Mechanik-Anker „Battle context prepared“ (Layer 2/3): kanonischer Runtime-Pfad ist
+# pending_battle_context() + GameCycleManager.battle_started; dieses Signal ist der
+# Coverage-Anker (MechanicRegistry-Reflection + scenarios/*.tres mechanics_covered).
+# 0 externe .connect()-Consumer — gleiche Klasse wie mid_game_started/transit_changed/run_started (F-212).
 signal battle_context_changed(context: BattleContext)
 signal transit_changed(record: TransitRecord)
 signal run_started(run_id: StringName, layout_seed: int)

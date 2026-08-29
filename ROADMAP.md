@@ -36,7 +36,7 @@ docs/modules/  ← nur echte Modulverträge (API/Datenmodell/Invarianten), keine
 - **P0-Bug:** `NEUES SPIEL → Identität → historical_world` bootet mit leerer Chronik
   (`ERROR: HistoricalWorld: chronicle has no historical snapshots`) — `run_started` feuert erst
   in `WorldBootstrap.begin_new_game` der world.tscn, also NACH der HistoricalWorld.
-- `battle_context_changed` (GameState-Signal): 2 Emits, **0 Consumers** (toter Pfad; Context fließt via `pending_battle_context` + `GameCycleManager.battle_started`).
+- Signal-Heuristik „0 Consumers = tot“ **widerlegt** (F-212): 6/38 GameState-Signale ohne externe `.connect()` — darunter akzeptierte Anker (`mid_game_started`, `transit_changed`, `run_started`, `planet_building_placed/destroyed`). `battle_context_changed` ist Mechanik-Anker der Combat-Mechanik (MechanicRegistry-Reflection + scenarios/*.tres), `run_started`/`ship_launched`/`milestone_reached` sind Compatibility-Facade mit kanonischen EventBus-Zwillingen.
 - ConceptIndex: 3 unmapped Klassen (GameConstants, FactionAI, PreflightCodeIndex).
 - Kein zentraler Test-Orchestrator; `scripts/history/test_determinism.gd` liegt außerhalb von `scripts/testing/`.
 
@@ -120,11 +120,12 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DoD:** Jahr-0-Ownership/Faction-State wird Basis des Weltstarts; `faction_planet_snapshot()` == Chronik-Endzustand; keine zweite Simulation.
 - **STATUS:** `TODO`
 
-### R-006 — Tote Signale beseitigen — **P1**
-- **WHY:** `battle_context_changed` (2 Emits, 0 Consumers) + weitere Signale mit ≤1 Connect (run_started, ship_launched, milestone_reached) sind Legacy-Altlasten.
-- **DEPENDS:** R-050 · **BLOCKS:** —
-- **DoD:** Repo-weite Suche belegt 0 Consumers; Signal entfernt oder verdrahtet; mechanic_registry/concept_index konsistent.
-- **STATUS:** `TODO`
+### R-006 — Tote-Signal-Befund klassifizieren — **P1** ✅ VERIFIED (revidiert)
+- **WHY (ursprünglich):** `battle_context_changed` + `run_started`/`ship_launched`/`milestone_reached` galten als Legacy-Altlasten.
+- **ERGEBNIS:** Befund durch Messung **widerlegt** (F-212): 6/38 Signale ohne Consumer, 5 akzeptierte Anker; `battle_context_changed` = einziger Combat-Mechanik-Anker (Entfernung hätte Coverage-Matrix + .tres/Spec inkonsistent gemacht); die übrigen 3 sind Compatibility-Facade mit EventBus-Zwillingen (F-204-Dokumentation bestätigt „Compatibility-Signal bleibt“).
+- **ÄNDERUNG:** Kein Signal entfernt; game_state.gd-Kommentar verankert die Klassifikation; FINDINGS F-202/F-204 geschlossen, F-212 neu.
+- **VERIFICATION:** repo-weite `.connect()`-Messung (29.08.); mechanic_coverage-Constraint; docs_integrity.
+- **STATUS:** `VERIFIED`
 
 ### R-007 — economy_domain konsolidieren — **P1**
 - **WHY:** 1.282 LOC, ≥5 Verantwortungsgruppen (Vaults/Deals/Upgrades/Worker-Fabriken/Gathering/Refinery/Trade/Transport-Records).

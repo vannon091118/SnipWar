@@ -1502,3 +1502,22 @@ R-050: HistoricalWorld-Lifecycle-Handover repariert — Run wird vor dem Szenenw
 - scripts/testing/historical_world_flow_test.gd: Test-Assets ergänzt (F-379).
 - scripts/testing/historical_world_flow_test.gd.uid: Test-Assets ergänzt (F-380).
 - scripts/ui/main_menu.gd: Test-Assets ergänzt (F-067).
+
+## 2026-08-27 09:00:00 — p81 · c81j8n8a33p69 · Ghost · trocken
+
+**Ghost verzeichnet: R-002: Constraint- und Autoload-Zahlen in sechs… — nach Vannon**
+
+R-002: Constraint- und Autoload-Zahlen in sechs Dokumenten vereinheitlicht — 43 Constraints und 10 Autoloads als einzige Wahrheit, Drift-Zahlen (34/36/38/39/40, 8 Autoloads) entfernt, Findings F-201 geschlossen
+
+- AGENTS.md: Implementiert und integriert (F-019).
+- ARCHITECTURE.md: Implementiert und integriert (F-199).
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- DESIGN.md: Implementiert und integriert (F-020).
+- PLAN.md: Implementiert und integriert (F-091).
+- ROADMAP.md: Implementiert und integriert (F-376).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/FINDINGS.md: Implementiert und integriert (F-046).
+- docs/GAME_CYCLE_CONCEPT.md: Implementiert und integriert (F-381).
+- docs/README.md: Implementiert und integriert (F-200).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
