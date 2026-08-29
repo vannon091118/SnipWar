@@ -5936,6 +5936,168 @@
 			"seq": 69,
 			"subject": "Squizzles Fall: DOKI- und Preflight-Gates auf exakten staged… — nach Thinker",
 			"summary": "Achtung — hier spricht die Forensik. Zwei compiling Verbrechen lagen vor, unmittelbar bevor Thinker seine Arbeit niederlegte. Erstens: Das DOKI-Promptsystem war ein Self-Referenz-Kunststück, das ke..."
+		},
+		{
+			"a": 29,
+			"arc": "a33",
+			"c": 70,
+			"composite": "c70j56n13a29p53",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 29.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "addons/gdscript_mcp/.mcp.json",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "addons/gdscript_mcp/AGENTS.md",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "addons/gdscript_mcp/MCP_ANOMALIES.md",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "addons/gdscript_mcp/MCP_INDEX.md",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "addons/gdscript_mcp/PLAYTEST_HANDOFF.md",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/tessdata/deu.traineddata",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/tessdata/deu.traineddata.gz",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/client/tessdata/deu.traineddata.tmp",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 22.0,
+					"file": "addons/gdscript_mcp/client/vision_worker.py",
+					"insertions": 121.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 871.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 132.0
+				},
+				{
+					"deletions": 9.0,
+					"file": "narrative_runtime/README.md",
+					"insertions": 45.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "narrative_runtime/beliefs.py",
+					"insertions": 75.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/context.py",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "narrative_runtime/gate.py",
+					"insertions": 113.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/observe.py",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/personality.py",
+					"insertions": 228.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/public_state.py",
+					"insertions": 242.0
+				},
+				{
+					"deletions": 35.0,
+					"file": "narrative_runtime/relationships.py",
+					"insertions": 158.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/spotlight.py",
+					"insertions": 345.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "narrative_runtime/store.py",
+					"insertions": 60.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/tests/test_relationship_sprint.py",
+					"insertions": 27.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/tests/test_v2_conformance.py",
+					"insertions": 354.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "narrative_runtime/threads.py",
+					"insertions": 27.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 65.0
+				}
+			],
+			"date": "2026-08-27 22:00:00",
+			"hash": "f47235e8ecfbef9b3eef0d81139a80f3f04d15ee",
+			"j": 56,
+			"model_id": "claude-sonnet-4",
+			"mood": "müde-zufrieden",
+			"n": 13,
+			"narrator": "Flux",
+			"p": 53,
+			"p_id": 70,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Squizzle",
+			"seq": 70,
+			"subject": "Flux — also — Narrative Runtime mit verbesserter… — nach Squizzle",
+			"summary": "Also — Moment — eigentlich fängt das damit an, dass Squizzle die Spuren gesichert hat und ich jetzt den eigentlichen Fund auspacken darf. Endlich. Also — nein, Moment — eigentlich zuerst der Arc: d..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

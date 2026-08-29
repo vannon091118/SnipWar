@@ -1161,7 +1161,7 @@
 			"p_id": 23.0
 		},
 		"af3a017280c27611b9d6ad6eecaead1b8104c97b": {
-			"c": 69,
+			"c": 69.0,
 			"composite": "c69j6n5a16p59",
 			"entities": [
 				"F-333",
@@ -1227,7 +1227,7 @@
 				"C-743",
 				"C-744"
 			],
-			"p_id": 69
+			"p_id": 69.0
 		},
 		"b2558f9c0bfa80ae63804e06736aae668802e38f": {
 			"c": 13.0,
@@ -1646,6 +1646,55 @@
 				"F-001"
 			],
 			"p_id": 39.0
+		},
+		"f47235e8ecfbef9b3eef0d81139a80f3f04d15ee": {
+			"c": 70,
+			"composite": "c70j56n13a29p53",
+			"entities": [
+				"F-002",
+				"F-098",
+				"F-050",
+				"F-094",
+				"F-045",
+				"F-096",
+				"F-345",
+				"F-346",
+				"F-347",
+				"F-082",
+				"F-085",
+				"F-041",
+				"F-003",
+				"F-004",
+				"F-136",
+				"F-175",
+				"F-177",
+				"F-185",
+				"F-141",
+				"F-348",
+				"F-349",
+				"F-179",
+				"F-350",
+				"F-142",
+				"F-291",
+				"F-351",
+				"F-180",
+				"F-001",
+				"C-745",
+				"C-746",
+				"C-747",
+				"C-748",
+				"C-749",
+				"C-750",
+				"C-751",
+				"C-752",
+				"C-753",
+				"C-754",
+				"C-755",
+				"C-756",
+				"C-757",
+				"C-758"
+			],
+			"p_id": 70
 		},
 		"f4ad0a403215cec46c4054884825a1f0865419cc": {
 			"c": 51.0,
@@ -14525,6 +14574,244 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-745": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-745",
+			"last_p": 70.0,
+			"name": "EMBEDDED_OCR_ENV",
+			"path": "addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-746": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						14.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-746",
+			"last_p": 70.0,
+			"name": "Reactivity",
+			"path": "narrative_runtime/personality.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-747": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						27.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-747",
+			"last_p": 70.0,
+			"name": "Personality",
+			"path": "narrative_runtime/personality.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-748": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						42.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-748",
+			"last_p": 70.0,
+			"name": "PublicState",
+			"path": "narrative_runtime/public_state.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-749": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						47.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-749",
+			"last_p": 70.0,
+			"name": "SpotlightCandidate",
+			"path": "narrative_runtime/spotlight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-750": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						76.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-750",
+			"last_p": 70.0,
+			"name": "BeliefsConformanceTests",
+			"path": "narrative_runtime/tests/test_v2_conformance.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-751": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						110.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-751",
+			"last_p": 70.0,
+			"name": "MemoryConformanceTests",
+			"path": "narrative_runtime/tests/test_v2_conformance.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-752": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						136.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-752",
+			"last_p": 70.0,
+			"name": "ThreadsConformanceTests",
+			"path": "narrative_runtime/tests/test_v2_conformance.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-753": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						157.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-753",
+			"last_p": 70.0,
+			"name": "DecayConformanceTests",
+			"path": "narrative_runtime/tests/test_v2_conformance.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-754": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						191.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-754",
+			"last_p": 70.0,
+			"name": "CharacterStateConformanceTests",
+			"path": "narrative_runtime/tests/test_v2_conformance.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-755": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						224.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-755",
+			"last_p": 70.0,
+			"name": "PublicStateConformanceTests",
+			"path": "narrative_runtime/tests/test_v2_conformance.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-756": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						256.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-756",
+			"last_p": 70.0,
+			"name": "SpotlightConformanceTests",
+			"path": "narrative_runtime/tests/test_v2_conformance.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-757": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						295.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-757",
+			"last_p": 70.0,
+			"name": "PersonalityConformanceTests",
+			"path": "narrative_runtime/tests/test_v2_conformance.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-758": {
+			"first_p": 70.0,
+			"history": [
+				{
+					"lines": [
+						313.0
+					],
+					"p_id": 70.0
+				}
+			],
+			"id": "C-758",
+			"last_p": 70.0,
+			"name": "ExplainabilityConformanceTests",
+			"path": "narrative_runtime/tests/test_v2_conformance.py",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -17962,6 +18249,76 @@
 			"last_p": 69.0,
 			"name": "constraint_save_game_roundtrip.gd",
 			"path": "scripts/preflight/constraint_save_game_roundtrip.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-345": {
+			"first_p": 70.0,
+			"history": [],
+			"id": "F-345",
+			"last_p": 70.0,
+			"name": "deu.traineddata",
+			"path": "addons/gdscript_mcp/client/tessdata/deu.traineddata",
+			"status": "created",
+			"type": "file"
+		},
+		"F-346": {
+			"first_p": 70.0,
+			"history": [],
+			"id": "F-346",
+			"last_p": 70.0,
+			"name": "deu.traineddata.gz",
+			"path": "addons/gdscript_mcp/client/tessdata/deu.traineddata.gz",
+			"status": "created",
+			"type": "file"
+		},
+		"F-347": {
+			"first_p": 70.0,
+			"history": [],
+			"id": "F-347",
+			"last_p": 70.0,
+			"name": "deu.traineddata.tmp",
+			"path": "addons/gdscript_mcp/client/tessdata/deu.traineddata.tmp",
+			"status": "created",
+			"type": "file"
+		},
+		"F-348": {
+			"first_p": 70.0,
+			"history": [],
+			"id": "F-348",
+			"last_p": 70.0,
+			"name": "personality.py",
+			"path": "narrative_runtime/personality.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-349": {
+			"first_p": 70.0,
+			"history": [],
+			"id": "F-349",
+			"last_p": 70.0,
+			"name": "public_state.py",
+			"path": "narrative_runtime/public_state.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-350": {
+			"first_p": 70.0,
+			"history": [],
+			"id": "F-350",
+			"last_p": 70.0,
+			"name": "spotlight.py",
+			"path": "narrative_runtime/spotlight.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-351": {
+			"first_p": 70.0,
+			"history": [],
+			"id": "F-351",
+			"last_p": 70.0,
+			"name": "test_v2_conformance.py",
+			"path": "narrative_runtime/tests/test_v2_conformance.py",
 			"status": "created",
 			"type": "file"
 		}

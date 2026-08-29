@@ -1299,3 +1299,38 @@ DOKI- und Preflight-Gates auf exakten staged Scope begrenzen, automatischen Such
 - scripts/history/world_chronicle.gd: Dokumentation aktualisiert (F-283).
 - scripts/preflight.gd: Dokumentation aktualisiert (F-343).
 - scripts/preflight/constraint_save_game_roundtrip.gd: Dokumentation aktualisiert (F-344).
+
+## 2026-08-27 22:00:00 — p70 · c70j56n13a29p53 · Flux · müde-zufrieden
+
+**Flux — also — Narrative Runtime mit verbesserter… — nach Squizzle**
+
+Narrative Runtime mit verbesserter Beziehungslogik und Arc-Gate, MCP-Vision-OCR mit Tessdata, Preflight-SaveGame-Contract-Update
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- addons/gdscript_mcp/.mcp.json: Implementiert und integriert (F-098).
+- addons/gdscript_mcp/AGENTS.md: Implementiert und integriert (F-050).
+- addons/gdscript_mcp/MCP_ANOMALIES.md: Implementiert und integriert (F-094).
+- addons/gdscript_mcp/MCP_INDEX.md: Implementiert und integriert (F-045).
+- addons/gdscript_mcp/PLAYTEST_HANDOFF.md: Implementiert und integriert (F-096).
+- addons/gdscript_mcp/client/tessdata/deu.traineddata: Implementiert und integriert (F-345).
+- addons/gdscript_mcp/client/tessdata/deu.traineddata.gz: Implementiert und integriert (F-346).
+- addons/gdscript_mcp/client/tessdata/deu.traineddata.tmp: Implementiert und integriert (F-347).
+- addons/gdscript_mcp/client/vision_worker.py: Implementiert und integriert (F-082).
+- addons/gdscript_mcp/runtime/host/mcp_runtime.gd: Implementiert und integriert (F-085).
+- addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd: Implementiert und integriert (F-041).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- narrative_runtime/README.md: Implementiert und integriert (F-136).
+- narrative_runtime/beliefs.py: Implementiert und integriert (F-175).
+- narrative_runtime/context.py: Implementiert und integriert (F-177).
+- narrative_runtime/gate.py: Implementiert und integriert (F-185).
+- narrative_runtime/observe.py: Implementiert und integriert (F-141).
+- narrative_runtime/personality.py: Implementiert und integriert (F-348).
+- narrative_runtime/public_state.py: Implementiert und integriert (F-349).
+- narrative_runtime/relationships.py: Implementiert und integriert (F-179).
+- narrative_runtime/spotlight.py: Implementiert und integriert (F-350).
+- narrative_runtime/store.py: Implementiert und integriert (F-142).
+- narrative_runtime/tests/test_relationship_sprint.py: Implementiert und integriert (F-291).
+- narrative_runtime/tests/test_v2_conformance.py: Implementiert und integriert (F-351).
+- narrative_runtime/threads.py: Implementiert und integriert (F-180).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
