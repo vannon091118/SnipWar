@@ -148,11 +148,11 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DEPENDS:** — · **BLOCKS:** —
 - **STATUS:** `VERIFIED`
 
-### R-011 — MCP-Audit-Fix + Session-Docs archivieren — **P2**
-- **WHY:** MCP_AUDIT_REPORT referenziert nicht existentes `scripts/tools_count.gd`; addons/findings.md, progress.md, task_plan.md, mcp_live_test_results.md sind historisch.
+### R-011 — MCP-Audit-Fix + Session-Docs archivieren — **P2** ✅ VERIFIED
+- **WHY:** MCP_AUDIT_REPORT referenzierte `scripts/tools_count.gd`; Session-Docs historisch.
+- **ERGEBNIS:** MCP_AUDIT_REPORT als HISTORISCH markiert; MCP_INDEX.md Referenz auf McpToolRegistry-Reflection aktualisiert; addons/findings.md + progress.md + task_plan.md + mcp_live_test_results.md bereits in R-003 entfernt.
 - **DEPENDS:** R-001 · **BLOCKS:** —
-- **DoD:** Referenzen gefixt; historische Docs archiviert (Inhalte in FINDINGS überführt).
-- **STATUS:** `TODO`
+- **STATUS:** `VERIFIED`
 
 ### R-012 — Preflight-Shared-Inventory + Cheap→Expensive — **P2**
 - **WHY:** top-6 Constraints ≈ 16 s; jeder Scan läuft pro Constraint neu (dead_code 3,5 s, scene_boot 3,5 s, global_search 2,9 s, world_details 2,5 s, context_handover 2,1 s, camera_and_input 1,6 s).

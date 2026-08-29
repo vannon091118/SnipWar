@@ -1690,3 +1690,15 @@ R-052: final_year0_ownership() auf WorldChronicle — WorldBootstrap liest Snaps
 - scripts/bootstrap/world_bootstrap.gd: Implementiert und integriert (F-386).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
 - scripts/history/world_chronicle.gd: Implementiert und integriert (F-283).
+
+## 2026-08-27 21:00:00 — p93 · c93j99n1a10p25 · Buffy · warm
+
+**[Buffy] Slice E: R-SIM-002 bis R-SIM-004 in ROADMAP… — nach Vannon**
+
+Slice E: R-SIM-002 bis R-SIM-004 in ROADMAP eingetragen — RelationshipEngine, EpochEngine, TradeWindow
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- ROADMAP.md: Implementiert und integriert (F-376).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).

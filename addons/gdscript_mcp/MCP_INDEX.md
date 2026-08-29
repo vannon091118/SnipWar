@@ -203,7 +203,7 @@ SnipWar-Defaults zurück (`res://scripts/preflight.gd` bzw.
 
 ## Tool-Liste (Stand: 143 Domain-Tools + 6 Host-Tools + custom_*; Editor-Session zusätzlich +17 editor_*-Tools)
 
-> **Zählung autoritativ:** `scripts/tools_count.gd`-Methode — die Registry lädt
+> **Zählung autoritativ:** `McpToolRegistry`-Reflection — die Registry lädt
 > alle Domänen und liefert die echten Namen. 143 Domain + 6 Host (runtime_mcp_status,
 > runtime_mcp_events, runtime_agent_goal_set, runtime_agent_activity,
 > runtime_visual_evidence, runtime_run_trace).

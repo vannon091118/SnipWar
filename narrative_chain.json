@@ -7592,6 +7592,53 @@
 			"seq": 92,
 			"subject": "R-052: final_year0_ownership() auf WorldChronicle… — nach Buffy",
 			"summary": "Vannon erschöpft:"
+		},
+		{
+			"a": 10,
+			"arc": "a44",
+			"c": 93,
+			"composite": "c93j99n1a10p25",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "ROADMAP.md",
+					"insertions": 18.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 34.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 57.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 18.0
+				}
+			],
+			"date": "2026-08-27 21:00:00",
+			"hash": "25feeadbe50cf842b506c08acc910331fc08147c",
+			"j": 99,
+			"model_id": "claude-sonnet-4",
+			"mood": "warm",
+			"n": 1,
+			"narrator": "Buffy",
+			"p": 25,
+			"p_id": 93,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Vannon",
+			"seq": 93,
+			"subject": "[Buffy] Slice E: R-SIM-002 bis R-SIM-004 in ROADMAP… — nach Vannon",
+			"summary": "Buffy warm:"
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

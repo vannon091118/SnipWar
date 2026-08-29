@@ -1,4 +1,7 @@
 # MCP SYSTEM AUDIT REPORT — SnipWar / GDScript MCP Bridge
+
+> ⚠️ **HISTORISCH** — Dieses Audit wurde am 29.08.2026 erstellt. Einzelne Referenzen (z.B. `scripts/tools_count.gd`) sind veraltet. Die aktuelle Wahrheit lebt in `addons/gdscript_mcp/MCP_INDEX.md` und `docs/FINDINGS.md`.
+
 **Date:** 2026-08-29
 **Auditor:** Adversarial Senior Software Architect (forensic read-only)
 **Scope:** Complete MCP integration, Godot 4.7 compatibility, tool contracts, security, test strategy
