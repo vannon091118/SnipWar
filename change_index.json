@@ -415,7 +415,7 @@
 			"p_id": 32.0
 		},
 		"1d42481811b45ddabaef7decbdd76dffdf38b1d8": {
-			"c": 71,
+			"c": 71.0,
 			"composite": "c71j61n9a4p69",
 			"entities": [
 				"F-002",
@@ -432,7 +432,7 @@
 				"C-763",
 				"C-764"
 			],
-			"p_id": 71
+			"p_id": 71.0
 		},
 		"23a393a36b55b464f4042b41643927ef966713f1": {
 			"c": 65.0,
@@ -1778,6 +1778,22 @@
 				"F-001"
 			],
 			"p_id": 64.0
+		},
+		"f76388e32f4432b73ffffab05230ab86149002cd": {
+			"c": 72,
+			"composite": "c72j62n12a35p71",
+			"entities": [
+				"F-002",
+				"F-355",
+				"F-003",
+				"F-356",
+				"F-357",
+				"F-358",
+				"F-359",
+				"F-004",
+				"F-001"
+			],
+			"p_id": 72
 		},
 		"fa2b7bbd7316ba058617513072f00afdf6e7dc93": {
 			"c": 36.0,
@@ -18471,6 +18487,56 @@
 			"last_p": 71.0,
 			"name": "constraint_narrative_runtime.gd.uid",
 			"path": "scripts/preflight/constraint_narrative_runtime.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-355": {
+			"first_p": 72.0,
+			"history": [],
+			"id": "F-355",
+			"last_p": 72.0,
+			"name": "MCP_AUDIT_REPORT.md",
+			"path": "MCP_AUDIT_REPORT.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-356": {
+			"first_p": 72.0,
+			"history": [],
+			"id": "F-356",
+			"last_p": 72.0,
+			"name": "INVENTORY_MATRIX.md",
+			"path": "docs/INVENTORY_MATRIX.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-357": {
+			"first_p": 72.0,
+			"history": [],
+			"id": "F-357",
+			"last_p": 72.0,
+			"name": "METRICS_TRACKER.md",
+			"path": "docs/METRICS_TRACKER.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-358": {
+			"first_p": 72.0,
+			"history": [],
+			"id": "F-358",
+			"last_p": 72.0,
+			"name": "SEARCH_INDEX.md",
+			"path": "docs/SEARCH_INDEX.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-359": {
+			"first_p": 72.0,
+			"history": [],
+			"id": "F-359",
+			"last_p": 72.0,
+			"name": "STRING_MATRIX.md",
+			"path": "docs/STRING_MATRIX.md",
 			"status": "created",
 			"type": "file"
 		}

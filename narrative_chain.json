@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-29 00:53:45 +0200",
-		"hash": "ee61de447792fbdc82e85061df4e6157293bef42",
-		"subject": "refactor: replace scene-tree scans with explicitâ€¦ [Analyse: Thinker] â€” nach Echo"
+		"date": "2026-08-29 02:21:03 +0200",
+		"hash": "f76388e32f4432b73ffffab05230ab86149002cd",
+		"subject": "Echo erinnert: Inventar-Matrizen, String-Matrix, Search-Index,â€¦ â€” nach Spark"
 	},
 	"entries": [
 		{
@@ -6155,6 +6155,73 @@
 			"seq": 71,
 			"subject": "Spark entdeckt: DOKI-Artefakte für nächsten Cycle nachziehen,… — nach Flux",
 			"summary": "Entdeckt! — also — nein, Moment. Das hier ist kein Aufregungsfall, das ist Nachsorge. Flux hat die große Nummer geliefert, und jetzt muss jemand die Papierkram-Schublade fertig machen. Das bin ich...."
+		},
+		{
+			"a": 35,
+			"arc": "a35",
+			"c": 72,
+			"composite": "c72j62n12a35p71",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "MCP_AUDIT_REPORT.md",
+					"insertions": 727.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 154.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/INVENTORY_MATRIX.md",
+					"insertions": 174.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/METRICS_TRACKER.md",
+					"insertions": 140.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/SEARCH_INDEX.md",
+					"insertions": 108.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/STRING_MATRIX.md",
+					"insertions": 160.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 57.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 27.0
+				}
+			],
+			"date": "2026-08-27 00:00:00",
+			"hash": "f76388e32f4432b73ffffab05230ab86149002cd",
+			"j": 62,
+			"model_id": "claude-sonnet-4",
+			"mood": "erschöpft",
+			"n": 12,
+			"narrator": "Echo",
+			"p": 71,
+			"p_id": 72,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Spark",
+			"seq": 72,
+			"subject": "Echo erinnert: Inventar-Matrizen, String-Matrix, Search-Index,… — nach Spark",
+			"summary": "Ich erinnere mich, als die erste INVENTORY_MATRIX angelegt wurde — das war noch bevor die Preflight-Suite ihre vierzig Constraints hatte. Jetzt, nach all den Commits, stehen hier fünf Dokumente, di..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
@@ -6207,6 +6274,10 @@
 		},
 		{
 			"at_hash": "ee61de447792fbdc82e85061df4e6157293bef42",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		},
+		{
+			"at_hash": "f76388e32f4432b73ffffab05230ab86149002cd",
 			"note": "Anker nach rebase/amend/force-push neu verankert."
 		}
 	]

@@ -168,14 +168,89 @@ static func amended_entry_hash_sync(chain: Dictionary, head: String, head_msg: S
 	return {"ok": true, "changed": false, "chain": chain}
 
 
+## ─── Recovery-Log: DOKI-interne Diagnose-Spur ────────────────────────────
+## Verwaiste/reparierte Sessions werden nach .doki/recovery_log.json protokolliert
+## (.doki ist gitignored). Bewusst KEINE Chain-/Index-Datei: diese dürfen im
+## verwaisten verified-Fall per Vertrag unangetastet bleiben.
+static func recovery_log_path(repo_root: String) -> String:
+	return repo_root.path_join(".doki").path_join("recovery_log.json")
+
+
+static func record_recovery(repo_root: String, kind: String, reason: String) -> void:
+	var path: String = recovery_log_path(repo_root)
+	var entries: Array = []
+	if FileAccess.file_exists(path):
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+		if parsed is Array:
+			entries = parsed
+	entries.append({
+		"kind": kind,
+		"reason": reason,
+		"at": Time.get_datetime_string_from_system(),
+	})
+	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify(entries, "\t"))
+		file.close()
+
+
+## Liest das Recovery-Log zurück (für Selfcheck/Diagnose; leer, wenn keins).
+static func recovery_read(repo_root: String) -> Array:
+	var path: String = recovery_log_path(repo_root)
+	if not FileAccess.file_exists(path):
+		return []
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	return parsed if parsed is Array else []
+
+
+## Verwaister-verified-Entscheidung (rein, git-frei — für den Selfcheck testbar).
+## DOKI validiert die verified-Session mit drei Prüfungen:
+##   a) Existiert der erwartete Commit?   → HEAD ist NICHT mehr der Anker
+##   b) Stimmt HEAD mit dem Session-Anker überein? → HEAD == git_head_before
+##   c) Existiert .commit_msg.txt?        → Diagnose (Message verloren?)
+## Der erwartete Commit existiert genau dann, wenn HEAD den Session-Anker
+## (git_head_before) verlassen hat. Bleibt HEAD auf dem Anker, wurde `git commit
+## -F .commit_msg.txt` nie ausgeführt bzw. der Commit ist verloren → die
+## verified-Session ist VERWAIST. commit_msg_exists verstärkt nur die Begründung,
+## ändert die Entscheidung aber nicht (die Message überlebt einen echten Commit).
+static func verified_orphan_decision(head: String, git_head_before: String, commit_msg_exists: bool) -> Dictionary:
+	var commit_created: bool = not git_head_before.is_empty() and not head.is_empty() and head != git_head_before
+	if commit_created:
+		return {"orphaned": false, "reason": ""}
+	var anchor_label: String = git_head_before.substr(0, 7) if not git_head_before.is_empty() else "(leer — korrupt)"
+	var msg_note: String = "ausstehende Message .commit_msg.txt noch vorhanden" if commit_msg_exists else "ausstehende Message fehlt"
+	var reason: String = "Verwaiste verified-Session atomar auf idle zurückgesetzt: HEAD steht noch auf dem Session-Anker %s, es wurde kein DOKI-Commit erzeugt; %s — Chain- und Index-Dateien blieben unberührt." % [anchor_label, msg_note]
+	return {"orphaned": true, "reason": reason}
+
+
 ## repair() → {ok, repaired:[...]}
 func repair() -> Dictionary:
 	var session: Dictionary = _session_store.read()
 	var head: String = _git.head_hash_full()
 	var repaired: Array = []
 
-	# 1. Crash zwischen commit und finalize: Chain-Eintrag nachholen
-	if session.get("state") == DOKI_SessionStore.STATE_VERIFIED and head != str(session.get("git_head_before", "")):
+	# ─ 1. verified validieren (Recovery-Kern) ──────────────────────────────
+	# Verwaister-Fall: die verified-Session hat KEINEN passenden Commit (HEAD
+	# steht noch auf dem Anker). Dann: atomar auf idle zurücksetzen, KEINE
+	# Chain-/Index-Dateien verändern, Recovery-Grund protokollieren. Erst danach
+	# läuft der normale Flow wieder: prepare → finish → DOKI-Commit → SHA-Prüfung
+	# (finalize) → finalize.
+	if session.get("state") == DOKI_SessionStore.STATE_VERIFIED:
+		var decision: Dictionary = verified_orphan_decision(
+			head,
+			str(session.get("git_head_before", "")),
+			FileAccess.file_exists(_repo_root.path_join(".commit_msg.txt"))
+		)
+		if bool(decision["orphaned"]):
+			var reason: String = str(decision["reason"])
+			record_recovery(_repo_root, "orphaned_verified", reason)
+			_session_store.reset()
+			repaired.append(reason)
+			# Früh-Return: im verwaisten Fall sind Chain/Index tabu — der
+			# Anker-Re-Anchor (Fall 3) würde eine Chain-Datei schreiben.
+			return {"ok": true, "repaired": repaired}
+		# Commit existiert → Crash zwischen commit und finalize: finalize nachholen.
 		var result: Dictionary = run()
 		if not result["ok"]:
 			return result

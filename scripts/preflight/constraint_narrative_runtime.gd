@@ -22,13 +22,19 @@ func requires_scene() -> bool:
 func run(ctx: PreflightContext) -> bool:
 	var root := ProjectSettings.globalize_path("res://")
 	var output: Array = []
-	var exit_code: int = OS.execute("python", ["-m", "narrative_runtime.gate_cli", "--root", root], output, true)
+	# Try python3 first (avoids Windows Store shim), then python.
+	var py_bin := "python3"
+	var exit_code: int = OS.execute(py_bin, ["-m", "narrative_runtime.gate_cli", "--root", root], output, true)
+	if exit_code != OK:
+		output = []
+		py_bin = "python"
+		exit_code = OS.execute(py_bin, ["-m", "narrative_runtime.gate_cli", "--root", root], output, true)
 	var raw := ""
 	if not output.is_empty():
 		raw = String(output[0]).strip_edges()
 	if exit_code != OK:
 		return ctx.check(false,
-			"Narrative Runtime Gate: python exited %d — Runtime nicht konform oder Python fehlt (fail-closed)" % exit_code,
+			"Narrative Runtime Gate: %s exited %d — Runtime nicht konform oder Python fehlt (fail-closed)" % [py_bin, exit_code],
 			{"output": raw.left(400)})
 	var parsed := {}
 	if raw.begins_with("{"):

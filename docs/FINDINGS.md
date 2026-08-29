@@ -23,6 +23,7 @@
 | # | Befund | Status | Beleg / Referenz |
 |---|--------|--------|------------------|
 | QA2-GAME-1 | Identitätsdialog: „IDENTITÄT FESTLEGEN" ohne Namen brach STUMM ab — kein Preset-Name, kein Feedback → Dead-End im Spieler-Flow | ✅ GEFIXT | `scripts/ui/main_menu.gd`: Preset `Stickman` im Input + sichtbarer Hinweis statt stummem `return` (`_show_identity_intro`/`_confirm_identity`); Compile-Gate PASS (301 Skripte); live verifiziert: Dialog → `game_view` (mehrfach, saubere Runs) |
+| QA2-GAME-3 | NEUES SPIEL-Klick löst keinen Szenenwechsel aus: `runtime_ux_click` returns `clicked:true` aber Szene bleibt auf `main_menu` — Blockiert Spielprogression komplett | 🟡 OFFEN | Direkte MCP-Tool-Calls zeigen erfolgreichen Klick aber persistente Main-Menü-Controls nach 6s Wartezeit; Visual Evidence OCR bestätigt Main-Menü-Text: "SNIPWAR\nSTICKMAN // IDENTITATSPROTOKOLL\n..." nach Klick und Warte |
 
 ### MCP-Findings
 | # | Befund | Status | Beleg / Referenz |

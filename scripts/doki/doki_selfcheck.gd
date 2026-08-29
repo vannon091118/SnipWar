@@ -21,6 +21,7 @@ func _init() -> void:
 	_test_checks_soft()
 	_test_amend_reconstruction()
 	_test_amend_hash_sync()
+	_test_repair_orphaned_verified()
 	_test_prompt_voice_lived()
 
 	print("")
@@ -436,6 +437,69 @@ func _test_amend_hash_sync() -> void:
 	# 5. Leere Chain → ok, kein Change
 	var r5: Dictionary = DOKI_FinalizeFlow.amended_entry_hash_sync({"entries": []}, "7c82f43", head_msg)
 	_expect("amend hash-sync: leere Chain ok", bool(r5.get("ok", false)) and not bool(r5.get("changed", true)))
+
+
+## ─── Verwaister-verified-Fall: repair validiert die verified-Session ───────
+## Regression für „doki repair": Wenn eine verified-Session KEINEN passenden
+## Commit hat (HEAD steht noch auf dem Session-Anker — `git commit` nie oder
+## verloren ausgeführt), muss repair die Session ATOMAR auf idle zurücksetzen,
+## KEINE Chain-/Index-Datei verändern und den Recovery-Grund protokollieren —
+## statt die Session dauerhaft in verified festzuhängen.
+func _test_repair_orphaned_verified() -> void:
+	# ─ 1. Reine Entscheidung (git-frei, deterministisch) ─
+	_expect("orphan: HEAD==Anker + Message vorhanden → verwaist", bool(DOKI_FinalizeFlow.verified_orphan_decision("a1b2c3d", "a1b2c3d", true)["orphaned"]))
+	_expect("orphan: HEAD==Anker + Message fehlt → verwaist", bool(DOKI_FinalizeFlow.verified_orphan_decision("a1b2c3d", "a1b2c3d", false)["orphaned"]))
+	_expect("orphan: HEAD!=Anker + Message vorhanden → Commit existiert (finalize-Pfad)", not bool(DOKI_FinalizeFlow.verified_orphan_decision("e5f6a7b", "a1b2c3d", true)["orphaned"]))
+	_expect("orphan: HEAD!=Anker + Message fehlt → Commit existiert (finalize-Pfad)", not bool(DOKI_FinalizeFlow.verified_orphan_decision("e5f6a7b", "a1b2c3d", false)["orphaned"]))
+	_expect("orphan: leerer Anker (korrupt) → verwaist", bool(DOKI_FinalizeFlow.verified_orphan_decision("e5f6a7b", "", true)["orphaned"]))
+	_expect("orphan: Begründung benennt Chain/Index unberührt", str(DOKI_FinalizeFlow.verified_orphan_decision("a1b2c3d", "a1b2c3d", true)["reason"]).contains("Chain- und Index-Dateien blieben unberührt"))
+
+	# ─ 2. Atomarer Reset + Recovery-Protokoll in isolierter .doki-Welt ─
+	var scratch: String = "user://tmp_doki_orphan_selfcheck"
+	var store := DOKI_SessionStore.new(scratch)
+	var orphan: Dictionary = store.default_session()
+	orphan["state"] = DOKI_SessionStore.STATE_VERIFIED
+	orphan["git_head_before"] = "a1b2c3d"
+	orphan["composite"] = "c99j5n9a2p7"
+	store.save(orphan)
+	var reason: String = "Verwaiste verified-Session atomar auf idle zurückgesetzt (Test)"
+	DOKI_FinalizeFlow.record_recovery(scratch, "orphaned_verified", reason)
+	store.reset()
+	var read_back: Dictionary = store.read()
+	_expect("orphan: Reset atomar → idle", str(read_back.get("state", "?")) == DOKI_SessionStore.STATE_IDLE)
+	_expect("orphan: Composite geleert", str(read_back.get("composite", "x")) == "" and str(read_back.get("git_head_before", "x")) == "")
+	var log: Array = DOKI_FinalizeFlow.recovery_read(scratch)
+	_expect("orphan: Recovery-Grund protokolliert", log.size() == 1 and str(log[0].get("kind", "")) == "orphaned_verified" and str(log[0].get("reason", "")) == reason)
+
+	# ─ 3. Nach Reset ist der normale Flow wieder möglich: die Session liegt auf
+	#    idle, d. h. der nächste prepare (idle→prepared) stoppt nicht mehr auf „verified".
+	var ensure: Dictionary = store.ensure_state(DOKI_SessionStore.STATE_IDLE)
+	_expect("orphan: Nach Reset ist der Flow-Start wieder erlaubt (idle)", ensure["ok"])
+
+	# Aufräumen: isolierte .doki-Welt löschen
+	_remove_recursive(scratch)
+
+
+## Löscht ein Verzeichnis rekursiv (für isolierte Test-Welten unter user://).
+func _remove_recursive(path: String) -> void:
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(path)
+		return
+	var dir := DirAccess.open(path)
+	if dir == null:
+		return
+	dir.list_dir_begin()
+	var name: String = dir.get_next()
+	while not name.is_empty():
+		if name != "." and name != "..":
+			var child: String = path.path_join(name)
+			if dir.current_is_dir():
+				_remove_recursive(child)
+			else:
+				DirAccess.remove_absolute(child)
+		name = dir.get_next()
+	dir.list_dir_end()
+	DirAccess.remove_absolute(path)  # leeres Verzeichnis
 
 
 ## ─── Stimmen gelebt (nicht genannt): Stil-Beispiel + Mood-Ausdruck + Kalibrierung ─
