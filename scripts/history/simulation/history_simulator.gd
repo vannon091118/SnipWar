@@ -9,6 +9,10 @@ var events: Array[HistoryEvent] = []
 var biographies: Dictionary = {}  # char_id → CharacterBiography
 var final_relationships: Dictionary = {}
 
+## Kriegs-Archiv der letzten Simulation (chain = truth für ChainDetector).
+## Wird von world_chronicle.gd nach simulate_with_snapshots() gelesen.
+var war_archive: Array[Dictionary] = []
+
 var _event_factory: HistoryEventFactory
 var _faction_ai: FactionAI
 var _figure_catalog: FigureCatalog
@@ -67,6 +71,7 @@ func _simulate_internal(
 
 	var world := WorldState.new()
 	world.reset(initial_factions, initial_planets, -years)
+	war_archive = world.war_archive
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
@@ -121,7 +126,8 @@ func _simulate_internal(
 
 
 ## Lesende Snapshot-Ableitung: Ownership aus WorldState, Events bis zum
-## aktuellen Jahr. Verändert weder WorldState noch events (Determinismus).
+## aktuellen Jahr, plus Kriegs-/Truce-Truth (Schema v3). Verändert weder
+## WorldState noch events (Determinismus).
 func _capture_snapshot(world: WorldState) -> HistoricalSnapshot:
 	var snapshot := HistoricalSnapshot.new()
 	snapshot.year = world.year
@@ -131,7 +137,35 @@ func _capture_snapshot(world: WorldState) -> HistoricalSnapshot:
 	for event in events:
 		if event.year <= world.year:
 			snapshot.events.append(event)
+	# Kriegs-Truth, ausschließlich lesend: laufende Kriege aus active_wars,
+	# abgeschlossene aus war_archive (status über end_year determiniert).
+	for war in world.active_wars.values():
+		snapshot.wars.append(_war_snapshot(war, "ongoing"))
+	for war in world.war_archive:
+		var status: String = "ended" if int(war.get("end_year", 0)) <= world.year else "ongoing"
+		snapshot.wars.append(_war_snapshot(war, status))
+	for key in world.truces:
+		if world.year < int(world.truces[key]):
+			snapshot.truces[key] = int(world.truces[key])
 	return snapshot
+
+
+## Ein Kriegs-Dictionary für den Snapshot (nur Felder, keine Referenzen).
+func _war_snapshot(war: Dictionary, status: String) -> Dictionary:
+	return {
+		"war_id": str(war.get("war_id", "")),
+		"attacker": str(war.get("attacker", "")),
+		"defender": str(war.get("defender", "")),
+		"goal_planet": str(war.get("goal_planet", "")),
+		"start_year": int(war.get("start_year", 0)),
+		"end_year": war.get("end_year"),
+		"status": status,
+		"battles": int(war.get("battles", 0)),
+		"attacker_losses": int(war.get("attacker_losses", 0)),
+		"defender_losses": int(war.get("defender_losses", 0)),
+		"war_exhaustion": float(war.get("war_exhaustion", 0.0)),
+		"outcome": str(war.get("outcome", "")),
+	}
 
 
 func _derive_planet_visual_state(planet_id: StringName, world: WorldState) -> Dictionary:
@@ -430,6 +464,13 @@ func _execute_action(action: Dictionary, world: WorldState, rng: RandomNumberGen
 			# Frieden wirkt diplomatisch (Event deklariert relationship_change = 20)
 			world.modify_relationship(actor, target_fid, 20)
 			world.modify_relationship(target_fid, actor, 20)
+			# Kriegs-Truth: Friedens-Event-ID im Archiv-Eintrag verankern, damit
+			# ChainDetector die Kette exakt abschließen kann (peace_event_id).
+			var peace_event: HistoryEvent = _event_factory.create_event(action, world, result_type, cause_event_id, cause_type)
+			_record_event(peace_event, world)
+			if world.war_archive:
+				(world.war_archive[-1] as Dictionary)["peace_event_id"] = peace_event.event_id
+			return  # Event schon gespeichert, kein zweites Mal unten
 
 	var event: HistoryEvent = _event_factory.create_event(action, world, result_type, cause_event_id, cause_type)
 	_record_event(event, world)

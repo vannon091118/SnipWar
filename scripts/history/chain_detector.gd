@@ -7,7 +7,10 @@ extends RefCounted
 const MAX_CHAIN_GAP: int = 15
 
 
-func detect_chains(events: Array[HistoryEvent]) -> Array[EventChain]:
+## war_archive: optionales Kriegs-Archiv (chain = truth). Nicht-null ⇒
+## Kriegs-Ketten kommen ausschließlich daraus (auch wenn leer — dann gab es
+## keine Kriege). null ⇒ Legacy-Pfad über die Actor-Overlap-Heuristik.
+func detect_chains(events: Array[HistoryEvent], war_archive: Variant = null) -> Array[EventChain]:
 	if events.is_empty():
 		return []
 
@@ -21,8 +24,13 @@ func detect_chains(events: Array[HistoryEvent]) -> Array[EventChain]:
 	var causal_chains: Array[EventChain] = _detect_causal_chains(sorted_events, used_events)
 	chains.append_array(causal_chains)
 
-	# 2. Kriegs-Verläufe
-	var war_chains: Array[EventChain] = _detect_war_chains(sorted_events, used_events)
+	# 2. Kriegs-Verläufe — exakt aus dem war_archive (chain = truth), wenn
+	# übergeben; sonst die alte Actor-Overlap-Heuristik (Rückwärtskompatibilität).
+	var war_chains: Array[EventChain] = []
+	if war_archive != null:
+		war_chains = _war_chains_from_archive(sorted_events, war_archive)
+	else:
+		war_chains = _detect_war_chains(sorted_events, used_events)
 	chains.append_array(war_chains)
 
 	# 3. Diplomatische Verläufe (Bündnisse, Verträge, Rivalitäten)
@@ -69,6 +77,50 @@ func _detect_causal_chains(events: Array[HistoryEvent], used: Dictionary) -> Arr
 				for a in ev.actors:
 					if not chain.participants.has(a):
 						chain.participants.append(a)
+			chains.append(chain)
+
+	return chains
+
+
+## Kriegs-Ketten 1:1 aus dem war_archive (chain = truth): Anker =
+## declaration_event_id, Mitglieder = battle_event_ids + peace_event_id,
+## Auflösung = outcome. Kein Raten über Actor-Overlap.
+func _war_chains_from_archive(events: Array[HistoryEvent], archive: Array[Dictionary]) -> Array[EventChain]:
+	var chains: Array[EventChain] = []
+	var index: Dictionary = {}
+	for ev in events:
+		index[ev.event_id] = ev
+
+	for war in archive:
+		if not (war is Dictionary):
+			continue
+		var chain := EventChain.new()
+		chain.chain_id = StringName("chain_war_%d" % chains.size())
+		chain.resolution = StringName(str(war.get("outcome", "unresolved")))
+
+		var decl_id: StringName = war.get("declaration_event_id", &"") as StringName
+		var decl: HistoryEvent = index.get(decl_id)
+		if decl != null:
+			chain.add_event(decl.event_id, decl.year)
+			for a in decl.actors:
+				if not chain.participants.has(a):
+					chain.participants.append(a)
+
+		for bid in war.get("battle_event_ids", []):
+			var b: HistoryEvent = index.get(bid as StringName)
+			if b != null:
+				chain.add_event(b.event_id, b.year)
+				for a in b.actors:
+					if not chain.participants.has(a):
+						chain.participants.append(a)
+
+		var peace_id: StringName = war.get("peace_event_id", &"") as StringName
+		if not String(peace_id).is_empty():
+			var peace: HistoryEvent = index.get(peace_id)
+			if peace != null:
+				chain.add_event(peace.event_id, peace.year)
+
+		if chain.event_count() >= 2:
 			chains.append(chain)
 
 	return chains

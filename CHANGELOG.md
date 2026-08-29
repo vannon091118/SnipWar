@@ -1401,3 +1401,29 @@ Junk-Artefakte aus dem Repo verbannen: Windows-nul-Redirect-Überbleibsel, scrat
 - change_index.json: Test-Assets ergänzt (F-003).
 - narrative_chain.json: Test-Assets ergänzt (F-004).
 - scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).
+
+## 2026-08-27 03:00:00 — p75 · c75j20n1a32p74 · Buffy · sachlich
+
+**[Buffy] Historische Weltchronik integrieren,… — nach Sage**
+
+Historische Weltchronik integrieren, Snapshot-Persistenz und Vorstart-Flow reparieren
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/CODEBASE_AUDIT.md: Implementiert und integriert (F-369).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scenes/historical_world/historical_world.tscn: Implementiert und integriert (F-370).
+- scripts/bootstrap/historical_world_bootstrap.gd: Implementiert und integriert (F-371).
+- scripts/bootstrap/historical_world_bootstrap.gd.uid: Implementiert und integriert (F-372).
+- scripts/concept_index.gd: Implementiert und integriert (F-055).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/history/chronicle_save_data.gd: Implementiert und integriert (F-301).
+- scripts/history/historical_snapshot.gd: Implementiert und integriert (F-337).
+- scripts/history/importance_evaluator.gd: Implementiert und integriert (F-318).
+- scripts/history/simulation/history_simulator.gd: Implementiert und integriert (F-279).
+- scripts/history/world_chronicle.gd: Implementiert und integriert (F-283).
+- scripts/ui/history/chronicle_archive_view.gd: Implementiert und integriert (F-320).
+- scripts/ui/history/historical_renderer.gd: Implementiert und integriert (F-367).
+- scripts/ui/history/simulation_overlay.gd: Implementiert und integriert (F-322).
+- scripts/ui/main_menu.gd: Implementiert und integriert (F-067).
+- scripts/ui/scene_director.gd: Implementiert und integriert (F-373).

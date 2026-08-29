@@ -141,8 +141,9 @@ func reset(seed: int, faction_data: Dictionary = {}, planet_data: Dictionary = {
 		_save.biographies.append(bio_dict[cid])
 	_save.relationships = result.get("final_relationships", {})
 
-	# Chains erkennen
-	_save.chains = _chain_detector.detect_chains(sim_events)
+	# Chains erkennen — Kriegs-Ketten exakt aus dem Kriegs-Archiv der
+	# Simulation (chain = truth), nicht aus der Actor-Overlap-Heuristik.
+	_save.chains = _chain_detector.detect_chains(sim_events, _simulator.war_archive)
 
 	# Kausalitäten verknüpfen
 	_cause_tracker.auto_link(sim_events)

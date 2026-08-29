@@ -18,6 +18,11 @@ var technologies: Dictionary = {}
 ## Aktive Kriege: { "faction_a<->faction_b": Dictionary }
 var active_wars: Dictionary = {}
 
+## Abgeschlossene Kriege (chain = truth): end_war() verschiebt den exakten
+## Kriegseintrag (Erklärung, Schlachten, Friedensanker) hierher statt ihn
+## wegzuwerfen. ChainDetector leitet Kriegs-Ketten 1:1 daraus ab — kein Raten.
+var war_archive: Array[Dictionary] = []
+
 ## Waffenstillstände: { "faction_a<->faction_b": end_year }
 var truces: Dictionary = {}
 
@@ -57,6 +62,7 @@ func reset(initial_factions: Dictionary, initial_planets: Dictionary, start_year
 	characters.clear()
 	technologies.clear()
 	active_wars.clear()
+	war_archive.clear()
 	truces.clear()
 	year = start_year
 	_next_event_id = 0
@@ -166,6 +172,7 @@ func get_active_war(a: StringName, b: StringName) -> Dictionary:
 func start_war(attacker: StringName, defender: StringName, goal_planet: StringName, declaration_event_id: StringName) -> void:
 	var key := _war_key(attacker, defender)
 	active_wars[key] = {
+		"war_id": "war_%04d" % (war_archive.size() + active_wars.size() + 1),
 		"attacker": attacker,
 		"defender": defender,
 		"start_year": year,
@@ -175,7 +182,8 @@ func start_war(attacker: StringName, defender: StringName, goal_planet: StringNa
 		"defender_losses": 0,
 		"war_exhaustion": 0.0,
 		"declaration_event_id": declaration_event_id,
-		"last_battle_event_id": declaration_event_id
+		"last_battle_event_id": declaration_event_id,
+		"battle_event_ids": []
 	}
 	# Hebe bestehende Waffenstillstände auf
 	truces.erase(key)
@@ -190,14 +198,23 @@ func record_war_battle(a: StringName, b: StringName, battle_event_id: StringName
 	w["attacker_losses"] = int(w.get("attacker_losses", 0)) + att_losses
 	w["defender_losses"] = int(w.get("defender_losses", 0)) + def_losses
 	w["last_battle_event_id"] = battle_event_id
+	# Exakte Schlachten-Mitgliedschaft für den ChainDetector (chain = truth)
+	var battle_ids: Array = w.get("battle_event_ids", [])
+	battle_ids.append(battle_event_id)
+	w["battle_event_ids"] = battle_ids
 	# Kriegsmüdigkeit steigt
 	w["war_exhaustion"] = clampf(float(w.get("war_exhaustion", 0.0)) + 0.25 + float(att_losses + def_losses) * 0.01, 0.0, 1.0)
 
 
-func end_war(a: StringName, b: StringName, truce_years: int = 20) -> Dictionary:
+func end_war(a: StringName, b: StringName, truce_years: int = 20, outcome: StringName = &"peace_treaty") -> Dictionary:
 	var key := _war_key(a, b)
 	var war_data: Dictionary = active_wars.get(key, {})
 	active_wars.erase(key)
+	if not war_data.is_empty():
+		# chain = truth: exakte Ereignis-Mitgliedschaft bleibt im Archiv erhalten.
+		war_data["end_year"] = year
+		war_data["outcome"] = String(outcome)
+		war_archive.append(war_data)
 	set_truce(a, b, truce_years)
 	return war_data
 

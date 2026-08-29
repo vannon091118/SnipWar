@@ -6381,6 +6381,123 @@
 			"seq": 74,
 			"subject": "Sage lehrt: Junk-Artefakte aus dem Repo verbannen:… — nach Argos",
 			"summary": "Stell dir vor, jede Datei im Repo ist eine Lektion — und manche lehren nur, was nicht dorthin gehört. Eine einzige Redirect-Zeile hat ein `nul` hinterlassen, als wäre ein Schatten stehen geblieben,..."
+		},
+		{
+			"a": 32,
+			"arc": "a36",
+			"c": 75,
+			"composite": "c75j20n1a32p74",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/CODEBASE_AUDIT.md",
+					"insertions": 360.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 47.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scenes/historical_world/historical_world.tscn",
+					"insertions": 18.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/bootstrap/historical_world_bootstrap.gd",
+					"insertions": 52.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/bootstrap/historical_world_bootstrap.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/concept_index.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/history/chronicle_save_data.gd",
+					"insertions": 31.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/historical_snapshot.gd",
+					"insertions": 27.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/importance_evaluator.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/history/simulation/history_simulator.gd",
+					"insertions": 22.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/history/world_chronicle.gd",
+					"insertions": 26.0
+				},
+				{
+					"deletions": 10.0,
+					"file": "scripts/ui/history/chronicle_archive_view.gd",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/ui/history/historical_renderer.gd",
+					"insertions": 29.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/ui/history/simulation_overlay.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/ui/main_menu.gd",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/ui/scene_director.gd",
+					"insertions": 5.0
+				}
+			],
+			"date": "2026-08-27 03:00:00",
+			"hash": "2c630aa8810861bc33d2b0ade46f2b87f727c3b5",
+			"j": 20,
+			"model_id": "claude-sonnet-4",
+			"mood": "sachlich",
+			"n": 1,
+			"narrator": "Buffy",
+			"p": 74,
+			"p_id": 75,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Sage",
+			"seq": 75,
+			"subject": "[Buffy] Historische Weltchronik integrieren,… — nach Sage",
+			"summary": "Die Chronik war berechnet, aber nicht sichtbar genug in den Spielablauf eingebettet. Deshalb bekam die Vorgeschichte eine eigene registrierte HistoricalWorld-Szene, deren Playback die gespeicherten..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

@@ -560,7 +560,7 @@
 			"p_id": 27.0
 		},
 		"27b82c4e764d85866391c98a539274df4a2a4f70": {
-			"c": 74,
+			"c": 74.0,
 			"composite": "c74j37n14a18p28",
 			"entities": [
 				"F-037",
@@ -569,7 +569,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 74
+			"p_id": 74.0
 		},
 		"2a1018160b75ec35334a1a56f55aa4daedc376da": {
 			"c": 34.0,
@@ -647,6 +647,50 @@
 				"C-001"
 			],
 			"p_id": 17.0
+		},
+		"2c630aa8810861bc33d2b0ade46f2b87f727c3b5": {
+			"c": 75,
+			"composite": "c75j20n1a32p74",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-369",
+				"F-004",
+				"F-370",
+				"F-371",
+				"F-372",
+				"F-055",
+				"F-001",
+				"F-301",
+				"F-337",
+				"F-318",
+				"F-279",
+				"F-283",
+				"F-320",
+				"F-367",
+				"F-322",
+				"F-067",
+				"F-373",
+				"C-800",
+				"C-801",
+				"C-802",
+				"C-803",
+				"C-804",
+				"C-805",
+				"C-806",
+				"C-807",
+				"C-808",
+				"C-809",
+				"C-810",
+				"C-811",
+				"C-812",
+				"C-813",
+				"C-814",
+				"C-815",
+				"C-816",
+				"C-817"
+			],
+			"p_id": 75
 		},
 		"2e0c055b552f60ea1cce83d3270e0d114a23651e": {
 			"c": 54.0,
@@ -15617,6 +15661,312 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-800": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-800",
+			"last_p": 75.0,
+			"name": "HistoricalWorldBootstrap",
+			"path": "scripts/bootstrap/historical_world_bootstrap.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-801": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						4.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-801",
+			"last_p": 75.0,
+			"name": "DEFAULT_THEME",
+			"path": "scripts/bootstrap/historical_world_bootstrap.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-802": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-802",
+			"last_p": 75.0,
+			"name": "_ready",
+			"path": "scripts/bootstrap/historical_world_bootstrap.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-803": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						33.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-803",
+			"last_p": 75.0,
+			"name": "_on_snapshot_changed",
+			"path": "scripts/bootstrap/historical_world_bootstrap.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-804": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						37.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-804",
+			"last_p": 75.0,
+			"name": "_on_overlay_year_changed",
+			"path": "scripts/bootstrap/historical_world_bootstrap.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-805": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						46.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-805",
+			"last_p": 75.0,
+			"name": "_on_playback_finished",
+			"path": "scripts/bootstrap/historical_world_bootstrap.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-806": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						73.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-806",
+			"last_p": 75.0,
+			"name": "faction_ids",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-807": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						122.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-807",
+			"last_p": 75.0,
+			"name": "snapshots_as_resources",
+			"path": "scripts/history/chronicle_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-808": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-808",
+			"last_p": 75.0,
+			"name": "SCHEMA_VERSION",
+			"path": "scripts/history/historical_snapshot.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-809": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						14.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-809",
+			"last_p": 75.0,
+			"name": "to_dict",
+			"path": "scripts/history/historical_snapshot.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-810": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-810",
+			"last_p": 75.0,
+			"name": "THRESHOLD_TURNING_POINT",
+			"path": "scripts/history/importance_evaluator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-811": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						128.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-811",
+			"last_p": 75.0,
+			"name": "_derive_planet_visual_state",
+			"path": "scripts/history/simulation/history_simulator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-812": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						312.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-812",
+			"last_p": 75.0,
+			"name": "_record_live_event_from_bus",
+			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-813": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						44.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-813",
+			"last_p": 75.0,
+			"name": "_apply_visual_state",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-814": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-814",
+			"last_p": 75.0,
+			"name": "TURNING_POINT_THRESHOLD",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-815": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						204.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-815",
+			"last_p": 75.0,
+			"name": "_goto_historical_world",
+			"path": "scripts/ui/main_menu.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-816": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-816",
+			"last_p": 75.0,
+			"name": "SCENE_HISTORICAL_WORLD",
+			"path": "scripts/ui/scene_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-817": {
+			"first_p": 75.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 75.0
+				}
+			],
+			"id": "C-817",
+			"last_p": 75.0,
+			"name": "SCENE_ID_HISTORICAL_WORLD",
+			"path": "scripts/ui/scene_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -19294,6 +19644,56 @@
 			"last_p": 73.0,
 			"name": "historical_renderer.gd.uid",
 			"path": "scripts/ui/history/historical_renderer.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-369": {
+			"first_p": 75.0,
+			"history": [],
+			"id": "F-369",
+			"last_p": 75.0,
+			"name": "CODEBASE_AUDIT.md",
+			"path": "docs/CODEBASE_AUDIT.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-370": {
+			"first_p": 75.0,
+			"history": [],
+			"id": "F-370",
+			"last_p": 75.0,
+			"name": "historical_world.tscn",
+			"path": "scenes/historical_world/historical_world.tscn",
+			"status": "created",
+			"type": "file"
+		},
+		"F-371": {
+			"first_p": 75.0,
+			"history": [],
+			"id": "F-371",
+			"last_p": 75.0,
+			"name": "historical_world_bootstrap.gd",
+			"path": "scripts/bootstrap/historical_world_bootstrap.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-372": {
+			"first_p": 75.0,
+			"history": [],
+			"id": "F-372",
+			"last_p": 75.0,
+			"name": "historical_world_bootstrap.gd.uid",
+			"path": "scripts/bootstrap/historical_world_bootstrap.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-373": {
+			"first_p": 75.0,
+			"history": [],
+			"id": "F-373",
+			"last_p": 75.0,
+			"name": "scene_director.gd",
+			"path": "scripts/ui/scene_director.gd",
 			"status": "created",
 			"type": "file"
 		}
