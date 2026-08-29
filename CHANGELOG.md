@@ -1730,3 +1730,11 @@ R-012: narrative_runtime Cache — 18.9s→21ms (904x), Preflight 70.7s→43.0s 
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
 - scripts/preflight/constraint_narrative_runtime.gd: Implementiert und integriert (F-353).
+
+## 2026-08-27 00:00:00 — p96 · c96j5n10a15p31 · Glitch · neugierig
+
+**Glitch ermittelt: AGENTS.md: Pflicht-Workflow als verbindlicher… — nach Vannon**
+
+AGENTS.md: Pflicht-Workflow als verbindlicher 7-Schritte-Loop — kein Commit ohne DOKI, kein --no-verify
+
+- AGENTS.md: Tooling erweitert (F-019).

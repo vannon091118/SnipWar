@@ -7753,6 +7753,33 @@
 			"seq": 95,
 			"subject": "R-012: narrative_runtime Cache —. … — nach Sage",
 			"summary": "Vannon alarmiert:"
+		},
+		{
+			"a": 15,
+			"arc": "a46",
+			"c": 96,
+			"composite": "c96j5n10a15p31",
+			"data_changes": [
+				{
+					"deletions": 26.0,
+					"file": "AGENTS.md",
+					"insertions": 111.0
+				}
+			],
+			"date": "2026-08-27 00:00:00",
+			"hash": "eae668cf558cf424dc2973d1b77e5f61130131bd",
+			"j": 5,
+			"model_id": "claude-sonnet-4",
+			"mood": "neugierig",
+			"n": 10,
+			"narrator": "Glitch",
+			"p": 31,
+			"p_id": 96,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Vannon",
+			"seq": 96,
+			"subject": "Glitch ermittelt: AGENTS.md: Pflicht-Workflow als verbindlicher… — nach Vannon",
+			"summary": "Zufall? Ich denke nicht. Jemand — oder etwas — hat in dieser Session 14 Commits durchgewunken, und bei jedem einzelnen wurde der DOKI-Flow eingehalten. Bis auf EINEN. Einen einzigen Commit, der mit..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
