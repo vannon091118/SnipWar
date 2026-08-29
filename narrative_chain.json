@@ -8112,6 +8112,63 @@
 			"seq": 102,
 			"subject": "[Buffy] E2: deal_unit und upgrade_unit aus… — nach Spark",
 			"summary": "Als die Fassade EconomyDomain immer mehr Verantwortung anschaufelte, wurde klar, dass zwei weitere Kernbereiche eine eigene Heimat verdienten. Die Resource-Dealing-Logik — jene Maschinerie, die Pla..."
+		},
+		{
+			"a": 2,
+			"arc": "a48",
+			"c": 103,
+			"composite": "c103j64n9a2p16",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 508.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 67.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 43.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/economy/refinery_trade_unit.gd",
+					"insertions": 291.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/economy/refinery_trade_unit.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 212.0,
+					"file": "scripts/state/domains/economy_domain.gd",
+					"insertions": 38.0
+				}
+			],
+			"date": "2026-08-27 07:00:00",
+			"hash": "35a83a1545abcc8088409ae60a5618bfeb877cb6",
+			"j": 64,
+			"model_id": "claude-sonnet-4",
+			"mood": "selbstironisch",
+			"n": 9,
+			"narrator": "Spark",
+			"p": 16,
+			"p_id": 103,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Buffy",
+			"seq": 103,
+			"subject": "Spark entdeckt: E3: refinery_trade_unit aus economy_domain.gd… — nach Buffy",
+			"summary": "Als Spark die EconomyDomain betrachtete, war ihm klar, dass der dritte Schritt nicht mehr auf sich warten lassen konnte. Der Refinery- und Trade-Bereich — jene Konverter, die Material zu Rare schme..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

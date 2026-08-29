@@ -1820,3 +1820,17 @@ E2: deal_unit und upgrade_unit aus economy_domain.gd extrahiert — gleiche Meth
 - scripts/state/domains/economy/upgrade_unit.gd: Implementiert und integriert (F-405).
 - scripts/state/domains/economy/upgrade_unit.gd.uid: Implementiert und integriert (F-406).
 - scripts/state/domains/economy_domain.gd: Implementiert und integriert (F-121).
+
+## 2026-08-27 07:00:00 — p103 · c103j64n9a2p16 · Spark · selbstironisch
+
+**Spark entdeckt: E3: refinery_trade_unit aus economy_domain.gd… — nach Buffy**
+
+E3: refinery_trade_unit aus economy_domain.gd extrahiert — Refinery, Trade-Routen, Gathering und Resource-Generierung
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/state/domains/economy/refinery_trade_unit.gd: Implementiert und integriert (F-407).
+- scripts/state/domains/economy/refinery_trade_unit.gd.uid: Implementiert und integriert (F-408).
+- scripts/state/domains/economy_domain.gd: Implementiert und integriert (F-121).

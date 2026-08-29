@@ -56,7 +56,6 @@ func reset() -> void:
 	_owner.market_prices.clear()
 	_owner.trade_volumes.clear()
 	_owner._next_trade_route_index = 0
-	_owner._trade_tick_index = 0
 	_owner.worker_transport_records.clear()
 	_owner._next_worker_transport_index = 0
 	_owner._local_seeded_planets.clear()

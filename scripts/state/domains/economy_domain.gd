@@ -7,7 +7,6 @@ const DEFAULT_ECONOMY_CONFIG: EconomyConfig = preload("res://resources/config/ec
 
 var economy_config: EconomyConfig = DEFAULT_ECONOMY_CONFIG
 var _next_trade_route_index: int = 0
-var _trade_tick_index: int = 0
 var market_prices: Dictionary = {}
 var trade_volumes: Dictionary = {}
 var worker_transport_records: Dictionary = {}

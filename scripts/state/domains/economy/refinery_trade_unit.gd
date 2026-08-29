@@ -250,7 +250,6 @@ func trade_routes_snapshot() -> Dictionary:
 
 
 func tick_trade_routes() -> int:
-	_owner._trade_tick_index += 1
 	var moved := 0
 	var config: EconomyConfig = _owner.economy_config if _owner.economy_config != null else _owner.DEFAULT_ECONOMY_CONFIG
 	for route_id in _owner.trade_routes:

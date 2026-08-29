@@ -853,6 +853,39 @@
 			],
 			"p_id": 80.0
 		},
+		"35a83a1545abcc8088409ae60a5618bfeb877cb6": {
+			"c": 103,
+			"composite": "c103j64n9a2p16",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-407",
+				"F-408",
+				"F-121",
+				"C-918",
+				"C-919",
+				"C-920",
+				"C-921",
+				"C-922",
+				"C-923",
+				"C-924",
+				"C-925",
+				"C-926",
+				"C-927",
+				"C-928",
+				"C-929",
+				"C-930",
+				"C-931",
+				"C-932",
+				"C-933",
+				"C-934",
+				"C-935",
+				"C-936"
+			],
+			"p_id": 103
+		},
 		"3a8ac091fc1b6ae5c795231d291a87c974dde55a": {
 			"c": 53.0,
 			"composite": "c53j53n14a12p18",
@@ -1849,7 +1882,7 @@
 			"p_id": 30.0
 		},
 		"d19b775622e2d9a68e34a6924bbd52875597579c": {
-			"c": 102,
+			"c": 102.0,
 			"composite": "c102j43n1a30p16",
 			"entities": [
 				"F-002",
@@ -1887,7 +1920,7 @@
 				"C-916",
 				"C-917"
 			],
-			"p_id": 102
+			"p_id": 102.0
 		},
 		"d5cd2f9e7af8ca65c73e5625c8f9bdbee626d9f5": {
 			"c": 37.0,
@@ -18188,6 +18221,329 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-918": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-918",
+			"last_p": 103.0,
+			"name": "EconomyRefineryTradeUnit",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-919": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-919",
+			"last_p": 103.0,
+			"name": "_init",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-920": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-920",
+			"last_p": 103.0,
+			"name": "steal_resources",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-921": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						41.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-921",
+			"last_p": 103.0,
+			"name": "register_gathering_workers",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-922": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						57.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-922",
+			"last_p": 103.0,
+			"name": "register_gathering_workers_with_domains",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-923": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						74.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-923",
+			"last_p": 103.0,
+			"name": "get_gathering_source",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-924": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						80.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-924",
+			"last_p": 103.0,
+			"name": "withdraw_gathering_workers",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-925": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						100.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-925",
+			"last_p": 103.0,
+			"name": "gathering_workers_on",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-926": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						106.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-926",
+			"last_p": 103.0,
+			"name": "gather_income_tick",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-927": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						138.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-927",
+			"last_p": 103.0,
+			"name": "generate_resources_for_planet",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-928": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						173.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-928",
+			"last_p": 103.0,
+			"name": "convert_refinery_resources",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-929": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						197.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-929",
+			"last_p": 103.0,
+			"name": "can_register_trade_route",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-930": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						209.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-930",
+			"last_p": 103.0,
+			"name": "register_trade_route",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-931": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						227.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-931",
+			"last_p": 103.0,
+			"name": "market_price",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-932": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						240.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-932",
+			"last_p": 103.0,
+			"name": "get_market_price",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-933": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						245.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-933",
+			"last_p": 103.0,
+			"name": "trade_routes_snapshot",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-934": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						252.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-934",
+			"last_p": 103.0,
+			"name": "tick_trade_routes",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-935": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						282.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-935",
+			"last_p": 103.0,
+			"name": "_route_owner",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-936": {
+			"first_p": 103.0,
+			"history": [
+				{
+					"lines": [
+						290.0
+					],
+					"p_id": 103.0
+				}
+			],
+			"id": "C-936",
+			"last_p": 103.0,
+			"name": "market_snapshot",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -22245,6 +22601,26 @@
 			"last_p": 102.0,
 			"name": "upgrade_unit.gd.uid",
 			"path": "scripts/state/domains/economy/upgrade_unit.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-407": {
+			"first_p": 103.0,
+			"history": [],
+			"id": "F-407",
+			"last_p": 103.0,
+			"name": "refinery_trade_unit.gd",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-408": {
+			"first_p": 103.0,
+			"history": [],
+			"id": "F-408",
+			"last_p": 103.0,
+			"name": "refinery_trade_unit.gd.uid",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd.uid",
 			"status": "created",
 			"type": "file"
 		}
