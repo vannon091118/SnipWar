@@ -1334,3 +1334,17 @@ Narrative Runtime mit verbesserter Beziehungslogik und Arc-Gate, MCP-Vision-OCR 
 - narrative_runtime/tests/test_v2_conformance.py: Implementiert und integriert (F-351).
 - narrative_runtime/threads.py: Implementiert und integriert (F-180).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 23:00:00 — p71 · c71j61n9a4p69 · Spark · sarkastisch
+
+**Spark entdeckt: DOKI-Artefakte für nächsten Cycle nachziehen,… — nach Flux**
+
+DOKI-Artefakte für nächsten Cycle nachziehen, Narrative Runtime Preflight-Gate und Recovery-Helfer einfügen
+
+- CHANGELOG.md: Tooling erweitert (F-002).
+- change_index.json: Tooling erweitert (F-003).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+- scripts/doki/reset_stale_session.gd: Tooling erweitert (F-352).
+- scripts/preflight/constraint_narrative_runtime.gd: Tooling erweitert (F-353).
+- scripts/preflight/constraint_narrative_runtime.gd.uid: Tooling erweitert (F-354).

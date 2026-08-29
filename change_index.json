@@ -414,6 +414,26 @@
 			],
 			"p_id": 32.0
 		},
+		"1d42481811b45ddabaef7decbdd76dffdf38b1d8": {
+			"c": 71,
+			"composite": "c71j61n9a4p69",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-352",
+				"F-353",
+				"F-354",
+				"C-759",
+				"C-760",
+				"C-761",
+				"C-762",
+				"C-763",
+				"C-764"
+			],
+			"p_id": 71
+		},
 		"23a393a36b55b464f4042b41643927ef966713f1": {
 			"c": 65.0,
 			"composite": "c65j75n7a29p24",
@@ -1648,7 +1668,7 @@
 			"p_id": 39.0
 		},
 		"f47235e8ecfbef9b3eef0d81139a80f3f04d15ee": {
-			"c": 70,
+			"c": 70.0,
 			"composite": "c70j56n13a29p53",
 			"entities": [
 				"F-002",
@@ -1694,7 +1714,7 @@
 				"C-757",
 				"C-758"
 			],
-			"p_id": 70
+			"p_id": 70.0
 		},
 		"f4ad0a403215cec46c4054884825a1f0865419cc": {
 			"c": 51.0,
@@ -14812,6 +14832,108 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-759": {
+			"first_p": 71.0,
+			"history": [
+				{
+					"lines": [
+						3.0
+					],
+					"p_id": 71.0
+				}
+			],
+			"id": "C-759",
+			"last_p": 71.0,
+			"name": "_init",
+			"path": "scripts/doki/reset_stale_session.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-760": {
+			"first_p": 71.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 71.0
+				}
+			],
+			"id": "C-760",
+			"last_p": 71.0,
+			"name": "PreflightConstraintNarrativeRuntime",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-761": {
+			"first_p": 71.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 71.0
+				}
+			],
+			"id": "C-761",
+			"last_p": 71.0,
+			"name": "constraint_name",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-762": {
+			"first_p": 71.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 71.0
+				}
+			],
+			"id": "C-762",
+			"last_p": 71.0,
+			"name": "constraint_description",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-763": {
+			"first_p": 71.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 71.0
+				}
+			],
+			"id": "C-763",
+			"last_p": 71.0,
+			"name": "requires_scene",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-764": {
+			"first_p": 71.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 71.0
+				}
+			],
+			"id": "C-764",
+			"last_p": 71.0,
+			"name": "run",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -18319,6 +18441,36 @@
 			"last_p": 70.0,
 			"name": "test_v2_conformance.py",
 			"path": "narrative_runtime/tests/test_v2_conformance.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-352": {
+			"first_p": 71.0,
+			"history": [],
+			"id": "F-352",
+			"last_p": 71.0,
+			"name": "reset_stale_session.gd",
+			"path": "scripts/doki/reset_stale_session.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-353": {
+			"first_p": 71.0,
+			"history": [],
+			"id": "F-353",
+			"last_p": 71.0,
+			"name": "constraint_narrative_runtime.gd",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-354": {
+			"first_p": 71.0,
+			"history": [],
+			"id": "F-354",
+			"last_p": 71.0,
+			"name": "constraint_narrative_runtime.gd.uid",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd.uid",
 			"status": "created",
 			"type": "file"
 		}
