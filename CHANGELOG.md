@@ -1849,3 +1849,16 @@ Dead-Code-Removal: _trade_tick_index war nur geschrieben, nie gelesen. Entfernt 
 - scripts/state/domains/economy/refinery_trade_unit.gd: Tooling erweitert (F-407).
 - scripts/state/domains/economy/vault_core.gd: Tooling erweitert (F-399).
 - scripts/state/domains/economy_domain.gd: Tooling erweitert (F-121).
+
+## 2026-08-27 09:00:00 — p105 · c105j98n5a20p80 · Squizzle · trocken
+
+**Squizzles Fall: Lint-Fix: 12 @warning_ignore(unused_signal)… — nach Basher**
+
+Lint-Fix: 12 @warning_ignore(unused_signal) Annotationen in economy_domain.gd. Die Unit-Dateien emittieren diese Signale via _owner., der Linter meldet sie faelschlich als ungenutzt.
+
+- CHANGELOG.md: Fehler behoben (F-002).
+- change_index.json: Fehler behoben (F-003).
+- docs/METRICS_TRACKER.md: Fehler behoben (F-357).
+- narrative_chain.json: Fehler behoben (F-004).
+- scripts/doki/data/arcs.json: Fehler behoben (F-001).
+- scripts/state/domains/economy_domain.gd: Fehler behoben (F-121).

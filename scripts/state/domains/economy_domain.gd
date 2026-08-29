@@ -34,6 +34,7 @@ signal resources_collected(faction: StringName, planet_id: StringName, resource_
 signal gathering_started(faction: StringName, planet_id: StringName, workers: int)
 @warning_ignore("unused_signal")
 signal gathering_withdrawn(faction: StringName, planet_id: StringName, workers: int)
+@warning_ignore("unused_signal")
 signal worker_factory_built(planet_id: StringName)
 @warning_ignore("unused_signal")
 signal refinery_converted(planet_id: StringName, faction: StringName, consumed: Dictionary, produced: Dictionary)
@@ -41,9 +42,13 @@ signal refinery_converted(planet_id: StringName, faction: StringName, consumed: 
 signal local_resources_changed(planet_id: StringName, resource_id: StringName, new_amount: int)
 @warning_ignore("unused_signal")
 signal resource_transferred(from_planet: StringName, to_planet: StringName, resource_id: StringName, amount: int)
+@warning_ignore("unused_signal")
 signal building_placed(planet_id: StringName, building_id: StringName, q: int, r: int)
+@warning_ignore("unused_signal")
 signal building_removed(planet_id: StringName, q: int, r: int)
+@warning_ignore("unused_signal")
 signal worker_transport_started(transport_id: StringName, faction: StringName, amount: int)
+@warning_ignore("unused_signal")
 signal worker_transport_phase_changed(transport_id: StringName, phase: StringName)
 
 
@@ -74,6 +79,12 @@ var _deal_unit: EconomyDealUnit
 var _upgrade_unit: EconomyUpgradeUnit
 ## E3: Verhaltens-Einheit für Refinery, Trade, Gathering und Resource-Generierung.
 var _refinery_trade_unit: EconomyRefineryTradeUnit
+## E4a: Verhaltens-Einheit für Gathering und Worker-Transport.
+var _gathering_transport_unit: EconomyGatheringTransportUnit
+## E4b: Verhaltens-Einheit für Worker-Fabriken.
+var _worker_factory_unit: EconomyWorkerFactoryUnit
+## E4b: Verhaltens-Einheit für Gebäude auf dem Grid inkl. Baustellen-Queue.
+var _buildings_unit: EconomyBuildingsUnit
 
 
 func _init() -> void:
@@ -81,6 +92,16 @@ func _init() -> void:
 	_deal_unit = EconomyDealUnit.new(self)
 	_upgrade_unit = EconomyUpgradeUnit.new(self)
 	_refinery_trade_unit = EconomyRefineryTradeUnit.new(self)
+	_gathering_transport_unit = EconomyGatheringTransportUnit.new(self)
+	_worker_factory_unit = EconomyWorkerFactoryUnit.new(self)
+	_buildings_unit = EconomyBuildingsUnit.new(self)
+
+
+## Injiziert den Route-Owner-Resolver (GameState->_init ruft das mit
+## self.faction_of). Ohne Injektion liefern Trade-Routen FACTION_NEUTRAL
+## als Owner — identisches Verhalten für synthetische Headless-Test-Planeten.
+func set_route_owner_resolver(resolver: Callable) -> void:
+	_gathering_transport_unit.set_route_owner_resolver(resolver)
 
 
 func reset_vaults() -> void:
@@ -99,63 +120,19 @@ func get_faction_credits(faction: StringName) -> int:
 ## WorkerCluster is disposable; this record is the source of truth across
 ## chunk cycling and scene rebuilds.
 func begin_worker_transport(faction: StringName, source_planet_id: StringName, destination_planet_id: StringName, amount: int, duration: float, route_path: Array[Vector2]) -> StringName:
-	if faction == GameState.FACTION_NEUTRAL or String(source_planet_id).is_empty() or String(destination_planet_id).is_empty() or amount <= 0:
-		return &""
-	_next_worker_transport_index += 1
-	var transport_id := StringName("worker_transport_%d" % _next_worker_transport_index)
-	worker_transport_records[transport_id] = {
-		"transport_id": transport_id,
-		"faction": faction,
-		"source_planet_id": source_planet_id,
-		"destination_planet_id": destination_planet_id,
-		"amount": amount,
-		"phase": &"outbound",
-		"cargo_amount": 0,
-		"cargo_resource_id": &"",
-		"duration": maxf(duration, 0.001),
-		"elapsed": 0.0,
-		"route_path": route_path.duplicate(),
-		"escorted": false,
-	}
-	worker_transport_started.emit(transport_id, faction, amount)
-	return transport_id
+	return _gathering_transport_unit.begin_worker_transport(faction, source_planet_id, destination_planet_id, amount, duration, route_path)
 
 func update_worker_transport(transport_id: StringName, phase: StringName, cargo_resource_id: StringName = &"", cargo_amount: int = 0) -> bool:
-	if not worker_transport_records.has(transport_id):
-		return false
-	var record: Dictionary = worker_transport_records[transport_id]
-	record["phase"] = phase
-	if not String(cargo_resource_id).is_empty():
-		record["cargo_resource_id"] = cargo_resource_id
-	record["cargo_amount"] = maxi(cargo_amount, 0)
-	worker_transport_records[transport_id] = record
-	worker_transport_phase_changed.emit(transport_id, phase)
-	return true
+	return _gathering_transport_unit.update_worker_transport(transport_id, phase, cargo_resource_id, cargo_amount)
 
 func set_worker_transport_escorted(transport_id: StringName, escorted: bool = true) -> bool:
-	if not worker_transport_records.has(transport_id):
-		return false
-	var record: Dictionary = worker_transport_records[transport_id]
-	record["escorted"] = escorted
-	worker_transport_records[transport_id] = record
-	return true
+	return _gathering_transport_unit.set_worker_transport_escorted(transport_id, escorted)
 
 func get_worker_transport_records(faction: StringName = &"") -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for value in worker_transport_records.values():
-		var record: Dictionary = value as Dictionary
-		if record != null and (String(faction).is_empty() or record.get("faction", &"") == faction):
-			result.append(record.duplicate(true))
-	return result
+	return _gathering_transport_unit.get_worker_transport_records(faction)
 
 func complete_worker_transport(transport_id: StringName, delivered: bool = true) -> bool:
-	if not worker_transport_records.has(transport_id):
-		return false
-	var record: Dictionary = worker_transport_records[transport_id]
-	record["phase"] = &"delivered" if delivered else &"cancelled"
-	worker_transport_phase_changed.emit(transport_id, record["phase"])
-	worker_transport_records.erase(transport_id)
-	return true
+	return _gathering_transport_unit.complete_worker_transport(transport_id, delivered)
 
 func add_faction_credits(faction: StringName, amount: int) -> int:
 	return _vault_core.add_faction_credits(faction, amount)
@@ -275,9 +252,11 @@ func get_planet_upgrades(planet_id: StringName) -> Array[StringName]:
 func add_planet_upgrade(planet_id: StringName, upgrade_id: StringName) -> void:
 	_upgrade_unit.add_planet_upgrade(planet_id, upgrade_id)
 
+## E4b: Delegation an EconomyWorkerFactoryUnit.
 func has_worker_factory(planet_id: StringName) -> bool:
-	return worker_factories.get(planet_id, false) as bool
+	return _worker_factory_unit.has_worker_factory(planet_id)
 
+## E4b: Delegation an EconomyWorkerFactoryUnit.
 func can_build_worker_factory(
 	faction: StringName,
 	planet_id: StringName,
@@ -289,14 +268,9 @@ func can_build_worker_factory(
 	cost_amount: int = 5,
 	credit_cost: int = 5
 ) -> bool:
-	if faction == GameState.FACTION_NEUTRAL or not faction_vaults.has(faction) or has_worker_factory(planet_id):
-		return false
-	if not has_shipyard or not first_scan_done or not has_automation_tech:
-		return false
-	if available_slots >= 0 and available_slots <= 0:
-		return false
-	return can_spend_cost(faction, cost_resource, cost_amount, credit_cost)
+	return _worker_factory_unit.can_build_worker_factory(faction, planet_id, has_shipyard, first_scan_done, has_automation_tech, available_slots, cost_resource, cost_amount, credit_cost)
 
+## E4b: Delegation an EconomyWorkerFactoryUnit.
 func build_worker_factory(
 	faction: StringName,
 	planet_id: StringName,
@@ -308,16 +282,9 @@ func build_worker_factory(
 	cost_amount: int = 5,
 	credit_cost: int = 5
 ) -> bool:
-	if not can_build_worker_factory(faction, planet_id, has_shipyard, first_scan_done, has_automation_tech, available_slots, cost_resource, cost_amount, credit_cost):
-		return false
-	if not spend_cost(faction, cost_resource, cost_amount, credit_cost):
-		return false
-	worker_factories[planet_id] = true
-	worker_factory_built.emit(planet_id)
-	return true
+	return _worker_factory_unit.build_worker_factory(faction, planet_id, has_shipyard, first_scan_done, has_automation_tech, available_slots, cost_resource, cost_amount, credit_cost)
 
-## Domain-ref overload: queries faction + tech requirements via the domain
-## objects so GameState.can_build_worker_factory() becomes a one-liner.
+## E4b: Delegation an EconomyWorkerFactoryUnit.
 func can_build_worker_factory_with_domains(
 	planet_id: StringName,
 	faction_domain: FactionDomain,
@@ -326,21 +293,9 @@ func can_build_worker_factory_with_domains(
 	cost_amount: int = 5,
 	credit_cost: int = 5
 ) -> bool:
-	var faction: StringName = faction_domain.faction_of(planet_id)
-	return can_build_worker_factory(
-		faction,
-		planet_id,
-		has_planet_upgrade(planet_id, &"shipyard"),
-		faction_domain.has_scanned_planet(faction),
-		tech_domain.has_technology(faction, GameState.TECH_WORKER_AUTOMATION),
-		-1,
-		cost_resource,
-		cost_amount,
-		credit_cost
-	)
+	return _worker_factory_unit.can_build_worker_factory_with_domains(planet_id, faction_domain, tech_domain, cost_resource, cost_amount, credit_cost)
 
-## Domain-ref overload: same as can_build_worker_factory_with_domains but also
-## executes the build so GameState.build_worker_factory() becomes a one-liner.
+## E4b: Delegation an EconomyWorkerFactoryUnit.
 func build_worker_factory_with_domains(
 	planet_id: StringName,
 	faction_domain: FactionDomain,
@@ -349,28 +304,17 @@ func build_worker_factory_with_domains(
 	cost_amount: int = 5,
 	credit_cost: int = 5
 ) -> bool:
-	var faction: StringName = faction_domain.faction_of(planet_id)
-	return build_worker_factory(
-		faction,
-		planet_id,
-		has_planet_upgrade(planet_id, &"shipyard"),
-		faction_domain.has_scanned_planet(faction),
-		tech_domain.has_technology(faction, GameState.TECH_WORKER_AUTOMATION),
-		-1,
-		cost_resource,
-		cost_amount,
-		credit_cost
-	)
+	return _worker_factory_unit.build_worker_factory_with_domains(planet_id, faction_domain, tech_domain, cost_resource, cost_amount, credit_cost)
 
 ## E3: Delegation an EconomyRefineryTradeUnit.
 func steal_resources(planet_id: StringName, attacker_faction: StringName, percentage: float = 0.5) -> Dictionary:
 	return _refinery_trade_unit.steal_resources(planet_id, attacker_faction, percentage)
 
-## E3: Delegation an EconomyRefineryTradeUnit.
+## E4a: Delegation an EconomyGatheringTransportUnit.
 func register_gathering_workers(faction: StringName, planet_id: StringName, source_planet_id: StringName, count: int) -> void:
-	_refinery_trade_unit.register_gathering_workers(faction, planet_id, source_planet_id, count)
+	_gathering_transport_unit.register_gathering_workers(faction, planet_id, source_planet_id, count)
 
-## E3: Delegation an EconomyRefineryTradeUnit.
+## E4a: Delegation an EconomyGatheringTransportUnit.
 func register_gathering_workers_with_domains(
 	faction: StringName,
 	planet_id: StringName,
@@ -378,25 +322,25 @@ func register_gathering_workers_with_domains(
 	faction_domain: FactionDomain,
 	source_planet_id: StringName = &""
 ) -> int:
-	return _refinery_trade_unit.register_gathering_workers_with_domains(faction, planet_id, worker_amount, faction_domain, source_planet_id)
+	return _gathering_transport_unit.register_gathering_workers_with_domains(faction, planet_id, worker_amount, faction_domain, source_planet_id)
 
-## E3: Delegation an EconomyRefineryTradeUnit.
+## E4a: Delegation an EconomyGatheringTransportUnit.
 func get_gathering_source(faction: StringName, planet_id: StringName) -> StringName:
-	return _refinery_trade_unit.get_gathering_source(faction, planet_id)
+	return _gathering_transport_unit.get_gathering_source(faction, planet_id)
 
-## E3: Delegation an EconomyRefineryTradeUnit.
+## E4a: Delegation an EconomyGatheringTransportUnit.
 func withdraw_gathering_workers(faction: StringName, planet_id: StringName, amount: int = -1) -> Dictionary:
-	return _refinery_trade_unit.withdraw_gathering_workers(faction, planet_id, amount)
+	return _gathering_transport_unit.withdraw_gathering_workers(faction, planet_id, amount)
 
-## E3: Delegation an EconomyRefineryTradeUnit.
+## E4a: Delegation an EconomyGatheringTransportUnit.
 func gathering_workers_on(faction: StringName, planet_id: StringName) -> int:
-	return _refinery_trade_unit.gathering_workers_on(faction, planet_id)
+	return _gathering_transport_unit.gathering_workers_on(faction, planet_id)
 
-## E3: Delegation an EconomyRefineryTradeUnit.
+## E4a: Delegation an EconomyGatheringTransportUnit.
 func gather_income_tick(base_amounts: Dictionary, catalog: PlanetUpgradeCatalog = null) -> int:
-	return _refinery_trade_unit.gather_income_tick(base_amounts, catalog)
+	return _gathering_transport_unit.gather_income_tick(base_amounts, catalog)
 
-## E3: Delegation an EconomyRefineryTradeUnit.
+## E4a: Delegation an EconomyGatheringTransportUnit.
 func generate_resources_for_planet(
 	planet_id: StringName,
 	faction_domain: FactionDomain,
@@ -404,7 +348,7 @@ func generate_resources_for_planet(
 	catalog: PlanetUpgradeCatalog,
 	base_amount: int = 1
 ) -> int:
-	return _refinery_trade_unit.generate_resources_for_planet(planet_id, faction_domain, tech, catalog, base_amount)
+	return _gathering_transport_unit.generate_resources_for_planet(planet_id, faction_domain, tech, catalog, base_amount)
 
 ## E3: Delegation an EconomyRefineryTradeUnit.
 func convert_refinery_resources(planet_id: StringName, faction_domain: FactionDomain) -> Dictionary:
@@ -438,148 +382,53 @@ func seed_local_resources(planet_ids: Array, pool: ResourcePool = null, seed_val
 
 # --- BUILDINGS ON GRID ---
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func can_spend_building_cost(faction: StringName, building: BuildingDefinition) -> bool:
-	if building == null or not can_spend_faction_credits(faction, building.credit_cost):
-		return false
-	for resource_id in building.cost_resources:
-		var amount: int = int(building.cost_resources[resource_id])
-		if amount > 0 and not can_spend_faction_resource(faction, resource_id as StringName, amount):
-			return false
-	return true
+	return _buildings_unit.can_spend_building_cost(faction, building)
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func spend_building_cost(faction: StringName, building: BuildingDefinition) -> bool:
-	if not can_spend_building_cost(faction, building):
-		return false
-	for resource_id in building.cost_resources:
-		var amount: int = int(building.cost_resources[resource_id])
-		if amount > 0:
-			spend_faction_resource(faction, resource_id as StringName, amount)
-	return spend_faction_credits(faction, building.credit_cost)
+	return _buildings_unit.spend_building_cost(faction, building)
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func queue_planet_building(planet_id: StringName, building_id: StringName, q: int, r: int, faction: StringName, reservation_id: StringName, build_time: float, costs: Dictionary) -> bool:
-	var key := "%d:%d" % [q, r]
-	if planet_building_at(planet_id, q, r) != &"" or building_jobs.get(planet_id, {}).has(key):
-		return false
-	if not building_jobs.has(planet_id):
-		building_jobs[planet_id] = {}
-	building_jobs[planet_id][key] = {
-		"building_id": building_id,
-		"q": q,
-		"r": r,
-		"faction": faction,
-		"reservation_id": reservation_id,
-		"remaining": maxf(build_time, 0.001),
-		"costs": costs.duplicate(true),
-	}
-	return true
+	return _buildings_unit.queue_planet_building(planet_id, building_id, q, r, faction, reservation_id, build_time, costs)
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func building_job_in_progress(planet_id: StringName, q: int, r: int) -> bool:
-	return building_jobs.has(planet_id) and (building_jobs[planet_id] as Dictionary).has("%d:%d" % [q, r])
+	return _buildings_unit.building_job_in_progress(planet_id, q, r)
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func advance_building_jobs(delta: float) -> void:
-	if delta <= 0.0:
-		return
-	for planet_value in building_jobs.keys():
-		var planet_id: StringName = planet_value as StringName
-		var jobs: Dictionary = building_jobs[planet_id]
-		for key in jobs.keys():
-			var job: Dictionary = jobs[key]
-			var remaining: float = float(job.get("remaining", 0.0)) - delta
-			if remaining > 0.0:
-				job["remaining"] = remaining
-				continue
-			jobs.erase(key)
-			record_planet_building(planet_id, job.get("building_id", &"") as StringName, int(job.get("q", 0)), int(job.get("r", 0)))
-			release_workers(planet_id, job.get("reservation_id", &"") as StringName)
-		if jobs.is_empty():
-			building_jobs.erase(planet_id)
+	_buildings_unit.advance_building_jobs(delta)
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func abort_building_job(planet_id: StringName, q: int, r: int) -> bool:
-	var key := "%d:%d" % [q, r]
-	if not building_job_in_progress(planet_id, q, r):
-		return false
-	var job: Dictionary = (building_jobs[planet_id] as Dictionary).get(key, {})
-	(building_jobs[planet_id] as Dictionary).erase(key)
-	release_workers(planet_id, job.get("reservation_id", &"") as StringName)
-	var faction: StringName = job.get("faction", &"") as StringName
-	var costs: Dictionary = job.get("costs", {}) as Dictionary
-	for resource_id in costs.get("resources", {}).keys():
-		add_faction_resource(faction, resource_id as StringName, int(costs["resources"][resource_id]))
-	add_faction_credits(faction, int(costs.get("credits", 0)))
-	return true
+	return _buildings_unit.abort_building_job(planet_id, q, r)
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func record_planet_building(planet_id: StringName, building_id: StringName, q: int, r: int) -> void:
-	if String(planet_id).is_empty() or String(building_id).is_empty():
-		return
-	if not planet_buildings.has(planet_id):
-		planet_buildings[planet_id] = {}
-	planet_buildings[planet_id]["%d:%d" % [q, r]] = building_id
-	building_placed.emit(planet_id, building_id, q, r)
+	_buildings_unit.record_planet_building(planet_id, building_id, q, r)
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func remove_planet_building(planet_id: StringName, q: int, r: int) -> StringName:
-	if not planet_buildings.has(planet_id):
-		return &""
-	var key := "%d:%d" % [q, r]
-	var removed: StringName = planet_buildings[planet_id].get(key, &"") as StringName
-	if String(removed).is_empty():
-		return &""
-	planet_buildings[planet_id].erase(key)
-	building_removed.emit(planet_id, q, r)
-	return removed
+	return _buildings_unit.remove_planet_building(planet_id, q, r)
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func can_place_building(planet_id: StringName, building_id: StringName, faction_domain: FactionDomain, tech_domain: TechDomain, catalog: BuildingCatalog = null) -> bool:
-	var faction: StringName = faction_domain.faction_of(planet_id)
-	if faction == GameState.FACTION_NEUTRAL:
-		return false
-	var cat: BuildingCatalog = catalog if catalog != null else GameState.DEFAULT_BUILDING_CATALOG
-	if cat == null:
-		return false
-	var building: BuildingDefinition = cat.resolve(building_id)
-	if building == null:
-		return false
-	if not String(building.required_tech_id).is_empty() and not tech_domain.has_technology(faction, building.required_tech_id):
-		return false
-	return can_spend_building_cost(faction, building)
+	return _buildings_unit.can_place_building(planet_id, building_id, faction_domain, tech_domain, catalog)
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func place_building(planet_id: StringName, building_id: StringName, q: int, r: int, faction_domain: FactionDomain, tech_domain: TechDomain, catalog: BuildingCatalog = null) -> bool:
-	if not can_place_building(planet_id, building_id, faction_domain, tech_domain, catalog):
-		return false
-	var cat: BuildingCatalog = catalog if catalog != null else GameState.DEFAULT_BUILDING_CATALOG
-	var building: BuildingDefinition = cat.resolve(building_id)
-	var faction: StringName = faction_domain.faction_of(planet_id)
-	var job_id := StringName("building_%s_%d_%d" % [String(building_id), q, r])
-	if building_job_in_progress(planet_id, q, r) or planet_building_at(planet_id, q, r) != &"":
-		return false
-	var total_workers: int = maxi(int(faction_domain.starting_workers.get(planet_id, 0)), building.workers_required)
-	if building.workers_required > 0 and not reserve_workers(planet_id, job_id, building.workers_required, total_workers):
-		return false
-	if not spend_building_cost(faction, building):
-		release_workers(planet_id, job_id)
-		return false
-	if building.build_time > 0.0:
-		var queued: bool = queue_planet_building(
-			planet_id, building_id, q, r, faction, job_id, building.build_time,
-			{"resources": building.cost_resources, "credits": building.credit_cost}
-		)
-		if queued:
-			return true
-		# Roll back an impossible queue without leaking costs or labor.
-		release_workers(planet_id, job_id)
-		for resource_id in building.cost_resources:
-			add_faction_resource(faction, resource_id as StringName, int(building.cost_resources[resource_id]))
-		add_faction_credits(faction, building.credit_cost)
-		return false
-	release_workers(planet_id, job_id)
-	record_planet_building(planet_id, building_id, q, r)
-	return true
+	return _buildings_unit.place_building(planet_id, building_id, q, r, faction_domain, tech_domain, catalog)
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func planet_building_at(planet_id: StringName, q: int, r: int) -> StringName:
-	if not planet_buildings.has(planet_id):
-		return &""
-	return planet_buildings[planet_id].get("%d:%d" % [q, r], &"") as StringName
+	return _buildings_unit.planet_building_at(planet_id, q, r)
 
+## E4b: Delegation an EconomyBuildingsUnit.
 func planet_buildings_of(planet_id: StringName) -> Dictionary:
-	return planet_buildings.get(planet_id, {}).duplicate()
+	return _buildings_unit.planet_buildings_of(planet_id)
 
 # --- TRADE ROUTES ---
 

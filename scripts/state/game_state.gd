@@ -152,6 +152,9 @@ var _historical_handoff_ownership: Dictionary = {}
 
 func _init() -> void:
 	_connect_domain_signals()
+	# R-007 (E4a): Route-Owner für Trade-Routen über Resolver injizieren —
+	# die Economy-Units fragen nie mehr global nach GameState am SceneTree.
+	economy_domain.set_route_owner_resolver(faction_of)
 	economy_domain.reset_vaults()
 	_session = RunSession.new()
 

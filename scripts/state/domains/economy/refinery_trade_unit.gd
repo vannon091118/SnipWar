@@ -14,9 +14,19 @@ extends RefCounted
 
 var _owner: EconomyDomain
 
+# R-007 (E4a): Aufgelöster Route-Owner über den von GameState injizierten
+# Callable-Resolver — kein Engine.get_main_loop()-Zugriff mehr. Ohne
+# Injektion (nackte EconomyDomain in Headless-Tests) → FACTION_NEUTRAL.
+var _route_owner_resolver: Callable
+
 
 func _init(owner: EconomyDomain) -> void:
 	_owner = owner
+
+
+func set_route_owner_resolver(resolver: Callable) -> void:
+	if resolver.is_valid():
+		_route_owner_resolver = resolver
 
 
 ## Encapsulates resource looting so GameState.steal_resources() becomes a
@@ -279,10 +289,12 @@ func tick_trade_routes() -> int:
 
 
 func _route_owner(planet_id: StringName) -> StringName:
-	var tree: SceneTree = Engine.get_main_loop() as SceneTree
-	var state: Node = tree.root.get_node_or_null("GameState") if tree != null and tree.root != null else null
-	if state != null and state.has_method("faction_of"):
-		return state.faction_of(planet_id)
+	if _route_owner_resolver.is_valid():
+		var result: Variant = _route_owner_resolver.call(planet_id)
+		if result is StringName:
+			return result
+		if result is String:
+			return StringName(result)
 	return GameState.FACTION_NEUTRAL
 
 

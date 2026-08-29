@@ -124,11 +124,13 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **VERIFICATION:** repo-weite `.connect()`-Messung (29.08.); mechanic_coverage-Constraint; docs_integrity.
 - **STATUS:** `VERIFIED`
 
-### R-007 — economy_domain konsolidieren — **P1**
+### R-007 — economy_domain konsolidieren — **P1** ✅ VERIFIED
 - **WHY:** 1.282 LOC, ≥5 Verantwortungsgruppen (Vaults/Deals/Upgrades/Worker-Fabriken/Gathering/Refinery/Trade/Transport-Records).
 - **DEPENDS:** — · **BLOCKS:** R-016
 - **DoD:** 2–3 kohärente Einheiten (Deal/Upgrade · Refinery/Trade · Gathering/Transport); GameState-Fassade unverändert; Preflight + Tests grün.
-- **STATUS:** `TODO`
+- **ERGEBNIS (E1–E4):** `vault_core.gd` (E1), `deal_unit.gd` + `upgrade_unit.gd` (E2), `refinery_trade_unit.gd` (E3), `gathering_transport_unit.gd` (E4a: Gathering + Worker-Transport inkl. begin/update/set/get/complete, phase/escorted/cargo), `worker_factory_unit.gd` + `buildings_unit.gd` (E4b: Factory-Gating, Grid-Queue/Advance/Abort/Refund). Fassade 655→499 LOC, 83 reine Delegationen; State-Dicts + Signale bleiben auf der Fassade (Referenzsemantik + Snapshot/Restore unverändert, `reset()`-Semantik identisch). `_route_owner` entkoppelt via injiziertem Callable-Resolver (`GameState._init` → `set_route_owner_resolver(faction_of)`; ohne Injektion FACTION_NEUTRAL). Tests: `e1_vault_core_semantics_test.gd` (umbenannt, registriert) + `e2_e4_economy_units_test.gd` (Details in FINDINGS F-213/F-214).
+- **VERIFICATION:** compile_gate 327/327 PASS; test_all 11/11 PASSED (10 Entry-Tests + Preflight -x); Preflight 44/44 PASSED (44,6 s); test_determinism Exit 0; DOKI selfcheck PASSED.
+- **STATUS:** `VERIFIED`
 
 ### R-008 — planet_network UI/Logik trennen — **P1**
 - **WHY:** 1.017 LOC mischen Routing/Netzwerk mit UI-Aufbau, Tooltips, Tutorial-Spawn, Dispatch-Preview; `planet_network_ui.gd` existiert bereits.
