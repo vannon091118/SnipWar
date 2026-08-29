@@ -29,13 +29,11 @@ docs/modules/  ← nur echte Modulverträge (API/Datenmodell/Invarianten), keine
 
 ## 1. Aktuelle Wahrheit (FACT, gemessen 2026-08-29)
 
-- Preflight: **43/43 PASSED** (61.156 ms; top-6 Constraints ≈ 16 s eines ~30-s-Laufs).
+- Preflight: **44/44 PASSED** (63.632 ms; `historical_world`-Gate 7,2 s; top-6 Constraints ≈ 16 s).
 - Live-Code: 313 `.gd` / 60.404 LOC (scripts 44.895 + addons/MCP 15.509); `snapshots/` enthält eine 19-MB-Kopie (52.171 LOC, 0 getrackt).
 - Autoloads: **10** (EventBus, GameState, WorldChronicle, GameCycleManager, SceneDirectorService, SaveGameService, EventLog, TouchFeedbackLayer, McpRuntime, McpProjectAdapter).
 - Doku-Drift: Constraint-Zahlen 34/36/38/39/42 werden in 7 MDs behauptet; DESIGN §17 SO1 nennt 8 Autoloads.
-- **P0-Bug:** `NEUES SPIEL → Identität → historical_world` bootet mit leerer Chronik
-  (`ERROR: HistoricalWorld: chronicle has no historical snapshots`) — `run_started` feuert erst
-  in `WorldBootstrap.begin_new_game` der world.tscn, also NACH der HistoricalWorld.
+- **P0-Bug (FIXED):** `NEUES SPIEL → Identität → historical_world` bootete mit leerer Chronik — **R-050 schließt** (RunPreparation vor Szenenwechsel; historical_world_flow_test 11/11; historical_world-Constraint 11/11, Preflight 44/44).
 - Signal-Heuristik „0 Consumers = tot“ **widerlegt** (F-212): 6/38 GameState-Signale ohne externe `.connect()` — darunter akzeptierte Anker (`mid_game_started`, `transit_changed`, `run_started`, `planet_building_placed/destroyed`). `battle_context_changed` ist Mechanik-Anker der Combat-Mechanik (MechanicRegistry-Reflection + scenarios/*.tres), `run_started`/`ship_launched`/`milestone_reached` sind Compatibility-Facade mit kanonischen EventBus-Zwillingen.
 - ConceptIndex: 3 unmapped Klassen (GameConstants, FactionAI, PreflightCodeIndex).
 - Kein zentraler Test-Orchestrator; `scripts/history/test_determinism.gd` liegt außerhalb von `scripts/testing/`.
@@ -108,11 +106,11 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DoD:** Flow: Run-Prepare → historical_world (gefüllte Chronik, Playback startet) → Jahr 0 → `request_world_reconnect()` → world.tscn reconnected (kein zweites `begin_new_game`); Bootstrap-Fallback statt Dead-End; Preflight grün.
 - **STATUS:** `VERIFIED`
 
-### R-051 — Preflight-Constraint historical_world — **P2**
-- **WHY:** Der Flow ist derzeit von keinem Gate abgedeckt (scene_boot bootet nur world.tscn).
+### R-051 — Preflight-Constraint historical_world — **P2** ✅ VERIFIED
+- **WHY:** Der Flow war von keinem Gate abgedeckt (scene_boot bootet nur world.tscn).
+- **DOCH GEPRÜFT:** `constraint_historical_world.gd` (pure, 11 Checks, 7,2 s): RunPreparation(424242) → Szene-Boot → Playback geladen → Snapshots == Chronik → Fallback (leere Chronik → Snapshot-Erzeugung) → Reconnect-Vertrag. Preflight 44/44 (63,6 s), docs 43→44 in allen 6 Stellen vereinheitlicht.
 - **DEPENDS:** R-050 · **BLOCKS:** —
-- **DoD:** Constraint bootet historical_world mit gefüllter Chronik; Preflight 43→44.
-- **STATUS:** `TODO`
+- **STATUS:** `VERIFIED`
 
 ### R-052 — HistoricalWorld-Kontext-Übergabe (Jahr-0-Snapshot → Weltstart) — **P1**
 - **WHY:** Chronik fällt ohne echte Daten auf `_default_planets()` zurück; die Vorstart-Welt ist eine Parallel-Erzählung ohne Rückkopplung in die Spielwelt.

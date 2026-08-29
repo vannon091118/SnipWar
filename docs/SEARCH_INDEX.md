@@ -74,7 +74,7 @@
 
 ## Testing & Preflight
 
-- `Preflight → scripts/preflight.gd : 43 Constraints (18 pure, 25 scene); -x fail-fast; --filter`
+- `Preflight → scripts/preflight.gd : 44 Constraints (19 pure, 25 scene); -x fail-fast; --filter`
 - `CompileGate → scripts/testing/compile_gate.gd : 311 Skripte`
 - `ChronicleCoreTest → scripts/testing/chronicle_core_test.gd : 22 Checks; Determinismus Seed 424242×2 + 999999`
 - `ChronicleLifecycleTest → scripts/testing/chronicle_lifecycle_test.gd : 21 Checks; EventBus-Boundary-Vertrag`

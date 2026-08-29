@@ -44,7 +44,7 @@ $GODOT_BIN --headless --path . --script res://scripts/global_search.gd "func (_?
 
 ### 3. Preflight (Verbindlicher Qualitäts-Check)
 ```bash
-$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x   # Full Suite (43 Constraints, ~65s, V2 Architecture)
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x   # Full Suite (44 Constraints, ~64s, V2 Architecture)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd --filter=concept_index -v  # Einzelne Constraint
 ```
 **Verbindlich:** `RESULT: PASSED` — ERROR-Traces am Ende sind normales Headless-Rauschen.

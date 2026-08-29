@@ -127,7 +127,7 @@
 
 | System | Datei | Zweck |
 |--------|-------|-------|
-| Preflight | `scripts/preflight.gd` | 43 Constraints (18 pure, 25 scene) |
+| Preflight | `scripts/preflight.gd` | 44 Constraints (19 pure, 25 scene) |
 | Compile Gate | `scripts/testing/compile_gate.gd` | 311 Skripte |
 | Chronicle Core | `scripts/testing/chronicle_core_test.gd` | 22 Checks |
 | Chronicle Lifecycle | `scripts/testing/chronicle_lifecycle_test.gd` | 21 Checks, EventBus-Boundary |

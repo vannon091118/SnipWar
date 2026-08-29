@@ -1837,11 +1837,20 @@
 			"climax_weight": 3.0,
 			"id": "a40",
 			"name": "Strukturwende",
+			"seen_entities": [
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-046",
+				"F-004",
+				"F-001",
+				"F-065"
+			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Monolithen-Grenzen in economy_domain und planet_network sowie den Test-Orchestrator vorantreiben.",
 			"version": "",
-			"weight": 0.0
+			"weight": 2.6
 		},
 		"a5": {
 			"climax_weight": 3.0,

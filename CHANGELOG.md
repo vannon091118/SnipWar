@@ -1521,3 +1521,17 @@ R-002: Constraint- und Autoload-Zahlen in sechs Dokumenten vereinheitlicht — 4
 - docs/README.md: Implementiert und integriert (F-200).
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 10:00:00 — p82 · c82j70n14a16p67 · Sage · sachlich
+
+**Sage lehrt: R-006: Tote-Signal-Befund klassifiziert — Messung… — nach Ghost**
+
+R-006: Tote-Signal-Befund klassifiziert — Messung widerlegt 0-Consumer-Heuristik; battle_context_changed als Mechanik-Anker verankert (Kommentar), run_started/ship_launched/milestone_reached als Compatibility-Facade bestätigt; F-202/F-204 geschlossen, F-212 neu
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- ROADMAP.md: Implementiert und integriert (F-376).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/FINDINGS.md: Implementiert und integriert (F-046).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/state/game_state.gd: Implementiert und integriert (F-065).

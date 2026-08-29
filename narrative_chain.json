@@ -6890,6 +6890,63 @@
 			"seq": 81,
 			"subject": "Ghost verzeichnet: R-002: Constraint- und Autoload-Zahlen in sechs… — nach Vannon",
 			"summary": "Die Chronik verzeichnet für diesen Tag eine schlichte, aber zähe Arbeit: Sechs Dokumente erzählten sechs verschiedene Geschichten über dieselbe Zahl, und weil die Wahrheit eines Repos nicht in der ..."
+		},
+		{
+			"a": 16,
+			"arc": "a40",
+			"c": 82,
+			"composite": "c82j70n14a16p67",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 19.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "ROADMAP.md",
+					"insertions": 7.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 31.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 82.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 21.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/game_state.gd",
+					"insertions": 4.0
+				}
+			],
+			"date": "2026-08-27 10:00:00",
+			"hash": "7eb6bec436efebca37dc5166ba2f5f9241523c9a",
+			"j": 70,
+			"model_id": "claude-sonnet-4",
+			"mood": "sachlich",
+			"n": 14,
+			"narrator": "Sage",
+			"p": 67,
+			"p_id": 82,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Ghost",
+			"seq": 82,
+			"subject": "Sage lehrt: R-006: Tote-Signal-Befund klassifiziert — Messung… — nach Ghost",
+			"summary": "Stell dir vor, ein Audit behauptet, vier Signale seien tot, bloß weil niemand an ihnen hängt. Die Lektion dieses Commits: Messen kann man erst nach dem Zählen."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

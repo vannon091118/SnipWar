@@ -1170,6 +1170,20 @@
 			],
 			"p_id": 42.0
 		},
+		"7eb6bec436efebca37dc5166ba2f5f9241523c9a": {
+			"c": 82,
+			"composite": "c82j70n14a16p67",
+			"entities": [
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-046",
+				"F-004",
+				"F-001",
+				"F-065"
+			],
+			"p_id": 82
+		},
 		"8cab9f7ab5cebf83cdcdbf4e2af085a2da35ea7f": {
 			"c": 76.0,
 			"composite": "c76j72n1a15p15",
@@ -1873,7 +1887,7 @@
 			"p_id": 39.0
 		},
 		"efd9bf8a23d87b1718a38347ae4543d7006acbe5": {
-			"c": 81,
+			"c": 81.0,
 			"composite": "c81j8n8a33p69",
 			"entities": [
 				"F-019",
@@ -1889,7 +1903,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 81
+			"p_id": 81.0
 		},
 		"f47235e8ecfbef9b3eef0d81139a80f3f04d15ee": {
 			"c": 70.0,
