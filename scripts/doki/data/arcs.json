@@ -1944,11 +1944,21 @@
 			"climax_weight": 3.0,
 			"id": "a43",
 			"name": "Nächster Akt",
+			"seen_entities": [
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-200",
+				"F-004",
+				"F-001",
+				"F-391",
+				"F-392"
+			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
-			"weight": 0.0
+			"weight": 2.4
 		},
 		"a5": {
 			"climax_weight": 3.0,

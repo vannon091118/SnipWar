@@ -7473,6 +7473,68 @@
 			"seq": 90,
 			"subject": "Argos: 8 Dateien — R-SIM-001: Dynamische Fraktion… — nach Sage",
 			"summary": "Argos sachlich:"
+		},
+		{
+			"a": 28,
+			"arc": "a43",
+			"c": 91,
+			"composite": "c91j39n1a28p90",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "ROADMAP.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "change_index.json",
+					"insertions": 81.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "docs/README.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 62.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 20.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/test_determinism.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/test_determinism.gd.uid",
+					"insertions": 0.0
+				}
+			],
+			"date": "2026-08-27 19:00:00",
+			"hash": "82a932e56b1b866061e767b88e86db85e86eee66",
+			"j": 39,
+			"model_id": "claude-sonnet-4",
+			"mood": "warm",
+			"n": 1,
+			"narrator": "Buffy",
+			"p": 90,
+			"p_id": 91,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Argos",
+			"seq": 91,
+			"subject": "[Buffy] Slice C: docs/README 43→44 letzte Restdrift,… — nach Argos",
+			"summary": "Buffy warm:"
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

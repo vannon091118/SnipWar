@@ -1283,6 +1283,21 @@
 			],
 			"p_id": 82.0
 		},
+		"82a932e56b1b866061e767b88e86db85e86eee66": {
+			"c": 91,
+			"composite": "c91j39n1a28p90",
+			"entities": [
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-200",
+				"F-004",
+				"F-001",
+				"F-391",
+				"F-392"
+			],
+			"p_id": 91
+		},
 		"8cab9f7ab5cebf83cdcdbf4e2af085a2da35ea7f": {
 			"c": 76.0,
 			"composite": "c76j72n1a15p15",
@@ -1580,7 +1595,7 @@
 			"p_id": 79.0
 		},
 		"b867cd73672f31089b8b97eb344ed66b58602b37": {
-			"c": 90,
+			"c": 90.0,
 			"composite": "c90j60n7a38p49",
 			"entities": [
 				"F-002",
@@ -1595,7 +1610,7 @@
 				"C-850",
 				"C-743"
 			],
-			"p_id": 90
+			"p_id": 90.0
 		},
 		"ba8f048015e26b4d428c7575b2f1642005ad4118": {
 			"c": 78.0,
@@ -20720,6 +20735,26 @@
 			"last_p": 90.0,
 			"name": "faction_profiles.gd",
 			"path": "scripts/history/simulation/faction_profiles.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-391": {
+			"first_p": 91.0,
+			"history": [],
+			"id": "F-391",
+			"last_p": 91.0,
+			"name": "test_determinism.gd",
+			"path": "scripts/testing/test_determinism.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-392": {
+			"first_p": 91.0,
+			"history": [],
+			"id": "F-392",
+			"last_p": 91.0,
+			"name": "test_determinism.gd.uid",
+			"path": "scripts/testing/test_determinism.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

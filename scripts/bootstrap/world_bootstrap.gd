@@ -207,14 +207,14 @@ func _apply_pending_timers() -> void:
 			float(timers.get("gather_remaining", -1.0))
 		)
 
-## R-052: Wendet den historischen Endzustand (Jahr 0) an, der von der
-## HistoricalWorld-Szene über GameState als Handoff-Daten übergeben wurde.
-## Überschreibt die Katalog-Defaults mit den tatsächlich simulierten Werten.
+## R-052: Wendet den historischen Endzustand (Jahr 0) an.
+## Liest das Ownership direkt aus WorldChronicle.final_year0_ownership()
+## (Snapshot-basiert) und überschreibt die Katalog-Defaults.
 func _apply_historical_handoff() -> void:
-	var state: Node = get_node_or_null("/root/GameState")
-	if state == null or not state.has_method("get_and_clear_historical_handoff"):
+	var chronicle: Node = get_node_or_null("/root/WorldChronicle")
+	if chronicle == null or not chronicle.has_method("final_year0_ownership"):
 		return
-	var ownership: Dictionary = state.get_and_clear_historical_handoff()
+	var ownership: Dictionary = chronicle.final_year0_ownership()
 	if ownership.is_empty():
 		return
 	# Alle Planeten im Szenenbaum durchlaufen und Ownership anwenden.

@@ -346,6 +346,22 @@ func get_save() -> ChronicleSaveData:
 	return _save
 
 
+## R-052: Gibt das Ownership-Dictionary des letzten Snapshots (Jahr 0)
+## zurück. Wird von WorldBootstrap beim Reconnect-Pfad verwendet, um
+## den historischen Endzustand als Spielstartbasis zu nutzen.
+## Liefert ein leerer Dictionary, wenn keine Snapshots vorhanden sind.
+func final_year0_ownership() -> Dictionary:
+	if _save == null or _save.historical_snapshots.is_empty():
+		return {}
+	var last: Dictionary = _save.historical_snapshots[_save.historical_snapshots.size() - 1]
+	var planets: Array = last.get("planets", [])
+	var ownership: Dictionary = {}
+	for p in planets:
+		if p is Dictionary and p.has("planet_id") and p.has("owner"):
+			ownership[String(p["planet_id"])] = p["owner"]
+	return ownership
+
+
 func get_events(filter: Dictionary = {}) -> Array[HistoryEvent]:
 	if _save == null:
 		return []

@@ -1661,3 +1661,18 @@ R-SIM-001: Dynamische Fraktionsprofile — 14 Profile aus JSON, deterministisch 
 - scripts/history/data/simulation_profiles.json: Implementiert und integriert (F-389).
 - scripts/history/simulation/faction_profiles.gd: Implementiert und integriert (F-390).
 - scripts/history/world_chronicle.gd: Implementiert und integriert (F-283).
+
+## 2026-08-27 19:00:00 — p91 · c91j39n1a28p90 · Buffy · warm
+
+**[Buffy] Slice C: docs/README 43→44 letzte Restdrift,… — nach Argos**
+
+Slice C: docs/README 43→44 letzte Restdrift, test_determinism.gd nach scripts/testing verschoben, ROADMAP aktualisiert
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- ROADMAP.md: Dokumentation aktualisiert (F-376).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- docs/README.md: Dokumentation aktualisiert (F-200).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- scripts/testing/test_determinism.gd: Dokumentation aktualisiert (F-391).
+- scripts/testing/test_determinism.gd.uid: Dokumentation aktualisiert (F-392).
