@@ -118,6 +118,26 @@
 			],
 			"p_id": 55.0
 		},
+		"0bbcb1a75fb64f12e788dff2425a018301691e7e": {
+			"c": 95,
+			"composite": "c95j27n4a1p89",
+			"entities": [
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-353",
+				"C-852",
+				"C-853",
+				"C-854",
+				"C-855",
+				"C-856",
+				"C-857",
+				"C-858"
+			],
+			"p_id": 95
+		},
 		"0d3e994cdaff6003fe851ad638f06da48c6d57d9": {
 			"c": 15.0,
 			"composite": "c15j38n3a2p11",
@@ -2097,7 +2117,7 @@
 			"p_id": 81.0
 		},
 		"f1649abda20d9cee652cdf613b1e22ab6a5c7ea3": {
-			"c": 94,
+			"c": 94.0,
 			"composite": "c94j24n14a36p77",
 			"entities": [
 				"F-002",
@@ -2109,7 +2129,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 94
+			"p_id": 94.0
 		},
 		"f47235e8ecfbef9b3eef0d81139a80f3f04d15ee": {
 			"c": 70.0,
@@ -16894,6 +16914,125 @@
 			"last_p": 92.0,
 			"name": "final_year0_ownership",
 			"path": "scripts/history/world_chronicle.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-852": {
+			"first_p": 95.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 95.0
+				}
+			],
+			"id": "C-852",
+			"last_p": 95.0,
+			"name": "CACHE_PATH",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-853": {
+			"first_p": 95.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 95.0
+				}
+			],
+			"id": "C-853",
+			"last_p": 95.0,
+			"name": "CHAIN_PATH",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-854": {
+			"first_p": 95.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 95.0
+				}
+			],
+			"id": "C-854",
+			"last_p": 95.0,
+			"name": "CHANGE_INDEX_PATH",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-855": {
+			"first_p": 95.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 95.0
+				}
+			],
+			"id": "C-855",
+			"last_p": 95.0,
+			"name": "GATE_CLI_PATH",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-856": {
+			"first_p": 95.0,
+			"history": [
+				{
+					"lines": [
+						69.0
+					],
+					"p_id": 95.0
+				}
+			],
+			"id": "C-856",
+			"last_p": 95.0,
+			"name": "_compute_hash",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-857": {
+			"first_p": 95.0,
+			"history": [
+				{
+					"lines": [
+						78.0
+					],
+					"p_id": 95.0
+				}
+			],
+			"id": "C-857",
+			"last_p": 95.0,
+			"name": "_read_cache",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-858": {
+			"first_p": 95.0,
+			"history": [
+				{
+					"lines": [
+						87.0
+					],
+					"p_id": 95.0
+				}
+			],
+			"id": "C-858",
+			"last_p": 95.0,
+			"name": "_write_cache",
+			"path": "scripts/preflight/constraint_narrative_runtime.gd",
 			"status": "modified",
 			"type": "component"
 		},

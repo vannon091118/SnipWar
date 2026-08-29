@@ -1717,3 +1717,16 @@ R-011: MCP_AUDIT_REPORT als HISTORISCH markiert, MCP_INDEX.md tools_count Refere
 - docs/FINDINGS.md: Implementiert und integriert (F-046).
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 23:00:00 — p95 · c95j27n4a1p89 · Vannon · alarmiert
+
+**R-012: narrative_runtime Cache —. … — nach Sage**
+
+R-012: narrative_runtime Cache — 18.9s→21ms (904x), Preflight 70.7s→43.0s (-39%)
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- ROADMAP.md: Implementiert und integriert (F-376).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/preflight/constraint_narrative_runtime.gd: Implementiert und integriert (F-353).
