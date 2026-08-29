@@ -6222,6 +6222,118 @@
 			"seq": 72,
 			"subject": "Echo erinnert: Inventar-Matrizen, String-Matrix, Search-Index,… — nach Spark",
 			"summary": "Ich erinnere mich, als die erste INVENTORY_MATRIX angelegt wurde — das war noch bevor die Preflight-Suite ihre vierzig Constraints hatte. Jetzt, nach all den Commits, stehen hier fünf Dokumente, di..."
+		},
+		{
+			"a": 8,
+			"arc": "a36",
+			"c": 73,
+			"composite": "c73j63n7a8p7",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 68.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 16.0,
+					"file": "docs/METRICS_TRACKER.md",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "narrative_chain.json",
+					"insertions": 74.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 23.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_selfcheck.gd",
+					"insertions": 64.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/orchestration/flows/finalize_flow.gd",
+					"insertions": 77.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/reset_stale_session.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/preflight/constraint_narrative_runtime.gd",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/chronicle_core_test.gd",
+					"insertions": 229.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/chronicle_core_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/chronicle_lifecycle_test.gd",
+					"insertions": 168.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/chronicle_lifecycle_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/historical_playback_test.gd",
+					"insertions": 169.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/historical_playback_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/ui/history/historical_renderer.gd",
+					"insertions": 71.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/ui/history/historical_renderer.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 01:00:00",
+			"hash": "21bc1b6070d99a8cfb8c5da2c4f808d6cd2c644d",
+			"j": 63,
+			"model_id": "claude-sonnet-4",
+			"mood": "triumphierend",
+			"n": 7,
+			"narrator": "Argos",
+			"p": 7,
+			"p_id": 73,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Echo",
+			"seq": 73,
+			"subject": "Argos: 18 Dateien — DOKI-Repair und Chronicle-Ausb… — nach Echo",
+			"summary": "Hab ich doch gesagt — wer den Commit-Flow mitten im Satz abwürgt, der hinterlässt sowas. Die Session hing in „verified\" fest, aber daraus war nie ein Commit geworden: der Kopf stand noch am Anker, ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

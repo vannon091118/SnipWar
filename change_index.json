@@ -434,6 +434,66 @@
 			],
 			"p_id": 71.0
 		},
+		"21bc1b6070d99a8cfb8c5da2c4f808d6cd2c644d": {
+			"c": 73,
+			"composite": "c73j63n7a8p7",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-046",
+				"F-357",
+				"F-004",
+				"F-001",
+				"F-017",
+				"F-011",
+				"F-360",
+				"F-353",
+				"F-361",
+				"F-362",
+				"F-363",
+				"F-364",
+				"F-365",
+				"F-366",
+				"F-367",
+				"F-368",
+				"C-765",
+				"C-766",
+				"C-767",
+				"C-768",
+				"C-769",
+				"C-770",
+				"C-771",
+				"C-772",
+				"C-773",
+				"C-774",
+				"C-775",
+				"C-776",
+				"C-777",
+				"C-778",
+				"C-779",
+				"C-780",
+				"C-781",
+				"C-782",
+				"C-783",
+				"C-784",
+				"C-785",
+				"C-786",
+				"C-787",
+				"C-788",
+				"C-789",
+				"C-790",
+				"C-791",
+				"C-792",
+				"C-793",
+				"C-794",
+				"C-795",
+				"C-796",
+				"C-797",
+				"C-798",
+				"C-799"
+			],
+			"p_id": 73
+		},
 		"23a393a36b55b464f4042b41643927ef966713f1": {
 			"c": 65.0,
 			"composite": "c65j75n7a29p24",
@@ -1780,7 +1840,7 @@
 			"p_id": 64.0
 		},
 		"f76388e32f4432b73ffffab05230ab86149002cd": {
-			"c": 72,
+			"c": 72.0,
 			"composite": "c72j62n12a35p71",
 			"entities": [
 				"F-002",
@@ -1793,7 +1853,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 72
+			"p_id": 72.0
 		},
 		"fa2b7bbd7316ba058617513072f00afdf6e7dc93": {
 			"c": 36.0,
@@ -14950,6 +15010,601 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-765": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						445.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-765",
+			"last_p": 73.0,
+			"name": "_test_repair_orphaned_verified",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-766": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						481.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-766",
+			"last_p": 73.0,
+			"name": "_remove_recursive",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-767": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-767",
+			"last_p": 73.0,
+			"name": "_init",
+			"path": "scripts/testing/chronicle_core_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-768": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-768",
+			"last_p": 73.0,
+			"name": "_process",
+			"path": "scripts/testing/chronicle_core_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-769": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						28.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-769",
+			"last_p": 73.0,
+			"name": "_run_test",
+			"path": "scripts/testing/chronicle_core_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-770": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						127.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-770",
+			"last_p": 73.0,
+			"name": "_compute_full_hash",
+			"path": "scripts/testing/chronicle_core_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-771": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						180.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-771",
+			"last_p": 73.0,
+			"name": "_actors_str",
+			"path": "scripts/testing/chronicle_core_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-772": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						187.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-772",
+			"last_p": 73.0,
+			"name": "_bio_dict",
+			"path": "scripts/testing/chronicle_core_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-773": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						194.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-773",
+			"last_p": 73.0,
+			"name": "_check",
+			"path": "scripts/testing/chronicle_core_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-774": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						203.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-774",
+			"last_p": 73.0,
+			"name": "_print_result",
+			"path": "scripts/testing/chronicle_core_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-775": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						215.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-775",
+			"last_p": 73.0,
+			"name": "_make_factions",
+			"path": "scripts/testing/chronicle_core_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-776": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						222.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-776",
+			"last_p": 73.0,
+			"name": "_make_planets",
+			"path": "scripts/testing/chronicle_core_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-777": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-777",
+			"last_p": 73.0,
+			"name": "_init",
+			"path": "scripts/testing/chronicle_lifecycle_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-778": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-778",
+			"last_p": 73.0,
+			"name": "_process",
+			"path": "scripts/testing/chronicle_lifecycle_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-779": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						31.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-779",
+			"last_p": 73.0,
+			"name": "_run_test",
+			"path": "scripts/testing/chronicle_lifecycle_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-780": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						150.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-780",
+			"last_p": 73.0,
+			"name": "_check",
+			"path": "scripts/testing/chronicle_lifecycle_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-781": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						159.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-781",
+			"last_p": 73.0,
+			"name": "_print_result",
+			"path": "scripts/testing/chronicle_lifecycle_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-782": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-782",
+			"last_p": 73.0,
+			"name": "_init",
+			"path": "scripts/testing/historical_playback_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-783": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-783",
+			"last_p": 73.0,
+			"name": "_process",
+			"path": "scripts/testing/historical_playback_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-784": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						34.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-784",
+			"last_p": 73.0,
+			"name": "_check",
+			"path": "scripts/testing/historical_playback_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-785": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						43.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-785",
+			"last_p": 73.0,
+			"name": "_run_test",
+			"path": "scripts/testing/historical_playback_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-786": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						119.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-786",
+			"last_p": 73.0,
+			"name": "_events_hash",
+			"path": "scripts/testing/historical_playback_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-787": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						130.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-787",
+			"last_p": 73.0,
+			"name": "_snapshots_hash",
+			"path": "scripts/testing/historical_playback_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-788": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						142.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-788",
+			"last_p": 73.0,
+			"name": "_make_factions",
+			"path": "scripts/testing/historical_playback_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-789": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						149.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-789",
+			"last_p": 73.0,
+			"name": "_make_planets",
+			"path": "scripts/testing/historical_playback_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-790": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						161.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-790",
+			"last_p": 73.0,
+			"name": "_print_result",
+			"path": "scripts/testing/historical_playback_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-791": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-791",
+			"last_p": 73.0,
+			"name": "HistoricalRenderer",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-792": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-792",
+			"last_p": 73.0,
+			"name": "PLANET_TEXTURES",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-793": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-793",
+			"last_p": 73.0,
+			"name": "FACTION_COLORS",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-794": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-794",
+			"last_p": 73.0,
+			"name": "RING_RADIUS",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-795": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						26.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-795",
+			"last_p": 73.0,
+			"name": "PLANET_SCALE",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-796": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						31.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-796",
+			"last_p": 73.0,
+			"name": "show_snapshot",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-797": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						46.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-797",
+			"last_p": 73.0,
+			"name": "planet_count",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-798": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						54.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-798",
+			"last_p": 73.0,
+			"name": "_ensure_planet",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-799": {
+			"first_p": 73.0,
+			"history": [
+				{
+					"lines": [
+						68.0
+					],
+					"p_id": 73.0
+				}
+			],
+			"id": "C-799",
+			"last_p": 73.0,
+			"name": "_layout_position",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -18537,6 +19192,96 @@
 			"last_p": 72.0,
 			"name": "STRING_MATRIX.md",
 			"path": "docs/STRING_MATRIX.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-360": {
+			"first_p": 73.0,
+			"history": [],
+			"id": "F-360",
+			"last_p": 73.0,
+			"name": "reset_stale_session.gd.uid",
+			"path": "scripts/doki/reset_stale_session.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-361": {
+			"first_p": 73.0,
+			"history": [],
+			"id": "F-361",
+			"last_p": 73.0,
+			"name": "chronicle_core_test.gd",
+			"path": "scripts/testing/chronicle_core_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-362": {
+			"first_p": 73.0,
+			"history": [],
+			"id": "F-362",
+			"last_p": 73.0,
+			"name": "chronicle_core_test.gd.uid",
+			"path": "scripts/testing/chronicle_core_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-363": {
+			"first_p": 73.0,
+			"history": [],
+			"id": "F-363",
+			"last_p": 73.0,
+			"name": "chronicle_lifecycle_test.gd",
+			"path": "scripts/testing/chronicle_lifecycle_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-364": {
+			"first_p": 73.0,
+			"history": [],
+			"id": "F-364",
+			"last_p": 73.0,
+			"name": "chronicle_lifecycle_test.gd.uid",
+			"path": "scripts/testing/chronicle_lifecycle_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-365": {
+			"first_p": 73.0,
+			"history": [],
+			"id": "F-365",
+			"last_p": 73.0,
+			"name": "historical_playback_test.gd",
+			"path": "scripts/testing/historical_playback_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-366": {
+			"first_p": 73.0,
+			"history": [],
+			"id": "F-366",
+			"last_p": 73.0,
+			"name": "historical_playback_test.gd.uid",
+			"path": "scripts/testing/historical_playback_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-367": {
+			"first_p": 73.0,
+			"history": [],
+			"id": "F-367",
+			"last_p": 73.0,
+			"name": "historical_renderer.gd",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-368": {
+			"first_p": 73.0,
+			"history": [],
+			"id": "F-368",
+			"last_p": 73.0,
+			"name": "historical_renderer.gd.uid",
+			"path": "scripts/ui/history/historical_renderer.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

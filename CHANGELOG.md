@@ -1364,3 +1364,28 @@ Inventar-Matrizen, String-Matrix, Search-Index, MCP-Audit-Report und Metrics-Tra
 - docs/STRING_MATRIX.md: Implementiert und integriert (F-359).
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 01:00:00 — p73 · c73j63n7a8p7 · Argos · triumphierend
+
+**Argos: 18 Dateien — DOKI-Repair und Chronicle-Ausb… — nach Echo**
+
+DOKI-Repair und Chronicle-Ausbau gemeinsam ausrollen: verwaiste verified-Sessions atomar zurückgesetzt (Recovery-Log, Chain/Index unberührt), History-Chronicle mit Renderer/Playback-Tests, Narrative-Runtime-Gate und FINDINGS nachgetragen
+
+- CHANGELOG.md: Fehler behoben (F-002).
+- change_index.json: Fehler behoben (F-003).
+- docs/FINDINGS.md: Fehler behoben (F-046).
+- docs/METRICS_TRACKER.md: Fehler behoben (F-357).
+- narrative_chain.json: Fehler behoben (F-004).
+- scripts/doki/data/arcs.json: Fehler behoben (F-001).
+- scripts/doki/doki_selfcheck.gd: Fehler behoben (F-017).
+- scripts/doki/orchestration/flows/finalize_flow.gd: Fehler behoben (F-011).
+- scripts/doki/reset_stale_session.gd.uid: Fehler behoben (F-360).
+- scripts/preflight/constraint_narrative_runtime.gd: Fehler behoben (F-353).
+- scripts/testing/chronicle_core_test.gd: Fehler behoben (F-361).
+- scripts/testing/chronicle_core_test.gd.uid: Fehler behoben (F-362).
+- scripts/testing/chronicle_lifecycle_test.gd: Fehler behoben (F-363).
+- scripts/testing/chronicle_lifecycle_test.gd.uid: Fehler behoben (F-364).
+- scripts/testing/historical_playback_test.gd: Fehler behoben (F-365).
+- scripts/testing/historical_playback_test.gd.uid: Fehler behoben (F-366).
+- scripts/ui/history/historical_renderer.gd: Fehler behoben (F-367).
+- scripts/ui/history/historical_renderer.gd.uid: Fehler behoben (F-368).

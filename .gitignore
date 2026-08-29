@@ -24,6 +24,14 @@ godot/
 /_mcp_*
 /_ux_report_*
 
+# Windows `> nul` redirect leftovers and scratch/dev leftovers (never commit).
+/nul
+/scratch_debug.gd
+/scratch_debug.gd.uid
+/scripts/_sentiment_compare.py
+/test_mcp_input.json
+/test_mcp_input.ndjson
+
 node_modules/
 
 # DOKI CommitLayer — transiente Flow-Artefakte (nie committen)
