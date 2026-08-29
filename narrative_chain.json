@@ -7978,6 +7978,73 @@
 			"seq": 100,
 			"subject": "Flux — also — AUDIT-3-Provenance-Instrumente verankert:… — nach Devin",
 			"summary": "Flashback — ein paar Stunden her, da lag der Audit-Bericht noch als loses Blatt im Working Tree, und ich dachte nur: wenn das Repo morgen brennt, dann brennt der Beweis mit ab. Deshalb war dieser C..."
+		},
+		{
+			"a": 12,
+			"arc": "a47",
+			"c": 101,
+			"composite": "c101j92n9a12p37",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 115.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 72.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/economy/vault_core.gd",
+					"insertions": 276.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/economy/vault_core.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 173.0,
+					"file": "scripts/state/domains/economy_domain.gd",
+					"insertions": 37.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/e1_vault_core_semantics_check.gd",
+					"insertions": 93.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/e1_vault_core_semantics_check.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 05:00:00",
+			"hash": "4e94181088affdb32405b27a4d0f39eaa04ff6e2",
+			"j": 92,
+			"model_id": "claude-sonnet-4",
+			"mood": "erschöpft",
+			"n": 9,
+			"narrator": "Spark",
+			"p": 37,
+			"p_id": 101,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Flux",
+			"seq": 101,
+			"subject": "Spark entdeckt: R-007 E1: EconomyDomain aufgeteilt — Vault-,… — nach Flux",
+			"summary": "Flashback — noch vor ein paar Stunden war die Vault-Logik ein einziger dicker Block in economy_domain.gd, und ich hab mich gefragt, wieso das eigentlich niemand früher getrennt hat. Moment — wieso ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

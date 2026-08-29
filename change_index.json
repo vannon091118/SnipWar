@@ -1033,6 +1033,54 @@
 			],
 			"p_id": 47.0
 		},
+		"4e94181088affdb32405b27a4d0f39eaa04ff6e2": {
+			"c": 101,
+			"composite": "c101j92n9a12p37",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-399",
+				"F-400",
+				"F-121",
+				"F-401",
+				"F-402",
+				"C-861",
+				"C-862",
+				"C-863",
+				"C-864",
+				"C-865",
+				"C-866",
+				"C-867",
+				"C-868",
+				"C-869",
+				"C-870",
+				"C-871",
+				"C-872",
+				"C-873",
+				"C-874",
+				"C-875",
+				"C-876",
+				"C-877",
+				"C-878",
+				"C-879",
+				"C-880",
+				"C-881",
+				"C-882",
+				"C-883",
+				"C-884",
+				"C-885",
+				"C-886",
+				"C-887",
+				"C-888",
+				"C-889",
+				"C-890",
+				"C-891",
+				"C-892"
+			],
+			"p_id": 101
+		},
 		"5bc899b56982f3b9676e93bc1c5d773c05c42f94": {
 			"c": 40.0,
 			"composite": "c40j23n4a5p37",
@@ -1738,7 +1786,7 @@
 			"p_id": 43.0
 		},
 		"c7c507b1b44c5aee90125ab14ced063471d796d1": {
-			"c": 100,
+			"c": 100.0,
 			"composite": "c100j7n13a4p37",
 			"entities": [
 				"F-002",
@@ -1754,7 +1802,7 @@
 				"C-859",
 				"C-860"
 			],
-			"p_id": 100
+			"p_id": 100.0
 		},
 		"caeed225d6e93fbfd5c0160e8f62c616aefbbf31": {
 			"c": 25.0,
@@ -17130,6 +17178,550 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-861": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-861",
+			"last_p": 101.0,
+			"name": "EconomyVaultCore",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-862": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-862",
+			"last_p": 101.0,
+			"name": "_init",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-863": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-863",
+			"last_p": 101.0,
+			"name": "reset_vaults",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-864": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						44.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-864",
+			"last_p": 101.0,
+			"name": "reset",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-865": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						66.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-865",
+			"last_p": 101.0,
+			"name": "credit_transport_resources",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-866": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						73.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-866",
+			"last_p": 101.0,
+			"name": "get_faction_credits",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-867": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						77.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-867",
+			"last_p": 101.0,
+			"name": "add_faction_credits",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-868": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						86.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-868",
+			"last_p": 101.0,
+			"name": "can_spend_faction_credits",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-869": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						90.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-869",
+			"last_p": 101.0,
+			"name": "spend_faction_credits",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-870": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						100.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-870",
+			"last_p": 101.0,
+			"name": "can_spend_cost",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-871": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						104.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-871",
+			"last_p": 101.0,
+			"name": "spend_cost",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-872": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						112.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-872",
+			"last_p": 101.0,
+			"name": "get_faction_resource",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-873": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						118.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-873",
+			"last_p": 101.0,
+			"name": "get_faction_vault_snapshot",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-874": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						124.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-874",
+			"last_p": 101.0,
+			"name": "add_faction_resource",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-875": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						136.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-875",
+			"last_p": 101.0,
+			"name": "can_spend_faction_resource",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-876": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						142.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-876",
+			"last_p": 101.0,
+			"name": "spend_faction_resource",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-877": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						156.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-877",
+			"last_p": 101.0,
+			"name": "set_planet_resource",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-878": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						162.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-878",
+			"last_p": 101.0,
+			"name": "resource_of",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-879": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						166.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-879",
+			"last_p": 101.0,
+			"name": "resource_snapshot",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-880": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						170.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-880",
+			"last_p": 101.0,
+			"name": "available_workers",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-881": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						178.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-881",
+			"last_p": 101.0,
+			"name": "reserve_workers",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-882": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						191.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-882",
+			"last_p": 101.0,
+			"name": "release_workers",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-883": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						206.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-883",
+			"last_p": 101.0,
+			"name": "local_vault",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-884": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						212.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-884",
+			"last_p": 101.0,
+			"name": "get_local_resource",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-885": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						216.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-885",
+			"last_p": 101.0,
+			"name": "add_local_resource",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-886": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						227.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-886",
+			"last_p": 101.0,
+			"name": "spend_local_resource",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-887": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						242.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-887",
+			"last_p": 101.0,
+			"name": "transfer_resources",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-888": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						253.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-888",
+			"last_p": 101.0,
+			"name": "seed_local_resources",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-889": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						275.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-889",
+			"last_p": 101.0,
+			"name": "is_valid_resource_id",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-890": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						55.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-890",
+			"last_p": 101.0,
+			"name": "_init",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-891": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						14.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-891",
+			"last_p": 101.0,
+			"name": "_init",
+			"path": "scripts/testing/e1_vault_core_semantics_check.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-892": {
+			"first_p": 101.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 101.0
+				}
+			],
+			"id": "C-892",
+			"last_p": 101.0,
+			"name": "_run",
+			"path": "scripts/testing/e1_vault_core_semantics_check.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -21107,6 +21699,46 @@
 			"last_p": 100.0,
 			"name": "immutability_gate.py",
 			"path": "tests/forensics/immutability_gate.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-399": {
+			"first_p": 101.0,
+			"history": [],
+			"id": "F-399",
+			"last_p": 101.0,
+			"name": "vault_core.gd",
+			"path": "scripts/state/domains/economy/vault_core.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-400": {
+			"first_p": 101.0,
+			"history": [],
+			"id": "F-400",
+			"last_p": 101.0,
+			"name": "vault_core.gd.uid",
+			"path": "scripts/state/domains/economy/vault_core.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-401": {
+			"first_p": 101.0,
+			"history": [],
+			"id": "F-401",
+			"last_p": 101.0,
+			"name": "e1_vault_core_semantics_check.gd",
+			"path": "scripts/testing/e1_vault_core_semantics_check.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-402": {
+			"first_p": 101.0,
+			"history": [],
+			"id": "F-402",
+			"last_p": 101.0,
+			"name": "e1_vault_core_semantics_check.gd.uid",
+			"path": "scripts/testing/e1_vault_core_semantics_check.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

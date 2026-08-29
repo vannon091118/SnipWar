@@ -1788,3 +1788,19 @@ AUDIT-3-Provenance-Instrumente verankert: forensische Gates (Immutability, Chain
 - tests/forensics/historical_replay.gd: Dokumentation aktualisiert (F-396).
 - tests/forensics/historical_replay.gd.uid: Dokumentation aktualisiert (F-397).
 - tests/forensics/immutability_gate.py: Dokumentation aktualisiert (F-398).
+
+## 2026-08-27 05:00:00 — p101 · c101j92n9a12p37 · Spark · erschöpft
+
+**Spark entdeckt: R-007 E1: EconomyDomain aufgeteilt — Vault-,… — nach Flux**
+
+R-007 E1: EconomyDomain aufgeteilt — Vault-, Credit-, Local-Vault- und Worker-Reservierungs-Logik wandert in die neue Einheit EconomyVaultCore (scripts/state/domains/economy/vault_core.gd). Die Fassade EconomyDomain behält alle 86 Methoden, 18 Signale und die Dictionary-Referenzsemantik. Neuer Assertion-Test e1_vault_core_semantics_check: 7/7 bestanden.
+
+- CHANGELOG.md: Test-Assets ergänzt (F-002).
+- change_index.json: Test-Assets ergänzt (F-003).
+- narrative_chain.json: Test-Assets ergänzt (F-004).
+- scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).
+- scripts/state/domains/economy/vault_core.gd: Test-Assets ergänzt (F-399).
+- scripts/state/domains/economy/vault_core.gd.uid: Test-Assets ergänzt (F-400).
+- scripts/state/domains/economy_domain.gd: Test-Assets ergänzt (F-121).
+- scripts/testing/e1_vault_core_semantics_check.gd: Test-Assets ergänzt (F-401).
+- scripts/testing/e1_vault_core_semantics_check.gd.uid: Test-Assets ergänzt (F-402).
