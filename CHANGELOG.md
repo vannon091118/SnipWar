@@ -1771,3 +1771,20 @@ DOKI chain sync — artifacts nach Staffelfinale
 - change_index.json: Tooling erweitert (F-003).
 - narrative_chain.json: Tooling erweitert (F-004).
 - scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+
+## 2026-08-27 04:00:00 — p100 · c100j7n13a4p37 · Flux · alarmiert
+
+**Flux — also — AUDIT-3-Provenance-Instrumente verankert:… — nach Devin**
+
+AUDIT-3-Provenance-Instrumente verankert: forensische Gates (Immutability, Chain-Rekonstruktion, Historical Replay) nach tests/forensics ueberfuehrt, Report in docs/ — Beweisbasis fuer DOKI-Reproduzierbarkeit lauffaehig committet
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- docs/AUDIT_3_REPRODUCIBILITY.md: Dokumentation aktualisiert (F-393).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- tests/forensics/README.md: Dokumentation aktualisiert (F-394).
+- tests/forensics/chain_history_reconstruction.py: Dokumentation aktualisiert (F-395).
+- tests/forensics/historical_replay.gd: Dokumentation aktualisiert (F-396).
+- tests/forensics/historical_replay.gd.uid: Dokumentation aktualisiert (F-397).
+- tests/forensics/immutability_gate.py: Dokumentation aktualisiert (F-398).

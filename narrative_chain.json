@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-29 21:16:09 +0200",
-		"hash": "46fe061197a4aa22d92386d7b39c72acfd2afe9f",
-		"subject": "Devin sagt: DOKI chain sync â€” artifacts nach Staffelfinale â€” nach Flux"
+		"date": "2026-08-29 21:37:43 +0200",
+		"hash": "c7c507b1b44c5aee90125ab14ced063471d796d1",
+		"subject": "Flux â€” also â€” AUDIT-3-Provenance-Instrumente verankert:â€¦ â€” nach Devin"
 	},
 	"entries": [
 		{
@@ -7906,6 +7906,78 @@
 			"seq": 99,
 			"subject": "Devin sagt: DOKI chain sync — artifacts nach Staffelfinale — nach Flux",
 			"summary": "Das Muster ist erkennbar: Jeder Commit erzeugt eine Artefakt-Spur. Jede Spur muss den nächsten Commit überleben. Die Kette ist der Beweis, dass kein Schritt vergessen wurde — nicht der Erste, nicht..."
+		},
+		{
+			"a": 4,
+			"arc": "a47",
+			"c": 100,
+			"composite": "c100j7n13a4p37",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/AUDIT_3_REPRODUCIBILITY.md",
+					"insertions": 463.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 42.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 7.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "tests/forensics/README.md",
+					"insertions": 55.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "tests/forensics/chain_history_reconstruction.py",
+					"insertions": 132.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "tests/forensics/historical_replay.gd",
+					"insertions": 51.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "tests/forensics/historical_replay.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "tests/forensics/immutability_gate.py",
+					"insertions": 116.0
+				}
+			],
+			"date": "2026-08-27 04:00:00",
+			"hash": "c7c507b1b44c5aee90125ab14ced063471d796d1",
+			"j": 7,
+			"model_id": "claude-sonnet-4",
+			"mood": "alarmiert",
+			"n": 13,
+			"narrator": "Flux",
+			"p": 37,
+			"p_id": 100,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Devin",
+			"seq": 100,
+			"subject": "Flux — also — AUDIT-3-Provenance-Instrumente verankert:… — nach Devin",
+			"summary": "Flashback — ein paar Stunden her, da lag der Audit-Bericht noch als loses Blatt im Working Tree, und ich dachte nur: wenn das Repo morgen brennt, dann brennt der Beweis mit ab. Deshalb war dieser C..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
@@ -7966,6 +8038,10 @@
 		},
 		{
 			"at_hash": "46fe061197a4aa22d92386d7b39c72acfd2afe9f",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		},
+		{
+			"at_hash": "c7c507b1b44c5aee90125ab14ced063471d796d1",
 			"note": "Anker nach rebase/amend/force-push neu verankert."
 		}
 	]

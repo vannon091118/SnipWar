@@ -988,7 +988,7 @@
 			"p_id": 33.0
 		},
 		"46fe061197a4aa22d92386d7b39c72acfd2afe9f": {
-			"c": 99,
+			"c": 99.0,
 			"composite": "c99j3n6a39p8",
 			"entities": [
 				"F-002",
@@ -996,7 +996,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 99
+			"p_id": 99.0
 		},
 		"4885a0249af70c3329eb9da047711d4b53fac7dd": {
 			"c": 47.0,
@@ -1736,6 +1736,25 @@
 				"C-253"
 			],
 			"p_id": 43.0
+		},
+		"c7c507b1b44c5aee90125ab14ced063471d796d1": {
+			"c": 100,
+			"composite": "c100j7n13a4p37",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-393",
+				"F-004",
+				"F-001",
+				"F-394",
+				"F-395",
+				"F-396",
+				"F-397",
+				"F-398",
+				"C-859",
+				"C-860"
+			],
+			"p_id": 100
 		},
 		"caeed225d6e93fbfd5c0160e8f62c616aefbbf31": {
 			"c": 25.0,
@@ -17077,6 +17096,40 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-859": {
+			"first_p": 100.0,
+			"history": [
+				{
+					"lines": [
+						31.0
+					],
+					"p_id": 100.0
+				}
+			],
+			"id": "C-859",
+			"last_p": 100.0,
+			"name": "XorShift128",
+			"path": "tests/forensics/chain_history_reconstruction.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-860": {
+			"first_p": 100.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 100.0
+				}
+			],
+			"id": "C-860",
+			"last_p": 100.0,
+			"name": "_init",
+			"path": "tests/forensics/historical_replay.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -20994,6 +21047,66 @@
 			"last_p": 91.0,
 			"name": "test_determinism.gd.uid",
 			"path": "scripts/testing/test_determinism.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-393": {
+			"first_p": 100.0,
+			"history": [],
+			"id": "F-393",
+			"last_p": 100.0,
+			"name": "AUDIT_3_REPRODUCIBILITY.md",
+			"path": "docs/AUDIT_3_REPRODUCIBILITY.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-394": {
+			"first_p": 100.0,
+			"history": [],
+			"id": "F-394",
+			"last_p": 100.0,
+			"name": "README.md",
+			"path": "tests/forensics/README.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-395": {
+			"first_p": 100.0,
+			"history": [],
+			"id": "F-395",
+			"last_p": 100.0,
+			"name": "chain_history_reconstruction.py",
+			"path": "tests/forensics/chain_history_reconstruction.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-396": {
+			"first_p": 100.0,
+			"history": [],
+			"id": "F-396",
+			"last_p": 100.0,
+			"name": "historical_replay.gd",
+			"path": "tests/forensics/historical_replay.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-397": {
+			"first_p": 100.0,
+			"history": [],
+			"id": "F-397",
+			"last_p": 100.0,
+			"name": "historical_replay.gd.uid",
+			"path": "tests/forensics/historical_replay.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-398": {
+			"first_p": 100.0,
+			"history": [],
+			"id": "F-398",
+			"last_p": 100.0,
+			"name": "immutability_gate.py",
+			"path": "tests/forensics/immutability_gate.py",
 			"status": "created",
 			"type": "file"
 		}

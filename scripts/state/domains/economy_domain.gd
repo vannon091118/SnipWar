@@ -49,58 +49,27 @@ var building_jobs: Dictionary = {}
 # re-seeding when an evicted chunk is regenerated).
 var _local_seeded_planets: Dictionary = {}
 
+## R-007 (E1): Verhaltens-Einheit für Vaults/Credits/Local-Vaults/Reservierungen.
+## Der State bleibt auf dieser Fassade; die Einheit mutiert ihn über _owner,
+## damit Dictionary-Referenzsemantik und Signal-Identität erhalten bleiben.
+var _vault_core: EconomyVaultCore
+
+
+func _init() -> void:
+	_vault_core = EconomyVaultCore.new(self)
+
+
 func reset_vaults() -> void:
-	faction_vaults = {
-		GameState.FACTION_PLAYER: {
-			GameState.RES_ENERGY: 50,
-			GameState.RES_BIOMASS: 50,
-			GameState.RES_RARE: 30,
-			GameState.RES_MATERIAL: 30,
-			GameState.RES_VOLATILE: 30
-		},
-		GameState.FACTION_CPU: {
-			GameState.RES_ENERGY: 50,
-			GameState.RES_BIOMASS: 50,
-			GameState.RES_RARE: 30,
-			GameState.RES_MATERIAL: 30,
-			GameState.RES_VOLATILE: 30
-		}
-	}
-	var config: EconomyConfig = economy_config if economy_config != null else DEFAULT_ECONOMY_CONFIG
-	faction_credits = {
-		GameState.FACTION_PLAYER: config.starting_credits,
-		GameState.FACTION_CPU: config.starting_credits,
-	}
+	_vault_core.reset_vaults()
 
 func reset() -> void:
-	planet_resources.clear()
-	planet_upgrades.clear()
-	worker_reservations.clear()
-	upgrade_build_jobs.clear()
-	worker_factories.clear()
-	gathering_workers.clear()
-	gathering_sources.clear()
-	local_vaults.clear()
-	trade_routes.clear()
-	planet_buildings.clear()
-	building_jobs.clear()
-	market_prices.clear()
-	trade_volumes.clear()
-	_next_trade_route_index = 0
-	_trade_tick_index = 0
-	worker_transport_records.clear()
-	_next_worker_transport_index = 0
-	_local_seeded_planets.clear()
-	reset_vaults()
+	_vault_core.reset()
 
 func credit_transport_resources(faction: StringName, resource_id: StringName, amount: int) -> bool:
-	if amount <= 0 or not _is_valid_resource_id(resource_id):
-		return false
-	add_faction_resource(faction, resource_id, amount)
-	return true
+	return _vault_core.credit_transport_resources(faction, resource_id, amount)
 
 func get_faction_credits(faction: StringName) -> int:
-	return int(faction_credits.get(faction, 0))
+	return _vault_core.get_faction_credits(faction)
 
 ## Creates the data-side record for a physical worker round-trip. The visible
 ## WorkerCluster is disposable; this record is the source of truth across
@@ -165,81 +134,40 @@ func complete_worker_transport(transport_id: StringName, delivered: bool = true)
 	return true
 
 func add_faction_credits(faction: StringName, amount: int) -> int:
-	if amount <= 0 or String(faction).is_empty():
-		return get_faction_credits(faction)
-	var new_amount: int = get_faction_credits(faction) + amount
-	faction_credits[faction] = new_amount
-	credits_changed.emit(faction, new_amount)
-	return new_amount
+	return _vault_core.add_faction_credits(faction, amount)
 
 func can_spend_faction_credits(faction: StringName, amount: int) -> bool:
-	return amount <= 0 or get_faction_credits(faction) >= amount
+	return _vault_core.can_spend_faction_credits(faction, amount)
 
 func spend_faction_credits(faction: StringName, amount: int) -> bool:
-	if amount < 0 or not can_spend_faction_credits(faction, amount):
-		return false
-	if amount == 0:
-		return true
-	faction_credits[faction] = get_faction_credits(faction) - amount
-	credits_changed.emit(faction, faction_credits[faction])
-	return true
+	return _vault_core.spend_faction_credits(faction, amount)
 
 func can_spend_cost(faction: StringName, resource_id: StringName, resource_amount: int, credit_amount: int) -> bool:
-	return can_spend_faction_resource(faction, resource_id, resource_amount) and can_spend_faction_credits(faction, credit_amount)
+	return _vault_core.can_spend_cost(faction, resource_id, resource_amount, credit_amount)
 
 func spend_cost(faction: StringName, resource_id: StringName, resource_amount: int, credit_amount: int) -> bool:
-	if not can_spend_cost(faction, resource_id, resource_amount, credit_amount):
-		return false
-	if not spend_faction_resource(faction, resource_id, resource_amount):
-		return false
-	return spend_faction_credits(faction, credit_amount)
+	return _vault_core.spend_cost(faction, resource_id, resource_amount, credit_amount)
 
 func get_faction_resource(faction: StringName, resource_id: StringName) -> int:
-	if not faction_vaults.has(faction):
-		return 0
-	return int(faction_vaults[faction].get(resource_id, 0))
+	return _vault_core.get_faction_resource(faction, resource_id)
 
 func get_faction_vault_snapshot(faction: StringName) -> Dictionary:
-	if not faction_vaults.has(faction):
-		return {}
-	return (faction_vaults[faction] as Dictionary).duplicate()
+	return _vault_core.get_faction_vault_snapshot(faction)
 
 func add_faction_resource(faction: StringName, resource_id: StringName, amount: int) -> int:
-	if amount <= 0 or String(faction).is_empty() or not _is_valid_resource_id(resource_id):
-		return get_faction_resource(faction, resource_id)
-	if not faction_vaults.has(faction):
-		faction_vaults[faction] = {}
-	var current: int = get_faction_resource(faction, resource_id)
-	var new_val := current + amount
-	faction_vaults[faction][resource_id] = new_val
-	faction_resources_changed.emit(faction, resource_id, new_val)
-	return new_val
+	return _vault_core.add_faction_resource(faction, resource_id, amount)
 
 func can_spend_faction_resource(faction: StringName, resource_id: StringName, amount: int) -> bool:
-	if amount <= 0:
-		return true
-	return get_faction_resource(faction, resource_id) >= amount
+	return _vault_core.can_spend_faction_resource(faction, resource_id, amount)
 
 func spend_faction_resource(faction: StringName, resource_id: StringName, amount: int) -> bool:
-	if amount < 0:
-		return false
-	if amount == 0:
-		return true
-	if not can_spend_faction_resource(faction, resource_id, amount):
-		return false
-	var current: int = get_faction_resource(faction, resource_id)
-	var new_val := current - amount
-	faction_vaults[faction][resource_id] = new_val
-	faction_resources_changed.emit(faction, resource_id, new_val)
-	return true
+	return _vault_core.spend_faction_resource(faction, resource_id, amount)
 
 func set_planet_resource(planet_id: StringName, resource_id: StringName) -> void:
-	if String(planet_id).is_empty() or not _is_valid_resource_id(resource_id):
-		return
-	planet_resources[planet_id] = resource_id
+	_vault_core.set_planet_resource(planet_id, resource_id)
 
 func resource_of(planet_id: StringName) -> StringName:
-	return planet_resources.get(planet_id, &"") as StringName
+	return _vault_core.resource_of(planet_id)
 
 func deal_resources(catalog: PlanetCatalog, pool: ResourcePool = null, seed_value: int = 0) -> void:
 	planet_resources.clear()
@@ -330,7 +258,7 @@ func deal_resources(catalog: PlanetCatalog, pool: ResourcePool = null, seed_valu
 			used_homeworld_resources[chosen_resource] = true
 
 func resource_snapshot() -> Dictionary:
-	return planet_resources.duplicate()
+	return _vault_core.resource_snapshot()
 
 ## Deals resources for a batch of new planets WITHOUT clearing existing
 ## assignments. Homeworlds in the origin chunk are assigned distinct resource
@@ -497,35 +425,13 @@ func get_planet_upgrades(planet_id: StringName) -> Array[StringName]:
 	return typed_list
 
 func available_workers(planet_id: StringName, total_workers: int) -> int:
-	var reserved := 0
-	if worker_reservations.has(planet_id):
-		for amount in (worker_reservations[planet_id] as Dictionary).values():
-			reserved += int(amount)
-	return maxi(0, total_workers - reserved)
+	return _vault_core.available_workers(planet_id, total_workers)
 
 func reserve_workers(planet_id: StringName, job_id: StringName, amount: int, total_workers: int) -> bool:
-	if amount <= 0:
-		return true
-	if available_workers(planet_id, total_workers) < amount:
-		return false
-	if not worker_reservations.has(planet_id):
-		worker_reservations[planet_id] = {}
-	var jobs: Dictionary = worker_reservations[planet_id]
-	jobs[job_id] = int(jobs.get(job_id, 0)) + amount
-	workers_reserved.emit(planet_id, job_id, amount)
-	return true
+	return _vault_core.reserve_workers(planet_id, job_id, amount, total_workers)
 
 func release_workers(planet_id: StringName, job_id: StringName) -> int:
-	if not worker_reservations.has(planet_id):
-		return 0
-	var jobs: Dictionary = worker_reservations[planet_id]
-	var amount: int = int(jobs.get(job_id, 0))
-	jobs.erase(job_id)
-	if jobs.is_empty():
-		worker_reservations.erase(planet_id)
-	if amount > 0:
-		workers_released.emit(planet_id, job_id, amount)
-	return amount
+	return _vault_core.release_workers(planet_id, job_id)
 
 func can_purchase_upgrade(faction: StringName, planet_id: StringName, upgrade_id: StringName, available_worker_count: int = -1, catalog: PlanetUpgradeCatalog = null) -> bool:
 	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
@@ -937,70 +843,28 @@ func convert_refinery_resources(planet_id: StringName, faction_domain: FactionDo
 # Local copy of GameState.is_valid_resource — calling the static via the autoload
 # instance triggers a STATIC_CALLED_ON_INSTANCE warning under Godot's parser.
 func _is_valid_resource_id(resource_id: StringName) -> bool:
-	return resource_id == GameState.RES_ENERGY or resource_id == GameState.RES_BIOMASS or resource_id == GameState.RES_RARE or resource_id == GameState.RES_MATERIAL or resource_id == GameState.RES_VOLATILE
+	return _vault_core.is_valid_resource_id(resource_id)
 
 # --- LOCAL VAULTS (per-planet) ---
 
 func local_vault(planet_id: StringName) -> Dictionary:
-	if not local_vaults.has(planet_id):
-		local_vaults[planet_id] = GameState.DEFAULT_RESOURCE_POOL.empty_vault()
-	return local_vaults[planet_id]
+	return _vault_core.local_vault(planet_id)
 
 func get_local_resource(planet_id: StringName, resource_id: StringName) -> int:
-	return int(local_vault(planet_id).get(resource_id, 0))
+	return _vault_core.get_local_resource(planet_id, resource_id)
 
 func add_local_resource(planet_id: StringName, resource_id: StringName, amount: int) -> int:
-	if amount <= 0 or String(planet_id).is_empty() or not _is_valid_resource_id(resource_id):
-		return get_local_resource(planet_id, resource_id)
-	var vault := local_vault(planet_id)
-	var new_val := get_local_resource(planet_id, resource_id) + amount
-	vault[resource_id] = new_val
-	local_vaults[planet_id] = vault
-	local_resources_changed.emit(planet_id, resource_id, new_val)
-	return new_val
+	return _vault_core.add_local_resource(planet_id, resource_id, amount)
 
 func spend_local_resource(planet_id: StringName, resource_id: StringName, amount: int) -> bool:
-	if amount < 0:
-		return false
-	if amount == 0:
-		return true
-	if get_local_resource(planet_id, resource_id) < amount:
-		return false
-	var vault := local_vault(planet_id)
-	var new_val := get_local_resource(planet_id, resource_id) - amount
-	vault[resource_id] = new_val
-	local_vaults[planet_id] = vault
-	local_resources_changed.emit(planet_id, resource_id, new_val)
-	return true
+	return _vault_core.spend_local_resource(planet_id, resource_id, amount)
 
 func transfer_resources(from_planet: StringName, to_planet: StringName, resource_id: StringName, amount: int) -> bool:
-	if amount <= 0 or from_planet == to_planet:
-		return false
-	if not spend_local_resource(from_planet, resource_id, amount):
-		return false
-	add_local_resource(to_planet, resource_id, amount)
-	resource_transferred.emit(from_planet, to_planet, resource_id, amount)
-	return true
+	return _vault_core.transfer_resources(from_planet, to_planet, resource_id, amount)
 
 ## Seeds a small deterministic starting stock of each planet's own resource.
 func seed_local_resources(planet_ids: Array, pool: ResourcePool = null, seed_value: int = 0) -> void:
-	var effective_pool: ResourcePool = pool if pool != null else GameState.DEFAULT_RESOURCE_POOL
-	if effective_pool == null:
-		return
-	var rng := RandomNumberGenerator.new()
-	rng.seed = seed_value
-	for planet_id_value in planet_ids:
-		var planet_id: StringName = planet_id_value as StringName
-		if _local_seeded_planets.has(planet_id):
-			continue
-		var res_id: StringName = resource_of(planet_id)
-		if String(res_id).is_empty():
-			continue
-		var vault := local_vault(planet_id)
-		var starting := maxi(1, rng.randi_range(2, 8))
-		vault[res_id] = int(vault.get(res_id, 0)) + starting
-		local_vaults[planet_id] = vault
-		_local_seeded_planets[planet_id] = true
+	_vault_core.seed_local_resources(planet_ids, pool, seed_value)
 
 # --- BUILDINGS ON GRID ---
 
