@@ -143,11 +143,11 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DoD:** Ein Befehl orchestriert alle Gates mit eindeutigem Exit-Code; test_determinism verschoben.
 - **STATUS:** `TODO`
 
-### R-010 — ConceptIndex: unmapped Klassen — **P2**
-- **WHY:** 3 Klassen (GameConstants, FactionAI, PreflightCodeIndex) unmapped.
+### R-010 — ConceptIndex: unmapped Klassen — **P2** ✅ VERIFIED
+- **WHY:** 5 Klassen (RunPreparation, GameConstants, FactionAI, PreflightConstraintHistoricalWorld, PreflightCodeIndex) unmapped.
+- **ERGEBNIS:** Alle 5 Klassen den passenden Konzepten zugeordnet (world_generation, game_state_access, historical_simulation, testing_quality ×2). `concept_search --unmapped` = 0; concept_index-Constraint 16/16 PASS.
 - **DEPENDS:** — · **BLOCKS:** —
-- **DoD:** `--unmapped` liefert 0; Preflight concept_index grün.
-- **STATUS:** `TODO`
+- **STATUS:** `VERIFIED`
 
 ### R-011 — MCP-Audit-Fix + Session-Docs archivieren — **P2**
 - **WHY:** MCP_AUDIT_REPORT referenziert nicht existentes `scripts/tools_count.gd`; addons/findings.md, progress.md, task_plan.md, mcp_live_test_results.md sind historisch.

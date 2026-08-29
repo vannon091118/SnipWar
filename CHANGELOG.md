@@ -1535,3 +1535,22 @@ R-006: Tote-Signal-Befund klassifiziert — Messung widerlegt 0-Consumer-Heurist
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
 - scripts/state/game_state.gd: Implementiert und integriert (F-065).
+
+## 2026-08-27 11:00:00 — p83 · c83j33n6a14p58 · Devin · triumphierend
+
+**Devin sagt: R-051: Preflight-Gate für historical_world-Flow —… — nach Sage**
+
+R-051: Preflight-Gate für historical_world-Flow — Constraint bootet Szene mit gefüllter Chronik, prüft Playback+Overlay+Fallback+Reconnect; 44/44 PASS, docs 43→44
+
+- AGENTS.md: Dokumentation aktualisiert (F-019).
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- ROADMAP.md: Dokumentation aktualisiert (F-376).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- docs/FINDINGS.md: Dokumentation aktualisiert (F-046).
+- docs/INVENTORY_MATRIX.md: Dokumentation aktualisiert (F-356).
+- docs/README.md: Dokumentation aktualisiert (F-200).
+- docs/SEARCH_INDEX.md: Dokumentation aktualisiert (F-358).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- scripts/preflight/constraint_historical_world.gd: Dokumentation aktualisiert (F-382).
+- scripts/preflight/constraint_historical_world.gd.uid: Dokumentation aktualisiert (F-383).

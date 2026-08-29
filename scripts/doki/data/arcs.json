@@ -1844,13 +1844,27 @@
 				"F-046",
 				"F-004",
 				"F-001",
-				"F-065"
+				"F-065",
+				"F-019",
+				"F-356",
+				"F-200",
+				"F-358",
+				"F-382",
+				"F-383",
+				"C-829",
+				"C-830",
+				"C-831",
+				"C-832",
+				"C-833",
+				"C-834",
+				"C-835",
+				"C-836"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Monolithen-Grenzen in economy_domain und planet_network sowie den Test-Orchestrator vorantreiben.",
 			"version": "",
-			"weight": 2.6
+			"weight": 9.2
 		},
 		"a5": {
 			"climax_weight": 3.0,

@@ -6947,6 +6947,88 @@
 			"seq": 82,
 			"subject": "Sage lehrt: R-006: Tote-Signal-Befund klassifiziert — Messung… — nach Ghost",
 			"summary": "Stell dir vor, ein Audit behauptet, vier Signale seien tot, bloß weil niemand an ihnen hängt. Die Lektion dieses Commits: Messen kann man erst nach dem Zählen."
+		},
+		{
+			"a": 14,
+			"arc": "a40",
+			"c": 83,
+			"composite": "c83j33n6a14p58",
+			"data_changes": [
+				{
+					"deletions": 1.0,
+					"file": "AGENTS.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 8.0,
+					"file": "ROADMAP.md",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "docs/INVENTORY_MATRIX.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "docs/README.md",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "docs/SEARCH_INDEX.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 57.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_historical_world.gd",
+					"insertions": 99.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_historical_world.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 11:00:00",
+			"hash": "1e2d6ba5e7d1d19186bdf94629cb4b49f9c389b9",
+			"j": 33,
+			"model_id": "claude-sonnet-4",
+			"mood": "triumphierend",
+			"n": 6,
+			"narrator": "Devin",
+			"p": 58,
+			"p_id": 83,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Sage",
+			"seq": 83,
+			"subject": "Devin sagt: R-051: Preflight-Gate für historical_world-Flow —… — nach Sage",
+			"summary": "Devin spricht:"
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

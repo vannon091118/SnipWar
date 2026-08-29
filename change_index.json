@@ -434,6 +434,33 @@
 			],
 			"p_id": 71.0
 		},
+		"1e2d6ba5e7d1d19186bdf94629cb4b49f9c389b9": {
+			"c": 83,
+			"composite": "c83j33n6a14p58",
+			"entities": [
+				"F-019",
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-046",
+				"F-356",
+				"F-200",
+				"F-358",
+				"F-004",
+				"F-001",
+				"F-382",
+				"F-383",
+				"C-829",
+				"C-830",
+				"C-831",
+				"C-832",
+				"C-833",
+				"C-834",
+				"C-835",
+				"C-836"
+			],
+			"p_id": 83
+		},
 		"21bc1b6070d99a8cfb8c5da2c4f808d6cd2c644d": {
 			"c": 73.0,
 			"composite": "c73j63n7a8p7",
@@ -1171,7 +1198,7 @@
 			"p_id": 42.0
 		},
 		"7eb6bec436efebca37dc5166ba2f5f9241523c9a": {
-			"c": 82,
+			"c": 82.0,
 			"composite": "c82j70n14a16p67",
 			"entities": [
 				"F-002",
@@ -1182,7 +1209,7 @@
 				"F-001",
 				"F-065"
 			],
-			"p_id": 82
+			"p_id": 82.0
 		},
 		"8cab9f7ab5cebf83cdcdbf4e2af085a2da35ea7f": {
 			"c": 76.0,
@@ -16294,6 +16321,142 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-829": {
+			"first_p": 83.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 83.0
+				}
+			],
+			"id": "C-829",
+			"last_p": 83.0,
+			"name": "PreflightConstraintHistoricalWorld",
+			"path": "scripts/preflight/constraint_historical_world.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-830": {
+			"first_p": 83.0,
+			"history": [
+				{
+					"lines": [
+						15.0
+					],
+					"p_id": 83.0
+				}
+			],
+			"id": "C-830",
+			"last_p": 83.0,
+			"name": "DETERMINISTIC_SEED",
+			"path": "scripts/preflight/constraint_historical_world.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-831": {
+			"first_p": 83.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 83.0
+				}
+			],
+			"id": "C-831",
+			"last_p": 83.0,
+			"name": "SCENE_PATH",
+			"path": "scripts/preflight/constraint_historical_world.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-832": {
+			"first_p": 83.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 83.0
+				}
+			],
+			"id": "C-832",
+			"last_p": 83.0,
+			"name": "constraint_name",
+			"path": "scripts/preflight/constraint_historical_world.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-833": {
+			"first_p": 83.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 83.0
+				}
+			],
+			"id": "C-833",
+			"last_p": 83.0,
+			"name": "constraint_description",
+			"path": "scripts/preflight/constraint_historical_world.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-834": {
+			"first_p": 83.0,
+			"history": [
+				{
+					"lines": [
+						27.0
+					],
+					"p_id": 83.0
+				}
+			],
+			"id": "C-834",
+			"last_p": 83.0,
+			"name": "requires_scene",
+			"path": "scripts/preflight/constraint_historical_world.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-835": {
+			"first_p": 83.0,
+			"history": [
+				{
+					"lines": [
+						31.0
+					],
+					"p_id": 83.0
+				}
+			],
+			"id": "C-835",
+			"last_p": 83.0,
+			"name": "run",
+			"path": "scripts/preflight/constraint_historical_world.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-836": {
+			"first_p": 83.0,
+			"history": [
+				{
+					"lines": [
+						97.0
+					],
+					"p_id": 83.0
+				}
+			],
+			"id": "C-836",
+			"last_p": 83.0,
+			"name": "_wait_frames",
+			"path": "scripts/preflight/constraint_historical_world.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -20101,6 +20264,26 @@
 			"last_p": 81.0,
 			"name": "GAME_CYCLE_CONCEPT.md",
 			"path": "docs/GAME_CYCLE_CONCEPT.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-382": {
+			"first_p": 83.0,
+			"history": [],
+			"id": "F-382",
+			"last_p": 83.0,
+			"name": "constraint_historical_world.gd",
+			"path": "scripts/preflight/constraint_historical_world.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-383": {
+			"first_p": 83.0,
+			"history": [],
+			"id": "F-383",
+			"last_p": 83.0,
+			"name": "constraint_historical_world.gd.uid",
+			"path": "scripts/preflight/constraint_historical_world.gd.uid",
 			"status": "created",
 			"type": "file"
 		}
