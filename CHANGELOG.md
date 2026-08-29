@@ -1760,3 +1760,14 @@ DOKI artifacts final cycle
 - change_index.json: Tooling erweitert (F-003).
 - narrative_chain.json: Tooling erweitert (F-004).
 - scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+
+## 2026-08-27 03:00:00 — p99 · c99j3n6a39p8 · Devin · triumphierend
+
+**Devin sagt: DOKI chain sync — artifacts nach Staffelfinale — nach Flux**
+
+DOKI chain sync — artifacts nach Staffelfinale
+
+- CHANGELOG.md: Tooling erweitert (F-002).
+- change_index.json: Tooling erweitert (F-003).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).

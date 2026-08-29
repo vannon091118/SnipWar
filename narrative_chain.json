@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-29 02:21:03 +0200",
-		"hash": "f76388e32f4432b73ffffab05230ab86149002cd",
-		"subject": "Echo erinnert: Inventar-Matrizen, String-Matrix, Search-Index,â€¦ â€” nach Spark"
+		"date": "2026-08-29 21:16:09 +0200",
+		"hash": "46fe061197a4aa22d92386d7b39c72acfd2afe9f",
+		"subject": "Devin sagt: DOKI chain sync â€” artifacts nach Staffelfinale â€” nach Flux"
 	},
 	"entries": [
 		{
@@ -7864,6 +7864,48 @@
 			"seq": 98,
 			"subject": "Flux — also — DOKI artifacts final cycle — nach Sage",
 			"summary": "Also erstmal — ne Moment — also — wir sind hier am Ende einer ganzen Staffel, oder? 14 Commits — ne, 16 jetzt — die alle durch den gleichen Pfad gelaufen sind. SELECT VERIFY IMPLEMENT GATE DOCS DOK..."
+		},
+		{
+			"a": 39,
+			"arc": "a47",
+			"c": 99,
+			"composite": "c99j3n6a39p8",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 42.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 13.0
+				}
+			],
+			"date": "2026-08-27 03:00:00",
+			"hash": "46fe061197a4aa22d92386d7b39c72acfd2afe9f",
+			"j": 3,
+			"model_id": "claude-sonnet-4",
+			"mood": "triumphierend",
+			"n": 6,
+			"narrator": "Devin",
+			"p": 8,
+			"p_id": 99,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Flux",
+			"seq": 99,
+			"subject": "Devin sagt: DOKI chain sync — artifacts nach Staffelfinale — nach Flux",
+			"summary": "Das Muster ist erkennbar: Jeder Commit erzeugt eine Artefakt-Spur. Jede Spur muss den nächsten Commit überleben. Die Kette ist der Beweis, dass kein Schritt vergessen wurde — nicht der Erste, nicht..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
@@ -7920,6 +7962,10 @@
 		},
 		{
 			"at_hash": "f76388e32f4432b73ffffab05230ab86149002cd",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		},
+		{
+			"at_hash": "46fe061197a4aa22d92386d7b39c72acfd2afe9f",
 			"note": "Anker nach rebase/amend/force-push neu verankert."
 		}
 	]
