@@ -71,7 +71,7 @@ graph TD
 
 | Dokument | Pfad | Zweck & Inhalt |
 |:---|:---|:---|
-| **System-Architektur** | [`ARCHITECTURE.md`](../ARCHITECTURE.md) | **Harte technische Ground Truth:** Godot 4.7 Specs, CLI-Suchtools (`concept_search`, `global_search`), SSO Domänen-Modell (`GameState`), 43 Preflight-Constraints, DOKI & S.C.O.U.T. Tooling, Transit- & KI-Formeln. |
+| **System-Architektur** | [`ARCHITECTURE.md`](../ARCHITECTURE.md) | **Harte technische Ground Truth:** Godot 4.7 Specs, CLI-Suchtools (`concept_search`, `global_search`), SSO Domänen-Modell (`GameState`), 44 Preflight-Constraints, DOKI & S.C.O.U.T. Tooling, Transit- & KI-Formeln. |
 | **System-Spezifikation** | [`DESIGN.md`](../DESIGN.md) | **Verbindlicher technischer MVP-Vertrag** (*„Code schlägt Dokument“*). Enthält deterministische Algorithmen (Flugzeit, Dispatch, Combat-Resolve), GameState-Fassadenarchitektur mit 4 Domänen-Managern, unendliche Chunk-Welt, aktuelle Layer-2/3-Replays und Feature-Matrix. |
 
 ---

@@ -613,7 +613,7 @@
 			"p_id": 74.0
 		},
 		"29f116052982103192d22e4236c9028f888eba1d": {
-			"c": 89,
+			"c": 89.0,
 			"composite": "c89j15n14a9p79",
 			"entities": [
 				"F-002",
@@ -631,7 +631,7 @@
 				"F-001",
 				"F-388"
 			],
-			"p_id": 89
+			"p_id": 89.0
 		},
 		"2a1018160b75ec35334a1a56f55aa4daedc376da": {
 			"c": 34.0,
@@ -1578,6 +1578,24 @@
 				"F-001"
 			],
 			"p_id": 79.0
+		},
+		"b867cd73672f31089b8b97eb344ed66b58602b37": {
+			"c": 90,
+			"composite": "c90j60n7a38p49",
+			"entities": [
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-389",
+				"F-390",
+				"F-283",
+				"C-849",
+				"C-850",
+				"C-743"
+			],
+			"p_id": 90
 		},
 		"ba8f048015e26b4d428c7575b2f1642005ad4118": {
 			"c": 78.0,
@@ -14965,10 +14983,16 @@
 						170.0
 					],
 					"p_id": 69.0
+				},
+				{
+					"lines": [
+						175.0
+					],
+					"p_id": 90.0
 				}
 			],
 			"id": "C-743",
-			"last_p": 69.0,
+			"last_p": 90.0,
 			"name": "_extract_real_factions",
 			"path": "scripts/history/world_chronicle.gd",
 			"status": "modified",
@@ -16762,6 +16786,40 @@
 			"last_p": 88.0,
 			"name": "get_and_clear_historical_handoff",
 			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-849": {
+			"first_p": 90.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 90.0
+				}
+			],
+			"id": "C-849",
+			"last_p": 90.0,
+			"name": "FactionProfiles",
+			"path": "scripts/history/simulation/faction_profiles.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-850": {
+			"first_p": 90.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 90.0
+				}
+			],
+			"id": "C-850",
+			"last_p": 90.0,
+			"name": "PROFILES_PATH",
+			"path": "scripts/history/simulation/faction_profiles.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -20642,6 +20700,26 @@
 			"last_p": 89.0,
 			"name": "task_plan.md",
 			"path": "task_plan.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-389": {
+			"first_p": 90.0,
+			"history": [],
+			"id": "F-389",
+			"last_p": 90.0,
+			"name": "simulation_profiles.json",
+			"path": "scripts/history/data/simulation_profiles.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-390": {
+			"first_p": 90.0,
+			"history": [],
+			"id": "F-390",
+			"last_p": 90.0,
+			"name": "faction_profiles.gd",
+			"path": "scripts/history/simulation/faction_profiles.gd",
 			"status": "created",
 			"type": "file"
 		}

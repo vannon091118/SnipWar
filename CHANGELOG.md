@@ -1646,3 +1646,18 @@ R-003: Repo-Hygiene — 8 veraltete Tracked-Files entfernt (kilo.json, PLAN.md, 
 - progress.md: Dokumentation aktualisiert (F-387).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
 - task_plan.md: Dokumentation aktualisiert (F-388).
+
+## 2026-08-27 18:00:00 — p90 · c90j60n7a38p49 · Argos · sachlich
+
+**Argos: 8 Dateien — R-SIM-001: Dynamische Fraktion… — nach Sage**
+
+R-SIM-001: Dynamische Fraktionsprofile — 14 Profile aus JSON, deterministisch via (sim_seed+fid.hash())%14, Hardcoded if/elif entfernt, Determinismus 87/87
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- ROADMAP.md: Implementiert und integriert (F-376).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/history/data/simulation_profiles.json: Implementiert und integriert (F-389).
+- scripts/history/simulation/faction_profiles.gd: Implementiert und integriert (F-390).
+- scripts/history/world_chronicle.gd: Implementiert und integriert (F-283).

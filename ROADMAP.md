@@ -36,7 +36,7 @@ docs/modules/  ← nur echte Modulverträge (API/Datenmodell/Invarianten), keine
 - **P0-Bug (FIXED):** `NEUES SPIEL → Identität → historical_world` bootete mit leerer Chronik — **R-050 schließt** (RunPreparation vor Szenenwechsel; historical_world_flow_test 11/11; historical_world-Constraint 11/11, Preflight 44/44).
 - Signal-Heuristik „0 Consumers = tot“ **widerlegt** (F-212): 6/38 GameState-Signale ohne externe `.connect()` — darunter akzeptierte Anker (`mid_game_started`, `transit_changed`, `run_started`, `planet_building_placed/destroyed`). `battle_context_changed` ist Mechanik-Anker der Combat-Mechanik (MechanicRegistry-Reflection + scenarios/*.tres), `run_started`/`ship_launched`/`milestone_reached` sind Compatibility-Facade mit kanonischen EventBus-Zwillingen.
 - ConceptIndex: 3 unmapped Klassen (GameConstants, FactionAI, PreflightCodeIndex).
-- Kein zentraler Test-Orchestrator; `scripts/history/test_determinism.gd` liegt außerhalb von `scripts/testing/`.
+- Test-Orchestrator etabliert (`scripts/testing/test_all.gd`); `test_determinism.gd` nach `scripts/testing/` verschoben.
 
 ---
 
