@@ -1143,7 +1143,7 @@
 			"p_id": 42.0
 		},
 		"8cab9f7ab5cebf83cdcdbf4e2af085a2da35ea7f": {
-			"c": 76,
+			"c": 76.0,
 			"composite": "c76j72n1a15p15",
 			"entities": [
 				"F-002",
@@ -1161,7 +1161,7 @@
 				"C-819",
 				"C-475"
 			],
-			"p_id": 76
+			"p_id": 76.0
 		},
 		"8d9d9f4ad24a1baba88e4c08fe114bd1767178e9": {
 			"c": 46.0,
@@ -1232,6 +1232,19 @@
 				"C-001"
 			],
 			"p_id": 11.0
+		},
+		"aa6d580eb6043d2acb4699370060a8073ca1bf95": {
+			"c": 77,
+			"composite": "c77j5n7a36p16",
+			"entities": [
+				"F-002",
+				"F-091",
+				"F-003",
+				"F-374",
+				"F-004",
+				"F-001"
+			],
+			"p_id": 77
 		},
 		"ab080dcd1543ee47db628b2abba91fe7846cc852": {
 			"c": 41.0,
@@ -19767,6 +19780,16 @@
 			"last_p": 75.0,
 			"name": "scene_director.gd",
 			"path": "scripts/ui/scene_director.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-374": {
+			"first_p": 77.0,
+			"history": [],
+			"id": "F-374",
+			"last_p": 77.0,
+			"name": "DEVELOPMENT_PROTOCOL.md",
+			"path": "docs/DEVELOPMENT_PROTOCOL.md",
 			"status": "created",
 			"type": "file"
 		}

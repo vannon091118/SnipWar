@@ -1443,3 +1443,16 @@ Phase 1 war chains: war_archive in WorldState, exact war chains from archive, Sn
 - scripts/history/simulation/history_simulator.gd: Implementiert und integriert (F-279).
 - scripts/history/simulation/world_state.gd: Implementiert und integriert (F-281).
 - scripts/history/world_chronicle.gd: Implementiert und integriert (F-283).
+
+## 2026-08-27 05:00:00 — p77 · c77j5n7a36p16 · Argos · neugierig
+
+**Argos: 6 Dateien — Phase 1 portability protocol a… — nach Buffy**
+
+Phase 1 portability protocol and remote continuation package
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- PLAN.md: Implementiert und integriert (F-091).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/DEVELOPMENT_PROTOCOL.md: Implementiert und integriert (F-374).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).

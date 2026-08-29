@@ -1762,11 +1762,19 @@
 			"climax_weight": 3.0,
 			"id": "a38",
 			"name": "Mehrketten-Mitgliedschaft",
+			"seen_entities": [
+				"F-002",
+				"F-091",
+				"F-003",
+				"F-374",
+				"F-004",
+				"F-001"
+			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Titel-Pool, resolve_chain_title und der vierte Chronicle-Tab.",
 			"version": "",
-			"weight": 0.0
+			"weight": 2.3
 		},
 		"a4": {
 			"climax_weight": 3.0,

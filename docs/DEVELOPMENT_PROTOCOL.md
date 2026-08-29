@@ -8,6 +8,7 @@
 - Godot `4.7.2-stable` als Console-Binary
 - Python `>=3.11` für `narrative_runtime`
 - Node.js nur für MCP-/E2E-Werkzeuge, sofern diese Phase sie benötigt
+- vollständiges PC-Profil nach [`PC_DEVELOPMENT_PROFILE.md`](PC_DEVELOPMENT_PROFILE.md)
 - identischer Repository-Checkout; keine lokalen Änderungen vor dem Pull verwerfen
 
 ## 2. Erstes Einrichten auf dem zweiten System
@@ -34,7 +35,11 @@ Danach einmal den Godot-Klassenscan ausführen:
 
 `.uid`-Dateien gehören zum Repository und dürfen nicht gelöscht werden.
 
-## 3. Arbeitsbeginn
+## 3. PC-Gesundheit vor Entwicklungsbeginn
+
+Vor einem Rechnerwechsel oder einer längeren Testphase das [PC-Entwicklungsprofil](PC_DEVELOPMENT_PROFILE.md) ausfüllen. Hardwarewerte werden gemessen, nicht geschätzt. RAM-Takt, CPU/GPU-Temperaturen, SMART/NVMe-Zustand, I/O-Fehler, Stromversorgung und Stabilitätstests sind eigene Nachweise und werden nicht durch einen bestandenen Godot-Test ersetzt.
+
+## 4. Arbeitsbeginn
 
 ```bash
 git status --short --branch
@@ -52,7 +57,7 @@ Vor Änderungen lesen:
 
 Keine lokalen Änderungen anderer Arbeitsstände überschreiben, stashen oder zurücksetzen.
 
-## 4. Architekturverträge
+## 5. Architekturverträge
 
 - `GameState` ist die einzige autoritative Live-Spielwelt.
 - `WorldState` ist nur temporärer Vorgeschichts-Simulationszustand.
@@ -62,7 +67,7 @@ Keine lokalen Änderungen anderer Arbeitsstände überschreiben, stashen oder zu
 - DOKI bleibt reines Commit-Gate und wird nicht mit der Spielhistorie gekoppelt.
 - Slot 0 ist ein echter Spielstand und darf für Tests nie gelöscht oder überschrieben werden.
 
-## 5. Verifikation vor Commit
+## 6. Verifikation vor Commit
 
 ```bash
 "$GODOT_BIN" --headless --path . --script res://scripts/testing/compile_gate.gd
@@ -74,7 +79,7 @@ Keine lokalen Änderungen anderer Arbeitsstände überschreiben, stashen oder zu
 
 Erwartung: `RESULT: PASSED`. Headless-RID-Leaks und Reload-Rauschen sind nur dann akzeptabel, wenn der Prozess mit Erfolg beendet und die Assertions bestanden sind.
 
-## 6. DOKI-Commitablauf
+## 7. DOKI-Commitablauf
 
 Direkte Commits ohne DOKI sind verboten:
 
@@ -94,7 +99,7 @@ Bei einem abgebrochenen Flow:
 
 DOKI-Artefakte (`narrative_chain.json`, `change_index.json`, `CHANGELOG.md`, `scripts/doki/data/arcs.json`) werden vom Flow verwaltet. Sie nicht manuell rekonstruieren.
 
-## 7. Sicheres Synchronisieren zwischen Systemen
+## 8. Sicheres Synchronisieren zwischen Systemen
 
 ```bash
 git status --short --branch
@@ -109,7 +114,7 @@ git switch -c phase-1/<kurzer-name>
 
 Vor dem Wechsel zwischen Systemen müssen Änderungen entweder committed und gepusht oder bewusst lokal dokumentiert sein. Uncommitted DOKI-Sessions nicht auf das zweite System übertragen; dort `doki repair` ausführen.
 
-## 8. Phase-1-Arbeitsprotokoll
+## 9. Phase-1-Arbeitsprotokoll
 
 Jede Arbeitseinheit dokumentiert:
 
@@ -122,6 +127,6 @@ Jede Arbeitseinheit dokumentiert:
 
 Das Protokoll gehört in den Commit-Body bzw. in die passende Dokumentation; es ersetzt keine Tests und keine Findings.
 
-## 9. Fehlerregel
+## 10. Fehlerregel
 
 Ein Parserfehler, ein fehlgeschlagener Preflight oder ein verletzter Architekturvertrag stoppt die Arbeitseinheit. Erst Root Cause beheben, dann erneut vollständig verifizieren. Keine Skips, Workarounds oder erwarteten Fehler als Erfolg behandeln.
