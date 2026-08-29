@@ -30,12 +30,40 @@ func simulate(
 	years: int = 300,
 	figure_catalog: FigureCatalog = null
 ) -> Dictionary:
+	return _simulate_internal(initial_factions, initial_planets, seed, years, figure_catalog, 0)
+
+
+## Wie simulate(), erzeugt zusätzlich eine Snapshot-Reihe für die
+## Historical-Presentation (Playback/Renderer). Die Snapshot-Ableitung ist
+## AUSSCHLIESSLICH lesend (kein RNG-Zugriff, keine Event-Mutation) — damit
+## bleibt die Event-Folge byte-identisch zu simulate().
+func simulate_with_snapshots(
+	initial_factions: Dictionary,
+	initial_planets: Dictionary,
+	seed: int,
+	years: int = 300,
+	figure_catalog: FigureCatalog = null,
+	snapshot_interval: int = 25
+) -> Dictionary:
+	return _simulate_internal(initial_factions, initial_planets, seed, years, figure_catalog, maxi(snapshot_interval, 1))
+
+
+func _simulate_internal(
+	initial_factions: Dictionary,
+	initial_planets: Dictionary,
+	seed: int,
+	years: int,
+	figure_catalog: FigureCatalog,
+	snapshot_interval: int
+) -> Dictionary:
 	_figure_catalog = figure_catalog
 	events.clear()
 	biographies.clear()
 	final_relationships.clear()
 	_recent_events.clear()
 	_last_significant_event_by_faction.clear()
+
+	var snapshots: Array[HistoricalSnapshot] = []
 
 	var world := WorldState.new()
 	world.reset(initial_factions, initial_planets, -years)
@@ -68,6 +96,10 @@ func simulate(
 		# E. Stimmungen der Fraktionen anpassen
 		_update_faction_moods(world)
 
+		# Snapshot nur lesend ableiten (Determinismus-Vertrag: kein RNG, keine Mutation)
+		if snapshot_interval > 0 and ((y + 1) % snapshot_interval == 0 or y == years - 1):
+			snapshots.append(_capture_snapshot(world))
+
 	# 3. Finale Beziehungen erfassen
 	for fid_a in world.faction_ids():
 		for fid_b in world.faction_ids():
@@ -78,11 +110,27 @@ func simulate(
 	# 4. Biografien synchronisieren
 	_sync_biographies(world)
 
-	return {
+	var result := {
 		"events": events,
 		"biographies": biographies,
 		"final_relationships": final_relationships,
 	}
+	if snapshot_interval > 0:
+		result["snapshots"] = snapshots
+	return result
+
+
+## Lesende Snapshot-Ableitung: Ownership aus WorldState, Events bis zum
+## aktuellen Jahr. Verändert weder WorldState noch events (Determinismus).
+func _capture_snapshot(world: WorldState) -> HistoricalSnapshot:
+	var snapshot := HistoricalSnapshot.new()
+	snapshot.year = world.year
+	for pid in world.planets:
+		snapshot.ownership[pid] = world.planet_owner(pid as StringName)
+	for event in events:
+		if event.year <= world.year:
+			snapshot.events.append(event)
+	return snapshot
 
 
 func _spawn_initial_characters(world: WorldState, rng: RandomNumberGenerator) -> void:

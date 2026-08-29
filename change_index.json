@@ -1020,7 +1020,7 @@
 			"p_id": 46.0
 		},
 		"a0e0702ce8c7660eb22f04ac0e09478336ee6689": {
-			"c": 67,
+			"c": 67.0,
 			"composite": "c67j75n12a23p47",
 			"entities": [
 				"F-002",
@@ -1036,7 +1036,7 @@
 				"C-702",
 				"C-703"
 			],
-			"p_id": 67
+			"p_id": 67.0
 		},
 		"a36707d4cf6285ad4e0ff2a6d1f348cbc6a343d0": {
 			"c": 29.0,
@@ -1540,6 +1540,23 @@
 				"C-542"
 			],
 			"p_id": 60.0
+		},
+		"ee61de447792fbdc82e85061df4e6157293bef42": {
+			"c": 68,
+			"composite": "c68j96n3a24p24",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-057",
+				"F-330",
+				"F-331",
+				"F-332",
+				"F-067",
+				"C-704"
+			],
+			"p_id": 68
 		},
 		"efc07a25345c759262292b4f6e5ae67f846412a7": {
 			"c": 39.0,
@@ -13742,6 +13759,23 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-704": {
+			"first_p": 68.0,
+			"history": [
+				{
+					"lines": [
+						99.0
+					],
+					"p_id": 68.0
+				}
+			],
+			"id": "C-704",
+			"last_p": 68.0,
+			"name": "_economy_manager_from_state",
+			"path": "scripts/ui/economy_window.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -17029,6 +17063,36 @@
 			"last_p": 65.0,
 			"name": "technology_definition.gd",
 			"path": "scripts/config/technology_definition.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-330": {
+			"first_p": 68.0,
+			"history": [],
+			"id": "F-330",
+			"last_p": 68.0,
+			"name": "planet_network_ui.gd",
+			"path": "scripts/objects/planets/planet_network_ui.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-331": {
+			"first_p": 68.0,
+			"history": [],
+			"id": "F-331",
+			"last_p": 68.0,
+			"name": "seeded_layout.gd",
+			"path": "scripts/objects/seeded_layout.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-332": {
+			"first_p": 68.0,
+			"history": [],
+			"id": "F-332",
+			"last_p": 68.0,
+			"name": "economy_window.gd",
+			"path": "scripts/ui/economy_window.gd",
 			"status": "created",
 			"type": "file"
 		}

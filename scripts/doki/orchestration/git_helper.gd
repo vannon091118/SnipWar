@@ -80,6 +80,68 @@ func diff_cached() -> String:
 	return r["stdout"] if r["ok"] else ""
 
 
+
+## Runs the repository's two search tools against the current checkout and
+## returns their complete stdout. Search is mandatory for every prepare run:
+## an agent receives the tool output instead of having to grep manually.
+func search_context(staged: Array, impulse: String) -> Dictionary:
+	var query: String = _search_query(staged, impulse)
+	if query.is_empty():
+		return {"ok": false, "error": "Search-Kontext konnte keine Suchbegriffe aus Impuls/Scope ableiten."}
+
+	# The search tools are separate CLIs. Never launch the current DOKI CLI
+	# executable here: that would recurse into doki.gd and hang indefinitely.
+	var global_result: Dictionary = _run_search_tool("res://scripts/global_search.gd", [
+		query, "--type", "gd", "--context", "3", "--max", "100",
+	])
+	if not global_result["ok"]:
+		return {"ok": false, "error": "Global Search fehlgeschlagen (Exit %d): %s" % [int(global_result["exit_code"]), str(global_result["stderr"])]}
+
+	var concept_index := preload("res://scripts/concept_index.gd").new()
+	var concepts: Array = []
+	for entry in concept_index.search(query):
+		concepts.append(entry.to_dict())
+	return {
+		"ok": true,
+		"query": query,
+		"scope": staged.duplicate(),
+		"global_search": str(global_result["stdout"]),
+		"concept_search": JSON.stringify({"query": query, "results": concepts}),
+		"complete": true,
+	}
+
+
+func _run_search_tool(script_path: String, tool_args: Array) -> Dictionary:
+	var output: Array = []
+	var args: Array = ["--headless", "--path", _repo_root, "--script", script_path]
+	args.append_array(tool_args)
+	var godot_bin: String = OS.get_environment("GODOT_BIN")
+	if godot_bin.is_empty():
+		return {"ok": false, "stdout": "", "stderr": "GODOT_BIN ist nicht gesetzt", "exit_code": 127}
+	var exit_code: int = OS.execute(godot_bin, args, output, true)
+	return {
+		"ok": exit_code == 0,
+		"stdout": str(output[0]) if output.size() > 0 else "",
+		"stderr": str(output[1]) if output.size() > 1 else "",
+		"exit_code": exit_code,
+	}
+
+
+static func _search_query(staged: Array, impulse: String) -> String:
+	var terms: Array[String] = []
+	for path in staged:
+		var token: String = str(path).get_file().get_basename().strip_edges().to_lower()
+		if token.length() >= 4 and not terms.has(token):
+			terms.append(token)
+	for raw in impulse.to_lower().split(" "):
+		var token: String = str(raw).strip_edges().trim_suffix(".").trim_suffix(",")
+		if token.length() >= 4 and not terms.has(token):
+			terms.append(token)
+		if terms.size() >= 16:
+			break
+	return "|".join(terms)
+
+
 ## Ungestagte Diffs auf Doku-Dateien (Check 8).
 ## CRLF-Warnzeilen („warning: ... LF will be replaced by CRLF“) werden
 ## gefiltert — sie sind kein Diff.

@@ -31,6 +31,7 @@ func _build_system_prompt(ctx: Dictionary) -> String:
 	var prev_narrator: String = str(ctx.get("prev_narrator", ""))
 	var relationship: Dictionary = ctx.get("relationship", {})
 	var sideplot: Dictionary = ctx.get("sideplot", {})
+	var search_context: Dictionary = ctx.get("search_context", {})
 	var mood: String = str(ctx.get("mood", ""))
 
 	var prompt: String = "DU BIST: %s (%s).\n" % [name, role]
@@ -92,6 +93,9 @@ func _build_system_prompt(ctx: Dictionary) -> String:
 		prompt += "- Erwähne %s natürlich im Text — nicht als Token, sondern als Teil der Geschichte.\n" % prev_narrator
 	prompt += "- Kausale Konnektoren sind Pflicht (weil, deshalb, daher, folglich) — aber eingewoben.\n"
 	prompt += "- Die Dateien am Ende sind die Spuren deiner Arbeit, nicht 'betroffen'.\n"
+	prompt += "- Der folgende Suchkontext ist vollständig und verbindlich; er wurde automatisch durch die Runtime erzeugt. Lies alle Treffer und Abhängigkeiten, bevor du schreibst.\n"
+	if not search_context.is_empty():
+		prompt += "\nAUTOMATISCHER SUCHKONTEXT (VOLLSTÄNDIG):\n%s\n" % JSON.stringify(search_context)
 
 	# Side-Plot (Merge)
 	if not sideplot.is_empty():
@@ -128,7 +132,7 @@ func _build_user_prompt(ctx: Dictionary) -> String:
 			prompt += "- AUSBLICK: Schlage am Ende des Epilogs EINEN Namen und EIN Thema für den NÄCHSTEN Arc vor (Format: 'NÄCHSTER ARC: <Name> — <Thema>').\n"
 			prompt += "Der neue Arc MUSS auf der realen Arbeit basieren, die in den letzten Commits passiert ist.\n\n"
 		else:
-			prompt += "\n!!! WARTUNGSABSCHNITT — Arc '%s' gewichtet sich, aber dieser Commit ist WARTUNG.\n" % str(ctx.get("arc_name", "?"))
+			prompt += "\n!!! WARTUNGSABSCHNITT — Arc '%s' bleibt unverändert; dieser Commit ist WARTUNG.\n" % str(ctx.get("arc_name", "?"))
 			prompt += "Der Arc geht weiter — dieser Fix/Doku/Trivial-Commit ist kein Höhepunkt.\n"
 			prompt += "Erzähle ihn als nötige Arbeit, die den Weg freimacht für das nächste große Thema.\n\n"
 
@@ -150,6 +154,10 @@ func _build_user_prompt(ctx: Dictionary) -> String:
 
 	# Side-Plot: Branch-Commits auflisten
 	var sideplot: Dictionary = ctx.get("sideplot", {})
+	var search_context: Dictionary = ctx.get("search_context", {})
+	if not search_context.is_empty():
+		prompt += "\nSEARCH-VERTRAG: %s\n" % str(ctx.get("search_contract", "Lies den vollständigen Suchkontext."))
+		prompt += "Der Suchkontext umfasst den kompletten Output von Global Search und Concept Search. Keine manuelle Suche und kein Auslassen von Treffern.\n"
 	if not sideplot.is_empty():
 		var summary: String = str(sideplot.get("commit_summary", ""))
 		if not summary.is_empty():

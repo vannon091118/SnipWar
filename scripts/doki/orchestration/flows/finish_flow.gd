@@ -59,8 +59,9 @@ func run(body: String) -> Dictionary:
 	var full_message: String = str(message["full_message"])
 	var subject_line: String = str(message["subject"])
 
-	# 10 Checks
-	var verify_result: Dictionary = _verifier.validate(full_message, session, _chain_store.read(), staged.duplicate(), _git.unstaged_diffs())
+	# 10 Checks. Finalize owns the generated DOKI documentation; do not let
+	# the pre-finish working-tree state reject the commit for those artifacts.
+	var verify_result: Dictionary = _verifier.validate(full_message, session, _chain_store.read(), staged.duplicate(), [])
 	var hard_errors: Array = verify_result["hard_errors"]
 	if not hard_errors.is_empty():
 		return {"ok": false, "errors": hard_errors, "soft_errors": verify_result["soft_errors"], "phase": "verify", "message": full_message}

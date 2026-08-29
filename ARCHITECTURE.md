@@ -5,7 +5,7 @@
 **VERBINDLICHE ENGINE-SPEZIFIKATION · DETERMINISTISCHE VERTRÄGE · REPRODUZIERBARE ENGINE-STATE-WELT**
 
 [![Engine: Godot 4.7](https://img.shields.io/badge/Engine-Godot%204.7-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/)
-[![Preflight](https://img.shields.io/badge/Preflight-38%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-prüfsequenz--automatisierte-vertragsverifizierung)
+[![Preflight](https://img.shields.io/badge/Preflight-43%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-automatisierte-preflight-suite-v2-architecture)
 [![Sprache: GDScript](https://img.shields.io/badge/GDScript-4.7-blue?style=for-the-badge)](#-architektur--vom-katalog-zum-spielstand)
 
 </div>
@@ -31,7 +31,7 @@
 # Smoke-Test (Bootet Hauptszene, beendet nach 2 Sekunden)
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Vollständige Preflight-Prüfung (38 Constraints)
+# Vollständige Preflight-Prüfung (43 Constraints)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x
 ```
 
@@ -207,48 +207,94 @@ Die Preflight-Suite in `scripts/preflight.gd` ist ein maßgeschnederter, Headles
 - `--reverse`: Führt Constraints in umgekehrter Reihenfolge aus (Isolations-Test).
 - `--list`: Listet alle registrierten Constraints auf.
 
-### Die 38 Preflight-Constraints
+### Die 43 Preflight-Constraints
 
 | # | Constraint | Test-Fokus | Execution Mode |
 |:---:|:---|:---|:---:|
-| 1 | `game_state_compatibility` | GameState Fassaden-Methoden & Signal-Signaturen | Pure |
-| 2 | `effects_and_traits` | Modifikatoren-, Trait- & Effektrechnungen | Pure |
-| 3 | `flight_and_dispatch` | `FlightTime.seconds_for()` & Cluster-Packing | Pure |
-| 4 | `world_generator_scaling` | Deterministische Welt- & Katalog-Generierung | Pure |
-| 5 | `navigation_growth` | Waypoint-Graphen & KNN-NavigationField | Pure |
-| 6 | `scene_boot` | Bootszenen-Hierarchie & Viewport-Handling | Scene |
-| 7 | `resources_and_seed` | Seed-Invarianz & `deal_resources()` | Pure |
-| 8 | `world_planets_and_dispatch` | Planeten-Netzwerk & Routen-Erstellung | Scene |
-| 9 | `world_details_and_scale` | Planeten-Größenprofile & Detail-Seeds | Scene |
-| 10 | `upgrade_catalog` | Upgrades, Voraussetzungen & Exklusivitäten | Pure |
-| 11 | `economy_production` | Upgrades, Produktions-Boosts & Raffinerie-Konvertierung | Pure |
-| 12 | `mission_semantics` | Military/Colony/Cargo/Collect Missionsregeln | Pure |
-| 13 | `cpu_dispatch` | `CpuDispatchAI` Pacing & Reserve-Schwellen | Pure |
-| 14 | `selection_and_context` | `SelectionService` & Kontextmenü-Gating | Scene |
-| 15 | `scout_and_discovery` | Scout-Flug, Scan-Intel & Fog-of-War | Scene |
-| 16 | `ship_catalog_and_assembly` | Teile-Katalog, Rumpfmontage & Tech-Gating | Pure |
-| 17 | `ship_transit_and_arrival` | ShipBase Transit & Conquest/Battle Triggers | Scene |
-| 18 | `colony_milestone` | Friedliche Besiedlung & `first_colony` Milestone | Scene |
-| 19 | `event_log` | Event-Logging, Toasts & Dateiexport | Pure |
-| 20 | `camera_and_input` | MapCamera Pan/Zoom & Bounds | Scene |
-| 21 | `pause_and_context` | Modal-Hierarchie & Pausen-Gating | Scene |
-| 22 | `layers_2_and_3` | Layer-2 & Layer-3 Simulator-Replays | Pure |
-| 23 | `ingame_player_and_transitions` | IngamePlayerControls & FloatingText | Scene |
-| 24 | `sector_classification` | Sektor-Typisierung & Flavor-Zuordnung | Pure |
-| 25 | `grid_system` | Conquest-Grid & Coordinate Mapping | Pure |
-| 26 | `local_resources` | Lokale Planeten-Ressourcen-Verträge | Pure |
-| 27 | `conquest_grid_combat` | Conquest Grid-Kampf-Simulation | Pure |
-| 28 | `paper_style` | Paper-Visuallinie & Asset-Integrität | Pure |
-| 29 | `chunk_expansion` | Prozedurale Chunk-Erweiterung & FoV-Cycling | Pure |
-| 30 | `main_menu_and_flow` | Hauptmenü-Flow & Continue-Status | Scene |
-| 31 | `context_handover` | SceneDirector Handover & Battle-Kontext | Scene |
-| 32 | `save_game_roundtrip` | Verlustfreier Save/Load Roundtrip | Pure |
-| 33 | `save_game_slots` | Save-Slot Write/Read/Corruption Checks | Pure |
-| 34 | `mechanic_coverage` | Mechanik-Erkennung & Szenario-Abdeckung | Pure |
-| 35 | `concept_index` | Semantischer ConceptIndex & Class-Mapping | Pure |
-| 36 | `dead_code` | Dead-Code-Heuristik (Warning-only) | Pure |
-| 37 | `global_search` | Global Search Engine Werkzeug-Test | Pure |
-| 38 | `mcp_capture_contract` | MCP Capture Vertrag (Async-only, Texture-Ready) | Scene |
+| 1 | `camera_and_input` | MapCamera Pan/Zoom & Bounds | Scene |
+| 2 | `chunk_expansion` | Prozedurale Chunk-Erweiterung & FoV-Cycling | Pure |
+| 3 | `cluster_generation` | Cluster-Generierung & Sektor-Flavor | Pure |
+| 4 | `colony_milestone` | Friedliche Besiedlung & `first_colony` Milestone | Scene |
+| 5 | `concept_index` | Semantischer ConceptIndex & Class-Mapping | Pure |
+| 6 | `conquest_grid_combat` | Conquest Grid-Kampf-Simulation | Scene |
+| 7 | `context_handover` | SceneDirector Handover & Battle-Kontext | Scene |
+| 8 | `cpu_dispatch` | `CpuDispatchAI` Pacing & Reserve-Schwellen | Scene |
+| 9 | `dead_code` | Dead-Code-Heuristik (Warning-only) | Pure |
+| 10 | `docs_integrity` | Duplicate-Headings & Markdown-Tabellen-Integrität | Pure |
+| 11 | `economy_production` | Upgrades, Produktions-Boosts & Raffinerie-Konvertierung | Scene |
+| 12 | `effects_and_traits` | Modifikatoren-, Trait- & Effektrechnungen | Pure |
+| 13 | `event_log` | Event-Logging, Toasts & Dateiexport | Scene |
+| 14 | `flight_and_dispatch` | `FlightTime.seconds_for()` & Cluster-Packing | Pure |
+| 15 | `game_state_compatibility` | GameState Fassaden-Methoden & Signal-Signaturen | Scene |
+| 16 | `global_search` | Global Search Engine Werkzeug-Test | Pure |
+| 17 | `grid_system` | Conquest-Grid & Coordinate Mapping | Scene |
+| 18 | `ingame_player_and_transitions` | IngamePlayerControls & FloatingText | Scene |
+| 19 | `layers_2_and_3` | Layer-2 & Layer-3 Simulator-Replays | Scene |
+| 20 | `layer_independence` | Layer-Isolation & Fixture-Hygiene | Scene |
+| 21 | `local_resources` | Lokale Planeten-Ressourcen-Verträge | Scene |
+| 22 | `main_menu_and_flow` | Hauptmenü-Flow & Continue-Status | Scene |
+| 23 | `mcp_capture_contract` | MCP Capture Vertrag (Async-only, Texture-Ready) | Pure |
+| 24 | `mechanic_coverage` | Mechanik-Erkennung & Szenario-Abdeckung | Pure |
+| 25 | `mission_semantics` | Military/Colony/Cargo/Collect Missionsregeln | Scene |
+| 26 | `module_damage_model` | Modul-Schadensmodell (Konquest) | Pure |
+| 27 | `narrative_runtime` | Narrative Runtime Gate G1–G24 (fail-closed, read-only) | Pure |
+| 28 | `navigation_growth` | Waypoint-Graphen & KNN-NavigationField | Pure |
+| 29 | `paper_style` | Paper-Visuallinie & Asset-Integrität | Pure |
+| 30 | `pause_and_context` | Modal-Hierarchie & Pausen-Gating | Scene |
+| 31 | `research_ship` | Forschungs-Schiff & Auftragslogik | Scene |
+| 32 | `resources_and_seed` | Seed-Invarianz & `deal_resources()` | Scene |
+| 33 | `save_game_roundtrip` | Verlustfreier Save/Load Roundtrip **+ Chronicle-Payload-Vertrag** | Scene |
+| 34 | `save_game_slots` | Save-Slot Write/Read/Corruption Checks | Pure |
+| 35 | `scene_boot` | Bootszenen-Hierarchie & Viewport-Handling | Scene |
+| 36 | `sector_classification` | Sektor-Typisierung & Flavor-Zuordnung | Pure |
+| 37 | `selection_and_context` | `SelectionService` & Kontextmenü-Gating | Scene |
+| 38 | `ship_catalog_and_assembly` | Teile-Katalog, Rumpfmontage & Tech-Gating | Scene |
+| 39 | `ship_transit_and_arrival` | ShipBase Transit & Conquest/Battle Triggers | Scene |
+| 40 | `upgrade_catalog` | Upgrades, Voraussetzungen & Exklusivitäten | Pure |
+| 41 | `world_details_and_scale` | Planeten-Größenprofile & Detail-Seeds | Scene |
+| 42 | `world_generator_scaling` | Deterministische Welt- & Katalog-Generierung | Pure |
+| 43 | `world_planets_and_dispatch` | Planeten-Netzwerk & Routen-Erstellung | Scene |
+
+> [!NOTE]
+> Die Constraints 33 (`save_game_roundtrip`) und 27 (`narrative_runtime`) sind die
+> **Modularisierungs-Verträge**: Chronicle-Payload überlebt den Roundtrip
+> (4 Checks) und die Narrative Runtime bleibt konform (G1–G24).
+
+---
+
+## 🧱 MODULARISIERUNG & SEPARATION (Phasen 1–9, abgeschlossen)
+
+Adapter-first, contract-preserving: Keine RNG-Reihenfolge, kein Save-Schema,
+keine Gameplay-Regel wurde verändert. Details: `docs/FINDINGS.md`
+(„Modularisierung & Separation“) und `docs/INVENTORY_MATRIX.md`.
+
+### Verantwortungsgrenzen (real im Code)
+
+```text
+Config-Resources → GameConstants (dependency-frei)   [Phase 1]
+GameState        → EventBus → EventLog/WorldChronicle [Phase 2]
+WorldChronicle   → GameState nur via expliziter Input-Schnittstelle [Phase 3]
+Save             → RunSaveData inkl. ChronicleSaveData [Phase 4]
+Welt-Objekte     → register_* bei GameState statt Szenenbaum-Scans [Phase 5]
+UI               → get_economy_manager() statt Baum-Scans [Phase 6]
+Narrative        → narrative_runtime (Python) hinter CLI-Gate [Phase 7]
+Presentation     → Snapshot → Playback → Renderer (nur Snapshots) [Phase 8]
+Cleanup          → tote Pfade entfernt; Fallbacks dokumentiert [Phase 9]
+```
+
+### Neue Dateien (Phase 1–9)
+
+| Datei | Zweck |
+|-------|-------|
+| `scripts/config/game_constants.gd` | Dependency-freie StringName-Konstanten (Compile-Zyklus-Fix) |
+| `scripts/preflight/constraint_narrative_runtime.gd` | 43. Constraint: Narrative Gate fail-closed |
+| `scripts/history/historical_snapshot.gd` | Pure Snapshot-Datenklasse |
+| `scripts/history/playback_controller.gd` | Snapshot-Playback (nur Snapshots) |
+| `scripts/ui/history/historical_renderer.gd` | Snapshot-Renderer (SVG-Wiederverwendung) |
+| `scripts/testing/historical_playback_test.gd` | 18 Checks, Determinismus simulate==with_snapshots |
+| `docs/STRING_MATRIX.md` | Alle StringName-/Event-Konstanten |
+| `docs/INVENTORY_MATRIX.md` | Systemkarte: System → Datei → Klasse → API |
+| `docs/SEARCH_INDEX.md` | LLM-freundlicher Flach-Index (global_search-durchsuchbar) |
 
 ---
 

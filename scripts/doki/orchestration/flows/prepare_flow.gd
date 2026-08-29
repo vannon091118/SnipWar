@@ -141,13 +141,16 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	session["limits"] = limits.duplicate()
 
 	# Prompt bauen + Session + Datei schreiben
-	# Narrative Runtime is downstream-only. Context is intentionally not read
-	# during prepare: a missing/stale Python archive must never block or alter
-	# deterministic Composite/Narrator selection. Post-push tooling may export
-	# narrative_runtime/context separately.
+	# Search is executed by the runtime before prompt generation. The complete
+	# JSON/text output is embedded into the prompt; failure is fail-closed.
+	var search: Dictionary = _git.search_context(staged, impulse)
+	if not search["ok"]:
+		return {"ok": false, "error": str(search.get("error", "Automatische Suche fehlgeschlagen."))}
 	var ctx: Dictionary = _session_builder.build_narrative_context(session, narrator, analyze)
+	ctx["search_context"] = search
+	ctx["search_contract"] = "Read the COMPLETE Global Search JSON and Concept Search output before writing the body."
+	session["search_context"] = search
 	session["prompt"] = _voice.build_prompts(ctx)
 	_session_store.save(session)
 	var prompt_path: String = _artifacts.write_prompt_file(session["prompt"], str(session["narrator"]), str(session["mood"]))
-
 	return {"ok": true, "session": session, "prompt_path": prompt_path}

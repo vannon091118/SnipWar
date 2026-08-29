@@ -109,10 +109,9 @@ func run() -> Dictionary:
 	var next_arc: Dictionary = session.get("next_arc", {})
 	var arc_result: Dictionary = _arc_engine.advance(entity_ids, not (session.get("sideplot", {}) as Dictionary).is_empty(), impulse_class, next_arc)
 
-	# CHANGELOG + change_index persistieren (NACH dem Commit — transaktional,
-	# kein Orphan möglich) und alle narrative Dateien stagen: sie reisen mit dem
-	# NÄCHSTEN Commit. Sonst bliebe der Repo-Zustand dirty und Check 8 (DocSync)
-	# blockte den nächsten Commit.
+	# CHANGELOG + change_index persistieren und sofort für den nächsten Commit
+	# nachziehen. Diese vier Dateien sind DOKI-eigene Folgeartefakte, kein neuer
+	# Nutzer-Scope.
 	var date_str: String = _chain_store.entry_timestamp(int(session.get("p_id", 1)))
 	_artifacts.apply_finalize_artifacts(session, index, date_str)
 	var stage_res: Dictionary = _git.stage(["narrative_chain.json", "change_index.json", "scripts/doki/data/arcs.json", "CHANGELOG.md"])

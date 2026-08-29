@@ -44,7 +44,7 @@ $GODOT_BIN --headless --path . --script res://scripts/global_search.gd "func (_?
 
 ### 3. Preflight (Verbindlicher Qualitäts-Check)
 ```bash
-$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x   # Full Suite (40 Constraints, ~100s, V2 Architecture)
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x   # Full Suite (43 Constraints, ~65s, V2 Architecture)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd --filter=concept_index -v  # Einzelne Constraint
 ```
 **Verbindlich:** `RESULT: PASSED` — ERROR-Traces am Ende sind normales Headless-Rauschen.
@@ -274,6 +274,9 @@ ConceptIndex.new().by_domain("ships")
 - Resource/Waypoint-Skripte für `@tool` → **auch** `@tool`
 - `NavigationWaypoint.configure()` läuft **vor** `_enter_tree()` — kein `@onready`
 - `MultiMeshInstance2D` braucht `MultiMesh.mesh` (QuadMesh) **vor** `instance_count`
+- **`Array.map()` → typisiertes Array:** `Array.map()` liefert untypisierte Arrays — Zuweisung an `Array[StringName]`-Felder crasht zur Laufzeit (489 SCRIPT ERRORS beim Chronicle-Restore, Phase 1). Explizit typisierte Schleife nutzen: `var out: Array[StringName] = []; for x in src: out.append(x)`
+- **Config-Resource → Autoload-Zyklus:** Config-Klassen (`.tres`-geladen, von GameState preloadet) dürfen `GameState`-Konstanten NICHT als Default-Werte referenzieren — Compile-Zyklus `GameState → .tres → Config → GameState` bricht je nach Ladereihenfolge. Lösung: dependency-freie `GameConstants` (`scripts/config/game_constants.gd`)
+- **UID-Alphabet (Base32, 0-9a-v):** UIDs mit Zeichen außerhalb (z.B. `y/x/w`) werden vom Editor verworfen → `.tres`-Referenz unauflösbar. Sidecar-UIDs mit `--editor --quit` regenerieren lassen
 - `SceneTree.quit()` → **danach `return`** nötig
 - `.uid`-Sidecars (`*.gd.uid`) **mitcommitten** (nicht in `.gitignore`)
 - Neue `class_name` → Editor-Scan: `$GODOT_BIN --headless --path . --editor --quit`

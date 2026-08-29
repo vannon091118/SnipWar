@@ -16,7 +16,8 @@ if [ -z "$godot_bin" ] || [ ! -x "$godot_bin" ]; then
 	exit 1
 fi
 
-# 1) Preflight-Gate (Bestand)
+# 1) Preflight-Gate. DOKI-Dokumente können hier bereits von finalize
+# nachgezogen worden sein und gehören deshalb zum normalen DOKI-Index.
 "$godot_bin" --headless --path "$repo_root" --script res://scripts/preflight.gd
 
 # 2) Mechanische Gates (unabhängig, jedes mit eigenem Evidence-Artfakt in user://mcp_evidence/)

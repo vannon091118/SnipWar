@@ -1254,3 +1254,19 @@ refactor: decouple WorldChronicle and EventLog from direct GameState signals via
 - scripts/doki/data/arcs.json: Umstrukturiert (F-001).
 - scripts/state/event_log.gd: Umstrukturiert (F-029).
 - scripts/state/game_state.gd: Umstrukturiert (F-065).
+
+## 2026-08-27 20:00:00 — p68 · c68j96n3a24p24 · Thinker · müde-zufrieden
+
+**refactor: replace scene-tree scans with explicit… [Analyse: Thinker] — nach Echo**
+
+refactor: replace scene-tree scans with explicit GameState registrations and facade methods
+
+- CHANGELOG.md: Umstrukturiert (F-002).
+- change_index.json: Umstrukturiert (F-003).
+- narrative_chain.json: Umstrukturiert (F-004).
+- scripts/doki/data/arcs.json: Umstrukturiert (F-001).
+- scripts/objects/conflict_manager.gd: Umstrukturiert (F-057).
+- scripts/objects/planets/planet_network_ui.gd: Umstrukturiert (F-330).
+- scripts/objects/seeded_layout.gd: Umstrukturiert (F-331).
+- scripts/ui/economy_window.gd: Umstrukturiert (F-332).
+- scripts/ui/main_menu.gd: Umstrukturiert (F-067).

@@ -17,9 +17,35 @@
 
 ---
 
-## QA-Runde 1 — „Tutorial durchspielen" (sichtbar, mcp_file_driver)
+## QA-Runde 2 — MCP-Live-Loop: Identity-Fix, OCR-Pipeline, Dock-Goal (28.08.2026, sichtbar, Port 9090, Profil qa)
 
 ### Spielfindings (Game-Seite)
+| # | Befund | Status | Beleg / Referenz |
+|---|--------|--------|------------------|
+| QA2-GAME-1 | Identitätsdialog: „IDENTITÄT FESTLEGEN" ohne Namen brach STUMM ab — kein Preset-Name, kein Feedback → Dead-End im Spieler-Flow | ✅ GEFIXT | `scripts/ui/main_menu.gd`: Preset `Stickman` im Input + sichtbarer Hinweis statt stummem `return` (`_show_identity_intro`/`_confirm_identity`); Compile-Gate PASS (301 Skripte); live verifiziert: Dialog → `game_view` (mehrfach, saubere Runs) |
+
+### MCP-Findings
+| # | Befund | Status | Beleg / Referenz |
+|---|--------|--------|------------------|
+| QA2-MCP-1 | OCR nie verfügbar: Python-Worker startete ohne `--ocr-command` (`mcp_runtime.gd` Default leer) → `ocr_available:false` | ✅ GEFIXT | Auto-Detect in `addons/gdscript_mcp/client/vision_worker.py` (`shutil.which` + Standard-Installationspfade, stdlib-only); Beleg: Evidence `available:true, engine:cli` nach Neustart |
+| QA2-MCP-2 | Tesseract-Invocation fehlte Output-Target `stdout` → `OCR command exited 1` | ✅ GEFIXT | `[tesseract, bild, stdout]` in `run_ocr`; Beleg: OCR-Text „WILLKOMMEN IM PAPIERKOSMOS …" aus Live-Screenshot (1656×932) |
+| QA2-MCP-3 | OCR einstellig englisch (Engine-Default) statt zweisprachig — User-Freigabe „kannst english"; lokales `deu.traineddata` korrupt (inkompletter Download, dazu `.tmp`-Artefakt) und bewusst NICHT verwendet | 🔵 BEOBACHTET | `run_ocr` ohne `-l deu`; Umlaute leicht unvollkommen („Transport", „lommen"), Text klar lesbar; deu-Rettung optional später |
+| QA2-MCP-4 | Dock „Ziel setzen" → „Nicht verbunden — Ziel kann erst nach dem Spielstart gesetzt werden" ist KORREKTES Gate-Verhalten: `mcp_dock.gd:383` prüft `_runtime_client.is_ready()` (TCP+Handshake). Nach Spielstart verbindet der Dauer-Auto-Connect selbsttätig neu (Beleg: `client_count=2` inkl. Dock), `runtime_agent_goal_set` → `ok:true` | 🔵 BEOBACHTET | Live 28.08.2026: Spiel-Neustart → Dock automatisch verbunden; Ziel gesetzt über denselben Tool-Call wie der Dock-Button |
+| QA2-MCP-5 | `runtime_audio_list_streams` → `[]` im Hauptmenü trotz vorhandnem `main_menu.ogg`-Asset; Welt: nur `Master`-Bus, keine Music/SFX-Buses — ungeklärt, ob das Tool nur MCP-gestartete Streams listet oder Audio nicht verdrahtet ist | 🟡 OFFEN | Proben 28.08.2026 (Menü + Welt); Klärung braucht `runtime_audio_analyze`/Code-Audit der Audio-Pipeline |
+| QA2-MCP-6 | Tutorial-Overlay („Schritt 1/8 — WILLKOMMEN IM PAPIERKOSMOS") ist für `runtime_ux_scan` UNSICHTBAR: `TutorialSkip`/`TutorialWeiter` sind Controls (Code: `tutorial_director.gd`), erscheinen aber weder bei max_controls=600/max_depth=14 noch über Pfad-Guesses (`/root/World/PlanetNetwork/...` → Node not found) — MCP kann das Overlay nicht schließen; Spieler schon | 🟡 OFFEN | Screenshot/OCR-Beleg im Lauf; `planet_network.gd:375` erzeugt den Director — echter Parent-Pfad noch unbekannt; nächsten Schritt: Parent-Pfad von `add_child(_tutorial)` klären |
+| QA2-GAME-2 | Progressions-Gate für „erstes Schiff": WERKSTATT/HANGAR zeigt „Keine eigene Werft vorhanden — zuerst Orbitale Werft bauen." — Forschungspfad („Orbitales Werft-Design") noch nicht durchspielbar, weil das Tutorial-Overlay (QA2-MCP-6) die Navigation verdeckt | 🟡 OFFEN | OCR-Beleg aus Live-Screenshot (WERKSTATT-Panel); Gate-Text exakt dokumentiert |
+| QA2-TEST-2 | Idle-Laufzeiten im Loop hatten zwei Wurzeln, beide behoben: (a) verwaiste Node-Driver hingen mehrfach parallel an 9090 und beobachteten dieselben Queue-Dateien (Desync), (b) Off-by-one in der Resultat-Zählung (`> base+1` statt `> base`) ließ Einzeln-Calls immer bis zum Cap laufen. Jetzt: ein exklusiver Driver pro Lauf (terminate im finally), unique Queue-Pfade, FileNotFound-tolerante Reads, Ready-Line als Bedingung | ✅ GEFIXT | Vorher: 25–40 s Idle pro Call; nachher: Scan in 0,5 s, Gesamtläufe < 10 s |
+
+### TEST-/Workflow-Findings
+| # | Befund | Status | Beleg / Referenz |
+|---|--------|--------|------------------|
+| QA2-TEST-1 | Fixe `sleep`-Wartezeiten im Testlauf waren Fehlerquelle (Timeouts, Desyncs). Permanent-Regel per Impuls: Warten AUSSCHLIESSLICH zustandsbasiert — Poll bis die erwartete Bedingung erfüllt ist (Port lauscht, Szene/Control sichtbar, Evidence `ready`), mit hartem Deadline-Cap, keine fixen Schläfchen | ✅ GEFIXT | Live-Loop 28.08.2026 komplett per Bedingungs-Polling verifiziert (Port→UI→Dialog→Welt→Evidence); Regel verbindlich in `addons/gdscript_mcp/AGENTS.md` Workflow |
+
+---
+
+## QA-Runde 1 — „Tutorial durchspielen" (sichtbar, mcp_file_driver)
+
+### Spielfindings (Game-Seite) — QA-Runde 1
 | # | Befund | Status | Beleg / Referenz |
 |---|--------|--------|------------------|
 | QA-GAME-1 | „WEITER" nach NEUES SPIEL: Save wurde von NEUES SPIEL gelöscht | 🔵 BEOBACHTET | `docs/mcp_live_test_results.md` (Doku präzisiert: „Save wurde von NEUES SPIEL gelöscht") |
@@ -222,12 +248,47 @@ statt Schwellenwert-Tuning — der Kriegs-Lifecycle war tot verdrahtet.
 | Preflight `-x` | RESULT: PASSED (42 Constraints, ~28 s) |
 
 ## Offene Punkte (nächste Runden)
-| # | Punkt | Priorität |
-|---|-------|-----------|
-| OFFEN-1 | ~~Editor-Modus: eingebettete Spiel-Tests~~ → ✅ GEFIXT (siehe oben: `MCP_EMBEDDED`-Env + Server im Spiel-SceneTree des Kind-Prozesses) | ~~P1~~ |
-| OFFEN-2 | Tutorial-Schritt 2: grüner Ziel-Marker (Home-Planet) sichtbar machen | P1 |
-| OFFEN-3 | `runtime_visual_evidence` um Age/Zeitstempel-Filter erweitern (veralteter Cache ≠ aktueller Zustand) | P2 |
-| OFFEN-4 | `runtime_ux_analyze include_visual=true` vom seriellen Async-Pfad auf Fire-and-forget umstellen | P2 |
-| OFFEN-5 | Pool-Skalierung messen: `MCP_OCR_POOL=1` vs. 4 mit je 8 Jobs | P3 |
-| OFFEN-6 | OCR-Assets (deu.traineddata.gz + Worker-Script) als gepackte Ressource einchecken für Offline-Kaltstart | P3 |
-| OFFEN-7 | Plan-Metriken aus dem Behavioral-Validation-Implementierungsplan noch nicht im Report: Kausalitätstiefe (BFS ≥ 3), Dead-End-Rate, State-Consequence-Rate, Character-Agency-Rate, Seed-Diversität (±5 %) — Report misst derzeit flache Quote + WarCausal/Resolve | P2 |
+|| # | Punkt | Priorität |
+||---|-------|-----------|
+|| OFFEN-1 | ~~Editor-Modus: eingebettete Spiel-Tests~~ → ✅ GEFIXT (siehe oben: `MCP_EMBEDDED`-Env + Server im Spiel-SceneTree des Kind-Prozesses) | ~~P1~~ |
+|| OFFEN-2 | Tutorial-Schritt 2: grüner Ziel-Marker (Home-Planet) sichtbar machen | P1 |
+|| OFFEN-3 | ~~`runtime_visual_evidence` um Age/Zeitstempel-Filter erweitern (veralteter Cache ≠ aktueller Zustand)~~ → ✅ GEFIXT (Phase B: `captured_at_ms`, `age_ms`, `stale` in `runtime_visual_evidence` implementiert) | ~~P2~~ |
+|| OFFEN-4 | ~~`runtime_ux_analyze include_visual=true` vom seriellen Async-Pfad auf Fire-and-forget umstellen~~ → ✅ GEFIXT (Phase B: OFFEN-4 implementiert, `analyze_live_only` + Fire-and-forget Background-Job) | ~~P2~~ |
+|| OFFEN-5 | Pool-Skalierung messen: `MCP_OCR_POOL=1` vs. 4 mit je 8 Jobs | P3 |
+|| OFFEN-6 | OCR-Assets (deu.traineddata.gz + Worker-Script) als gepackte Ressource einchecken für Offline-Kaltstart | P3 |
+|| OFFEN-7 | Plan-Metriken aus dem Behavioral-Validation-Implementierungsplan noch nicht im Report: Kausalitätstiefe (BFS ≥ 3), Dead-End-Rate, State-Consequence-Rate, Character-Agency-Rate, Seed-Diversität (±5 %) — Report misst derzeit flache Quote + WarCausal/Resolve | P2 |
+
+### Phase B Repairs (2026-08-29)
+| Fix | Beschreibung | Status |
+|-----|--------------|--------|
+| MCP-006 | Vision Worker Start Race: Mutex für `_starting` in `mcp_vision_worker.gd` | ✅ GEFIXT |
+| MCP-007 | `runtime_ux_click` Verdict-Semantik dokumentiert: `TO_CHECK` statt `SOLVED` | ✅ DOKU |
+| Path Validator | Verifiziert: `McpPathValidator` korrekt in `McpProjectTools` verdrahtet (read/write/patch/import/export) | ✅ VERIFIED |
+| MCP_ANOMALIES.md | Historische Einträge als GEFIXT markiert (M1-M6, MCP-01 bis MCP-11, MCP-006) | ✅ DOKU |
+| PLAYTEST_HANDOFF.md | `runtime_ux_click` Verdict-Tabelle hinzugefügt (`MCP_ISSUE`, `INCONCLUSIVE`, `TO_CHECK`) | ✅ DOKU |
+
+## Modularisierung & Separation (Phasen 0–9, abgeschlossen)
+
+Adapter-first, contract-preserving. Alle Phasen einzeln verifiziert; keine RNG-Reihenfolge, kein Save-Schema, keine Gameplay-Regel verändert.
+
+### Phasen-Ergebnisse
+| Phase | Änderung | Beleg |
+|-------|----------|-------|
+| 1 Chronicle-Blocker | Typisierte Deserialisierung (`history_event/character_biography/event_chain/chronicle_save_data`); Lifecycle-Test kompilierbar; `GameConstants` als dependency-freie Konstantenklasse löst Config→GameState→Config-Compile-Zyklus | Core 22/22, Lifecycle 21/21, 0 SCRIPT ERRORS |
+| 2 Event Boundary | `run_started` läuft über EventBus; WorldChronicle hat keine direkte GameState-Signal-Verbindung mehr (Lifecycle-Test verankert: „NOT connected to GameState.run_started directly“) | Simulation läuft exakt 1×, Preflight 42/42 |
+| 3 State Ownership | `world_chronicle` liest Ownership über explizite GameState-Input-Schnittstelle statt `faction_domain` intern; `conflict_manager` nutzt Facade statt `ship_domain` intern | Compile 306/306 |
+| 4 Persistence | Chronicle-Payload-Vertrag im `save_game_roundtrip`-Constraint explizit (4 neue Checks) | Preflight 2022 Assertions |
+| 5 Scene Boundary | `register_chunk_coordinator`/`register_economy_manager` in GameState; `seeded_layout` registriert beim Erzeugen; Szenenbaum-Scans nur noch dokumentierter Fallback | Roundtrip über registrierte Referenz |
+| 6 UI Boundary | `get_economy_manager()`-Getter; `economy_window`/`planet_network_ui` ohne Szenenbaum-Scans; toter `_find_seeded_layout` entfernt | Compile 306/306 |
+| 7 Narrative Adapter | NARRATIVE_RUNTIME_GATE als Preflight-Constraint (`constraint_narrative_runtime.gd`, fail-closed, read-only-Verify in Temp-Archiven); Gameplay-Core bleibt runtime-frei | 43 Constraints, Gate 17.8 s |
+| 8 Historical Presentation | `HistoricalSnapshot` (pure data), `PlaybackController` (nur Snapshots), `HistoricalRenderer` (nur Snapshots, SVG-Wiederverwendung); `simulate_with_snapshots()` lesend, deterministisch identisch zu `simulate()` | Playback-Test 18/18, Determinismus Seed A×2 + Seed B |
+| 9 Cleanup | Tote Lookup-Pfade entfernt (UI-Scans, `_find_seeded_layout`); `_find_*`-Fallbacks in GameState bewusst behalten — `chronicle_lifecycle_test` läuft nachweislich ohne Welt-Szene | — |
+
+### Abschluss-Verifikation
+| Check | Ergebnis |
+|-------|----------|
+| Narrative Unit Tests | 49/49 OK |
+| Compile Gate | 311/311 PASS |
+| Chronicle Core / Lifecycle | PASSED / PASSED |
+| Historical Playback | 18/18 PASSED |
+| Full Preflight `-x` | RESULT: PASSED (43 Constraints, ~64 s, inkl. narrative_runtime-Gate) |

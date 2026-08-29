@@ -52,6 +52,12 @@ func run(ctx: PreflightContext) -> bool:
 		return false
 	if not ctx.check(before.chunk_data != null, "snapshot did not capture the chunk-world payload"):
 		return false
+	# Chronicle-Persistence-Vertrag: Die Weltchronik ist Teil des kanonischen
+	# RunSaveData und muss den Roundtrip verlustfrei überleben.
+	if not ctx.check(before.chronicle != null, "snapshot did not capture the chronicle payload"):
+		return false
+	if not ctx.check(before.chronicle.backstory_events.size() > 0, "chronicle backstory is empty in the snapshot"):
+		return false
 	# save_run stamps the slot onto the session; mirror that so the comparison
 	# covers domain state rather than the storage binding.
 	if before.session != null:
@@ -73,6 +79,10 @@ func run(ctx: PreflightContext) -> bool:
 	if not ctx.check(after != null, "snapshot_run returned null after restore"):
 		return false
 	if not ctx.check(after.chunk_data != null, "restored snapshot lost the chunk-world payload"):
+		return false
+	if not ctx.check(after.chronicle != null, "restored snapshot lost the chronicle payload"):
+		return false
+	if not ctx.check(after.chronicle.backstory_events.size() == before.chronicle.backstory_events.size(), "chronicle backstory event count changed across the roundtrip"):
 		return false
 	var before_cmp: Dictionary = RunSaveData.comparable(before)
 	var after_cmp: Dictionary = RunSaveData.comparable(after)

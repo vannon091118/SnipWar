@@ -331,7 +331,6 @@ func _parse_cli_arguments() -> Dictionary:
 			parsed["mcp_json"] = arg.trim_prefix("--mcp-json=")
 	return parsed
 
-
 func _print_help() -> void:
 	print("""
 SnipWar Preflight Suite v2 (Optimized)

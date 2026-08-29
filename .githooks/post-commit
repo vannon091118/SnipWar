@@ -22,4 +22,10 @@ if [ -f "$repo_root/scripts/doki/doki.gd" ] && [ -n "$godot_bin" ]; then
 	fi
 fi
 
+# Metriken-Tracker aktualisieren (fehlgeschlagen = Warning, kein Blocker)
+if [ -f "$repo_root/scripts/doki/metrics_updater.gd" ] && [ -n "$godot_bin" ]; then
+	"$godot_bin" --headless --path "$repo_root" --script res://scripts/doki/metrics_updater.gd 2>/dev/null || \
+		printf 'WARN: Metrics-Tracker Update fehlgeschlagen (non-fatal).\n' >&2
+fi
+
 git push origin "HEAD:$branch"
