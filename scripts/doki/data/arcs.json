@@ -1,5 +1,5 @@
 {
-	"active": "a38",
+	"active": "a39",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -1760,6 +1760,7 @@
 		},
 		"a38": {
 			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
 			"id": "a38",
 			"name": "Mehrketten-Mitgliedschaft",
 			"seen_entities": [
@@ -1768,13 +1769,25 @@
 				"F-003",
 				"F-374",
 				"F-004",
-				"F-001"
+				"F-001",
+				"F-357",
+				"F-375"
 			],
 			"span": "heute → offen",
-			"status": "active",
+			"status": "completed",
 			"theme": "Titel-Pool, resolve_chain_title und der vierte Chronicle-Tab.",
 			"version": "",
-			"weight": 2.3
+			"weight": 5.4
+		},
+		"a39": {
+			"climax_weight": 3.0,
+			"id": "a39",
+			"name": "Nächster Akt",
+			"span": "heute → offen",
+			"status": "active",
+			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
+			"version": "",
+			"weight": 0.0
 		},
 		"a4": {
 			"climax_weight": 3.0,

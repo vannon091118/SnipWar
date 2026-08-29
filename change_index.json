@@ -1234,7 +1234,7 @@
 			"p_id": 11.0
 		},
 		"aa6d580eb6043d2acb4699370060a8073ca1bf95": {
-			"c": 77,
+			"c": 77.0,
 			"composite": "c77j5n7a36p16",
 			"entities": [
 				"F-002",
@@ -1244,7 +1244,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 77
+			"p_id": 77.0
 		},
 		"ab080dcd1543ee47db628b2abba91fe7846cc852": {
 			"c": 41.0,
@@ -1406,6 +1406,20 @@
 				"F-001"
 			],
 			"p_id": 13.0
+		},
+		"ba8f048015e26b4d428c7575b2f1642005ad4118": {
+			"c": 78,
+			"composite": "c78j61n3a12p46",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-374",
+				"F-357",
+				"F-375",
+				"F-004",
+				"F-001"
+			],
+			"p_id": 78
 		},
 		"bf2cf55bb2aacf85e3f457695484541a3c72abbf": {
 			"c": 16.0,
@@ -19790,6 +19804,16 @@
 			"last_p": 77.0,
 			"name": "DEVELOPMENT_PROTOCOL.md",
 			"path": "docs/DEVELOPMENT_PROTOCOL.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-375": {
+			"first_p": 78.0,
+			"history": [],
+			"id": "F-375",
+			"last_p": 78.0,
+			"name": "PC_DEVELOPMENT_PROFILE.md",
+			"path": "docs/PC_DEVELOPMENT_PROFILE.md",
 			"status": "created",
 			"type": "file"
 		}

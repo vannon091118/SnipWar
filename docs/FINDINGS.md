@@ -293,3 +293,24 @@ Adapter-first, contract-preserving. Alle Phasen einzeln verifiziert; keine RNG-R
 | Chronicle Core / Lifecycle | PASSED / PASSED |
 | Historical Playback | 18/18 PASSED |
 | Full Preflight `-x` | RESULT: PASSED (43 Constraints, ~64 s, inkl. narrative_runtime-Gate) |
+
+---
+
+## Konsolidierungs-Audit 2026-08-29 — Forensik & ROADMAP etabliert (R-001)
+
+> Basis: READ-ONLY-Forensik-Lauf (Repo-Inventur, Live-Code-Lektüre, frischer Preflight 43/43, Laufzeit-Messungen). Übergeordnete TODO-Kette: `ROADMAP.md` (einzige vorwärts denkende Quelle; CHANGELOG = Vergangenheit, FINDINGS = offener Schaden).
+
+### Befunde (F-200)
+| # | Befund | Status | Beleg / Referenz |
+|---|--------|--------|------------------|
+| F-201 | Constraint-Zahlen-Drift: 34/36/38/39/42 in 7 MDs gleichzeitig behauptet (ARCHITECTURE.md:34 = 43 vs. ARCHITECTURE.md:349 = 38; DESIGN §1 = 39 vs. §14 = 34; docs/README = 36; PLAN.md = 36; GAME_CYCLE_CONCEPT = 34) | 🟡 OFFEN | grep 29.08.2026; → R-002 |
+| F-202 | Autoload-Drift: DESIGN.md §17.2 SO1 nennt 8 Autoloads, `project.godot` hat 10 (EventBus, WorldChronicle fehlen dort; INVENTORY_MATRIX.md korrekt) | 🟡 OFFEN | project.godot [autoload]; → R-002 |
+| F-203 | CODEBASE_AUDIT.md (29.08.) widerlegt: behauptet „HistoricalWorld.tscn fehlt / nicht verdrahtet“, FACT: Szene existiert, preloaded (scene_director.gd:24), Menü-Eintrag (main_menu.gd:207) | 🟡 OFFEN | Code-Lektüre; → R-005 |
+| F-204 | `battle_context_changed`: 2 Emits (game_state.gd:442/453), 0 Connectoren; `run_started`-Signal: 1 Emit, 0 Connect (kanonischer Pfad = EventBus, Compatibility-Signal bleibt) | 🟡 OFFEN | repo-weite grep; → R-006 |
+| F-205 | ConceptIndex: 3 unmapped Klassen (GameConstants, FactionAI, PreflightCodeIndex) | 🟡 OFFEN | concept_search --unmapped; → R-010 |
+| F-206 | Repo-Junk: `kilo.json` (getrackt, absolute Maschinenpfade), `snapshots/pf_pre_cluster/` (19 MB, 52.171 LOC .gd, 0 getrackt), Root-`tmp_*` (ignoriert) | 🟡 OFFEN | git ls-files + du; → R-003 (destruktiv, wartet auf Freigabe) |
+| F-207 | HistoricalWorld bootet mit leerer Chronik: `ERROR: HistoricalWorld: chronicle has no historical snapshots` (headless reproduziert); `run_started` feuert erst in world.tscn (`WorldBootstrap.begin_new_game`) — der Flow „NEUES SPIEL“ wartet auf R-050 | 🟡 OFFEN | Boot-Test 29.08.2026; → R-050 |
+| F-208 | MCP_AUDIT_REPORT.md referenziert `scripts/tools_count.gd` als autoritativ — Datei existiert nicht | 🟡 OFFEN | ls; → R-011 |
+| F-209 | Preflight top-6 Constraints ≈ 16 s (dead_code 3,5 s / scene_boot 3,5 s / global_search 2,9 s / world_details 2,5 s / context_handover 2,1 s / camera_and_input 1,6 s); Einzel-Fixes der QA-PERF-Runde vorhanden, aber kein länderübergreifendes Shared Inventory | 🟡 OFFEN | tmp_timings.json + frischer Lauf; → R-012 |
+| F-210 | Kein zentraler Test-Orchestrator (11 Entry-Tests + Preflight einzeln); `scripts/history/test_determinism.gd` außerhalb von `scripts/testing/` | 🟡 OFFEN | Inventur; → R-009 |
+| F-211 | Doppel-Simulations-Risiko: Nach HistoricalWorld würde world.tscn erneut `begin_new_game()` feuern (zweite Chronik-Simulation), weil `request_world_reconnect()` nie gesetzt wird | 🟡 OFFEN | world_bootstrap.gd:129-136 reconnect-Pfad; → R-050 |
