@@ -1407,8 +1407,21 @@
 			],
 			"p_id": 13.0
 		},
+		"b4ae8d55493bcb5a3a605c16cb6e282c5aa4f52a": {
+			"c": 79,
+			"composite": "c79j13n4a15p4",
+			"entities": [
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-046",
+				"F-004",
+				"F-001"
+			],
+			"p_id": 79
+		},
 		"ba8f048015e26b4d428c7575b2f1642005ad4118": {
-			"c": 78,
+			"c": 78.0,
 			"composite": "c78j61n3a12p46",
 			"entities": [
 				"F-002",
@@ -1419,7 +1432,7 @@
 				"F-004",
 				"F-001"
 			],
-			"p_id": 78
+			"p_id": 78.0
 		},
 		"bf2cf55bb2aacf85e3f457695484541a3c72abbf": {
 			"c": 16.0,
@@ -19814,6 +19827,16 @@
 			"last_p": 78.0,
 			"name": "PC_DEVELOPMENT_PROFILE.md",
 			"path": "docs/PC_DEVELOPMENT_PROFILE.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-376": {
+			"first_p": 79.0,
+			"history": [],
+			"id": "F-376",
+			"last_p": 79.0,
+			"name": "ROADMAP.md",
+			"path": "ROADMAP.md",
 			"status": "created",
 			"type": "file"
 		}

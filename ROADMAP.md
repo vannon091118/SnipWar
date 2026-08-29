@@ -99,14 +99,14 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DoD:** Einzigartige Inhalte → FINDINGS/Modul-Doku; Rest archiviert.
 - **STATUS:** `TODO`
 
-### R-050 — HistoricalWorld-Lifecycle & Handover — **P0**
-- **WHY:** Spielerfluss „NEUES SPIEL“ endet in toter Szene (leere Chronik); Doppel-Simulation droht (zweites `begin_new_game`).
-- **CURRENT:** Reproduziert via Headless-Boot (F-207). Run wird nicht vorbereitet; Playback startet nie.
+### R-050 — HistoricalWorld-Lifecycle & Handover — **P0** ✅ VERIFIED
+- **WHY:** Spielerfluss „NEUES SPIEL“ endete in toter Szene (leere Chronik); Doppel-Simulation drohte (zweites `begin_new_game`).
+- **CURRENT (vor Fix):** Reproduziert via Headless-Boot (F-207). Run wurde nicht vorbereitet; Playback startete nie.
 - **DEPENDS:** — · **BLOCKS:** R-014, R-051, R-052
-- **MODULES:** main_menu, world_bootstrap (reconnect-Pfad), historical_world_bootstrap, WorldChronicle, GameState
-- **VERIFICATION:** neuer `historical_world_flow_test.gd` (RunPrep → Szene-Boot → Playback geladen → Reconnect-Vertrag); `chronicle_lifecycle_test`; `constraint_main_menu_and_flow`, `constraint_scene_boot`
+- **MODULES:** main_menu, `run_preparation.gd` (neu), historical_world_bootstrap, WorldChronicle, GameState
+- **VERIFICATION:** `historical_world_flow_test.gd` 11/11 PASS; `chronicle_lifecycle_test` 21/21; `historical_playback_test` 18/18; `chronicle_core_test` 22/22; compile_gate 315/315; Preflight 43/43 (62,9 s)
 - **DoD:** Flow: Run-Prepare → historical_world (gefüllte Chronik, Playback startet) → Jahr 0 → `request_world_reconnect()` → world.tscn reconnected (kein zweites `begin_new_game`); Bootstrap-Fallback statt Dead-End; Preflight grün.
-- **STATUS:** `IN_PROGRESS` (nächster Slice)
+- **STATUS:** `VERIFIED`
 
 ### R-051 — Preflight-Constraint historical_world — **P2**
 - **WHY:** Der Flow ist derzeit von keinem Gate abgedeckt (scene_boot bootet nur world.tscn).
@@ -190,7 +190,7 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 
 ## 4. Ausführungsreihenfolge (nächste Slice-Kandidaten)
 
-1. **R-050** (P0, unabhängig) — HistoricalWorld-Lifecycle-Handover
+1. ~~**R-050**~~ ✅ VERIFIED (b4ae8d5-Folge-Commit) — HistoricalWorld-Lifecycle-Handover
 2. **R-002** (P0) — Zahlen vereinheitlichen
 3. **R-051** (P2) — Preflight-Gate für den Flow
 4. **R-006** (P1) — tote Signale

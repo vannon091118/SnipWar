@@ -22,6 +22,12 @@ func _ready() -> void:
 	_overlay.year_changed.connect(_on_overlay_year_changed)
 	var save: ChronicleSaveData = _chronicle.get_save() as ChronicleSaveData
 	if save == null or save.historical_snapshots.is_empty():
+		# R-050-Fallback: Wurde der Run nicht vorbereitet (z. B. direkter
+		# Szenen-Boot), erzeugt die Chronik selbst deterministische Snapshots
+		# aus dem aktiven Run-Seed — nie ein Dead-End ohne Playback.
+		_chronicle.reset(_chronicle_seed())
+		save = _chronicle.get_save() as ChronicleSaveData
+	if save == null or save.historical_snapshots.is_empty():
 		push_error("HistoricalWorld: chronicle has no historical snapshots")
 		return
 	var snapshots: Array[HistoricalSnapshot] = save.snapshots_as_resources()
@@ -33,6 +39,13 @@ func _ready() -> void:
 func _on_snapshot_changed(_index: int, snapshot: HistoricalSnapshot) -> void:
 	if _renderer != null:
 		_renderer.show_snapshot(snapshot)
+
+func _chronicle_seed() -> int:
+	var state: Node = get_node_or_null("/root/GameState")
+	if state != null and state.has_method("world_session_context"):
+		return int(state.world_session_context().get("layout_seed", 0))
+	return 424242
+
 
 func _on_overlay_year_changed(year: int) -> void:
 	if _playback == null or _playback.snapshots.is_empty():
@@ -47,6 +60,12 @@ func _on_playback_finished() -> void:
 	if _finished:
 		return
 	_finished = true
+	# R-050: Reconnect-Vertrag — die world.tscn darf den aktiven Run NICHT per
+	# begin_new_game() neu erzeugen (Doppel-Simulation). Der Flag veranlasst
+	# WorldBootstrap, über reconnect_world() denselben Run fortzusetzen.
+	var state: Node = get_node_or_null("/root/GameState")
+	if state != null and state.has_active_run() and state.has_method("request_world_reconnect"):
+		state.request_world_reconnect()
 	var director: Node = get_node_or_null("/root/SceneDirectorService")
 	if director != null and director.has_method("goto_scene"):
 		director.call("goto_scene", &"world")

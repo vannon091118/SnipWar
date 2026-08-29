@@ -189,9 +189,13 @@ func _confirm_identity() -> void:
 	var service: Node = get_node_or_null("/root/SaveGameService")
 	if service != null and service.has_method("delete_save"):
 		service.delete_save(SAVE_SLOT)
-	var game_state: Node = get_node_or_null("/root/GameState")
-	if game_state != null and game_state.has_method("request_new_run"):
-		game_state.request_new_run()
+	# R-050: Run VOR dem Szenenwechsel vorbereiten (begin_new_game → run_started
+	# → WorldChronicle gefüllt), damit die HistoricalWorld ihre Chronik beim Boot
+	# vorfindet. Der alte request_new_run()-Pfad lief der Szene hinterher und
+	# ließ sie mit leerer Chronik booten (toter Spielerfluss).
+	var prep: Dictionary = RunPreparation.prepare_new_run()
+	if not prep.get("ok", false):
+		push_warning("RunPreparation failed (%s) — HistoricalWorld bootet mit Fallback" % str(prep.get("error", "unknown")))
 	_goto_historical_world()
 
 func _on_continue_pressed() -> void:
