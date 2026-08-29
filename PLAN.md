@@ -1,7 +1,7 @@
 # SnipWar & MCP Autonomie — Masterplan & Roadmap
 
 **Stand:** August 2026
-**Doktrin:** Code schlägt Dokument. Dieses Dokument ist der verbindliche Masterplan für das Gesamtsystem und das autonome MCP-Subprojekt (`addons/gdscript_mcp`).
+**Doktrin:** Code schlägt Dokument. Dieses Dokument ist der verbindliche Masterplan für das Gesamtsystem und das autonome MCP-Subprojekt (`addons/gdscript_mcp`). Der portable Arbeitsablauf für Phase 1 ist in [`docs/DEVELOPMENT_PROTOCOL.md`](docs/DEVELOPMENT_PROTOCOL.md) festgehalten.
 
 ---
 

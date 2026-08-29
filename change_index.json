@@ -649,7 +649,7 @@
 			"p_id": 17.0
 		},
 		"2c630aa8810861bc33d2b0ade46f2b87f727c3b5": {
-			"c": 75,
+			"c": 75.0,
 			"composite": "c75j20n1a32p74",
 			"entities": [
 				"F-002",
@@ -690,7 +690,7 @@
 				"C-816",
 				"C-817"
 			],
-			"p_id": 75
+			"p_id": 75.0
 		},
 		"2e0c055b552f60ea1cce83d3270e0d114a23651e": {
 			"c": 54.0,
@@ -1141,6 +1141,27 @@
 				"C-243"
 			],
 			"p_id": 42.0
+		},
+		"8cab9f7ab5cebf83cdcdbf4e2af085a2da35ea7f": {
+			"c": 76,
+			"composite": "c76j72n1a15p15",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-297",
+				"F-337",
+				"F-279",
+				"F-281",
+				"F-283",
+				"C-555",
+				"C-818",
+				"C-808",
+				"C-819",
+				"C-475"
+			],
+			"p_id": 76
 		},
 		"8d9d9f4ad24a1baba88e4c08fe114bd1767178e9": {
 			"c": 46.0,
@@ -10144,10 +10165,16 @@
 						197.0
 					],
 					"p_id": 57.0
+				},
+				{
+					"lines": [
+						202.0
+					],
+					"p_id": 76.0
 				}
 			],
 			"id": "C-475",
-			"last_p": 57.0,
+			"last_p": 76.0,
 			"name": "end_war",
 			"path": "scripts/history/simulation/world_state.gd",
 			"status": "modified",
@@ -11504,10 +11531,16 @@
 						10.0
 					],
 					"p_id": 62.0
+				},
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 76.0
 				}
 			],
 			"id": "C-555",
-			"last_p": 62.0,
+			"last_p": 76.0,
 			"name": "detect_chains",
 			"path": "scripts/history/chain_detector.gd",
 			"status": "modified",
@@ -15805,10 +15838,16 @@
 						9.0
 					],
 					"p_id": 75.0
+				},
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 76.0
 				}
 			],
 			"id": "C-808",
-			"last_p": 75.0,
+			"last_p": 76.0,
 			"name": "SCHEMA_VERSION",
 			"path": "scripts/history/historical_snapshot.gd",
 			"status": "modified",
@@ -15964,6 +16003,40 @@
 			"last_p": 75.0,
 			"name": "SCENE_ID_HISTORICAL_WORLD",
 			"path": "scripts/ui/scene_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-818": {
+			"first_p": 76.0,
+			"history": [
+				{
+					"lines": [
+						85.0
+					],
+					"p_id": 76.0
+				}
+			],
+			"id": "C-818",
+			"last_p": 76.0,
+			"name": "_war_chains_from_archive",
+			"path": "scripts/history/chain_detector.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-819": {
+			"first_p": 76.0,
+			"history": [
+				{
+					"lines": [
+						148.0
+					],
+					"p_id": 76.0
+				}
+			],
+			"id": "C-819",
+			"last_p": 76.0,
+			"name": "_war_snapshot",
+			"path": "scripts/history/simulation/history_simulator.gd",
 			"status": "modified",
 			"type": "component"
 		},

@@ -6498,6 +6498,73 @@
 			"seq": 75,
 			"subject": "[Buffy] Historische Weltchronik integrieren,… — nach Sage",
 			"summary": "Die Chronik war berechnet, aber nicht sichtbar genug in den Spielablauf eingebettet. Deshalb bekam die Vorgeschichte eine eigene registrierte HistoricalWorld-Szene, deren Playback die gespeicherten..."
+		},
+		{
+			"a": 15,
+			"arc": "a37",
+			"c": 76,
+			"composite": "c76j72n1a15p15",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 26.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 402.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 117.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 46.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/history/chain_detector.gd",
+					"insertions": 55.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/history/historical_snapshot.gd",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/history/simulation/history_simulator.gd",
+					"insertions": 42.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/history/simulation/world_state.gd",
+					"insertions": 19.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/history/world_chronicle.gd",
+					"insertions": 3.0
+				}
+			],
+			"date": "2026-08-27 04:00:00",
+			"hash": "8cab9f7ab5cebf83cdcdbf4e2af085a2da35ea7f",
+			"j": 72,
+			"model_id": "claude-sonnet-4",
+			"mood": "erschöpft",
+			"n": 1,
+			"narrator": "Buffy",
+			"p": 15,
+			"p_id": 76,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Sage",
+			"seq": 76,
+			"subject": "[Buffy] Phase 1 war chains: war_archive in WorldState,… — nach Sage",
+			"summary": "Weisst du, was passiert, wenn man GDScript eine Union und ein C-Ternary unterjubelt? Der Parser streikt, das Autoload fällt um, und man steht drei Commits vor dem Staffelfinale mit einer halb kaput..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

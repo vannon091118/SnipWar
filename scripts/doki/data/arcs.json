@@ -1,5 +1,5 @@
 {
-	"active": "a37",
+	"active": "a38",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -1733,11 +1733,38 @@
 		},
 		"a37": {
 			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
 			"id": "a37",
 			"name": "Nächster Akt",
+			"seen_entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-297",
+				"F-337",
+				"F-279",
+				"F-281",
+				"F-283",
+				"C-555",
+				"C-818",
+				"C-808",
+				"C-819",
+				"C-475"
+			],
+			"span": "heute → offen",
+			"status": "completed",
+			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
+			"version": "",
+			"weight": 4.7
+		},
+		"a38": {
+			"climax_weight": 3.0,
+			"id": "a38",
+			"name": "Mehrketten-Mitgliedschaft",
 			"span": "heute → offen",
 			"status": "active",
-			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
+			"theme": "Titel-Pool, resolve_chain_title und der vierte Chronicle-Tab.",
 			"version": "",
 			"weight": 0.0
 		},

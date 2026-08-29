@@ -1427,3 +1427,19 @@ Historische Weltchronik integrieren, Snapshot-Persistenz und Vorstart-Flow repar
 - scripts/ui/history/simulation_overlay.gd: Implementiert und integriert (F-322).
 - scripts/ui/main_menu.gd: Implementiert und integriert (F-067).
 - scripts/ui/scene_director.gd: Implementiert und integriert (F-373).
+
+## 2026-08-27 04:00:00 — p76 · c76j72n1a15p15 · Buffy · erschöpft
+
+**[Buffy] Phase 1 war chains: war_archive in WorldState,… — nach Sage**
+
+Phase 1 war chains: war_archive in WorldState, exact war chains from archive, Snapshot schema v3 with wars/truces, peace event anchoring
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/history/chain_detector.gd: Implementiert und integriert (F-297).
+- scripts/history/historical_snapshot.gd: Implementiert und integriert (F-337).
+- scripts/history/simulation/history_simulator.gd: Implementiert und integriert (F-279).
+- scripts/history/simulation/world_state.gd: Implementiert und integriert (F-281).
+- scripts/history/world_chronicle.gd: Implementiert und integriert (F-283).
