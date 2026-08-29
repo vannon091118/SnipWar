@@ -1483,3 +1483,22 @@ Konsolidierungs-Roadmap und dokumentarische Befund-Basis aus Forensik-Audit etab
 - docs/FINDINGS.md: Dokumentation aktualisiert (F-046).
 - narrative_chain.json: Dokumentation aktualisiert (F-004).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+
+## 2026-08-27 08:00:00 — p80 · c80j59n4a10p9 · Vannon · warm
+
+**R-050: HistoricalWorld-Lifecycle-Handover… — nach Thinker**
+
+R-050: HistoricalWorld-Lifecycle-Handover repariert — Run wird vor dem Szenenwechsel vorbereitet (RunPreparation), Bootstrap-Fallback statt Dead-End, Reconnect-Flag gegen Doppel-Simulation, Flow-Test 11/11
+
+- CHANGELOG.md: Test-Assets ergänzt (F-002).
+- ROADMAP.md: Test-Assets ergänzt (F-376).
+- change_index.json: Test-Assets ergänzt (F-003).
+- docs/FINDINGS.md: Test-Assets ergänzt (F-046).
+- narrative_chain.json: Test-Assets ergänzt (F-004).
+- scripts/bootstrap/historical_world_bootstrap.gd: Test-Assets ergänzt (F-371).
+- scripts/bootstrap/run_preparation.gd: Test-Assets ergänzt (F-377).
+- scripts/bootstrap/run_preparation.gd.uid: Test-Assets ergänzt (F-378).
+- scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).
+- scripts/testing/historical_world_flow_test.gd: Test-Assets ergänzt (F-379).
+- scripts/testing/historical_world_flow_test.gd.uid: Test-Assets ergänzt (F-380).
+- scripts/ui/main_menu.gd: Test-Assets ergänzt (F-067).

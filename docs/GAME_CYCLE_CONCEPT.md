@@ -2,7 +2,7 @@
 
 > **Stand:** August 2026
 > **Status:** Laufzeit- und Erweiterungsnotiz
-> **Regel:** Der Code und die 34 Preflight-Constraints sind verbindlich. Historische Entwürfe werden hier nicht als bestehende Features ausgegeben.
+> **Regel:** Der Code und die 43 Preflight-Constraints sind verbindlich. Historische Entwürfe werden hier nicht als bestehende Features ausgegeben.
 
 ---
 

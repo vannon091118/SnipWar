@@ -27,9 +27,9 @@
 
 ## 1. Aktueller Status
 
-SnipWar ist ein strategischer Overworld-Prototyp mit funktionierendem Karten-, Transit-, Ressourcen-, Forschungs-, Upgrade-, Scout- und deterministischem Konfliktkern. Die bisher implementierten Phasen (EffectDefinition, Trait-Erweiterungen, Planetensignaturen, Raffinerie-Konvertierung, Perimeter-Slots & Reichweite, CompositeShipView, FleetSnapshot, FleetBattleSimulator, ConquestSimulator und Replay-Szenen) sind implementiert und in `scripts/preflight.gd` (aktuell 39 Constraints, V2 Architecture mit Auto-Discovery) verifiziert.
+SnipWar ist ein strategischer Overworld-Prototyp mit funktionierendem Karten-, Transit-, Ressourcen-, Forschungs-, Upgrade-, Scout- und deterministischem Konfliktkern. Die bisher implementierten Phasen (EffectDefinition, Trait-Erweiterungen, Planetensignaturen, Raffinerie-Konvertierung, Perimeter-Slots & Reichweite, CompositeShipView, FleetSnapshot, FleetBattleSimulator, ConquestSimulator und Replay-Szenen) sind implementiert und in `scripts/preflight.gd` (aktuell 43 Constraints, V2 Architecture mit Auto-Discovery) verifiziert.
 
-Der Startpunkt ist `scenes/main_menu/main_menu.tscn` (Neues Spiel / Weiter / Beenden). Die Strategie-Overworld liegt in `scenes/world/world.tscn` mit `WorldBootstrap` als Wurzel; Layer-2-/Layer-3-Replays sind eigene Szenen (`battle_scene.tscn`, `conquest_scene.tscn`). Autoloads: `GameState`, `GameCycleManager`, `SceneDirectorService`, `SaveGameService`, `EventLog`, `TouchFeedbackLayer`. `WorldBootstrap._enter_tree()` wählt das aktive Szenario, finalisiert den Layout-Seed und generiert den Planetenkatalog, bevor es GameState, PlanetField und MeteorField konfiguriert; `Bootstrap` dealt danach nur die Ressourcen. Szenen-Wechsel laufen über den `SceneDirectorService` (Custom-Switcher), Kontext über `GameState.pending_battle_context`/`reconnect_world`/`RunSession`.
+Der Startpunkt ist `scenes/main_menu/main_menu.tscn` (Neues Spiel / Weiter / Beenden). Die Strategie-Overworld liegt in `scenes/world/world.tscn` mit `WorldBootstrap` als Wurzel; Layer-2-/Layer-3-Replays sind eigene Szenen (`battle_scene.tscn`, `conquest_scene.tscn`). Autoloads: `EventBus`, `GameState`, `WorldChronicle`, `GameCycleManager`, `SceneDirectorService`, `SaveGameService`, `EventLog`, `TouchFeedbackLayer` (plus die MCP-Autoloads `McpRuntime`, `McpProjectAdapter` aus dem Addon). `WorldBootstrap._enter_tree()` wählt das aktive Szenario, finalisiert den Layout-Seed und generiert den Planetenkatalog, bevor es GameState, PlanetField und MeteorField konfiguriert; `Bootstrap` dealt danach nur die Ressourcen. Szenen-Wechsel laufen über den `SceneDirectorService` (Custom-Switcher), Kontext über `GameState.pending_battle_context`/`reconnect_world`/`RunSession`.
 
 **Commit-Infrastruktur (DOKI CommitLayer):** Das Repo committet über ein deterministisches Narrativ-Gate (`scripts/doki/` — 14 Charaktere × 10 Moods, 9 Verifier-Checks, Chain in `narrative_chain.json`, Zustandsmaschine via `.doki/session.json`). DOKI ist bewusst ein reines Commit-Gate ohne MCP-/Agent-/Spiel-Kopplung (Separation of Concerns); Details: [`scripts/doki/README.md`](scripts/doki/README.md). Big Bang am aktuellen HEAD: `doki init --seed-last 10` übernimmt die letzten 10 Bestands-Commits als Chain-Vorgeschichte.
 
@@ -278,7 +278,7 @@ Ein separater Main-Scene-Smoke-Test ist:
 godot --headless --path . --quit-after 2
 ```
 
-Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgeführt und meldete `RESULT: PASSED (34 constraints)`; auch der Main-Scene-Smoke-Test mit `--quit-after 2` war erfolgreich. Die Aussagen oben wurden aus Code, Resources, den vorhandenen Preflight-Assertions und diesem Lauf abgeleitet.
+Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgeführt und meldete `RESULT: PASSED (43 constraints)`; auch der Main-Scene-Smoke-Test mit `--quit-after 2` war erfolgreich. Die Aussagen oben wurden aus Code, Resources, den vorhandenen Preflight-Assertions und diesem Lauf abgeleitet.
 
 ## 15. Feature-Matrix
 
@@ -522,7 +522,7 @@ Ein Schritt gilt erst als abgeschlossen, wenn:
 
 | # | Constraint | Quelle | Status |
 |---|-----------|--------|--------|
-| SO1 | **Kein DOKI-Autoload:** `project.godot [autoload]` enthält 8 Autoloads (GameState, GameCycleManager, SceneDirectorService, SaveGameService, EventLog, TouchFeedbackLayer, McpRuntime, McpProjectAdapter) — **kein DOKI-Eintrag** | `project.godot:24–33` | ✅ |
+| SO1 | **Kein DOKI-Autoload:** `project.godot [autoload]` enthält 10 Autoloads (EventBus, GameState, WorldChronicle, GameCycleManager, SceneDirectorService, SaveGameService, EventLog, TouchFeedbackLayer, McpRuntime, McpProjectAdapter) — **kein DOKI-Eintrag** | `project.godot [autoload]` | ✅ |
 | SO2 | **Kein DOKI-Editor-Plugin:** `[editor_plugins]` aktiviert nur `res://addons/gdscript_mcp/plugin.cfg` | `project.godot:43–45` | ✅ |
 | SO3 | **Keine DOKI-Klasse ist ein Node:** 20 von 24 Klassen `extends RefCounted` (können strukturell nicht im SceneTree hängen, kein `_ready`/`_process`); 4 `extends SceneTree` = reine CLI-Einstiege | grep über alle `scripts/doki/*.gd` | ✅ |
 | SO4 | **Keine Signale:** kein einziges `signal`/`emit_signal` in `scripts/doki/**` | grep | ✅ |

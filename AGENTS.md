@@ -237,7 +237,7 @@ ConceptIndex.new().by_domain("ships")
 | `--reverse` | Reverse-Execution (Testet Isolation) |
 | `--list` | Constraints auflisten — **Kurzform `-l` kollidiert mit Godots eigenem `-l/--language`** ("Missing language argument, aborting") → Langform nutzen |
 
-### Constraints (40, atomare Commit-Gruppen beachten!)
+### Constraints (43, atomare Commit-Gruppen beachten!)
 - `game_state_compatibility` — Reflection-Signaturen, Fassaden-Methoden
 - `concept_index` — **Nur funktional**: search/expand für Kern-Domänen
 - `save_game_roundtrip`, `save_game_slots` — Slot-Konvention beachten!

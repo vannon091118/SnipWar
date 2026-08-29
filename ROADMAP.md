@@ -78,13 +78,13 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DoD:** ROADMAP.md existiert mit Dependency-Graph; FINDINGS trägt F-201…F-210; Preflight grün.
 - **STATUS:** `VERIFIED` (dieser Commit)
 
-### R-002 — Constraint-/Autoload-Zahlen vereinheitlichen — **P0**
-- **WHY:** 6 verschiedene Constraint-Zahlen (34–43) erzeugen falsche Systemwahrheit für Agents.
-- **CURRENT:** ARCHITECTURE.md:34 (43) vs. :349 (38); DESIGN §1 (39)/§14 (34); docs/README (36); PLAN.md (36); GAME_CYCLE (34); FINDINGS-Zeilen (39/42/43, teils historisch korrekt).
+### R-002 — Constraint-/Autoload-Zahlen vereinheitlichen — **P0** ✅ VERIFIED
+- **WHY:** 6 verschiedene Constraint-Zahlen (34–43) erzeugten falsche Systemwahrheit für Agents.
+- **CURRENT (vor Fix):** ARCHITECTURE.md:349 (38); DESIGN §1 (39)/§14 (34); docs/README (36 ×3); PLAN.md (36); GAME_CYCLE (34); AGENTS (40); DESIGN SO1 (8 Autoloads).
 - **DEPENDS:** R-001 · **BLOCKS:** —
 - **MODULES:** Doku
-- **DoD:** Alle MDs nennen 43 Constraints / 10 Autoloads; historische Zahlen als solche markiert.
-- **STATUS:** `TODO`
+- **DoD:** Alle MDs nennen 43 Constraints / 10 Autoloads; historische datierte Lauf-Belege bleiben unangetastet.
+- **STATUS:** `VERIFIED`
 
 ### R-003 — Repo-Hygiene: kilo.json, snapshots/, tmp_* — **P0**
 - **WHY:** `kilo.json` (getrackt, absolute Maschinenpfade), `snapshots/pf_pre_cluster/` (19 MB, 52.171 LOC Kopie), Root-`tmp_*` (ignoriert) verursachen Rauschen/Verwechslung.
@@ -190,8 +190,8 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 
 ## 4. Ausführungsreihenfolge (nächste Slice-Kandidaten)
 
-1. ~~**R-050**~~ ✅ VERIFIED (b4ae8d5-Folge-Commit) — HistoricalWorld-Lifecycle-Handover
-2. **R-002** (P0) — Zahlen vereinheitlichen
+1. ~~**R-050**~~ ✅ VERIFIED (343cabf) — HistoricalWorld-Lifecycle-Handover
+2. ~~**R-002**~~ ✅ VERIFIED — Zahlen vereinheitlichen
 3. **R-051** (P2) — Preflight-Gate für den Flow
 4. **R-006** (P1) — tote Signale
 5. **R-003** (P0, nach User-Freigabe) — Repo-Hygiene

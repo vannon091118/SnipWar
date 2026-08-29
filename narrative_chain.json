@@ -6726,6 +6726,88 @@
 			"seq": 79,
 			"subject": "Konsolidierungs-Roadmap und dokumentarische… — nach Thinker",
 			"summary": "Der Forensik-Lauf ließ keinen anderen Weg zu: Als die Zahlen gegeneinander standen — sechs verschiedene Constraint-Zählungen in sieben Dokumenten, eine Doku, die eine Szene für verschollen erklärte..."
+		},
+		{
+			"a": 10,
+			"arc": "a39",
+			"c": 80,
+			"composite": "c80j59n4a10p9",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "ROADMAP.md",
+					"insertions": 7.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 52.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/bootstrap/historical_world_bootstrap.gd",
+					"insertions": 19.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/bootstrap/run_preparation.gd",
+					"insertions": 71.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/bootstrap/run_preparation.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/historical_world_flow_test.gd",
+					"insertions": 110.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/historical_world_flow_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/ui/main_menu.gd",
+					"insertions": 7.0
+				}
+			],
+			"date": "2026-08-27 08:00:00",
+			"hash": "343cabf4025280c9193c9dfaa559654af36c0e37",
+			"j": 59,
+			"model_id": "claude-sonnet-4",
+			"mood": "warm",
+			"n": 4,
+			"narrator": "Vannon",
+			"p": 9,
+			"p_id": 80,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Thinker",
+			"seq": 80,
+			"subject": "R-050: HistoricalWorld-Lifecycle-Handover… — nach Thinker",
+			"summary": "R-050 ließ sich nicht aufschieben, weil der Beweis auf dem Tisch lag: Der Spielerfluss endete reproduzierbar in einer Szene, die eine Chronik abfragte, die niemand gefüllt hatte. Thinker hatte die ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

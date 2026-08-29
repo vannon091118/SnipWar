@@ -346,7 +346,7 @@ Jeder Commit läuft unumgehbar durch folgende Stufen:
 | Szenen (`.tscn`) | **16** |
 | Textur- & Audio-Assets | **419** |
 | Engine-Ressourcen (`.tres`) | **91** |
-| Preflight Coverage | **38 / 38 Constraints PASS** |
+| Preflight Coverage | **43 / 43 Constraints PASS** |
 
 ---
 

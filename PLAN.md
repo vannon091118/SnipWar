@@ -8,7 +8,7 @@
 ## 1. Übersicht & Systemarchitektur
 
 SnipWar besteht aus zwei eng verzahnten, aber architektonisch sauber getrennten Systemen:
-1. **SnipWar Core Game**: Strategischer 3-Layer-Overworld-Simulator in Godot 4.7 (SSO: `GameState`, 4 Domänen: Faction, Economy, Tech, Ship; Headless-Preflight-Suite mit 36 deterministischen Constraints).
+1. **SnipWar Core Game**: Strategischer 3-Layer-Overworld-Simulator in Godot 4.7 (SSO: `GameState`, 4 Domänen: Faction, Economy, Tech, Ship; Headless-Preflight-Suite mit 43 deterministischen Constraints).
 2. **MCP Autonomy Bridge (`addons/gdscript_mcp`)**: Eigenständiges Subprojekt im Projekt. Eine JSON-RPC 2.0 Brücke (TCP 9090 / stdio) für externe KI-Agenten und Testframeworks mit eigenem Server-Lifecycle (`PROCESS_MODE_ALWAYS`), deterministischer Maus-/Frame-Steuerung, UX-Pipeline, OCR/Vision-Artefakten und journalisierter Sandbox-Autonomie.
 
 ---

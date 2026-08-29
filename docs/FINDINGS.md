@@ -303,7 +303,7 @@ Adapter-first, contract-preserving. Alle Phasen einzeln verifiziert; keine RNG-R
 ### Befunde (F-200)
 | # | Befund | Status | Beleg / Referenz |
 |---|--------|--------|------------------|
-| F-201 | Constraint-Zahlen-Drift: 34/36/38/39/42 in 7 MDs gleichzeitig behauptet (ARCHITECTURE.md:34 = 43 vs. ARCHITECTURE.md:349 = 38; DESIGN §1 = 39 vs. §14 = 34; docs/README = 36; PLAN.md = 36; GAME_CYCLE_CONCEPT = 34) | 🟡 OFFEN | grep 29.08.2026; → R-002 |
+| F-201 | Constraint-Zahlen-Drift: 34/36/38/39/42 in 7 MDs gleichzeitig behauptet (ARCHITECTURE.md:349 = 38; DESIGN §1 = 39 vs. §14 = 34; docs/README = 36; PLAN.md = 36; GAME_CYCLE_CONCEPT = 34) plus Autoload-Zählung (DESIGN SO1 = 8) | ✅ GEFIXT | R-002: alle 11 Stellen auf 43 Constraints / 10 Autoloads vereinheitlicht (ARCHITECTURE, DESIGN ×4, AGENTS, PLAN, docs/README ×3, GAME_CYCLE_CONCEPT); historische datierte Lauf-Belege in FINDINGS bleiben unangetastet |
 | F-202 | Autoload-Drift: DESIGN.md §17.2 SO1 nennt 8 Autoloads, `project.godot` hat 10 (EventBus, WorldChronicle fehlen dort; INVENTORY_MATRIX.md korrekt) | 🟡 OFFEN | project.godot [autoload]; → R-002 |
 | F-203 | CODEBASE_AUDIT.md (29.08.) widerlegt: behauptet „HistoricalWorld.tscn fehlt / nicht verdrahtet“, FACT: Szene existiert, preloaded (scene_director.gd:24), Menü-Eintrag (main_menu.gd:207) | 🟡 OFFEN | Code-Lektüre; → R-005 |
 | F-204 | `battle_context_changed`: 2 Emits (game_state.gd:442/453), 0 Connectoren; `run_started`-Signal: 1 Emit, 0 Connect (kanonischer Pfad = EventBus, Compatibility-Signal bleibt) | 🟡 OFFEN | repo-weite grep; → R-006 |
