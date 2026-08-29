@@ -8283,6 +8283,128 @@
 			"seq": 105,
 			"subject": "Squizzles Fall: Lint-Fix: 12 @warning_ignore(unused_signal)… — nach Basher",
 			"summary": "FALL-AUFNAHME: Ein Linter meldet zwölf Signale als unbenutzt — in einer Klasse, deren Signale täglich tausendfach feuern. Indiz eins: die Zeilennummern. Zeile 10 war die tote Variable, die Basher g..."
+		},
+		{
+			"a": 1,
+			"arc": "a49",
+			"c": 106,
+			"composite": "c106j23n14a1p72",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "ROADMAP.md",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 52.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/concept_index.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/economy/buildings_unit.gd",
+					"insertions": 179.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/economy/buildings_unit.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/economy/gathering_transport_unit.gd",
+					"insertions": 247.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/economy/gathering_transport_unit.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/state/domains/economy/refinery_trade_unit.gd",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/economy/worker_factory_unit.gd",
+					"insertions": 112.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/domains/economy/worker_factory_unit.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 227.0,
+					"file": "scripts/state/domains/economy_domain.gd",
+					"insertions": 76.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/game_state.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/e1_vault_core_semantics_test.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/e1_vault_core_semantics_test.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/e2_e4_economy_units_test.gd",
+					"insertions": 344.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/e2_e4_economy_units_test.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 10:00:00",
+			"hash": "b8df1e40599991172ff55fddfc235c33623b7e1a",
+			"j": 23,
+			"model_id": "claude-sonnet-4",
+			"mood": "triumphierend",
+			"n": 14,
+			"narrator": "Sage",
+			"p": 72,
+			"p_id": 106,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Squizzle",
+			"seq": 106,
+			"subject": "Sage lehrt: R-007 E4: EconomyDomain final konsolidiert -… — nach Squizzle",
+			"summary": "[NARRATOR:Sage]"
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

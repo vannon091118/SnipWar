@@ -1,19 +1,23 @@
 class_name PlanetNetwork
 extends Node2D
 
-const _FlightTime := preload("res://scripts/flight_time.gd")
-const _Dispatch := preload("res://scripts/dispatch.gd")
+## R-008: PlanetNetwork besitzt die Netzwerk-/State-Logik der Planetenszene:
+## Routen, Nachbarschaft, Auswahl (SelectionService), Nebel (Fog of War),
+## _process/_draw-Routen-Rendering und Dispatch. Die UI-Orchestrierung
+## (Context-Menü, Dossiers, Hotkeys, Fleet-, Economy-, Message-, Tutorial-,
+## Layout-Module, Dispatch-Vorschau) liegt in PlanetWorldUI (Kindknoten).
+##
+## Kompatibilitäts-Shims (dünn, delegieren an PlanetWorldUI) bleiben für
+## Preflight-Constraints und Pause-Menü: _context_menu/_context_*,
+## _economy_window, _build_context_menu_for, _on_context_action,
+## _open_workshop_dossier, get_modal_coordinator/get_message_feed/
+## get_fleet_overview, _connect_ship_selection.
+
 const DEFAULT_CONFIG: TransitConfig = preload("res://resources/config/transit_default.tres")
 const DEFAULT_UI_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
 const PLANET_NETWORK_UI_SCENE: PackedScene = preload("res://scenes/ui/planet_network_ui.tscn")
-const MESSAGE_FEED_SCENE: PackedScene = preload("res://scenes/ui/message_feed.tscn")
+const PLANET_WORLD_UI_SCRIPT: Script = preload("res://scripts/ui/world/planet_world_ui.gd")
 const SELECTION_SERVICE_SCRIPT: Script = preload("res://scripts/objects/selection_service.gd")
-const SELECTION_ACTION_TOOLTIP_SCRIPT: Script = preload("res://scripts/ui/selection_tooltip.gd")
-const FLEET_OVERVIEW_SCRIPT: Script = preload("res://scripts/ui/fleet_overview.gd")
-const ECONOMY_WINDOW_SCRIPT: Script = preload("res://scripts/ui/economy_window.gd")
-const LAYOUT_COORDINATOR_SCRIPT: Script = preload("res://scripts/ui/layout_coordinator.gd")
-const INPUT_HINT_OVERLAY_SCRIPT: Script = preload("res://scripts/ui/input_hint_overlay.gd")
-const TUTORIAL_DIRECTOR_SCRIPT: Script = preload("res://scripts/ui/tutorial/tutorial_director.gd")
 
 @export var transit_config: TransitConfig = DEFAULT_CONFIG
 @export var ui_theme_config: UIThemeConfig = DEFAULT_UI_THEME
@@ -26,24 +30,13 @@ var _routes: Dictionary = {}
 var _active_planet: Node2D
 var _destination_planets: Array[Node2D] = []
 var _ui: PlanetNetworkUI
-var _message_feed: MessageFeed
+var _world_ui: PlanetWorldUI
 var _chunk_coordinator: ChunkCoordinator
 var _map_camera: MapCamera
-var _context_menu: PopupMenu
-var _context_active_planet: Node2D
+var _selection_service: SelectionService
 var _line_phase := 0.0
 var _neighbor_cache: Dictionary = {}
 var _neighbor_cache_valid := false
-var _selection_service: SelectionService
-var _action_tooltip: SelectionActionTooltip
-var _modal_coordinator: ModalCoordinator
-var _fleet_overview: FleetOverview
-var _economy_window: EconomyWindow
-var _layout_coordinator: LayoutCoordinator
-var _input_hints: InputHintOverlay
-var _tutorial: TutorialDirector
-var _tutorial_auto_started := false
-var _selected_ship: ShipBase
 
 # Context-menu item IDs and stable names used by tests/replay scripts.
 const ACTION_OPEN: int = 0
@@ -56,7 +49,25 @@ const ACTION_SEPARATOR_2: int = 6
 const ACTION_CLEAR_SELECTION: int = 7
 const ACTION_COUNT: int = 8
 
-var _context_disabled_reasons: Dictionary = {}
+# --- Kompatibilitäts-Shims auf PlanetWorldUI (Preflight/Replay greifen direkt
+# auf network-Felder zu; die echte Logik lebt in PlanetWorldUI). ---
+
+var _context_menu: PopupMenu:
+	get:
+		return _world_ui.get_context_menu() if _world_ui != null else null
+var _context_disabled_reasons: Dictionary:
+	get:
+		return _world_ui.get_context_disabled_reasons() if _world_ui != null else {}
+var _context_active_planet: Node2D:
+	get:
+		return _world_ui.get_context_active_planet() if _world_ui != null else null
+	set(value):
+		if _world_ui != null:
+			_world_ui.set_context_active_planet(value)
+var _economy_window: EconomyWindow:
+	get:
+		return _world_ui.get_economy_window() if _world_ui != null else null
+
 
 func _ready() -> void:
 	_resolve_service_references()
@@ -79,7 +90,9 @@ func _ready() -> void:
 	_connect_map_camera.call_deferred()
 	_connect_conflict_ships.call_deferred()
 	_create_ui.call_deferred()
+	_create_world_ui.call_deferred()
 	_refresh_fog_of_war.call_deferred()
+
 
 func _resolve_service_references() -> void:
 	var field: SeededLayout = get_parent() as SeededLayout
@@ -90,9 +103,11 @@ func _resolve_service_references() -> void:
 	if background != null:
 		_map_camera = background.get_node_or_null("MapCamera") as MapCamera
 
+
 func _on_layout_completed(_unused_planets: Array = []) -> void:
 	invalidate_neighbor_cache()
 	_refresh_fog_of_war()
+
 
 ## Extracted signal-connection helper used by both _ready() and
 ## _on_planet_added() to avoid duplicate connection logic.
@@ -110,6 +125,7 @@ func _connect_planet_signals(planet: Node2D) -> void:
 	if not planet.planet_unhovered.is_connected(_on_planet_unhovered):
 		planet.planet_unhovered.connect(_on_planet_unhovered)
 
+
 func _on_planet_added(planet: Planet) -> void:
 	if not _planets.has(planet):
 		_planets.append(planet)
@@ -118,10 +134,15 @@ func _on_planet_added(planet: Planet) -> void:
 		_ui.update_planets(_planets)
 	_refresh_fog_of_war()
 
+
 func _on_planet_removed(planet: Planet) -> void:
 	_planets.erase(planet)
 	if is_instance_valid(_ui):
 		_ui.update_planets(_planets)
+
+
+# --- Selection service ---
+
 
 func _create_selection_service() -> void:
 	_selection_service = SELECTION_SERVICE_SCRIPT.new() as SelectionService
@@ -133,6 +154,10 @@ func _create_selection_service() -> void:
 		_selection_service.selection_changed.connect(_on_selection_group_changed)
 	if not _selection_service.selection_count_changed.is_connected(_on_selection_count_changed):
 		_selection_service.selection_count_changed.connect(_on_selection_count_changed)
+
+
+# --- UI creation (Panel-UI + Welt-UI) ---
+
 
 func _create_ui() -> void:
 	_ui = PLANET_NETWORK_UI_SCENE.instantiate() as PlanetNetworkUI
@@ -149,18 +174,44 @@ func _create_ui() -> void:
 		_ui.economy_overview_requested.connect(_on_economy_overview_requested)
 	if _ui.has_signal("build_requested") and not _ui.build_requested.is_connected(_on_build_requested):
 		_ui.build_requested.connect(_on_build_requested)
-	_create_context_menu()
-	_create_message_feed.call_deferred()
-	_create_modal_coordinator.call_deferred()
+
+
+## R-008: PlanetWorldUI rendert keine Netzwerk-Logik — es orchestriert nur
+## UI-Module und delegiert Intents über die dokumentierten Entry-Points.
+func _create_world_ui() -> void:
+	if _world_ui != null:
+		return
+	_world_ui = PLANET_WORLD_UI_SCRIPT.new() as PlanetWorldUI
+	_world_ui.name = "PlanetWorldUI"
+	add_child(_world_ui)
+	var field: SeededLayout = get_parent() as SeededLayout
+	var ship_manager: Node = get_parent().get_node_or_null("ShipManager")
+	var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
+	_world_ui.setup(
+		self,
+		field,
+		_ui,
+		_planets,
+		_selection_service,
+		_worker_manager,
+		ship_manager,
+		conflict_manager,
+		_map_camera,
+		ui_theme_config,
+		transit_config
+	)
+
 
 func _on_clear_selection_requested() -> void:
 	if _selection_service != null:
 		_selection_service.clear()
 
+
 func _process(delta: float) -> void:
 	if _active_planet != null and is_instance_valid(_ui) and _ui.is_panel_visible():
 		_line_phase += delta
 		queue_redraw()
+
 
 func _draw() -> void:
 	if _active_planet == null or not is_instance_valid(_ui) or not _ui.is_panel_visible():
@@ -182,115 +233,54 @@ func _draw() -> void:
 	for index in range(route_path.size() - 1):
 		draw_line(to_local(route_path[index]), to_local(route_path[index + 1]), route_color, theme.route_line_width, true)
 
-func _create_context_menu() -> void:
-	_context_menu = PopupMenu.new()
-	_context_menu.name = "PlanetContextMenu"
-	_context_menu.id_pressed.connect(_on_context_action)
-	_context_menu.id_focused.connect(_on_context_item_focused)
-	_ui.add_child(_context_menu)
-	_create_action_tooltip()
 
-func _create_action_tooltip() -> void:
-	if _ui == null:
-		return
-	_action_tooltip = SELECTION_ACTION_TOOLTIP_SCRIPT.new() as SelectionActionTooltip
-	_action_tooltip.name = "SelectionActionTooltip"
-	_ui.add_child(_action_tooltip)
+# --- Context-menu shims (Logik in PlanetWorldUI) ---
+
 
 func _on_planet_context_requested(planet: Node2D, screen_position: Vector2) -> void:
-	if _context_menu == null or not is_instance_valid(_context_menu):
-		return
-	# Right-click keeps the SelectionService primary (which acts as the
-	# mission source) intact and treats the right-clicked planet as the
-	# menu target. Promoting the primary on right-click would otherwise
-	# collapse source==target and disable every mission action.
-	_context_active_planet = planet
-	_build_context_menu_for(planet)
-	_context_menu.popup(Rect2(screen_position, Vector2.ZERO))
+	if _world_ui != null:
+		_world_ui.show_context_menu(planet, screen_position)
+
 
 func _build_context_menu_for(planet: Node2D) -> void:
-	if _context_menu == null or not is_instance_valid(_context_menu):
-		return
-	_context_active_planet = planet
-	var result: Dictionary = ContextMenuBuilder.build_menu(
-		_context_menu,
-		planet,
-		_selection_service,
-		_game_state(),
-		_is_neighbor,
-		{
-			"OPEN": ACTION_OPEN,
-			"FOCUS": ACTION_FOCUS,
-			"ATTACK": ACTION_ATTACK,
-			"COLLECT": ACTION_COLLECT,
-			"COLONIZE": ACTION_COLONIZE,
-			"CLEAR": ACTION_CLEAR_SELECTION,
-		}
-	)
-	_context_disabled_reasons = result.get("disabled_reasons", {})
+	if _world_ui != null:
+		_world_ui.build_context_menu_for(planet)
 
-func _on_planet_hovered(planet: Node2D) -> void:
-	if is_instance_valid(_ui):
-		_ui.show_planet_tooltip(planet)
-
-func _on_planet_unhovered(_planet: Node2D) -> void:
-	if is_instance_valid(_ui):
-		_ui.hide_planet_tooltip()
-
-func _on_context_item_focused(id: int) -> void:
-	if _context_menu == null or not is_instance_valid(_context_menu):
-		return
-	var item_index: int = _context_menu.get_item_index(id)
-	if item_index < 0 or _context_menu.is_item_disabled(item_index) == false:
-		return
-	var anchor_position: Vector2 = Vector2(_context_menu.position) + Vector2(8.0, float(item_index + 1) * 24.0)
-	_show_action_tooltip(id, anchor_position)
 
 func _on_context_action(id: int) -> void:
-	var planet: Node2D = _context_active_planet
-	_context_active_planet = null
-	if _context_menu != null and is_instance_valid(_context_menu):
-		var item_index: int = _context_menu.get_item_index(id)
-		if item_index >= 0 and _context_menu.is_item_disabled(item_index):
-			_show_action_tooltip(id, _context_menu.position)
-			return
-	if planet == null or not is_instance_valid(_ui):
+	if _world_ui != null:
+		_world_ui.on_context_action(id)
+
+
+func _on_context_item_focused(id: int) -> void:
+	if _world_ui != null:
+		_world_ui.on_context_item_focused(id)
+
+
+func _on_planet_hovered(planet: Node2D) -> void:
+	if _world_ui != null:
+		_world_ui.on_planet_hovered(planet)
+
+
+func _on_planet_unhovered(_planet: Node2D) -> void:
+	if _world_ui != null:
+		_world_ui.on_planet_unhovered()
+
+
+func _center_camera_on(planet: Node2D) -> void:
+	if _map_camera == null or not is_instance_valid(_map_camera) or planet == null:
 		return
-	if id == ACTION_OPEN:
-		if _selection_service != null:
-			_selection_service.handle_request(planet, {})
-		else:
-			_on_planet_selected(planet)
-	elif id == ACTION_FOCUS:
-		_center_camera_on(planet)
-	elif id == ACTION_ATTACK:
-		_open_mission_for_target(planet, GameState.MISSION_MILITARY)
-	elif id == ACTION_COLLECT:
-		_open_mission_for_target(planet, GameState.MISSION_COLLECT)
-	elif id == ACTION_COLONIZE:
-		_open_mission_for_target(planet, GameState.MISSION_COLONY)
-	elif id == ACTION_CLEAR_SELECTION:
-		if _selection_service != null:
-			_selection_service.clear()
+	_map_camera.position = planet.global_position
+
 
 func _open_mission_for_target(target: Node2D, mission_type: StringName) -> void:
-	if target == null or not is_instance_valid(target) or not is_instance_valid(_ui):
-		return
-	var source: Node2D = _selection_service.get_primary() if _selection_service != null else _active_planet
-	if source == null or not is_instance_valid(source):
-		return
-	_ui.set_mission_type(mission_type)
-	_on_planet_selected(source)
-	var target_index: int = _destination_planets.find(target)
-	if target_index >= 0:
-		_on_destination_selected(target_index)
+	if _world_ui != null:
+		_world_ui.open_mission_for_target(target, mission_type)
+
 
 func _show_action_tooltip(item_id: int, anchor_position: Vector2) -> void:
-	if _action_tooltip == null or not is_instance_valid(_action_tooltip):
-		return
-	var reason: String = String(_context_disabled_reasons.get(item_id, "Diese Aktion ist aktuell nicht verfügbar."))
-	_action_tooltip.show_text(reason, anchor_position)
-
+	if _world_ui != null:
+		_world_ui.show_action_tooltip(item_id, anchor_position)
 
 
 func _is_neighbor(source: Node2D, target: Node2D) -> bool:
@@ -301,362 +291,96 @@ func _is_neighbor(source: Node2D, target: Node2D) -> bool:
 			return true
 	return false
 
-func _center_camera_on(planet: Node2D) -> void:
-	if _map_camera == null or not is_instance_valid(_map_camera) or planet == null:
-		return
-	_map_camera.position = planet.global_position
 
-func _create_message_feed() -> void:
-	var event_log: Node = get_tree().root.get_node_or_null("EventLog")
-	if event_log == null:
-		return
-	_message_feed = MESSAGE_FEED_SCENE.instantiate() as MessageFeed
-	add_child(_message_feed)
-	_message_feed.setup(event_log, ui_theme_config)
+# --- Dossier/Economy/Fleet shims (Logik in PlanetWorldUI) ---
 
-func _create_modal_coordinator() -> void:
-	_modal_coordinator = ModalCoordinator.new()
-	_modal_coordinator.name = "ModalCoordinator"
-	add_child(_modal_coordinator)
-	_modal_coordinator.setup(_map_camera, ui_theme_config)
-	_create_layout_coordinator()
-	_create_input_hints()
-	_create_tutorial()
-	_create_dossier_launcher()
-	_create_fleet_overview.call_deferred()
-	_create_economy_module.call_deferred()
-
-## Sprint 6 (S6): fixed non-overlapping panel zones. The paper dossier stays a
-## full-screen modal (it intentionally dims and freezes the world), while the
-## persistent panels (fleet top-right, economy bottom-right) live inside their
-## ControlField so nothing ever overlaps the map or the vault.
-func _create_layout_coordinator() -> void:
-	_layout_coordinator = LAYOUT_COORDINATOR_SCRIPT.new() as LayoutCoordinator
-	_layout_coordinator.name = "LayoutCoordinator"
-	add_child(_layout_coordinator)
-	_layout_coordinator.setup()
-	var map_field := ControlField.new()
-	map_field.name = "FieldMap"
-	map_field.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_layout_coordinator.register_field(map_field, &"field_map")
-	var vault_field := ControlField.new()
-	vault_field.name = "FieldVaultTop"
-	vault_field.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_layout_coordinator.register_field(vault_field, &"field_vault_top")
-	var dossier_field := ControlField.new()
-	dossier_field.name = "FieldDossierLeft"
-	dossier_field.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_layout_coordinator.register_field(dossier_field, &"field_dossier_left")
-
-func _create_dossier_launcher() -> void:
-	var layer := CanvasLayer.new()
-	layer.name = "DossierLauncher"
-	# Sits ABOVE the PaperDossier modal (layer 80) so the PLANET/WERKSTATT/
-	# FORSCHUNG/ECONOMY buttons stay clickable while a dossier is open — the
-	# modal's fullscreen dim would otherwise swallow every click and make
-	# sub-tab switching impossible until the dossier is closed first.
-	layer.layer = 85
-	add_child(layer)
-	var box := VBoxContainer.new()
-	box.name = "LauncherBox"
-	box.position = Vector2(12.0, 72.0)
-	box.add_theme_constant_override("separation", 6)
-	layer.add_child(box)
-	_add_dossier_button(box, "PLANET", _open_planet_dossier, "Planeten-Dossier: Gebäude, Hangar, planetare Forschung")
-	_add_dossier_button(box, "WERKSTATT", _open_workshop_dossier)
-	_add_dossier_button(box, "FORSCHUNG", _open_tech_tree_dossier)
-	_add_dossier_button(box, "ECONOMY", _toggle_economy_module)
-	_add_dossier_button(box, "TUTORIAL", _restart_tutorial)
-
-## Sprint 7: interaktives Onboarding. Auto-Start einmal pro Session; danach
-## über den TUTORIAL-Launcher-Button jederzeit neu startbar.
-func _create_tutorial() -> void:
-	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
-	_tutorial = TUTORIAL_DIRECTOR_SCRIPT.new() as TutorialDirector
-	_tutorial.name = "TutorialDirector"
-	# CanvasLayer muss zum Scene-Root (World) hinzugefügt werden, nicht zu PlanetNetwork
-	# (Node2D mit Transform), sonst stimmt viewport.get_canvas_transform() nicht.
-	var world_root := get_tree().root
-	if world_root != null:
-		world_root.add_child(_tutorial)
-	else:
-		add_child(_tutorial)  # Fallback
-	_tutorial.setup(ui_theme_config)
-	if not _tutorial_auto_started:
-		_tutorial_auto_started = true
-		_tutorial.start(self, ship_manager, _game_state(), _map_camera)
-
-func _restart_tutorial() -> void:
-	if _tutorial != null and is_instance_valid(_tutorial):
-		_tutorial.restart()
-	else:
-		_create_tutorial()
-
-func _create_fleet_overview() -> void:
-	_fleet_overview = FLEET_OVERVIEW_SCRIPT.new() as FleetOverview
-	_fleet_overview.name = "FleetOverview"
-	var layer := CanvasLayer.new()
-	layer.name = "FleetOverviewLayer"
-	layer.layer = 38
-	add_child(layer)
-	_fleet_overview.setup(ui_theme_config, _map_camera)
-	_fleet_overview.focus_requested.connect(_on_fleet_overview_focus)
-	_fleet_overview.ship_drop_requested.connect(_on_ship_drop_requested)
-	# Dock the overview into its ControlField zone (no manual offset anymore).
-	if _layout_coordinator != null:
-		var fleet_field := ControlField.new()
-		fleet_field.name = "FieldFleetRightTop"
-		fleet_field.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		layer.add_child(fleet_field)
-		fleet_field.add_child(_fleet_overview)
-		_layout_coordinator.register_field(fleet_field, &"field_fleet_right_top")
-	else:
-		_fleet_overview.position = Vector2(12.0, 220.0)
-		_fleet_overview.custom_minimum_size = Vector2(190.0, 0.0)
-		layer.add_child(_fleet_overview)
-
-func _create_economy_module() -> void:
-	_economy_window = ECONOMY_WINDOW_SCRIPT.new() as EconomyWindow
-	_economy_window.name = "EconomyWindow"
-	var layer := CanvasLayer.new()
-	layer.name = "EconomyWindowLayer"
-	layer.layer = 65
-	add_child(layer)
-	_economy_window.setup(ui_theme_config)
-	# Economy lives in its own zone bottom-right; the standard floating window
-	# keeps its own positioning when the coordinator is unavailable.
-	if _layout_coordinator != null:
-		var economy_field := ControlField.new()
-		economy_field.name = "FieldEconomyRightBottom"
-		economy_field.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		layer.add_child(economy_field)
-		economy_field.add_child(_economy_window)
-		_layout_coordinator.register_field(economy_field, &"field_economy_right_bottom")
-	else:
-		layer.add_child(_economy_window)
-
-func _toggle_economy_module() -> void:
-	if _economy_window != null and is_instance_valid(_economy_window):
-		_economy_window.toggle()
-
-func _on_economy_overview_requested() -> void:
-	if _economy_window != null and is_instance_valid(_economy_window):
-		_economy_window.open()
-
-func _on_ship_dispatched(ship: ShipBase) -> void:
-	_connect_ship_selection(ship)
-	_update_fleet_overview()
-
-func _on_ship_drop_requested(ship: ShipBase, destination_planet: Node2D) -> void:
-	if ship == null or destination_planet == null or not is_instance_valid(ship):
-		return
-	# Only dispatch idle/arrived ships; in-flight ones just get camera focus.
-	var source_planet := _find_planet_by_id(ship.source_planet_id)
-	if ship.has_arrived() and source_planet != null and source_planet != destination_planet:
-		var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
-		if conflict_manager != null and conflict_manager.has_method("dispatch_ship"):
-			var ship_id: StringName = &""
-			if ship.fleet != null and not ship.fleet.ships.is_empty():
-				ship_id = ship.fleet.ships[0].ship_id
-			if not String(ship_id).is_empty():
-				var result: ShipBase = conflict_manager.call("dispatch_ship", source_planet, destination_planet, ship_id, ship.mission_role) as ShipBase
-				if result != null:
-					var event_log: Node = get_node_or_null("/root/EventLog")
-					if event_log != null and event_log.has_method("push"):
-						event_log.push("Schiff entsendet nach %s" % UIBaseUtils.planet_display_name(destination_planet))
-					_update_fleet_overview.call_deferred()
-					return
-	# Fallback: centre camera and select the destination planet.
-	_center_camera_on(destination_planet)
-	if _selection_service != null:
-		_selection_service.handle_request(destination_planet, {})
-	else:
-		_on_planet_selected(destination_planet)
-
-func _find_planet_by_id(planet_id: StringName) -> Planet:
-	if String(planet_id).is_empty():
-		return null
-	for child in get_parent().get_children():
-		var planet := child as Planet
-		if planet != null and planet.get("planet_id") == planet_id:
-			return planet
-	return null
-
-func _connect_ship_selection(ship: ShipBase) -> void:
-	if ship == null or not is_instance_valid(ship):
-		return
-	if not ship.ship_selected.is_connected(_on_ship_clicked):
-		ship.ship_selected.connect(_on_ship_clicked)
-
-func _on_ship_clicked(ship: ShipBase) -> void:
-	_deselect_current_ship()
-	if _selection_service != null:
-		_selection_service.clear()
-	ship.set_selected(true)
-	_selected_ship = ship
-	_center_camera_on(ship)
-
-func _deselect_current_ship() -> void:
-	if _selected_ship != null and is_instance_valid(_selected_ship):
-		_selected_ship.set_selected(false)
-	_selected_ship = null
-
-func _update_fleet_overview() -> void:
-	if _fleet_overview == null or not is_instance_valid(_fleet_overview):
-		return
-	# Keep the part catalog fresh so ship rows can render composition icons.
-	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
-	if ship_manager != null and _fleet_overview.has_method("set_part_catalog"):
-		_fleet_overview.set_part_catalog(ship_manager.get_part_catalog())
-	var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
-	var ships: Array[ShipBase] = []
-	if conflict_manager != null:
-		if conflict_manager.has_method("get_active_ships"):
-			for ship in conflict_manager.get_active_ships() as Array[ShipBase]:
-				ships.append(ship)
-		if conflict_manager.has_method("get_idle_ships"):
-			for ship in conflict_manager.get_idle_ships() as Array[ShipBase]:
-				ships.append(ship)
-	_fleet_overview.update_ships(ships)
-	if _selection_service != null:
-		_fleet_overview.update_planets(_selection_service.get_selection())
-
-func _on_fleet_overview_focus(target: Node2D) -> void:
-	_center_camera_on(target)
-	if target is Planet:
-		_deselect_current_ship()
-		if _selection_service != null:
-			_selection_service.handle_request(target, {})
-		else:
-			_on_planet_selected(target)
-	elif target is ShipBase:
-		_deselect_current_ship()
-		if _selection_service != null:
-			_selection_service.clear()
-		target.set_selected(true)
-		_selected_ship = target as ShipBase
-
-## Sprint 6 (S2): direct Dossier hotkeys (P/W/F/R, ESC handled by ui_cancel).
-## Kept in _unhandled_input so the world view reacts without stealing focus.
-func _unhandled_input(event: InputEvent) -> void:
-	if _modal_coordinator != null and is_instance_valid(_modal_coordinator) and _modal_coordinator.is_open():
-		return
-	if event.is_action_pressed(&"open_planet"):
-		_open_planet_dossier()
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed(&"open_workshop"):
-		_open_workshop_dossier()
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed(&"open_research"):
-		_open_tech_tree_dossier()
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed(&"open_economy"):
-		_toggle_economy_module()
-		get_viewport().set_input_as_handled()
-
-func _create_input_hints() -> void:
-	_input_hints = INPUT_HINT_OVERLAY_SCRIPT.new() as InputHintOverlay
-	_input_hints.name = "InputHintOverlay"
-	add_child(_input_hints)
-	_input_hints.setup(ui_theme_config)
-
-func _add_dossier_button(box: VBoxContainer, text: String, pressed: Callable, tooltip: String = "") -> void:
-	var button := Button.new()
-	button.text = text
-	button.focus_mode = Control.FOCUS_NONE
-	if tooltip != "":
-		button.tooltip_text = tooltip
-	UIBaseUtils.apply_button_theme(button, ui_theme_config)
-	button.pressed.connect(pressed)
-	box.add_child(button)
-
-func _close_overlay_panels() -> void:
-	if is_instance_valid(_ui):
-		_ui.close_panel()
 
 func _open_planet_dossier() -> void:
-	if _modal_coordinator == null or not is_instance_valid(_modal_coordinator):
-		return
-	if _active_planet == null or not is_instance_valid(_active_planet):
-		return
-	var view := PlanetDossierView.new()
-	view.setup(ui_theme_config)
-	view.populate(_active_planet as Planet, _game_state())
-	_close_overlay_panels()
-	_modal_coordinator.open_view(view, "PLANETEN-DOSSIER")
+	if _world_ui != null:
+		_world_ui.open_planet_dossier()
 
-func _on_build_requested() -> void:
-	_open_planet_dossier()
 
 func _open_workshop_dossier() -> void:
-	if _modal_coordinator == null or not is_instance_valid(_modal_coordinator):
-		return
-	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
-	if ship_manager == null:
-		return
-	var view := WorkshopView.new()
-	view.setup(ship_manager, ui_theme_config)
-	view.refresh(_game_state(), ship_manager.get_planets())
-	_close_overlay_panels()
-	_modal_coordinator.open_view(view, "WERKSTATT / HANGAR")
+	if _world_ui != null:
+		_world_ui.open_workshop_dossier()
+
 
 func _open_tech_tree_dossier() -> void:
-	if _modal_coordinator == null or not is_instance_valid(_modal_coordinator):
-		return
-	var ship_manager: ShipManager = get_parent().get_node_or_null("ShipManager") as ShipManager
-	if ship_manager == null:
-		return
-	var view := ParchmentTechTreeView.new()
-	view.setup(ship_manager, ui_theme_config)
-	view.refresh(_game_state())
-	_close_overlay_panels()
-	_modal_coordinator.open_view(view, "FORSCHUNGSBAUM")
+	if _world_ui != null:
+		_world_ui.open_tech_tree_dossier()
+
+
+func _on_economy_overview_requested() -> void:
+	if _world_ui != null:
+		_world_ui.open_economy_module()
+
+
+func _on_build_requested() -> void:
+	if _world_ui != null:
+		_world_ui.open_planet_dossier()
+
+
+func _restart_tutorial() -> void:
+	if _world_ui != null:
+		_world_ui.restart_tutorial()
+
 
 func get_fleet_overview() -> FleetOverview:
-	return _fleet_overview
+	return _world_ui.get_fleet_overview() if _world_ui != null else null
+
 
 func get_modal_coordinator() -> ModalCoordinator:
-	return _modal_coordinator
+	return _world_ui.get_modal_coordinator() if _world_ui != null else null
+
 
 func get_message_feed() -> MessageFeed:
-	return _message_feed
+	return _world_ui.get_message_feed() if _world_ui != null else null
 
-func _on_panel_visibility_changed(_panel_open: bool) -> void:
+
+# --- Selection flow ---
+
+
+func _on_planet_selection_requested(planet: Node2D, modifiers: Dictionary) -> void:
+	if _selection_service == null:
+		return
+	_selection_service.handle_request(planet, modifiers)
+
+
+func _on_selection_primary_changed(_planet: Node2D) -> void:
+	var primary: Node2D = _selection_service.get_primary() if _selection_service != null else null
+	if primary == null:
+		_clear_active_planet()
+		return
+	_on_planet_selected(primary)
+
+
+func _on_selection_group_changed(selection: Array[Node2D]) -> void:
+	if _world_ui != null:
+		_world_ui.on_selection_group_changed(selection)
 	queue_redraw()
 
-func _on_workers_spawn_requested(source: Node2D, amount: int) -> void:
-	_worker_manager.call("_spawn_clusters", source, amount)
 
-func _connect_map_camera() -> void:
-	if _map_camera != null and is_instance_valid(_map_camera) and not _map_camera.planet_drag_dropped.is_connected(_on_planet_drag_dropped):
-		_map_camera.planet_drag_dropped.connect(_on_planet_drag_dropped)
+func _on_selection_count_changed(count: int) -> void:
+	if _world_ui != null:
+		_world_ui.set_selection_count(count)
 
-func _connect_conflict_ships() -> void:
-	var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
-	if conflict_manager == null:
-		return
-	if conflict_manager.has_signal("ship_dispatched") and not conflict_manager.is_connected("ship_dispatched", _on_ship_dispatched):
-		conflict_manager.connect("ship_dispatched", _on_ship_dispatched)
-	if conflict_manager.has_signal("ship_arrived") and not conflict_manager.is_connected("ship_arrived", _on_ship_arrived):
-		conflict_manager.connect("ship_arrived", _on_ship_arrived)
-	# Connect existing materialized ships (e.g. restore from save).
-	if conflict_manager.has_method("get_active_ships"):
-		for ship in conflict_manager.get_active_ships() as Array[ShipBase]:
-			_connect_ship_selection(ship)
 
-func _on_ship_arrived(_ship: Node2D) -> void:
-	_update_fleet_overview.call_deferred()
+func _clear_active_planet() -> void:
+	if is_instance_valid(_active_planet):
+		var previous: Planet = _active_planet as Planet
+		if previous != null:
+			previous.set_selected(false)
+	_active_planet = null
+	if is_instance_valid(_ui):
+		_ui.close_panel()
+	if _world_ui != null:
+		_world_ui.close_panel()
+	queue_redraw()
 
-func _on_planet_drag_dropped(source: Node2D, destination: Node2D) -> void:
-	if not is_instance_valid(_ui) or source == null or destination == null or source == destination:
-		return
-	if _selection_service != null:
-		_selection_service.handle_request(source, {})
-	else:
-		_on_planet_selected(source)
-	var destination_index := _ui.index_of_destination(destination.name)
-	if destination_index >= 0:
-		_on_destination_selected(destination_index)
+
+func get_selection_service() -> SelectionService:
+	return _selection_service
+
 
 func _on_planet_selected(planet: Node2D) -> void:
 	if not is_instance_valid(_ui):
@@ -671,56 +395,21 @@ func _on_planet_selected(planet: Node2D) -> void:
 		selected_planet.set_selected(true)
 	_destination_planets = get_mission_destinations(planet, _ui.selected_mission_type())
 	var default_destination := get_destination(planet)
-	_ui.show_planet(planet, _destination_planets, default_destination)
-	_update_selected_count()
-	_refresh_slider_bounds()
-	_refresh_dispatch_lock()
-	if _input_hints != null:
-		_input_hints.show_context(&"planet")
-	if _ui.has_selectable_amount():
-		_ui.reset_amount()
-		_update_preview()
+	if _world_ui != null:
+		_world_ui.on_planet_selected(planet, _destination_planets, default_destination)
 	queue_redraw()
 
-func _on_planet_selection_requested(planet: Node2D, modifiers: Dictionary) -> void:
-	if _selection_service == null:
-		return
-	_selection_service.handle_request(planet, modifiers)
 
-func _on_selection_primary_changed(_planet: Node2D) -> void:
-	var primary: Node2D = _selection_service.get_primary() if _selection_service != null else null
-	if primary == null:
-		_clear_active_planet()
-		return
-	_on_planet_selected(primary)
-
-func _on_selection_group_changed(_selection: Array[Node2D]) -> void:
-	if _ui == null or not is_instance_valid(_ui):
-		return
-	if _ui.has_method("refresh_selection_overview"):
-		_ui.refresh_selection_overview(_selection)
-	if _fleet_overview != null and is_instance_valid(_fleet_overview):
-		_fleet_overview.update_planets(_selection)
-	queue_redraw()
-
-func _on_selection_count_changed(count: int) -> void:
-	if _ui == null or not is_instance_valid(_ui):
-		return
-	if _ui.has_method("set_selection_count"):
-		_ui.set_selection_count(count)
-
-func _clear_active_planet() -> void:
-	if is_instance_valid(_active_planet):
-		var previous: Planet = _active_planet as Planet
-		if previous != null:
-			previous.set_selected(false)
-	_active_planet = null
+func _on_worker_count_changed(planet: Node2D, _count: int) -> void:
 	if is_instance_valid(_ui):
-		_ui.close_panel()
-	queue_redraw()
+		_ui.update_count(planet)
+	if planet == _active_planet and _world_ui != null:
+		_world_ui.refresh_selected_count()
+		_world_ui.refresh_slider_bounds()
 
-func get_selection_service() -> SelectionService:
-	return _selection_service
+
+# --- Route / dispatch flow ---
+
 
 func _on_destination_selected(index: int) -> void:
 	if _active_planet == null:
@@ -728,9 +417,11 @@ func _on_destination_selected(index: int) -> void:
 	if index < 0 or index >= _destination_planets.size():
 		return
 	_routes[_active_planet] = _destination_planets[index]
-	_update_preview()
-	_refresh_dispatch_lock()
+	if _world_ui != null:
+		_world_ui.update_preview()
+		_world_ui.refresh_dispatch_lock()
 	queue_redraw()
+
 
 func _on_mission_selected(mission_type: StringName) -> void:
 	if _active_planet == null or not is_instance_valid(_ui):
@@ -738,101 +429,17 @@ func _on_mission_selected(mission_type: StringName) -> void:
 	_destination_planets = get_mission_destinations(_active_planet, mission_type)
 	var current_destination := get_destination(_active_planet)
 	_ui.set_destinations(_destination_planets, current_destination)
-	_update_preview()
-	_refresh_dispatch_lock()
+	if _world_ui != null:
+		_world_ui.update_preview()
+		_world_ui.refresh_dispatch_lock()
 	queue_redraw()
 
-func _on_worker_count_changed(planet: Node2D, _count: int) -> void:
-	if is_instance_valid(_ui):
-		_ui.update_count(planet)
-	if planet == _active_planet:
-		_update_selected_count()
-		_refresh_slider_bounds()
-
-func _update_selected_count() -> void:
-	if _active_planet == null or not is_instance_valid(_ui):
-		return
-	_ui.set_selected_count(int(_active_planet.get("worker_count")))
 
 func _on_amount_changed(_value: float) -> void:
-	_update_preview()
+	if _world_ui != null:
+		_world_ui.update_preview()
 	queue_redraw()
 
-func get_ship_flight_preview(source: Planet, destination: Planet, ship_id: StringName) -> float:
-	var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
-	if conflict_manager == null or not conflict_manager.has_method("preview_duration"):
-		return 0.0
-	return float(conflict_manager.call("preview_duration", source, destination, ship_id))
-
-func _update_preview() -> void:
-	if not is_instance_valid(_ui):
-		return
-	if _active_planet == null or not _ui.has_selectable_amount():
-		_ui.set_preview("Keine Einheiten verfügbar")
-		_ui.set_dispatch_preview({"summary": "Keine Einheiten verfügbar."})
-		return
-	var destination := get_destination(_active_planet)
-	if destination == null:
-		_ui.set_preview("Kein Ziel verfügbar")
-		_ui.set_dispatch_preview({"summary": "Kein Ziel verfügbar — Auftrag kann nicht gestartet werden."})
-		return
-	var source: Planet = _active_planet as Planet
-	var destination_planet: Planet = destination as Planet
-	var state: Node = _game_state()
-	var available: int = int(source.get("worker_count"))
-	var selected_amount: int = clampi(_ui.selected_amount(), 1, maxi(available, 1))
-	var route_path := get_route_path(source, destination)
-	var distance := _path_distance(route_path)
-	var speed_multiplier: float = source.get_transfer_speed_multiplier()
-	var seconds := _FlightTime.seconds_for(distance, selected_amount, transit_config, speed_multiplier)
-	var mission_type: StringName = _ui.selected_mission_type()
-	var destination_faction: StringName = destination_planet.get_faction() if destination_planet != null else GameState.FACTION_NEUTRAL
-	var destination_known: bool = false
-	if state != null and destination_planet != null:
-		destination_known = state.is_known(destination_planet.planet_id, GameState.FACTION_PLAYER)
-	var destination_name: String = UIBaseUtils.planet_display_name(destination_planet) if destination_planet != null and destination_known else "Unbekanntes Ziel"
-	var summary_lines: Array[String] = [
-		"%s · %s" % [UIBaseUtils.mission_display_name(mission_type), destination_name],
-		"Sende: %d / %d Einheiten · Danach verfügbar: %d" % [selected_amount, available, maxi(0, available - selected_amount)],
-		"Transit: %.1f s" % seconds,
-	]
-	match mission_type:
-		GameState.MISSION_COLLECT:
-			var resource_id: StringName = state.resource_of(destination_planet.planet_id) if destination_planet != null and destination_known else &""
-			var local_stock: int = state.get_local_resource(destination_planet.planet_id, resource_id) if state != null and destination_planet != null and not String(resource_id).is_empty() else 0
-			var base_amount: int = destination_planet.get_size_profile().resource_base if destination_planet != null else 1
-			var possible_cargo: int = mini(selected_amount * maxi(base_amount, 1), local_stock)
-			if not String(resource_id).is_empty():
-				summary_lines.append("Rückkehrladung: bis zu %d %s" % [possible_cargo, UIBaseUtils.resource_display_name(resource_id)])
-			else:
-				summary_lines.append("Rückkehrladung: Zielressource noch unbekannt")
-		GameState.MISSION_MILITARY:
-			if destination_faction != source.get_faction():
-				summary_lines.append("Risiko: Konflikt möglich")
-			else:
-				summary_lines.append("Einsatz: Verstärkung der eigenen Welt")
-		GameState.MISSION_CARGO:
-			if destination_faction == source.get_faction():
-				summary_lines.append("Wirkung: Verstärkt die Zielwelt")
-			else:
-				summary_lines.append("Hinweis: Transport ist nur zu einer eigenen Welt gültig")
-		GameState.MISSION_COLONY:
-			if destination_faction == GameState.FACTION_NEUTRAL:
-				summary_lines.append("Wirkung: Besiedelt die neutrale Zielwelt")
-			else:
-				summary_lines.append("Hinweis: Ziel muss neutral sein")
-	# Keep the compact preview parseable for existing replay/preflight tooling;
-	# the sticky footer carries the richer consequence summary.
-	var preview_text: String = "Flugzeit: %.1f s" % seconds
-	_ui.set_preview(preview_text)
-	_ui.set_dispatch_preview({"summary": "\n".join(summary_lines), "seconds": seconds, "amount": selected_amount, "available": available})
-
-func _refresh_slider_bounds() -> void:
-	if _active_planet == null or not is_instance_valid(_ui):
-		return
-	var bounds := _Dispatch.amount_range(int(_active_planet.get("worker_count")))
-	_ui.set_amount_bounds(bounds)
-	_update_preview()
 
 func _on_send_pressed() -> void:
 	if _active_planet == null or not is_instance_valid(_ui):
@@ -842,7 +449,9 @@ func _on_send_pressed() -> void:
 	var destination := get_destination(_active_planet)
 	if destination != null:
 		_worker_manager.call("_dispatch_clusters", _active_planet, destination, _ui.selected_amount(), get_route_path(_active_planet, destination), _ui.selected_mission_type())
-		_refresh_dispatch_lock.call_deferred()
+		if _world_ui != null:
+			_world_ui.refresh_dispatch_lock.call_deferred()
+
 
 ## Sprint 6 (S9): max one active dispatch order per planet. Disables the send
 ## button (and preview) while the selected destination already has a mission.
@@ -859,18 +468,6 @@ func _dispatch_locked_for_destination() -> bool:
 		return false
 	return _worker_manager.has_active_order(planet.planet_id)
 
-func _refresh_dispatch_lock() -> void:
-	if _ui == null or not is_instance_valid(_ui) or _worker_manager == null:
-		return
-	var locked := _dispatch_locked_for_destination()
-	var send_button: Button = _ui.get_send_button()
-	if send_button != null:
-		if locked and send_button.disabled == false:
-			send_button.disabled = true
-		elif not locked and send_button.disabled and _ui.has_selectable_amount():
-			send_button.disabled = false
-	if locked and _ui.has_method("set_preview"):
-		_ui.set_preview("Ziel bereits unter Auftrag — warte auf Ankunft")
 
 func transit_config_identity_valid() -> bool:
 	if _worker_manager == null or transit_config == null:
@@ -878,22 +475,42 @@ func transit_config_identity_valid() -> bool:
 	var manager_config: TransitConfig = _worker_manager.get("transit_config") as TransitConfig
 	return manager_config == transit_config
 
+
 func get_ui() -> PlanetNetworkUI:
 	return _ui
 
+
+func get_active_planet() -> Node2D:
+	return _active_planet
+
+
+func get_active_destinations() -> Array[Node2D]:
+	return _destination_planets
+
+
 func get_line_phase() -> float:
 	return _line_phase
+
+
+# --- Network queries ---
+
+
+func get_ship_flight_preview(source: Planet, destination: Planet, ship_id: StringName) -> float:
+	var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
+	if conflict_manager == null or not conflict_manager.has_method("preview_duration"):
+		return 0.0
+	return float(conflict_manager.call("preview_duration", source, destination, ship_id))
+
 
 func get_route_path(source: Node2D, destination: Node2D) -> Array[Vector2]:
 	if is_instance_valid(_navigation):
 		return _navigation.find_route(source, destination)
 	return [source.global_position, destination.global_position]
 
-func _path_distance(path: Array[Vector2]) -> float:
-	return PathUtils.distance(path)
 
 func _game_state() -> Node:
 	return GameStateAccess.autoload(self)
+
 
 func get_destination(source: Node2D) -> Node2D:
 	var selected = _routes.get(source)
@@ -902,6 +519,7 @@ func get_destination(source: Node2D) -> Node2D:
 	if selected != null and is_instance_valid(selected) and allowed_destinations.has(selected):
 		return selected as Node2D
 	return allowed_destinations[0] if not allowed_destinations.is_empty() else null
+
 
 func get_route_destinations(source: Node2D) -> Array[Node2D]:
 	var world_config: WorldConfig = get_parent().get("world_config") as WorldConfig
@@ -912,6 +530,7 @@ func get_route_destinations(source: Node2D) -> Array[Node2D]:
 		if destination != source:
 			result.append(destination)
 	return result
+
 
 func get_mission_destinations(source: Node2D, mission_type: StringName) -> Array[Node2D]:
 	var route_destinations: Array[Node2D] = get_route_destinations(source)
@@ -928,9 +547,11 @@ func get_mission_destinations(source: Node2D, mission_type: StringName) -> Array
 			result.append(destination)
 	return result
 
+
 func invalidate_neighbor_cache() -> void:
 	_neighbor_cache.clear()
 	_neighbor_cache_valid = false
+
 
 func get_neighbors(planet: Node2D) -> Array[Node2D]:
 	if not _neighbor_cache_valid:
@@ -939,6 +560,7 @@ func get_neighbors(planet: Node2D) -> Array[Node2D]:
 	if cached == null:
 		return []
 	return cached as Array[Node2D]
+
 
 func _build_neighbor_cache() -> void:
 	_neighbor_cache.clear()
@@ -951,7 +573,7 @@ func _build_neighbor_cache() -> void:
 		return
 	for planet in _planets:
 		var neighbors: Array[Node2D] = _navigation.get_neighbors_for_planet(planet)
-		# Stable sort by neighbour index/id so the Set/seen-order in scripts
+		# Stable sort by neighbor index/id so the Set/seen-order in scripts
 		# that iterate the cache stays deterministic across rebuilds.
 		neighbors.sort_custom(func(a, b):
 			var ai := int((a as Node).get_index())
@@ -962,6 +584,10 @@ func _build_neighbor_cache() -> void:
 		)
 		_neighbor_cache[planet] = neighbors
 	_neighbor_cache_valid = true
+
+
+# --- Fog of war ---
+
 
 func _connect_fog_signals() -> void:
 	var state: Node = _game_state()
@@ -974,14 +600,18 @@ func _connect_fog_signals() -> void:
 	if not state.catalog_reset.is_connected(_on_catalog_reset):
 		state.catalog_reset.connect(_on_catalog_reset)
 
+
 func _on_faction_changed(_planet_id: StringName, _old_faction: StringName, _new_faction: StringName) -> void:
 	_refresh_fog_of_war()
+
 
 func _on_planet_discovered(_faction: StringName, _planet_id: StringName) -> void:
 	_refresh_fog_of_war()
 
+
 func _on_catalog_reset(_catalog: PlanetCatalog) -> void:
 	_refresh_fog_of_war()
+
 
 ## Recomputes the player's fog-of-war frontier: own/known planets are fully
 ## visible, their unknown neighbors are dimmed, and everything else is hidden.
@@ -1009,9 +639,67 @@ func _refresh_fog_of_war() -> void:
 		_navigation.queue_redraw()
 	queue_redraw()
 
+
 func _is_frontier_for_player(planet: Node2D) -> bool:
 	for neighbor in get_neighbors(planet):
 		var neighbor_planet: Planet = neighbor as Planet
 		if neighbor_planet != null and neighbor_planet.get_faction() == GameState.FACTION_PLAYER:
 			return true
 	return false
+
+
+# --- Camera / drag / ship wiring (Signal-Verdrahtung bleibt im Network) ---
+
+
+func _connect_map_camera() -> void:
+	if _map_camera != null and is_instance_valid(_map_camera) and not _map_camera.planet_drag_dropped.is_connected(_on_planet_drag_dropped):
+		_map_camera.planet_drag_dropped.connect(_on_planet_drag_dropped)
+
+
+func _connect_conflict_ships() -> void:
+	var conflict_manager: Node = get_parent().get_node_or_null("ConflictManager")
+	if conflict_manager == null:
+		return
+	if conflict_manager.has_signal("ship_dispatched") and not conflict_manager.is_connected("ship_dispatched", _on_ship_dispatched):
+		conflict_manager.connect("ship_dispatched", _on_ship_dispatched)
+	if conflict_manager.has_signal("ship_arrived") and not conflict_manager.is_connected("ship_arrived", _on_ship_arrived):
+		conflict_manager.connect("ship_arrived", _on_ship_arrived)
+	# Connect existing materialized ships (e.g. restore from save).
+	if conflict_manager.has_method("get_active_ships"):
+		for ship in conflict_manager.get_active_ships() as Array[ShipBase]:
+			_connect_ship_selection(ship)
+
+
+func _connect_ship_selection(ship: ShipBase) -> void:
+	if _world_ui != null:
+		_world_ui.connect_ship_selection(ship)
+
+
+func _on_ship_dispatched(ship: ShipBase) -> void:
+	if _world_ui != null:
+		_world_ui.on_ship_dispatched(ship)
+
+
+func _on_ship_arrived(_ship: Node2D) -> void:
+	if _world_ui != null:
+		_world_ui.on_ship_arrived()
+
+
+func _on_planet_drag_dropped(source: Node2D, destination: Node2D) -> void:
+	if not is_instance_valid(_ui) or source == null or destination == null or source == destination:
+		return
+	if _selection_service != null:
+		_selection_service.handle_request(source, {})
+	else:
+		_on_planet_selected(source)
+	var destination_index := _ui.index_of_destination(destination.name)
+	if destination_index >= 0:
+		_on_destination_selected(destination_index)
+
+
+func _on_workers_spawn_requested(source: Node2D, amount: int) -> void:
+	_worker_manager.call("_spawn_clusters", source, amount)
+
+
+func _on_panel_visibility_changed(_panel_open: bool) -> void:
+	queue_redraw()

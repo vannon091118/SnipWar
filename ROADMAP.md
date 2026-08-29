@@ -132,11 +132,13 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **VERIFICATION:** compile_gate 327/327 PASS; test_all 11/11 PASSED (10 Entry-Tests + Preflight -x); Preflight 44/44 PASSED (44,6 s); test_determinism Exit 0; DOKI selfcheck PASSED.
 - **STATUS:** `VERIFIED`
 
-### R-008 — planet_network UI/Logik trennen — **P1**
+### R-008 — planet_network UI/Logik trennen — **P1** ✅ VERIFIED
 - **WHY:** 1.017 LOC mischen Routing/Netzwerk mit UI-Aufbau, Tooltips, Tutorial-Spawn, Dispatch-Preview; `planet_network_ui.gd` existiert bereits.
 - **DEPENDS:** — · **BLOCKS:** —
 - **DoD:** UI-Teil in planet_network_ui; Netzwerk-Logik bleibt; Tests grün.
-- **STATUS:** `TODO`
+- **ERGEBNIS:** `scripts/ui/world/planet_world_ui.gd` (neu, 732 LOC) übernimmt die UI-Orchestrierung: Context-Menü, Dossier-Launcher, Hotkeys (P/W/F/R), Input-Hints, Fleet-Overview, Economy-Window, Message-Feed, Modal-/Layout-Koordinator, Tutorial, Dispatch-Vorschau/Slider/Lock. `planet_network.gd` (1017→~700 LOC) besitzt Netzwerk-Logik, Selection, Fog, `_process`/`_draw`/Route-Rendering und Dispatch; Kompatibilitäts-Shims delegieren dünn an `_world_ui` (`_context_menu`/`_context_*`/`_economy_window` als Property-Getter, `_build_context_menu_for`, `_on_context_action`, `_open_workshop_dossier`, `get_modal_coordinator`/`get_message_feed`/`get_fleet_overview`). Keine UI-Zyklen: PlanetWorldUI ruft nur dokumentierte Network-Entry-Points (`_on_planet_selected`, `_on_destination_selected`, `_center_camera_on`, `get_*`-Queries).
+- **VERIFICATION:** compile_gate 328/328 PASS; Preflight 44/44 PASSED (73,5 s) inkl. `world_planets_and_dispatch`, `selection_and_context`, `pause_and_context`, `event_log`, `ship_catalog_and_assembly` (Scene-Lifecycle + alle UI-Module); neuer `r008_world_ui_boundary_test.gd` (Quelltext-Gate: keine UI-Konstruktion mehr im Network, Network-API intakt, Welt-UI trägt Orchestrierung); test_all 12/12 PASSED; DOKI selfcheck PASSED.
+- **STATUS:** `VERIFIED`
 
 ### R-009 — Test-Orchestrator `test_all.gd` — **P2** ✅ VERIFIED
 - **WHY:** Entry-Tests + Preflight liefen einzeln; kein zentraler Befehl für CI/Agenten-Verifikation.

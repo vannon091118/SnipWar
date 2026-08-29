@@ -1862,3 +1862,30 @@ Lint-Fix: 12 @warning_ignore(unused_signal) Annotationen in economy_domain.gd. D
 - narrative_chain.json: Fehler behoben (F-004).
 - scripts/doki/data/arcs.json: Fehler behoben (F-001).
 - scripts/state/domains/economy_domain.gd: Fehler behoben (F-121).
+
+## 2026-08-27 10:00:00 — p106 · c106j23n14a1p72 · Sage · triumphierend
+
+**Sage lehrt: R-007 E4: EconomyDomain final konsolidiert -… — nach Squizzle**
+
+R-007 E4: EconomyDomain final konsolidiert - Gathering+Worker-Transport in gathering_transport_unit, Worker-Factory in worker_factory_unit, Buildings/Grid-Queue in buildings_unit; _route_owner per Callable-Resolver injiziert statt SceneTree-Lookup; e1-Test auf _test.gd-Konvention umbenannt (False-Green in test_all gefixt), neuer e2_e4_economy_units_test
+
+- CHANGELOG.md: Test-Assets ergänzt (F-002).
+- ROADMAP.md: Test-Assets ergänzt (F-376).
+- change_index.json: Test-Assets ergänzt (F-003).
+- docs/FINDINGS.md: Test-Assets ergänzt (F-046).
+- narrative_chain.json: Test-Assets ergänzt (F-004).
+- scripts/concept_index.gd: Test-Assets ergänzt (F-055).
+- scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).
+- scripts/state/domains/economy/buildings_unit.gd: Test-Assets ergänzt (F-409).
+- scripts/state/domains/economy/buildings_unit.gd.uid: Test-Assets ergänzt (F-410).
+- scripts/state/domains/economy/gathering_transport_unit.gd: Test-Assets ergänzt (F-411).
+- scripts/state/domains/economy/gathering_transport_unit.gd.uid: Test-Assets ergänzt (F-412).
+- scripts/state/domains/economy/refinery_trade_unit.gd: Test-Assets ergänzt (F-407).
+- scripts/state/domains/economy/worker_factory_unit.gd: Test-Assets ergänzt (F-413).
+- scripts/state/domains/economy/worker_factory_unit.gd.uid: Test-Assets ergänzt (F-414).
+- scripts/state/domains/economy_domain.gd: Test-Assets ergänzt (F-121).
+- scripts/state/game_state.gd: Test-Assets ergänzt (F-065).
+- scripts/testing/e1_vault_core_semantics_test.gd: Test-Assets ergänzt (F-415).
+- scripts/testing/e1_vault_core_semantics_test.gd.uid: Test-Assets ergänzt (F-416).
+- scripts/testing/e2_e4_economy_units_test.gd: Test-Assets ergänzt (F-417).
+- scripts/testing/e2_e4_economy_units_test.gd.uid: Test-Assets ergänzt (F-418).

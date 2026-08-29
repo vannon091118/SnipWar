@@ -381,7 +381,7 @@
 			"p_id": 52.0
 		},
 		"188d1ca63e4d1755c7a355781c5f73c44dad9489": {
-			"c": 105,
+			"c": 105.0,
 			"composite": "c105j98n5a20p80",
 			"entities": [
 				"F-002",
@@ -391,7 +391,7 @@
 				"F-001",
 				"F-121"
 			],
-			"p_id": 105
+			"p_id": 105.0
 		},
 		"193aa9dc36209b96d263cdd3fdb00a5f7fe9a0e3": {
 			"c": 18.0,
@@ -1774,6 +1774,81 @@
 				"C-743"
 			],
 			"p_id": 90.0
+		},
+		"b8df1e40599991172ff55fddfc235c33623b7e1a": {
+			"c": 106,
+			"composite": "c106j23n14a1p72",
+			"entities": [
+				"F-002",
+				"F-376",
+				"F-003",
+				"F-046",
+				"F-004",
+				"F-055",
+				"F-001",
+				"F-409",
+				"F-410",
+				"F-411",
+				"F-412",
+				"F-407",
+				"F-413",
+				"F-414",
+				"F-121",
+				"F-065",
+				"F-415",
+				"F-416",
+				"F-417",
+				"F-418",
+				"C-937",
+				"C-938",
+				"C-939",
+				"C-940",
+				"C-941",
+				"C-942",
+				"C-943",
+				"C-944",
+				"C-945",
+				"C-946",
+				"C-947",
+				"C-948",
+				"C-949",
+				"C-950",
+				"C-951",
+				"C-952",
+				"C-953",
+				"C-954",
+				"C-955",
+				"C-956",
+				"C-957",
+				"C-958",
+				"C-959",
+				"C-960",
+				"C-961",
+				"C-962",
+				"C-963",
+				"C-964",
+				"C-965",
+				"C-966",
+				"C-967",
+				"C-968",
+				"C-969",
+				"C-970",
+				"C-971",
+				"C-972",
+				"C-973",
+				"C-974",
+				"C-975",
+				"C-976",
+				"C-977",
+				"C-978",
+				"C-979",
+				"C-980",
+				"C-981",
+				"C-982",
+				"C-983",
+				"C-984"
+			],
+			"p_id": 106
 		},
 		"ba8f048015e26b4d428c7575b2f1642005ad4118": {
 			"c": 78.0,
@@ -18572,6 +18647,822 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-937": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-937",
+			"last_p": 106.0,
+			"name": "EconomyBuildingsUnit",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-938": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-938",
+			"last_p": 106.0,
+			"name": "_init",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-939": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						27.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-939",
+			"last_p": 106.0,
+			"name": "can_spend_building_cost",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-940": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						37.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-940",
+			"last_p": 106.0,
+			"name": "spend_building_cost",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-941": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						47.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-941",
+			"last_p": 106.0,
+			"name": "queue_planet_building",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-942": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						65.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-942",
+			"last_p": 106.0,
+			"name": "building_job_in_progress",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-943": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						69.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-943",
+			"last_p": 106.0,
+			"name": "advance_building_jobs",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-944": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						88.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-944",
+			"last_p": 106.0,
+			"name": "abort_building_job",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-945": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						103.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-945",
+			"last_p": 106.0,
+			"name": "record_planet_building",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-946": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						112.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-946",
+			"last_p": 106.0,
+			"name": "remove_planet_building",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-947": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						124.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-947",
+			"last_p": 106.0,
+			"name": "can_place_building",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-948": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						139.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-948",
+			"last_p": 106.0,
+			"name": "place_building",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-949": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						172.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-949",
+			"last_p": 106.0,
+			"name": "planet_building_at",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-950": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						178.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-950",
+			"last_p": 106.0,
+			"name": "planet_buildings_of",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-951": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-951",
+			"last_p": 106.0,
+			"name": "EconomyGatheringTransportUnit",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-952": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-952",
+			"last_p": 106.0,
+			"name": "_init",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-953": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						29.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-953",
+			"last_p": 106.0,
+			"name": "set_route_owner_resolver",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-954": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						37.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-954",
+			"last_p": 106.0,
+			"name": "_route_owner",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-955": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						50.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-955",
+			"last_p": 106.0,
+			"name": "register_gathering_workers",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-956": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						66.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-956",
+			"last_p": 106.0,
+			"name": "register_gathering_workers_with_domains",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-957": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						83.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-957",
+			"last_p": 106.0,
+			"name": "get_gathering_source",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-958": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						89.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-958",
+			"last_p": 106.0,
+			"name": "withdraw_gathering_workers",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-959": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						109.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-959",
+			"last_p": 106.0,
+			"name": "gathering_workers_on",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-960": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						115.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-960",
+			"last_p": 106.0,
+			"name": "gather_income_tick",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-961": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						147.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-961",
+			"last_p": 106.0,
+			"name": "generate_resources_for_planet",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-962": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						186.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-962",
+			"last_p": 106.0,
+			"name": "begin_worker_transport",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-963": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						209.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-963",
+			"last_p": 106.0,
+			"name": "update_worker_transport",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-964": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						222.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-964",
+			"last_p": 106.0,
+			"name": "set_worker_transport_escorted",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-965": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						231.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-965",
+			"last_p": 106.0,
+			"name": "get_worker_transport_records",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-966": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						240.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-966",
+			"last_p": 106.0,
+			"name": "complete_worker_transport",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-967": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-967",
+			"last_p": 106.0,
+			"name": "set_route_owner_resolver",
+			"path": "scripts/state/domains/economy/refinery_trade_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-968": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-968",
+			"last_p": 106.0,
+			"name": "EconomyWorkerFactoryUnit",
+			"path": "scripts/state/domains/economy/worker_factory_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-969": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-969",
+			"last_p": 106.0,
+			"name": "_init",
+			"path": "scripts/state/domains/economy/worker_factory_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-970": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-970",
+			"last_p": 106.0,
+			"name": "has_worker_factory",
+			"path": "scripts/state/domains/economy/worker_factory_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-971": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						27.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-971",
+			"last_p": 106.0,
+			"name": "can_build_worker_factory",
+			"path": "scripts/state/domains/economy/worker_factory_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-972": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						47.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-972",
+			"last_p": 106.0,
+			"name": "build_worker_factory",
+			"path": "scripts/state/domains/economy/worker_factory_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-973": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						69.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-973",
+			"last_p": 106.0,
+			"name": "can_build_worker_factory_with_domains",
+			"path": "scripts/state/domains/economy/worker_factory_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-974": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						93.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-974",
+			"last_p": 106.0,
+			"name": "build_worker_factory_with_domains",
+			"path": "scripts/state/domains/economy/worker_factory_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-975": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						100.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-975",
+			"last_p": 106.0,
+			"name": "set_route_owner_resolver",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-976": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-976",
+			"last_p": 106.0,
+			"name": "_init",
+			"path": "scripts/testing/e2_e4_economy_units_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-977": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						24.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-977",
+			"last_p": 106.0,
+			"name": "_fail",
+			"path": "scripts/testing/e2_e4_economy_units_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-978": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						27.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-978",
+			"last_p": 106.0,
+			"name": "_run",
+			"path": "scripts/testing/e2_e4_economy_units_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-979": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						43.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-979",
+			"last_p": 106.0,
+			"name": "_make_test_catalog",
+			"path": "scripts/testing/e2_e4_economy_units_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-980": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						67.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-980",
+			"last_p": 106.0,
+			"name": "_fund_economy",
+			"path": "scripts/testing/e2_e4_economy_units_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-981": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						79.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-981",
+			"last_p": 106.0,
+			"name": "_run_e2_deal_and_upgrade",
+			"path": "scripts/testing/e2_e4_economy_units_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-982": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						143.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-982",
+			"last_p": 106.0,
+			"name": "_run_e3_refinery_trade",
+			"path": "scripts/testing/e2_e4_economy_units_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-983": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						191.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-983",
+			"last_p": 106.0,
+			"name": "_run_e4_gathering_transport",
+			"path": "scripts/testing/e2_e4_economy_units_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-984": {
+			"first_p": 106.0,
+			"history": [
+				{
+					"lines": [
+						251.0
+					],
+					"p_id": 106.0
+				}
+			],
+			"id": "C-984",
+			"last_p": 106.0,
+			"name": "_run_e4_buildings_grid",
+			"path": "scripts/testing/e2_e4_economy_units_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"F-001": {
 			"first_p": 20.0,
 			"history": [],
@@ -22649,6 +23540,106 @@
 			"last_p": 103.0,
 			"name": "refinery_trade_unit.gd.uid",
 			"path": "scripts/state/domains/economy/refinery_trade_unit.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-409": {
+			"first_p": 106.0,
+			"history": [],
+			"id": "F-409",
+			"last_p": 106.0,
+			"name": "buildings_unit.gd",
+			"path": "scripts/state/domains/economy/buildings_unit.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-410": {
+			"first_p": 106.0,
+			"history": [],
+			"id": "F-410",
+			"last_p": 106.0,
+			"name": "buildings_unit.gd.uid",
+			"path": "scripts/state/domains/economy/buildings_unit.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-411": {
+			"first_p": 106.0,
+			"history": [],
+			"id": "F-411",
+			"last_p": 106.0,
+			"name": "gathering_transport_unit.gd",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-412": {
+			"first_p": 106.0,
+			"history": [],
+			"id": "F-412",
+			"last_p": 106.0,
+			"name": "gathering_transport_unit.gd.uid",
+			"path": "scripts/state/domains/economy/gathering_transport_unit.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-413": {
+			"first_p": 106.0,
+			"history": [],
+			"id": "F-413",
+			"last_p": 106.0,
+			"name": "worker_factory_unit.gd",
+			"path": "scripts/state/domains/economy/worker_factory_unit.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-414": {
+			"first_p": 106.0,
+			"history": [],
+			"id": "F-414",
+			"last_p": 106.0,
+			"name": "worker_factory_unit.gd.uid",
+			"path": "scripts/state/domains/economy/worker_factory_unit.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-415": {
+			"first_p": 106.0,
+			"history": [],
+			"id": "F-415",
+			"last_p": 106.0,
+			"name": "e1_vault_core_semantics_test.gd",
+			"path": "scripts/testing/e1_vault_core_semantics_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-416": {
+			"first_p": 106.0,
+			"history": [],
+			"id": "F-416",
+			"last_p": 106.0,
+			"name": "e1_vault_core_semantics_test.gd.uid",
+			"path": "scripts/testing/e1_vault_core_semantics_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-417": {
+			"first_p": 106.0,
+			"history": [],
+			"id": "F-417",
+			"last_p": 106.0,
+			"name": "e2_e4_economy_units_test.gd",
+			"path": "scripts/testing/e2_e4_economy_units_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-418": {
+			"first_p": 106.0,
+			"history": [],
+			"id": "F-418",
+			"last_p": 106.0,
+			"name": "e2_e4_economy_units_test.gd.uid",
+			"path": "scripts/testing/e2_e4_economy_units_test.gd.uid",
 			"status": "created",
 			"type": "file"
 		}
