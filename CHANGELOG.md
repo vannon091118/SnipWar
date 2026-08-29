@@ -1389,3 +1389,15 @@ DOKI-Repair und Chronicle-Ausbau gemeinsam ausrollen: verwaiste verified-Session
 - scripts/testing/historical_playback_test.gd.uid: Fehler behoben (F-366).
 - scripts/ui/history/historical_renderer.gd: Fehler behoben (F-367).
 - scripts/ui/history/historical_renderer.gd.uid: Fehler behoben (F-368).
+
+## 2026-08-27 02:00:00 — p74 · c74j37n14a18p28 · Sage · alarmiert
+
+**Sage lehrt: Junk-Artefakte aus dem Repo verbannen:… — nach Argos**
+
+Junk-Artefakte aus dem Repo verbannen: Windows-nul-Redirect-Überbleibsel, scratch_debug, Sentiment-Compare und MCP-Testinputs — .gitignore ergänzt, Dateien entfernt
+
+- .gitignore: Test-Assets ergänzt (F-037).
+- CHANGELOG.md: Test-Assets ergänzt (F-002).
+- change_index.json: Test-Assets ergänzt (F-003).
+- narrative_chain.json: Test-Assets ergänzt (F-004).
+- scripts/doki/data/arcs.json: Test-Assets ergänzt (F-001).

@@ -17,6 +17,7 @@ const THRESHOLD_INVISIBLE: float = 0.20
 const THRESHOLD_MINOR: float = 0.45
 const THRESHOLD_NORMAL: float = 0.70
 const THRESHOLD_MAJOR: float = 0.90
+const THRESHOLD_TURNING_POINT: float = THRESHOLD_MAJOR
 
 
 ## Berechnet die importance für ein einzelnes Event.

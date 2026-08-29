@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/bootstrap/historical_world_bootstrap.gd" id="1_bootstrap"]
+[ext_resource type="Script" path="res://scripts/ui/history/historical_renderer.gd" id="2_renderer"]
+[ext_resource type="Script" path="res://scripts/history/playback_controller.gd" id="3_playback"]
+[ext_resource type="Script" path="res://scripts/ui/history/simulation_overlay.gd" id="4_overlay"]
+
+[node name="HistoricalWorld" type="Node2D"]
+script = ExtResource("1_bootstrap")
+
+[node name="HistoricalRenderer" type="Node2D" parent="."]
+script = ExtResource("2_renderer")
+
+[node name="PlaybackController" type="Node" parent="."]
+script = ExtResource("3_playback")
+
+[node name="SimulationOverlay" type="CanvasLayer" parent="."]
+script = ExtResource("4_overlay")

@@ -192,7 +192,7 @@ func _confirm_identity() -> void:
 	var game_state: Node = get_node_or_null("/root/GameState")
 	if game_state != null and game_state.has_method("request_new_run"):
 		game_state.request_new_run()
-	_goto_world()
+	_goto_historical_world()
 
 func _on_continue_pressed() -> void:
 	var service: Node = get_node_or_null("/root/SaveGameService")
@@ -203,6 +203,13 @@ func _on_continue_pressed() -> void:
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
+
+func _goto_historical_world() -> void:
+	var director: Node = get_node_or_null("/root/SceneDirectorService")
+	if director != null and director.has_method("goto_scene"):
+		director.call("goto_scene", &"historical_world")
+	else:
+		get_tree().change_scene_to_file("res://scenes/historical_world/historical_world.tscn")
 
 func _goto_world() -> void:
 	var director: Node = get_node_or_null("/root/SceneDirectorService")

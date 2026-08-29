@@ -21,11 +21,13 @@ signal transition_completed()
 
 const SCENE_MENU: PackedScene = preload("res://scenes/main_menu/main_menu.tscn")
 const SCENE_WORLD: PackedScene = preload("res://scenes/world/world.tscn")
+const SCENE_HISTORICAL_WORLD: PackedScene = preload("res://scenes/historical_world/historical_world.tscn")
 const SCENE_BATTLE: PackedScene = preload("res://scenes/battle/battle_scene.tscn")
 const SCENE_CONQUEST: PackedScene = preload("res://scenes/conquest/conquest_scene.tscn")
 
 const SCENE_ID_MENU: StringName = &"menu"
 const SCENE_ID_WORLD: StringName = &"world"
+const SCENE_ID_HISTORICAL_WORLD: StringName = &"historical_world"
 const SCENE_ID_BATTLE: StringName = &"battle"
 const SCENE_ID_CONQUEST: StringName = &"conquest"
 
@@ -55,6 +57,8 @@ func scene_for_id(scene_id: StringName) -> PackedScene:
 			return SCENE_MENU
 		SCENE_ID_WORLD:
 			return SCENE_WORLD
+		SCENE_ID_HISTORICAL_WORLD:
+			return SCENE_HISTORICAL_WORLD
 		SCENE_ID_BATTLE:
 			return SCENE_BATTLE
 		SCENE_ID_CONQUEST:
@@ -62,7 +66,7 @@ func scene_for_id(scene_id: StringName) -> PackedScene:
 	return null
 
 func registered_scene_ids() -> Array[StringName]:
-	return [SCENE_ID_MENU, SCENE_ID_WORLD, SCENE_ID_BATTLE, SCENE_ID_CONQUEST]
+	return [SCENE_ID_MENU, SCENE_ID_HISTORICAL_WORLD, SCENE_ID_WORLD, SCENE_ID_BATTLE, SCENE_ID_CONQUEST]
 
 ## Requests a scene switch with a fade. The actual switch happens at the
 ## transition midpoint via the deferred custom-switcher. Context handover:

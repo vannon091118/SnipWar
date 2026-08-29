@@ -1689,13 +1689,14 @@
 				"C-796",
 				"C-797",
 				"C-798",
-				"C-799"
+				"C-799",
+				"F-037"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
-			"weight": 15.9
+			"weight": 17.8
 		},
 		"a4": {
 			"climax_weight": 3.0,

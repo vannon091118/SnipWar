@@ -36,11 +36,40 @@ func show_snapshot(snapshot: HistoricalSnapshot) -> void:
 		var owner: StringName = snapshot.owner_of(pid as StringName)
 		node.position = _layout_position(pid as StringName)
 		node.modulate = FACTION_COLORS.get(owner, FACTION_COLORS[&""]) as Color
+		_apply_visual_state(node, snapshot.visual_state.get(pid, {}))
 		node.visible = true
 	# Planeten, die im aktuellen Snapshot nicht mehr existieren, ausblenden.
 	for pid in _planet_nodes:
 		if not snapshot.ownership.has(pid):
 			(_planet_nodes[pid] as Node2D).visible = false
+
+
+func _apply_visual_state(node: Node2D, state: Dictionary) -> void:
+	var colony_level: int = int(state.get("colony_level", 0))
+	var industry_level: int = int(state.get("industry_level", 0))
+	var research_level: int = int(state.get("research_level", 0))
+	var defense_level: int = int(state.get("defense_level", 0))
+	var ring: Line2D = node.get_node_or_null("FactionRing") as Line2D
+	if ring == null:
+		ring = Line2D.new()
+		ring.name = "FactionRing"
+		ring.width = 2.0
+		var points := PackedVector2Array()
+		for i in range(25):
+			var angle := TAU * float(i) / 24.0
+			points.append(Vector2(cos(angle), sin(angle)) * 34.0)
+		ring.points = points
+		node.add_child(ring)
+	ring.visible = colony_level > 0
+	var details: Label = node.get_node_or_null("DevelopmentState") as Label
+	if details == null:
+		details = Label.new()
+		details.name = "DevelopmentState"
+		details.position = Vector2(-32, 38)
+		details.add_theme_font_size_override("font_size", 8)
+		node.add_child(details)
+	details.text = "I%d R%d D%d" % [industry_level, research_level, defense_level]
+	details.visible = colony_level > 0
 
 
 func planet_count() -> int:

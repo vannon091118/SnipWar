@@ -6334,6 +6334,53 @@
 			"seq": 73,
 			"subject": "Argos: 18 Dateien — DOKI-Repair und Chronicle-Ausb… — nach Echo",
 			"summary": "Hab ich doch gesagt — wer den Commit-Flow mitten im Satz abwürgt, der hinterlässt sowas. Die Session hing in „verified\" fest, aber daraus war nie ein Commit geworden: der Kopf stand noch am Anker, ..."
+		},
+		{
+			"a": 18,
+			"arc": "a36",
+			"c": 74,
+			"composite": "c74j37n14a18p28",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": ".gitignore",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 747.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 112.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 56.0
+				}
+			],
+			"date": "2026-08-27 02:00:00",
+			"hash": "27b82c4e764d85866391c98a539274df4a2a4f70",
+			"j": 37,
+			"model_id": "claude-sonnet-4",
+			"mood": "alarmiert",
+			"n": 14,
+			"narrator": "Sage",
+			"p": 28,
+			"p_id": 74,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Argos",
+			"seq": 74,
+			"subject": "Sage lehrt: Junk-Artefakte aus dem Repo verbannen:… — nach Argos",
+			"summary": "Stell dir vor, jede Datei im Repo ist eine Lektion — und manche lehren nur, was nicht dorthin gehört. Eine einzige Redirect-Zeile hat ein `nul` hinterlassen, als wäre ein Schatten stehen geblieben,..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

@@ -127,10 +127,32 @@ func _capture_snapshot(world: WorldState) -> HistoricalSnapshot:
 	snapshot.year = world.year
 	for pid in world.planets:
 		snapshot.ownership[pid] = world.planet_owner(pid as StringName)
+		snapshot.visual_state[pid] = _derive_planet_visual_state(pid as StringName, world)
 	for event in events:
 		if event.year <= world.year:
 			snapshot.events.append(event)
 	return snapshot
+
+
+func _derive_planet_visual_state(planet_id: StringName, world: WorldState) -> Dictionary:
+	var owner: StringName = world.planet_owner(planet_id)
+	var faction_territory: int = world.faction_territory(owner) if not String(owner).is_empty() else 0
+	var technology_count: int = world.faction_technology_count(owner) if not String(owner).is_empty() else 0
+	var event_count_for_planet: int = 0
+	var construction_count: int = 0
+	for event in events:
+		if event.target == planet_id:
+			event_count_for_planet += 1
+			if event.event_type in [&"build", &"colony", &"conquest"]:
+				construction_count += 1
+	return {
+		"owner": owner,
+		"colony_level": 1 if not String(owner).is_empty() else 0,
+		"industry_level": mini(construction_count, 3),
+		"research_level": mini(technology_count, 3),
+		"defense_level": mini(faction_territory, 3),
+		"event_count": event_count_for_planet,
+	}
 
 
 func _spawn_initial_characters(world: WorldState, rng: RandomNumberGenerator) -> void:

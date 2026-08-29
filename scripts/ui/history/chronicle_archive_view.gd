@@ -162,9 +162,9 @@ func _build_chronicle_tab() -> void:
 	filter_bar.add_child(fac_lbl)
 	_faction_filter = OptionButton.new()
 	_faction_filter.add_item("Alle Fraktionen", 0)
-	_faction_filter.add_item("Solari", 1)
-	_faction_filter.add_item("Vanguard", 2)
-	_faction_filter.add_item("Krypton Miners", 3)
+	var faction_ids: Array[StringName] = _chronicle_save.faction_ids()
+	for faction_index in range(faction_ids.size()):
+		_faction_filter.add_item(String(faction_ids[faction_index]).capitalize(), faction_index + 1)
 	_faction_filter.item_selected.connect(func(_idx): _refresh_events_list())
 	filter_bar.add_child(_faction_filter)
 
@@ -208,12 +208,14 @@ func _refresh_events_list() -> void:
 
 	# Fraktions-Filter
 	var fac_idx: int = _faction_filter.selected
-	if fac_idx == 1:
-		events = events.filter(func(e): return e.actors.has(&"solari"))
-	elif fac_idx == 2:
-		events = events.filter(func(e): return e.actors.has(&"vanguard"))
-	elif fac_idx == 3:
-		events = events.filter(func(e): return e.actors.has(&"krypton_miners"))
+	if fac_idx > 0:
+		var faction_ids: Array[StringName] = _chronicle_save.faction_ids()
+		var faction_index: int = fac_idx - 1
+		if faction_index < faction_ids.size():
+			var selected_faction: StringName = faction_ids[faction_index]
+			events = events.filter(func(e):
+				return e.actors.has(selected_faction) or e.winner == selected_faction or e.loser == selected_faction
+			)
 
 	# Liste befüllen
 	var count: int = 0
@@ -297,7 +299,7 @@ func _build_relations_tab() -> void:
 	matrix_vbox.add_theme_constant_override("separation", 10)
 	_relations_container.add_child(matrix_vbox)
 
-	var factions: Array[StringName] = [&"solari", &"vanguard", &"krypton_miners"]
+	var factions: Array[StringName] = _chronicle_save.faction_ids()
 	var rels: Dictionary = _chronicle_save.relationships
 
 	for fid_a in factions:

@@ -9,6 +9,7 @@ extends Resource
 ## Historische Events (Vorgeschichte + Live).
 @export var backstory_events: Array[HistoryEvent] = []
 @export var live_events: Array[HistoryEvent] = []
+@export var historical_snapshots: Array[Dictionary] = []
 
 ## Figuren-Biografien.
 @export var biographies: Array[CharacterBiography] = []
@@ -70,9 +71,29 @@ func events_by_type(event_type: StringName) -> Array[HistoryEvent]:
 func events_by_faction(fid: StringName) -> Array[HistoryEvent]:
 	var result: Array[HistoryEvent] = []
 	for event in all_events():
-		if event.actors.has(fid):
+		if event.actors.has(fid) or event.winner == fid or event.loser == fid:
 			result.append(event)
 	return result
+
+
+## Returns all faction identifiers represented by the current chronicle.
+func faction_ids() -> Array[StringName]:
+	var ids: Dictionary = {}
+	for event in all_events():
+		for actor in event.actors:
+			if not String(actor).begins_with("char_") and not String(actor).is_empty():
+				ids[actor] = true
+		if not String(event.winner).is_empty():
+			ids[event.winner] = true
+		if not String(event.loser).is_empty():
+			ids[event.loser] = true
+	var result: Array[StringName] = []
+	for fid in ids:
+		result.append(fid as StringName)
+	result.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
+	return result
+
+
 
 
 func biography_for(char_id: StringName) -> CharacterBiography:
@@ -101,10 +122,18 @@ func next_live_event_id() -> StringName:
 	return StringName("live_%06d" % next_live_event_index)
 
 
+func snapshots_as_resources() -> Array[HistoricalSnapshot]:
+	var result: Array[HistoricalSnapshot] = []
+	for data in historical_snapshots:
+		result.append(HistoricalSnapshot.from_dict(data))
+	return result
+
+
 func snapshot_dict() -> Dictionary:
 	return {
 		"backstory_events": backstory_events.map(func(e): return e.to_dict()),
 		"live_events": live_events.map(func(e): return e.to_dict()),
+		"historical_snapshots": historical_snapshots.duplicate(true),
 		"biographies": biographies.map(func(b): return b.to_dict()),
 		"chains": chains.map(func(c): return c.to_dict()),
 		"eras": eras.duplicate(true),
@@ -127,6 +156,7 @@ static func from_snapshot_dict(data: Dictionary) -> ChronicleSaveData:
 	for d in raw_live:
 		typed_live.append(HistoryEvent.from_dict(d))
 	save.live_events = typed_live
+	save.historical_snapshots = data.get("historical_snapshots", []).duplicate(true)
 	var raw_bios: Array = data.get("biographies", [])
 	var typed_bios: Array[CharacterBiography] = []
 	for d in raw_bios:

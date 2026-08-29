@@ -117,7 +117,7 @@ func reset(seed: int, faction_data: Dictionary = {}, planet_data: Dictionary = {
 
 	# Simulation starten — deterministisch aus Run-Seed abgeleitet
 	var sim_seed: int = seed + 7919
-	var result: Dictionary = _simulator.simulate(
+	var result: Dictionary = _simulator.simulate_with_snapshots(
 		faction_data,
 		planet_data,
 		sim_seed,
@@ -131,6 +131,10 @@ func reset(seed: int, faction_data: Dictionary = {}, planet_data: Dictionary = {
 
 	# In SaveData übernehmen
 	_save.backstory_events = sim_events
+	_save.historical_snapshots.clear()
+	for raw_snapshot in result.get("snapshots", []):
+		if raw_snapshot is HistoricalSnapshot:
+			_save.historical_snapshots.append((raw_snapshot as HistoricalSnapshot).to_dict())
 	var bio_dict: Dictionary = result.get("biographies", {})
 	_save.biographies.clear()
 	for cid in bio_dict:
@@ -256,6 +260,8 @@ func _on_game_event(type: StringName, data: Dictionary) -> void:
 			_on_technology_researched(data.get("faction", &""), data.get("technology_id", &""))
 		&"milestone_reached":
 			_on_milestone_reached(data.get("faction", &""), data.get("milestone_id", &""))
+		_:
+			_record_live_event_from_bus(type, data)
 
 
 func _on_faction_changed(planet_id: StringName, old_faction: StringName, new_faction: StringName) -> void:
@@ -304,6 +310,25 @@ func _on_milestone_reached(faction: StringName, milestone_id: StringName) -> voi
 func _record_live_event(event: HistoryEvent) -> void:
 	_save.add_live_event(event)
 	live_event_recorded.emit(event)
+
+
+func _record_live_event_from_bus(type: StringName, data: Dictionary) -> void:
+	if not _is_ready or _save == null:
+		return
+	var event := HistoryEvent.new()
+	event.event_id = _save.next_live_event_id()
+	event.year = maxi(_save.last_event_year + 1, 1)
+	event.event_type = type
+	event.trigger = String(type)
+	event.context_dict = data.duplicate(true)
+	for key in [&"faction", &"old_faction", &"new_faction"]:
+		var faction_value: StringName = data.get(key, &"") as StringName
+		if not String(faction_value).is_empty() and not event.actors.has(faction_value):
+			event.actors.append(faction_value)
+	var target: StringName = data.get("planet_id", data.get("to_planet", data.get("target_planet_id", &""))) as StringName
+	if not String(target).is_empty():
+		event.target = target
+	_record_live_event(event)
 
 
 ## --- Query API ---

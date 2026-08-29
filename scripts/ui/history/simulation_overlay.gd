@@ -10,6 +10,7 @@ signal playback_finished()
 signal turning_point_triggered(event: HistoryEvent)
 
 const DEFAULT_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
+const TURNING_POINT_THRESHOLD: float = ImportanceEvaluator.THRESHOLD_TURNING_POINT
 
 var _theme: UIThemeConfig = DEFAULT_THEME
 var _events: Array[HistoryEvent] = []
@@ -223,7 +224,7 @@ func _update_ticker_for_year(year: int) -> void:
 	for ev in _events:
 		if ev.year == year and ev.importance >= 0.45:
 			_push_ticker_item(ev)
-			if ev.importance >= 0.75:
+			if ev.importance >= TURNING_POINT_THRESHOLD:
 				_show_turning_point_flash(ev)
 
 
