@@ -1568,3 +1568,16 @@ R-010: ConceptIndex 5 unmapped Klassen mappen — RunPreparation/GameConstants/F
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/concept_index.gd: Implementiert und integriert (F-055).
 - scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 13:00:00 — p85 · c85j95n4a5p66 · Vannon · neugierig
+
+**Doc Drift: Constraint-Zahlen 43→44. … — nach Glitch**
+
+Doc Drift: Constraint-Zahlen 43→44 in ARCHITECTURE.md und DESIGN.md nach R-051 (44/44 Preflight)
+
+- ARCHITECTURE.md: Implementiert und integriert (F-199).
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- DESIGN.md: Implementiert und integriert (F-020).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).

@@ -7086,6 +7086,58 @@
 			"seq": 84,
 			"subject": "Glitch ermittelt: R-010: ConceptIndex 5 unmapped Klassen mappen —… — nach Devin",
 			"summary": "Glitch murmelt:"
+		},
+		{
+			"a": 5,
+			"arc": "a41",
+			"c": 85,
+			"composite": "c85j95n4a5p66",
+			"data_changes": [
+				{
+					"deletions": 2.0,
+					"file": "ARCHITECTURE.md",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "DESIGN.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 57.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 16.0
+				}
+			],
+			"date": "2026-08-27 13:00:00",
+			"hash": "6c0a3a6d1ed4ef18bb53e398f3996a4db449125c",
+			"j": 95,
+			"model_id": "claude-sonnet-4",
+			"mood": "neugierig",
+			"n": 4,
+			"narrator": "Vannon",
+			"p": 66,
+			"p_id": 85,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Glitch",
+			"seq": 85,
+			"subject": "Doc Drift: Constraint-Zahlen 43→44. … — nach Glitch",
+			"summary": "Vannon notiert:"
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

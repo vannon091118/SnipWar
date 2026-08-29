@@ -137,11 +137,11 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **DoD:** UI-Teil in planet_network_ui; Netzwerk-Logik bleibt; Tests grün.
 - **STATUS:** `TODO`
 
-### R-009 — Test-Orchestrator `test_all.gd` — **P2**
-- **WHY:** 11 Entry-Tests + Preflight laufen einzeln; `test_determinism.gd` falsch platziert.
+### R-009 — Test-Orchestrator `test_all.gd` — **P2** ✅ VERIFIED
+- **WHY:** Entry-Tests + Preflight liefen einzeln; kein zentraler Befehl für CI/Agenten-Verifikation.
+- **ERGEBNIS:** `scripts/testing/test_all.gd` (SceneTree, 8 Entry-Tests + Preflight -x, 9/9 PASS, 140 s). Optionen: `TEST_ALL_FILTER`, `TEST_ALL_SKIP_PREFLIGHT`, `TEST_ALL_TIMEOUT`. Exit 0/1.
 - **DEPENDS:** — · **BLOCKS:** —
-- **DoD:** Ein Befehl orchestriert alle Gates mit eindeutigem Exit-Code; test_determinism verschoben.
-- **STATUS:** `TODO`
+- **STATUS:** `VERIFIED`
 
 ### R-010 — ConceptIndex: unmapped Klassen — **P2** ✅ VERIFIED
 - **WHY:** 5 Klassen (RunPreparation, GameConstants, FactionAI, PreflightConstraintHistoricalWorld, PreflightCodeIndex) unmapped.
