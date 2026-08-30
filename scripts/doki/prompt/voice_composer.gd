@@ -200,6 +200,14 @@ func _build_user_prompt(ctx: Dictionary) -> String:
 			"WICHTIG: Stell dir vor, dieser Impuls ist der EINE Commit der alles verändert. Die Welt hält den Atem an. Schreib entsprechend.",
 			"WICHTIG: %d Dateien. Klingt wenig? In einem PARALLELUNIVERSUM wären es %d. Erzähl von DIESEM Universum." % [files.size(), files.size() * 1000],
 			"WICHTIG: So unscheinbar der Impuls wirkt — er ist der fehlende Puzzlestein. Ohne ihn: CHAOS. Mit ihm: KOSMOS. Zeig das.",
+			"WICHTIG: Nur %d Datei(en). Dieser Commit ist der eine Grund, warum die Sterne stehen bleiben. Ohne ihn: Dunkelheit." % files.size(),
+			"WICHTIG: Dieser Mini-Commit hat mehr Tiefe als der Ozean. Jede gelöste Frage wirft zehn neue auf. Willkommen in der Tiefe.",
+			"WICHTIG: Behandle diesen unscheinbaren Fix wie den letzten Schluck Wasser in der Wüste. Klein? Ja. Überlebenswichtig? ABSOLUT.",
+			"WICHTIG: Dieser %d-Datei-Commit ist der Domino-Stein. Die ersten %d fallen — danach fallen alle anderen von selbst." % [files.size(), files.size()],
+			"WICHTIG: Wenn dieser Impuls ein Film wäre, wäre er der oscargekrönte Independent-Film. Kein Effekt, reine Substanz.",
+			"WICHTIG: Schreib diesen Commit wie einen finalen Akt. Der Vorhang fällt, aber das Publikum applaudiert.",
+			"WICHTIG: Jeder Pixel in diesem Patch erzählt eine Geschichte. Lies zwischen den Zeilen.",
+			"WICHTIG: Nur %d Datei(en). Aber IMAGINE if this %d Dateien WÄREN. Erzähl von diesem Universum." % [files.size(), files.size()],
 		]
 		var idx: int = DOKI_RngEngine.djb2(str(ctx.get("impulse", ""))) % trivial_pool.size()
 		prompt += "\n%s\n" % str(trivial_pool[idx])

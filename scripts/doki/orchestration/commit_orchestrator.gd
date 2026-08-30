@@ -35,6 +35,7 @@ var finish_flow: DOKI_FinishFlow
 var finalize_flow: DOKI_FinalizeFlow
 var gate_flow: DOKI_GateFlow
 var status_flow: DOKI_StatusFlow
+var _block_report: DOKI_BlockReport
 
 
 func _init(repo_root_value: String) -> void:
@@ -69,6 +70,7 @@ func _init(repo_root_value: String) -> void:
 	)
 	gate_flow = DOKI_GateFlow.new(repo_root, session_store, git)
 	status_flow = DOKI_StatusFlow.new(chain_store, session_store)
+	_block_report = DOKI_BlockReport.new(repo_root)
 
 
 ## ═══ init — Genesis: Chain am aktuellen HEAD verankern ══════════════════
@@ -160,11 +162,17 @@ static func _truncate_subject(s: String) -> String:
 
 ## ─── Delegation an Flow-Module ──────────────────────────────────────────
 func prepare(impulse: String, model_id: String) -> Dictionary:
-	return prepare_flow.run(impulse, model_id)
+	var result: Dictionary = prepare_flow.run(impulse, model_id)
+	if not result["ok"]:
+		_write_block("prepare", result)
+	return result
 
 
 func finish(body: String) -> Dictionary:
-	return finish_flow.run(body)
+	var result: Dictionary = finish_flow.run(body)
+	if not result["ok"]:
+		_write_block("finish", result)
+	return result
 
 
 ## ─── amend — DOKI-Message eines bestehenden Commits nachbearbeiten ────────
@@ -184,7 +192,9 @@ func amend(body: String) -> Dictionary:
 	# Chain-verankerte Verifikation (Checks 1-8)
 	var verify_result: Dictionary = verifier.validate_amend(new_message, chain_store.read(), git.unstaged_diffs())
 	if not verify_result["success"]:
-		return {"ok": false, "errors": verify_result["hard_errors"], "soft_errors": verify_result["soft_errors"], "phase": "verify", "message": new_message}
+		var block_result: Dictionary = {"ok": false, "errors": verify_result["hard_errors"], "soft_errors": verify_result["soft_errors"], "phase": "verify", "message": new_message}
+		_write_block("amend", block_result)
+		return block_result
 
 	artifacts.write_commit_msg(new_message)
 	return {"ok": true, "message": new_message, "soft_errors": verify_result["soft_errors"]}
@@ -221,8 +231,22 @@ func repair() -> Dictionary:
 
 
 func gate() -> Dictionary:
-	return gate_flow.run()
+	var result: Dictionary = gate_flow.run()
+	if not result["ok"]:
+		_write_block("gate", result)
+	return result
 
 
 func status() -> Dictionary:
 	return status_flow.run()
+
+
+## Schreibt bei einem Block (ok=false) einen Diagnose-Report nach
+## .doki/block_report.md — damit der blockierte Agent alle Infos hat.
+func _write_block(phase: String, error_result: Dictionary) -> void:
+	var session: Dictionary = session_store.read()
+	var chain: Dictionary = chain_store.read()
+	var staged: Array = git.staged_files()
+	var path: String = _block_report.write_block_report(phase, error_result, session, chain, staged)
+	if not path.is_empty():
+		print("  → Diagnose: %s" % path)

@@ -8924,6 +8924,48 @@
 			"seq": 113,
 			"subject": "Spark entdeckt: Commit artifact post-commit: chain 112, arco a54… — nach Sage",
 			"summary": "Moment — wieso eigentlich? Die letzten Male haben wir die Artefakte immer selbst geschrieben, und dann kam der post-commit Hook und hat sie *nochmal* angetastet? Das kann doch nicht sein, oder? Aha..."
+		},
+		{
+			"a": 7,
+			"arc": "a54",
+			"c": 114,
+			"composite": "c114j64n2a7p94",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 47.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 62.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 11.0
+				}
+			],
+			"date": "2026-08-27 18:00:00",
+			"hash": "25ec40435a1c17c1278f7dd653606343010ba75a",
+			"j": 64,
+			"model_id": "claude-sonnet-4",
+			"mood": "selbstironisch",
+			"n": 2,
+			"narrator": "Basher",
+			"p": 94,
+			"p_id": 114,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Spark",
+			"seq": 114,
+			"subject": "Basher (4 files): Verifikationslauf: preflight 44/44 PASS,… — nach Spark",
+			"summary": "> run: verify-all. output: gruen."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

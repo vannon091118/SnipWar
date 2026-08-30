@@ -66,10 +66,18 @@ func run(body: String) -> Dictionary:
 	if not hard_errors.is_empty():
 		return {"ok": false, "errors": hard_errors, "soft_errors": verify_result["soft_errors"], "phase": "verify", "message": full_message}
 
-	# Erst JETZT schreiben (Fehlschlag = Disk unberührt). Nur die Message-Datei:
-	# CHANGELOG/change_index entstehen erst in finalize NACH dem Commit — sonst
-	# bliebe bei einem gescheiterten Commit ein Orphan-Eintrag stehen.
-	_artifacts.write_commit_msg(full_message)
+	# Subject + reason_lines + entities VOR apply_commit_artifacts setzen
+	# (apply_commit_artifacts braucht sie für den CHANGELOG-Eintrag).
+	session["subject"] = subject_line
+	session["reason_lines"] = message.get("reason_lines", [])
+	session["_entities"] = analyze
+	session["_index"] = index
+
+	# Early Artifact Writing (Phase 9): schreibt .commit_msg.txt UND
+	# change_index.json + CHANGELOG.md und staged sie — der Commit wird
+	# self-contained (kein „Zettel auf dem Schreibtisch"-Bug).
+	var date_str: String = _chain_store.entry_timestamp(int(session.get("p_id", 1)))
+	_artifacts.apply_commit_artifacts(session, message, analyze, index, subject_line, date_str)
 
 	# NÄCHSTER-ARC-Vorschlag des Narrators (am Epilogende) parsen — wird beim
 	# Climax-Advance als Name/Thema des nächsten Bogens übernommen.
@@ -77,11 +85,6 @@ func run(body: String) -> Dictionary:
 	if not next_arc.is_empty():
 		session["next_arc"] = next_arc
 
-	# Analyze-Ergebnisse + Subject in der Session tragen (finalize braucht sie).
-	session["subject"] = subject_line  # echter Git-Subject für Chain + Analyzer (Kausalität)
-	session["reason_lines"] = message.get("reason_lines", [])
-	session["_entities"] = analyze
-	session["_index"] = index
 	session["body_text"] = body
 	session["state"] = DOKI_SessionStore.STATE_VERIFIED
 	_session_store.save(session)

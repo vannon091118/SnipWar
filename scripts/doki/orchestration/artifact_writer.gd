@@ -15,10 +15,40 @@ func _init(repo_root: String, git: DOKI_GitHelper, index_store: DOKI_ChangeIndex
 	_index_store = index_store
 
 
-## finish: schreibt NUR die Commit-Message-Datei (nach bestandenen Checks).
-## CHANGELOG/change_index entstehen bewusst NICHT hier — sie werden erst in
-## finalize NACH dem Commit geschrieben. Sonst bliebe bei einem gescheiterten
-## Commit ein Orphan-Eintrag stehen (bekannter Fehler: p17/Argos ohne Commit).
+## finish: schreibt die Commit-Message-Datei UND die Early-Artifacts
+## (change_index.json + CHANGELOG.md). Diese werden VOR dem Commit geschrieben
+## und gestaged, damit der Commit self-contained ist (kein „Zettel auf dem
+## Schreibtisch" — der post-commit Hook braucht sie nicht mehr nachzuziehen).
+## Bei einem gescheiterten Commit (Hook-Block) bleiben die Artefakte staged,
+## aber das ist korrekt: sie werden beim Retry aktualisiert.
+func apply_commit_artifacts(
+	session: Dictionary,
+	message: Dictionary,
+	analyze: Dictionary,
+	index: Dictionary,
+	subject: String,
+	date_str: String
+) -> void:
+	# change_index persistieren
+	_index_store.save(index)
+	session["_entities"] = analyze
+	# CHANGELOG-Eintrag anhängen
+	var changelog_path: String = _repo_root.path_join("CHANGELOG.md")
+	var existing: String = FileAccess.get_file_as_string(changelog_path) if FileAccess.file_exists(changelog_path) else "# CHANGELOG\n"
+	var reason_lines: Array = message.get("reason_lines", [])
+	_write_changelog(changelog_path, existing.rstrip("\n") + "\n" + _changelog_entry(session, subject, reason_lines, date_str))
+	# .commit_msg.txt schreiben
+	var msg_path: String = _repo_root.path_join(".commit_msg.txt")
+	var msg_file := FileAccess.open(msg_path, FileAccess.WRITE)
+	if msg_file != null:
+		msg_file.store_string(str(message["full_message"]))
+		msg_file.close()
+	# Early-Staging: CHANGELOG + change_index gehören in DENSEN Commit
+	_git.stage(["CHANGELOG.md", "change_index.json"])
+
+
+## finish (legacy): schreibt nur die Commit-Message-Datei.
+## Wird von amend verwendet (keine Early-Artifacts beim Amend).
 func write_commit_msg(full_message: String) -> void:
 	var msg_path: String = _repo_root.path_join(".commit_msg.txt")
 	var msg_file := FileAccess.open(msg_path, FileAccess.WRITE)
@@ -27,17 +57,12 @@ func write_commit_msg(full_message: String) -> void:
 		msg_file.close()
 
 
-## finalize (post-commit, transaktional): persistiert change_index.json (inkl.
-## Commit-Link) und hängt den CHANGELOG-Eintrag an. Das Stagen der narrative
-## Dateien macht finalize selbst (ein Punkt, alle 4 Dateien). Kein Orphan möglich.
+## finalize (post-commit, transaktional): verknüpft change_index mit dem
+## Commit-Hash und speichert ihn erneut (der Hash war beim finish-Schreiben
+## noch nicht bekannt). CHANGELOG wird NICHT erneut geschrieben — das macht
+## finish (Early Artifact Writing, Phase 9). Finalize staged chain + arcs.
 func apply_finalize_artifacts(session: Dictionary, index: Dictionary, date_str: String) -> void:
 	_index_store.save(index)
-
-	var changelog_path: String = _repo_root.path_join("CHANGELOG.md")
-	var existing: String = FileAccess.get_file_as_string(changelog_path) if FileAccess.file_exists(changelog_path) else "# CHANGELOG\n"
-	var subject: String = str(session.get("subject", ""))
-	var reason_lines: Array = session.get("reason_lines", [])
-	_write_changelog(changelog_path, existing.rstrip("\n") + "\n" + _changelog_entry(session, subject, reason_lines, date_str))
 
 
 ## CHANGELOG-Eintrag für diesen Commit (deterministischer Zeitstempel aus der Chain).

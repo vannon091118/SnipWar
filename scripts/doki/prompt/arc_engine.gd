@@ -9,9 +9,11 @@ extends RefCounted
 ## Wird climax_weight erreicht → ARC_CLIMAX im Prompt + Auto-Advance in finalize.
 
 const BASE_WEIGHT: float = 0.5
-const NEW_ENTITY_WEIGHT: float = 0.3
-const RECUR_ENTITY_WEIGHT: float = 0.4
+const NEW_ENTITY_WEIGHT: float = 0.4
+const RECUR_ENTITY_WEIGHT: float = 0.2
 const MERGE_BONUS: float = 1.0
+const MIN_COMMITS_FOR_CLIMAX: int = 2
+const ENTITY_WINDOW: int = 50
 
 ## Kategorien, die einen Arc-Vorstoß blockieren (kein CLIMAX möglich).
 const NON_NARRATIVE_CLASSES: Array = ["FIX", "DOKU", "TRIVIAL", "TEST-ASSET"]
@@ -92,7 +94,10 @@ func forecast_weight(active_arc: Dictionary, change_entities: Array, is_merge: b
 	if is_merge:
 		weight += MERGE_BONUS
 
-	var climax: bool = eligible and weight >= climax_weight
+	# MIN_COMMITS_FOR_CLIMAX: Arc muss mindestens N Commits haben, bevor
+	# Climax ausgelöst werden darf (verhindert Früh-Climax bei Wartungsarcs).
+	var commit_count: int = int(active_arc.get("commit_count", 0))
+	var climax: bool = eligible and weight >= climax_weight and commit_count >= MIN_COMMITS_FOR_CLIMAX
 	return {
 		"forecast_weight": weight,
 		"new_entities": new_entities,
@@ -129,6 +134,7 @@ func advance(new_entities: Array, is_merge: bool, impulse_class: String = "CODE"
 		old_arc["weight"] = weight
 		old_arc["completed_at"] = "arc_climax"
 		old_arc["seen_entities"] = _merge_seen(old_arc.get("seen_entities", []), new_entities)
+		old_arc["commit_count"] = int(old_arc.get("commit_count", 0)) + 1
 		_data["arcs"][old_id] = old_arc
 		result["completed"] = true
 		result["advanced"] = true
@@ -143,7 +149,7 @@ func advance(new_entities: Array, is_merge: bool, impulse_class: String = "CODE"
 				"span": "heute → offen",
 				"status": "active",
 				"weight": 0.0,
-				"climax_weight": 3.0,
+				"climax_weight": 5.0,
 			}
 		# NÄCHSTER-ARC-Vorschlag des Narrators übernehmen (falls im Body vorhanden)
 		var next_name: String = str(next_arc.get("name", "")).strip_edges()
@@ -161,6 +167,7 @@ func advance(new_entities: Array, is_merge: bool, impulse_class: String = "CODE"
 		# Kein Climax: Entitäten auf dem aktiven Arc fortschreiben
 		old_arc["weight"] = weight
 		old_arc["seen_entities"] = _merge_seen(old_arc.get("seen_entities", []), new_entities)
+		old_arc["commit_count"] = int(old_arc.get("commit_count", 0)) + 1
 		_data["arcs"][old_id] = old_arc
 
 	_save()
@@ -177,6 +184,9 @@ static func _merge_seen(seen: Array, new_entities: Array) -> Array:
 		if not entity_id.is_empty() and not seen_set.has(entity_id):
 			seen_set[entity_id] = true
 			merged.append(entity_id)
+	# Sliding Window: nur letzte ENTITY_WINDOW Einträge behalten
+	if merged.size() > ENTITY_WINDOW:
+		merged = merged.slice(merged.size() - ENTITY_WINDOW)
 	return merged
 
 

@@ -2011,3 +2011,34 @@ Commit artifact post-commit: chain 112, arco a54 attivo, METRICS_TRACKER sincron
 - scripts/preflight_v2/_probe_field_leak.gd.uid: Implementiert und integriert (F-436).
 - scripts/preflight_v2/change_impact_resolver.gd.uid: Implementiert und integriert (F-437).
 - scripts/testing/change_impact_resolver_test.gd.uid: Implementiert und integriert (F-438).
+
+## 2026-08-27 18:00:00 — p114 · c114j64n2a7p94 · Basher · selbstironisch
+
+**Basher (4 files): Verifikationslauf: preflight 44/44 PASS,… — nach Spark**
+
+Verifikationslauf: preflight 44/44 PASS, narrative runtime verify PASS nach rebuild
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 19:00:00 — p115 · c115j82n13a51p113 · Flux · erschöpft
+
+**Flux — also — DOKI Master-Plan Phase 1+2+6+9: Pools… — nach Basher**
+
+DOKI Master-Plan Phase 1+2+6+9: Pools erweitert, Score rebalanced, Error-Artifacts, Early Writing
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- narrative_chain.json: Dokumentation aktualisiert (F-004).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- scripts/doki/data/moods.json: Dokumentation aktualisiert (F-026).
+- scripts/doki/orchestration/artifact_writer.gd: Dokumentation aktualisiert (F-009).
+- scripts/doki/orchestration/block_report.gd: Dokumentation aktualisiert (F-439).
+- scripts/doki/orchestration/block_report.gd.uid: Dokumentation aktualisiert (F-440).
+- scripts/doki/orchestration/commit_orchestrator.gd: Dokumentation aktualisiert (F-010).
+- scripts/doki/orchestration/flows/finalize_flow.gd: Dokumentation aktualisiert (F-011).
+- scripts/doki/orchestration/flows/finish_flow.gd: Dokumentation aktualisiert (F-012).
+- scripts/doki/prompt/arc_engine.gd: Dokumentation aktualisiert (F-015).
+- scripts/doki/prompt/voice_composer.gd: Dokumentation aktualisiert (F-016).

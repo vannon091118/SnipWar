@@ -55,7 +55,7 @@ func run() -> Dictionary:
 	if not existing_entries.is_empty():
 		var last_existing: Dictionary = existing_entries[existing_entries.size() - 1]
 		if str(last_existing.get("hash", "")) == head and str(last_existing.get("composite", "")) == str(session.get("composite", "")):
-			var restage: Dictionary = _git.stage(["narrative_chain.json", "change_index.json", "scripts/doki/data/arcs.json", "CHANGELOG.md"])
+			var restage: Dictionary = _git.stage(["narrative_chain.json", "change_index.json", "scripts/doki/data/arcs.json"])
 			if not restage["ok"]:
 				return {"ok": false, "error": "finalize: narrative Dateien konnten nicht gestaged werden: %s" % str(restage.get("stderr", "?"))}
 			_artifacts.cleanup_transients()
@@ -109,12 +109,13 @@ func run() -> Dictionary:
 	var next_arc: Dictionary = session.get("next_arc", {})
 	var arc_result: Dictionary = _arc_engine.advance(entity_ids, not (session.get("sideplot", {}) as Dictionary).is_empty(), impulse_class, next_arc)
 
-	# CHANGELOG + change_index persistieren und sofort für den nächsten Commit
-	# nachziehen. Diese vier Dateien sind DOKI-eigene Folgeartefakte, kein neuer
-	# Nutzer-Scope.
+	# change_index mit Commit-Hash verknüpfen und erneut speichern (Hash war
+	# beim finish-Schreiben noch nicht bekannt). CHANGELOG wurde bereits in
+	# finish geschrieben (Early Artifact Writing, Phase 9) — finalize schreibt
+	# nur chain + arcs neu und staged diese für den nächsten Commit.
 	var date_str: String = _chain_store.entry_timestamp(int(session.get("p_id", 1)))
 	_artifacts.apply_finalize_artifacts(session, index, date_str)
-	var stage_res: Dictionary = _git.stage(["narrative_chain.json", "change_index.json", "scripts/doki/data/arcs.json", "CHANGELOG.md"])
+	var stage_res: Dictionary = _git.stage(["narrative_chain.json", "change_index.json", "scripts/doki/data/arcs.json"])
 	if not stage_res["ok"]:
 		return {"ok": false, "error": "finalize: narrative Dateien konnten nicht gestaged werden: %s" % str(stage_res.get("stderr", "?"))}
 
