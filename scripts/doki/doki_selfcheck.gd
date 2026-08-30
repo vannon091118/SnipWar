@@ -196,6 +196,7 @@ func _fixture_session(chain: Dictionary) -> Dictionary:
 		"arc_name": "Der erste Stein",
 		"mood_pool": _fixture_pool,
 		"impulse_class": "REFACTOR",
+		"limits": {"j": 99, "n": 14, "a": 3, "p": maxi(1, 2)},
 	}
 
 

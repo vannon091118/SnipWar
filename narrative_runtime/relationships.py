@@ -62,7 +62,16 @@ def classify_events(observations: Iterable[dict[str, Any]]) -> list[dict[str, An
         if facts.get("explicit_admission"):
             classification, level = "EXPLICIT_ADMISSION", "DIRECT_FACT"
         elif facts.get("explicit_revert") and prior_refs:
-            if facts.get("explicit_causality"):
+            # G3: Same-file/entity touch is only a CANDIDATE,
+            # not a confirmed regression.  REGRESSION_CONFIRMED requires
+            # additional determinism beyond shared paths.
+            current_keys = set(keys)
+            # Check if ALL prior_refs come from observations with identical keys
+            prior_same_file = all(
+                current_keys == set(map(str, ordered[p - 1].get("files", []))) | set(map(str, ordered[p - 1].get("entities", [])))
+                for p in prior_refs if p > 0 and p - 1 < len(ordered)
+            )
+            if not prior_same_file and facts.get("explicit_causality"):
                 classification, level = "REGRESSION_CONFIRMED", "CONFIRMED_BY_LATER_EVIDENCE"
             else:
                 classification, level = "REGRESSION_CANDIDATE", "CANDIDATE"
@@ -236,7 +245,11 @@ def build_relationship_state_history(observations: Iterable[dict[str, Any]], bel
 
 
 CHARACTER_STATE_RULE_VERSION = "character_state/v2"
-CHARACTER_AXES = ("frustration", "confidence", "embarrassment", "pride", "curiosity", "defensiveness", "fatigue")
+# Character State Axes: 7 internal character states that track emotional/
+# motivational condition per narrator.  Fatigue is a character state, NOT a
+# relationship axis.  The 8 RELATIONSHIP_AXES below are separate and track
+# inter-narrator dynamics independently.
+CHARACTER_AXES = ("frustration", "pride", "embarrassment", "defensiveness", "confidence", "curiosity", "fatigue")
 
 # Classification → which personality reactivity axis scales the state delta.
 _REACTIVITY_MAP = {

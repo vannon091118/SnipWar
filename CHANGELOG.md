@@ -2066,3 +2066,109 @@ DOKI Phasen 3-8: Prompting-Verbesserungen, Prompt-Engine, Python-Sandbox, Selfch
 - scripts/doki/prompt/prompt_engine.gd: Tooling erweitert (F-446).
 - scripts/doki/prompt/prompt_engine.gd.uid: Tooling erweitert (F-447).
 - scripts/doki/prompt/voice_composer.gd: Tooling erweitert (F-016).
+
+## 2026-08-27 21:00:00 — p117 · c117j70n8a50p74 · Ghost · sarkastisch
+
+**Ghost verzeichnet: Cherry-Pick aus 3 Session-Branches:… — nach Vannon**
+
+Cherry-Pick aus 3 Session-Branches: Regression-Klassifikation, Save-Versionierung, Config-Refactor, Scene-Director-Headless-Fix, Referenz-Sicherung
+
+- change_index.json: Fehler behoben (F-003).
+- docs/FINDINGS.md: Fehler behoben (F-046).
+- docs/METRICS_TRACKER.md: Fehler behoben (F-357).
+- docs/reference/FALSIFIKATION_WAVE_CONSOLIDATED.md: Fehler behoben (F-448).
+- docs/reference/MASTER_TODO.md: Fehler behoben (F-449).
+- docs/reference/python_preflight/__init__.py: Fehler behoben (F-450).
+- docs/reference/python_preflight/__main__.py: Fehler behoben (F-451).
+- docs/reference/python_preflight/cache.py: Fehler behoben (F-452).
+- docs/reference/python_preflight/constraints.py: Fehler behoben (F-453).
+- docs/reference/python_preflight/core.py: Fehler behoben (F-454).
+- docs/reference/python_preflight/inventory.py: Fehler behoben (F-455).
+- docs/reference/python_preflight/pure_constraints.py: Fehler behoben (F-456).
+- docs/reference/python_preflight/report.py: Fehler behoben (F-457).
+- docs/reference/python_preflight/scope.py: Fehler behoben (F-458).
+- docs/reference/python_preflight/test__init__.py: Fehler behoben (F-459).
+- docs/reference/python_preflight/test_preflight.py: Fehler behoben (F-460).
+- narrative_chain.json: Fehler behoben (F-004).
+- narrative_runtime/relationships.py: Fehler behoben (F-179).
+- scripts/doki/core/verifier.gd: Fehler behoben (F-007).
+- scripts/doki/data/arcs.json: Fehler behoben (F-001).
+- scripts/doki/data/doki_config.json: Fehler behoben (F-461).
+- scripts/doki/doki_selfcheck.gd: Fehler behoben (F-017).
+- scripts/preflight/constraint_save_game_roundtrip.gd: Fehler behoben (F-344).
+- scripts/state/run_save_data.gd: Fehler behoben (F-196).
+- scripts/state/save_game_service.gd: Fehler behoben (F-462).
+- scripts/ui/scene_director.gd: Fehler behoben (F-373).
+- scripts/ui/tutorial/tutorial_director.gd: Fehler behoben (F-031).
+
+## 2026-08-27 21:00:00 — p117 · c117j52n3a17p18 · Thinker · erschöpft
+
+**Cherry-Pick aus 3 Session-Branches:… [Analyse: Thinker] — nach Vannon**
+
+Cherry-Pick aus 3 Session-Branches: Regression-Klassifikation, Save-Versionierung, Config-Refactor, Scene-Director-Headless-Fix, Referenz-Sicherung
+
+- CHANGELOG.md: Fehler behoben (F-002).
+- change_index.json: Fehler behoben (F-003).
+- docs/FINDINGS.md: Fehler behoben (F-046).
+- docs/METRICS_TRACKER.md: Fehler behoben (F-357).
+- docs/reference/FALSIFIKATION_WAVE_CONSOLIDATED.md: Fehler behoben (F-448).
+- docs/reference/MASTER_TODO.md: Fehler behoben (F-449).
+- docs/reference/python_preflight/__init__.py: Fehler behoben (F-450).
+- docs/reference/python_preflight/__main__.py: Fehler behoben (F-451).
+- docs/reference/python_preflight/cache.py: Fehler behoben (F-452).
+- docs/reference/python_preflight/constraints.py: Fehler behoben (F-453).
+- docs/reference/python_preflight/core.py: Fehler behoben (F-454).
+- docs/reference/python_preflight/inventory.py: Fehler behoben (F-455).
+- docs/reference/python_preflight/pure_constraints.py: Fehler behoben (F-456).
+- docs/reference/python_preflight/report.py: Fehler behoben (F-457).
+- docs/reference/python_preflight/scope.py: Fehler behoben (F-458).
+- docs/reference/python_preflight/test__init__.py: Fehler behoben (F-459).
+- docs/reference/python_preflight/test_preflight.py: Fehler behoben (F-460).
+- narrative_chain.json: Fehler behoben (F-004).
+- narrative_runtime/relationships.py: Fehler behoben (F-179).
+- scripts/doki/core/verifier.gd: Fehler behoben (F-007).
+- scripts/doki/data/arcs.json: Fehler behoben (F-001).
+- scripts/doki/data/doki_config.json: Fehler behoben (F-461).
+- scripts/doki/doki_selfcheck.gd: Fehler behoben (F-017).
+- scripts/doki/orchestration/block_report.gd: Fehler behoben (F-439).
+- scripts/preflight/constraint_save_game_roundtrip.gd: Fehler behoben (F-344).
+- scripts/state/run_save_data.gd: Fehler behoben (F-196).
+- scripts/state/save_game_service.gd: Fehler behoben (F-462).
+- scripts/ui/scene_director.gd: Fehler behoben (F-373).
+- scripts/ui/tutorial/tutorial_director.gd: Fehler behoben (F-031).
+
+## 2026-08-27 21:00:00 — p117 · c117j71n3a18p86 · Thinker · sarkastisch
+
+**Cherry-Pick aus 3 Session-Branches [Analyse: Thinker] — nach Vannon**
+
+Cherry-Pick aus 3 Session-Branches
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/FINDINGS.md: Implementiert und integriert (F-046).
+- docs/METRICS_TRACKER.md: Implementiert und integriert (F-357).
+- docs/reference/FALSIFIKATION_WAVE_CONSOLIDATED.md: Implementiert und integriert (F-448).
+- docs/reference/MASTER_TODO.md: Implementiert und integriert (F-449).
+- docs/reference/python_preflight/__init__.py: Implementiert und integriert (F-450).
+- docs/reference/python_preflight/__main__.py: Implementiert und integriert (F-451).
+- docs/reference/python_preflight/cache.py: Implementiert und integriert (F-452).
+- docs/reference/python_preflight/constraints.py: Implementiert und integriert (F-453).
+- docs/reference/python_preflight/core.py: Implementiert und integriert (F-454).
+- docs/reference/python_preflight/inventory.py: Implementiert und integriert (F-455).
+- docs/reference/python_preflight/pure_constraints.py: Implementiert und integriert (F-456).
+- docs/reference/python_preflight/report.py: Implementiert und integriert (F-457).
+- docs/reference/python_preflight/scope.py: Implementiert und integriert (F-458).
+- docs/reference/python_preflight/test__init__.py: Implementiert und integriert (F-459).
+- docs/reference/python_preflight/test_preflight.py: Implementiert und integriert (F-460).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- narrative_runtime/relationships.py: Implementiert und integriert (F-179).
+- scripts/doki/core/verifier.gd: Implementiert und integriert (F-007).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/doki/data/doki_config.json: Implementiert und integriert (F-461).
+- scripts/doki/doki_selfcheck.gd: Implementiert und integriert (F-017).
+- scripts/doki/orchestration/block_report.gd: Implementiert und integriert (F-439).
+- scripts/preflight/constraint_save_game_roundtrip.gd: Implementiert und integriert (F-344).
+- scripts/state/run_save_data.gd: Implementiert und integriert (F-196).
+- scripts/state/save_game_service.gd: Implementiert und integriert (F-462).
+- scripts/ui/scene_director.gd: Implementiert und integriert (F-373).
+- scripts/ui/tutorial/tutorial_director.gd: Implementiert und integriert (F-031).

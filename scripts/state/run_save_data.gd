@@ -9,7 +9,7 @@ extends Resource
 ## Saved with ResourceSaver as user://saves/run_<slot>.tres. save_version gates
 ## future migrations.
 
-const SAVE_VERSION: int = 1
+const SAVE_VERSION: int = 2
 
 @export var save_version: int = SAVE_VERSION
 @export var session: RunSession
@@ -141,3 +141,18 @@ static func restore_array(source: Array) -> Array:
 		else:
 			result.append(item)
 	return result
+
+## Migration von v1 → v2 (zukunftssicher: erweiterbar für weitere Versionen)
+static func migrate(data: Dictionary) -> Dictionary:
+	var version: int = data.get("save_version", 1)
+	if version >= SAVE_VERSION:
+		return data
+
+	# v1 → v2: Keine strukturellen Änderungen, nur Versionsbump für zukünftige Migrationen.
+	# Falls in v2 neue Pflichtfelder hinzugefügt werden, hier Defaults setzen.
+	data["save_version"] = SAVE_VERSION
+
+	# Placeholder für zukünftige Migrationen:
+	# if version == 2: ...
+
+	return data

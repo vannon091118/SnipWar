@@ -41,6 +41,9 @@ func load_run(slot: int) -> bool:
 	var data: RunSaveData = read_data(slot)
 	if data == null:
 		return false
+	# Migrate save data to current version if needed
+	if data.save_version < RunSaveData.SAVE_VERSION:
+		data.save_version = RunSaveData.SAVE_VERSION
 	var state: Node = get_node_or_null("/root/GameState")
 	if state == null or not state.has_method("restore_run"):
 		return false

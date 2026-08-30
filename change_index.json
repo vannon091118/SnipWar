@@ -1,5 +1,46 @@
 {
 	"commits": {
+		"0416851b5d4a8ab894b6655756949dfb5c5f6629": {
+			"c": 116,
+			"composite": "c116j80n4a44p41",
+			"entities": [
+				"F-019",
+				"F-003",
+				"F-357",
+				"F-004",
+				"F-139",
+				"F-441",
+				"F-442",
+				"F-443",
+				"F-444",
+				"F-001",
+				"F-445",
+				"F-023",
+				"F-017",
+				"F-439",
+				"F-446",
+				"F-447",
+				"F-016",
+				"C-1135",
+				"C-1136",
+				"C-1137",
+				"C-1138",
+				"C-1139",
+				"C-1140",
+				"C-1141",
+				"C-1142",
+				"C-1143",
+				"C-1144",
+				"C-1145",
+				"C-1146",
+				"C-1147",
+				"C-1148",
+				"C-1149",
+				"C-1150",
+				"C-1151"
+			],
+			"p_id": 116
+		},
 		"046757c67245b48a78f03679463d648c4d32440b": {
 			"c": 66,
 			"composite": "c66j74n2a26p28",
@@ -7541,6 +7582,238 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1152": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						22
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						22
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						22
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1152",
+			"last_p": 117,
+			"name": "CacheEntry",
+			"path": "docs/reference/python_preflight/cache.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1153": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						38
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						38
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						38
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1153",
+			"last_p": 117,
+			"name": "FileCache",
+			"path": "docs/reference/python_preflight/cache.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1154": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						171
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						171
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						171
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1154",
+			"last_p": 117,
+			"name": "ConstraintCache",
+			"path": "docs/reference/python_preflight/cache.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1155": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						22
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						22
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						22
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1155",
+			"last_p": 117,
+			"name": "ConstraintType",
+			"path": "docs/reference/python_preflight/constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1156": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						28
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						28
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						28
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1156",
+			"last_p": 117,
+			"name": "ConstraintPhase",
+			"path": "docs/reference/python_preflight/constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1157": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						40
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						40
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						40
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1157",
+			"last_p": 117,
+			"name": "ConstraintMetadata",
+			"path": "docs/reference/python_preflight/constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1158": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						58
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						58
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						58
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1158",
+			"last_p": 117,
+			"name": "ConstraintResult",
+			"path": "docs/reference/python_preflight/constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1159": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						84
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						84
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						84
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1159",
+			"last_p": 117,
+			"name": "Constraint",
+			"path": "docs/reference/python_preflight/constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-116": {
 			"first_p": 36,
 			"history": [
@@ -7556,6 +7829,296 @@
 			"last_p": 36,
 			"name": "args",
 			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1160": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						104
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						104
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						104
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1160",
+			"last_p": 117,
+			"name": "PreflightContext",
+			"path": "docs/reference/python_preflight/constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1161": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						134
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						134
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						134
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1161",
+			"last_p": 117,
+			"name": "ConstraintRegistry",
+			"path": "docs/reference/python_preflight/constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1162": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						271
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						271
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						271
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1162",
+			"last_p": 117,
+			"name": "PureConstraint",
+			"path": "docs/reference/python_preflight/constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1163": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						300
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						300
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						300
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1163",
+			"last_p": 117,
+			"name": "GodotConstraint",
+			"path": "docs/reference/python_preflight/constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1164": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						28
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						28
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						28
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1164",
+			"last_p": 117,
+			"name": "PreflightRunner",
+			"path": "docs/reference/python_preflight/core.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1165": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						24
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						24
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						24
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1165",
+			"last_p": 117,
+			"name": "FileChange",
+			"path": "docs/reference/python_preflight/inventory.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1166": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						35
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						35
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						35
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1166",
+			"last_p": 117,
+			"name": "RepositorySnapshot",
+			"path": "docs/reference/python_preflight/inventory.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1167": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						93
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						93
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						93
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1167",
+			"last_p": 117,
+			"name": "RepositoryInventory",
+			"path": "docs/reference/python_preflight/inventory.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1168": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						19
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						19
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						19
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1168",
+			"last_p": 117,
+			"name": "ConceptIndexConstraint",
+			"path": "docs/reference/python_preflight/pure_constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1169": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						95
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						95
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						95
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1169",
+			"last_p": 117,
+			"name": "GlobalSearchConstraint",
+			"path": "docs/reference/python_preflight/pure_constraints.py",
 			"status": "modified",
 			"type": "component"
 		},
@@ -7576,6 +8139,296 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1170": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						170
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						170
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						170
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1170",
+			"last_p": 117,
+			"name": "DocsIntegrityConstraint",
+			"path": "docs/reference/python_preflight/pure_constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1171": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						315
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						315
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						315
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1171",
+			"last_p": 117,
+			"name": "DeadCodeConstraint",
+			"path": "docs/reference/python_preflight/pure_constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1172": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						437
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						437
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						437
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1172",
+			"last_p": 117,
+			"name": "MechanicCoverageConstraint",
+			"path": "docs/reference/python_preflight/pure_constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1173": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						501
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						501
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						501
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1173",
+			"last_p": 117,
+			"name": "MCPCaptureContractConstraint",
+			"path": "docs/reference/python_preflight/pure_constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1174": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						572
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						572
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						572
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1174",
+			"last_p": 117,
+			"name": "GameStateCompatibilityConstraint",
+			"path": "docs/reference/python_preflight/pure_constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1175": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						644
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						644
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						644
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1175",
+			"last_p": 117,
+			"name": "SaveGameSlotsConstraint",
+			"path": "docs/reference/python_preflight/pure_constraints.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1176": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						20
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						20
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						20
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1176",
+			"last_p": 117,
+			"name": "ReportGenerator",
+			"path": "docs/reference/python_preflight/report.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1177": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						18
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						18
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						18
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1177",
+			"last_p": 117,
+			"name": "ScopeResolution",
+			"path": "docs/reference/python_preflight/scope.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1178": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						127
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						127
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						127
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1178",
+			"last_p": 117,
+			"name": "ScopeResolver",
+			"path": "docs/reference/python_preflight/scope.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1179": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						39
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						39
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						39
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1179",
+			"last_p": 117,
+			"name": "TestRepositoryInventory",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-118": {
 			"first_p": 36,
 			"history": [
@@ -7590,6 +8443,320 @@
 			"last_p": 36,
 			"name": "parsed",
 			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1180": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						101
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						101
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						101
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1180",
+			"last_p": 117,
+			"name": "TestScopeResolver",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1181": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						159
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						159
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						159
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1181",
+			"last_p": 117,
+			"name": "TestFileCache",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1182": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						211
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						211
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						211
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1182",
+			"last_p": 117,
+			"name": "TestConstraintRegistry",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1183": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						262
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						262
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						262
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1183",
+			"last_p": 117,
+			"name": "TestPureConstraints",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1184": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						278,
+						590
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						278,
+						590
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						278,
+						590
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1184",
+			"last_p": 117,
+			"name": "ConceptIndex",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1185": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						281,
+						592
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						281,
+						592
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						281,
+						592
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1185",
+			"last_p": 117,
+			"name": "_build_concepts",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1186": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						284,
+						310,
+						593,
+						605
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						284,
+						310,
+						593,
+						605
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						284,
+						310,
+						593,
+						605
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1186",
+			"last_p": 117,
+			"name": "search",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1187": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						287,
+						594
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						287,
+						594
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						287,
+						594
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1187",
+			"last_p": 117,
+			"name": "expand",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1188": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						290,
+						595
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						290,
+						595
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						290,
+						595
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1188",
+			"last_p": 117,
+			"name": "class_concept",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1189": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						293,
+						596
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						293,
+						596
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						293,
+						596
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1189",
+			"last_p": 117,
+			"name": "by_domain",
+			"path": "docs/reference/python_preflight/test_preflight.py",
 			"status": "modified",
 			"type": "component"
 		},
@@ -7610,6 +8777,326 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1190": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						296,
+						597
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						296,
+						597
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						296,
+						597
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1190",
+			"last_p": 117,
+			"name": "get_unmapped_classes",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1191": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						299,
+						598
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						299,
+						598
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						299,
+						598
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1191",
+			"last_p": 117,
+			"name": "get_concepts_with_free_slots",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1192": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						304,
+						602
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						304,
+						602
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						304,
+						602
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1192",
+			"last_p": 117,
+			"name": "GlobalSearch",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1193": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						307,
+						604
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						307,
+						604
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						307,
+						604
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1193",
+			"last_p": 117,
+			"name": "scan",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1194": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						313,
+						606
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						313,
+						606
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						313,
+						606
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1194",
+			"last_p": 117,
+			"name": "_scan_file",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1195": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						316,
+						607
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						316,
+						607
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						316,
+						607
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1195",
+			"last_p": 117,
+			"name": "_matches",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1196": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						319,
+						608
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						319,
+						608
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						319,
+						608
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1196",
+			"last_p": 117,
+			"name": "_get_context",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1197": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						342,
+						616
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						342,
+						616
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						342,
+						616
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1197",
+			"last_p": 117,
+			"name": "GameState",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1198": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						345,
+						618
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						345,
+						618
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						345,
+						618
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1198",
+			"last_p": 117,
+			"name": "begin_new_game",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1199": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						348,
+						619
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						348,
+						619
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						348,
+						619
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1199",
+			"last_p": 117,
+			"name": "reconnect_world",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-120": {
 			"first_p": 36,
 			"history": [
@@ -7624,6 +9111,326 @@
 			"last_p": 36,
 			"name": "baselineResp",
 			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1200": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						351,
+						620
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						351,
+						620
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						351,
+						620
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1200",
+			"last_p": 117,
+			"name": "validate",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1201": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						354,
+						621
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						354,
+						621
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						354,
+						621
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1201",
+			"last_p": 117,
+			"name": "validate_starting_setup",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1202": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						357,
+						622
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						357,
+						622
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						357,
+						622
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1202",
+			"last_p": 117,
+			"name": "get_ownership_count",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1203": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						360,
+						623
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						360,
+						623
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						360,
+						623
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1203",
+			"last_p": 117,
+			"name": "get_faction_resource",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1204": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						363,
+						624
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						363,
+						624
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						363,
+						624
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1204",
+			"last_p": 117,
+			"name": "get_researched_technologies",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1205": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						366,
+						625
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						366,
+						625
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						366,
+						625
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1205",
+			"last_p": 117,
+			"name": "homeworld_for",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1206": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						369,
+						626
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						369,
+						626
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						369,
+						626
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1206",
+			"last_p": 117,
+			"name": "resource_snapshot",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1207": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						372,
+						627
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						372,
+						627
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						372,
+						627
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1207",
+			"last_p": 117,
+			"name": "has_active_run",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1208": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						375,
+						628
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						375,
+						628
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						375,
+						628
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1208",
+			"last_p": 117,
+			"name": "request_world_reconnect",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1209": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						378,
+						629
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						378,
+						629
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						378,
+						629
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1209",
+			"last_p": 117,
+			"name": "set_jobs_auto_advance",
+			"path": "docs/reference/python_preflight/test_preflight.py",
 			"status": "modified",
 			"type": "component"
 		},
@@ -7644,6 +9451,314 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1210": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						381,
+						630
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						381,
+						630
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						381,
+						630
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1210",
+			"last_p": 117,
+			"name": "prepare_start_roster",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1211": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						386,
+						634
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						386,
+						634
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						386,
+						634
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1211",
+			"last_p": 117,
+			"name": "SaveGameService",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1212": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						389,
+						636
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						389,
+						636
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						389,
+						636
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1212",
+			"last_p": 117,
+			"name": "SAVE_SLOT",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1213": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						393,
+						640
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						393,
+						640
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						393,
+						640
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1213",
+			"last_p": 117,
+			"name": "MechanicRegistry",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1214": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						400,
+						646
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						400,
+						646
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						400,
+						646
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1214",
+			"last_p": 117,
+			"name": "MCPServer",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1215": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						403,
+						648
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						403,
+						648
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						403,
+						648
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1215",
+			"last_p": 117,
+			"name": "capture_screenshot",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1216": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						512
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						512
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						512
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1216",
+			"last_p": 117,
+			"name": "TestReportGenerator",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1217": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						570
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						570
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						570
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1217",
+			"last_p": 117,
+			"name": "TestIntegration",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1218": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						22
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						22
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						22
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1218",
+			"last_p": 117,
+			"name": "DOKI_CONFIG_PATH",
+			"path": "scripts/doki/core/verifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1219": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						25
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						25
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						25
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1219",
+			"last_p": 117,
+			"name": "_load_config",
+			"path": "scripts/doki/core/verifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-122": {
 			"first_p": 36,
 			"history": [
@@ -7658,6 +9773,122 @@
 			"last_p": 36,
 			"name": "sessionId",
 			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1220": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						376
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						376
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						376
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1220",
+			"last_p": 117,
+			"name": "check_11_mood_uniqueness",
+			"path": "scripts/doki/core/verifier.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1221": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						9
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						9
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						9
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1221",
+			"last_p": 117,
+			"name": "SAVE_VERSION",
+			"path": "scripts/state/run_save_data.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1222": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						100
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						100
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						100
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1222",
+			"last_p": 117,
+			"name": "_direct_switch_historical_world",
+			"path": "scripts/ui/scene_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1223": {
+			"first_p": 117,
+			"history": [
+				{
+					"lines": [
+						146
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						146
+					],
+					"p_id": 117
+				},
+				{
+					"lines": [
+						146
+					],
+					"p_id": 117
+				}
+			],
+			"id": "C-1223",
+			"last_p": 117,
+			"name": "_set_current_scene_deferred",
+			"path": "scripts/ui/scene_director.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -27079,6 +29310,156 @@
 			"last_p": 116,
 			"name": "prompt_engine.gd.uid",
 			"path": "scripts/doki/prompt/prompt_engine.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-448": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-448",
+			"last_p": 117,
+			"name": "FALSIFIKATION_WAVE_CONSOLIDATED.md",
+			"path": "docs/reference/FALSIFIKATION_WAVE_CONSOLIDATED.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-449": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-449",
+			"last_p": 117,
+			"name": "MASTER_TODO.md",
+			"path": "docs/reference/MASTER_TODO.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-450": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-450",
+			"last_p": 117,
+			"name": "__init__.py",
+			"path": "docs/reference/python_preflight/__init__.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-451": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-451",
+			"last_p": 117,
+			"name": "__main__.py",
+			"path": "docs/reference/python_preflight/__main__.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-452": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-452",
+			"last_p": 117,
+			"name": "cache.py",
+			"path": "docs/reference/python_preflight/cache.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-453": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-453",
+			"last_p": 117,
+			"name": "constraints.py",
+			"path": "docs/reference/python_preflight/constraints.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-454": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-454",
+			"last_p": 117,
+			"name": "core.py",
+			"path": "docs/reference/python_preflight/core.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-455": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-455",
+			"last_p": 117,
+			"name": "inventory.py",
+			"path": "docs/reference/python_preflight/inventory.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-456": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-456",
+			"last_p": 117,
+			"name": "pure_constraints.py",
+			"path": "docs/reference/python_preflight/pure_constraints.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-457": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-457",
+			"last_p": 117,
+			"name": "report.py",
+			"path": "docs/reference/python_preflight/report.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-458": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-458",
+			"last_p": 117,
+			"name": "scope.py",
+			"path": "docs/reference/python_preflight/scope.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-459": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-459",
+			"last_p": 117,
+			"name": "test__init__.py",
+			"path": "docs/reference/python_preflight/test__init__.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-460": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-460",
+			"last_p": 117,
+			"name": "test_preflight.py",
+			"path": "docs/reference/python_preflight/test_preflight.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-461": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-461",
+			"last_p": 117,
+			"name": "doki_config.json",
+			"path": "scripts/doki/data/doki_config.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-462": {
+			"first_p": 117,
+			"history": [],
+			"id": "F-462",
+			"last_p": 117,
+			"name": "save_game_service.gd",
+			"path": "scripts/state/save_game_service.gd",
 			"status": "created",
 			"type": "file"
 		}

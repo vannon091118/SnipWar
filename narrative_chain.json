@@ -9053,6 +9053,113 @@
 			"seq": 115,
 			"subject": "Flux — also — DOKI Master-Plan Phase 1+2+6+9: Pools… — nach Basher",
 			"summary": "Irgendwie — also — Moment. Nein, warte. Ja. Genau das. Dieser Commit. Vier Phasen auf einmal, und ich soll erklären warum? Weil — also — eigentlich war es nicht geplant, alle gleichzeitig zu machen..."
+		},
+		{
+			"a": 44,
+			"arc": "a55",
+			"c": 116,
+			"composite": "c116j80n4a44p41",
+			"data_changes": [
+				{
+					"deletions": 3.0,
+					"file": "AGENTS.md",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 5647.0,
+					"file": "change_index.json",
+					"insertions": 5679.0
+				},
+				{
+					"deletions": 32.0,
+					"file": "docs/METRICS_TRACKER.md",
+					"insertions": 32.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 87.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "narrative_runtime/cli.py",
+					"insertions": 54.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/sandbox/__init__.py",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/sandbox/generators.py",
+					"insertions": 65.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/sandbox/metrics.py",
+					"insertions": 38.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/sandbox/runner.py",
+					"insertions": 244.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 29.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/prompt_templates.json",
+					"insertions": 70.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/doki_analyze.gd",
+					"insertions": 19.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/doki_selfcheck.gd",
+					"insertions": 68.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "scripts/doki/orchestration/block_report.gd",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/prompt_engine.gd",
+					"insertions": 106.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/prompt_engine.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/prompt/voice_composer.gd",
+					"insertions": 10.0
+				}
+			],
+			"date": "2026-08-27 20:00:00",
+			"hash": "0416851b5d4a8ab894b6655756949dfb5c5f6629",
+			"j": 80,
+			"model_id": "claude-sonnet-4",
+			"mood": "sachlich",
+			"n": 4,
+			"narrator": "Vannon",
+			"p": 41,
+			"p_id": 116,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Flux",
+			"seq": 116,
+			"subject": "DOKI Phasen 3-8: Prompting-Verbesserungen,… — nach Flux",
+			"summary": "Phasen drei bis acht. Keine Diskussion, Umsetzung."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

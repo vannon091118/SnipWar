@@ -47,9 +47,12 @@ func _build_report(
 	chain: Dictionary,
 	staged: Array
 ) -> String:
-	var errors: Array = error_result.get("errors", error_result.get("error", []))
-	if not errors is Array:
-		errors = [str(errors)]
+	var errors: Variant = error_result.get("errors", error_result.get("error", []))
+	var errors_arr: Array = []
+	if errors is Array:
+		errors_arr = errors
+	elif errors is String and str(errors) != "":
+		errors_arr = [str(errors)]
 	var soft: Array = error_result.get("soft_errors", [])
 
 	var narrator: String = str(session.get("narrator", "?"))
@@ -66,7 +69,7 @@ func _build_report(
 	lines.append("")
 	lines.append("## Was ist passiert?")
 	lines.append("")
-	for e in errors:
+	for e in errors_arr:
 		lines.append("- %s" % str(e))
 	if not soft.is_empty():
 		lines.append("")
@@ -97,7 +100,7 @@ func _build_report(
 	lines.append("")
 	lines.append("## Was muss ich tun?")
 	lines.append("")
-	lines.append(_recommend(phase, errors, session))
+	lines.append(_recommend(phase, errors_arr, session))
 	lines.append("")
 	lines.append("## Nächster Schritt")
 	lines.append("")

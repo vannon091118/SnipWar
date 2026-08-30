@@ -102,4 +102,29 @@ func run(ctx: PreflightContext) -> bool:
 	state.call("request_new_run")
 	ctx.root().get_tree().current_scene = null
 	await ctx.await_frame()
+
+	# --- Migration Test: v1 → v2 ---
+	# Create a legacy v1 save manually, then load it and verify migration.
+	service.delete_save(6)
+	var legacy_data: RunSaveData = state.snapshot_run() as RunSaveData
+	if legacy_data != null:
+		legacy_data.save_version = 1
+		if legacy_data.session != null:
+			legacy_data.session.save_slot = 6
+		if ctx.check(service.write_data(6, legacy_data), "legacy v1 write_data failed"):
+			if ctx.check(service.has_save(6), "legacy v1 save file missing"):
+				state.begin_new_game(ctx.planet_catalog, &"default", ctx.original_seed, ctx.world_config.is_infinite_world())
+				if ctx.check(service.load_run(6), "legacy v1 load_run failed"):
+					var migrated_after: RunSaveData = state.snapshot_run() as RunSaveData
+					if ctx.check(migrated_after != null, "migrated snapshot_run returned null"):
+						if ctx.check(migrated_after.save_version == 2, "migration did not update save_version to 2: got %d" % migrated_after.save_version):
+							# Verify migrated data integrity (save_version is expected to differ)
+							var mig_before_cmp: Dictionary = RunSaveData.comparable(legacy_data)
+							var mig_after_cmp: Dictionary = RunSaveData.comparable(migrated_after)
+							mig_before_cmp.erase("save_version")
+							mig_after_cmp.erase("save_version")
+							if ctx.check(mig_before_cmp == mig_after_cmp, "migration roundtrip is not lossless"):
+								pass
+		service.delete_save(6)
+
 	return true

@@ -1,8 +1,8 @@
 class_name DOKI_Verifier
 extends RefCounted
-## Verifikation der Commit-Message — 10 Checks:
+## Verifikation der Commit-Message — 11 Checks:
 ## Checks 1-6 (weich): Token, Impuls, Storytelling, Narrator, Composite, Cross-Narrator
-## Checks 7-10 (HART): Kausalität, DocSync, ChainAudit, Datei-Limit (Atomicity)
+## Checks 7-11 (HART): Kausalität, DocSync, ChainAudit, Datei-Limit (Atomicity), Mood-Einmaligkeit
 ##
 ## Portiert aus VerifyEngine.cs, aber mit sauberer soft/hard-Trennung
 ## (das alte System blockte bei JEDEM Fehler — auch bei weichen).
@@ -10,6 +10,7 @@ extends RefCounted
 var _catalog: DOKI_NarratorCatalog
 var _repo_root: String
 var _changelog_path: String
+var _config: Dictionary
 
 const CAUSAL_CONNECTORS: String = "\\b(weil|deshalb|daher|dadurch|folglich|somit|Ursache|Wirkung)\\b"
 const COMPOSITE_TOKEN_REGEX: String = "\\[COMPOSITE:(c\\d+j\\d+n\\d+a\\d+p\\d+)\\]"
@@ -20,12 +21,24 @@ const MAX_FILES_PER_COMMIT: int = 30
 ## Von finish/finalize selbst gestagte narrative Dateien — zählen beim
 ## Datei-Limit nicht mit (identisch zu GateFlow.AUTO_MANAGED).
 const AUTO_MANAGED: Array = ["narrative_chain.json", "change_index.json", "CHANGELOG.md", ".commit_msg.txt", "arcs.json"]
+## Config-Pfad für RNG-Limits und Verifier-Regeln
+const DOKI_CONFIG_PATH: String = "res://scripts/doki/data/doki_config.json"
 
 
 func _init(catalog: DOKI_NarratorCatalog, repo_root: String) -> void:
 	_catalog = catalog
 	_repo_root = repo_root
 	_changelog_path = repo_root.path_join("CHANGELOG.md")
+	_config = _load_config()
+
+func _load_config() -> Dictionary:
+	var path: String = ProjectSettings.globalize_path(DOKI_CONFIG_PATH)
+	if FileAccess.file_exists(path):
+		var file := FileAccess.open(path, FileAccess.READ)
+		var content: String = file.get_as_text()
+		file.close()
+		return JSON.parse_string(content) if content != "" else {}
+	return {}
 
 
 ## Prüft die Message gegen Session + Chain + Git-Zustand.
@@ -45,6 +58,7 @@ func validate(message: String, session: Dictionary, chain: Dictionary, staged_fi
 	_append(check_8_docsync(message, session, staged_file_names, unstaged_doc_diffs), checks, hard_errors, soft_errors)
 	_append(check_9_chain_audit(message, session, chain), checks, hard_errors, soft_errors)
 	_append(check_10_file_limit(staged_file_names), checks, hard_errors, soft_errors)
+	_append(check_11_mood_uniqueness(session), checks, hard_errors, soft_errors)
 
 	return {
 		"success": hard_errors.is_empty(),
@@ -347,9 +361,9 @@ func check_9_chain_audit(message: String, session: Dictionary, chain: Dictionary
 	var mood_pool: Array = session.get("mood_pool", [])
 	if mood_pool.is_empty():
 		mood_pool = DOKI_MoodOverlay.default_pool()
-	# Exakt dieselben Limits/Vorgänger-Mood wie im prepare verwenden (in Session
-	# gespeichert) — sonst weicht der Replay vom Original ab.
-	var limits: Dictionary = session.get("limits", {"j": 99, "n": 14, "a": maxi(1, int(session.get("a", 1))), "p": maxi(1, entries.size() + 1)})
+	# Limits: Session > Config > Hardcoded Fallback (für RNG-Replay-Konsistenz)
+	var cfg_limits: Dictionary = _config.get("rng_limits", {"j": 99, "n": 14, "a": 52, "p": 52})
+	var limits: Dictionary = session.get("limits", cfg_limits)
 	var prev_mood: String = str(session.get("prev_mood", DOKI_RngEngine.GENESIS_MOOD))
 	var replayed: Dictionary = DOKI_RngEngine.derive(prev_composite, tree_hash, diff_hash, impulse, limits, prev_mood, mood_pool)
 	if replayed["composite"] != composite:
@@ -359,7 +373,19 @@ func check_9_chain_audit(message: String, session: Dictionary, chain: Dictionary
 	return _result("CHECK 9", true, ok, " ".join(problems) if not ok else "")
 
 
-## ─── Check 10: Datei-Limit / Atomicity (HARTER BLOCK) ───────────────────
+## ─── Check 11: Mood-Einmaligkeit (HARTER BLOCK) ──────────────────────────
+## Der Mood darf sich nicht wiederholen (select_mood garantiert prev_mood != mood).
+## Verifier prüft explizit: session.mood != session.prev_mood.
+func check_11_mood_uniqueness(session: Dictionary) -> Dictionary:
+	if not _config.get("verifier", {}).get("mood_uniqueness_check", true):
+		return _result("CHECK 11", true, true, "Mood-Uniqueness-Check deaktiviert per Config.")
+	var mood: String = str(session.get("mood", ""))
+	var prev_mood: String = str(session.get("prev_mood", ""))
+	var ok: bool = mood != prev_mood
+	var msg: String = ""
+	if not ok:
+		msg = "Mood '%s' wiederholte sich (prev_mood war ebenfalls '%s'). select_mood() garantiert Einmaligkeit — Session korrupt?" % [mood, prev_mood]
+	return _result("CHECK 11", true, ok, msg)
 ## Ein Commit = eine logische Einheit. Werden mehr als MAX_FILES_PER_COMMIT
 ## Dateien gestaged, ist der Commit zu groß — der Diff muss in atomare
 ## Commits aufgeteilt werden. Auto-managed narrative Dateien (finalize staged

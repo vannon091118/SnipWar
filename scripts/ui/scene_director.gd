@@ -73,6 +73,7 @@ func registered_scene_ids() -> Array[StringName]:
 ## - world: GameState.request_world_reconnect() (rebuild from session seed)
 ## - battle/conquest: The scene receives context via play_battle/play_conquest
 ##   after instantiation (SceneDirector explicitly calls the play method).
+## - historical_world: No fade transition needed, direct switch for headless compatibility
 func goto_scene(scene_id: StringName, context: Resource = null) -> bool:
 	if _is_transitioning:
 		return false
@@ -91,11 +92,22 @@ func goto_scene(scene_id: StringName, context: Resource = null) -> bool:
 		_pending_scene_id = scene_id
 		if state != null and state.has_method("set_pending_battle_context"):
 			state.set_pending_battle_context(_pending_scene_context)
+	elif scene_id == SCENE_ID_HISTORICAL_WORLD:
+		# Historical world is an intro sequence - no fade transition, direct switch
+		# This ensures headless compatibility where current_scene setter can be problematic
+		_pending_scene_context = null
+		_pending_scene_id = &""
+		_direct_switch_historical_world(scene)
+		return true
 	else:
 		_pending_scene_context = null
 		_pending_scene_id = &""
 	transition(0.6, func(): _switch_scene(scene))
 	return true
+
+## Direct switch for historical_world without fade transition (headless-safe)
+func _direct_switch_historical_world(scene: PackedScene) -> void:
+	call_deferred("_deferred_switch_scene", scene)
 
 func transition(duration: float = 0.4, on_midpoint: Callable = Callable()) -> void:
 	if _is_transitioning:
@@ -132,12 +144,16 @@ func _deferred_switch_scene(scene: PackedScene) -> void:
 		current.free()
 	var instance: Node = scene.instantiate()
 	get_tree().root.add_child(instance)
-	get_tree().current_scene = instance
+	# Use call_deferred to set current_scene - more robust in headless
+	call_deferred("_set_current_scene_deferred", instance)
 	# SceneDirector is the authority for handing context to newly-created
 	# scenes. BattleScene/ConquestScene no longer pull from GameState
 	# in _ready — they receive data through explicit play_battle/play_conquest
 	# calls. This is the single point where the handover happens.
 	_apply_pending_context(instance)
+
+func _set_current_scene_deferred(instance: Node) -> void:
+	get_tree().current_scene = instance
 
 func _apply_pending_context(scene: Node) -> void:
 	var ctx: BattleContext = _pending_scene_context
