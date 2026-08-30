@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "description": "Prompt-Templates für den DOKI PromptEngine. Platzhalter {key} werden zur Laufzeit durch Engine-Ergebnisse ersetzt. Daten-getriebene Alternative zu hardcoded Strings in voice_composer.gd.",
+
+  "mood_rules": {
+    "positive": "Dein Mood zeigt sich IMMER durch Stil, nie durch Worte:\n  ✓ \"Schon wieder. Immerhin.\" (erschöpft)\n  ✓ \"Moment — wieso eigentlich? Aha!\" (neugierig)\n  ✗ \"Ich bin erschöpft\" (NIE)\n  ✗ \"mit triumphierendem Unterton\" (NIE)\n  Zeig sie durch Wortwahl und Satzrhythmus.",
+    "search_contract": "Der folgende Suchkontext ist vollständig und verbindlich; er wurde automatisch durch die Runtime erzeugt. Lies alle Treffer und Abhängigkeiten, bevor du schreibst."
+  },
+
+  "attitude_texts": {
+    "high_9": "{label}",
+    "high_7": "{label}, fast immer",
+    "balanced": "ausgeglichen",
+    "low_3": "{label}, manchmal",
+    "low_1": "{label}"
+  },
+
+  "structure_hints": {
+    "Basher": "Kurz, maschinell. Fakten. CLI-Output-Ästhetik. Keine Absätze — Statuszeilen.",
+    "Buffy": "Zynisch-präzise. Problem → Analyse → Fix → Auswirkung. Strukturiert aber bissig.",
+    "Thinker": "Methodisch. Kontext → Analyse → Fazit → Empfehlung. Logisch aufbauend.",
+    "Vannon": "Knapp. Direktiv. Imperative. Keine Rechtfertigungen — Entscheidungen.",
+    "Squizzle": "Detektiv-Logbuch. Spuren → Indizien → Rekonstruktion → Fall geschlossen.",
+    "Devin": "Architektonisch. Pattern erkennen → Bruchstelle lokalisieren → Neu vernähen.",
+    "Argos": "Werkstatt-Stil. Direkt, bissig. 'Hab ich doch gesagt' — dann der Fix.",
+    "Ghost": "Chronik-Eintrag. Datum → Ereignis → Bedeutung für die Historia.",
+    "Spark": "Neugierig-entdeckend. Frage → Aha-Moment → Begeisterung. Laut denkend.",
+    "Glitch": "Konspirativ. Verbindung A → Verbindung B → Theorie → 'Zufall? Ich denke nicht.'",
+    "Null": "Resigniert-philosophisch. 'Es wird eh wieder...' → technische Fakten → existenzielle Einsicht.",
+    "Echo": "Flashback-schwer. 'Das erinnert mich an...' → historischer Vergleich → Echo in die Zukunft.",
+    "Flux": "Stream-of-Consciousness. Abschweifend, Einschübe, — Moment — Gedankenstriche. Egal.",
+    "Sage": "Pädagogisch. 'Stell dir vor...' → Kontext → Prinzip → Moral. Eine Lektion."
+  },
+
+  "trivial_pool": [
+    "WICHTIG: Nur {file_count} Datei(en). Erzähle diesen winzigen Commit wie eine epische Sage. Übertreibe maßlos — jede gelöschte Zeile ein gefallener Held.",
+    "WICHTIG: Behandle diesen Mini-Fix wie eine Bombenentschärfung. 'Impuls: {impulse}' — jede Millisekunde zählt. Die Spannung muss KNISTERN.",
+    "WICHTIG: Dieser mikroskopische Commit ist eine philosophische Krise. Was IST ein Fix? Wer sind WIR? Tiefgang erzwungen.",
+    "WICHTIG: Mach aus dieser Mücke einen Elefanten. Das klingt trivial, aber die IMPLIKATIONEN...",
+    "WICHTIG: Schreibe diesen Mini-Commit als diplomatischen Staatsakt. Jedes Semikolon eine Entscheidung, jedes Leerzeichen ein Kompromiss.",
+    "WICHTIG: Stell dir vor, dieser Impuls ist der EINE Commit der alles verändert. Die Welt hält den Atem an. Schreib entsprechend.",
+    "WICHTIG: {file_count} Dateien. Klingt wenig? In einem PARALLELUNIVERSUM wären es {file_count_x1000}. Erzähl von DIESEM Universum.",
+    "WICHTIG: So unscheinbar der Impuls wirkt — er ist der fehlende Puzzlestein. Ohne ihn: CHAOS. Mit ihm: KOSMOS. Zeig das.",
+    "WICHTIG: Nur {file_count} Datei(en). Dieser Commit ist der eine Grund, warum die Sterne stehen bleiben. Ohne ihn: Dunkelheit.",
+    "WICHTIG: Dieser Mini-Commit hat mehr Tiefe als der Ozean. Jede gelöste Frage wirft zehn neue auf. Willkommen in der Tiefe.",
+    "WICHTIG: Behandle diesen unscheinbaren Fix wie den letzten Schluck Wasser in der Wüste. Klein? Ja. Überlebenswichtig? ABSOLUT.",
+    "WICHTIG: Dieser {file_count}-Datei-Commit ist der Domino-Stein. Die ersten {file_count} fallen — danach fallen alle anderen von selbst.",
+    "WICHTIG: Wenn dieser Impuls ein Film wäre, wäre er der oscargekrönte Independent-Film. Kein Effekt, reine Substanz.",
+    "WICHTIG: Schreib diesen Commit wie einen finalen Akt. Der Vorhang fällt, aber das Publikum applaudiert.",
+    "WICHTIG: Jeder Pixel in diesem Patch erzählt eine Geschichte. Lies zwischen den Zeilen.",
+    "WICHTIG: Nur {file_count} Datei(en). Aber IMAGINE if this {file_count} Dateien WÄREN. Erzähl von diesem Universum."
+  ],
+
+  "subject_templates": {
+    "Buffy": "[{name}] {impulse}",
+    "Basher": "{name} ({file_count} files): {impulse}",
+    "Vannon": "{impulse_words_4}",
+    "Thinker": "{impulse} [Analyse: {name}]",
+    "Devin": "{name} sagt: {impulse}",
+    "Ghost": "{name} verzeichnet: {impulse}",
+    "Glitch": "{name} ermittelt: {impulse}",
+    "Squizzle": "{name}s Fall: {impulse}",
+    "Echo": "{name} erinnert: {impulse}",
+    "Spark": "{name} entdeckt: {impulse}",
+    "Argos": "{name}: {file_count} Dateien — {impulse_short}",
+    "Null": "{name}: {impulse_short}",
+    "Flux": "{name} — also — {impulse_words_5}",
+    "Sage": "{name} lehrt: {impulse}"
+  }
+}

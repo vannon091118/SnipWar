@@ -23,6 +23,9 @@ func _init() -> void:
 	_test_amend_hash_sync()
 	_test_repair_orphaned_verified()
 	_test_prompt_voice_lived()
+	_test_entity_window_decay()
+	_test_min_commits_for_climax()
+	_test_new_recur_weight_swap()
 
 	print("")
 	print("═══════════════════════════════════════")
@@ -540,7 +543,7 @@ func _test_prompt_voice_lived() -> void:
 	_expect("voice-lived: Stil-Beispiel im Prompt", sys.contains("SO SCHREIBST DU") and sys.contains(str(catalog.by_name("Buffy").get("style_sample", ""))))
 	_expect("voice-lived: Mood-Ausdruck statt nur Name", sys.contains("SO LEBST DU DEN MOOD") and sys.contains("passiv-aggressiv"))
 	_expect("voice-lived: Kategorie-Kalibrierung im Prompt", sys.contains("KALIBRIERUNG (Kategorie CODE)"))
-	_expect("voice-lived: Anti-Naming-Regel (nie 'mit triumphierendem Unterton')", sys.contains("NIEMALS beim Namen"))
+	_expect("voice-lived: Anti-Naming-Regel (NIE Mood beim Namen)", sys.contains("(NIE)"))
 
 	# 5. Doku-Arbeit dämpft Euphorie: triumphierender Mood + DOKU-Kategorie → nüchtern
 	var ctx_doku: Dictionary = _fixture_voice_ctx(catalog, "Buffy", "triumphierend", "DOKU")
@@ -571,6 +574,70 @@ func _fixture_voice_ctx(catalog: DOKI_NarratorCatalog, narrator_name: String, mo
 		"mood": mood,
 		"structure_info": {"structure": "chronologisch", "pattern": ""},
 	}
+
+
+## ─── Arc-Engine: Entity-Window Decay (Sliding-Window) ───────────────
+## Regression für ENTITY_WINDOW=50: _merge_seen kapp die Liste bei >50.
+func _test_entity_window_decay() -> void:
+	# Weniger als 50 → bleibt
+	var seen_small: Array = ["F-1", "F-2", "F-3"]
+	var merged_small: Array = DOKI_ArcEngine._merge_seen(seen_small, ["F-4", "F-5"])
+	_expect("entity window: 5 items stay (under 50)", merged_small.size() == 5)
+
+	# Genau 50 → bleibt (Grenzwert inklusiv)
+	var seen_50: Array = []
+	for i in 48:
+		seen_50.append("F-%d" % i)
+	var merged_50: Array = DOKI_ArcEngine._merge_seen(seen_50, ["F-50", "F-51"])
+	_expect("entity window: 50 stays (at limit)", merged_50.size() == 50)
+
+	# Über 50 → gekappt auf die letzten 50
+	var seen_60: Array = []
+	for i in 60:
+		seen_60.append("F-%d" % i)
+	var merged_60: Array = DOKI_ArcEngine._merge_seen(seen_60, [])
+	_expect("entity window: 60 capped at 50", merged_60.size() == 50)
+	_expect("entity window: letzte 50 behalten", str(merged_60[0]) == "F-10" and str(merged_60[49]) == "F-59")
+
+
+## ─── Arc-Engine: MIN_COMMITS_FOR_CLIMAX ─────────────────────────────
+## Regression für MIN_COMMITS_FOR_CLIMAX=2: Climax erst ab 2 Commits.
+func _test_min_commits_for_climax() -> void:
+	# Arc mit commit_count=0, aber hohes Gewicht → kein Climax
+	var arc_0: Dictionary = {"weight": 10.0, "climax_weight": 5.0, "commit_count": 0, "seen_entities": []}
+	var forecast_0: Dictionary = DOKI_ArcEngine.new("res://scripts/doki/data").forecast_weight(arc_0, ["F-1", "F-2", "F-3", "F-4", "F-5", "F-6", "F-7", "F-8", "F-9", "F-10"], false, "CODE")
+	_expect("min commits: 0 commits → kein climax trotz hohem gewicht", not bool(forecast_0["climax"]))
+
+	# Arc mit commit_count=1 → noch kein Climax
+	var arc_1: Dictionary = {"weight": 10.0, "climax_weight": 5.0, "commit_count": 1, "seen_entities": []}
+	var forecast_1: Dictionary = DOKI_ArcEngine.new("res://scripts/doki/data").forecast_weight(arc_1, ["F-1", "F-2", "F-3", "F-4", "F-5", "F-6", "F-7", "F-8", "F-9", "F-10"], false, "CODE")
+	_expect("min commits: 1 commit → noch kein climax", not bool(forecast_1["climax"]))
+
+	# Arc mit commit_count=2 → Climax möglich (wenn Gewicht reicht)
+	var arc_2: Dictionary = {"weight": 10.0, "climax_weight": 5.0, "commit_count": 2, "seen_entities": []}
+	var forecast_2: Dictionary = DOKI_ArcEngine.new("res://scripts/doki/data").forecast_weight(arc_2, ["F-1", "F-2", "F-3", "F-4", "F-5", "F-6", "F-7", "F-8", "F-9", "F-10"], false, "CODE")
+	_expect("min commits: 2 commits → climax erlaubt", bool(forecast_2["climax"]))
+
+
+## ─── Arc-Engine: NEW/RECUR Weight Swap ─────────────────────────────
+## Regression für den Tausch: NEW=0.4 (zählt mehr) vs RECUR=0.2.
+func _test_new_recur_weight_swap() -> void:
+	# Neue Entitäten zählen mehr als wiedergefundene
+	_expect("new > recur: 0.4 > 0.2", DOKI_ArcEngine.NEW_ENTITY_WEIGHT > DOKI_ArcEngine.RECUR_ENTITY_WEIGHT)
+
+	# Konstanten haben die korrekten Werte
+	_expect("new weight = 0.4", abs(DOKI_ArcEngine.NEW_ENTITY_WEIGHT - 0.4) < 0.001)
+	_expect("recur weight = 0.2", abs(DOKI_ArcEngine.RECUR_ENTITY_WEIGHT - 0.2) < 0.001)
+
+	# FIX-Kategorie → base=0, nicht eligible (kein Climax)
+	var arc_fix: Dictionary = {"weight": 10.0, "climax_weight": 5.0, "commit_count": 5, "seen_entities": []}
+	var forecast_fix: Dictionary = DOKI_ArcEngine.new("res://scripts/doki/data").forecast_weight(arc_fix, ["F-1", "F-2"], false, "FIX")
+	_expect("fix: nicht eligible", not bool(forecast_fix["climax_eligible"]))
+
+	# REFACTOR → base=0.25 (halbiert), eligible
+	var arc_refactor: Dictionary = {"weight": 0.0, "climax_weight": 5.0, "commit_count": 5, "seen_entities": []}
+	var forecast_refactor: Dictionary = DOKI_ArcEngine.new("res://scripts/doki/data").forecast_weight(arc_refactor, ["F-1", "F-2"], false, "REFACTOR")
+	_expect("refactor: eligible", bool(forecast_refactor["climax_eligible"]))
 
 
 static func _has_hard(result: Dictionary, check_prefix: String) -> bool:

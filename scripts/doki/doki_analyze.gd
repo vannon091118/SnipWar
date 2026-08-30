@@ -230,16 +230,33 @@ func _analyze_arcs(entries: Array) -> void:
 		if not subjects.is_empty():
 			print("    Themen: %s" % " | ".join(subjects))
 
-	# arcs.json Konsistenz
+	# arcs.json Konsistenz + erweiterte Statistiken
 	var arc_data: Dictionary = _load_json(_repo_root.path_join("scripts/doki/data/arcs.json"))
 	if not arc_data.is_empty():
 		print("\n  arcs.json Status:")
 		var active: String = str(arc_data.get("active", "?"))
+		var real_arcs: int = 0
+		var climax_count: int = 0
+		var total_commits_in_arcs: int = 0
 		for arc_id in arc_data.get("arcs", {}):
 			var a: Dictionary = arc_data["arcs"][arc_id]
 			var status: String = str(a.get("status", "?"))
 			var active_mark: String = " ◄ AKTIV" if arc_id == active else ""
-			print("    %s '%s' — weight: %-5.1f, status: %s%s" % [arc_id, str(a.get("name", "?")), float(a.get("weight", 0)), status, active_mark])
+			var commit_count: int = int(a.get("commit_count", 0))
+			total_commits_in_arcs += commit_count
+			if status == "completed":
+				real_arcs += 1
+				if commit_count >= 3:
+					climax_count += 1
+			print("    %s '%s' — weight: %-5.1f, commits: %d, status: %s%s" % [arc_id, str(a.get("name", "?")), float(a.get("weight", 0)), commit_count, status, active_mark])
+		# Erweiterte Statistiken
+		var total_arcs_in_json: int = (arc_data.get("arcs", {}) as Dictionary).size()
+		var avg_arc_length: float = float(total_commits_in_arcs) / float(max(1, total_arcs_in_json))
+		print("\n  Ø Arc-Länge: %.1f Commits" % avg_arc_length)
+		if real_arcs > 0:
+			print("  Arcs ≥3 Commits (echte Handlungsbögen): %d/%d (%.0f%%)" % [climax_count, real_arcs, climax_count * 100.0 / real_arcs])
+		else:
+			print("  Arcs ≥3 Commits: 0 (noch keine abgeschlossenen Arcs)")
 	print("")
 
 

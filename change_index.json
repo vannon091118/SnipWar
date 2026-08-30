@@ -1049,6 +1049,38 @@
 			],
 			"p_id": 111
 		},
+		"4117d9a951a3f3c7e9b8cb21b17ef121010ee3fe": {
+			"c": 115,
+			"composite": "c115j82n13a51p113",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-001",
+				"F-026",
+				"F-009",
+				"F-439",
+				"F-440",
+				"F-010",
+				"F-011",
+				"F-012",
+				"F-015",
+				"F-016",
+				"C-1123",
+				"C-1124",
+				"C-1125",
+				"C-1126",
+				"C-1127",
+				"C-1128",
+				"C-1129",
+				"C-1130",
+				"C-1131",
+				"C-1132",
+				"C-1133",
+				"C-1134"
+			],
+			"p_id": 115
+		},
 		"4483ceb09193b09566ee931b433a874fdc37c967": {
 			"c": 44,
 			"composite": "c44j38n3a12p28",
@@ -7186,6 +7218,91 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1135": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						10
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1135",
+			"last_p": 116,
+			"name": "SimCommit",
+			"path": "narrative_runtime/sandbox/metrics.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1136": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						21
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1136",
+			"last_p": 116,
+			"name": "SimMetrics",
+			"path": "narrative_runtime/sandbox/metrics.py",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1137": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						578
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1137",
+			"last_p": 116,
+			"name": "_test_entity_window_decay",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1138": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						602
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1138",
+			"last_p": 116,
+			"name": "_test_min_commits_for_climax",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1139": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						621
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1139",
+			"last_p": 116,
+			"name": "_test_new_recur_weight_swap",
+			"path": "scripts/doki/doki_selfcheck.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-114": {
 			"first_p": 36,
 			"history": [
@@ -7203,6 +7320,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1140": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						1
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1140",
+			"last_p": 116,
+			"name": "DOKI_PromptEngine",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1141": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						22
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1141",
+			"last_p": 116,
+			"name": "_init",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1142": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						26
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1142",
+			"last_p": 116,
+			"name": "_load_templates",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1143": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						36
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1143",
+			"last_p": 116,
+			"name": "is_loaded",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1144": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						41
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1144",
+			"last_p": 116,
+			"name": "get_template",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1145": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						47
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1145",
+			"last_p": 116,
+			"name": "get_array",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1146": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						53
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1146",
+			"last_p": 116,
+			"name": "get_dict",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1147": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						59
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1147",
+			"last_p": 116,
+			"name": "render",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1148": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						67
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1148",
+			"last_p": 116,
+			"name": "attitude_text",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1149": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						81
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1149",
+			"last_p": 116,
+			"name": "structure_hint",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-115": {
 			"first_p": 36,
 			"history": [
@@ -7217,6 +7504,40 @@
 			"last_p": 36,
 			"name": "PORT",
 			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1150": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						90
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1150",
+			"last_p": 116,
+			"name": "trivial_entry",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1151": {
+			"first_p": 116,
+			"history": [
+				{
+					"lines": [
+						104
+					],
+					"p_id": 116
+				}
+			],
+			"id": "C-1151",
+			"last_p": 116,
+			"name": "mood_rule",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -26688,6 +27009,76 @@
 			"last_p": 115,
 			"name": "block_report.gd.uid",
 			"path": "scripts/doki/orchestration/block_report.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-441": {
+			"first_p": 116,
+			"history": [],
+			"id": "F-441",
+			"last_p": 116,
+			"name": "__init__.py",
+			"path": "narrative_runtime/sandbox/__init__.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-442": {
+			"first_p": 116,
+			"history": [],
+			"id": "F-442",
+			"last_p": 116,
+			"name": "generators.py",
+			"path": "narrative_runtime/sandbox/generators.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-443": {
+			"first_p": 116,
+			"history": [],
+			"id": "F-443",
+			"last_p": 116,
+			"name": "metrics.py",
+			"path": "narrative_runtime/sandbox/metrics.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-444": {
+			"first_p": 116,
+			"history": [],
+			"id": "F-444",
+			"last_p": 116,
+			"name": "runner.py",
+			"path": "narrative_runtime/sandbox/runner.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-445": {
+			"first_p": 116,
+			"history": [],
+			"id": "F-445",
+			"last_p": 116,
+			"name": "prompt_templates.json",
+			"path": "scripts/doki/data/prompt_templates.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-446": {
+			"first_p": 116,
+			"history": [],
+			"id": "F-446",
+			"last_p": 116,
+			"name": "prompt_engine.gd",
+			"path": "scripts/doki/prompt/prompt_engine.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-447": {
+			"first_p": 116,
+			"history": [],
+			"id": "F-447",
+			"last_p": 116,
+			"name": "prompt_engine.gd.uid",
+			"path": "scripts/doki/prompt/prompt_engine.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

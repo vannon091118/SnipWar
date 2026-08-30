@@ -82,7 +82,12 @@ func _build_system_prompt(ctx: Dictionary) -> String:
 
 	prompt += "\nSCHREIBREGELN:\n"
 	prompt += "- Erzähl eine GESCHICHTE, keinen Bericht. Zeig deine Persönlichkeit.\n"
-	prompt += "- Nenne deinen Mood oder deine Stimmung NIEMALS beim Namen (kein 'mit triumphierendem Unterton', kein 'diesmal war ich alarmiert'). Zeig sie durch Stil, Wortwahl und Satzrhythmus.\n"
+	prompt += "- Dein Mood zeigt sich IMMER durch Stil, nie durch Worte:\n"
+	prompt += "  ✓ \"Schon wieder. Immerhin.\" (erschöpft)\n"
+	prompt += "  ✓ \"Moment — wieso eigentlich? Aha!\" (neugierig)\n"
+	prompt += "  ✗ \"Ich bin erschöpft\" (NIE)\n"
+	prompt += "  ✗ \"mit triumphierendem Unterton\" (NIE)\n"
+	prompt += "  Zeig sie durch Wortwahl und Satzrhythmus.\n"
 	prompt += "- Imitiere das Stil-Beispiel: Dein Text MUSS nach DIR klingen, nicht nach einem generischen Bericht.\n"
 	prompt += "- KEINE Bullet-Listen. KEINE technischen Auflistungen. Fließtext.\n"
 	prompt += "- Der Impuls war UNVERMEIDLICH. Formuliere die Kausalität natürlich, nicht als Protokoll.\n"
@@ -94,7 +99,8 @@ func _build_system_prompt(ctx: Dictionary) -> String:
 	prompt += "- Kausale Konnektoren sind Pflicht (weil, deshalb, daher, folglich) — aber eingewoben.\n"
 	prompt += "- Die Dateien am Ende sind die Spuren deiner Arbeit, nicht 'betroffen'.\n"
 	prompt += "- Der folgende Suchkontext ist vollständig und verbindlich; er wurde automatisch durch die Runtime erzeugt. Lies alle Treffer und Abhängigkeiten, bevor du schreibst.\n"
-	if not search_context.is_empty():
+	var files: Array = ctx.get("files", [])
+	if files.size() >= 3 and not search_context.is_empty():
 		prompt += "\nAUTOMATISCHER SUCHKONTEXT (VOLLSTÄNDIG):\n%s\n" % JSON.stringify(search_context)
 
 	# Side-Plot (Merge)
@@ -296,11 +302,11 @@ static func _attitude_text(value: int, high: String, low: String) -> String:
 	if value >= 9:
 		return high
 	if value >= 7:
-		return high.replace(".", ", meistens.")
+		return high + ", fast immer"
 	if value >= 5:
 		return "ausgeglichen"
 	if value >= 3:
-		return low.replace(".", ", manchmal.")
+		return low + ", manchmal"
 	return low
 
 

@@ -66,8 +66,9 @@ $GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- prepare "<
 #   → liest .doki/prompt.txt: Narrator + Mood + Composite (deterministisch)
 #   → Agent schreibt den Commit-Body in der Rolle des Narrators (Fließtext)
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki.gd -- finish --body-file .doki/narrator_body.md
-#   → 10 Checks (1-6 weich, 7-10 HART), schreibt .commit_msg.txt + staged Doku-Artefakte
+#   → 10 Checks (1-6 weich, 7-10 HART), schreibt .commit_msg.txt + change_index + CHANGELOG (staged)
 git commit -F .commit_msg.txt                  # Hook re-verifiziert + finalize/push automatisch
+#   → finalize schreibt chain + arcs (staged für nächsten Commit), push automatisch
 
 # Narrative-Qualitäts-Analyse (was DOKI geschrieben hat, logisch konsistent?):
 $GODOT_BIN --headless --path . --script res://scripts/doki/doki_analyze.gd
@@ -385,8 +386,14 @@ git commit -F .commit_msg.txt
 - **VERBOTEN:** `--no-verify` (bypassed DOKI + Preflight-Hook)
 - **VERBOTEN:** Direkt-Commits ohne prepare/finish
 - Begründungszeilen (`- pfad/datei: Grund.`) erzeugt DOKI maschinell
-- DOKI-Artefakte (CHANGELOG, change_index, narrative_chain, arcs) werden
-  vom post-commit-Hook aktualisiert — diese NÄCHSTEN Commit mitnehmen
+- **Early Artifact Writing (Phase 9):** `finish` schreibt `change_index.json` +
+  `CHANGELOG.md` und staged sie → Commit ist self-contained (User-Code + Artefakte).
+  `finalize` (post-commit) schreibt NUR `narrative_chain.json` + `arcs.json` und
+  staged sie für den NÄCHSTEN Commit. Kein „Zettel auf dem Schreibtisch" mehr —
+  jeder Commit enthält seine eigenen Artefakte. Branch-Switches sind sauber.
+- **Block-Report (Phase 6):** Bei jedem DOKI-Block (hard_error in finish/gate/prepare)
+  wird `.doki/block_report.md` geschrieben — vollständige Diagnose mit Session-State,
+  Narrator, Mood, Composite, Arc, Fehler, Empfehlung und nächsten Kommando.
 
 ### 7. RE-AUDIT — Nach jedem Commit
 ```bash

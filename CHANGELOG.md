@@ -2042,3 +2042,27 @@ DOKI Master-Plan Phase 1+2+6+9: Pools erweitert, Score rebalanced, Error-Artifac
 - scripts/doki/orchestration/flows/finish_flow.gd: Dokumentation aktualisiert (F-012).
 - scripts/doki/prompt/arc_engine.gd: Dokumentation aktualisiert (F-015).
 - scripts/doki/prompt/voice_composer.gd: Dokumentation aktualisiert (F-016).
+
+## 2026-08-27 20:00:00 — p116 · c116j80n4a44p41 · Vannon · sachlich
+
+**DOKI Phasen 3-8: Prompting-Verbesserungen,… — nach Flux**
+
+DOKI Phasen 3-8: Prompting-Verbesserungen, Prompt-Engine, Python-Sandbox, Selfcheck-Tests, Analyze-Stats, Block-Report-Lifecycle
+
+- AGENTS.md: Tooling erweitert (F-019).
+- change_index.json: Tooling erweitert (F-003).
+- docs/METRICS_TRACKER.md: Tooling erweitert (F-357).
+- narrative_chain.json: Tooling erweitert (F-004).
+- narrative_runtime/cli.py: Tooling erweitert (F-139).
+- narrative_runtime/sandbox/__init__.py: Tooling erweitert (F-441).
+- narrative_runtime/sandbox/generators.py: Tooling erweitert (F-442).
+- narrative_runtime/sandbox/metrics.py: Tooling erweitert (F-443).
+- narrative_runtime/sandbox/runner.py: Tooling erweitert (F-444).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+- scripts/doki/data/prompt_templates.json: Tooling erweitert (F-445).
+- scripts/doki/doki_analyze.gd: Tooling erweitert (F-023).
+- scripts/doki/doki_selfcheck.gd: Tooling erweitert (F-017).
+- scripts/doki/orchestration/block_report.gd: Tooling erweitert (F-439).
+- scripts/doki/prompt/prompt_engine.gd: Tooling erweitert (F-446).
+- scripts/doki/prompt/prompt_engine.gd.uid: Tooling erweitert (F-447).
+- scripts/doki/prompt/voice_composer.gd: Tooling erweitert (F-016).
