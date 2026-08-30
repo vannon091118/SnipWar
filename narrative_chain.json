@@ -8862,6 +8862,68 @@
 			"seq": 112,
 			"subject": "Sage lehrt: Ripristino artifact DOKI interrotti: chiusura… — nach Null",
 			"summary": "Stell dir vor, jemand löst ein Puzzle halb und lässt die Reste auf dem Tisch liegen — und der Nächste, der kommt, findet nicht Chaos, sondern fast schon Ordnung. Genau das war heute meine Lage. Der..."
+		},
+		{
+			"a": 32,
+			"arc": "a54",
+			"c": 113,
+			"composite": "c113j79n9a32p86",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 43.0
+				},
+				{
+					"deletions": 19.0,
+					"file": "docs/METRICS_TRACKER.md",
+					"insertions": 19.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 52.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 22.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_v2/_probe_field_leak.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_v2/change_impact_resolver.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/change_impact_resolver_test.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 17:00:00",
+			"hash": "2950712607f4ce60d28cd7f3d66e93c31d3916be",
+			"j": 79,
+			"model_id": "claude-sonnet-4",
+			"mood": "warm",
+			"n": 9,
+			"narrator": "Spark",
+			"p": 86,
+			"p_id": 113,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Sage",
+			"seq": 113,
+			"subject": "Spark entdeckt: Commit artifact post-commit: chain 112, arco a54… — nach Sage",
+			"summary": "Moment — wieso eigentlich? Die letzten Male haben wir die Artefakte immer selbst geschrieben, und dann kam der post-commit Hook und hat sie *nochmal* angetastet? Das kann doch nicht sein, oder? Aha..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

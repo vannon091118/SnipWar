@@ -1996,3 +1996,18 @@ Ripristino artifact DOKI interrotti: chiusura arco a52 + apertura a53
 - narrative_chain.json: Tooling erweitert (F-004).
 - scripts/doki/data/arcs.json: Tooling erweitert (F-001).
 - scripts/preflight_v2/_probe_field_leak.gd: Tooling erweitert (F-435).
+
+## 2026-08-27 17:00:00 — p113 · c113j79n9a32p86 · Spark · warm
+
+**Spark entdeckt: Commit artifact post-commit: chain 112, arco a54… — nach Sage**
+
+Commit artifact post-commit: chain 112, arco a54 attivo, METRICS_TRACKER sincronizzato + .uid sidecar
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/METRICS_TRACKER.md: Implementiert und integriert (F-357).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/preflight_v2/_probe_field_leak.gd.uid: Implementiert und integriert (F-436).
+- scripts/preflight_v2/change_impact_resolver.gd.uid: Implementiert und integriert (F-437).
+- scripts/testing/change_impact_resolver_test.gd.uid: Implementiert und integriert (F-438).
