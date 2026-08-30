@@ -1983,3 +1983,16 @@ Entferne technischen Leak aus Kamera-Tutorial-Text
 - change_index.json: Implementiert und integriert (F-003).
 - narrative_chain.json: Implementiert und integriert (F-004).
 - scripts/ui/tutorial/tutorial_director.gd: Implementiert und integriert (F-031).
+
+## 2026-08-27 16:00:00 — p112 · c112j34n14a27p66 · Sage · selbstironisch
+
+**Sage lehrt: Ripristino artifact DOKI interrotti: chiusura… — nach Null**
+
+Ripristino artifact DOKI interrotti: chiusura arco a52 + apertura a53
+
+- CHANGELOG.md: Tooling erweitert (F-002).
+- change_index.json: Tooling erweitert (F-003).
+- docs/METRICS_TRACKER.md: Tooling erweitert (F-357).
+- narrative_chain.json: Tooling erweitert (F-004).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+- scripts/preflight_v2/_probe_field_leak.gd: Tooling erweitert (F-435).

@@ -8810,6 +8810,58 @@
 			"seq": 111,
 			"subject": "Null: Entferne technischen Leak aus Kamera-Tut… — nach Sage",
 			"summary": "Ich zähle zwei Probleme: den technischen Leak und den Immersion-Bruch. Kontext: Die Kamera-Anleitung enthielt hardkodierte Eingaben wie [W A S D] und Mausrad. Analyse: Diese Details brachen die Imm..."
+		},
+		{
+			"a": 27,
+			"arc": "a53",
+			"c": 112,
+			"composite": "c112j34n14a27p66",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 23.0,
+					"file": "docs/METRICS_TRACKER.md",
+					"insertions": 23.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 42.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_v2/_probe_field_leak.gd",
+					"insertions": 13.0
+				}
+			],
+			"date": "2026-08-27 16:00:00",
+			"hash": "2d6db95694ff33dab7cf7ad3accb471230151813",
+			"j": 34,
+			"model_id": "claude-sonnet-4",
+			"mood": "selbstironisch",
+			"n": 14,
+			"narrator": "Sage",
+			"p": 66,
+			"p_id": 112,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Null",
+			"seq": 112,
+			"subject": "Sage lehrt: Ripristino artifact DOKI interrotti: chiusura… — nach Null",
+			"summary": "Stell dir vor, jemand löst ein Puzzle halb und lässt die Reste auf dem Tisch liegen — und der Nächste, der kommt, findet nicht Chaos, sondern fast schon Ordnung. Genau das war heute meine Lage. Der..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

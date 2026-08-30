@@ -845,6 +845,20 @@
 			],
 			"p_id": 75.0
 		},
+		"2d6db95694ff33dab7cf7ad3accb471230151813": {
+			"c": 112,
+			"composite": "c112j34n14a27p66",
+			"entities": [
+				"F-002",
+				"F-003",
+				"F-357",
+				"F-004",
+				"F-001",
+				"F-435",
+				"C-1122"
+			],
+			"p_id": 112
+		},
 		"2d7fba9c87200b4d777a8b9fe0c71c474746b384": {
 			"c": 86.0,
 			"composite": "c86j71n5a30p76",
@@ -999,7 +1013,7 @@
 			"p_id": 53.0
 		},
 		"3e6ade8e3956ffbc7b0a65bef1136da14eb3827c": {
-			"c": 111,
+			"c": 111.0,
 			"composite": "c111j58n11a28p25",
 			"entities": [
 				"F-002",
@@ -1007,7 +1021,7 @@
 				"F-004",
 				"F-031"
 			],
-			"p_id": 111
+			"p_id": 111.0
 		},
 		"4483ceb09193b09566ee931b433a874fdc37c967": {
 			"c": 44.0,
@@ -6905,6 +6919,23 @@
 			"last_p": 110.0,
 			"name": "RUNTIME_DIR",
 			"path": "scripts/preflight/constraint_narrative_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1122": {
+			"first_p": 112.0,
+			"history": [
+				{
+					"lines": [
+						3.0
+					],
+					"p_id": 112.0
+				}
+			],
+			"id": "C-1122",
+			"last_p": 112.0,
+			"name": "PreflightV2ProbeFieldLeak",
+			"path": "scripts/preflight_v2/_probe_field_leak.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -26367,6 +26398,16 @@
 			"last_p": 109.0,
 			"name": "change_impact_resolver_test.gd",
 			"path": "scripts/testing/change_impact_resolver_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-435": {
+			"first_p": 112.0,
+			"history": [],
+			"id": "F-435",
+			"last_p": 112.0,
+			"name": "_probe_field_leak.gd",
+			"path": "scripts/preflight_v2/_probe_field_leak.gd",
 			"status": "created",
 			"type": "file"
 		}

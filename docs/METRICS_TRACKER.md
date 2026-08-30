@@ -1,6 +1,6 @@
 # 🔢 NARRATIVE METRICS TRACKER
 > Automatisch aktualisiert nach jedem DOKI-Commit.
-> Letzte Aktualisierung: `2026-08-30T05:41:28` | Chain-Eintrag: `c111` | Arc: `a53`
+> Letzte Aktualisierung: `2026-08-30T17:46:25` | Chain-Eintrag: `c112` | Arc: `a54`
 
 ---
 
@@ -8,8 +8,8 @@
 
 | Metrik | Wert |
 |--------|------|
-| **Gesamt-Commits (Chain)** | 111 |
-| **Aktiver Arc** | `a53` |
+| **Gesamt-Commits (Chain)** | 112 |
+| **Aktiver Arc** | `a54` |
 | **Narratoren aktiv** | 14 |
 | **Letzter Sentiment** | 10.0/10 |
 
@@ -19,9 +19,9 @@
 
 | Narrator | Commits | Bugs | Clean | Fixes | Score |
 |----------|---------|------|-------|-------|-------|
+| 🟢 Sage | 15 | 0 | 14 | 1 | **+4.6** |
 | 🟢 Devin | 9 | 0 | 9 | 0 | **+4.5** |
 | 🟢 Squizzle | 9 | 0 | 9 | 0 | **+4.5** |
-| 🟢 Sage | 14 | 0 | 13 | 1 | **+4.1** |
 | 🟢 Buffy | 11 | 1 | 10 | 0 | **+3.8** |
 | 🟢 Spark | 6 | 0 | 6 | 0 | **+3.0** |
 | 🟢 Basher | 8 | 1 | 7 | 0 | **+2.3** |
@@ -40,8 +40,8 @@
 
 | Mood | Anzahl | % |
 |------|--------|---|
-| trocken | 15 | 14% |
-| triumphierend | 15 | 14% |
+| trocken | 15 | 13% |
+| triumphierend | 15 | 13% |
 | alarmiert | 13 | 12% |
 | neugierig | 13 | 12% |
 | erschöpft | 11 | 10% |
@@ -49,7 +49,7 @@
 | warm | 10 | 9% |
 | sachlich | 9 | 8% |
 | sarkastisch | 8 | 7% |
-| selbstironisch | 7 | 6% |
+| selbstironisch | 8 | 7% |
 
 ---
 
@@ -58,15 +58,15 @@
 | Paar | Häufigkeit |
 |------|-----------|
 | Ghost > Sage | 3 |
-| Squizzle > Buffy | 3 |
-| Flux > Spark | 3 |
 | Argos > Sage | 3 |
-| Buffy > Sage | 2 |
-| Vannon > Ghost | 2 |
-| Sage > Devin | 2 |
-| Thinker > Vannon | 2 |
+| Flux > Spark | 3 |
+| Squizzle > Buffy | 3 |
+| Basher > Null | 2 |
 | Sage > Buffy | 2 |
+| Basher > Squizzle | 2 |
 | Argos > Basher | 2 |
+| Null > Devin | 2 |
+| Thinker > Vannon | 2 |
 
 ---
 
@@ -86,11 +86,11 @@
  11 │█████
  12 │██████
  13 │████
- 14 │█████
+ 14 │████
  15 │██
  16 │███
  17 │████
- 18 │█████
+ 18 │██████
  19 │█████
  20 │████
  21 │███
@@ -98,8 +98,8 @@
  23 │█████
  24 │██████
  25 │███████
- 26 │████████
- 27 │█████████
+ 26 │█████████
+ 27 │██████████
  28 │██████████
  29 │██████████
  30 │██████████
@@ -108,8 +108,8 @@
  33 │██████████
  34 │██████████
  35 │██████████
- 36 │████████
- 37 │█████████
+ 36 │█████████
+ 37 │██████████
  38 │██████████
  39 │██████████
  40 │██████████
