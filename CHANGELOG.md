@@ -1957,3 +1957,18 @@ Session-Scoped Verification Contract: machine-resolvable ChangeImpactResolver (P
 - scripts/preflight_v2/change_impact_resolver.gd: Tooling erweitert (F-432).
 - scripts/preflight_v2/constraint_scanner.gd: Tooling erweitert (F-433).
 - scripts/testing/change_impact_resolver_test.gd: Tooling erweitert (F-434).
+
+## 2026-08-27 14:00:00 — p110 · c110j48n14a7p10 · Sage · trocken
+
+**Sage lehrt: FIX: Drei belegte Findings aus Divergenz-Audit —… — nach Argos**
+
+FIX: Drei belegte Findings aus Divergenz-Audit — cluster_generation war stille No-Op-Constraint (0 Checks, fehlendes world_config in Pure-Phase), narrative_runtime-Cache hashtte nur gate_cli statt aller Runtime-Module (stale PASS-Fenster), AGENTS-Legacy-Claim stale (Datei entfernt, nicht archiviert)
+
+- AGENTS.md: Fehler behoben (F-019).
+- CHANGELOG.md: Fehler behoben (F-002).
+- change_index.json: Fehler behoben (F-003).
+- docs/FINDINGS.md: Fehler behoben (F-046).
+- narrative_chain.json: Fehler behoben (F-004).
+- scripts/doki/data/arcs.json: Fehler behoben (F-001).
+- scripts/preflight/constraint_cluster_generation.gd: Fehler behoben (F-134).
+- scripts/preflight/constraint_narrative_runtime.gd: Fehler behoben (F-353).

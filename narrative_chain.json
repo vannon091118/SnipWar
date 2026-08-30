@@ -8706,6 +8706,68 @@
 			"seq": 109,
 			"subject": "Sage lehrt: Session-Scoped Verification Contract:… — nach Argos",
 			"summary": "Stell dir vor, dein Prüfstein wägt jedes Argument, bleibt aber taub für die Frage, ob es gerade zu diesem Problem gehört. Genauso ging es uns bisher: Beim kleinsten Trostpflaster rannte der volle R..."
+		},
+		{
+			"a": 7,
+			"arc": "a52",
+			"c": 110,
+			"composite": "c110j48n14a7p10",
+			"data_changes": [
+				{
+					"deletions": 1.0,
+					"file": "AGENTS.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 22.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 326.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 97.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 44.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/preflight/constraint_cluster_generation.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/preflight/constraint_narrative_runtime.gd",
+					"insertions": 23.0
+				}
+			],
+			"date": "2026-08-27 14:00:00",
+			"hash": "47aaf93a0b995d328071739e1a83831e9384d3fb",
+			"j": 48,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 14,
+			"narrator": "Sage",
+			"p": 10,
+			"p_id": 110,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Argos",
+			"seq": 110,
+			"subject": "Sage lehrt: FIX: Drei belegte Findings aus Divergenz-Audit —… — nach Argos",
+			"summary": "Stell dir vor, du vertraust einem Wächter nur deshalb, weil du ihn nie bei der Arbeit gesehen hast. Genau daran krankte unser einsamer Stachel: Der eine Cluster-Wächter meldete jedes Mal akribisch ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

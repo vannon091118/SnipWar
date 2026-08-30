@@ -95,28 +95,29 @@ func _discover_tests(root_path: String, filter: String) -> PackedStringArray:
 func _run_subprocess(godot_bin: String, args: PackedStringArray, timeout_sec: int) -> Dictionary:
 	var start_ms: int = Time.get_ticks_msec()
 	var output: Array = []
-	var exit_code: int = -1
 
-	# OS.execute gibt kein exit_code zurück in Godot 4.x — wir nutzen
-	# OS.create_process + Thread-Timeout als Fallback.
-	# Einfacher: OS.execute mit capture und manuellem Timeout via Timer.
-	# Godot 4.x OS.execute mit read_stderr = true:
-	OS.execute(godot_bin, args, output, true, false)
+	# Autoritativer Exit-Code: OS.execute gibt den Subprozess-Exit-Code zurück
+	# (6. Argument = timeout_msec). Der [PASS]/RESULT: PASSED-Substring allein
+	# wäre ein False-Green — ein Test, der nach der ersten Assertion crasht,
+	# hinterlässt „[PASS]“ im Output, obwohl quit(1) nie erreicht wurde.
+	# OS.execute in dieser Godot-Build akzeptiert max. 5 Argumente (kein
+	# timeout_msec hier) und gibt den Subprozess-Exit-Code als Rückgabe zurück.
+	# Der Exit-Code ist die einzige Wahrheit — siehe Kommentar oben.
+	var exit_code: int = OS.execute(godot_bin, args, output, true, false)
 
 	var ms: int = Time.get_ticks_msec() - start_ms
 	var text: String = "\n".join(output)
-	var ok: bool = text.contains("RESULT: PASSED") or text.contains("PASS") or text.contains("RESULT: OK")
-	# Spezialfall: preflight -x gibt "RESULT: PASSED" aus
-	# Spezialfall: entry tests geben "RESULT: PASSED" oder "[PASS]" aus
-	# Nur wenn KEIN RESULT und KEIN PASS → Fehler
-	if not text.contains("RESULT:") and not text.contains("[PASS]") and not text.contains("PASS"):
-		ok = false
+	# Exit 0 = grün (einzige Wahrheit). Marker nur als Diagnose/Anzeige.
+	var ok: bool = exit_code == 0
+	var has_pass_marker: bool = text.contains("RESULT: PASSED") or text.contains("RESULT: OK") or text.contains("[PASS]")
 
 	var label: String = args[args.size() - 1].get_file() if args.size() > 0 else "?"
 	if ok:
 		print("  [PASS] %-40s %d ms" % [label, ms])
 	else:
-		print("  [FAIL] %-40s %d ms" % [label, ms])
+		print("  [FAIL] %-40s %d ms (exit=%d)" % [label, ms, exit_code])
+		if ok == false and has_pass_marker:
+			print("        | Hinweis: Output enthält PASS-Marker, aber Exit != 0 → False-Green überschrieben.")
 		# Letzte 5 Zeilen bei Fehler ausgeben
 		var lines: PackedStringArray = text.strip_edges().split("\n")
 		var start: int = maxi(0, lines.size() - 5)
