@@ -174,7 +174,7 @@ func _build_steps() -> void:
 	_steps.append({
 		"id": "camera",
 		"title": "WILLKOMMEN IM PAPIERKOSMOS",
-		"text": "Deine Heimatwelt trägt den grünen Ring. Kamera: [W A S D], Zoom: Mausrad. Mehr braucht es nicht — Stickmen reisen leicht.",
+		"text": "Deine Heimatwelt trägt den grünen Ring. Die Kamera zeigt dir die Umgebung, während du sie erkundest. Mehr braucht es nicht — Stickmen reisen leicht.",
 		"target": "planet",
 		"width_min": 340.0,
 	})
