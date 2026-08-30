@@ -1972,3 +1972,14 @@ FIX: Drei belegte Findings aus Divergenz-Audit — cluster_generation war stille
 - scripts/doki/data/arcs.json: Fehler behoben (F-001).
 - scripts/preflight/constraint_cluster_generation.gd: Fehler behoben (F-134).
 - scripts/preflight/constraint_narrative_runtime.gd: Fehler behoben (F-353).
+
+## 2026-08-27 15:00:00 — p111 · c111j58n11a28p25 · Null · warm
+
+**Null: Entferne technischen Leak aus Kamera-Tut… — nach Sage**
+
+Entferne technischen Leak aus Kamera-Tutorial-Text
+
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/ui/tutorial/tutorial_director.gd: Implementiert und integriert (F-031).

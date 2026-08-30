@@ -1,5 +1,5 @@
 {
-	"active": "a52",
+	"active": "a53",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -2463,6 +2463,7 @@
 		},
 		"a52": {
 			"climax_weight": 3.0,
+			"completed_at": "arc_climax",
 			"id": "a52",
 			"name": "Der Beweis der Schärfe",
 			"seen_entities": [
@@ -2474,13 +2475,24 @@
 				"F-001",
 				"F-134",
 				"F-353",
-				"C-1121"
+				"C-1121",
+				"F-031"
 			],
 			"span": "heute → offen",
-			"status": "active",
+			"status": "completed",
 			"theme": "die Messung des Scoped-Wegs",
 			"version": "",
-			"weight": 2.7
+			"weight": 4.7
+		},
+		"a53": {
+			"climax_weight": 3.0,
+			"id": "a53",
+			"name": "Nächster Akt",
+			"span": "heute → offen",
+			"status": "active",
+			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
+			"version": "",
+			"weight": 1.0
 		},
 		"a6": {
 			"climax_weight": 3.0,

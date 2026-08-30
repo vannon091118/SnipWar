@@ -8768,6 +8768,48 @@
 			"seq": 110,
 			"subject": "Sage lehrt: FIX: Drei belegte Findings aus Divergenz-Audit —… — nach Argos",
 			"summary": "Stell dir vor, du vertraust einem Wächter nur deshalb, weil du ihn nie bei der Arbeit gesehen hast. Genau daran krankte unser einsamer Stachel: Der eine Cluster-Wächter meldete jedes Mal akribisch ..."
+		},
+		{
+			"a": 28,
+			"arc": "a52",
+			"c": 111,
+			"composite": "c111j58n11a28p25",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "change_index.json",
+					"insertions": 35.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 62.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/ui/tutorial/tutorial_director.gd",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 15:00:00",
+			"hash": "3e6ade8e3956ffbc7b0a65bef1136da14eb3827c",
+			"j": 58,
+			"model_id": "claude-sonnet-4",
+			"mood": "warm",
+			"n": 11,
+			"narrator": "Null",
+			"p": 25,
+			"p_id": 111,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Sage",
+			"seq": 111,
+			"subject": "Null: Entferne technischen Leak aus Kamera-Tut… — nach Sage",
+			"summary": "Ich zähle zwei Probleme: den technischen Leak und den Immersion-Bruch. Kontext: Die Kamera-Anleitung enthielt hardkodierte Eingaben wie [W A S D] und Mausrad. Analyse: Diese Details brachen die Imm..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
