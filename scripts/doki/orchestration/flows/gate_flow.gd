@@ -45,18 +45,42 @@ func run() -> Dictionary:
 
 	# Snapshot-Gate: gestagte Dateien müssen exakt der Session entsprechen
 	# (verhindert: alte Message auf neuem Diff). Auto-Managed narrative Dateien
-	# werden auf beiden Seiten ignoriert — sie stammen aus finish/finalize,
-	# nicht aus dem User-Diff.
-	var staged: Array = _without_auto_managed(_git.staged_files())
+	# werden auf beiden Seiten ignoriert.
+	var full_staged: Array = _git.staged_files()
+	var staged: Array = _without_auto_managed(full_staged)
 	var snapshot: Array = _without_auto_managed(session.get("file_snapshot", []))
-	staged.sort()
-	snapshot.sort()
-	if staged != snapshot:
+
+	# Scope-Gate: der MACHINE-resolvable Verification-Scope (über den VOLLEN
+	# Staged-Diff, der auch die Auto-Managed-Artefakte enthält — exakt wie im
+	# prepare) muss dem prepared Scope entsprechen. Unknown/leerer Impact
+	# blockt fail-closed.
+	var scope: Dictionary = _resolve_scope(full_staged)
+	if not bool(scope.get("ok", false)):
+		return {"ok": false, "error": "Scope-Auflösung fehlgeschlagen: %s — Impact-Unknown/leer darf nie grün werden." % str(scope.get("error", "unresolved_impact"))}
+	var prepared_scope: Array = session.get("impact", {}).get("constraints", []) if session.get("impact", {}) is Dictionary else []
+	var resolved_constraints: Array = Array(scope["constraints"]).duplicate()
+	prepared_scope.sort()
+	resolved_constraints.sort()
+	if prepared_scope != resolved_constraints:
+		return {"ok": false, "error": "Verification-Scope weicht vom Prepare-Scope ab (Under-/Over-Scope). Bitte `doki prepare` erneut."}
+
+	# Path-Gate: der gestagte Pfadbestand muss dem Snapshot entsprechen.
+	var staged_sorted: Array = staged.duplicate()
+	var snapshot_sorted: Array = snapshot.duplicate()
+	staged_sorted.sort()
+	snapshot_sorted.sort()
+	if staged_sorted != snapshot_sorted:
 		var extra: Array = staged.filter(func(f): return not snapshot.has(f))
 		var missing: Array = snapshot.filter(func(f): return not staged.has(f))
 		return {"ok": false, "error": "Staged-Dateien weichen von der Session ab (Stale Message?). Zusätzlich: %s — Fehlend: %s. Bitte `doki prepare` erneut." % [str(extra), str(missing)]}
 
 	return {"ok": true}
+
+
+## Resolves the current staged change to its required verification scope.
+static func _resolve_scope(staged: Array) -> Dictionary:
+	var resolver_script: Script = preload("res://scripts/preflight_v2/change_impact_resolver.gd")
+	return resolver_script.resolve(staged)
 
 
 static func _without_auto_managed(files: Array) -> Array:

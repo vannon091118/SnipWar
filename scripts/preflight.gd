@@ -52,7 +52,23 @@ func _init() -> void:
 		return
 
 	var filter_query: String = args.get("filter", "")
-	var pipeline: Array[Dictionary] = _build_pipeline(registry, filter_query)
+	var scope_spec: String = args.get("scope", "")
+	var pipeline: Array[Dictionary] = []
+	if not scope_spec.is_empty():
+		# Machine-driven scoped mode: constraints are resolved by the
+		# ChangeImpactResolver, NOT guessed via --filter. Empty/unknown scope
+		# is a FAIL (never a silent green 0-constraint run).
+		var scope: Dictionary = _resolve_scope(scope_spec, registry)
+		if not scope["ok"]:
+			print("[preflight-v2] FATAL: Ungültiger Verification-Scope — %s" % str(scope["error"]))
+			quit(1)
+			return
+		for entry in registry:
+			if (scope["ids"] as Array).has(String(entry["id"])):
+				pipeline.append(entry)
+	else:
+		pipeline = _build_pipeline(registry, filter_query)
+
 	if args.get("reverse", false):
 		pipeline = _reverse_pipeline(pipeline)
 
@@ -268,6 +284,52 @@ func _reverse_pipeline(pipeline: Array[Dictionary]) -> Array[Dictionary]:
 	return reversed
 
 
+# --- Scoped mode ---
+
+## Resolves --scope=<value> into a validated {ok, ids, error} result.
+## value is a manifest file (JSON: {"constraints":[...]}) or a comma-separated
+## id list — production is ChangeImpactResolver.resolve(). Every id must exist
+## in the registry; empty and unknown scopes fail closed (Exit 1).
+func _resolve_scope(value: String, registry: Array[Dictionary]) -> Dictionary:
+	var ids: Array[String] = []
+	if FileAccess.file_exists(value):
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(value))
+		if not parsed is Dictionary:
+			return {"ok": false, "error": "scope manifest is not a JSON object"}
+		var raw: Array = (parsed as Dictionary).get("constraints", [])
+		if raw.is_empty():
+			return {"ok": false, "error": "empty scope manifest"}
+		for item in raw:
+			ids.append(String(item))
+	else:
+		for part in value.split(","):
+			var t: String = part.strip_edges()
+			if not t.is_empty():
+				ids.append(t)
+
+	var seen: Dictionary = {}
+	var unknown: Array[String] = []
+	var valid: Array[String] = []
+	for id in ids:
+		if seen.has(id):
+			return {"ok": false, "error": "duplicate scope id: %s" % id}
+		seen[id] = true
+		var known: bool = false
+		for entry in registry:
+			if String(entry["id"]) == id:
+				known = true
+				break
+		if known:
+			valid.append(id)
+		else:
+			unknown.append(id)
+	if not unknown.is_empty():
+		return {"ok": false, "error": "unknown scope id(s): %s" % ",".join(unknown)}
+	if valid.is_empty():
+		return {"ok": false, "error": "empty scope"}
+	return {"ok": true, "ids": valid}
+
+
 # --- Catalog lookup ---
 
 ## Pure/Scene classification is derived from each constraint's
@@ -329,6 +391,8 @@ func _parse_cli_arguments() -> Dictionary:
 			parsed["filter"] = arg.trim_prefix("--only=")
 		elif arg.begins_with("--mcp-json="):
 			parsed["mcp_json"] = arg.trim_prefix("--mcp-json=")
+		elif arg.begins_with("--scope="):
+			parsed["scope"] = arg.trim_prefix("--scope=")
 	return parsed
 
 func _print_help() -> void:

@@ -554,6 +554,52 @@
 			],
 			"p_id": 73.0
 		},
+		"22fbb27d74f263dc42fa188f3489efa1cb00386a": {
+			"c": 108,
+			"composite": "c108j39n7a17p59",
+			"entities": [
+				"F-069",
+				"F-002",
+				"F-003",
+				"F-357",
+				"F-423",
+				"F-424",
+				"F-004",
+				"F-377",
+				"F-425",
+				"F-426",
+				"F-130",
+				"F-112",
+				"F-001",
+				"F-283",
+				"F-131",
+				"F-065",
+				"F-427",
+				"F-379",
+				"F-428",
+				"F-429",
+				"C-1088",
+				"C-1089",
+				"C-1090",
+				"C-1091",
+				"C-1092",
+				"C-1093",
+				"C-1094",
+				"C-1095",
+				"C-1096",
+				"C-1097",
+				"C-1098",
+				"C-1099",
+				"C-1100",
+				"C-1101",
+				"C-1102",
+				"C-1103",
+				"C-1104",
+				"C-1105",
+				"C-1106"
+			],
+			"p_id": 108
+		},
 		"23a393a36b55b464f4042b41643927ef966713f1": {
 			"c": 65.0,
 			"composite": "c65j75n7a29p24",
@@ -2290,7 +2336,7 @@
 			"p_id": 21.0
 		},
 		"e20b5a61d9e52f362897cc9cab64b77acdbd9b23": {
-			"c": 107,
+			"c": 107.0,
 			"composite": "c107j62n6a16p12",
 			"entities": [
 				"F-002",
@@ -2410,7 +2456,7 @@
 				"C-1086",
 				"C-1087"
 			],
-			"p_id": 107
+			"p_id": 107.0
 		},
 		"e2a63b42c45eb9c8bacf1affd41387ac902daa56": {
 			"c": 31.0,
@@ -6153,6 +6199,40 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1088": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1088",
+			"last_p": 108.0,
+			"name": "DEFAULT_PLANET_CATALOG",
+			"path": "scripts/bootstrap/run_preparation.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1089": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1089",
+			"last_p": 108.0,
+			"name": "StartRosterGenerator",
+			"path": "scripts/bootstrap/start_roster_generator.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-109": {
 			"first_p": 34.0,
 			"history": [
@@ -6170,6 +6250,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1090": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1090",
+			"last_p": 108.0,
+			"name": "DEFAULT_WORLD_CONFIG",
+			"path": "scripts/bootstrap/start_roster_generator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1091": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1091",
+			"last_p": 108.0,
+			"name": "DEFAULT_PLANET_CATALOG",
+			"path": "scripts/bootstrap/start_roster_generator.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1092": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						452.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1092",
+			"last_p": 108.0,
+			"name": "prepare_start_roster",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1093": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						457.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1093",
+			"last_p": 108.0,
+			"name": "start_roster_snapshot",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1094": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						460.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1094",
+			"last_p": 108.0,
+			"name": "_copy_start_roster",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1095": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1095",
+			"last_p": 108.0,
+			"name": "DEFAULT_WORLD_CONFIG",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1096": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1096",
+			"last_p": 108.0,
+			"name": "DEFAULT_PLANET_CATALOG",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1097": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						15.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1097",
+			"last_p": 108.0,
+			"name": "_process",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1098": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1098",
+			"last_p": 108.0,
+			"name": "_check",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1099": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						33.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1099",
+			"last_p": 108.0,
+			"name": "_run",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-110": {
 			"first_p": 34.0,
 			"history": [
@@ -6184,6 +6434,125 @@
 			"last_p": 34.0,
 			"name": "_current_step_id",
 			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1100": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						85.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1100",
+			"last_p": 108.0,
+			"name": "_chunk_records",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1101": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						103.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1101",
+			"last_p": 108.0,
+			"name": "_same_candidate",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1102": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						106.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1102",
+			"last_p": 108.0,
+			"name": "_unique_ids",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1103": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						115.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1103",
+			"last_p": 108.0,
+			"name": "_unique_cells",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1104": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						124.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1104",
+			"last_p": 108.0,
+			"name": "_canonical",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1105": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						127.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1105",
+			"last_p": 108.0,
+			"name": "_contains_roster_id",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1106": {
+			"first_p": 108.0,
+			"history": [
+				{
+					"lines": [
+						133.0
+					],
+					"p_id": 108.0
+				}
+			],
+			"id": "C-1106",
+			"last_p": 108.0,
+			"name": "_print_result",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -25560,6 +25929,76 @@
 			"last_p": 107.0,
 			"name": "planet_world_ui.gd.uid",
 			"path": "scripts/ui/world/planet_world_ui.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-423": {
+			"first_p": 108.0,
+			"history": [],
+			"id": "F-423",
+			"last_p": 108.0,
+			"name": "mcp_start.cmd",
+			"path": "mcp_start.cmd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-424": {
+			"first_p": 108.0,
+			"history": [],
+			"id": "F-424",
+			"last_p": 108.0,
+			"name": "mcp_start.sh",
+			"path": "mcp_start.sh",
+			"status": "created",
+			"type": "file"
+		},
+		"F-425": {
+			"first_p": 108.0,
+			"history": [],
+			"id": "F-425",
+			"last_p": 108.0,
+			"name": "start_roster_generator.gd",
+			"path": "scripts/bootstrap/start_roster_generator.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-426": {
+			"first_p": 108.0,
+			"history": [],
+			"id": "F-426",
+			"last_p": 108.0,
+			"name": "start_roster_generator.gd.uid",
+			"path": "scripts/bootstrap/start_roster_generator.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-427": {
+			"first_p": 108.0,
+			"history": [],
+			"id": "F-427",
+			"last_p": 108.0,
+			"name": "run_session.gd",
+			"path": "scripts/state/run_session.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-428": {
+			"first_p": 108.0,
+			"history": [],
+			"id": "F-428",
+			"last_p": 108.0,
+			"name": "phase01_world_identity_roster_test.gd",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-429": {
+			"first_p": 108.0,
+			"history": [],
+			"id": "F-429",
+			"last_p": 108.0,
+			"name": "phase01_world_identity_roster_test.gd.uid",
+			"path": "scripts/testing/phase01_world_identity_roster_test.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

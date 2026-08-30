@@ -16,9 +16,16 @@ if [ -z "$godot_bin" ] || [ ! -x "$godot_bin" ]; then
 	exit 1
 fi
 
-# 1) Preflight-Gate. DOKI-Dokumente können hier bereits von finalize
-# nachgezogen worden sein und gehören deshalb zum normalen DOKI-Index.
-"$godot_bin" --headless --path "$repo_root" --script res://scripts/preflight.gd
+# 1) Preflight-Gate — Session-Scoped (nur wenn ein DOKI-Scope-Manifest vorliegt).
+# Das Manifest wird von `doki prepare` aus dem echten Diff erzeugt
+# (ChangeImpactResolver). Ohne Manifest bleibt der Full-Preflight der maximale
+# Sicherheitsmodus. Empty/Unknown-Scope-Mannifests blocken preflight selbst.
+scope_file="$repo_root/.doki/scope.json"
+if [ -f "$scope_file" ]; then
+	"$godot_bin" --headless --path "$repo_root" --script res://scripts/preflight.gd --scope="$scope_file"
+else
+	"$godot_bin" --headless --path "$repo_root" --script res://scripts/preflight.gd
+fi
 
 # 2) Mechanische Gates (unabhängig, jedes mit eigenem Evidence-Artfakt in user://mcp_evidence/)
 for gate in scripts/testing/chain_manifest_gate.gd scripts/testing/compile_gate.gd scripts/testing/chain_validate_entry_test.gd; do

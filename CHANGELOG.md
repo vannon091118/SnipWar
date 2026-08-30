@@ -1908,3 +1908,30 @@ R-008: planet_network UI/Logik getrennt - neue planet_world_ui.gd orchestriert C
 - scripts/testing/r008_world_ui_boundary_test.gd.uid: Implementiert und integriert (F-420).
 - scripts/ui/world/planet_world_ui.gd: Implementiert und integriert (F-421).
 - scripts/ui/world/planet_world_ui.gd.uid: Implementiert und integriert (F-422).
+
+## 2026-08-27 12:00:00 — p108 · c108j39n7a17p59 · Argos · warm
+
+**Argos: 20 Dateien — Phase 0/1 deterministic world … — nach Devin**
+
+Phase 0/1 deterministic world identity and historical start roster
+
+- .mcp.json: Implementiert und integriert (F-069).
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- change_index.json: Implementiert und integriert (F-003).
+- docs/METRICS_TRACKER.md: Implementiert und integriert (F-357).
+- mcp_start.cmd: Implementiert und integriert (F-423).
+- mcp_start.sh: Implementiert und integriert (F-424).
+- narrative_chain.json: Implementiert und integriert (F-004).
+- scripts/bootstrap/run_preparation.gd: Implementiert und integriert (F-377).
+- scripts/bootstrap/start_roster_generator.gd: Implementiert und integriert (F-425).
+- scripts/bootstrap/start_roster_generator.gd.uid: Implementiert und integriert (F-426).
+- scripts/config/world_config.gd: Implementiert und integriert (F-130).
+- scripts/config/world_generator.gd: Implementiert und integriert (F-112).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- scripts/history/world_chronicle.gd: Implementiert und integriert (F-283).
+- scripts/objects/chunk_coordinator.gd: Implementiert und integriert (F-131).
+- scripts/state/game_state.gd: Implementiert und integriert (F-065).
+- scripts/state/run_session.gd: Implementiert und integriert (F-427).
+- scripts/testing/historical_world_flow_test.gd: Implementiert und integriert (F-379).
+- scripts/testing/phase01_world_identity_roster_test.gd: Implementiert und integriert (F-428).
+- scripts/testing/phase01_world_identity_roster_test.gd.uid: Implementiert und integriert (F-429).

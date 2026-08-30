@@ -46,8 +46,15 @@ $GODOT_BIN --headless --path . --script res://scripts/global_search.gd "func (_?
 ```bash
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x   # Full Suite (44 Constraints, ~64s, V2 Architecture)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd --filter=concept_index -v  # Einzelne Constraint
+$GODOT_BIN --headless --path . --script res://scripts/preflight.gd --scope=.doki/scope.json  # Machine-resolvable Scope (Hook)
 ```
 **Verbindlich:** `RESULT: PASSED` — ERROR-Traces am Ende sind normales Headless-Rauschen.
+**Session-Scoped Verification:** `--scope` ist der einzige autoritative Scoped-Modus. Das Manifest
+wird von `doki prepare` über `scripts/preflight_v2/change_impact_resolver.gd` aus dem echten Diff
+erzeugt (Pfad → Contract → Constraint-Closure, deterministisch & fail-closed). Empty/Unknown/
+Duplicate-Scope blockt (nie ein grüner 0-Constraint-Run). Ohne Manifest läuft der volle Full-Preflight.
+Der pre-commit Hook nutzt `.doki/scope.json`, wenn vorhanden, sonst Full. Kanonisches Impact-
+Metadata liegt in `scripts/preflight_v2/constraint_scanner.gd` (keine Parallel-Registry).
 **V2 Features:** Auto-Discovery, Phase-Split (Pure/Scene), Fail-Fast mit Summary, Isolation Warnings.
 **Legacy V1:** `scripts/legacy/preflight_v1.gd` — archiviert, nicht aktiv.
 

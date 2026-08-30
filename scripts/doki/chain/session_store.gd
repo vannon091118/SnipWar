@@ -52,6 +52,7 @@ func default_session() -> Dictionary:
 		"model_id": "",
 		"prev_narrator": "",
 		"file_snapshot": [],
+		"impact": {},
 		"git_head_before": "",
 		"p_id": 0,
 		"c": 0,

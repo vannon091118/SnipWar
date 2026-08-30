@@ -18,6 +18,7 @@ var _change_index_engine: DOKI_ChangeIndexEngine
 var _index_store: DOKI_ChangeIndexStore
 var _session_builder: DOKI_SessionBuilder
 var _artifacts: DOKI_ArtifactWriter
+const IMPACT_RESOLVER: Script = preload("res://scripts/preflight_v2/change_impact_resolver.gd")
 
 
 func _init(
@@ -64,6 +65,14 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	var staged: Array = _git.staged_files()
 	if staged.is_empty():
 		return {"ok": false, "error": "Keine gestagten Änderungen — erst `git add <dateien>`, dann prepare."}
+	# Scope-Auflösung (Session-Scoped Verification): der machine-resolvable
+	# Verification-Scope des echten Diffs wird VOR dem Prompt bestimmt und in
+	# der Session + .doki/scope.json (für den Preflight-Hook) persistiert.
+	# Unknown/leer blockt fail-closed (nie ein grüner leere Run).
+	var impact: Dictionary = IMPACT_RESOLVER.resolve(staged)
+	if not bool(impact.get("ok", false)):
+		return {"ok": false, "error": "Impact-Auflösung fehlgeschlagen: %s" % str(impact.get("error", "unresolved_impact"))}
+	_write_scope_file(impact)
 
 	# Atomicity-Gate (früh, wie Check 10): ein Commit = EINE logische Einheit.
 	# Mehr als MAX_FILES_PER_COMMIT User-Dateien → sofort blocken, bevor der
@@ -136,6 +145,7 @@ func run(impulse: String, model_id: String) -> Dictionary:
 		staged, _git.head_hash_full(), sideplot, relationship, arc, arc_forecast, mood_pool,
 		plot_id
 	)
+	session["impact"] = impact
 	# Limits in die Session — Check 9 (RNG-Replay) muss exakt dieselben
 	# Ziehungs-Grenzen verwenden wie prepare, sonst divergiert der RNG-Zustand.
 	session["limits"] = limits.duplicate()
@@ -153,4 +163,17 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	session["prompt"] = _voice.build_prompts(ctx)
 	_session_store.save(session)
 	var prompt_path: String = _artifacts.write_prompt_file(session["prompt"], str(session["narrator"]), str(session["mood"]))
-	return {"ok": true, "session": session, "prompt_path": prompt_path}
+	return {"ok": true, "session": session, "prompt_path": prompt_path, "scope": impact}
+
+
+## Persistiert den resolved Verification-Scope als JSON-Manifest für den
+## Preflight-Hook (.doki ist gitignored): {constraints:[...], contracts:[...]}.
+func _write_scope_file(impact: Dictionary) -> void:
+	var dir_path: String = _repo_root.path_join(".doki")
+	DirAccess.make_dir_recursive_absolute(dir_path)
+	var file := FileAccess.open(dir_path.path_join("scope.json"), FileAccess.WRITE)
+	if file == null:
+		push_warning("DOKI: scope.json konnte nicht geschrieben werden: %s" % dir_path)
+		return
+	file.store_string(JSON.stringify({"constraints": impact.get("constraints", []), "contracts": impact.get("contracts", [])}, "\t"))
+	file.close()
