@@ -56,7 +56,7 @@ Duplicate-Scope blockt (nie ein grüner 0-Constraint-Run). Ohne Manifest läuft 
 Der pre-commit Hook nutzt `.doki/scope.json`, wenn vorhanden, sonst Full. Kanonisches Impact-
 Metadata liegt in `scripts/preflight_v2/constraint_scanner.gd` (keine Parallel-Registry).
 **V2 Features:** Auto-Discovery, Phase-Split (Pure/Scene), Fail-Fast mit Summary, Isolation Warnings.
-**Legacy V1:** `scripts/legacy/preflight_v1.gd` — archiviert, nicht aktiv.
+**Legacy V1:** `scripts/legacy/preflight_v1.gd` wurde in `ab080dc` entfernt (kein aktives Archiv — V2 IST die Kanonische).
 
 ### 4. Commit-Workflow (Hooks aktiv, DOKI CommitLayer als Tor!)
 ```bash

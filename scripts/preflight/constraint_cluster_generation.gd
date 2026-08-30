@@ -11,9 +11,12 @@ func requires_scene() -> bool:
 	return false
 
 func run(ctx: PreflightContext) -> bool:
+	# Pure phase (no scene boot): ctx.world_config is not wired. Like the
+	# sibling pure world constraints, construct the canonical config here
+	# instead of silently returning a no-op PASS with zero checks.
 	var world_config: WorldConfig = ctx.world_config
 	if world_config == null:
-		return true
+		world_config = preload("res://resources/config/world_default.tres")
 
 	# Test 1: Cluster generation parameters are valid
 	if not ctx.check(world_config.void_ratio >= 0.0 and world_config.void_ratio <= 0.6, "void_ratio must stay between 0 and 0.6"):

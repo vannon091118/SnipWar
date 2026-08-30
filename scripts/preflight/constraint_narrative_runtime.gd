@@ -22,7 +22,7 @@ func requires_scene() -> bool:
 const CACHE_PATH := "user://narrative_runtime_cache.json"
 const CHAIN_PATH := "res://narrative_chain.json"
 const CHANGE_INDEX_PATH := "res://change_index.json"
-const GATE_CLI_PATH := "res://narrative_runtime/gate_cli.py"
+const RUNTIME_DIR := "res://narrative_runtime"
 
 func run(ctx: PreflightContext) -> bool:
 	var root := ProjectSettings.globalize_path("res://")
@@ -72,12 +72,33 @@ func run(ctx: PreflightContext) -> bool:
 		{"gates": parsed})
 
 func _compute_hash() -> String:
+	# Hash over chain + change-index + ALL runtime sources (gate_cli and every
+	# module it imports). Hashing only gate_cli.py let a nonconformance in
+	# observe.py/store.py/etc. slip past the cache and keep a stale PASS alive
+	# — fail-closed means the cache must invalidate on ANY runtime code change.
 	var parts: PackedStringArray = []
-	for path in [CHAIN_PATH, CHANGE_INDEX_PATH, GATE_CLI_PATH]:
+	for path in [CHAIN_PATH, CHANGE_INDEX_PATH]:
 		var f := FileAccess.open(path, FileAccess.READ)
 		if f != null:
 			parts.append(f.get_as_text())
 			f.close()
+	var dir := DirAccess.open(RUNTIME_DIR)
+	if dir != null:
+		var files: Array = []
+		dir.list_dir_begin()
+		while true:
+			var entry: String = dir.get_next()
+			if entry.is_empty():
+				break
+			if entry.ends_with(".py"):
+				files.append(entry)
+		dir.list_dir_end()
+		files.sort()
+		for fname in files:
+			var f := FileAccess.open(RUNTIME_DIR.path_join(String(fname)), FileAccess.READ)
+			if f != null:
+				parts.append(f.get_as_text())
+				f.close()
 	return str("".join(parts).hash())
 
 func _read_cache() -> Dictionary:

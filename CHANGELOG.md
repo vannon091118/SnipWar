@@ -1935,3 +1935,25 @@ Phase 0/1 deterministic world identity and historical start roster
 - scripts/testing/historical_world_flow_test.gd: Implementiert und integriert (F-379).
 - scripts/testing/phase01_world_identity_roster_test.gd: Implementiert und integriert (F-428).
 - scripts/testing/phase01_world_identity_roster_test.gd.uid: Implementiert und integriert (F-429).
+
+## 2026-08-27 13:00:00 — p109 · c109j45n14a28p83 · Sage · neugierig
+
+**Sage lehrt: Session-Scoped Verification Contract:… — nach Argos**
+
+Session-Scoped Verification Contract: machine-resolvable ChangeImpactResolver (Pfad->Contract->Constraint-Closure), Preflight --scope Modus, DOKI Scope-Gate + .doki/scope.json Manifest fuer den pre-commit Hook, fail-closed bei Empty/Unknown
+
+- .githooks/pre-commit: Tooling erweitert (F-125).
+- AGENTS.md: Tooling erweitert (F-019).
+- CHANGELOG.md: Tooling erweitert (F-002).
+- change_index.json: Tooling erweitert (F-003).
+- docs/METRICS_TRACKER.md: Tooling erweitert (F-357).
+- narrative_chain.json: Tooling erweitert (F-004).
+- plan/infrastructure-session-scoped-verification-1.md: Tooling erweitert (F-430).
+- scripts/doki/chain/session_store.gd: Tooling erweitert (F-431).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+- scripts/doki/orchestration/flows/gate_flow.gd: Tooling erweitert (F-013).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Tooling erweitert (F-181).
+- scripts/preflight.gd: Tooling erweitert (F-343).
+- scripts/preflight_v2/change_impact_resolver.gd: Tooling erweitert (F-432).
+- scripts/preflight_v2/constraint_scanner.gd: Tooling erweitert (F-433).
+- scripts/testing/change_impact_resolver_test.gd: Tooling erweitert (F-434).

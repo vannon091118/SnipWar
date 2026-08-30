@@ -555,7 +555,7 @@
 			"p_id": 73.0
 		},
 		"22fbb27d74f263dc42fa188f3489efa1cb00386a": {
-			"c": 108,
+			"c": 108.0,
 			"composite": "c108j39n7a17p59",
 			"entities": [
 				"F-069",
@@ -598,7 +598,7 @@
 				"C-1105",
 				"C-1106"
 			],
-			"p_id": 108
+			"p_id": 108.0
 		},
 		"23a393a36b55b464f4042b41643927ef966713f1": {
 			"c": 65.0,
@@ -2472,6 +2472,42 @@
 				"F-001"
 			],
 			"p_id": 31.0
+		},
+		"e6b01a363f02730de9bc49280ba16e21f49d9756": {
+			"c": 109,
+			"composite": "c109j45n14a28p83",
+			"entities": [
+				"F-125",
+				"F-019",
+				"F-002",
+				"F-003",
+				"F-357",
+				"F-004",
+				"F-430",
+				"F-431",
+				"F-001",
+				"F-013",
+				"F-181",
+				"F-343",
+				"F-432",
+				"F-433",
+				"F-434",
+				"C-1107",
+				"C-1108",
+				"C-1109",
+				"C-1110",
+				"C-1111",
+				"C-1112",
+				"C-1113",
+				"C-1114",
+				"C-1115",
+				"C-1116",
+				"C-1117",
+				"C-1118",
+				"C-1119",
+				"C-1120"
+			],
+			"p_id": 109
 		},
 		"e959757a93e8cd5ce9b8c1e0ec32519b010e4e71": {
 			"c": 60.0,
@@ -6556,6 +6592,57 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1107": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1107",
+			"last_p": 109.0,
+			"name": "IMPACT_RESOLVER",
+			"path": "scripts/doki/orchestration/flows/prepare_flow.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1108": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						168.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1108",
+			"last_p": 109.0,
+			"name": "_write_scope_file",
+			"path": "scripts/doki/orchestration/flows/prepare_flow.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1109": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						290.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1109",
+			"last_p": 109.0,
+			"name": "_resolve_scope",
+			"path": "scripts/preflight.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-111": {
 			"first_p": 34.0,
 			"history": [
@@ -6573,6 +6660,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1110": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						1.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1110",
+			"last_p": 109.0,
+			"name": "ChangeImpactResolver",
+			"path": "scripts/preflight_v2/change_impact_resolver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1111": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1111",
+			"last_p": 109.0,
+			"name": "SCANNER_SCRIPT",
+			"path": "scripts/preflight_v2/change_impact_resolver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1112": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1112",
+			"last_p": 109.0,
+			"name": "SCHEMA_VERSION",
+			"path": "scripts/preflight_v2/change_impact_resolver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1113": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1113",
+			"last_p": 109.0,
+			"name": "AUTO_MANAGED",
+			"path": "scripts/preflight_v2/constraint_scanner.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1114": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						168.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1114",
+			"last_p": 109.0,
+			"name": "contracts_for",
+			"path": "scripts/preflight_v2/constraint_scanner.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1115": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						178.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1115",
+			"last_p": 109.0,
+			"name": "contract_constraints",
+			"path": "scripts/preflight_v2/constraint_scanner.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1116": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						183.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1116",
+			"last_p": 109.0,
+			"name": "path_contracts",
+			"path": "scripts/preflight_v2/constraint_scanner.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1117": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						3.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1117",
+			"last_p": 109.0,
+			"name": "RESOLVER",
+			"path": "scripts/testing/change_impact_resolver_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1118": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						4.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1118",
+			"last_p": 109.0,
+			"name": "SCANNER",
+			"path": "scripts/testing/change_impact_resolver_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1119": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1119",
+			"last_p": 109.0,
+			"name": "_init",
+			"path": "scripts/testing/change_impact_resolver_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-112": {
 			"first_p": 34.0,
 			"history": [
@@ -6587,6 +6844,23 @@
 			"last_p": 34.0,
 			"name": "_find_tree_scroll",
 			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1120": {
+			"first_p": 109.0,
+			"history": [
+				{
+					"lines": [
+						54.0
+					],
+					"p_id": 109.0
+				}
+			],
+			"id": "C-1120",
+			"last_p": 109.0,
+			"name": "_check",
+			"path": "scripts/testing/change_impact_resolver_test.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -25999,6 +26273,56 @@
 			"last_p": 108.0,
 			"name": "phase01_world_identity_roster_test.gd.uid",
 			"path": "scripts/testing/phase01_world_identity_roster_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-430": {
+			"first_p": 109.0,
+			"history": [],
+			"id": "F-430",
+			"last_p": 109.0,
+			"name": "infrastructure-session-scoped-verification-1.md",
+			"path": "plan/infrastructure-session-scoped-verification-1.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-431": {
+			"first_p": 109.0,
+			"history": [],
+			"id": "F-431",
+			"last_p": 109.0,
+			"name": "session_store.gd",
+			"path": "scripts/doki/chain/session_store.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-432": {
+			"first_p": 109.0,
+			"history": [],
+			"id": "F-432",
+			"last_p": 109.0,
+			"name": "change_impact_resolver.gd",
+			"path": "scripts/preflight_v2/change_impact_resolver.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-433": {
+			"first_p": 109.0,
+			"history": [],
+			"id": "F-433",
+			"last_p": 109.0,
+			"name": "constraint_scanner.gd",
+			"path": "scripts/preflight_v2/constraint_scanner.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-434": {
+			"first_p": 109.0,
+			"history": [],
+			"id": "F-434",
+			"last_p": 109.0,
+			"name": "change_impact_resolver_test.gd",
+			"path": "scripts/testing/change_impact_resolver_test.gd",
 			"status": "created",
 			"type": "file"
 		}

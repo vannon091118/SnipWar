@@ -318,3 +318,27 @@ Adapter-first, contract-preserving. Alle Phasen einzeln verifiziert; keine RNG-R
 | F-213 | Economy-Fassade trug noch Businesslogik: Worker-Transport-Records, Worker-Factory-Gating/-Bau, komplette Buildings/Grid-Queue (place/queue/advance/abort/refund) direkt in `economy_domain.gd`; `_route_owner` griff per `Engine.get_main_loop()` global auf GameState zu | ✅ GEFIXT | R-007 (E4a/E4b): `gathering_transport_unit.gd` (Gathering + Transport-Lifecycle), `worker_factory_unit.gd` (Gating/Kosten/Bau), `buildings_unit.gd` (Grid-Queue inkl. Rollback-Reihenfolge) extrahiert; Fassade 655→499 LOC, 83 reine Delegationen; `_route_owner` über injizierten Callable-Resolver (GameState->_init injiziert `faction_of`; ohne Injektion → FACTION_NEUTRAL); Snapshot/Restore unverändert auf Fassade (Semantik identisch); Preflight 44/44 PASSED, test_all 11/11 (E1/E2-E4 registriert) |
 | F-214 | False-Green: `test_all.gd`-Discovery matcht nur `*_test.gd` — `e1_vault_core_semantics_check.gd` wurde still übersprungen (Orchestrator meldete ALL PASSED ohne E1 je auszuführen) | ✅ GEFIXT | R-007: Test auf `_test.gd`-Konvention umbenannt (`e1_vault_core_semantics_test.gd`); neuer `e2_e4_economy_units_test.gd` (Deal/Upgrade/Refinery/Trade/Gathering/Transport/Buildings-Grid mit echten Assertions + Failure-Paths); test_all findet jetzt 10 Entry-Tests, 11/11 PASSED |
 | F-215 | `planet_network.gd` (1017 LOC) mischte Routing/Netzwerk mit kompletter UI-Orchestrierung: Context-Menü-Konstruktion, Dossier-Launcher, Hotkeys, Fleet-Overview, Economy-Window, Message-Feed, Modal-/Layout-Koordinator, Tutorial, Dispatch-Vorschau | ✅ GEFIXT | R-008: `planet_world_ui.gd` (neu) übernimmt die UI-Orchestrierung; `planet_network.gd` besitzt nur noch Network/Selection/Fog/Rendering/Dispatch + dünne `_world_ui`-Shims; kein UI-Zyklus (Welt-UI ruft dokumentierte Network-Entry-Points); compile 328/328, Preflight 44/44, `r008_world_ui_boundary_test.gd` verankert die Grenze, test_all 12/12 |
+
+---
+
+## Divergenz-Audit 2026-08-30 — Adversarial Counter-Forensics (R-200, „Agent B")
+
+> Basis: Unabhängiger Reality-Snapshot gegen HEAD `22fbb27` (später e6b01a3) — eigener Git-Abgleich, Primärquellen-Lektüre und Live-Läufe; alle Verdicts unabhängig von import A erneut hergeleitet.
+
+### Code-Befunde (Gdsript/Preflight)
+
+| # | Befund | Status | Beleg / Referenz |
+|---|--------|--------|------------------|
+| F-301 | `cluster_generation` = stille No-Op-Constraint: pure (requires_scene=false), liest aber `ctx.world_config`, der in der Pure-Phase NULL ist → sofortiger `return true` mit **0 Checks** im Lauf (15 Check-Aufrufe im Code); die 44. Constraint trug nichts bei, zählte aber voll | ✅ GEFIXT | Empirisch vorher: `[PASS] cluster_generation (74.82 ms, 0 checks)`. Fix: kanonisches `world_default.tres`-Fallback wie bei Sibling-Pure-Constraints (`chunk_expansion`, `world_generator_scaling`); nachher `[PASS] cluster_generation (19.64 ms, 64 checks, 0 fail)` — `scripts/preflight/constraint_cluster_generation.gd` |
+| F-302 | runtime-Cache stale PASS: `_compute_hash()` inkludierte nur chain + change_index + `gate_cli.py` — eine Nonkonformität in **jedem anderen** Runtime-Modul (observe.py/store.py/relationships.py/…, die gate_cli importiert) änderte den Hash nicht → alter PASS-Cache-Eintrag wurde weiter ausgeliefert; `_write_cache` nur bei exit_code OK | ✅ GEFIXT | `scripts/preflight/constraint_narrative_runtime.gd`: Hash wälzt jetzt ALLE `*.py` in `res://narrative_runtime` (top-level) + chain + change_index über den deterministischen Dir-Scan; Cachе-Invalidierung auf JEDE Runtime-Änderung (fail-closed); Tests: Compile-Gate 333/333 PASS, resolver-test PASSED |
+| F-303 | AGENTS.md „Legacy V1 archiviert" = STALE_CURRENT_CLAIM: `scripts/legacy/preflight_v1.gd` ist NICHT im Baum (`git ls-files` leer, `find` leer), entfernt in `ab080dc`; CHANGELOG F-104/F-105 = gültige Historien-Einträge | ✅ GEFIXT | AGENTS.md-Zeile korrigiert → „wurde in `ab080dc` entfernt (kein aktives Archiv — V2 ist die Kanonische)"; `git ls-tree HEAD scripts/legacy/` leer |
+
+### Offene / Design-Findings (aus B, nicht autonom entschieden)
+
+| # | Befund | Status | Beleg / Referenz |
+|---|--------|--------|------------------|
+| F-304 | `reset_state()` ist partiell: Ownership wird restauriert (75→0→75), Field-Node-Count leakt über Constraint-Grenzen (Baseline exp=105, `world_details_and_scale` startet exp=106); Messpunkt liegt VOR dem Reset → „68 Mutationen" überwiegend erwartete Fixture-Mutationen statt Kontamination | 🟡 OFFEN | `scripts/preflight_v2/v2_fixture.gd` + `v2_context.gd`; Design-Frage: Node-Count-Restore nötig? → ROADMAP/DESIGN |
+| F-305 | test_all `[PASS]`-Substring-False-Green: Entry-Tests drucken `[PASS]` pro Assertion; ein Crash nach der ersten Assertion lässt PASS im Output (Exit-Code nie gelesen) → Orchestrator grün | 🔵 BEOBACHTET | `scripts/testing/test_all.gd`; KEIN Commit-Hook (nur Workflow-Schritt b) → operativ kein Gate; vermindertes Risiko |
+| F-306 | Selfcheck „65 Regressionstests": weder Funktionen- (14) noch Check-Anzahl (79) — Einheit nicht reproduzierbar unter HEAD | 🟡 OFFEN | `scripts/doki/doki_selfcheck.gd`; Provenienz nur per `git log --follow` auflösbar |
+
+---
