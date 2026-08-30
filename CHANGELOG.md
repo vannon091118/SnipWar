@@ -2172,3 +2172,17 @@ Cherry-Pick aus 3 Session-Branches
 - scripts/state/save_game_service.gd: Implementiert und integriert (F-462).
 - scripts/ui/scene_director.gd: Implementiert und integriert (F-373).
 - scripts/ui/tutorial/tutorial_director.gd: Implementiert und integriert (F-031).
+
+## 2026-08-27 22:00:00 — p118 · c118j46n12a38p68 · Echo · müde-zufrieden
+
+**Echo erinnert: Sandbox-Determinismus korrigieren: exakter… — nach Thinker**
+
+Sandbox-Determinismus korrigieren: exakter DOKI-XorShift128-Port, Reference-Snapshot, Relationship-Classification-Upgrade reparieren
+
+- change_index.json: Tooling erweitert (F-003).
+- docs/METRICS_TRACKER.md: Tooling erweitert (F-357).
+- narrative_chain.json: Tooling erweitert (F-004).
+- narrative_runtime/relationships.py: Tooling erweitert (F-179).
+- narrative_runtime/sandbox/reference/snapshot.json: Tooling erweitert (F-463).
+- narrative_runtime/sandbox/runner.py: Tooling erweitert (F-444).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).

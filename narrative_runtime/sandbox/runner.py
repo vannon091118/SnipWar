@@ -35,6 +35,8 @@ GENESIS_COMPOSITE = "c0j0n0a0p0"
 GENESIS_MOOD = "genesis"
 
 # --- DOKI RNG Reimplementierung (Djb2 + XorShift128, Python-Port) ---
+# Spiegeln exakt scripts/doki/core/xorshift128.gd: zwei 32-bit Zustände
+# (s0/s1), zehn Warmup-Schritte und Float-Ausgabe [0,1).
 
 
 def djb2(s: str) -> int:
@@ -48,43 +50,62 @@ def posmod(a: int, b: int) -> int:
     return ((a % b) + b) % b
 
 
+class XorShift128:
+    """Exact Python port of DOKI_XorShift128 in xorshift128.gd."""
+
+    MASK = 0xFFFFFFFF
+
+    def __init__(self, seed: int) -> None:
+        self.s0 = seed & self.MASK
+        self.s1 = (seed * 1812433253 + 1) & self.MASK
+        for _ in range(10):
+            self._step()
+
+    def _step(self) -> float:
+        s1 = self.s0
+        s0 = self.s1
+        self.s0 = s0
+        s1 = (s1 ^ (s1 << 23)) & self.MASK
+        s1 = (s1 ^ (s1 >> 17)) & self.MASK
+        s1 = (s1 ^ s0) & self.MASK
+        s1 = (s1 ^ (s0 >> 26)) & self.MASK
+        self.s1 = s1
+        return float((s0 + self.s1) & self.MASK) / 4294967296.0
+
+    def next(self) -> float:
+        return self._step()
+
+    def next_int(self, minimum: int, maximum: int) -> int:
+        return minimum + int(self.next() * float(maximum - minimum))
+
+
 def derive_composite(prev_composite: str, tree_hash: str, diff_hash: str,
                      subject: str, seq: int, prev_mood: str,
                      arc_count: int, structures_count: int = 7) -> dict[str, Any]:
-    """Vereinfachte Python-Port der DOKI derive() Funktion."""
-    seed_str = prev_composite + tree_hash + diff_hash + subject
-    seed = djb2(seed_str)
-    # XorShift128 Warmup (10×)
-    state = seed & 0xFFFFFFFF
-    if state == 0:
-        state = 1
-    for _ in range(10):
-        state ^= (state << 13) & 0xFFFFFFFF
-        state ^= (state >> 17)
-        state ^= (state << 5) & 0xFFFFFFFF
-        state &= 0xFFFFFFFF
-    j = posmod(int(state), 99) + 1  # 1-99
-    n = posmod(int(state >> 8), len(NARRATORS))  # 0-13
-    a = posmod(int(state >> 16), max(1, arc_count))
-    p = posmod(int(state >> 24), max(1, seq))
-    # Mood: j % 10, nie gleich wie prev
-    mood_idx = posmod(j, len(MOODS))
-    mood = MOODS[mood_idx]
+    """Exact port of DOKI_RngEngine.derive() for sandbox inputs."""
+    del structures_count  # Structure decoding is not part of derive().
+    fields = _parse_composite(prev_composite)
+    seed = djb2(prev_composite + tree_hash + diff_hash + subject)
+    rng = XorShift128(seed)
+    limits = {"j": 99, "n": 14, "a": max(1, arc_count), "p": max(1, seq)}
+    next_fields = {"c": fields["c"] + 1}
+    for key in ("j", "n", "a", "p"):
+        next_fields[key] = rng.next_int(1, limits[key] + 1)
+    j = next_fields["j"]
+    mood = MOODS[posmod(j, len(MOODS))]
     if mood == prev_mood and len(MOODS) > 1:
-        mood = MOODS[(mood_idx + 1) % len(MOODS)]
-    narrator = NARRATORS[n]
-    c = seq
-    composite = "c%dj%dn%da%dp%d" % (c, j, n + 1, a + 1, p)
-    return {
-        "composite": composite,
-        "narrator": narrator,
-        "mood": mood,
-        "j": j,
-        "n": n + 1,
-        "a": a + 1,
-        "p": p,
-        "c": c,
-    }
+        mood = MOODS[posmod(posmod(j, len(MOODS)) + 1, len(MOODS))]
+    narrator = NARRATORS[next_fields["n"] - 1]
+    composite = "c%dj%dn%da%dp%d" % tuple(next_fields[key] for key in ("c", "j", "n", "a", "p"))
+    return {"composite": composite, "narrator": narrator, "mood": mood, **next_fields, "seed": seed}
+
+
+def _parse_composite(composite: str) -> dict[str, int]:
+    import re
+    match = re.fullmatch(r"c(\d+)j(\d+)n(\d+)a(\d+)p(\d+)", composite)
+    if not match:
+        return {"c": 0, "j": 0, "n": 0, "a": 0, "p": 0}
+    return {key: int(value) for key, value in zip(("c", "j", "n", "a", "p"), match.groups())}
 
 
 def merge_seen(seen: list[str], new_entities: list[str]) -> list[str]:

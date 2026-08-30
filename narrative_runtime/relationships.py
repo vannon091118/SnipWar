@@ -65,13 +65,10 @@ def classify_events(observations: Iterable[dict[str, Any]]) -> list[dict[str, An
             # G3: Same-file/entity touch is only a CANDIDATE,
             # not a confirmed regression.  REGRESSION_CONFIRMED requires
             # additional determinism beyond shared paths.
-            current_keys = set(keys)
-            # Check if ALL prior_refs come from observations with identical keys
-            prior_same_file = all(
-                current_keys == set(map(str, ordered[p - 1].get("files", []))) | set(map(str, ordered[p - 1].get("entities", [])))
-                for p in prior_refs if p > 0 and p - 1 < len(ordered)
-            )
-            if not prior_same_file and facts.get("explicit_causality"):
+            # Explicit causal language is the additional deterministic evidence
+            # required for confirmation.  Identical keys alone remain a
+            # candidate; causality confirms even when the same file is touched.
+            if facts.get("explicit_causality"):
                 classification, level = "REGRESSION_CONFIRMED", "CONFIRMED_BY_LATER_EVIDENCE"
             else:
                 classification, level = "REGRESSION_CANDIDATE", "CANDIDATE"

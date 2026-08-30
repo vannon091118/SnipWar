@@ -9160,6 +9160,173 @@
 			"seq": 116,
 			"subject": "DOKI Phasen 3-8: Prompting-Verbesserungen,… — nach Flux",
 			"summary": "Phasen drei bis acht. Keine Diskussion, Umsetzung."
+		},
+		{
+			"a": 18,
+			"arc": "a55",
+			"c": 117,
+			"composite": "c117j71n3a18p86",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 70.0
+				},
+				{
+					"deletions": 115.0,
+					"file": "change_index.json",
+					"insertions": 2030.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 23.0
+				},
+				{
+					"deletions": 12.0,
+					"file": "docs/METRICS_TRACKER.md",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/FALSIFIKATION_WAVE_CONSOLIDATED.md",
+					"insertions": 109.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/MASTER_TODO.md",
+					"insertions": 354.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/python_preflight/__init__.py",
+					"insertions": 31.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/python_preflight/__main__.py",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/python_preflight/cache.py",
+					"insertions": 202.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/python_preflight/constraints.py",
+					"insertions": 345.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/python_preflight/core.py",
+					"insertions": 366.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/python_preflight/inventory.py",
+					"insertions": 229.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/python_preflight/pure_constraints.py",
+					"insertions": 724.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/python_preflight/report.py",
+					"insertions": 201.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/python_preflight/scope.py",
+					"insertions": 276.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/python_preflight/test__init__.py",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/reference/python_preflight/test_preflight.py",
+					"insertions": 670.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 107.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "narrative_runtime/relationships.py",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "scripts/doki/core/verifier.gd",
+					"insertions": 32.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 32.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/doki_config.json",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_selfcheck.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "scripts/doki/orchestration/block_report.gd",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_save_game_roundtrip.gd",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/state/run_save_data.gd",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/state/save_game_service.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/ui/scene_director.gd",
+					"insertions": 17.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/ui/tutorial/tutorial_director.gd",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 21:00:00",
+			"hash": "c686d27188ccc6f07ffdf8fdd1788800bf8bdaac",
+			"j": 71,
+			"model_id": "claude-sonnet-4",
+			"mood": "sarkastisch",
+			"n": 3,
+			"narrator": "Thinker",
+			"p": 86,
+			"p_id": 117,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Vannon",
+			"seq": 117,
+			"subject": "Cherry-Pick aus 3 Session-Branches [Analyse: Thinker] — nach Vannon",
+			"summary": "Drei Geister aus dem Nebel — Session-Branches, entstanden vor Äons, sechs Commits hinter der Gegenwart. Ich habe ihre Überreste katalogisiert, seziert und das Brauchbare geborgen. Der Rest verweht."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
