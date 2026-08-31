@@ -30,6 +30,8 @@ var _slider: HSlider
 var _ticker_container: VBoxContainer
 var _turning_point_panel: PanelContainer
 var _turning_point_label: Label
+var _economy_container: VBoxContainer
+var _economy_state: Dictionary = {}
 
 
 func setup(events: Array[HistoryEvent], eras: Array[Dictionary], theme: UIThemeConfig = null) -> void:
@@ -190,6 +192,25 @@ func _build_ui() -> void:
 	_turning_point_label.add_theme_color_override("font_color", Color(1.0, 0.4, 0.3))
 	_turning_point_panel.add_child(_turning_point_label)
 
+	_economy_container = VBoxContainer.new()
+	_economy_container.name = "EconomySummary"
+	_economy_container.custom_minimum_size = Vector2(210, 0)
+	top_bar.add_child(_economy_container)
+
+
+func set_economy_state(economy_state: Dictionary) -> void:
+	_economy_state = economy_state.duplicate(true)
+	if _economy_container == null:
+		return
+	for child in _economy_container.get_children():
+		child.queue_free()
+	for fid in _economy_state:
+		var data: Dictionary = _economy_state[fid]
+		var line := Label.new()
+		line.text = "%s  Lager %.0f  %+0.0f/J" % [String(fid).to_upper(), float(data.get("stock", 0.0)), float(data.get("net", 0.0))]
+		line.add_theme_font_size_override("font_size", 11)
+		_economy_container.add_child(line)
+
 
 func _update_play_button() -> void:
 	if _play_pause_button != null:
@@ -219,7 +240,6 @@ func _update_era_badge() -> void:
 func _update_ticker_for_year(year: int) -> void:
 	if _ticker_container == null:
 		return
-
 	# Suche Events aus diesem Jahr
 	for ev in _events:
 		if ev.year == year and ev.importance >= 0.45:

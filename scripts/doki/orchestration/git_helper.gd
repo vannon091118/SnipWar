@@ -81,13 +81,13 @@ func diff_cached() -> String:
 
 
 
-## Runs the repository's two search tools against the current checkout and
-## returns their complete stdout. Search is mandatory for every prepare run:
-## an agent receives the tool output instead of having to grep manually.
+## Runs repository search only when the prepare impulse explicitly requests
+## analysis. Normal prepare runs use staged paths and the impulse without
+## embedding the massive search output in every prompt.
 func search_context(staged: Array, impulse: String) -> Dictionary:
 	var query: String = _search_query(staged, impulse)
 	if query.is_empty():
-		return {"ok": false, "error": "Search-Kontext konnte keine Suchbegriffe aus Impuls/Scope ableiten."}
+		return {"ok": true, "query": "", "scope": staged.duplicate(), "global_search": "", "concept_search": "", "complete": false}
 
 	# The search tools are separate CLIs. Never launch the current DOKI CLI
 	# executable here: that would recurse into doki.gd and hang indefinitely.

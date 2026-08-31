@@ -13,3 +13,4 @@ func configure(definition: NavigationWaypointDefinition) -> void:
 		return
 	sprite.texture = definition.texture
 	sprite.scale = Vector2.ONE * (definition.size_pixels / float(definition.texture.get_width()))
+	z_index = -1  # Hinter Planeten rendern

@@ -134,9 +134,15 @@ func _capture_snapshot(world: WorldState) -> HistoricalSnapshot:
 	for pid in world.planets:
 		snapshot.ownership[pid] = world.planet_owner(pid as StringName)
 		snapshot.visual_state[pid] = _derive_planet_visual_state(pid as StringName, world)
-	for event in events:
-		if event.year <= world.year:
-			snapshot.events.append(event)
+	for fid in world.faction_ids():
+		var faction_data: Dictionary = world.factions.get(fid, {})
+		snapshot.economy_state[fid] = {
+			"stock": float(faction_data.get("economy_stock", 0.0)),
+			"income": float(faction_data.get("economy_income", 0.0)),
+			"upkeep": float(faction_data.get("military_upkeep", 0.0)),
+			"net": float(faction_data.get("economy_income", 0.0)) - float(faction_data.get("military_upkeep", 0.0)),
+			"territory": int(faction_data.get("territory", 0)),
+		}
 	# Kriegs-Truth, ausschließlich lesend: laufende Kriege aus active_wars,
 	# abgeschlossene aus war_archive (status über end_year determiniert).
 	for war in world.active_wars.values():

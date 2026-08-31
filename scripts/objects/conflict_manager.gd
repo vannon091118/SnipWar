@@ -127,7 +127,17 @@ func _restore_persistent_transits() -> void:
 		return
 	for record_value in state.get_transit_records():
 		var record: TransitRecord = record_value as TransitRecord
-		if record == null or record.status != TransitRecord.STATUS_IN_FLIGHT:
+		if record == null:
+			continue
+		# Engaged records are owned by the persisted battle context. If the
+		# context is absent (legacy save), roll them back to a resumable flight.
+		if record.status == TransitRecord.STATUS_ENGAGED:
+			var context: BattleContext = state.pending_battle_context() if state.has_method("pending_battle_context") else null
+			if context != null and context.transit_ids.has(record.transit_id):
+				continue
+			record.status = TransitRecord.STATUS_IN_FLIGHT
+			state.update_transit(record)
+		if record.status != TransitRecord.STATUS_IN_FLIGHT:
 			continue
 		if _ship_by_transit.has(record.transit_id):
 			continue
@@ -181,6 +191,10 @@ func _find_planet(planet_id: StringName) -> Planet:
 
 func game_seed() -> int:
 	return _game_seed
+
+func restore_combat_state(game_seed_value: int, battle_counter_value: int) -> void:
+	_game_seed = game_seed_value
+	_battle_counter = maxi(battle_counter_value, 0)
 
 func battle_counter() -> int:
 	return _battle_counter

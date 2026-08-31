@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2 uid="UID://simulation_overlay"]
+
+[ext_resource type="Script" path="res://scripts/ui/history/simulation_overlay.gd" id="1"]
+
+[node name="SimulationOverlay" type="CanvasLayer"]
+script = ExtResource( 1 )

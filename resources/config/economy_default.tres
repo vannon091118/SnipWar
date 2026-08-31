@@ -6,5 +6,7 @@
 script = ExtResource("1_economy")
 tick_interval = 10.0
 starting_credits = 100
+credit_income_per_colony = 5
+credit_income_per_upgrade = 2
 market_radius_hops = 2
 market_toll_rate = 0.1

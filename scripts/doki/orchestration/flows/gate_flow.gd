@@ -10,6 +10,7 @@ const AUTO_MANAGED: Array = ["narrative_chain.json", "change_index.json", "CHANG
 var _repo_root: String
 var _session_store: DOKI_SessionStore
 var _git: DOKI_GitHelper
+const IMPACT_RESOLVER: Script = preload("res://scripts/preflight_v2/change_impact_resolver.gd")
 
 
 func _init(repo_root: String, session_store: DOKI_SessionStore, git: DOKI_GitHelper) -> void:
@@ -34,14 +35,22 @@ func run() -> Dictionary:
 		return {"ok": false, "error": "Kein DOKI-Flow aktiv. Ablauf: git add → doki prepare → doki finish → git commit -F .commit_msg.txt"}
 
 	if state != DOKI_SessionStore.STATE_VERIFIED:
-		return {"ok": false, "error": "Session ist '%s' — es wurde kein verlifizierter Commit vorbereitet (doki finish)." % state}
-
-	# .commit_msg.txt muss existieren und nicht leer sein
+		return {"ok": false, "error": "Session ist '%s' — es wurde kein verlifizierter Commit vorbereitet (doki finish)." % state}	# .commit_msg.txt muss existieren und nicht leer sein
 	var msg_path: String = _repo_root.path_join(".commit_msg.txt")
 	if not FileAccess.file_exists(msg_path):
 		return {"ok": false, "error": ".commit_msg.txt fehlt — der Commit darf nur über `doki finish` entstehen."}
 	if FileAccess.get_file_as_string(msg_path).strip_edges().is_empty():
 		return {"ok": false, "error": ".commit_msg.txt ist leer."}
+
+	# Ownership-Gate (TASK-013, RISK-003): die Session muss dem ausführenden
+	# Prozess gehören. Ein zweiter Agent, der denselben Worktree parallel hält,
+	# wird fail-closed abgewiesen — der Commit einer fremden Session ist verboten.
+	var owner_token: String = str(session.get("owner_token", ""))
+	if owner_token.is_empty():
+		return {"ok": false, "error": "Ownership-Token fehlt in Session — prepare ohne Ownership-Bindung gelaufen? Bitte `doki prepare` erneut."}
+	var owner_check: Dictionary = _session_store.assert_owner(owner_token)
+	if not bool(owner_check.get("ok", false)):
+		return owner_check
 
 	# Snapshot-Gate: gestagte Dateien müssen exakt der Session entsprechen
 	# (verhindert: alte Message auf neuem Diff). Auto-Managed narrative Dateien
@@ -59,10 +68,27 @@ func run() -> Dictionary:
 		return {"ok": false, "error": "Scope-Auflösung fehlgeschlagen: %s — Impact-Unknown/leer darf nie grün werden." % str(scope.get("error", "unresolved_impact"))}
 	var prepared_scope: Array = session.get("impact", {}).get("constraints", []) if session.get("impact", {}) is Dictionary else []
 	var resolved_constraints: Array = Array(scope["constraints"]).duplicate()
+
 	prepared_scope.sort()
 	resolved_constraints.sort()
 	if prepared_scope != resolved_constraints:
 		return {"ok": false, "error": "Verification-Scope weicht vom Prepare-Scope ab (Under-/Over-Scope). Bitte `doki prepare` erneut."}
+
+	# Byte-/Path-Drift-Gate (TASK-011): die gestagten Bytes und der Pfadbestand
+	# müssen exakt den prepare-Zeit-Digests entsprechen. Jeglicher Drift nach
+	# prepare (Datei verändert, Datei hinzugefügt/entfernt) blockt den Commit,
+	# OHNE die Datei zu normalisieren oder umzuschreiben (CON-005).
+	var diff_output: String = _git.diff_cached()
+	var live_byte_digest: String = IMPACT_RESOLVER.staged_byte_digest(diff_output)
+	var live_path_digest: String = IMPACT_RESOLVER.path_digest(full_staged)
+	var prepared_byte_digest: String = str(session.get("staged_byte_digest", ""))
+	var prepared_path_digest: String = str(session.get("scope_path_digest", ""))
+	if prepared_byte_digest.is_empty() or prepared_path_digest.is_empty():
+		return {"ok": false, "error": "Digest-Bindung fehlt in Session — prepare ohne Content-Addressed-Scope gelaufen? Bitte `doki prepare` erneut."}
+	if live_byte_digest != prepared_byte_digest:
+		return {"ok": false, "error": "Byte-Drift: gestagte Bytes weichen vom prepare-Stand ab (Datei nach prepare verändert). Bitte `doki prepare` erneut — die Datei wird NICHT umgeschrieben."}
+	if live_path_digest != prepared_path_digest:
+		return {"ok": false, "error": "Pfad-Drift: gestagter Pfadbestand weicht vom prepare-Stand ab (Datei nach prepare hinzugefügt/entfernt). Bitte `doki prepare` erneut."}
 
 	# Path-Gate: der gestagte Pfadbestand muss dem Snapshot entsprechen.
 	var staged_sorted: Array = staged.duplicate()

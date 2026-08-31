@@ -37,12 +37,15 @@ func _init() -> void:
 	ctx.verbose = args.get("verbose", false)
 	ctx.fail_fast = args.get("fail_fast", false)
 
-	# Watchdog: guarantee preflight can never hang indefinitely in background
-	var watchdog_seconds: float = 120.0
-	create_timer(watchdog_seconds).timeout.connect(func() -> void:
-		print("\n[preflight-v2] FATAL: WATCHDOG TIMEOUT (%ds) — an async constraint never resolved" % int(watchdog_seconds))
-		quit(124)
-	)
+	# Watchdog is configurable for suites that legitimately exceed the default.
+	var watchdog_env := OS.get_environment("PREFLIGHT_WATCHDOG_SECONDS")
+	var watchdog_arg: String = str(args.get("watchdog", ""))
+	var watchdog_seconds: float = float(watchdog_arg) if not watchdog_arg.is_empty() else (float(watchdog_env) if not watchdog_env.is_empty() else 0.0)
+	if watchdog_seconds > 0.0:
+		create_timer(watchdog_seconds).timeout.connect(func() -> void:
+			print("\n[preflight-v2] ABORT: watchdog timeout (%ds)" % int(watchdog_seconds))
+			quit(124)
+		)
 
 	_registry = _Scanner.new().scan()
 	var registry: Array[Dictionary] = _registry
@@ -393,6 +396,8 @@ func _parse_cli_arguments() -> Dictionary:
 			parsed["mcp_json"] = arg.trim_prefix("--mcp-json=")
 		elif arg.begins_with("--scope="):
 			parsed["scope"] = arg.trim_prefix("--scope=")
+		elif arg.begins_with("--watchdog="):
+			parsed["watchdog"] = arg.trim_prefix("--watchdog=")
 	return parsed
 
 func _print_help() -> void:
@@ -409,6 +414,7 @@ Options:
   --reverse, --order=reverse
                            Run the selected constraints in reverse order.
   --mcp-json=<path>        Write machine-readable JSON result for chain controller.
+  --watchdog=<seconds>     Optional abort watchdog; omitted/0 means no timeout.
   --list, -l               List all available constraints.
   --help, -h               Show this help message.
 

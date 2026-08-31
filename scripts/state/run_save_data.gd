@@ -42,6 +42,11 @@ const SAVE_VERSION: int = 2
 @export var next_trade_route_index: int = 0
 @export var next_worker_transport_index: int = 0
 
+# --- QS-3: Shop-Ausgaben-Tracking ---
+@export var shop_credits_spent: Dictionary = {}
+@export var shop_resources_spent: Dictionary = {}
+@export var shop_total_investments: Dictionary = {}
+
 # --- Tech domain ---
 @export var researched_techs: Dictionary = {}
 @export var planet_technologies: Dictionary = {}
@@ -58,6 +63,14 @@ const SAVE_VERSION: int = 2
 @export var research_missions: Dictionary = {}
 @export var next_ship_index: int = 0
 @export var next_research_mission_index: int = 0
+
+# --- Combat / replay continuity ---
+## Layout seed and monotonic combat counter keep combat seed derivation stable
+## across save/load boundaries. The active battle context is persisted so a
+## world reconnect cannot silently discard an engaged transit.
+@export var combat_game_seed: int = 0
+@export var combat_battle_counter: int = 0
+@export var pending_battle: BattleContext
 
 # --- Transits ---
 @export var transits: Array[TransitRecord] = []

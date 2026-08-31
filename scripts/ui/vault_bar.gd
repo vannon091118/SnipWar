@@ -12,6 +12,8 @@ const ICON_VOLATILE: Texture2D = preload("res://assets/ui/resources/resource_vol
 
 var _theme_config: UIThemeConfig = DEFAULT_THEME
 var _income_rates: Dictionary = {}
+## QS-4: Credit-Einkommen-Rate (pro Sekunde), von refresh(state) gesetzt.
+var _credit_rate: float = 0.0
 var _economy_manager: Node
 var _tick_remaining: float = -1.0
 var _tick_interval: float = 10.0
@@ -48,6 +50,12 @@ func refresh(state: Node) -> void:
 		_credit_label.text = "[color=#f2c14e]Credits: %d[/color]" % state.get_faction_credits(player_faction)
 	_refresh_transport_label(state)
 	_refresh_tick_status()
+	# QS-4: Credit-Rate aus EconomyConfig ableiten.
+	_credit_rate = 0.0
+	if _tick_interval > 0.0 and state.has_method("economy_domain"):
+		var econ = state.economy_domain()
+		if econ != null and econ.has_method("credit_income_per_colony"):
+			_credit_rate = float(econ.credit_income_per_colony()) / _tick_interval
 	_refresh_income_rate_label()
 	var tw: Tween = create_tween()
 	tw.tween_property(self, "scale", Vector2(1.02, 1.02), 0.08)
@@ -122,6 +130,13 @@ func _refresh_income_rate_label() -> void:
 		tick_text = " · Nächster Tick: %.1fs" % _tick_remaining
 	elif _tick_interval > 0.0:
 		tick_text = " · Automatik noch nicht aktiv"
+	# QS-4: Credit-Einkommen-Rate anzeigen (pro Sekunde).
+	if _credit_rate > 0.0:
+		var cr_text: String = "%.1f" % _credit_rate
+		if is_equal_approx(_credit_rate, round(_credit_rate)):
+			cr_text = "%.0f" % _credit_rate
+		segments.append("[color=#f2c14e]+%s Credits/s[/color]" % cr_text)
+		income_text = " | ".join(segments)
 	_rate_label.text = "Einkommen: " + income_text + tick_text
 
 func _resource_rate_name(resource_id: StringName) -> String:

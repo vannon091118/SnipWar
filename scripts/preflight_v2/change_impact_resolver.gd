@@ -13,6 +13,36 @@ const SCANNER_SCRIPT := preload("res://scripts/preflight_v2/constraint_scanner.g
 const SCHEMA_VERSION := 1
 
 
+## Compute a stable SHA-256 digest over the staged byte representation used by
+## the gate (the exact `git diff --cached` blob bytes). Two concurrent agents
+## producing the same staged tree yield the same digest → dedup-eligible.
+static func staged_byte_digest(diff_output: String) -> String:
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	ctx.update(diff_output.to_utf8_buffer())
+	return ctx.finish().hex_encode()
+
+
+## Stable digest over the sorted staged-path list (path identity, independent
+## of byte drift — used to detect path-set changes vs. byte changes).
+static func path_digest(staged_paths: Array) -> String:
+	var paths := _normalized_paths(staged_paths)
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	ctx.update("\n".join(paths).to_utf8_buffer())
+	return ctx.finish().hex_encode()
+
+
+## Stable digest over the resolved constraint set (the verification scope).
+static func constraint_digest(constraints: Array) -> String:
+	var sorted: Array = constraints.duplicate()
+	sorted.sort()
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	ctx.update("\n".join(sorted).to_utf8_buffer())
+	return ctx.finish().hex_encode()
+
+
 ## resolve(staged_paths) → {ok, error?, paths, contracts, constraints, schema_version}
 ## staged_paths: repo-relative file paths (from `git diff --cached --name-only`).
 static func resolve(staged_paths: Array) -> Dictionary:

@@ -63,16 +63,40 @@ func run(impulse: String, model_id: String) -> Dictionary:
 		return {"ok": false, "error": "Kein Git-Repository: %s" % _repo_root}
 
 	var staged: Array = _git.staged_files()
+	var agent_name := OS.get_environment("AGENT_NAME").strip_edges()
+	var activity_seed := OS.get_environment("AGENT_ACTIVITY_SEED").strip_edges()
+	if agent_name.is_empty() or activity_seed.is_empty():
+		return {"ok": false, "error": "AGENT_NAME und AGENT_ACTIVITY_SEED müssen aus dem aktiven Check-In stammen."}
 	if staged.is_empty():
 		return {"ok": false, "error": "Keine gestagten Änderungen — erst `git add <dateien>`, dann prepare."}
+
+	# Single-Active-Owner (TASK-013, RISK-003): fail-closed, kein destruktives
+	# Cleanup. Der Owner-Token ist prozess-eindeutig; ein zweiter aktiver Agent
+	# wird abgewiesen — nie automatisch überschrieben.
+	var owner_token: String = _ownership_token()
+	var claim_result: Dictionary = _session_store.claim(owner_token)
+	if not bool(claim_result.get("ok", false)):
+		return claim_result
+
 	# Scope-Auflösung (Session-Scoped Verification): der machine-resolvable
 	# Verification-Scope des echten Diffs wird VOR dem Prompt bestimmt und in
 	# der Session + .doki/scope.json (für den Preflight-Hook) persistiert.
 	# Unknown/leer blockt fail-closed (nie ein grüner leere Run).
 	var impact: Dictionary = IMPACT_RESOLVER.resolve(staged)
 	if not bool(impact.get("ok", false)):
+		_session_store.release_ownership(owner_token)
 		return {"ok": false, "error": "Impact-Auflösung fehlgeschlagen: %s" % str(impact.get("error", "unresolved_impact"))}
+
+	# Content-Addressed Scope (TASK-010/011): exakte Digests der gestagten
+	# Bytes, des Pfadbestands und des resolved Constraint-Sets. Der Gate
+	# recompute diese Werte und weist jeglichen Drift ab (Byte-/Scope-Drift
+	# nach prepare → kein grüner Commit, ohne die Datei umzuschreiben).
+	var diff_output: String = _git.diff_cached()
+	var scope_path_digest: String = IMPACT_RESOLVER.path_digest(staged)
+	var scope_constraint_digest: String = IMPACT_RESOLVER.constraint_digest(impact.get("constraints", []))
+	var staged_byte_digest: String = IMPACT_RESOLVER.staged_byte_digest(diff_output)
 	_write_scope_file(impact)
+	_write_agent_binding(agent_name, activity_seed)
 
 	# Atomicity-Gate (früh, wie Check 10): ein Commit = EINE logische Einheit.
 	# Mehr als MAX_FILES_PER_COMMIT User-Dateien → sofort blocken, bevor der
@@ -82,10 +106,12 @@ func run(impulse: String, model_id: String) -> Dictionary:
 		if not DOKI_Verifier.AUTO_MANAGED.has(str(f).get_file()):
 			user_files.append(str(f))
 	if user_files.size() > DOKI_Verifier.MAX_FILES_PER_COMMIT:
+		_session_store.release_ownership(owner_token)
 		return {"ok": false, "error": "Atomicity-Gate: %d Dateien gestaged (max %d). Bitte in atomare Commits aufteilen — ein Commit = eine logische Einheit." % [user_files.size(), DOKI_Verifier.MAX_FILES_PER_COMMIT]}
 
 	var chain: Dictionary = _chain_store.read()
 	if chain.get("anchor", {}).is_empty():
+		_session_store.release_ownership(owner_token)
 		return {"ok": false, "error": "DOKI nicht initialisiert — erst `doki init`."}
 
 	var entries: Array = chain.get("entries", [])
@@ -98,7 +124,6 @@ func run(impulse: String, model_id: String) -> Dictionary:
 
 	# Kausaler Seed: Tree + Diff + Impuls → Composite (deterministisch)
 	var tree_hash: String = _git.head_tree_hash()
-	var diff_output: String = _git.diff_cached()
 	var diff_hash: int = DOKI_RngEngine.djb2(diff_output)
 	var mood_pool: Array = _moods.mood_pool()
 	if mood_pool.is_empty():
@@ -146,6 +171,11 @@ func run(impulse: String, model_id: String) -> Dictionary:
 		plot_id
 	)
 	session["impact"] = impact
+	session["scope_path_digest"] = scope_path_digest
+	session["scope_constraint_digest"] = scope_constraint_digest
+	session["staged_byte_digest"] = staged_byte_digest
+	session["baseline_identity"] = str(result.get("tree_hash", ""))
+	session["owner_token"] = owner_token
 	# Limits in die Session — Check 9 (RNG-Replay) muss exakt dieselben
 	# Ziehungs-Grenzen verwenden wie prepare, sonst divergiert der RNG-Zustand.
 	session["limits"] = limits.duplicate()
@@ -153,9 +183,13 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	# Prompt bauen + Session + Datei schreiben
 	# Search is executed by the runtime before prompt generation. The complete
 	# JSON/text output is embedded into the prompt; failure is fail-closed.
-	var search: Dictionary = _git.search_context(staged, impulse)
-	if not search["ok"]:
-		return {"ok": false, "error": str(search.get("error", "Automatische Suche fehlgeschlagen."))}
+	var search: Dictionary = {"ok": true, "complete": false, "query": "", "scope": staged.duplicate(), "global_search": "", "concept_search": ""}
+	var search_requested := impulse.to_lower().contains("search") or impulse.to_lower().contains("analyse") or impulse.to_lower().contains("audit")
+	if search_requested:
+		search = _git.search_context(staged, impulse)
+		if not search["ok"]:
+			_session_store.release_ownership(owner_token)
+			return {"ok": false, "error": str(search.get("error", "Automatische Suche fehlgeschlagen."))}
 	var ctx: Dictionary = _session_builder.build_narrative_context(session, narrator, analyze)
 	ctx["search_context"] = search
 	ctx["search_contract"] = "Read the COMPLETE Global Search JSON and Concept Search output before writing the body."
@@ -168,6 +202,13 @@ func run(impulse: String, model_id: String) -> Dictionary:
 
 ## Persistiert den resolved Verification-Scope als JSON-Manifest für den
 ## Preflight-Hook (.doki ist gitignored): {constraints:[...], contracts:[...]}.
+func _write_agent_binding(agent_name: String, activity_seed: String) -> void:
+	var binding := {"agent_name": agent_name, "activity_seed": activity_seed, "owner_token": "agent:%s:seed:%s" % [agent_name, activity_seed]}
+	var file := FileAccess.open(_repo_root.path_join(".doki/agent_binding.json"), FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify(binding, "\t"))
+		file.close()
+
 func _write_scope_file(impact: Dictionary) -> void:
 	var dir_path: String = _repo_root.path_join(".doki")
 	DirAccess.make_dir_recursive_absolute(dir_path)
@@ -177,3 +218,12 @@ func _write_scope_file(impact: Dictionary) -> void:
 		return
 	file.store_string(JSON.stringify({"constraints": impact.get("constraints", []), "contracts": impact.get("contracts", [])}, "\t"))
 	file.close()
+
+
+## Prozesseeindeutiger Ownership-Token (Single-Active-Owner, RISK-003).
+func _ownership_token() -> String:
+	var agent_name := OS.get_environment("AGENT_NAME").strip_edges()
+	var activity_seed := OS.get_environment("AGENT_ACTIVITY_SEED").strip_edges()
+	if agent_name.is_empty() or activity_seed.is_empty():
+		return ""
+	return "agent:%s:seed:%s" % [agent_name, activity_seed]

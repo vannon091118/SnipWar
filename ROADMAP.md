@@ -172,9 +172,17 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 
 ### R-014 — QA-Stränge: Tutorial → Werft → Neues-Spiel — **P2**
 - **WHY:** FINDINGS QA2-MCP-6 (Tutorial für MCP unsichtbar) blockiert QA2-GAME-2/-3.
-- **DEPENDS:** R-050 · **BLOCKS:** —
+- **DEPENDS:** R-050 · **BLOCKS:** R-014-A bis R-014-D, R-015-Lore
 - **DoD:** Overlay-Pfad für MCP auffindbar; „erstes Schiff“ durchspielbar.
-- **STATUS:** `TODO`
+- **Sub-Tasks:**
+  - **R-014-A** Pfeil-Flyover + WEITER-Blink + Light-Ring-Fade (`tutorial_director.gd`) — **IN_PROGRESS**
+  - **R-014-B** QA2-MCP-6: TutorialDirector-Pfad für `runtime_ux_scan` exponiert (`/root/TutorialDirector`, `unique_name_in_owner`) — **IN_PROGRESS**
+  - **R-014-C** Schritt-4-Überladung reduzieren + ECONOMY-Schritt + „erstes Schiff“-Flow (QA2-GAME-2) — **IN_PROGRESS**
+  - **R-014-D** Menü-Animation „Zerknüllen“ (#5, Godot-nativ Tween/Shader, 1–2 s) — `paper_dossier.gd _set_open` — `TODO`
+  - **R-014-E** Menü-Identität/Blueprint (#6, vorhandene Texturen + SVG-Upgrades) — `paper_dossier.gd`/`planet_details.gd` — `TODO`
+  - **R-014-F** Profil-SVGs (#9, abgeleitet aus `stickman_fracture.svg`/Banner-/Upgrade-SVGs) — `assets/ui/stickman/` — `TODO`
+  - **R-014-G** Stickman-Lore (#10, in `res/lore/*.md`, Fragmente nutzen) — `res/lore/` — `TODO`
+- **STATUS:** `IN_PROGRESS`
 
 ### R-015 — CHANGELOG-Boilerplate komprimieren — **P3**
 - **WHY:** 1.472 LOC, große DOKI-Boilerplate-Anteile.

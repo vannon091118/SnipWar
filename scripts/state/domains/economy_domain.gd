@@ -85,6 +85,14 @@ var _gathering_transport_unit: EconomyGatheringTransportUnit
 var _worker_factory_unit: EconomyWorkerFactoryUnit
 ## E4b: Verhaltens-Einheit für Gebäude auf dem Grid inkl. Baustellen-Queue.
 var _buildings_unit: EconomyBuildingsUnit
+## QS-3: Shop-Ausgaben-Tracking (Credits + Ressourcen pro Fraktion).
+var _shop_unit: EconomyShopUnit
+## QS-3: Kumulierte Shop-Ausgaben. Keys: "faction::category" (Credits)
+var shop_credits_spent: Dictionary = {}
+## QS-3: Keys: "faction::category::resource_id" (Ressourcen-Mengen)
+var shop_resources_spent: Dictionary = {}
+## QS-3: Gesamt-Investment pro Fraktion (Credits + Ressourcen-Menge)
+var shop_total_investments: Dictionary = {}
 
 
 func _init() -> void:
@@ -95,6 +103,7 @@ func _init() -> void:
 	_gathering_transport_unit = EconomyGatheringTransportUnit.new(self)
 	_worker_factory_unit = EconomyWorkerFactoryUnit.new(self)
 	_buildings_unit = EconomyBuildingsUnit.new(self)
+	_shop_unit = EconomyShopUnit.new(self)
 
 
 ## Injiziert den Route-Owner-Resolver (GameState->_init ruft das mit
@@ -109,6 +118,16 @@ func reset_vaults() -> void:
 
 func reset() -> void:
 	_vault_core.reset()
+	shop_credits_spent.clear()
+	shop_resources_spent.clear()
+	shop_total_investments.clear()
+
+## QS-4: Credit-Einkommen pro Kolonie/Upgrade (vom EconomyConfig).
+func credit_income_per_colony() -> int:
+	return economy_config.credit_income_per_colony if economy_config != null else 0
+
+func credit_income_per_upgrade() -> int:
+	return economy_config.credit_income_per_upgrade if economy_config != null else 0
 
 func credit_transport_resources(faction: StringName, resource_id: StringName, amount: int) -> bool:
 	return _vault_core.credit_transport_resources(faction, resource_id, amount)
@@ -340,6 +359,26 @@ func gathering_workers_on(faction: StringName, planet_id: StringName) -> int:
 func gather_income_tick(base_amounts: Dictionary, catalog: PlanetUpgradeCatalog = null) -> int:
 	return _gathering_transport_unit.gather_income_tick(base_amounts, catalog)
 
+## Credit income from owned colonies, independent of active worker gathering.
+func credit_income_tick(owned_planets: Array[StringName], faction: StringName, catalog: PlanetUpgradeCatalog = null) -> int:
+	var total: int = 0
+	var effective_catalog: PlanetUpgradeCatalog = catalog if catalog != null else GameState.DEFAULT_UPGRADE_CATALOG
+	for planet_id in owned_planets:
+		var income: int = credit_income_per_colony()
+		var upgrades: Array[StringName] = get_planet_upgrades(planet_id)
+		income += upgrades.size() * credit_income_per_upgrade()
+		if effective_catalog != null:
+			var multiplier := 1.0
+			for upgrade_id in upgrades:
+				var upgrade: PlanetUpgradeDefinition = effective_catalog.resolve(upgrade_id)
+				if upgrade != null and upgrade.trait_definition != null:
+					multiplier *= upgrade.trait_definition.gather_income_multiplier
+			income = int(round(float(income) * multiplier))
+		if income > 0:
+			add_faction_credits(faction, income)
+			total += income
+	return total
+
 ## E4a: Delegation an EconomyGatheringTransportUnit.
 func generate_resources_for_planet(
 	planet_id: StringName,
@@ -480,6 +519,7 @@ func capture_snapshot(data: RunSaveData) -> void:
 	data.worker_transport_records = worker_transport_records.duplicate(true)
 	data.next_trade_route_index = _next_trade_route_index
 	data.next_worker_transport_index = _next_worker_transport_index
+	_shop_unit.capture_snapshot(data)
 
 func restore_snapshot(data: RunSaveData) -> void:
 	if data == null:
@@ -502,3 +542,18 @@ func restore_snapshot(data: RunSaveData) -> void:
 	worker_transport_records = RunSaveData.restore_dict(data.worker_transport_records)
 	_next_trade_route_index = data.next_trade_route_index
 	_next_worker_transport_index = data.next_worker_transport_index
+	_shop_unit.restore_snapshot(data)
+
+# --- QS-3: Shop-Ausgaben-Tracking (Delegation) ---
+
+func record_purchase(faction: StringName, category: String, resource_id: StringName, resource_amount: int, credit_amount: int) -> void:
+	_shop_unit.record_purchase(faction, category, resource_id, resource_amount, credit_amount)
+
+func faction_investments(faction: StringName, category: String = "") -> Dictionary:
+	return _shop_unit.faction_investments(faction, category)
+
+func total_investment(faction: StringName) -> int:
+	return _shop_unit.total_investment(faction)
+
+func shop_offer_tier(faction: StringName) -> int:
+	return _shop_unit.offer_tier(faction)

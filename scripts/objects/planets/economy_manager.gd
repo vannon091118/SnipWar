@@ -104,8 +104,14 @@ func _tick_economy() -> int:
 			if automation_researched and state != null and state.has_method("convert_refinery_resources"):
 				if state.has_planet_upgrade(planet.planet_id, &"refinery"):
 					state.convert_refinery_resources(planet.planet_id)
-	if state != null and state.has_method("tick_trade_routes"):
-		state.tick_trade_routes()
+	if state != null:
+		# QS-4: periodisches Credit-Einkommen einmal pro Economy-Tick.
+		# Die Methode ermittelt alle besessenen Kolonien selbst; dadurch wird
+		# jede Kolonie exakt einmal gutgeschrieben, unabhängig von Worker-Gathering.
+		if state.has_method("credit_income_tick"):
+			state.credit_income_tick()
+		if state.has_method("tick_trade_routes"):
+			state.tick_trade_routes()
 	return generated_total
 
 func gather_now() -> int:

@@ -14,6 +14,7 @@ godot/
 # Local agent workspaces and session artifacts (never publish).
 .agents/
 .hermes/
+/.agent-activity/
 .kilo/
 
 # Ad-hoc development artifacts never belong in the repository.

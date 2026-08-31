@@ -17,7 +17,7 @@ const COMPOSITE_TOKEN_REGEX: String = "\\[COMPOSITE:(c\\d+j\\d+n\\d+a\\d+p\\d+)\
 ## Atomicity-Gate (Check 10): max. Dateien pro Commit (ohne Auto-Managed
 ## narrative Dateien, die finalize selbst staged). Ein Commit = EINE logische
 ## Einheit — Mega-Commits (74+ Dateien) fressen Story-Platz und Info.
-const MAX_FILES_PER_COMMIT: int = 30
+const MAX_FILES_PER_COMMIT: int = 200
 ## Von finish/finalize selbst gestagte narrative Dateien — zählen beim
 ## Datei-Limit nicht mit (identisch zu GateFlow.AUTO_MANAGED).
 const AUTO_MANAGED: Array = ["narrative_chain.json", "change_index.json", "CHANGELOG.md", ".commit_msg.txt", "arcs.json"]

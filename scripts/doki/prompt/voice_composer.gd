@@ -98,10 +98,11 @@ func _build_system_prompt(ctx: Dictionary) -> String:
 		prompt += "- Erwähne %s natürlich im Text — nicht als Token, sondern als Teil der Geschichte.\n" % prev_narrator
 	prompt += "- Kausale Konnektoren sind Pflicht (weil, deshalb, daher, folglich) — aber eingewoben.\n"
 	prompt += "- Die Dateien am Ende sind die Spuren deiner Arbeit, nicht 'betroffen'.\n"
-	prompt += "- Der folgende Suchkontext ist vollständig und verbindlich; er wurde automatisch durch die Runtime erzeugt. Lies alle Treffer und Abhängigkeiten, bevor du schreibst.\n"
+	if bool(search_context.get("complete", false)):
+		prompt += "- Der folgende Suchkontext wurde auf Anfrage erzeugt und ist vollständig.\n"
 	var files: Array = ctx.get("files", [])
-	if files.size() >= 3 and not search_context.is_empty():
-		prompt += "\nAUTOMATISCHER SUCHKONTEXT (VOLLSTÄNDIG):\n%s\n" % JSON.stringify(search_context)
+	if bool(search_context.get("complete", false)):
+		prompt += "\nAUTOMATISCHER SUCHKONTEXT (NUR AUF ANFRAGE):\n%s\n" % JSON.stringify(search_context)
 
 	# Side-Plot (Merge)
 	if not sideplot.is_empty():
@@ -161,9 +162,8 @@ func _build_user_prompt(ctx: Dictionary) -> String:
 	# Side-Plot: Branch-Commits auflisten
 	var sideplot: Dictionary = ctx.get("sideplot", {})
 	var search_context: Dictionary = ctx.get("search_context", {})
-	if not search_context.is_empty():
+	if bool(search_context.get("complete", false)):
 		prompt += "\nSEARCH-VERTRAG: %s\n" % str(ctx.get("search_contract", "Lies den vollständigen Suchkontext."))
-		prompt += "Der Suchkontext umfasst den kompletten Output von Global Search und Concept Search. Keine manuelle Suche und kein Auslassen von Treffern.\n"
 	if not sideplot.is_empty():
 		var summary: String = str(sideplot.get("commit_summary", ""))
 		if not summary.is_empty():

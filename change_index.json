@@ -1122,6 +1122,21 @@
 			],
 			"p_id": 115
 		},
+		"41aafa3cdd66eae66098292abdfa051852c449c8": {
+			"c": 118,
+			"composite": "c118j46n12a38p68",
+			"entities": [
+				"F-003",
+				"F-357",
+				"F-004",
+				"F-179",
+				"F-463",
+				"F-444",
+				"F-001",
+				"C-1224"
+			],
+			"p_id": 118
+		},
 		"4483ceb09193b09566ee931b433a874fdc37c967": {
 			"c": 44,
 			"composite": "c44j38n3a12p28",
@@ -10017,6 +10032,211 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1225": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						1
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						1
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						1
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						1
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						1
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1225",
+			"last_p": 119,
+			"name": "EconomyShopUnit",
+			"path": "scripts/state/domains/economy/shop_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1226": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						19
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						19
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						19
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						19
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						19
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1226",
+			"last_p": 119,
+			"name": "_init",
+			"path": "scripts/state/domains/economy/shop_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1227": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						26
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						26
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						26
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						26
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						26
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1227",
+			"last_p": 119,
+			"name": "record_purchase",
+			"path": "scripts/state/domains/economy/shop_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1228": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						43
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						43
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						43
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						43
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						43
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1228",
+			"last_p": 119,
+			"name": "faction_investments",
+			"path": "scripts/state/domains/economy/shop_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1229": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						67
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						67
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						67
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						67
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						67
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1229",
+			"last_p": 119,
+			"name": "total_investment",
+			"path": "scripts/state/domains/economy/shop_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-123": {
 			"first_p": 36,
 			"history": [
@@ -10031,6 +10251,416 @@
 			"last_p": 36,
 			"name": "fail",
 			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1230": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						73
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						73
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						73
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						73
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						73
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1230",
+			"last_p": 119,
+			"name": "offer_tier",
+			"path": "scripts/state/domains/economy/shop_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1231": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						83
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						83
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						83
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						83
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						83
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1231",
+			"last_p": 119,
+			"name": "validate_investments",
+			"path": "scripts/state/domains/economy/shop_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1232": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						91
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						91
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						91
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						91
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						91
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1232",
+			"last_p": 119,
+			"name": "capture_snapshot",
+			"path": "scripts/state/domains/economy/shop_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1233": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						100
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						100
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						100
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						100
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						100
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1233",
+			"last_p": 119,
+			"name": "restore_snapshot",
+			"path": "scripts/state/domains/economy/shop_unit.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1234": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						123
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						123
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						123
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						123
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						123
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1234",
+			"last_p": 119,
+			"name": "credit_income_per_colony",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1235": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						126
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						126
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						126
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						126
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						126
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1235",
+			"last_p": 119,
+			"name": "credit_income_per_upgrade",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1236": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						360
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						360
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						360
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						360
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						360
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1236",
+			"last_p": 119,
+			"name": "credit_income_tick",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1237": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						546
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						546
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						546
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						546
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						546
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1237",
+			"last_p": 119,
+			"name": "record_purchase",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1238": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						549
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						549
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						549
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						549
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						549
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1238",
+			"last_p": 119,
+			"name": "faction_investments",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1239": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						552
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						552
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						552
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						552
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						552
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1239",
+			"last_p": 119,
+			"name": "total_investment",
+			"path": "scripts/state/domains/economy_domain.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -10051,6 +10681,332 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1240": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						555
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						555
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						555
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						555
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						555
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1240",
+			"last_p": 119,
+			"name": "shop_offer_tier",
+			"path": "scripts/state/domains/economy_domain.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1241": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						3
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						3
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						3
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						3
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						3
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1241",
+			"last_p": 119,
+			"name": "ECONOMY_DOMAIN",
+			"path": "scripts/testing/credit_income_behavior_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1242": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						4
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						4
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						4
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						4
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						4
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1242",
+			"last_p": 119,
+			"name": "UPGRADE_CATALOG",
+			"path": "scripts/testing/credit_income_behavior_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1243": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						6
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						6
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						6
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						6
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						6
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1243",
+			"last_p": 119,
+			"name": "_initialize",
+			"path": "scripts/testing/credit_income_behavior_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1244": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						30
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						30
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						30
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						30
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						30
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1244",
+			"last_p": 119,
+			"name": "_assert_equal",
+			"path": "scripts/testing/credit_income_behavior_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1245": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						427
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						427
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						427
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						427
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1245",
+			"last_p": 119,
+			"name": "WAYPOINT_MIN_PLANET_DIST",
+			"path": "scripts/objects/planets/navigation_field.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1246": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						429
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						429
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						429
+					],
+					"p_id": 119
+				},
+				{
+					"lines": [
+						429
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1246",
+			"last_p": 119,
+			"name": "_clear_of_planets",
+			"path": "scripts/objects/planets/navigation_field.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1247": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						4
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1247",
+			"last_p": 119,
+			"name": "lod_level_changed",
+			"path": "scripts/backgrounds/map_camera.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1248": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						390
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1248",
+			"last_p": 119,
+			"name": "lod_level",
+			"path": "scripts/backgrounds/map_camera.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1249": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						394
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1249",
+			"last_p": 119,
+			"name": "lod_zoom_threshold",
+			"path": "scripts/backgrounds/map_camera.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-125": {
 			"first_p": 36,
 			"history": [
@@ -10065,6 +11021,176 @@
 			"last_p": 36,
 			"name": "imp",
 			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1250": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						401
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1250",
+			"last_p": 119,
+			"name": "_update_lod_level",
+			"path": "scripts/backgrounds/map_camera.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1251": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						12
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1251",
+			"last_p": 119,
+			"name": "OWNER_FILE",
+			"path": "scripts/doki/chain/session_store.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1252": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						101
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1252",
+			"last_p": 119,
+			"name": "claim",
+			"path": "scripts/doki/chain/session_store.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1253": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						113
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1253",
+			"last_p": 119,
+			"name": "release_ownership",
+			"path": "scripts/doki/chain/session_store.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1254": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						121
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1254",
+			"last_p": 119,
+			"name": "assert_owner",
+			"path": "scripts/doki/chain/session_store.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1255": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						128
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1255",
+			"last_p": 119,
+			"name": "_read_owner",
+			"path": "scripts/doki/chain/session_store.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1256": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						135
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1256",
+			"last_p": 119,
+			"name": "_write_owner",
+			"path": "scripts/doki/chain/session_store.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1257": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						10
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1257",
+			"last_p": 119,
+			"name": "IMPACT_RESOLVER",
+			"path": "scripts/doki/orchestration/flows/gate_flow.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1258": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						199
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1258",
+			"last_p": 119,
+			"name": "_write_agent_binding",
+			"path": "scripts/doki/orchestration/flows/prepare_flow.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1259": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						218
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1259",
+			"last_p": 119,
+			"name": "_ownership_token",
+			"path": "scripts/doki/orchestration/flows/prepare_flow.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -10085,6 +11211,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1260": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						192
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1260",
+			"last_p": 119,
+			"name": "restore_combat_state",
+			"path": "scripts/objects/conflict_manager.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1261": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						3
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1261",
+			"last_p": 119,
+			"name": "AGENT_SCRIPT",
+			"path": "scripts/preflight/constraint_agent_activity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1262": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						5
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1262",
+			"last_p": 119,
+			"name": "constraint_name",
+			"path": "scripts/preflight/constraint_agent_activity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1263": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						8
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1263",
+			"last_p": 119,
+			"name": "constraint_description",
+			"path": "scripts/preflight/constraint_agent_activity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1264": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						11
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1264",
+			"last_p": 119,
+			"name": "requires_scene",
+			"path": "scripts/preflight/constraint_agent_activity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1265": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						14
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1265",
+			"last_p": 119,
+			"name": "run",
+			"path": "scripts/preflight/constraint_agent_activity.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1266": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						800
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1266",
+			"last_p": 119,
+			"name": "credit_income_tick",
+			"path": "scripts/state/game_state.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1267": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						11
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1267",
+			"last_p": 119,
+			"name": "load_snapshots",
+			"path": "scripts/state/playback_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1268": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						244
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1268",
+			"last_p": 119,
+			"name": "_cleanup_stale_tmps",
+			"path": "scripts/testing/chain_manifest_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1269": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						73
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1269",
+			"last_p": 119,
+			"name": "_cleanup_stale_tmps",
+			"path": "scripts/testing/compile_gate.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-127": {
 			"first_p": 36,
 			"history": [
@@ -10099,6 +11395,176 @@
 			"last_p": 36,
 			"name": "exp",
 			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1270": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						3
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1270",
+			"last_p": 119,
+			"name": "_initialize",
+			"path": "scripts/testing/history_economy_behavior_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1271": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						13
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1271",
+			"last_p": 119,
+			"name": "_assert",
+			"path": "scripts/testing/history_economy_behavior_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1272": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						3
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1272",
+			"last_p": 119,
+			"name": "_initialize",
+			"path": "scripts/testing/history_economy_seams_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1273": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						32
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1273",
+			"last_p": 119,
+			"name": "_assert",
+			"path": "scripts/testing/history_economy_seams_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1274": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						20
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1274",
+			"last_p": 119,
+			"name": "CACHE_DIR",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1275": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						158
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1275",
+			"last_p": 119,
+			"name": "_cache_hit",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1276": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						173
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1276",
+			"last_p": 119,
+			"name": "_file_digest",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1277": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						184
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1277",
+			"last_p": 119,
+			"name": "_cache_key",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1278": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						187
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1278",
+			"last_p": 119,
+			"name": "_current_tree_hash",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1279": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						194
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1279",
+			"last_p": 119,
+			"name": "_read_cache",
+			"path": "scripts/testing/test_all.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -10119,6 +11585,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1280": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						206
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1280",
+			"last_p": 119,
+			"name": "_write_cache",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1281": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						233
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1281",
+			"last_p": 119,
+			"name": "_cache_file_path",
+			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1282": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						24
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1282",
+			"last_p": 119,
+			"name": "_ready",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1283": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						54
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1283",
+			"last_p": 119,
+			"name": "set_planet_positions",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1284": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						56
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1284",
+			"last_p": 119,
+			"name": "set_world_config",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1285": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						65
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1285",
+			"last_p": 119,
+			"name": "_render_background",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1286": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						74
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1286",
+			"last_p": 119,
+			"name": "_render_stars",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1287": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						88
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1287",
+			"last_p": 119,
+			"name": "_render_edges",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1288": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						91
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1288",
+			"last_p": 119,
+			"name": "_render_planets",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1289": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						138
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1289",
+			"last_p": 119,
+			"name": "_render_fleet_markers",
+			"path": "scripts/ui/history/historical_renderer.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-129": {
 			"first_p": 36,
 			"history": [
@@ -10133,6 +11769,91 @@
 			"last_p": 36,
 			"name": "chain",
 			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1290": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						198
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1290",
+			"last_p": 119,
+			"name": "set_economy_state",
+			"path": "scripts/ui/history/simulation_overlay.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1291": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						510
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1291",
+			"last_p": 119,
+			"name": "_card_edge_point",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1292": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						522
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1292",
+			"last_p": 119,
+			"name": "_refresh_highlight_target",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1293": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						535
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1293",
+			"last_p": 119,
+			"name": "_start_weiter_blink",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1294": {
+			"first_p": 119,
+			"history": [
+				{
+					"lines": [
+						543
+					],
+					"p_id": 119
+				}
+			],
+			"id": "C-1294",
+			"last_p": 119,
+			"name": "_stop_weiter_blink",
+			"path": "scripts/ui/tutorial/tutorial_director.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -21519,10 +23240,16 @@
 						46
 					],
 					"p_id": 73
+				},
+				{
+					"lines": [
+						153
+					],
+					"p_id": 119
 				}
 			],
 			"id": "C-797",
-			"last_p": 73,
+			"last_p": 119,
 			"name": "planet_count",
 			"path": "scripts/ui/history/historical_renderer.gd",
 			"status": "modified",
@@ -21797,10 +23524,16 @@
 						44
 					],
 					"p_id": 75
+				},
+				{
+					"lines": [
+						109
+					],
+					"p_id": 119
 				}
 			],
 			"id": "C-813",
-			"last_p": 75,
+			"last_p": 119,
 			"name": "_apply_visual_state",
 			"path": "scripts/ui/history/historical_renderer.gd",
 			"status": "modified",
@@ -22205,10 +23938,16 @@
 						16
 					],
 					"p_id": 86
+				},
+				{
+					"lines": [
+						18
+					],
+					"p_id": 119
 				}
 			],
 			"id": "C-837",
-			"last_p": 86,
+			"last_p": 119,
 			"name": "DEFAULT_TIMEOUT",
 			"path": "scripts/testing/test_all.gd",
 			"status": "modified",
@@ -22222,10 +23961,16 @@
 						17
 					],
 					"p_id": 86
+				},
+				{
+					"lines": [
+						19
+					],
+					"p_id": 119
 				}
 			],
 			"id": "C-838",
-			"last_p": 86,
+			"last_p": 119,
 			"name": "PREFLIGHT_TIMEOUT",
 			"path": "scripts/testing/test_all.gd",
 			"status": "modified",
@@ -29595,6 +31340,1196 @@
 			"last_p": 118,
 			"name": "snapshot.json",
 			"path": "narrative_runtime/sandbox/reference/snapshot.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-464": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-464",
+			"last_p": 119,
+			"name": "economy_default.tres",
+			"path": "resources/config/economy_default.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-465": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-465",
+			"last_p": 119,
+			"name": "economy_config.gd",
+			"path": "scripts/config/economy_config.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-466": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-466",
+			"last_p": 119,
+			"name": "economy_manager.gd",
+			"path": "scripts/objects/planets/economy_manager.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-467": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-467",
+			"last_p": 119,
+			"name": "shop_unit.gd",
+			"path": "scripts/state/domains/economy/shop_unit.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-468": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-468",
+			"last_p": 119,
+			"name": "shop_unit.gd.uid",
+			"path": "scripts/state/domains/economy/shop_unit.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-469": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-469",
+			"last_p": 119,
+			"name": "credit_income_behavior_test.gd",
+			"path": "scripts/testing/credit_income_behavior_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-470": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-470",
+			"last_p": 119,
+			"name": "vault_bar.gd",
+			"path": "scripts/ui/vault_bar.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-471": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-471",
+			"last_p": 119,
+			"name": "asset_library.gd",
+			"path": "scripts/config/asset_library.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-472": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-472",
+			"last_p": 119,
+			"name": "navigation_field.gd",
+			"path": "scripts/objects/planets/navigation_field.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-473": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-473",
+			"last_p": 119,
+			"name": "agent_activity.sh",
+			"path": "scripts/agent_activity.sh",
+			"status": "created",
+			"type": "file"
+		},
+		"F-474": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-474",
+			"last_p": 119,
+			"name": "vfx_debris.svg",
+			"path": "assets/effects/vfx_debris.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-475": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-475",
+			"last_p": 119,
+			"name": "vfx_debris.svg.import",
+			"path": "assets/effects/vfx_debris.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-476": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-476",
+			"last_p": 119,
+			"name": "vfx_explosion.svg",
+			"path": "assets/effects/vfx_explosion.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-477": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-477",
+			"last_p": 119,
+			"name": "vfx_explosion.svg.import",
+			"path": "assets/effects/vfx_explosion.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-478": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-478",
+			"last_p": 119,
+			"name": "vfx_laser_beam.svg",
+			"path": "assets/effects/vfx_laser_beam.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-479": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-479",
+			"last_p": 119,
+			"name": "vfx_laser_beam.svg.import",
+			"path": "assets/effects/vfx_laser_beam.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-480": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-480",
+			"last_p": 119,
+			"name": "vfx_shield_hit.svg",
+			"path": "assets/effects/vfx_shield_hit.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-481": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-481",
+			"last_p": 119,
+			"name": "vfx_shield_hit.svg.import",
+			"path": "assets/effects/vfx_shield_hit.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-482": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-482",
+			"last_p": 119,
+			"name": "vfx_spark.svg",
+			"path": "assets/effects/vfx_spark.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-483": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-483",
+			"last_p": 119,
+			"name": "vfx_spark.svg.import",
+			"path": "assets/effects/vfx_spark.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-484": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-484",
+			"last_p": 119,
+			"name": "vfx_thrust_flame.svg",
+			"path": "assets/effects/vfx_thrust_flame.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-485": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-485",
+			"last_p": 119,
+			"name": "vfx_thrust_flame.svg.import",
+			"path": "assets/effects/vfx_thrust_flame.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-486": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-486",
+			"last_p": 119,
+			"name": "beacon_signal.svg",
+			"path": "assets/objects/gates/beacon_signal.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-487": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-487",
+			"last_p": 119,
+			"name": "beacon_signal.svg.import",
+			"path": "assets/objects/gates/beacon_signal.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-488": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-488",
+			"last_p": 119,
+			"name": "jump_gate.svg",
+			"path": "assets/objects/gates/jump_gate.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-489": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-489",
+			"last_p": 119,
+			"name": "jump_gate.svg.import",
+			"path": "assets/objects/gates/jump_gate.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-490": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-490",
+			"last_p": 119,
+			"name": "wormhole_active.svg",
+			"path": "assets/objects/gates/wormhole_active.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-491": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-491",
+			"last_p": 119,
+			"name": "wormhole_active.svg.import",
+			"path": "assets/objects/gates/wormhole_active.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-492": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-492",
+			"last_p": 119,
+			"name": "resource_asteroid_field.svg",
+			"path": "assets/objects/resources/resource_asteroid_field.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-493": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-493",
+			"last_p": 119,
+			"name": "resource_asteroid_field.svg.import",
+			"path": "assets/objects/resources/resource_asteroid_field.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-494": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-494",
+			"last_p": 119,
+			"name": "resource_crystal_cluster.svg",
+			"path": "assets/objects/resources/resource_crystal_cluster.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-495": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-495",
+			"last_p": 119,
+			"name": "resource_crystal_cluster.svg.import",
+			"path": "assets/objects/resources/resource_crystal_cluster.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-496": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-496",
+			"last_p": 119,
+			"name": "resource_debris_field.svg",
+			"path": "assets/objects/resources/resource_debris_field.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-497": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-497",
+			"last_p": 119,
+			"name": "resource_debris_field.svg.import",
+			"path": "assets/objects/resources/resource_debris_field.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-498": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-498",
+			"last_p": 119,
+			"name": "resource_gas_cloud.svg",
+			"path": "assets/objects/resources/resource_gas_cloud.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-499": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-499",
+			"last_p": 119,
+			"name": "resource_gas_cloud.svg.import",
+			"path": "assets/objects/resources/resource_gas_cloud.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-500": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-500",
+			"last_p": 119,
+			"name": "armor_heavy.svg",
+			"path": "assets/objects/ships/armor_heavy.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-501": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-501",
+			"last_p": 119,
+			"name": "drive_advanced.svg",
+			"path": "assets/objects/ships/drive_advanced.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-502": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-502",
+			"last_p": 119,
+			"name": "scanner_t2.svg",
+			"path": "assets/objects/ships/scanner_t2.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-503": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-503",
+			"last_p": 119,
+			"name": "sensor_array.svg",
+			"path": "assets/objects/ships/sensor_array.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-504": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-504",
+			"last_p": 119,
+			"name": "star_blue_dwarf.svg",
+			"path": "assets/objects/stars/star_blue_dwarf.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-505": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-505",
+			"last_p": 119,
+			"name": "star_blue_dwarf.svg.import",
+			"path": "assets/objects/stars/star_blue_dwarf.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-506": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-506",
+			"last_p": 119,
+			"name": "star_main_sequence.svg",
+			"path": "assets/objects/stars/star_main_sequence.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-507": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-507",
+			"last_p": 119,
+			"name": "star_main_sequence.svg.import",
+			"path": "assets/objects/stars/star_main_sequence.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-508": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-508",
+			"last_p": 119,
+			"name": "star_nebula_core.svg",
+			"path": "assets/objects/stars/star_nebula_core.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-509": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-509",
+			"last_p": 119,
+			"name": "star_red_giant.svg",
+			"path": "assets/objects/stars/star_red_giant.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-510": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-510",
+			"last_p": 119,
+			"name": "automated_mine.svg",
+			"path": "assets/objects/structures/automated_mine.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-511": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-511",
+			"last_p": 119,
+			"name": "comms_array.svg",
+			"path": "assets/objects/structures/comms_array.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-512": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-512",
+			"last_p": 119,
+			"name": "trade_hub.svg",
+			"path": "assets/objects/structures/trade_hub.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-513": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-513",
+			"last_p": 119,
+			"name": "bg_deep_space.svg",
+			"path": "assets/ui/backgrounds/bg_deep_space.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-514": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-514",
+			"last_p": 119,
+			"name": "bg_nebula_purple.svg",
+			"path": "assets/ui/backgrounds/bg_nebula_purple.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-515": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-515",
+			"last_p": 119,
+			"name": "bg_nebula_teal.svg",
+			"path": "assets/ui/backgrounds/bg_nebula_teal.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-516": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-516",
+			"last_p": 119,
+			"name": "banner_ai.svg",
+			"path": "assets/ui/banner_ai.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-517": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-517",
+			"last_p": 119,
+			"name": "banner_architecture.svg",
+			"path": "assets/ui/banner_architecture.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-518": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-518",
+			"last_p": 119,
+			"name": "banner_architecture.svg.import",
+			"path": "assets/ui/banner_architecture.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-519": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-519",
+			"last_p": 119,
+			"name": "banner_conflict.svg",
+			"path": "assets/ui/banner_conflict.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-520": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-520",
+			"last_p": 119,
+			"name": "banner_conflict.svg.import",
+			"path": "assets/ui/banner_conflict.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-521": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-521",
+			"last_p": 119,
+			"name": "banner_terminal.svg",
+			"path": "assets/ui/banner_terminal.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-522": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-522",
+			"last_p": 119,
+			"name": "banner_terminal.svg.import",
+			"path": "assets/ui/banner_terminal.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-523": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-523",
+			"last_p": 119,
+			"name": "banner_workflow.svg",
+			"path": "assets/ui/banner_workflow.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-524": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-524",
+			"last_p": 119,
+			"name": "banner_workflow.svg.import",
+			"path": "assets/ui/banner_workflow.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-525": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-525",
+			"last_p": 119,
+			"name": "faction_emblem_a.svg",
+			"path": "assets/ui/factions/faction_emblem_a.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-526": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-526",
+			"last_p": 119,
+			"name": "faction_emblem_b.svg",
+			"path": "assets/ui/factions/faction_emblem_b.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-527": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-527",
+			"last_p": 119,
+			"name": "faction_emblem_b.svg.import",
+			"path": "assets/ui/factions/faction_emblem_b.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-528": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-528",
+			"last_p": 119,
+			"name": "faction_emblem_neutral.svg",
+			"path": "assets/ui/factions/faction_emblem_neutral.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-529": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-529",
+			"last_p": 119,
+			"name": "faction_emblem_neutral.svg.import",
+			"path": "assets/ui/factions/faction_emblem_neutral.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-530": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-530",
+			"last_p": 119,
+			"name": "faction_emblem_pirate.svg",
+			"path": "assets/ui/factions/faction_emblem_pirate.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-531": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-531",
+			"last_p": 119,
+			"name": "faction_emblem_pirate.svg.import",
+			"path": "assets/ui/factions/faction_emblem_pirate.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-532": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-532",
+			"last_p": 119,
+			"name": "fleet_marker_cpu.svg",
+			"path": "assets/ui/fleet/fleet_marker_cpu.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-533": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-533",
+			"last_p": 119,
+			"name": "fleet_marker_cpu.svg.import",
+			"path": "assets/ui/fleet/fleet_marker_cpu.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-534": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-534",
+			"last_p": 119,
+			"name": "fleet_marker_neutral.svg",
+			"path": "assets/ui/fleet/fleet_marker_neutral.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-535": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-535",
+			"last_p": 119,
+			"name": "fleet_marker_neutral.svg.import",
+			"path": "assets/ui/fleet/fleet_marker_neutral.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-536": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-536",
+			"last_p": 119,
+			"name": "fleet_marker_player.svg",
+			"path": "assets/ui/fleet/fleet_marker_player.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-537": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-537",
+			"last_p": 119,
+			"name": "fleet_marker_player.svg.import",
+			"path": "assets/ui/fleet/fleet_marker_player.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-538": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-538",
+			"last_p": 119,
+			"name": "fleet_marker_transit.svg",
+			"path": "assets/ui/fleet/fleet_marker_transit.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-539": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-539",
+			"last_p": 119,
+			"name": "fleet_marker_transit.svg.import",
+			"path": "assets/ui/fleet/fleet_marker_transit.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-540": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-540",
+			"last_p": 119,
+			"name": "icon_alliance.svg",
+			"path": "assets/ui/icons/icon_alliance.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-541": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-541",
+			"last_p": 119,
+			"name": "icon_alliance.svg.import",
+			"path": "assets/ui/icons/icon_alliance.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-542": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-542",
+			"last_p": 119,
+			"name": "icon_conquest.svg",
+			"path": "assets/ui/icons/icon_conquest.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-543": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-543",
+			"last_p": 119,
+			"name": "icon_conquest.svg.import",
+			"path": "assets/ui/icons/icon_conquest.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-544": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-544",
+			"last_p": 119,
+			"name": "icon_diplomacy.svg",
+			"path": "assets/ui/icons/icon_diplomacy.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-545": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-545",
+			"last_p": 119,
+			"name": "icon_diplomacy.svg.import",
+			"path": "assets/ui/icons/icon_diplomacy.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-546": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-546",
+			"last_p": 119,
+			"name": "icon_famine.svg",
+			"path": "assets/ui/icons/icon_famine.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-547": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-547",
+			"last_p": 119,
+			"name": "icon_famine.svg.import",
+			"path": "assets/ui/icons/icon_famine.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-548": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-548",
+			"last_p": 119,
+			"name": "icon_plague.svg",
+			"path": "assets/ui/icons/icon_plague.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-549": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-549",
+			"last_p": 119,
+			"name": "icon_plague.svg.import",
+			"path": "assets/ui/icons/icon_plague.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-550": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-550",
+			"last_p": 119,
+			"name": "icon_tech.svg",
+			"path": "assets/ui/icons/icon_tech.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-551": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-551",
+			"last_p": 119,
+			"name": "icon_tech.svg.import",
+			"path": "assets/ui/icons/icon_tech.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-552": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-552",
+			"last_p": 119,
+			"name": "icon_trade.svg",
+			"path": "assets/ui/icons/icon_trade.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-553": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-553",
+			"last_p": 119,
+			"name": "icon_trade.svg.import",
+			"path": "assets/ui/icons/icon_trade.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-554": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-554",
+			"last_p": 119,
+			"name": "icon_war.svg",
+			"path": "assets/ui/icons/icon_war.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-555": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-555",
+			"last_p": 119,
+			"name": "icon_war.svg.import",
+			"path": "assets/ui/icons/icon_war.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-556": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-556",
+			"last_p": 119,
+			"name": "status_burning.svg",
+			"path": "assets/ui/status/status_burning.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-557": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-557",
+			"last_p": 119,
+			"name": "status_burning.svg.import",
+			"path": "assets/ui/status/status_burning.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-558": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-558",
+			"last_p": 119,
+			"name": "status_contested.svg",
+			"path": "assets/ui/status/status_contested.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-559": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-559",
+			"last_p": 119,
+			"name": "status_contested.svg.import",
+			"path": "assets/ui/status/status_contested.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-560": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-560",
+			"last_p": 119,
+			"name": "status_depleted.svg",
+			"path": "assets/ui/status/status_depleted.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-561": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-561",
+			"last_p": 119,
+			"name": "status_depleted.svg.import",
+			"path": "assets/ui/status/status_depleted.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-562": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-562",
+			"last_p": 119,
+			"name": "status_fortified.svg",
+			"path": "assets/ui/status/status_fortified.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-563": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-563",
+			"last_p": 119,
+			"name": "status_fortified.svg.import",
+			"path": "assets/ui/status/status_fortified.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-564": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-564",
+			"last_p": 119,
+			"name": "status_siege.svg",
+			"path": "assets/ui/status/status_siege.svg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-565": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-565",
+			"last_p": 119,
+			"name": "status_siege.svg.import",
+			"path": "assets/ui/status/status_siege.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-566": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-566",
+			"last_p": 119,
+			"name": "AGENT_ACTIVITY.md",
+			"path": "docs/AGENT_ACTIVITY.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-567": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-567",
+			"last_p": 119,
+			"name": "BRANCH_AUDIT_2026-08-30.md",
+			"path": "docs/BRANCH_AUDIT_2026-08-30.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-568": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-568",
+			"last_p": 119,
+			"name": "architecture-history-economy-1.md",
+			"path": "plan/architecture-history-economy-1.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-569": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-569",
+			"last_p": 119,
+			"name": "playback_controller.tscn",
+			"path": "scenes/historical_world/playback_controller.tscn",
+			"status": "created",
+			"type": "file"
+		},
+		"F-570": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-570",
+			"last_p": 119,
+			"name": "simulation_overlay.tscn",
+			"path": "scenes/historical_world/simulation_overlay.tscn",
+			"status": "created",
+			"type": "file"
+		},
+		"F-571": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-571",
+			"last_p": 119,
+			"name": "AGENTS_REFERENCE.md",
+			"path": "scripts/docs/AGENTS_REFERENCE.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-572": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-572",
+			"last_p": 119,
+			"name": "navigation_waypoint.gd",
+			"path": "scripts/objects/planets/navigation_waypoint.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-573": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-573",
+			"last_p": 119,
+			"name": "constraint_agent_activity.gd",
+			"path": "scripts/preflight/constraint_agent_activity.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-574": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-574",
+			"last_p": 119,
+			"name": "constraint_agent_activity.gd.uid",
+			"path": "scripts/preflight/constraint_agent_activity.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-575": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-575",
+			"last_p": 119,
+			"name": "constraint_world_planets_and_dispatch.gd",
+			"path": "scripts/preflight/constraint_world_planets_and_dispatch.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-576": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-576",
+			"last_p": 119,
+			"name": "playback_controller.gd",
+			"path": "scripts/state/playback_controller.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-577": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-577",
+			"last_p": 119,
+			"name": "playback_controller.gd.uid",
+			"path": "scripts/state/playback_controller.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-578": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-578",
+			"last_p": 119,
+			"name": "credit_income_behavior_test.gd.uid",
+			"path": "scripts/testing/credit_income_behavior_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-579": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-579",
+			"last_p": 119,
+			"name": "history_economy_behavior_test.gd",
+			"path": "scripts/testing/history_economy_behavior_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-580": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-580",
+			"last_p": 119,
+			"name": "history_economy_behavior_test.gd.uid",
+			"path": "scripts/testing/history_economy_behavior_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-581": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-581",
+			"last_p": 119,
+			"name": "history_economy_seams_test.gd",
+			"path": "scripts/testing/history_economy_seams_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-582": {
+			"first_p": 119,
+			"history": [],
+			"id": "F-582",
+			"last_p": 119,
+			"name": "history_economy_seams_test.gd.uid",
+			"path": "scripts/testing/history_economy_seams_test.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

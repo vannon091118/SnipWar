@@ -36,6 +36,8 @@ var _marker_offscreen := false
 var _open_pending_label := ""
 var _open_pending_delay := 0.0
 var _scrolled_steps: Dictionary = {}
+var _weiter_blink_tween: Tween
+var _highlight_target: Control
 
 const DEFAULT_THEME: UIThemeConfig = preload("res://resources/config/ui_theme_default.tres")
 
@@ -145,6 +147,9 @@ func _build_ui() -> void:
 	UIBaseUtils.apply_button_theme(_weiter_button, _theme_config)
 	_weiter_button.pressed.connect(_on_weiter_pressed)
 	row.add_child(_weiter_button)
+	# WEITER-Blink (1,5 Hz pulsierender Rahmen): macht klar, wo es
+	# weitergeht. Wird in _present_step gestartet/gestoppt.
+	_weiter_button.add_theme_stylebox_override("normal", UIBaseUtils.style_box(_theme_config, _theme_config.button_background, _theme_config.accent_text_color, 2, _theme_config.panel_corner_radius))
 
 	var skip_button := Button.new()
 	skip_button.name = "TutorialSkip"
@@ -196,7 +201,23 @@ func _build_steps() -> void:
 	_steps.append({
 		"id": "open_dossier",
 		"title": "DOSSIER AUFKLAPPEN",
-		"text": "[PLANET] ist offen: Bau, Hangar und planetare Forschung stecken in deinem Aktenberg. Blättern lohnt sich — Papier lügt nicht. Meistens.",
+		"text": "[PLANET] ist offen: Bau, Hangar und Forschung stecken hier. Wir bauen gleich die Werft.",
+		"target": "",
+		"open": "PLANET",
+		"width_min": 320.0,
+	})
+	_steps.append({
+		"id": "vault_explain",
+		"title": "DER VAULT",
+		"text": "Oben im Dossier: dein Vault — Biomasse, Material, Rare, Volatile. Alles, was du erntest oder baust, landet hier. Biomasse braucht die Werft; Credits kommen über die Runden.",
+		"target": "",
+		"open": "PLANET",
+		"width_min": 340.0,
+	})
+	_steps.append({
+		"id": "economy_check",
+		"title": "RESSOURCEN PRÜFEN",
+		"text": "Die Orbitale Werft braucht 20 Biomasse · 5 Credits. Fehlt etwas? Sammle, bis es reicht — Papier Geduld.",
 		"target": "",
 		"open": "PLANET",
 		"width_min": 340.0,
@@ -204,10 +225,18 @@ func _build_steps() -> void:
 	_steps.append({
 		"id": "build_shipyard",
 		"title": "WERFT BAUEN",
-		"text": "Im Block MILITARY wartet die Orbitale Werft (20 Biomasse · 5 Credits). BAUEN drücken — der Timer läuft von allein, wir arbeiten hier schließlich professionell.",
+		"text": "Im Block MILITARY: Orbitale Werft (20 Biomasse · 5 Credits). BAUEN drücken — der Timer läuft von allein. Erst mit eigener Werft geht es zur Werkstatt.",
 		"target": "",
 		"open": "PLANET",
 		"width_min": 350.0,
+	})
+	_steps.append({
+		"id": "shipyard_gate",
+		"title": "DAS WERFT-GATE",
+		"text": "Ohne eigene Werft bleibt die Werkstatt verschlossen. Sobald der Bau-Timer abläuft, wird sie frei — der Hangar öffnet sich. Warte oder baue nebenbei weiter.",
+		"target": "",
+		"open": "PLANET",
+		"width_min": 340.0,
 	})
 	_steps.append({
 		"id": "workshop",
@@ -216,6 +245,14 @@ func _build_steps() -> void:
 		"target": "",
 		"open": "WERKSTATT",
 		"width_min": 360.0,
+	})
+	_steps.append({
+		"id": "hangar_explain",
+		"title": "DER HANGAR",
+		"text": "Im unteren Dossier-Bereich: der Hangar. Hier liegen deine fertigen Schiffe und die montierten Teile am Rumpf. Jedes kombinierte Schiff erscheint hier sichtbar.",
+		"target": "",
+		"open": "WERKSTATT",
+		"width_min": 350.0,
 	})
 	_steps.append({
 		"id": "scout",
@@ -245,10 +282,13 @@ func _present_step() -> void:
 	_text_label.custom_minimum_size.x = width_min - 36.0
 	_counter_label.text = "Schritt %d / %d" % [_step_index + 1, _steps.size()]
 	_refresh_marker_target()
+	_refresh_highlight_target(step)
+	_start_weiter_blink()
 	_marker.queue_redraw()
 	_schedule_open(step)
 
 func _on_weiter_pressed() -> void:
+	_stop_weiter_blink()
 	_step_index += 1
 	_present_step()
 
@@ -309,6 +349,7 @@ func _find_tree_scroll() -> ScrollContainer:
 
 func _finish() -> void:
 	_active = false
+	_stop_weiter_blink()
 	hide_overlay()
 
 # ── Helfer ─────────────────────────────────────────────────────────────
@@ -438,6 +479,76 @@ func _draw_marker() -> void:
 			var tip := _marker_draw_pos + dir * (radius + 18.0)
 			var side := dir.orthogonal() * 9.0
 			_marker.draw_colored_polygon(PackedVector2Array([tip, tip - dir * 14.0 + side, tip - dir * 14.0 - side]), color)
+	# Pfeil-Konnektor (#3): sichtbarer Zeiger vom Kartenrand zur Zielposition.
+	# Bei Offscreen-Ziel zeigt der bestehende Pfeil schon Richtung; hier
+	# zusätzlich eine Linie vom Kartenrand zur Zielposition, wenn die Karte
+	# sichtbar ist und nicht deckungsgleich mit dem Marker.
+	if _card.visible and not _marker_offscreen:
+		var card_rect := _card.get_global_rect()
+		var card_anchor := card_rect.get_center()
+		# Kartenrand-Anker: nächste Kante zum Ziel
+		var to_target := _marker_draw_pos - card_anchor
+		if to_target.length_squared() > 4.0:
+			var edge_point := _card_edge_point(card_rect, _marker_draw_pos)
+			var pulse := 0.6 + 0.4 * sin(t * 6.28)
+			var line_col := Color(color.r, color.g, color.b, pulse)
+			_marker.draw_line(edge_point, _marker_draw_pos, line_col, 2.0, true)
+			# Pfeilspitze am Ziel
+			var n := to_target.normalized()
+			var tip2 := _marker_draw_pos - n * (radius + 4.0)
+			var side2 := n.orthogonal() * 7.0
+			_marker.draw_colored_polygon(PackedVector2Array([_marker_draw_pos - n * (radius - 2.0), tip2 + side2, tip2 - side2]), Color(color.r, color.g, color.b, pulse))
+	# Light-Ring-Fade (#3): weicher, wiederkehrender Fade-Ring um das
+	# aktuelle Ziel-Control (Launcher-Button/Tech-Bubble) zusätzlich zum
+	# Zielring. _highlight_target wird in _refresh_highlight_target gesetzt.
+	if _highlight_target != null and is_instance_valid(_highlight_target):
+		var hr := _highlight_target.get_global_rect()
+		var hc := hr.get_center()
+		var fade := 0.5 + 0.5 * sin(t * 4.0)  # ~0,6 Hz, ruhiger als Zielring
+		var hcol := Color(1.0, 0.85, 0.4, fade * 0.5)
+		_marker.draw_rect(hr.grow(6.0 + 2.0 * fade), hcol, false, 3.0)
+		_marker.draw_arc(hc, hr.size.length() * 0.5 + 10.0, t * 0.8, t * 0.8 + TAU, 60, hcol, 2.0, true)
+
+## Nächstgelegener Punkt auf dem Kartenrand zur Zielposition (für Pfeil-Linie).
+func _card_edge_point(card_rect: Rect2, target: Vector2) -> Vector2:
+	var center := card_rect.get_center()
+	var to := target - center
+	if abs(to.x) * card_rect.size.y > abs(to.y) * card_rect.size.x:
+		var sx := card_rect.size.x * 0.5 * signf(to.x)
+		return center + Vector2(sx, to.y * (sx / to.x) if to.x != 0.0 else 0.0)
+	else:
+		var sy := card_rect.size.y * 0.5 * signf(to.y)
+		return center + Vector2(to.x * (sy / to.y) if to.y != 0.0 else 0.0, sy)
+
+## Löst das Ziel-Control des Schritts auf (Launcher-Button), damit der
+## Light-Ring-Fade direkt das erklärte Element hervorhebt.
+func _refresh_highlight_target(step: Dictionary) -> void:
+	_highlight_target = null
+	var open_label := String(step.get("open", ""))
+	if not open_label.is_empty():
+		_highlight_target = _find_launcher_button(open_label)
+		return
+	var target_text := String(step.get("target", ""))
+	if target_text.begins_with("button:"):
+		_highlight_target = _find_launcher_button(target_text.get_slice(":", 1))
+
+## WEITER-Blink (#3): pulsierender modulate-Tween (~1,5 Hz), damit klar ist,
+## wo es weitergeht. Wird pro Schritt neu gestartet und bei finish/skip
+## gestoppt.
+func _start_weiter_blink() -> void:
+	_stop_weiter_blink()
+	if not is_instance_valid(_weiter_button):
+		return
+	_weiter_blink_tween = create_tween().set_loops()
+	_weiter_blink_tween.tween_property(_weiter_button, "modulate:a", 0.45, 0.34).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_weiter_blink_tween.tween_property(_weiter_button, "modulate:a", 1.0, 0.34).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+func _stop_weiter_blink() -> void:
+	if _weiter_blink_tween != null and _weiter_blink_tween.is_valid():
+		_weiter_blink_tween.kill()
+	_weiter_blink_tween = null
+	if is_instance_valid(_weiter_button):
+		_weiter_button.modulate.a = 1.0
 
 func _process(delta: float) -> void:
 	if not _active:

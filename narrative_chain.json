@@ -9327,6 +9327,63 @@
 			"seq": 117,
 			"subject": "Cherry-Pick aus 3 Session-Branches [Analyse: Thinker] — nach Vannon",
 			"summary": "Drei Geister aus dem Nebel — Session-Branches, entstanden vor Äons, sechs Commits hinter der Gegenwart. Ich habe ihre Überreste katalogisiert, seziert und das Brauchbare geborgen. Der Rest verweht."
+		},
+		{
+			"a": 38,
+			"arc": "a56",
+			"c": 118,
+			"composite": "c118j46n12a38p68",
+			"data_changes": [
+				{
+					"deletions": 6441.0,
+					"file": "change_index.json",
+					"insertions": 6549.0
+				},
+				{
+					"deletions": 18.0,
+					"file": "docs/METRICS_TRACKER.md",
+					"insertions": 18.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_chain.json",
+					"insertions": 167.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "narrative_runtime/relationships.py",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "narrative_runtime/sandbox/reference/snapshot.json",
+					"insertions": 866.0
+				},
+				{
+					"deletions": 33.0,
+					"file": "narrative_runtime/sandbox/runner.py",
+					"insertions": 54.0
+				},
+				{
+					"deletions": 53.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 64.0
+				}
+			],
+			"date": "2026-08-27 22:00:00",
+			"hash": "41aafa3cdd66eae66098292abdfa051852c449c8",
+			"j": 46,
+			"model_id": "claude-sonnet-4",
+			"mood": "müde-zufrieden",
+			"n": 12,
+			"narrator": "Echo",
+			"p": 68,
+			"p_id": 118,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Thinker",
+			"seq": 118,
+			"subject": "Echo erinnert: Sandbox-Determinismus korrigieren: exakter… — nach Thinker",
+			"summary": "Die Sandbox behauptete, DOKI zu simulieren, aber ihre Zufallsmaschine erzählte eine andere Geschichte. Das war kein Stilunterschied, sondern ein deterministischer Bruch: Ein einzelner 32-Bit-Zustan..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

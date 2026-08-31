@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <g fill="#FF4500">
+    <polygon points="24,24 48,24 41,29 41,19" />
+    <polygon points="24,24 34,30 37,37 41,29" />
+    <polygon points="24,24 36,45 29,41 37,37" />
+    <polygon points="24,24 24,36 19,41 29,41" />
+    <polygon points="24,24 12,45 11,37 19,41" />
+    <polygon points="24,24 14,30 7,29 11,37" />
+    <polygon points="24,24 0,24 7,19 7,29" />
+    <polygon points="24,24 14,18 11,11 7,19" />
+    <polygon points="24,24 12,3 19,7 11,11" />
+    <polygon points="24,24 24,12 29,7 19,7" />
+    <polygon points="24,24 36,3 37,11 29,7" />
+    <polygon points="24,24 34,18 41,19 37,11" />
+  </g>
+</svg>

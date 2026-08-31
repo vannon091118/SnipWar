@@ -125,6 +125,7 @@ func rebuild() -> void:
 			var direction := (second.global_position - first.global_position).normalized()
 			var perpendicular := Vector2(-direction.y, direction.x)
 			midpoint += perpendicular * rng.randf_range(-waypoint_config.midpoint_jitter, waypoint_config.midpoint_jitter)
+			midpoint = _clear_of_planets(midpoint, planets)
 			var waypoint_definition: NavigationWaypointDefinition = waypoint_config.waypoint_for_edge(edge_index)
 			if waypoint_definition == null:
 				continue
@@ -180,6 +181,7 @@ func _rebuild_infinite_edges(planets: Array[Planet], waypoint_config: Navigation
 			var direction := (second.global_position - first.global_position).normalized()
 			var perpendicular := Vector2(-direction.y, direction.x)
 			midpoint += perpendicular * waypoint_config.midpoint_jitter * sin(float(edge_index + 1))
+			midpoint = _clear_of_planets(midpoint, planets)
 			var waypoint_definition: NavigationWaypointDefinition = waypoint_config.waypoint_for_edge(edge_index)
 			if waypoint_definition == null:
 				continue
@@ -420,3 +422,32 @@ func _add_graph_point(point_position: Vector2) -> int:
 func _connect_graph_points(first_id: int, second_id: int) -> void:
 	if not _astar.are_points_connected(first_id, second_id):
 		_astar.connect_points(first_id, second_id, true)
+
+## Waypoint clearance from every planet in the field. Runs after jitter so the
+## rendered position is guaranteed clear (bounded iterative nudge: each pass rc
+## away from the nearest infringing planet; handful of passes converges on grid
+## layouts and degrades gracefully in dense chunk worlds).
+const WAYPOINT_MIN_PLANET_DIST := 56.0
+
+func _clear_of_planets(midpoint: Vector2, planets: Array[Planet]) -> Vector2:
+	var result := midpoint
+	for _pass in 8:
+		var nearest: Planet = null
+		var nearest_dist := WAYPOINT_MIN_PLANET_DIST
+		for planet in planets:
+			if planet == null:
+				continue
+			var dist: float = result.distance_to(planet.global_position)
+			if dist < nearest_dist:
+				nearest_dist = dist
+				nearest = planet
+		if nearest == null:
+			break
+		var away := (result - nearest.global_position)
+		if away.length() <= 0.0001:
+			# On top of the planet: bias along a deterministic axis.
+			away = Vector2(1.0, 0.3)
+		else:
+			away = away.normalized()
+		result = nearest.global_position + away * WAYPOINT_MIN_PLANET_DIST
+	return result

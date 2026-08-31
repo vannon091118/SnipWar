@@ -12,17 +12,26 @@ extends SceneTree
 ##   "$GODOT_BIN" --headless --path . --script res://scripts/testing/compile_gate.gd
 
 const EVIDENCE_PATH := "user://mcp_evidence/compile_gate.json"
-const EVIDENCE_TMP := "user://mcp_evidence/compile_gate.tmp"
+# PID-keyed Tmp-Pfad: parallele Agenten/Läufe kollidieren nicht mehr auf
+# derselben Tmp-Datei (RISK: user:// ist über alle Prozesse dieses OS-Users
+# geteilt). Der finale Evidence-Pfad bleibt stabil (Letzter-Schreiber-
+# Semantik ist für den Befund akzeptabel; der Tmp-Race war das Risiko).
+# Const kann keine Runtime-Funktionen rufen → als reguläre Konstante mit
+# Variablen-Initialisierung in _init.
+var EVIDENCE_TMP := ""
 
 var _files: Array[String] = []
 var _failures: Array[String] = []
 var _live_verified := 0
 
 func _init() -> void:
-	create_timer(30.0).timeout.connect(func() -> void:
-		print("COMPILE_GATE: FATAL: WATCHDOG TIMEOUT")
-		quit(3)
-	)
+	EVIDENCE_TMP = "user://mcp_evidence/compile_gate.%d.tmp" % OS.get_process_id()
+	var watchdog_env := OS.get_environment("COMPILE_GATE_WATCHDOG_SECONDS")
+	if not watchdog_env.is_empty() and float(watchdog_env) > 0.0:
+		create_timer(float(watchdog_env)).timeout.connect(func() -> void:
+			print("COMPILE_GATE: ABORT: watchdog timeout")
+			quit(3)
+		)
 	_collect("res://scripts")
 	_collect("res://addons/gdscript_mcp")
 	print("COMPILE_GATE: scanning ", _files.size(), " files")
@@ -57,8 +66,26 @@ func _write_evidence(data: Dictionary) -> void:
 		return
 	file.store_string(JSON.stringify(data, "\t"))
 	file.close()
-	# atomar: erst tmp, dann rename — kein halbgeschriebener Befund
-	DirAccess.rename_absolute(ProjectSettings.globalize_path(EVIDENCE_TMP), ProjectSettings.globalize_path(EVIDENCE_PATH))
+	# atomar: erst tmp, dann rename — kein halbgeschriebener Befund. Tmp-Pfad
+	# ist PID-keyed, damit parallele Läufe sich nicht gegenseitig stören.
+	var tmp_global: String = ProjectSettings.globalize_path(EVIDENCE_TMP)
+	DirAccess.rename_absolute(tmp_global, ProjectSettings.globalize_path(EVIDENCE_PATH))
+	# Verwaiste PID-Tmps älterer Läufe aufräumen (best-effort, nicht blockend).
+	_cleanup_stale_tmps()
+
+func _cleanup_stale_tmps() -> void:
+	var dir := DirAccess.open("user://mcp_evidence")
+	if dir == null:
+		return
+	dir.list_dir_begin()
+	var entry := dir.get_next()
+	while not entry.is_empty():
+		if entry.begins_with("compile_gate.") and entry.ends_with(".tmp"):
+			# Eigene Tmp-Datei nicht löschen (könnte noch offen sein).
+			if entry != "compile_gate.%d.tmp" % OS.get_process_id():
+				dir.remove(entry)
+		entry = dir.get_next()
+	dir.list_dir_end()
 
 func _collect(dir_path: String) -> void:
 	var dir := DirAccess.open(dir_path)

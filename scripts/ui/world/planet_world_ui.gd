@@ -270,6 +270,9 @@ func _create_tutorial() -> void:
 	var ship_manager: ShipManager = _ship_manager as ShipManager
 	_tutorial = TUTORIAL_DIRECTOR_SCRIPT.new() as TutorialDirector
 	_tutorial.name = "TutorialDirector"
+	# QA2-MCP-6: eindeutiger Name für runtime_ux_scan/find_child. Der Director
+	# hängt am Viewport-Root (CanvasLayer), Pfad = /root/TutorialDirector.
+	_tutorial.unique_name_in_owner = true
 	# CanvasLayer muss zum Scene-Root (World) hinzugefügt werden, nicht zu PlanetNetwork
 	# (Node2D mit Transform), sonst stimmt viewport.get_canvas_transform() nicht.
 	var world_root := get_tree().root

@@ -1,6 +1,6 @@
 # 🔢 NARRATIVE METRICS TRACKER
 > Automatisch aktualisiert nach jedem DOKI-Commit.
-> Letzte Aktualisierung: `2026-08-30T19:40:15` | Chain-Eintrag: `c117` | Arc: `a56`
+> Letzte Aktualisierung: `2026-08-30T20:02:22` | Chain-Eintrag: `c118` | Arc: `a56`
 
 ---
 
@@ -8,7 +8,7 @@
 
 | Metrik | Wert |
 |--------|------|
-| **Gesamt-Commits (Chain)** | 117 |
+| **Gesamt-Commits (Chain)** | 118 |
 | **Aktiver Arc** | `a56` |
 | **Narratoren aktiv** | 14 |
 | **Letzter Sentiment** | 10.0/10 |
@@ -28,7 +28,7 @@
 | 🟢 Argos | 10 | 0 | 9 | 1 | **+2.1** |
 | 🟢 Glitch | 4 | 0 | 4 | 0 | **+2.0** |
 | 🟢 Null | 7 | 1 | 6 | 0 | **+1.8** |
-| 🟡 Echo | 2 | 0 | 2 | 0 | **+1.0** |
+| 🟢 Echo | 3 | 0 | 3 | 0 | **+1.5** |
 | 🟡 Vannon | 11 | 1 | 9 | 1 | **+0.9** |
 | 🟡 Ghost | 7 | 0 | 6 | 1 | **+0.6** |
 | 🟡 Flux | 7 | 0 | 6 | 1 | **+0.6** |
@@ -45,9 +45,9 @@
 | alarmiert | 13 | 11% |
 | neugierig | 13 | 11% |
 | erschöpft | 12 | 10% |
+| müde-zufrieden | 11 | 9% |
 | warm | 11 | 9% |
-| müde-zufrieden | 10 | 9% |
-| sachlich | 10 | 9% |
+| sachlich | 10 | 8% |
 | sarkastisch | 9 | 8% |
 | selbstironisch | 9 | 8% |
 
@@ -57,16 +57,16 @@
 
 | Paar | Häufigkeit |
 |------|-----------|
+| Squizzle > Buffy | 3 |
 | Ghost > Sage | 3 |
 | Argos > Sage | 3 |
 | Flux > Spark | 3 |
-| Squizzle > Buffy | 3 |
-| Null > Devin | 2 |
-| Basher > Null | 2 |
-| Thinker > Vannon | 2 |
-| Basher > Squizzle | 2 |
+| Vannon > Ghost | 2 |
+| Buffy > Sage | 2 |
 | Argos > Basher | 2 |
+| Basher > Squizzle | 2 |
 | Sage > Devin | 2 |
+| Basher > Null | 2 |
 
 ---
 
@@ -96,18 +96,18 @@
  21 │████
  22 │█████
  23 │██████
- 24 │███████
+ 24 │████████
  25 │█████████
  26 │██████████
  27 │██████████
  28 │██████████
- 29 │████████
- 30 │█████████
+ 29 │█████████
+ 30 │██████████
  31 │██████████
  32 │██████████
  33 │██████████
  34 │████████
- 35 │█████████
+ 35 │██████████
  36 │██████████
  37 │██████████
  38 │██████████

@@ -800,6 +800,13 @@ func gathering_workers_on(faction: StringName, planet_id: StringName) -> int:
 func gather_income_tick(base_amounts: Dictionary, catalog: PlanetUpgradeCatalog = null) -> int:
 	return economy_domain.gather_income_tick(base_amounts, catalog)
 
+func credit_income_tick(faction: StringName = FACTION_PLAYER, catalog: PlanetUpgradeCatalog = null) -> int:
+	var owned: Array[StringName] = []
+	for planet_id in faction_domain.ownership:
+		if faction_domain.faction_of(planet_id) == faction:
+			owned.append(planet_id)
+	return economy_domain.credit_income_tick(owned, faction, catalog)
+
 # --- TECHNOLOGY DELEGATES ---
 func has_technology(faction: StringName, technology_id: StringName) -> bool:
 	return tech_domain.has_technology(faction, technology_id)
@@ -1028,6 +1035,11 @@ func snapshot_run() -> RunSaveData:
 	economy_domain.capture_snapshot(data)
 	tech_domain.capture_snapshot(data)
 	ship_domain.capture_snapshot(data)
+	var conflict_manager: Node = get_node_or_null("/root/ConflictManager")
+	if conflict_manager != null:
+		data.combat_game_seed = int(conflict_manager.call("game_seed"))
+		data.combat_battle_counter = int(conflict_manager.call("battle_counter"))
+	data.pending_battle = pending_battle_context()
 
 	# Transits
 	for record_value in _transit_records.values():
@@ -1051,7 +1063,7 @@ func restore_run(data: RunSaveData) -> bool:
 		return false
 	_run_active = true
 	_reconnect_requested = true
-	_pending_battle = null
+	_pending_battle = data.pending_battle.copy() if data.pending_battle != null else null
 	if data.session != null:
 		_session = data.session.copy()
 		_run_id = _session.run_id
@@ -1075,6 +1087,9 @@ func restore_run(data: RunSaveData) -> bool:
 		if record != null:
 			_transit_records[record.transit_id] = record.copy()
 	_next_transit_index = data.next_transit_index
+	var conflict_manager: Node = get_node_or_null("/root/ConflictManager")
+	if conflict_manager != null:
+		conflict_manager.call("restore_combat_state", data.combat_game_seed, data.combat_battle_counter)
 	# Chunk world + timers (consumed by the world scene on boot)
 	_pending_chunk_data = data.chunk_data
 	_pending_timers = data.timers.duplicate()

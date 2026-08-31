@@ -32,11 +32,13 @@ const CONTROLLER_SPECIAL := ["preflight_constraint"]
 const REQUIRED_HOST_TOOLS := ["runtime_mcp_status", "runtime_mcp_events", "runtime_agent_activity", "runtime_run_trace", "editor_logs_read"]
 
 const EVIDENCE_PATH := "user://mcp_evidence/chain_manifest_gate.json"
-const EVIDENCE_TMP := "user://mcp_evidence/chain_manifest_gate.tmp"
+# PID-keyed Tmp-Pfad: parallele Läufe kollidieren nicht auf derselben Tmp-Datei.
+var EVIDENCE_TMP := ""
 
 var _failures: Array[String] = []
 
 func _init() -> void:
+	EVIDENCE_TMP = "user://mcp_evidence/chain_manifest_gate.%d.tmp" % OS.get_process_id()
 	var registry_script := load(REGISTRY_PATH) as Script
 	if registry_script == null:
 		_failures.append("Cannot load McpToolRegistry — gate cannot verify tool names")
@@ -239,3 +241,18 @@ func _write_evidence(data: Dictionary) -> void:
 	file.store_string(JSON.stringify(data, "\t"))
 	file.close()
 	DirAccess.rename_absolute(ProjectSettings.globalize_path(EVIDENCE_TMP), ProjectSettings.globalize_path(EVIDENCE_PATH))
+	_cleanup_stale_tmps()
+
+
+func _cleanup_stale_tmps() -> void:
+	var d := DirAccess.open("user://mcp_evidence")
+	if d == null:
+		return
+	d.list_dir_begin()
+	var entry := d.get_next()
+	while not entry.is_empty():
+		if entry.begins_with("chain_manifest_gate.") and entry.ends_with(".tmp"):
+			if entry != "chain_manifest_gate.%d.tmp" % OS.get_process_id():
+				d.remove(entry)
+		entry = d.get_next()
+	d.list_dir_end()

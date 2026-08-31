@@ -137,6 +137,7 @@ func gather_income_tick(base_amounts: Dictionary, catalog: PlanetUpgradeCatalog 
 			_owner.add_faction_resource(faction_name, res_id, earned)
 			total_earned += earned
 			_owner.resources_collected.emit(faction_name, planet_id, res_id, earned)
+
 	return total_earned
 
 

@@ -37,9 +37,13 @@ func refresh(state: Node, planets: Array[Planet]) -> void:
 	_research_ship_view.worker_button = null
 	if state == null or _ship_manager == null:
 		return
-	_content.add_child(UIBaseUtils.make_label("WERKBANK — SCHIFFSMONTAGE", _theme_config.heading_text_color, _theme_config.section_font_size))
-	_content.add_child(UIBaseUtils.make_label("Teile kaufen, im Hangar montieren, starten oder wieder zerlegen.", _theme_config.muted_text_color, _theme_config.small_font_size))
+	# QS-2: Getrennte Sektionen SHOP (Kauf) und HANGAR (Montage/Forschungsschiff)
+	_content.add_child(UIBaseUtils.make_label("SCHIFFSWERFT — SHOP", _theme_config.heading_text_color, _theme_config.section_font_size))
+	_content.add_child(UIBaseUtils.make_label("Teile kaufen, die Montage erfolgt unten im Hangar.", _theme_config.muted_text_color, _theme_config.small_font_size))
 	_builder.build_ship_builder_section(_content, state, planets, Callable(self, "_refresh_from_builder").bind(state, planets))
+	_content.add_child(UIBaseUtils.make_separator())
+	_content.add_child(UIBaseUtils.make_label("HANGAR — MONTAGE & FORSCHUNGSSCHIFF", _theme_config.heading_text_color, _theme_config.section_font_size))
+	_content.add_child(UIBaseUtils.make_label("Montierte Teile, Schiffbau und Forschungsschiff-Start.", _theme_config.muted_text_color, _theme_config.small_font_size))
 	_research_ship_view.build_research_ship_and_worker_section(_content, state, planets, Callable(self, "_refresh_from_builder").bind(state, planets))
 
 ## Live-Countdowns für Forschungsaufträge (Scan/Explore) aktualisieren,

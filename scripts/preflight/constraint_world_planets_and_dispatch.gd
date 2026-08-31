@@ -75,6 +75,16 @@ func run(ctx: PreflightContext) -> bool:
 				return false
 	if not ctx.check(rendered_waypoint_count == expected_waypoint_count, "navigation waypoint visuals are incomplete"):
 		return false
+
+	# Waypoint darf nicht innerhalb von X Pixel eines Planeten liegen
+	for waypoint_node in navigation.get_children():
+		if waypoint_node is NavigationWaypoint:
+			var wp_pos: Vector2 = (waypoint_node as Node2D).global_position
+			for planet in field.get_children():
+				if planet is Planet:
+					var dist: float = wp_pos.distance_to(planet.global_position)
+					if not ctx.check(dist > 50.0, "waypoint overlaps planet"):
+						return false
 	var ui_theme_config: UIThemeConfig = network.get("ui_theme_config") as UIThemeConfig
 	if not ctx.check(ui_theme_config != null and ui_theme_config.validate().is_empty(), "UI theme config validation failed"):
 		return false

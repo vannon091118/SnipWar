@@ -84,6 +84,7 @@ const ROUTE_MODE_NEIGHBORS_ONLY := "neighbors_only"
 @export var composition_base_textures: Array[Texture2D] = []
 @export var composition_tint_palettes: Array[Color] = []
 @export var composition_decal_pool: Array[Texture2D] = []
+@export var composition_star_textures: Array[Texture2D] = []
 
 func meteor_bounds() -> Rect2:
 	return Rect2(Vector2.ZERO, design_size)

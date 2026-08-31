@@ -2,11 +2,17 @@ class_name MapCamera
 extends Camera2D
 
 signal planet_drag_dropped(source: Node2D, destination: Node2D)
+## QS-5: LoD-Stufen-Signal — feuert bei Zoom-Level-Wechsel (0=Nah, 1=Mittel,
+## 2=Weit/Sternenkarte). PlanetNetwork/FoW können darauf reagieren.
+signal lod_level_changed(level: int)
 
 const PLANET_CLICK_RADIUS := 120.0
 
 @export_range(0.5, 1.0, 0.05) var min_zoom: float = 1.0
-@export_range(1.0, 6.0, 0.05) var max_zoom: float = 2.5
+## QS-5: max_zoom erweitert (2.5 → 6.0) — ermöglicht Herauszoomen auf die
+## Sternenkarte. @export_range erlaubte schon bis 6.0, nur der Default
+## war zu klein.
+@export_range(1.0, 6.0, 0.05) var max_zoom: float = 6.0
 @export_range(0.05, 0.5, 0.05) var zoom_step: float = 0.15
 @export_range(2.0, 32.0, 1.0) var drag_threshold: float = 6.0
 @export_range(100.0, 800.0, 10.0) var keyboard_pan_speed: float = 400.0
@@ -26,6 +32,8 @@ var _input_blocked := false
 var _home_tween: Tween
 var _home_center_done := false
 var _home_center_retries := 0
+## QS-5: Aktueller LoD-Level (0=Nah <2.0, 1=Mittel 2.0–4.0, 2=Weit ≥4.0).
+var _lod_level := 0
 
 func _ready() -> void:
 	var background: Node = get_parent()
@@ -225,6 +233,7 @@ func _set_zoom_at(new_zoom: float, world_point: Vector2) -> void:
 	var world_offset := world_point - position
 	position = world_point - world_offset * (zoom.x / new_zoom)
 	zoom = Vector2(new_zoom, new_zoom)
+	_update_lod_level()
 	_clamp_position()
 	_sync_infinite_world()
 
@@ -377,3 +386,27 @@ func _current_pinch_midpoint() -> Vector2:
 	if positions.size() < 2:
 		return Vector2.ZERO
 	return ((positions[0] as Vector2) + (positions[1] as Vector2)) * 0.5
+
+# ── QS-5: LoD-Stufen + zoom-adaptive Sicht ──────────────────────────────
+
+## Liefert den aktuellen LoD-Level: 0 (Nah, Details), 1 (Mittel), 2 (Weit/Sternenkarte).
+func lod_level() -> int:
+	return _lod_level
+
+## Liefert die Zoom-Schwelle für eine LoD-Stufe (für FoW/Renderer).
+func lod_zoom_threshold(level: int) -> float:
+	match level:
+		0: return 2.0
+		1: return 4.0
+		_: return 6.0
+
+## Aktualisiert _lod_level und emittiert bei Wechsel lod_level_changed.
+func _update_lod_level() -> void:
+	var new_level := 0
+	if zoom.x >= 4.0:
+		new_level = 2
+	elif zoom.x >= 2.0:
+		new_level = 1
+	if new_level != _lod_level:
+		_lod_level = new_level
+		lod_level_changed.emit(new_level)

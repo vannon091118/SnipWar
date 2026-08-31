@@ -17,6 +17,7 @@ var events: Array[HistoryEvent] = []  # Events bis einschließlich year
 var visual_state: Dictionary = {}     # planet_id → derived presentation state
 var wars: Array[Dictionary] = []      # Kriegs-Truth je Snapshot (v3): status ongoing/ended
 var truces: Dictionary = {}           # Kriegsschlüssel → end_year, nur aktive (v3)
+var economy_state: Dictionary = {}     # faction_id → deterministic economy values
 
 
 func to_dict() -> Dictionary:
@@ -31,6 +32,7 @@ func to_dict() -> Dictionary:
 		"visual_state": visual_state.duplicate(true),
 		"wars": wars.duplicate(true),
 		"truces": truces.duplicate(true),
+		"economy_state": economy_state.duplicate(true),
 	}
 
 
@@ -45,6 +47,7 @@ static func from_dict(data: Dictionary) -> HistoricalSnapshot:
 		if raw_war is Dictionary:
 			snapshot.wars.append(raw_war.duplicate(true))
 	snapshot.truces = data.get("truces", {}).duplicate(true)
+	snapshot.economy_state = data.get("economy_state", {}).duplicate(true)
 	for raw_event in data.get("events", []):
 		if raw_event is Dictionary:
 			snapshot.events.append(HistoryEvent.from_dict(raw_event))

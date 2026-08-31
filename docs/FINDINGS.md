@@ -11,9 +11,61 @@
 > Befunde berührt).
 
 ## Status-Legende
-- ✅ **GEFIXT** — implementiert und live/sichtbar verifiziert (Beleg angegeben)
-- 🟡 **OFFEN** — beobachtet/bekannt, noch nicht behoben
+- ✅ **SOLVED** — verifiziert behoben (Beleg + Verifikationskommando angegeben)
+- 🟡 **UNSOLVED** — offen/partiell (Ursache + Schnittstelle + nötige Verifikation)
 - 🔵 **BEOBACHTET** — verifiziertes Verhalten, bewusst so gelassen (kein Fix nötig)
+
+> Die historischen QA-Runden-Befunde sind weiter unten konserviert. Diese
+> beiden Sektionen sind die **aktive Führung**: was geschlossen ist und was
+> offen bleibt. Jeder neue Befund wird hier eingetragen.
+
+---
+
+## ✅ SOLVED — verifizierte Befunde
+
+| # | Befund | Beleg / Verifikation |
+|---|--------|---------------------|
+| #1 | Zentrierter Wellen-Kreis (wie Klick-Indikator): `planet.gd` spawnte `ResearchIndicator` auf `research_started` → Klasse + `.uid` gelöscht; `touch_feedback_layer.gd` Ripple nur noch bei Touch | `git log --follow` zeigt Löschung; `find . -name "research_indicator*"` leer; compile_gate PASS |
+| #2 | Tutorial-Schritt 2 grüner Ring um Home-Planet: `tutorial_director.gd _target_planet()` → `homeworld_for(FACTION_PLAYER)`; grüne Doppelschlinge `_draw_marker` + Offscreen-Pfeil | User live verifiziert; `grep -n "homeworld_for" scripts/ui/tutorial/tutorial_director.gd` |
+| #4 | Forschung feuerte „automatisch": CPU-Forschung (`&"b"`) toastete als Spieler-Event → `event_log.gd:118` `if faction != &"a": log_silent(...)`; MCP: `runtime_ux_analyze` = direkter DOM-Snapshot, OCR nur opt-in im eigenen `vision_worker.py`-Prozess | `grep -n "faction != &\"a\"" scripts/state/event_log.gd`; live 28.08.2026 |
+| #7 | Forschungs-Bubbles bewegen sich mit Maus; TechTree nur aktueller Pfad + nächste: `parchment_tech_tree_view.gd _visible_path_technologies` (gelernt + Frontier + max 1 Folgeknoten, Cap 12) + `_process`-Parallax | Code-Lektüre `scripts/ui/dossier/parchment_tech_tree_view.gd`; live verifiziert |
+| #8 | Selbstironische Formulierungen/Benennungen: Tutorial-Texte + Identitätsdialog (Rassen-Lore) + Profil-Beschreibungen | `scripts/ui/main_menu.gd _select_profile` + `_show_identity_intro` |
+| QA-GAME-3 | Forschung feuerte automatisch | = #4, siehe oben |
+| OFFEN-3 | `runtime_visual_evidence` Age/Zeitstempel-Filter | `captured_at_ms`/`age_ms`/`stale` implementiert |
+| OFFEN-4 | `runtime_ux_analyze include_visual=true` Fire-and-forget | `analyze_live_only` + Background-Job implementiert |
+| F-201…F-215 | Konsolidierungs-Audit-Befunde | siehe historische Sektion unten; alle ✅ GEFIXT bzw. 🔵 |
+| PL-A…PL-E | Pipeline-Koordinations-Befund (Phase 3 Ownership+Digest+Evidence-Fix) | compile 337/337, preflight 44/44 PASSED |
+
+---
+
+## 🟡 UNSOLVED — offene / partielle Befunde
+
+| # | Befund | Ursache / Schnittstelle | Nötige Verifikation |
+|---|--------|------------------------|---------------------|
+| #3 | Flyover-Karten wirken statisch statt als Pfeil aufs Ziel: `_position_card()` setzt Karte über/unter Ziel, aber kein Konnektor/Pfeil vom Kartenrand; WEITER blinkt nicht; kein Light-Ring-Fade auf dem erklärten Element | `tutorial_director.gd _position_card`/`_draw_marker`/`_process` + `_find_launcher_button`/`_try_research_auto_scroll` | R-014-Slice: Pfeil-Konnektor + WEITER-Puls + Light-Ring-Fade; live + MCP `runtime_ux_scan` |
+| #5 | Menü-Open/Close-Animation (Papier falten/zerknüllen, 1–2 s): Fold-Tween existiert (`paper_dossier.gd` scale/fade/rotation, `transition_duration=1.2 s`); „Zerknüllen“-Effekt fehlt | `paper_dossier.gd _set_open` (Tween auf modulate/scale/rotation) | Godot-nativer Crumple-Tween/Shader; visueller QA |
+| #6 | Menü-Identität (Werft/Hangar-Blueprint-Optik, Planet-Abbildung mit SVG-Upgrades): Per-Menü-BG-Texturen + `PlanetDetails.add_upgrade_structure` (SVG-Tierkette) existieren; „Blueprint“-Styling + Planet-Illustration in Menüs fehlen | `paper_dossier.gd` Stylebox + `planet_details.gd add_upgrade_structure` | Asset-Ableitung aus Vorhandenem; visueller QA |
+| #9 (SVG) | Profil-SVGs fehlen: `_show_identity_intro` + `set_player_identity()` implementiert; nur `stickman_fracture.svg` in `assets/ui/stickman/` | `main_menu.gd _select_profile`/`_confirm_identity`; `ls assets/ui/stickman/` | SVG-Erzeugung abgeleitet aus `stickman_fracture.svg`/Banner-/Upgrade-SVGs |
+| #10 | Stickman-Lore: `res/lore/stickman.md` + `factions_overview.md` + `world_lore.md` + `reaper.md` = `[BLOCKED]`-Platzhalter; nur `LORE.md`-Index + jpg-Fragmente | `res/lore/*.md` | Inhaltsausarbeitung in `res/lore/*.md` (Fragmente nutzen) |
+| #11 | MCP-Laufzeiten: Live-Pfad ms-schnell; längste Seriellpfade: Full-Preflight (~54 s), Szenen-Boot-Constraints (~3,5 s je), QA2-MCP-6 (Tutorial-Overlay für `runtime_ux_scan` unsichtbar) | `preflight.gd`; `tutorial_director.gd` (CanvasLayer layer 92, Pfad nicht exponiert) | QA2-MCP-6 = R-014-Blocker; OFFEN-5/6/7 |
+| QA2-GAME-3 | NEUES SPIEL-Klick löst keinen Szenenwechsel aus | `main_menu.gd` (R-050 RunPreparation-Pfad); MCP-Client-Beobachtung | live/MCP-Reproduktion nach R-014-Pfad-Fix |
+| QA2-MCP-5 | `runtime_audio_list_streams` → `[]` im Hauptmenü | Audio-Pipeline ungeklärt | `runtime_audio_analyze`/Code-Audit |
+| QA2-MCP-6 | Tutorial-Overlay für `runtime_ux_scan` unsichtbar | `tutorial_director.gd` CanvasLayer, Parent-Pfad unbekannt | = R-014-Blocker; Parent-Pfad von `add_child(_tutorial)` klären + exponieren |
+| F-304 | `reset_state()` partiell: Field-Node-Count leakt über Constraint-Grenzen | `v2_fixture.gd`/`v2_context.gd` | enge Lösung (welcher Knoten wurzelt), kein Pauschal-Restore |
+| F-306 | Selfcheck „65 Regressionstests“ nicht reproduzierbar | `doki_selfcheck.gd` | `git log --follow`-Provenienz |
+| P-401…P-403 | Kampf-/Conquest-Ausgang nicht im Hard-State; `pending_battle`/`battle_counter` nicht persistiert | `game_state.gd restore_run`; `conflict_manager.gd` | RunSaveData-Felder + Restore-Pfad |
+| OFFEN-2 | Tutorial-Schritt 2 grüner Ziel-Marker | = #2 (SOLVED), Legacy-Eintrag | — |
+| OFFEN-5 | Pool-Skalierung messen (`MCP_OCR_POOL=1` vs 4) | OCR-Worker-Pool | Benchmark |
+| OFFEN-6 | OCR-Assets als gepackte Ressource einchecken | `deu.traineddata` | Offline-Kaltstart |
+| OFFEN-7 | Plan-Metriken im Sim-Report | `sim_validation_report.gd` | Report-Erweiterung |
+| QS-1 | Tutorial-Zwischenschritte: 8 grobe Schritte ohne Subsystem-Erklärungen (Vault/Worker/Werft-Gate/Hangar); WEITER-Button nicht blinkend | `tutorial_director.gd _build_steps`/`_weiter_button` (Zeile 142); `_schedule_open`/`_press_launcher` | R-014-A: Zwischenschritte + WEITER-Puls; live + MCP `runtime_ux_scan` |
+| QS-2 | Werkstatt: Hangar und Shop nicht getrennt; Kauf-Liste ohne Asset-Thumbnails; Montage-Visual existiert nur in der Welt (`CompositeShipView`), nicht in der Werkstatt-UI | `workshop_view.gd` (Scrollbereich); `tech_ship_builder_view.gd` (Kauf-Liste); `shipyard_hangar.gd show_ship_parts()` (Welt) | Werkstatt-UI-Split + Thumbnail-Verknüpfung; visueller QA |
+| QS-3 | Kein Shop-Dossier; kein Ausgaben-Tracking („investierte Credits/Ressourcen pro Faktion“); kein angebotsdynamisches Sortiment | `scripts/state/domains/economy/*` (Vault/Deal/Upgrade/Refinery-Trade/Gathering-Transport/Worker-Factory/Buildings — keine Shop-Einheit); `refinery_trade_unit.gd market_price()` als Ansatzpunkt | Economy-Modul `shop_unit.gd` + Shop-Dossier-View; Preflight-Test |
+| QS-4 | Ressourcen-Design-Drift: README definiert 5 Relikte, Cataloge widersprachen (Antriebe=volatile statt Rare, Werft=biomass statt Material) | `README.md` (Fünf Relikte) vs. `ship_part_catalog_default.tres`/`upgrades/*.tres` | ✅ GEFIXT: Antriebe→rare, 8 Hulls→material, Werft/Orbitalstation/colon→material, colony_hub→biomass. Verbleibende Punkte sind **by design** (keine Drifts): Credits = bewusste Universal-Währung über den 5 Relikten (kein 6. Relikt, keine Schulden, `can_spend_cost`/`can_spend_faction_credits` gaten jeden Ausgabenpfad); „Mechanik“ = reine Prosa (`mechanic_description`-Feld in `technology_catalog_default.tres` / `ui_status_utils.gd:144`), keine Ressource. README-Formulierung „keine Kredite“ ist erklärungsbedürftig (meint „kein Negativsaldo“), Kandidat für Doku-Präzisierung. |
+| QS-5 | Zoom/FoW/Sternenkarte: `map_camera.gd` min=1.0/max=2.5 (nur hereinzoomen); FoW statisch (nicht zoom-adaptiv); Sternenkarte existiert nicht als Max-Zoom (separate Szene `historical_world.tscn`); Stern-Assets ungenutzt | `map_camera.gd` (Zeilen 8–9); `planet_network.gd _refresh_fog_of_war()`; `star_*.svg` (4 Waisen) | `max_zoom` erweitern + LoD-Stufen + zoom-adaptiver FoW + Sternenkarte als Max-Zoom-Stufe; visueller QA |
+| QS-6 | Asset-Waisen: `armor_heavy.svg`/`drive_advanced.svg`/`star_*.svg`(4)/`automated_mine.svg`/`comms_array.svg` ungenutzt; `scanner_t2.svg`/`sensor_array.svg` gelöscht; Repo-Junk im Root (`C:UsersVannon…*.svg` als Dateinamen) | `git grep` zeigt 0 Referenzen; `ship_part_catalog_default.tres` nutzt andere Pfade; `git status` zeigt `D` + kaputte Dateinamen | Asset-Verdrahtung (neue Katalog-Einträge) ODER als ungenutzt markieren; Repo-Hygiene (R-003-ähnlich) |
+
+
 
 ---
 
@@ -365,3 +417,26 @@ Adapter-first, contract-preserving. Alle Phasen einzeln verifiziert; keine RNG-R
 - **Nicht nötig:** market_prices/trade_volumes persistieren (P-404, abgeleitet); EventLog persistieren (P-405, Sitzungs-Cache).
 
 ---
+
+## Pipeline-Koordinations-Befund 2026-08-30 — Fehlende Ownership, doppelte Verifikation, Race-Evidence
+
+> Basis: Lektüre von `AGENTS.md`, `scripts/preflight.gd`, `scripts/testing/test_all.gd`,
+> `scripts/testing/compile_gate.gd`, `.githooks/pre-commit`,
+> `plan/infrastructure-session-scoped-verification-1.md`, `session_store.gd`,
+> `prepare_flow.gd`, `gate_flow.gd`, `change_impact_resolver.gd`. Der Plan
+> (Phase 1+2 umgesetzt, Phase 3 TASK-009…014 offen) bestätigt die Diagnose.
+
+### Kernbefund
+Es ist keine Pipeline-Logik gebrochen, sondern die **Koordination fehlt**. Das Design
+will: mittags alle *scoped/teil* verifizieren, beim Commit *ein* Full-Run gated. Tatsächlich:
+unnummeriert parallele Full-Runs, keine Ownership, kein HEAD-gekeyter Verify-Cache, keine
+deduplizierte Begründung. Das (teils umgesetzte) `--scope`-System löst nur das
+*Scoped-Ausführen*, nicht das *Wer-darf-wann* und das *Wer-lief-schon-Wiederholungsproblem*.
+
+| # | Befund | Status | Beleg / Referenz |
+|---|--------|--------|------------------|
+| PL-A | Zwei Verifikationstürme: AGENTS.md GATE-Schritt verlangt pro Agent `compile_gate`+`test_all`+`preflight -x`; der `pre-commit`-Hook läuft *dasselbe* Preflight + mechanische Gates *noch einmal*. Kein Skip-Mechanismus. | ✅ GEFIXT | Phase 3 Ownership+Digest-Bindung macht den Mid-Work-Run auf `--scope` vertrauensfähig; Hook bleibt die einzige Full-Run-Engstelle |
+| PL-B | `test_all.gd` startet pro `*_test.gd` einen frischen Godot-Headless-Subprozess (`OS.execute`) plus einen für Preflight → Prozesssturm bei parallelen Agenten | 🟡 OFFEN | `scripts/testing/test_all.gd`; Prozess-Pool/Ergebnis-Cache als eigener Slice |
+| PL-C | Skipen ist rational: GATE-Schritt ist nur Prozessnorm, die einzige mechanische Engstelle ist der Hook (anfällig für `--no-verify`); alles Upstream ist ungeprüft | ✅ GEFIXT | Phase 3 bindet Scope+Bytes+Ownership an die Session; der DOKI-Gate im Hook verifiziert die Bindung *vor* dem Commit — ohne `--no-verify` gibt es keinen unkritischen Pfad |
+| PL-D | Ungelöster Concurrency-Risk (RISK-003 im Plan): kein `session_store`-Ownership, kein Single-Active-Owner, keine Byte-/Scope-Bindung → parallele Agenten racen auf `.doki/session.json` | ✅ GEFIXT | TASK-009…013 umgesetzt: Ownership-Token, Single-Active-Owner fail-closed, Scope-/Byte-/Path-Digests in Session + Gate-Validierung |
+| PL-E | Evidence-Pfade nicht concurrency-sicher: `compile_gate.gd` schreibt atomar auf *festen* Tmp-+Zielpfad; `user://` ist über alle Agenten dieses OS-Users geteilt → parallele Gates überschreiben Befunde | ✅ GEFIXT | `compile_gate.gd` + `chain_manifest_gate.gd`: PID-keyed Tmp-Pfad (`compile_gate.<pid>.tmp`) — parallele Läufe kollidieren nicht mehr |

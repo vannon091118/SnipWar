@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2 uid="UID://playback_controller"]
+
+[ext_resource type="Script" path="res://scripts/history/playback_controller.gd" id="1"]
+
+[node name="PlaybackController" type="Node"]
+script = ExtResource( 1 )

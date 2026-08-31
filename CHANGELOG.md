@@ -2186,3 +2186,269 @@ Sandbox-Determinismus korrigieren: exakter DOKI-XorShift128-Port, Reference-Snap
 - narrative_runtime/sandbox/reference/snapshot.json: Tooling erweitert (F-463).
 - narrative_runtime/sandbox/runner.py: Tooling erweitert (F-444).
 - scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+
+## 2026-08-27 23:00:00 — p119 · c119j28n14a19p56 · Sage · trocken
+
+**Sage lehrt: QS-4 Ressourcen-Design-Drift: Kosten-Resourcen-Zuo… — nach Echo**
+
+QS-4 Ressourcen-Design-Drift: Kosten-Resourcen-Zuordnung an README angleichen, per-Tick-Credit-Einkommen (Credit kommt ueber die Runden) und Shop-Unit-Grundlage
+
+- resources/config/economy_default.tres: Dokumentation aktualisiert (F-464).
+- resources/config/ship_part_catalog_default.tres: Dokumentation aktualisiert (F-156).
+- resources/config/upgrades/colony_hub.tres: Dokumentation aktualisiert (F-160).
+- resources/config/upgrades/colony_shipyard.tres: Dokumentation aktualisiert (F-161).
+- resources/config/upgrades/orbital_station.tres: Dokumentation aktualisiert (F-166).
+- resources/config/upgrades/shipyard.tres: Dokumentation aktualisiert (F-168).
+- scripts/config/economy_config.gd: Dokumentation aktualisiert (F-465).
+- scripts/objects/planets/economy_manager.gd: Dokumentation aktualisiert (F-466).
+- scripts/state/domains/economy/gathering_transport_unit.gd: Dokumentation aktualisiert (F-411).
+- scripts/state/domains/economy/shop_unit.gd: Dokumentation aktualisiert (F-467).
+- scripts/state/domains/economy/shop_unit.gd.uid: Dokumentation aktualisiert (F-468).
+- scripts/state/domains/economy_domain.gd: Dokumentation aktualisiert (F-121).
+- scripts/testing/credit_income_behavior_test.gd: Dokumentation aktualisiert (F-469).
+- scripts/ui/vault_bar.gd: Dokumentation aktualisiert (F-470).
+
+## 2026-08-27 23:00:00 — p119 · c119j95n10a6p103 · Glitch · neugierig
+
+**Glitch ermittelt: QS-4 Ressourcen-Design-Drift korrigiert… — nach Echo**
+
+QS-4 Ressourcen-Design-Drift korrigiert (Kosten-Zuordnung an README) plus Credit-Einkommen ueber die Runden, Shop-Unit-Tracking; Preflight-Gates gruen: asset_library laedt importierbare SVGs statt Magenta-ImageTextures (ConquestScene rendert angegriffenen Planeten) und Waypoints werden nach Jitter aus jedem Planeten-Radius herausgeschoben
+
+- resources/config/economy_default.tres: Dokumentation aktualisiert (F-464).
+- resources/config/ship_part_catalog_default.tres: Dokumentation aktualisiert (F-156).
+- resources/config/upgrades/colony_hub.tres: Dokumentation aktualisiert (F-160).
+- resources/config/upgrades/colony_shipyard.tres: Dokumentation aktualisiert (F-161).
+- resources/config/upgrades/orbital_station.tres: Dokumentation aktualisiert (F-166).
+- resources/config/upgrades/shipyard.tres: Dokumentation aktualisiert (F-168).
+- scripts/config/asset_library.gd: Dokumentation aktualisiert (F-471).
+- scripts/config/economy_config.gd: Dokumentation aktualisiert (F-465).
+- scripts/objects/planets/economy_manager.gd: Dokumentation aktualisiert (F-466).
+- scripts/objects/planets/navigation_field.gd: Dokumentation aktualisiert (F-472).
+- scripts/state/domains/economy/gathering_transport_unit.gd: Dokumentation aktualisiert (F-411).
+- scripts/state/domains/economy/shop_unit.gd: Dokumentation aktualisiert (F-467).
+- scripts/state/domains/economy/shop_unit.gd.uid: Dokumentation aktualisiert (F-468).
+- scripts/state/domains/economy_domain.gd: Dokumentation aktualisiert (F-121).
+- scripts/testing/credit_income_behavior_test.gd: Dokumentation aktualisiert (F-469).
+- scripts/ui/vault_bar.gd: Dokumentation aktualisiert (F-470).
+
+## 2026-08-27 23:00:00 — p119 · c119j41n3a53p31 · Thinker · sarkastisch
+
+**QS-4 Ressourcen-Design-Drift korrigiert… [Analyse: Thinker] — nach Echo**
+
+QS-4 Ressourcen-Design-Drift korrigiert (Kosten-Zuordnung an README) plus Credit-Einkommen ueber die Runden und Shop-Unit-Tracking; Preflight-Gates gruen: asset_library laedt importierbare SVGs statt Magenta-ImageTextures (ConquestScene rendert angegriffenen Planeten), Waypoints werden nach Jitter aus jedem Planeten-Radius herausgeschoben, AgentGate own_covers() implementiert
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- resources/config/economy_default.tres: Dokumentation aktualisiert (F-464).
+- resources/config/ship_part_catalog_default.tres: Dokumentation aktualisiert (F-156).
+- resources/config/upgrades/colony_hub.tres: Dokumentation aktualisiert (F-160).
+- resources/config/upgrades/colony_shipyard.tres: Dokumentation aktualisiert (F-161).
+- resources/config/upgrades/orbital_station.tres: Dokumentation aktualisiert (F-166).
+- resources/config/upgrades/shipyard.tres: Dokumentation aktualisiert (F-168).
+- scripts/agent_activity.sh: Dokumentation aktualisiert (F-473).
+- scripts/config/asset_library.gd: Dokumentation aktualisiert (F-471).
+- scripts/config/economy_config.gd: Dokumentation aktualisiert (F-465).
+- scripts/objects/planets/economy_manager.gd: Dokumentation aktualisiert (F-466).
+- scripts/objects/planets/navigation_field.gd: Dokumentation aktualisiert (F-472).
+- scripts/state/domains/economy/gathering_transport_unit.gd: Dokumentation aktualisiert (F-411).
+- scripts/state/domains/economy/shop_unit.gd: Dokumentation aktualisiert (F-467).
+- scripts/state/domains/economy/shop_unit.gd.uid: Dokumentation aktualisiert (F-468).
+- scripts/state/domains/economy_domain.gd: Dokumentation aktualisiert (F-121).
+- scripts/testing/credit_income_behavior_test.gd: Dokumentation aktualisiert (F-469).
+- scripts/ui/vault_bar.gd: Dokumentation aktualisiert (F-470).
+
+## 2026-08-27 23:00:00 — p119 · c119j49n5a25p38 · Squizzle · warm
+
+**Squizzles Fall: QS-4 Ressourcen-Design-Drift korrigiert… — nach Echo**
+
+QS-4 Ressourcen-Design-Drift korrigiert (Kosten-Zuordnung an README) plus Credit-Einkommen ueber die Runden und Shop-Unit-Tracking; Preflight-Gates gruen: asset_library laedt importierbare SVGs statt Magenta-ImageTextures (ConquestScene rendert angegriffenen Planeten), Waypoints werden nach Jitter aus jedem Planeten-Radius herausgeschoben
+
+- CHANGELOG.md: Dokumentation aktualisiert (F-002).
+- change_index.json: Dokumentation aktualisiert (F-003).
+- resources/config/economy_default.tres: Dokumentation aktualisiert (F-464).
+- resources/config/ship_part_catalog_default.tres: Dokumentation aktualisiert (F-156).
+- resources/config/upgrades/colony_hub.tres: Dokumentation aktualisiert (F-160).
+- resources/config/upgrades/colony_shipyard.tres: Dokumentation aktualisiert (F-161).
+- resources/config/upgrades/orbital_station.tres: Dokumentation aktualisiert (F-166).
+- resources/config/upgrades/shipyard.tres: Dokumentation aktualisiert (F-168).
+- scripts/config/asset_library.gd: Dokumentation aktualisiert (F-471).
+- scripts/config/economy_config.gd: Dokumentation aktualisiert (F-465).
+- scripts/objects/planets/economy_manager.gd: Dokumentation aktualisiert (F-466).
+- scripts/objects/planets/navigation_field.gd: Dokumentation aktualisiert (F-472).
+- scripts/state/domains/economy/gathering_transport_unit.gd: Dokumentation aktualisiert (F-411).
+- scripts/state/domains/economy/shop_unit.gd: Dokumentation aktualisiert (F-467).
+- scripts/state/domains/economy/shop_unit.gd.uid: Dokumentation aktualisiert (F-468).
+- scripts/state/domains/economy_domain.gd: Dokumentation aktualisiert (F-121).
+- scripts/testing/credit_income_behavior_test.gd: Dokumentation aktualisiert (F-469).
+- scripts/ui/vault_bar.gd: Dokumentation aktualisiert (F-470).
+
+## 2026-08-27 23:00:00 — p119 · c119j67n9a17p31 · Spark · alarmiert
+
+**Spark entdeckt: Übernahme und DOKI-Kommit aller 174 lokalen… — nach Echo**
+
+Übernahme und DOKI-Kommit aller 174 lokalen Änderungen als gemeinsamer historischer Slice
+
+- .githooks/pre-commit: Tooling erweitert (F-125).
+- .gitignore: Tooling erweitert (F-037).
+- AGENTS.md: Tooling erweitert (F-019).
+- CHANGELOG.md: Tooling erweitert (F-002).
+- ROADMAP.md: Tooling erweitert (F-376).
+- assets/effects/vfx_debris.svg: Tooling erweitert (F-474).
+- assets/effects/vfx_debris.svg.import: Tooling erweitert (F-475).
+- assets/effects/vfx_explosion.svg: Tooling erweitert (F-476).
+- assets/effects/vfx_explosion.svg.import: Tooling erweitert (F-477).
+- assets/effects/vfx_laser_beam.svg: Tooling erweitert (F-478).
+- assets/effects/vfx_laser_beam.svg.import: Tooling erweitert (F-479).
+- assets/effects/vfx_shield_hit.svg: Tooling erweitert (F-480).
+- assets/effects/vfx_shield_hit.svg.import: Tooling erweitert (F-481).
+- assets/effects/vfx_spark.svg: Tooling erweitert (F-482).
+- assets/effects/vfx_spark.svg.import: Tooling erweitert (F-483).
+- assets/effects/vfx_thrust_flame.svg: Tooling erweitert (F-484).
+- assets/effects/vfx_thrust_flame.svg.import: Tooling erweitert (F-485).
+- assets/objects/gates/beacon_signal.svg: Tooling erweitert (F-486).
+- assets/objects/gates/beacon_signal.svg.import: Tooling erweitert (F-487).
+- assets/objects/gates/jump_gate.svg: Tooling erweitert (F-488).
+- assets/objects/gates/jump_gate.svg.import: Tooling erweitert (F-489).
+- assets/objects/gates/wormhole_active.svg: Tooling erweitert (F-490).
+- assets/objects/gates/wormhole_active.svg.import: Tooling erweitert (F-491).
+- assets/objects/resources/resource_asteroid_field.svg: Tooling erweitert (F-492).
+- assets/objects/resources/resource_asteroid_field.svg.import: Tooling erweitert (F-493).
+- assets/objects/resources/resource_crystal_cluster.svg: Tooling erweitert (F-494).
+- assets/objects/resources/resource_crystal_cluster.svg.import: Tooling erweitert (F-495).
+- assets/objects/resources/resource_debris_field.svg: Tooling erweitert (F-496).
+- assets/objects/resources/resource_debris_field.svg.import: Tooling erweitert (F-497).
+- assets/objects/resources/resource_gas_cloud.svg: Tooling erweitert (F-498).
+- assets/objects/resources/resource_gas_cloud.svg.import: Tooling erweitert (F-499).
+- assets/objects/ships/armor_heavy.svg: Tooling erweitert (F-500).
+- assets/objects/ships/drive_advanced.svg: Tooling erweitert (F-501).
+- assets/objects/ships/scanner_t2.svg: Tooling erweitert (F-502).
+- assets/objects/ships/sensor_array.svg: Tooling erweitert (F-503).
+- assets/objects/stars/star_blue_dwarf.svg: Tooling erweitert (F-504).
+- assets/objects/stars/star_blue_dwarf.svg.import: Tooling erweitert (F-505).
+- assets/objects/stars/star_main_sequence.svg: Tooling erweitert (F-506).
+- assets/objects/stars/star_main_sequence.svg.import: Tooling erweitert (F-507).
+- assets/objects/stars/star_nebula_core.svg: Tooling erweitert (F-508).
+- assets/objects/stars/star_red_giant.svg: Tooling erweitert (F-509).
+- assets/objects/structures/automated_mine.svg: Tooling erweitert (F-510).
+- assets/objects/structures/comms_array.svg: Tooling erweitert (F-511).
+- assets/objects/structures/trade_hub.svg: Tooling erweitert (F-512).
+- assets/ui/backgrounds/bg_deep_space.svg: Tooling erweitert (F-513).
+- assets/ui/backgrounds/bg_nebula_purple.svg: Tooling erweitert (F-514).
+- assets/ui/backgrounds/bg_nebula_teal.svg: Tooling erweitert (F-515).
+- assets/ui/banner_ai.svg: Tooling erweitert (F-516).
+- assets/ui/banner_architecture.svg: Tooling erweitert (F-517).
+- assets/ui/banner_architecture.svg.import: Tooling erweitert (F-518).
+- assets/ui/banner_conflict.svg: Tooling erweitert (F-519).
+- assets/ui/banner_conflict.svg.import: Tooling erweitert (F-520).
+- assets/ui/banner_terminal.svg: Tooling erweitert (F-521).
+- assets/ui/banner_terminal.svg.import: Tooling erweitert (F-522).
+- assets/ui/banner_workflow.svg: Tooling erweitert (F-523).
+- assets/ui/banner_workflow.svg.import: Tooling erweitert (F-524).
+- assets/ui/factions/faction_emblem_a.svg: Tooling erweitert (F-525).
+- assets/ui/factions/faction_emblem_b.svg: Tooling erweitert (F-526).
+- assets/ui/factions/faction_emblem_b.svg.import: Tooling erweitert (F-527).
+- assets/ui/factions/faction_emblem_neutral.svg: Tooling erweitert (F-528).
+- assets/ui/factions/faction_emblem_neutral.svg.import: Tooling erweitert (F-529).
+- assets/ui/factions/faction_emblem_pirate.svg: Tooling erweitert (F-530).
+- assets/ui/factions/faction_emblem_pirate.svg.import: Tooling erweitert (F-531).
+- assets/ui/fleet/fleet_marker_cpu.svg: Tooling erweitert (F-532).
+- assets/ui/fleet/fleet_marker_cpu.svg.import: Tooling erweitert (F-533).
+- assets/ui/fleet/fleet_marker_neutral.svg: Tooling erweitert (F-534).
+- assets/ui/fleet/fleet_marker_neutral.svg.import: Tooling erweitert (F-535).
+- assets/ui/fleet/fleet_marker_player.svg: Tooling erweitert (F-536).
+- assets/ui/fleet/fleet_marker_player.svg.import: Tooling erweitert (F-537).
+- assets/ui/fleet/fleet_marker_transit.svg: Tooling erweitert (F-538).
+- assets/ui/fleet/fleet_marker_transit.svg.import: Tooling erweitert (F-539).
+- assets/ui/icons/icon_alliance.svg: Tooling erweitert (F-540).
+- assets/ui/icons/icon_alliance.svg.import: Tooling erweitert (F-541).
+- assets/ui/icons/icon_conquest.svg: Tooling erweitert (F-542).
+- assets/ui/icons/icon_conquest.svg.import: Tooling erweitert (F-543).
+- assets/ui/icons/icon_diplomacy.svg: Tooling erweitert (F-544).
+- assets/ui/icons/icon_diplomacy.svg.import: Tooling erweitert (F-545).
+- assets/ui/icons/icon_famine.svg: Tooling erweitert (F-546).
+- assets/ui/icons/icon_famine.svg.import: Tooling erweitert (F-547).
+- assets/ui/icons/icon_plague.svg: Tooling erweitert (F-548).
+- assets/ui/icons/icon_plague.svg.import: Tooling erweitert (F-549).
+- assets/ui/icons/icon_tech.svg: Tooling erweitert (F-550).
+- assets/ui/icons/icon_tech.svg.import: Tooling erweitert (F-551).
+- assets/ui/icons/icon_trade.svg: Tooling erweitert (F-552).
+- assets/ui/icons/icon_trade.svg.import: Tooling erweitert (F-553).
+- assets/ui/icons/icon_war.svg: Tooling erweitert (F-554).
+- assets/ui/icons/icon_war.svg.import: Tooling erweitert (F-555).
+- assets/ui/status/status_burning.svg: Tooling erweitert (F-556).
+- assets/ui/status/status_burning.svg.import: Tooling erweitert (F-557).
+- assets/ui/status/status_contested.svg: Tooling erweitert (F-558).
+- assets/ui/status/status_contested.svg.import: Tooling erweitert (F-559).
+- assets/ui/status/status_depleted.svg: Tooling erweitert (F-560).
+- assets/ui/status/status_depleted.svg.import: Tooling erweitert (F-561).
+- assets/ui/status/status_fortified.svg: Tooling erweitert (F-562).
+- assets/ui/status/status_fortified.svg.import: Tooling erweitert (F-563).
+- assets/ui/status/status_siege.svg: Tooling erweitert (F-564).
+- assets/ui/status/status_siege.svg.import: Tooling erweitert (F-565).
+- assets/ui/stickman/stickman_fracture.svg: Tooling erweitert (F-053).
+- assets/ui/stickman/stickman_fracture.svg.import: Tooling erweitert (F-054).
+- change_index.json: Tooling erweitert (F-003).
+- docs/AGENT_ACTIVITY.md: Tooling erweitert (F-566).
+- docs/BRANCH_AUDIT_2026-08-30.md: Tooling erweitert (F-567).
+- docs/FINDINGS.md: Tooling erweitert (F-046).
+- docs/METRICS_TRACKER.md: Tooling erweitert (F-357).
+- narrative_chain.json: Tooling erweitert (F-004).
+- plan/architecture-history-economy-1.md: Tooling erweitert (F-568).
+- progress.md: Tooling erweitert (F-387).
+- resources/config/economy_default.tres: Tooling erweitert (F-464).
+- resources/config/ship_part_catalog_default.tres: Tooling erweitert (F-156).
+- resources/config/upgrades/colony_hub.tres: Tooling erweitert (F-160).
+- resources/config/upgrades/colony_shipyard.tres: Tooling erweitert (F-161).
+- resources/config/upgrades/orbital_station.tres: Tooling erweitert (F-166).
+- resources/config/upgrades/shipyard.tres: Tooling erweitert (F-168).
+- scenes/historical_world/historical_world.tscn: Tooling erweitert (F-370).
+- scenes/historical_world/playback_controller.tscn: Tooling erweitert (F-569).
+- scenes/historical_world/simulation_overlay.tscn: Tooling erweitert (F-570).
+- scripts/agent_activity.sh: Tooling erweitert (F-473).
+- scripts/backgrounds/map_camera.gd: Tooling erweitert (F-109).
+- scripts/bootstrap/historical_world_bootstrap.gd: Tooling erweitert (F-371).
+- scripts/config/asset_library.gd: Tooling erweitert (F-471).
+- scripts/config/economy_config.gd: Tooling erweitert (F-465).
+- scripts/config/world_config.gd: Tooling erweitert (F-130).
+- scripts/docs/AGENTS_REFERENCE.md: Tooling erweitert (F-571).
+- scripts/doki/chain/session_store.gd: Tooling erweitert (F-431).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+- scripts/doki/orchestration/flows/gate_flow.gd: Tooling erweitert (F-013).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Tooling erweitert (F-181).
+- scripts/history/historical_snapshot.gd: Tooling erweitert (F-337).
+- scripts/history/simulation/history_simulator.gd: Tooling erweitert (F-279).
+- scripts/objects/conflict_manager.gd: Tooling erweitert (F-057).
+- scripts/objects/planets/economy_manager.gd: Tooling erweitert (F-466).
+- scripts/objects/planets/navigation_field.gd: Tooling erweitert (F-472).
+- scripts/objects/planets/navigation_waypoint.gd: Tooling erweitert (F-572).
+- scripts/preflight.gd: Tooling erweitert (F-343).
+- scripts/preflight/constraint_agent_activity.gd: Tooling erweitert (F-573).
+- scripts/preflight/constraint_agent_activity.gd.uid: Tooling erweitert (F-574).
+- scripts/preflight/constraint_historical_world.gd: Tooling erweitert (F-382).
+- scripts/preflight/constraint_world_planets_and_dispatch.gd: Tooling erweitert (F-575).
+- scripts/preflight_v2/change_impact_resolver.gd: Tooling erweitert (F-432).
+- scripts/preflight_v2/constraint_scanner.gd: Tooling erweitert (F-433).
+- scripts/state/domains/economy/gathering_transport_unit.gd: Tooling erweitert (F-411).
+- scripts/state/domains/economy/shop_unit.gd: Tooling erweitert (F-467).
+- scripts/state/domains/economy/shop_unit.gd.uid: Tooling erweitert (F-468).
+- scripts/state/domains/economy_domain.gd: Tooling erweitert (F-121).
+- scripts/state/game_state.gd: Tooling erweitert (F-065).
+- scripts/state/playback_controller.gd: Tooling erweitert (F-576).
+- scripts/state/playback_controller.gd.uid: Tooling erweitert (F-577).
+- scripts/state/run_save_data.gd: Tooling erweitert (F-196).
+- scripts/testing/chain_manifest_gate.gd: Tooling erweitert (F-122).
+- scripts/testing/compile_gate.gd: Tooling erweitert (F-123).
+- scripts/testing/credit_income_behavior_test.gd: Tooling erweitert (F-469).
+- scripts/testing/credit_income_behavior_test.gd.uid: Tooling erweitert (F-578).
+- scripts/testing/history_economy_behavior_test.gd: Tooling erweitert (F-579).
+- scripts/testing/history_economy_behavior_test.gd.uid: Tooling erweitert (F-580).
+- scripts/testing/history_economy_seams_test.gd: Tooling erweitert (F-581).
+- scripts/testing/history_economy_seams_test.gd.uid: Tooling erweitert (F-582).
+- scripts/testing/test_all.gd: Tooling erweitert (F-384).
+- scripts/ui/dossier/workshop_view.gd: Tooling erweitert (F-034).
+- scripts/ui/history/historical_renderer.gd: Tooling erweitert (F-367).
+- scripts/ui/history/simulation_overlay.gd: Tooling erweitert (F-322).
+- scripts/ui/tutorial/tutorial_director.gd: Tooling erweitert (F-031).
+- scripts/ui/vault_bar.gd: Tooling erweitert (F-470).
+- scripts/ui/world/planet_world_ui.gd: Tooling erweitert (F-421).
+- task_plan.md: Tooling erweitert (F-388).
