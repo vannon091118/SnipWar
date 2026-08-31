@@ -2633,7 +2633,7 @@
 		},
 		"a57": {
 			"climax_weight": 5.0,
-			"commit_count": 4,
+			"commit_count": 4.0,
 			"completed_at": "arc_climax",
 			"id": "a57",
 			"name": "Verifikations-Ende-zu-Ende",
@@ -2681,13 +2681,35 @@
 		},
 		"a58": {
 			"climax_weight": 5.0,
+			"commit_count": 1,
 			"id": "a58",
 			"name": "Fundament-Dichtprüfung",
+			"seen_entities": [
+				"F-586",
+				"F-584",
+				"F-002",
+				"F-046",
+				"F-602",
+				"F-013",
+				"F-181",
+				"F-343",
+				"F-605",
+				"F-384",
+				"C-1297",
+				"C-1298",
+				"C-1299",
+				"C-1300",
+				"C-1301",
+				"C-1302",
+				"C-1303",
+				"C-1304",
+				"C-1305"
+			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "systematische Verifikation aller P1-Befunde gegen die jetzt geschlossenen P0-Fixes.",
 			"version": "",
-			"weight": 0.0
+			"weight": 8.1
 		},
 		"a6": {
 			"climax_weight": 3.0,

@@ -9836,6 +9836,79 @@
 			"seq": 124,
 			"subject": "DOKI finalize Chain-Eintrag 123 — nach Basher",
 			"summary": "Finalize. Chain-Eintrag 123. Artefakte gestaged. Commit."
+		},
+		{
+			"a": 48,
+			"arc": "a58",
+			"c": 125,
+			"composite": "c125j3n8a48p1",
+			"data_changes": [
+				{
+					"deletions": 7221.0,
+					"file": ".doki/change_index.json",
+					"insertions": 7384.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".githooks/commit-msg",
+					"insertions": 22.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 88.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/check.gd",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "scripts/doki/orchestration/flows/gate_flow.gd",
+					"insertions": 7.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "scripts/preflight.gd",
+					"insertions": 30.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_lock.gd",
+					"insertions": 111.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/testing/test_all.gd",
+					"insertions": 19.0
+				}
+			],
+			"date": "2026-08-27 05:00:00",
+			"hash": "3efe34a4b3b95f6617cd05a48d7b6c8feb82e362",
+			"j": 3,
+			"model_id": "claude-sonnet-4",
+			"mood": "triumphierend",
+			"n": 8,
+			"narrator": "Ghost",
+			"p": 1,
+			"p_id": 125,
+			"prev_hash": "c2f0a4ac9e2629813fe124f945dba0243e881f817cf98a0193f0614e41f5d927",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Vannon",
+			"seq": 125,
+			"subject": "Ghost verzeichnet: Preflight-Mutex TASK-015 + Transport-Commit-Modus… — nach Vannon",
+			"summary": "Die Chronik verzeichnet diesen Tag: Der Loop, der jeden Takt erstickte, wurde von vier Regeln ersetzt."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
