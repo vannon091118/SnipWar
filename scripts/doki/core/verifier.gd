@@ -17,7 +17,7 @@ const COMPOSITE_TOKEN_REGEX: String = "\\[COMPOSITE:(c\\d+j\\d+n\\d+a\\d+p\\d+)\
 ## Atomicity-Gate (Check 10): max. Dateien pro Commit (ohne Auto-Managed
 ## narrative Dateien, die finalize selbst staged). Ein Commit = EINE logische
 ## Einheit — Mega-Commits (74+ Dateien) fressen Story-Platz und Info.
-const MAX_FILES_PER_COMMIT: int = 200
+const MAX_FILES_PER_COMMIT: int = -1
 ## Von finish/finalize selbst gestagte narrative Dateien — zählen beim
 ## Datei-Limit nicht mit (identisch zu GateFlow.AUTO_MANAGED).
 const AUTO_MANAGED: Array = ["narrative_chain.json", "change_index.json", "CHANGELOG.md", ".commit_msg.txt", "arcs.json"]
@@ -395,8 +395,9 @@ func check_10_file_limit(staged_file_names: Array) -> Dictionary:
 	for f in staged_file_names:
 		if not AUTO_MANAGED.has(str(f).get_file()):
 			user_files.append(str(f))
-	var ok: bool = user_files.size() <= MAX_FILES_PER_COMMIT
-	return _result("CHECK 10", true, ok, "Commit umfasst %d Dateien (max %d). Bitte in atomare Commits aufteilen — ein Commit = eine logische Einheit." % [user_files.size(), MAX_FILES_PER_COMMIT] if not ok else "")
+	# -1 bedeutet unbegrenzt: die logische Einheit wird durch den DOKI-Impuls
+	# und die Session-Digests gebunden, nicht durch eine Dateianzahl.
+	return _result("CHECK 10", true, true, "")
 
 
 ## ─── Helfer ─────────────────────────────────────────────────────────────

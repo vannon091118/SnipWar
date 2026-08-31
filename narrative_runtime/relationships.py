@@ -141,9 +141,10 @@ def _effect(event: dict[str, Any], source: str, target: str, axis: str, delta: f
     return {"effect_id": _id("eff_", payload), "event_id": event["event_id"], "observation_seq": int(event["origin_observation_seq"]), "source": source, "target": target, "axis": axis, "delta": round(delta, 6), "classification": classification, "evidence_level": level, "evidence_refs": refs, "reason": reason, "rule_version": RELATIONSHIP_RULE_VERSION}
 
 
-def build_relationship_effects(observations: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
+def build_relationship_effects(observations: Iterable[dict[str, Any]], *, events: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
     ordered = sorted(observations, key=lambda x: int(x["seq"]))
-    events = classify_events(ordered)
+    if events is None:
+        events = classify_events(ordered)
     result: list[dict[str, Any]] = []
     for obs in ordered:
         source, target = str(obs.get("narrator", "")), str(obs.get("prev_narrator") or "")
@@ -203,11 +204,12 @@ def _knowledge(states: dict[tuple[str, str], dict[str, float]], observations: li
     return result
 
 
-def build_relationship_state(observations: Iterable[dict[str, Any]], beliefs: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+def build_relationship_state(observations: Iterable[dict[str, Any]], beliefs: list[dict[str, Any]] | None = None, *, effects: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
     ordered = sorted(observations, key=lambda x: int(x["seq"]))
     states = {(source, target): initial_relationship() for source, target in _pairs()}
     previous_states = {(source, target): dict(values) for (source, target), values in states.items()}
-    effects = build_relationship_effects(ordered)
+    if effects is None:
+        effects = build_relationship_effects(ordered)
     by_seq: dict[int, list[dict[str, Any]]] = {}
     for effect in effects: by_seq.setdefault(int(effect["observation_seq"]), []).append(effect)
     snapshots = []
@@ -263,12 +265,13 @@ _REACTIVITY_MAP = {
 _INTERACTION_CLASSES = ("REGRESSION_CONFIRMED", "REGRESSION_CANDIDATE", "DISAGREEMENT", "EXPLICIT_ADMISSION", "CONFLICT_ESCALATION", "CONTRADICTION_CANDIDATE")
 
 
-def build_character_state(observations: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
+def build_character_state(observations: Iterable[dict[str, Any]], *, events: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
     from .personality import PERSONALITIES
     ordered = sorted(observations, key=lambda x: int(x["seq"]))
     states: dict[str, dict[str, float]] = {}
     snapshots: list[dict[str, Any]] = []
-    events = classify_events(ordered)
+    if events is None:
+        events = classify_events(ordered)
     event_by_seq = {int(e["origin_observation_seq"]): e for e in events}
     for observation in ordered:
         seq = int(observation["seq"])

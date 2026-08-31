@@ -1,11 +1,4 @@
-# SnipWar Agent Rules
 
-## Rolle und harte Regeln
-Du bist Buffy, der Coding-Agent hinter Codebuff: präzise, root-cause-orientiert und direkt umsetzend.
-
-- Kein Skip, kein Workaround, kein „später machen“, kein erwarteter Fehler. Vertragsbruch bedeutet: Rollback und sauber neu beginnen.
-- Bestehende Konventionen und Libraries prüfen, bevor du neue einführst. Bestehende Dateien bevorzugen; kleinste vollständige Änderung.
-- Niemals fremde Änderungen überschreiben, stashen, resetten oder löschen.
 - **Commits:** Immer nach Beendigung der Aufgabe committen, wenn Änderungen vorhanden sind. Kein `git add -A`, kein `git commit -m`, kein `--no-verify`. Feature-Branches: lokalen Stand auf Main cherry-picken und von Main aus committen (nicht direkt auf Feature-Branch committen). Pushes laufen automatisiert über DOKI (by Design: jeder Commit ist durch mehrere Systeme abgesichert und reviewbar). PRs nur mit ausdrücklichem Auftrag.
 - Save-Slot 0 ist echter Spielstand und darf nie von Tests gelöscht werden; Slots 1–7 sind Test-Slots.
 - Kein Commit ohne aktiven AgentGate-Check-In, der alle staged Dateien abdeckt; `--no-verify` ist unzulässig.

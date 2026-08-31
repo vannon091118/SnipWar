@@ -132,7 +132,7 @@ func audio_analyze(audio_path: String, output_json_path: String = "") -> Diction
 	if not FileAccess.file_exists(global_audio_path):
 		return {"ok": false, "error": "Audio file not found: " + audio_path}
 
-	var script_path := ProjectSettings.globalize_path("res://audio_analyzer.py")
+	var script_path := ProjectSettings.globalize_path("res://scripts/tools/audio_analyzer.py")
 	var args: Array[String] = [script_path, "analyze", global_audio_path, "--quiet"]
 	if output_json_path != "":
 		var global_out_json := ProjectSettings.globalize_path(output_json_path)
@@ -165,7 +165,7 @@ func audio_slice_auto(audio_path: String, output_dir: String = "assets/audio/sfx
 	if not FileAccess.file_exists(global_audio_path):
 		return {"ok": false, "error": "Audio file not found: " + audio_path}
 
-	var script_path := ProjectSettings.globalize_path("res://audio_analyzer.py")
+	var script_path := ProjectSettings.globalize_path("res://scripts/tools/audio_analyzer.py")
 	var global_out_dir := ProjectSettings.globalize_path(output_dir)
 	var args: Array[String] = [script_path, "slice", global_audio_path, "--auto", "--output-dir", global_out_dir, "--quiet"]
 	if config_json != "":
@@ -197,7 +197,7 @@ func audio_render_evidence(audio_path: String, output_dir: String = "user://audi
 	if not FileAccess.file_exists(global_audio_path):
 		return {"ok": false, "error": "Audio file not found: " + audio_path}
 
-	var script_path := ProjectSettings.globalize_path("res://audio_analyzer.py")
+	var script_path := ProjectSettings.globalize_path("res://scripts/tools/audio_analyzer.py")
 	var global_out_dir := ProjectSettings.globalize_path(output_dir)
 	var args: Array[String] = [script_path, "render-evidence", global_audio_path, "--output-dir", global_out_dir, "--quiet"]
 
@@ -228,7 +228,7 @@ func audio_compare(audio_path_a: String, audio_path_b: String) -> Dictionary:
 	if not FileAccess.file_exists(global_path_b):
 		return {"ok": false, "error": "Audio file B not found: " + audio_path_b}
 
-	var script_path := ProjectSettings.globalize_path("res://audio_analyzer.py")
+	var script_path := ProjectSettings.globalize_path("res://scripts/tools/audio_analyzer.py")
 	var args: Array[String] = [script_path, "compare", global_path_a, global_path_b, "--quiet"]
 
 	var output: Array = []

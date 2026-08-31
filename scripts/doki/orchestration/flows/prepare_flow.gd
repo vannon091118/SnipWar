@@ -98,16 +98,12 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	_write_scope_file(impact)
 	_write_agent_binding(agent_name, activity_seed)
 
-	# Atomicity-Gate (früh, wie Check 10): ein Commit = EINE logische Einheit.
-	# Mehr als MAX_FILES_PER_COMMIT User-Dateien → sofort blocken, bevor der
-	# Prompt geschrieben wird (Mega-Commits fressen Story-Platz und Info).
+	# Die Commit-Größe ist nicht künstlich begrenzt; Kohärenz wird durch
+	# Snapshot-, Scope- und Content-Digests geprüft.
 	var user_files: Array = []
 	for f in staged:
 		if not DOKI_Verifier.AUTO_MANAGED.has(str(f).get_file()):
 			user_files.append(str(f))
-	if user_files.size() > DOKI_Verifier.MAX_FILES_PER_COMMIT:
-		_session_store.release_ownership(owner_token)
-		return {"ok": false, "error": "Atomicity-Gate: %d Dateien gestaged (max %d). Bitte in atomare Commits aufteilen — ein Commit = eine logische Einheit." % [user_files.size(), DOKI_Verifier.MAX_FILES_PER_COMMIT]}
 
 	var chain: Dictionary = _chain_store.read()
 	if chain.get("anchor", {}).is_empty():

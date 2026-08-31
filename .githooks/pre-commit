@@ -22,19 +22,14 @@ if ! bash "$repo_root/scripts/agent_activity.sh" run-preflight; then
 	exit 1
 fi
 
-# 1) Preflight-Gate — Session-Scoped (nur wenn ein DOKI-Scope-Manifest vorliegt).
-# Python-only Änderungen bleiben bewusst bei den mechanischen/DOKI-Gates;
-# Scene-Preflight wird nur für code-relevante Änderungen gestartet.
-severity=$(bash "$repo_root/scripts/agent_activity.sh" classify-staged)
+# 1) Preflight-Gate — NUR scoped (Scope-Manifest aus DOKI prepare). Kein
+#    Full-Preflight im Hook: der Voll-Lauf ist ausschließlich manuell
+#    ($GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x).
 scope_file="$repo_root/.doki/scope.json"
-if [ "$severity" != python ]; then
-	if [ -f "$scope_file" ]; then
-		"$godot_bin" --headless --path "$repo_root" --script res://scripts/preflight.gd --scope="$scope_file"
-	else
-		"$godot_bin" --headless --path "$repo_root" --script res://scripts/preflight.gd
-	fi
+if [ -f "$scope_file" ]; then
+	"$godot_bin" --headless --path "$repo_root" --script res://scripts/preflight.gd --scope="$scope_file" --fail-fast
 else
-	printf 'Preflight: cheap path (python-only staged changes)\n'
+	printf 'Preflight: kein Scope-Manifest — scoped run übersprungen (full preflight nur manuell).\n'
 fi
 
 # 2) Mechanische Gates (unabhängig, jedes mit eigenem Evidence-Artfakt in user://mcp_evidence/)

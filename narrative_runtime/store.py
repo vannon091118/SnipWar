@@ -12,7 +12,7 @@ from .errors import HistoryChangedError, ImportAtomicityError
 from .observe import SourceSnapshot, canonical_json, event_id, observation_digest
 from .relationships import build_relationship_effects, build_relationship_state, build_character_state, classify_events
 from .beliefs import build_beliefs, build_memory
-from .threads import build_threads, current_threads
+from .threads import derive_threads
 from .perspectives import build_perspectives, build_conflicts
 from .public_state import build_public_state
 from .spotlight import derive_spotlight
@@ -387,14 +387,17 @@ class Archive:
     def _write_derived(self, connection: sqlite3.Connection, observations: list[dict[str, Any]]) -> None:
         for table in ("relationship_classifications", "relationship_events", "relationship_state_history", "character_state_history", "beliefs", "memory", "threads", "thread_events", "perspectives", "conflicts", "public_state_history", "spotlight_selections"):
             connection.execute(f"DELETE FROM {table}")
-        for item in classify_events(observations):
+        # Compute shared intermediates ONCE to avoid O(N²) redundant work
+        classified_events = classify_events(observations)
+        relationship_effects = build_relationship_effects(observations, events=classified_events)
+        for item in classified_events:
             connection.execute("INSERT INTO relationship_classifications VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (item["event_id"], item["origin_observation_seq"], item["event_type"], item["classification"], item["evidence_level"], canonical_json(item["evidence_refs"]), item["status"], item.get("superseded_by"), item.get("upgraded_classification"), canonical_json(item.get("upgrade_evidence_refs", [])), item["rule_version"]))
-        for item in build_relationship_effects(observations):
+        for item in relationship_effects:
             connection.execute("INSERT INTO relationship_events VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (item["effect_id"], item["event_id"], item["observation_seq"], item["source"], item["target"], item["axis"], item["delta"], item["classification"], item["evidence_level"], canonical_json(item["evidence_refs"]), item["reason"], item["rule_version"]))
         belief_data = build_beliefs(observations)
-        for item in build_relationship_state(observations, belief_data):
+        for item in build_relationship_state(observations, belief_data, effects=relationship_effects):
             connection.execute("INSERT INTO relationship_state_history(observation_seq, source, target, values_json, previous_values_json, deltas_json, evidence_refs, knowledge_json, rule_version, decay_rule_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (item["observation_seq"], item["source"], item["target"], canonical_json(item["values"]), canonical_json(item.get("previous_values", {})), canonical_json(item.get("deltas", {})), canonical_json(item.get("evidence_refs", [])), canonical_json(item.get("knowledge", {})), item["rule_version"], item.get("decay_rule_version", "relationship_decay/v1")))
-        for item in build_character_state(observations):
+        for item in build_character_state(observations, events=classified_events):
             connection.execute("INSERT INTO character_state_history VALUES (?, ?, ?, ?)", (item["observation_seq"], item["character"], canonical_json(item["values"]), item["rule_version"]))
         for item in belief_data:
             connection.execute("INSERT INTO beliefs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tuple(item.values()))
@@ -406,23 +409,23 @@ class Archive:
                  canonical_json(list(item["involved"])), item["recall_count"], item["last_recalled"],
                  item["rule_version"]),
             )
-        thread_history = build_threads(observations)
-        thread_data = build_threads(observations)
-        current_thread_map = {item["thread_id"]: item for item in current_threads(observations)}
-        for item in thread_data:
+        thread_history_derived = derive_threads(observations)
+        thread_history = thread_history_derived["thread_events"]
+        current_thread_map = {item["thread_id"]: item for item in thread_history_derived["threads"]}
+        for item in thread_history:
             current = current_thread_map[item["thread_id"]]
             connection.execute("INSERT INTO threads VALUES (?, ?, ?, ?, ?, ?)", (item["thread_id"], item["observation_seq"], current["topic"], item["status"], item["observation_seq"], item["rule_version"]))
             connection.execute("INSERT INTO thread_events VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (item["thread_id"], item["observation_seq"], item["status"], item["evidence_type"], canonical_json(item["evidence_refs"]), int(item["is_reactivation"]), float(item.get("relevance", 0.0)), item["rule_version"]))
-        perspectives = build_perspectives(observations, build_beliefs(observations), thread_history)
+        perspectives = build_perspectives(observations, belief_data, thread_history)
         for item in perspectives:
             connection.execute("INSERT INTO perspectives VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (item["perspective_id"], item["character"], item["thread_id"], item["claim"], item["stance"], item["confidence"], canonical_json(item["supporting_evidence"]), canonical_json(item["contradicting_evidence"]), item["rule_version"]))
         for item in build_conflicts(perspectives):
             connection.execute("INSERT INTO conflicts VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (item["conflict_id"], item["thread_id"], canonical_json(item["actors"]), item["trigger"], item["contradiction"], item["intensity"], canonical_json(item["evidence_refs"]), item["rule_version"]))
         # Public State (full snapshot incl. audit updates)
-        for item in build_public_state(observations):
+        public_states = build_public_state(observations)
+        for item in public_states:
             connection.execute("INSERT INTO public_state_history VALUES (?, ?, ?)", (item["observation_seq"], canonical_json({"public_states": item["public_states"], "updates": item["updates"]}), item["rule_version"]))
         # Spotlight Selections
-        public_states = build_public_state(observations)
         ps_lookup = {int(ps["observation_seq"]): ps for ps in public_states}
         spotlight_result = derive_spotlight(observations, public_states)
         for item in spotlight_result.get("spotlight_selections", []):

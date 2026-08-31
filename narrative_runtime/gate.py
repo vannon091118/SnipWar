@@ -18,7 +18,7 @@ from .relationships import (
     classify_events,
 )
 from .beliefs import BELIEF_BASES, BELIEF_STATUSES, build_beliefs, build_memory
-from .threads import build_threads, current_threads
+from .threads import derive_threads
 from .public_state import AXES, build_public_state
 from .spotlight import BALANCE_LOWER, BALANCE_UPPER, MAX_WEIGHT, MIN_WEIGHT, SOCIAL_LOWER, SOCIAL_UPPER, select_narrator
 
@@ -119,8 +119,9 @@ def gate_relationship_structure(snapshot: SourceSnapshot) -> None:
         raise AssertionError("G8 relationship axis coverage incomplete")
 
 
-def gate_relationship_effects(snapshot: SourceSnapshot) -> None:
-    effects = build_relationship_effects(snapshot.observations)
+def gate_relationship_effects(snapshot: SourceSnapshot, *, effects: list[dict[str, Any]] | None = None) -> None:
+    if effects is None:
+        effects = build_relationship_effects(snapshot.observations)
     for item in effects:
         if item["axis"] not in RELATIONSHIP_AXES:
             raise AssertionError("G10 unknown relationship axis")
@@ -137,8 +138,9 @@ def gate_no_lookahead(snapshot: SourceSnapshot) -> None:
             raise AssertionError("G11 observation contains look-ahead evidence")
 
 
-def gate_classification_contract(snapshot: SourceSnapshot) -> None:
-    events = classify_events(snapshot.observations)
+def gate_classification_contract(snapshot: SourceSnapshot, *, events: list[dict[str, Any]] | None = None) -> None:
+    if events is None:
+        events = classify_events(snapshot.observations)
     valid_levels = {"DIRECT_FACT", "DETERMINISTIC_DERIVATION", "CANDIDATE", "CONFIRMED_BY_LATER_EVIDENCE"}
     for event in events:
         if event["evidence_level"] not in valid_levels or not event["evidence_refs"]:
@@ -156,8 +158,9 @@ def gate_state_rebuild_contract(snapshot: SourceSnapshot) -> None:
         raise AssertionError("G15 relationship state is incomplete")
 
 
-def gate_beliefs_v2(snapshot: SourceSnapshot) -> None:
-    beliefs = build_beliefs(snapshot.observations)
+def gate_beliefs_v2(snapshot: SourceSnapshot, *, beliefs: list[dict[str, Any]] | None = None) -> None:
+    if beliefs is None:
+        beliefs = build_beliefs(snapshot.observations)
     for item in beliefs:
         if item["basis"] not in BELIEF_BASES:
             raise AssertionError("G18 belief basis outside contract")
@@ -169,8 +172,9 @@ def gate_beliefs_v2(snapshot: SourceSnapshot) -> None:
         raise AssertionError("G18 SOCIAL belief produced without external social input")
 
 
-def gate_memory_v2(snapshot: SourceSnapshot) -> None:
-    memory = build_memory(snapshot.observations)
+def gate_memory_v2(snapshot: SourceSnapshot, *, memory: list[dict[str, Any]] | None = None) -> None:
+    if memory is None:
+        memory = build_memory(snapshot.observations)
     for item in memory:
         if "involved" not in item or not item["involved"]:
             raise AssertionError("G18 memory lacks involved")
@@ -180,27 +184,30 @@ def gate_memory_v2(snapshot: SourceSnapshot) -> None:
             raise AssertionError("G18 memory has negative recall_count")
 
 
-def gate_threads_v2(snapshot: SourceSnapshot) -> None:
-    events = build_threads(snapshot.observations)
-    for item in events:
+def gate_threads_v2(snapshot: SourceSnapshot, *, threads_derived: dict[str, Any] | None = None) -> None:
+    if threads_derived is None:
+        from .threads import derive_threads
+        threads_derived = derive_threads(snapshot.observations)
+    for item in threads_derived["thread_events"]:
         if "relevance" not in item or not (0.0 <= item["relevance"] <= 1.0):
             raise AssertionError("G18 thread event lacks bounded relevance")
-    for thread in current_threads(snapshot.observations):
+    for thread in threads_derived["threads"]:
         if "pressure" not in thread or "relevance" not in thread:
             raise AssertionError("G18 thread lacks pressure/relevance separation")
 
 
-def gate_character_state_v2(snapshot: SourceSnapshot) -> None:
+def gate_character_state_v2(snapshot: SourceSnapshot, *, events: list[dict[str, Any]] | None = None) -> None:
     if "fatigue" not in CHARACTER_AXES:
         raise AssertionError("G18 character state lacks fatigue axis")
-    states = build_character_state(snapshot.observations)
+    states = build_character_state(snapshot.observations, events=events)
     if any(set(item["values"]) != set(CHARACTER_AXES) for item in states):
         raise AssertionError("G18 character state axis coverage incomplete")
 
 
-def gate_public_state_v2(snapshot: SourceSnapshot) -> None:
-    history = build_public_state(snapshot.observations)
-    for item in history:
+def gate_public_state_v2(snapshot: SourceSnapshot, *, public_state: list[dict[str, Any]] | None = None) -> None:
+    if public_state is None:
+        public_state = build_public_state(snapshot.observations)
+    for item in public_state:
         if item["rule_version"] != "public_state/v2":
             raise AssertionError("G18 public state rule version stale")
         for name, update in item["updates"].items():
@@ -214,9 +221,10 @@ def gate_public_state_v2(snapshot: SourceSnapshot) -> None:
                     raise AssertionError(f"G18 public state delta inconsistent for {name}.{axis}")
 
 
-def gate_spotlight_v2(snapshot: SourceSnapshot) -> None:
+def gate_spotlight_v2(snapshot: SourceSnapshot, *, public_state: list[dict[str, Any]] | None = None) -> None:
     history = [{"seq": int(o["seq"]), "narrator": str(o["narrator"])} for o in snapshot.observations]
-    public_state = build_public_state(snapshot.observations)
+    if public_state is None:
+        public_state = build_public_state(snapshot.observations)
     ps = public_state[-1]["public_states"] if public_state else {}
     result = select_narrator(snapshot.observations[-1]["composite"], history[:-1], len(history), ps)
     if "error" in result:
@@ -259,6 +267,15 @@ def gate_effect_batch_contract(snapshot: SourceSnapshot) -> None:
 
 def run_gate(root: Path, chain: Path, index: Path) -> dict[str, str]:
     snapshot = SourceSnapshot.from_paths(chain, index)
+    obs = snapshot.observations
+    # Pre-compute shared intermediates ONCE to avoid redundant O(N²) work.
+    # Gate functions that intentionally use different inputs ([:1], split,
+    # double-call for determinism) still compute independently.
+    _classified_events = classify_events(obs)
+    _relationship_effects = build_relationship_effects(obs, events=_classified_events)
+    _beliefs = build_beliefs(obs)
+    _threads_derived = derive_threads(obs)
+    _public_state = build_public_state(obs)
     checks = {
         "G1": lambda: gate_stdlib(root),
         "G2": lambda: gate_purity(snapshot),
@@ -267,20 +284,20 @@ def run_gate(root: Path, chain: Path, index: Path) -> dict[str, str]:
         "G5": lambda: gate_no_truth_writes(root),
         "G6/G7": lambda: gate_archive(snapshot),
         "G8/G9": lambda: gate_relationship_structure(snapshot),
-        "G10/G14": lambda: gate_relationship_effects(snapshot),
+        "G10/G14": lambda: gate_relationship_effects(snapshot, effects=_relationship_effects),
         "G11": lambda: gate_no_lookahead(snapshot),
-        "G12": lambda: gate_classification_contract(snapshot),
-        "G13": lambda: gate_classification_contract(snapshot),
-        "G14": lambda: gate_relationship_effects(snapshot),
+        "G12": lambda: gate_classification_contract(snapshot, events=_classified_events),
+        "G13": lambda: gate_classification_contract(snapshot, events=_classified_events),
+        "G14": lambda: gate_relationship_effects(snapshot, effects=_relationship_effects),
         "G15": lambda: gate_state_rebuild_contract(snapshot),
         "G16": lambda: gate_effect_batch_contract(snapshot),
         "G17": lambda: gate_effect_batch_contract(snapshot),
-        "G18": lambda: gate_beliefs_v2(snapshot),
+        "G18": lambda: gate_beliefs_v2(snapshot, beliefs=_beliefs),
         "G19": lambda: gate_memory_v2(snapshot),
-        "G20": lambda: gate_threads_v2(snapshot),
-        "G21": lambda: gate_character_state_v2(snapshot),
-        "G22": lambda: gate_public_state_v2(snapshot),
-        "G23": lambda: gate_spotlight_v2(snapshot),
+        "G20": lambda: gate_threads_v2(snapshot, threads_derived=_threads_derived),
+        "G21": lambda: gate_character_state_v2(snapshot, events=_classified_events),
+        "G22": lambda: gate_public_state_v2(snapshot, public_state=_public_state),
+        "G23": lambda: gate_spotlight_v2(snapshot, public_state=_public_state),
         "G24": lambda: gate_explainability(snapshot),
     }
     result = {}

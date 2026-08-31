@@ -1,0 +1,114 @@
+{
+  "ok": true,
+  "file": "paper_rustle.ogg",
+  "path": "C:/Users/Vannon/Documents/snippet-empire/snip-war/assets/audio/sfx/paper_rustle.ogg",
+  "technical": {
+    "duration": 0.72,
+    "sample_rate": 44100,
+    "channels": 1,
+    "codec": "vorbis",
+    "bit_rate": 115233
+  },
+  "waveform": {
+    "peaks_per_second": [
+      0.12
+    ],
+    "rms_per_second": [
+      0.0154
+    ],
+    "lufs_integrated": -32.4,
+    "lufs_momentary": [
+      -32.4
+    ],
+    "peak_db": -18.4,
+    "dynamic_range_db": 0.0
+  },
+  "spectrum": {
+    "bands": {
+      "sub_bass": {
+        "range_hz": [
+          20,
+          60
+        ],
+        "energy": 0.8754
+      },
+      "bass": {
+        "range_hz": [
+          60,
+          250
+        ],
+        "energy": 0.9645
+      },
+      "low_mid": {
+        "range_hz": [
+          250,
+          500
+        ],
+        "energy": 1.0
+      },
+      "mid": {
+        "range_hz": [
+          500,
+          2000
+        ],
+        "energy": 0.9881
+      },
+      "upper_mid": {
+        "range_hz": [
+          2000,
+          4000
+        ],
+        "energy": 0.9068
+      },
+      "presence": {
+        "range_hz": [
+          4000,
+          6000
+        ],
+        "energy": 0.7431
+      },
+      "brilliance": {
+        "range_hz": [
+          6000,
+          20000
+        ],
+        "energy": 0.7124
+      }
+    },
+    "spectral_centroid_hz": 2825.6,
+    "spectral_flatness": 0.9922
+  },
+  "transients": {
+    "count": 0,
+    "positions_sec": [],
+    "density_per_sec": 0.0
+  },
+  "classification": {
+    "paper_noise_ratio": 1.0,
+    "tonal_ratio": 0.01,
+    "noise_floor_db": -36.2,
+    "silence_ratio": 0.0,
+    "tags": [
+      "noise_dominant",
+      "white_noise_like",
+      "compressed",
+      "dense"
+    ]
+  },
+  "duration": 0.72,
+  "sample_rate": 44100,
+  "channels": 1,
+  "codec": "vorbis",
+  "peaks": [
+    0.12
+  ],
+  "silence_ranges": [],
+  "recommended_cuts": [
+    {
+      "name": "slice_01",
+      "start": 0.0,
+      "end": 0.74,
+      "duration": 0.74
+    }
+  ]
+}

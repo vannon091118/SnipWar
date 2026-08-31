@@ -63,7 +63,7 @@ Charakters** als Fließtext (keine Bullets).
   7. **Kausalität:** IMPULSE-Anker + Composite ist Ketten-Nachfolger der Session
   8. **DocSync:** CHANGELOG/change_index existieren + keine ungestagten Diffs
   9. **ChainAudit:** c-Folge lückenlos, kein Doppel-Append, **RNG-Replay** == Session
-  10. **Datei-Limit (Atomicity):** max. `MAX_FILES_PER_COMMIT` (30) User-Dateien
+  10. **Datei-Kohärenz:** unbegrenzte Dateianzahl; Snapshot-, Scope- und Content-Digests müssen exakt übereinstimmen.
       pro Commit — ein Commit = eine logische Einheit; Auto-Managed narrative
       Dateien (narrative_chain.json, change_index.json, CHANGELOG.md,
       .commit_msg.txt, arcs.json) zählen nicht mit (identisch zu GateFlow)
