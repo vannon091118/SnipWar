@@ -200,8 +200,11 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	session["search_context"] = search
 	session["prompt"] = _voice.build_prompts(ctx)
 	
-	# Transition state atomically with integrity hash (V2-001, V2-003)
-	var transition_result: Dictionary = _session_store.transition_state(DOKI_SessionStore.STATE_PREPARED, activity_seed)
+	# Transition state atomically with integrity hash (V2-001, V2-003).
+	# Die gebaute Session (mit narrator/mood/composite/seed/file_snapshot/limits)
+	# wird übergeben, damit sie persistiert wird — transition_state darf sonst nur
+	# die leere Disk-Version überschreiben und alle Content-Felder wegwerfen.
+	var transition_result: Dictionary = _session_store.transition_state(DOKI_SessionStore.STATE_PREPARED, activity_seed, session)
 	if not bool(transition_result.get("ok", false)):
 		_session_store.release_ownership(owner_token)
 		return transition_result

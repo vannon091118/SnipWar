@@ -230,15 +230,30 @@ static func _is_valid_transition(from_state: String, to_state: String) -> bool:
 			return false
 
 
-func transition_state(new_state: String, agent_seed: String) -> Dictionary:
-	var session: Dictionary = read()
-	var current_state: String = str(session.get("state", STATE_IDLE))
+func transition_state(new_state: String, agent_seed: String, filled_session: Dictionary = {}) -> Dictionary:
+	# BUGFIX: Wenn ein bereits vollständig gebauter Session-Inhalt übergeben wird
+	# (wie prepare_flow ihn via build_session() erzeugt), muss DIESER persistiert
+	# werden — nicht die leere/veraltete Disk-Version, die sonst alle Content-Felder
+	# (narrator, mood, composite, seed, file_snapshot, limits, ...) wegwirft und
+	# dazu führt, dass prepare nur "state" schreibt und alles andere leer bleibt.
+	#
+	# Der Zustandsmaschinen-Übergang wird gegen den DISK-Zustand validiert (idle →
+	# prepared), weil build_session() die Session bereits auf "prepared" setzt —
+	# verglichen werden muss aber der vorherige persisted Zustand.
+	var disk_session: Dictionary = read()
+	var current_state: String = str(disk_session.get("state", STATE_IDLE))
 	
 	if not _is_valid_transition(current_state, new_state):
 		return {"ok": false, "error": "Ungültiger Zustandsübergang: '%s' → '%s'." % [current_state, new_state]}
 	
+	var session: Dictionary
+	if filled_session.is_empty():
+		session = disk_session.duplicate(true)
+	else:
+		session = filled_session.duplicate(true)
 	session["prev_state"] = current_state
 	session["state"] = new_state
+	session["activity_seed"] = agent_seed
 	session = _sign_session(session, agent_seed)
 	save(session)
 	return {"ok": true, "session": session}

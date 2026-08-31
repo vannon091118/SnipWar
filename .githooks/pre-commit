@@ -2,8 +2,15 @@
 set -euo pipefail
 
 # SnipWar pre-commit hook
-# Runs: DOKI prepare + gate → Unified Check (compile + preflight + tests, scope-kontrolliert)
+# Runs: DOKI gate (Session verified? Snapshot-Match? .commit_msg.txt?) →
+#       Unified Check (compile + preflight + tests, scope-kontrolliert)
 # Exits 1 if GODOT_BIN not available or any check fails
+#
+# Der DOKI-Ablauf ist laut AGENTS.md/README: git add → doki prepare →
+# body schreiben → doki finish → git commit -F .commit_msg.txt. prepare und
+# finish macht der AGENT manuell; der pre-commit-Hook feuert das DOKI-Gate
+# (prüft verified + Snapshot + Coverage + .commit_msg.txt), KEIN zweites
+# prepare (das würde die bereits verified Session überschreiben).
 
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null)"
 if [ -z "$ROOT_DIR" ]; then
@@ -37,12 +44,6 @@ if [ -f "scripts/agent_activity.sh" ]; then
     esac
     echo "=== pre-commit: Staged changes classified as severity=$SEVERITY ==="
 fi
-
-echo "=== pre-commit: DOKI prepare ==="
-run_godot "res://scripts/doki/doki.gd" -- prepare "pre-commit gate" || {
-    echo "ERROR: DOKI prepare failed" >&2
-    exit 1
-}
 
 echo "=== pre-commit: DOKI gate ==="
 run_godot "res://scripts/doki/doki.gd" -- gate || {

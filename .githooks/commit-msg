@@ -36,10 +36,16 @@ run_godot() {
 COMMIT_MSG="$(cat "$MSG_FILE")"
 
 # Check if this is a DOKI commit (has the expected format)
-# DOKI commits have a specific structure with [NARRATOR:], [COMPOSITE:], etc.
-if echo "$COMMIT_MSG" | grep -q '^\[NARRATOR:\]'; then
+# DOKI commits have a specific structure with [NARRATOR:], [MODEL:], [COMPOSITE:]
+# im Body. WICHTIG: die Message beginnt mit dem Subject ("<Narrator> (N files): …"),
+# erst danach folgen die Tokens — deshalb prüfen wir auf Vorhandensein im gesamten
+# Text, NICHT auf Zeilenanfang (ein Anker an ^ verwarf jede echt generierte Message).
+if echo "$COMMIT_MSG" | grep -q '\[NARRATOR:'; then
     echo "=== commit-msg: DOKI verify-only ==="
-    run_godot "res://scripts/doki/doki.gd" -- verify-only || {
+    # verify-only erwartet die Message-Datei als Positionsargument (<msgfile>),
+    # nicht als --body-file. `$MSG_FILE` ist die temporäre Message-Datei, die
+    # git dem commit-msg-Hook übergibt.
+    run_godot "res://scripts/doki/doki.gd" -- verify-only "$MSG_FILE" || {
         echo "ERROR: DOKI commit message validation failed" >&2
         exit 1
     }

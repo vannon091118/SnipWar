@@ -10,8 +10,13 @@ func _init() -> void:
 
 func _run() -> void:
 	# Check if narrative_chain.json and change_index.json exist
-	var chain_path: String = "res://narrative_chain.json"
-	var index_path: String = "res://change_index.json"
+	# DOKI-Migration: Artefakte liegen unter .doki/ (Fallback auf Root für alte Stände).
+	var chain_path: String = "res://.doki/narrative_chain.json"
+	var index_path: String = "res://.doki/change_index.json"
+	if not FileAccess.file_exists(chain_path):
+		chain_path = "res://narrative_chain.json"
+	if not FileAccess.file_exists(index_path):
+		index_path = "res://change_index.json"
 	
 	if not FileAccess.file_exists(chain_path):
 		_failures.append("narrative_chain.json not found at %s" % chain_path)
@@ -101,8 +106,12 @@ func _run() -> void:
 
 func _compute_runtime_hash() -> String:
 	var parts: PackedStringArray = []
-	var chain_path: String = "res://narrative_chain.json"
-	var index_path: String = "res://change_index.json"
+	var chain_path: String = "res://.doki/narrative_chain.json"
+	var index_path: String = "res://.doki/change_index.json"
+	if not FileAccess.file_exists(chain_path):
+		chain_path = "res://narrative_chain.json"
+	if not FileAccess.file_exists(index_path):
+		index_path = "res://change_index.json"
 	
 	for path in [chain_path, index_path]:
 		var f := FileAccess.open(path, FileAccess.READ)

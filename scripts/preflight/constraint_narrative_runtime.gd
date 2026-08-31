@@ -20,8 +20,10 @@ func requires_scene() -> bool:
 	return false
 
 const CACHE_PATH := "user://narrative_runtime_cache.json"
-const CHAIN_PATH := "res://narrative_chain.json"
-const CHANGE_INDEX_PATH := "res://change_index.json"
+# DOKI-Migration: narrative Artefakte liegen seit der Pfad-Migration unter
+# .doki/ (nicht mehr am Repo-Root). Fallback auf Root für ältere Stände.
+const CHAIN_PATH := "res://.doki/narrative_chain.json"
+const CHANGE_INDEX_PATH := "res://.doki/change_index.json"
 const RUNTIME_DIR := "res://narrative_runtime"
 
 func run(ctx: PreflightContext) -> bool:

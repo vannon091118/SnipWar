@@ -12,7 +12,16 @@ def main() -> int:
     parser.add_argument("--root", type=Path, required=True)
     args = parser.parse_args()
     root = args.root.resolve()
-    result = run_gate(root, root / "narrative_chain.json", root / "change_index.json")
+    # DOKI-Migration: narrative Artefakte liegen seit der Pfad-Migration unter
+    # .doki/ (nicht mehr am Repo-Root). Fail-open mit Fallback auf Root, damit
+    # der Python-Fallback (ohne Godot) und alter Stand nicht doppelt brechen.
+    chain = root / ".doki" / "narrative_chain.json"
+    index = root / ".doki" / "change_index.json"
+    if not chain.exists():
+        chain = root / "narrative_chain.json"
+    if not index.exists():
+        index = root / "change_index.json"
+    result = run_gate(root, chain, index)
     print(json.dumps(result, sort_keys=True))
     return 0
 

@@ -135,10 +135,22 @@ static func _without_auto_managed(files: Array) -> Array:
 ## V10-003: Verify AGENT_ACTIVITY_SEED against agent_activity.sh registry
 func _verify_agent_activity_seed(agent_name: String, activity_seed: String) -> Dictionary:
 	# Call agent_activity.sh seed <agent> to get registered seed
+	# Resolve bash path: Windows needs full path (Git Bash), Unix uses PATH
+	# (gleicher Fix wie prepare_flow — nacktes "bash" bricht unter Windows).
 	var output: Array = []
-	var exit_code: int = OS.execute("bash", ["scripts/agent_activity.sh", "seed", agent_name], output, true)
+	var repo_root: String = ProjectSettings.globalize_path("res://")
+	var script_path: String = repo_root + "scripts/agent_activity.sh"
+	var bash_path: String = OS.get_environment("SHELL")
+	if bash_path.is_empty() or not FileAccess.file_exists(bash_path):
+		for candidate in ["C:/Program Files/Git/usr/bin/bash.exe", "C:/Program Files/Git/bin/bash.exe"]:
+			if FileAccess.file_exists(candidate):
+				bash_path = candidate
+				break
+	if bash_path.is_empty():
+		bash_path = "bash"  # Fallback: hope it's in PATH
+	var exit_code: int = OS.execute(bash_path, [script_path, "seed", agent_name], output, true)
 	if exit_code != 0:
-		return {"ok": false, "error": "AGENT_ACTIVITY_SEED verification failed: agent '%s' not checked in or registry error." % agent_name}
+		return {"ok": false, "error": "AGENT_ACTIVITY_SEED verification failed: agent '%s' not checked in or registry error (exit=%d)." % [agent_name, exit_code]}
 	var registered_seed: String = str(output[0]).strip_edges() if output.size() > 0 else ""
 	if registered_seed.is_empty():
 		return {"ok": false, "error": "AGENT_ACTIVITY_SEED verification failed: no seed registered for agent '%s'." % agent_name}
