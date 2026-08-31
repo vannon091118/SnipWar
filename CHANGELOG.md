@@ -2393,3 +2393,33 @@ DOKI finalize Chain-Eintrag 123
 - .doki/change_index.json: Tooling erweitert (F-586).
 - .doki/narrative_chain.json: Tooling erweitert (F-587).
 - scripts/doki/data/arcs.json: Tooling erweitert (F-001).
+
+## 2026-08-27 05:00:00 — p125 · c125j94n5a15p37 · Squizzle · selbstironisch
+
+**Squizzles Fall: Preflight-Mutex TASK-015 (1 Lauf, Warteschlange,… — nach Vannon**
+
+Preflight-Mutex TASK-015 (1 Lauf, Warteschlange, Stale-Takeover) + Transport-Commit-Modus im commit-msg Hook + FINDINGS F-605..608 (Commit-Audit, Byte-Drift-Cause, Takt-Regel)
+
+- .githooks/commit-msg: Tooling erweitert (F-584).
+- docs/FINDINGS.md: Tooling erweitert (F-046).
+- scripts/check.gd: Tooling erweitert (F-602).
+- scripts/preflight.gd: Tooling erweitert (F-343).
+- scripts/preflight_lock.gd: Tooling erweitert (F-605).
+- scripts/testing/test_all.gd: Tooling erweitert (F-384).
+
+## 2026-08-27 05:00:00 — p125 · c125j3n8a48p1 · Ghost · triumphierend
+
+**Ghost verzeichnet: Preflight-Mutex TASK-015 + Transport-Commit-Modus… — nach Vannon**
+
+Preflight-Mutex TASK-015 + Transport-Commit-Modus + Scope-Filter F-606 + FINDINGS F-605..608
+
+- .doki/change_index.json: Implementiert und integriert (F-586).
+- .githooks/commit-msg: Implementiert und integriert (F-584).
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- docs/FINDINGS.md: Implementiert und integriert (F-046).
+- scripts/check.gd: Implementiert und integriert (F-602).
+- scripts/doki/orchestration/flows/gate_flow.gd: Implementiert und integriert (F-013).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Implementiert und integriert (F-181).
+- scripts/preflight.gd: Implementiert und integriert (F-343).
+- scripts/preflight_lock.gd: Implementiert und integriert (F-605).
+- scripts/testing/test_all.gd: Implementiert und integriert (F-384).

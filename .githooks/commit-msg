@@ -35,6 +35,28 @@ run_godot() {
 # Read the commit message
 COMMIT_MSG="$(cat "$MSG_FILE")"
 
+# ─── Transport-Commit-Erkennung (TASK-015) ─────────────────────────────────
+# Ein Commit, der NUR auto-managed DOKI-Artefakte enthält (finalize-Produkte:
+# narrative_chain.json, change_index.json, CHANGELOG.md, arcs.json), ist ein
+# TRANSPORT-Commit — er transportiert fertige Artefakte, erzeugt keine neue
+# Arbeit. Er braucht KEINE DOKI-Tokens und keine Message-Validierung.
+# Ohne diese Ausnahme entsteht der finalize-Loop: finalize staged Artefakte →
+# Commit braucht Tokens → Tokens nur via prepare/finish → neuer Chain-Eintrag
+# → finalize schreibt wieder Artefakte → Endlosschleife.
+TRANSPORT_COMMIT=1
+while IFS= read -r staged_file; do
+    [ -z "$staged_file" ] && continue
+    case "$(basename "$staged_file")" in
+        narrative_chain.json|change_index.json|CHANGELOG.md|arcs.json) ;;
+        *) TRANSPORT_COMMIT=0; break ;;
+    esac
+done < <(git diff --cached --name-only)
+
+if [ "$TRANSPORT_COMMIT" -eq 1 ]; then
+    echo "=== commit-msg: Transport-Commit (nur DOKI-Artefakte) — Message-Validierung übersprungen ==="
+    exit 0
+fi
+
 # Check if this is a DOKI commit (has the expected format)
 # DOKI commits have a specific structure with [NARRATOR:], [MODEL:], [COMPOSITE:]
 # im Body. WICHTIG: die Message beginnt mit dem Subject ("<Narrator> (N files): …"),

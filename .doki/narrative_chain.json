@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-31 22:02:49 +0200",
-		"hash": "2626fc890f9b540010c30fc18c1ea9aeef528f66",
-		"subject": "Basher (15 files): Vier P0-Fixe + Byte-Drift-Gate Fix +â€¦ â€” nach Thinker"
+		"date": "2026-08-31 22:15:00 +0200",
+		"hash": "780b2457aa66f400fe37122fe58d98d62fb383b4",
+		"subject": "Vannon: Finalize Chain-Eintrag 124 â€” nach Basher"
 	},
 	"entries": [
 		{
@@ -9904,6 +9904,10 @@
 		},
 		{
 			"at_hash": "2626fc890f9b540010c30fc18c1ea9aeef528f66",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		},
+		{
+			"at_hash": "780b2457aa66f400fe37122fe58d98d62fb383b4",
 			"note": "Anker nach rebase/amend/force-push neu verankert."
 		}
 	]

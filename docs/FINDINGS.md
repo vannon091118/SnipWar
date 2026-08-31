@@ -438,3 +438,91 @@ deduplizierte Begründung. Das (teils umgesetzte) `--scope`-System löst nur das
 | PL-C | Skipen ist rational: GATE-Schritt ist nur Prozessnorm, die einzige mechanische Engstelle ist der Hook (anfällig für `--no-verify`); alles Upstream ist ungeprüft | ✅ GEFIXT | Phase 3 bindet Scope+Bytes+Ownership an die Session; der DOKI-Gate im Hook verifiziert die Bindung *vor* dem Commit — ohne `--no-verify` gibt es keinen unkritischen Pfad |
 | PL-D | Ungelöster Concurrency-Risk (RISK-003 im Plan): kein `session_store`-Ownership, kein Single-Active-Owner, keine Byte-/Scope-Bindung → parallele Agenten racen auf `.doki/session.json` | ✅ GEFIXT | TASK-009…013 umgesetzt: Ownership-Token, Single-Active-Owner fail-closed, Scope-/Byte-/Path-Digests in Session + Gate-Validierung |
 | PL-E | Evidence-Pfade nicht concurrency-sicher: `compile_gate.gd` schreibt atomar auf *festen* Tmp-+Zielpfad; `user://` ist über alle Agenten dieses OS-Users geteilt → parallele Gates überschreiben Befunde | ✅ GEFIXT | `compile_gate.gd` + `chain_manifest_gate.gd`: PID-keyed Tmp-Pfad (`compile_gate.<pid>.tmp`) — parallele Läufe kollidieren nicht mehr |
+
+---
+
+## DOKI-Takt- und Verifikations-Loop-Befunde 2026-08-31 (F-605…F-608)
+
+> Basis: Commit-Audit der Historie `3fb67e6…780b245`, Chain-Lektüre
+> (`.doki/narrative_chain.json` p123/p124), reproducebarer Byte-Drift-Loop
+> (3 fehlgeschlagene Commit-Versuche mit identischem Fehlerbild),
+> Task-Manager-Evidence (4 parallele Godot-Prozesse während Gate-Läufen).
+
+### F-605 — Commit-Audit: Zwei Commits umgingen den DOKI-Message-Flow (Befund)
+
+**Beobachtung:** `c205edc` ("Vannon: DOKI finalize Chain-Eintrag 123") und
+`780b245` ("Vannon: Finalize Chain-Eintrag 124") tragen DOKI-Tokens
+(`[NARRATOR:Vannon]`, `[COMPOSITE:c124j10n4a8p117]`), wurden aber NICHT durch
+einen echten prepare→finish-Zyklus generiert — die `.commit_msg.txt` wurde
+manuell mit kopierter Token-Struktur geschrieben, weil der commit-msg-Hook
+ohne Tokens hart blockt und der finalize-Loop sonst nicht auflösbar war.
+
+**Konsequenz:** Beide Commits claimen denselben Composite `c124j10n4a8p117`;
+der Chain-Eintrag p124 beschreibt Artefakt-Transport als "Arbeit". DOKI wurde
+nicht kaputt gemacht, aber umgangen — der Message-Generator (Stimme, Mood,
+Checker 1-6) lief für diese beiden Commits nicht.
+
+**Regel (ab sofort gültig):** finalize-Artefakte sind KEINE eigene Arbeit und
+brauchen keinen DOKI-Zyklus. Sie reisen als auto-managed Dateien im nächsten
+echten Commit mit ODER als F-608-Transport-Commit (nüchtern, ohne Tokens).
+Fake-Narrator-Story für Artefakt-Transporte ist verboten.
+
+### F-606 — Byte-Drift-Loop: Cause und Fix (GEFIXT)
+
+**Cause (falsifizierbar):** `finish` schreibt `.doki/change_index.json` +
+`CHANGELOG.md` und staged sie (Early-Artifacts, artifact_writer.gd). Der
+DOKI-Gate verglich danach die gestagten Bytes gegen den prepare-Stand-Digest —
+der prepare-Stand kannte die Artefakte nicht (sie existieren erst NACH prepare).
+Ergebnis: "Byte-Drift" bei jedem Commit, Reparatur via erneutem prepare,
+das erzeugt einen neuen Narrator/Composite → Loop.
+
+**Fix:** `AUTO_MANAGED` (bereits definiert für den Pfad-Snapshot) wird jetzt
+AUCH auf Byte-Digest und Path-Digest angewendet: `_strip_auto_managed_diff()`
+filtert auto-managed Datei-Sektionen aus dem `git diff --cached`-String;
+`_without_auto_managed()` filtert den Pfad-Array. Sowohl in `prepare_flow.gd`
+als auch `gate_flow.gd` — identische Implementierung, damit Digests synchron
+sind. Beweis: Commit `2626fc8` lief durch den vollen Gate-Flow ohne Drift.
+
+**Bewertung:** Der Byte-Drift ist KEIN Fehler, sondern Teil der Chain-Validierung
+(CON-005: keine stillschweigende Normalisierung). Das Gate MUSS die Tatsache
+kennen, dass finish auto-managed Artefakte staged — jetzt ist sie explizit im
+Code (beide Flows, mit Kommentar), nicht mehr implizit im Ablauf.
+
+### F-607 — Preflight-Mutex: NUR EIN Verifikations-Lauf gleichzeitig (GEFIXT)
+
+**Beobachtung:** Task-Manager zeigte 4 parallele Godot-Prozesse während
+Gate-Läufen (check.gd → preflight-Subprozess × DOKI-Hook-Läufe × parallele
+Agenten). test_all.gd startet pro Entry-Test einen Subprozess plus einen
+Preflight-Subprozess; parallele Agenten multiplizieren das.
+
+**Fix:** Neuer `scripts/preflight_lock.gd` (kein class_name, preload-basiert):
+- Lockfile-Mutex unter `user://preflight_gate.lock` (nie committed, repo-übergreifend).
+- `acquire_blocking()`: Warteschlange im 500ms-Takt, Status-Print alle 10s,
+  hart failen nach 3600s.
+- Stale-Takeover: Lock älter als 1200s gilt als verwaist (Crash-Selbstheilung).
+- Verdrahtet in `check.gd`, `preflight.gd`, `test_all.gd` (einziger Exit-Punkt
+  je Script gibt frei: `_exit`/`_finish`/`_preflight_exit`).
+- Deadlock-Schutz: Parent-Runner (check.gd, test_all.gd) setzt
+  `PREFLIGHT_LOCK_HELD=1` im Subprozess-Env; der Child-Preflight skippt dann
+  den eigenen Acquire.
+
+### F-608 — finalize-Loop: Transport-Commit-Modus im commit-msg Hook (GEFIXT)
+
+**Cause:** post-commit finalize schreibt+staged narrative Artefakte (by design,
+sie reisen im nächsten Commit). Aber der commit-msg Hook blockt jeden Commit
+ohne `[NARRATOR:...]`-Tokens — Tokens gibt es nur via prepare/finish —
+prepare/finish erzeugt einen neuen Chain-Eintrag — dessen finalize schreibt
+wieder Artefakte → Endlosschleife mit je einem "leeren" Chain-Eintrag pro Takt
+(gesehen: p123-Transport als eigener Vannon-Eintrag, p124-Transport als
+derselbe Composite-Claim auf zwei Commits).
+
+**Fix:** `.githooks/commit-msg` erkennt Transport-Commits VOR dem Token-Check:
+Wenn ALLE gestagten Dateien auto-managed sind (narrative_chain.json,
+change_index.json, CHANGELOG.md, arcs.json), skippt der Hook die
+Message-Validierung komplett. Transport-Commits tragen eine nüchterne,
+narrator-freie Message ("Transport: DOKI finalize Artefakte ...") — keine
+fake Stimme, kein Composite-Claim.
+
+**Nach-Push-Taktung (Regel):** Nach jedem Push: `git status` prüfen; wenn
+finalize-Artefakte gestaged sind, GENAU EIN Transport-Commit, dann fertig —
+kein zweiter, kein Loop (finalize ist idempotent: idle-Session staged nichts).

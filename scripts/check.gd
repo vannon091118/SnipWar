@@ -30,11 +30,13 @@ extends SceneTree
 
 const CHANGE_IMPACT_RESOLVER := preload("res://scripts/preflight_v2/change_impact_resolver.gd")
 const CONSTRAINT_SCANNER := preload("res://scripts/preflight_v2/constraint_scanner.gd")
+const PREFLIGHT_LOCK := preload("res://scripts/preflight_lock.gd")
 
 var _failures: Array[String] = []
 var _scope: Dictionary = {}
 var _verbose: bool = false
 var _fail_fast: bool = false
+var _lock_token: String = ""
 
 func _init() -> void:
 	var args: Dictionary = _parse_args()
@@ -73,6 +75,16 @@ func _init() -> void:
 			return
 
 		_print_scope_report()
+
+	# ─── Preflight-Mutex (TASK-015): NUR EIN Verifikations-Lauf gleichzeitig ───
+	# Ein zweiter Lauf blockt in einer Warteschlange, bis der laufende fertig ist.
+	# Stale-Locks (Crash) werden nach STALE_SECONDS automatisch übernommen.
+	var lock_res: Dictionary = PREFLIGHT_LOCK.acquire_blocking("check.gd")
+	if not bool(lock_res.get("ok", false)):
+		printerr("[check] FATAL: %s" % str(lock_res.get("error", "preflight-lock fehlgeschlagen")))
+		quit(1)
+		return
+	_lock_token = str(lock_res.get("token", ""))
 
 	# ─── Phase 2: Compile-Gate (scope-gefiltert) ──────────────────────
 	if not args.get("skip_compile", false):
@@ -252,7 +264,11 @@ func _run_preflight(args: Dictionary) -> void:
 		print(" Läuft alle Constraints (full)")
 
 	var output: Array = []
+	# Subprozess erbt das Lock-Flag: der Child-Preflight acquiriert NICHT erneut
+	# (Parent hält das Lock — sonst Deadlock Parent↔Child).
+	OS.set_environment("PREFLIGHT_LOCK_HELD", "1")
 	var exit_code := OS.execute(_godot_bin(), pf_args, output, true)
+	OS.set_environment("PREFLIGHT_LOCK_HELD", "")
 	# Exit-Code ist die einzige Wahrheit (M2 Fix): ein Test der nach PASS crasht
 	# hinterlässt „RESULT: PASSED“ im Output aber exit!=0 → False-Green vermieden.
 	if exit_code == 0:
@@ -377,7 +393,15 @@ func _finish() -> void:
 		for f in _failures:
 			print("   FAILED: %s" % f)
 	print("══════════════════════════════════════════════════")
-	quit(0 if _failures.is_empty() else 1)
+	_exit(0 if _failures.is_empty() else 1)
+
+
+## Central exit: gibt das Preflight-Lock frei (no-op ohne Token) und beendet.
+func _exit(code: int) -> void:
+	PREFLIGHT_LOCK.release(_lock_token)
+	_lock_token = ""
+	quit(code)
+	return
 
 
 func _parse_args() -> Dictionary:
