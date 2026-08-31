@@ -1,5 +1,5 @@
 {
-	"active": "a57",
+	"active": "a58",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -2633,7 +2633,8 @@
 		},
 		"a57": {
 			"climax_weight": 5.0,
-			"commit_count": 3,
+			"commit_count": 4,
+			"completed_at": "arc_climax",
 			"id": "a57",
 			"name": "Verifikations-Ende-zu-Ende",
 			"seen_entities": [
@@ -2673,10 +2674,20 @@
 				"C-1296"
 			],
 			"span": "heute → offen",
-			"status": "active",
+			"status": "completed",
 			"theme": "den Unified Check als einzige Wahrheit verankern.",
 			"version": "",
-			"weight": 15.0
+			"weight": 15.85
+		},
+		"a58": {
+			"climax_weight": 5.0,
+			"id": "a58",
+			"name": "Fundament-Dichtprüfung",
+			"span": "heute → offen",
+			"status": "active",
+			"theme": "systematische Verifikation aller P1-Befunde gegen die jetzt geschlossenen P0-Fixes.",
+			"version": "",
+			"weight": 0.0
 		},
 		"a6": {
 			"climax_weight": 3.0,

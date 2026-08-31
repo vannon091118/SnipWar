@@ -9798,6 +9798,44 @@
 			"seq": 123,
 			"subject": "Basher (15 files): Vier P0-Fixe + Byte-Drift-Gate Fix +… — nach Thinker",
 			"summary": "git add. prepare. finish. commit. Das ist der Flow. Heute: sechs Fixes deployt. Status:"
+		},
+		{
+			"a": 8,
+			"arc": "a57",
+			"c": 124,
+			"composite": "c124j10n4a8p117",
+			"data_changes": [
+				{
+					"deletions": 7219.0,
+					"file": ".doki/change_index.json",
+					"insertions": 7242.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_chain.json",
+					"insertions": 98.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 15.0
+				}
+			],
+			"date": "2026-08-27 04:00:00",
+			"hash": "c205edcc9ead9f4d4a18044aa752702a2e9aa387",
+			"j": 10,
+			"model_id": "claude-sonnet-4",
+			"mood": "sachlich",
+			"n": 4,
+			"narrator": "Vannon",
+			"p": 117,
+			"p_id": 124,
+			"prev_hash": "ea914cc073e7f4b725db25d389bb082ce4e15c6cf1dc09935b592f1890f3c358",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Basher",
+			"seq": 124,
+			"subject": "DOKI finalize Chain-Eintrag 123 — nach Basher",
+			"summary": "Finalize. Chain-Eintrag 123. Artefakte gestaged. Commit."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
