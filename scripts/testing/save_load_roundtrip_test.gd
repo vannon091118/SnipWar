@@ -24,7 +24,7 @@ func _run() -> void:
 	# Test 2: FactionDomain set/get roundtrip
 	var faction_domain := FactionDomain.new()
 	faction_domain.set_faction(&"test_p1", GameState.FACTION_PLAYER)
-	if faction_domain.get_faction(&"test_p1") != GameState.FACTION_PLAYER:
+	if faction_domain.faction_of(&"test_p1") != GameState.FACTION_PLAYER:
 		_failures.append("FactionDomain set/get failed")
 
 	# Test 3: EconomyDomain credits roundtrip

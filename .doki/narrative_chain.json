@@ -9652,6 +9652,54 @@
 			"seq": 121,
 			"subject": "Fix DOKI finalize/finish Zustandsmaschine:. … — nach Null",
 			"summary": "Endlich. Der Commit stand, aber der Fluss dahinter war noch brüchig — und dieser eine Rest konnte nicht stehen bleiben. Null hat die Hauptnarbe gezogen, deshalb war klar, dass der Rest hierhergehör..."
+		},
+		{
+			"a": 35,
+			"arc": "a57",
+			"c": 122,
+			"composite": "c122j52n3a35p89",
+			"data_changes": [
+				{
+					"deletions": 2.0,
+					"file": ".doki/change_index.json",
+					"insertions": 189.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_chain.json",
+					"insertions": 123.0
+				},
+				{
+					"deletions": 165.0,
+					"file": "CHANGELOG.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/doki_analyze.gd",
+					"insertions": 6.0
+				}
+			],
+			"date": "2026-08-27 02:00:00",
+			"hash": "3fb67e6b215bd74ff73ec56dd5d2cf22bf167310",
+			"j": 52,
+			"model_id": "claude-sonnet-4",
+			"mood": "erschöpft",
+			"n": 3,
+			"narrator": "Thinker",
+			"p": 89,
+			"p_id": 122,
+			"prev_hash": "ec240315b20d862bdd1cd37c6613e6f17d3b6f4ce009e4d73a2c21656360949b",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Vannon",
+			"seq": 122,
+			"subject": "Bereinige CHANGELOG-Orphan-Einträge (6 Composites… [Analyse: Thinker] — nach Vannon",
+			"summary": "Ich zähle sechs Geister im Changelog, die nie einen Commit hatten. Kontext: der Changelog trug 115 Einträge, aber sechs davon verwiesen auf Composites, die keine Git-Historie kennt — Überreste abge..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

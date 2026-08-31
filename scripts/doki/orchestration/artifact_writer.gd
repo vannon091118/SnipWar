@@ -57,7 +57,7 @@ func apply_commit_artifacts(
 	var msg_path: String = _repo_root.path_join(".commit_msg.txt")
 	_atomic_write(msg_path, str(message["full_message"]))
 	# Early-Staging: CHANGELOG + change_index gehören in DEN Commit
-	_git.stage(["CHANGELOG.md", "change_index.json"])
+	_git.stage(["CHANGELOG.md", ".doki/change_index.json"])
 
 
 ## finish (legacy): schreibt nur die Commit-Message-Datei.
@@ -98,9 +98,7 @@ func write_prompt_file(prompt: Dictionary, narrator: String, mood: String) -> St
 	_atomic_write(prompt_path, "════════ SYSTEM-PROMPT ════════\n" + str(prompt["system"])
 		+ "\n\n════════ USER-PROMPT ════════\n" + str(prompt["user"])
 		+ "\n\n════════ AUFGABE ════════\n"
-		+ "Schreibe den Commit-Body in der Rolle von " + narrator + " (Mood: " + mood
-		+ ") als Fließtext-Erzählung (keine Bullets). Schreibe NUR den Body — ohne Tokens, ohne Header.\n"
-		+ "Danach: `doki finish --body-file .doki/narrator_body.md`")
+		+ "Prompt ganz lesen → Stimme/Mood/Regeln übernehmen → Body als %s (%s) Fließtext → `doki finish --body-file .doki/narrator_body.md`. Halte dich an die Regeln.\n" % [narrator, mood])
 	return prompt_path
 
 

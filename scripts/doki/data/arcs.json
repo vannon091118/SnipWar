@@ -2633,7 +2633,7 @@
 		},
 		"a57": {
 			"climax_weight": 5.0,
-			"commit_count": 1,
+			"commit_count": 2,
 			"id": "a57",
 			"name": "Verifikations-Ende-zu-Ende",
 			"seen_entities": [
@@ -2656,13 +2656,15 @@
 				"F-598",
 				"F-599",
 				"F-600",
-				"F-601"
+				"F-601",
+				"F-002",
+				"F-023"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "den Unified Check als einzige Wahrheit verankern.",
 			"version": "",
-			"weight": 8.0
+			"weight": 9.4
 		},
 		"a6": {
 			"climax_weight": 3.0,

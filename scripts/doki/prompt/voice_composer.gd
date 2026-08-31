@@ -36,36 +36,26 @@ func _build_system_prompt(ctx: Dictionary) -> String:
 
 	var prompt: String = "DU BIST: %s (%s).\n" % [name, role]
 	prompt += "DEINE STIMME: %s\n" % voice
-	# Konkretes Stil-Beispiel — die Stimme wird GEZEIGT, nicht nur beschrieben.
-	var style_sample: String = str(narrator.get("style_sample", ""))
-	if not style_sample.is_empty():
-		prompt += "SO SCHREIBST DU (Stil-Beispiel): %s\n" % style_sample
 	prompt += "DEIN MOOD: %s\n" % mood
-	# Mood wird GELEBT, nicht genannt: konkrete Ausdrucks-Anleitung (Stil/Wortwahl).
 	var mood_expr: String = _moods.mood_expression(mood)
 	if not mood_expr.is_empty():
-		prompt += "SO LEBST DU DEN MOOD: %s\n" % mood_expr
-	# Kategorie-Kalibrierung: Emotion in Relation zur Arbeit (keine Euphorie über Doku).
+		prompt += "MOOD-AUSDRUCK: %s\n" % mood_expr
 	var impulse_class: String = str(ctx.get("impulse_class", "CODE"))
 	var calib: String = _moods.category_calibration(impulse_class)
 	if not calib.is_empty():
-		prompt += "KALIBRIERUNG (Kategorie %s): %s\n" % [impulse_class, calib]
+		prompt += "KALIBRIERUNG (%s): %s\n" % [impulse_class, calib]
 	if not tone_brief.is_empty():
-		prompt += "DEINE DISPOSITION: %s\n" % tone_brief
+		prompt += "DISPOSITION: %s\n" % tone_brief
 
-	prompt += "\nDEINE HALTUNG:\n"
-	prompt += "- Code-Liebe: %s\n" % _attitude_text(int(attitudes.get("code_love", 5)), "du liebst eleganten Code", "Code ist dir egal")
-	prompt += "- Aufräum-Frust: %s\n" % _attitude_text(int(attitudes.get("cleanup_resentment", 5)), "Aufräumen macht dich wütend", "Aufräumen ist okay")
-	prompt += "- Doku-Genervtheit: %s\n" % _attitude_text(int(attitudes.get("doku_irritation", 5)), "Dokumentation nervt dich", "Doku ist in Ordnung")
-	prompt += "- Kritik-Neigung: %s\n" % _attitude_text(int(attitudes.get("criticism_tendency", 5)), "du kritisierst gnadenlos", "du bist nachsichtig")
-	prompt += "- Lob-Neigung: %s\n" % _attitude_text(int(attitudes.get("praise_tendency", 5)), "du lobst gute Arbeit", "Lob kommt selten")
-	prompt += "- Optimismus: %s\n" % _attitude_text(int(attitudes.get("optimism", 5)), "du bist optimistisch", "du erwartest das Schlimmste")
-	prompt += "- Ausführlichkeit: %s\n" % _attitude_text(int(attitudes.get("verbosity_bias", 5)), "du schreibst ausführlich", "du bist wortkarg")
-
-	# Mood-Beispiel (wenn vorhanden)
-	var example: String = _moods.mood_example(name, mood)
-	if not example.is_empty():
-		prompt += "\nMOOD-BEISPIEL (%s+%s): %s\n" % [name, mood, example]
+	prompt += "\nHALTUNG: Code %s / Aufräumen %s / Doku %s / Kritik %s / Lob %s / Optimismus %s / Ausführlichkeit %s\n" % [
+		_attitude_text(int(attitudes.get("code_love", 5)), "liebt", "egal"),
+		_attitude_text(int(attitudes.get("cleanup_resentment", 5)), "hasst", "okay"),
+		_attitude_text(int(attitudes.get("doku_irritation", 5)), "nervt", "okay"),
+		_attitude_text(int(attitudes.get("criticism_tendency", 5)), "gnadenlos", "nachgiebig"),
+		_attitude_text(int(attitudes.get("praise_tendency", 5)), "lobt", "selten"),
+		_attitude_text(int(attitudes.get("optimism", 5)), "optimistisch", "pessimistisch"),
+		_attitude_text(int(attitudes.get("verbosity_bias", 5)), "ausführlich", "wortkarg"),
+	]
 
 	if not prev_narrator.is_empty():
 		prompt += "\nVOR DIR WAR: %s.\n" % prev_narrator
@@ -80,29 +70,12 @@ func _build_system_prompt(ctx: Dictionary) -> String:
 			if not directive.is_empty():
 				prompt += "- %s\n" % directive
 
-	prompt += "\nSCHREIBREGELN:\n"
-	prompt += "- Erzähl eine GESCHICHTE, keinen Bericht. Zeig deine Persönlichkeit.\n"
-	prompt += "- Dein Mood zeigt sich IMMER durch Stil, nie durch Worte:\n"
-	prompt += "  ✓ \"Schon wieder. Immerhin.\" (erschöpft)\n"
-	prompt += "  ✓ \"Moment — wieso eigentlich? Aha!\" (neugierig)\n"
-	prompt += "  ✗ \"Ich bin erschöpft\" (NIE)\n"
-	prompt += "  ✗ \"mit triumphierendem Unterton\" (NIE)\n"
-	prompt += "  Zeig sie durch Wortwahl und Satzrhythmus.\n"
-	prompt += "- Imitiere das Stil-Beispiel: Dein Text MUSS nach DIR klingen, nicht nach einem generischen Bericht.\n"
-	prompt += "- KEINE Bullet-Listen. KEINE technischen Auflistungen. Fließtext.\n"
-	prompt += "- Der Impuls war UNVERMEIDLICH. Formuliere die Kausalität natürlich, nicht als Protokoll.\n"
-	prompt += "- KEIN 'Der Grund war X. Die Wirkung: Y.' — stattdessen: 'X ließ keinen anderen Weg zu.'\n"
-	prompt += "- Reagiere auf den technischen Text ALS %s — analysiere, kritisiere, lobe.\n" % name
-	prompt += "- Übersetze den technischen Text in DEINE Stimme. Kein generischer Bericht.\n"
+	prompt += "\nSTIL: Fließtext, keine Bullets. Stimme gelebt, Mood in Wortwahl, nie genannt. Kausalität eingewoben, nicht protokolliert. Dateien als Spuren."
 	if not prev_narrator.is_empty():
-		prompt += "- Erwähne %s natürlich im Text — nicht als Token, sondern als Teil der Geschichte.\n" % prev_narrator
-	prompt += "- Kausale Konnektoren sind Pflicht (weil, deshalb, daher, folglich) — aber eingewoben.\n"
-	prompt += "- Die Dateien am Ende sind die Spuren deiner Arbeit, nicht 'betroffen'.\n"
+		prompt += " %s als Teil der Geschichte." % prev_narrator
+	prompt += "\n"
 	if bool(search_context.get("complete", false)):
-		prompt += "- Der folgende Suchkontext wurde auf Anfrage erzeugt und ist vollständig.\n"
-	var files: Array = ctx.get("files", [])
-	if bool(search_context.get("complete", false)):
-		prompt += "\nAUTOMATISCHER SUCHKONTEXT (NUR AUF ANFRAGE):\n%s\n" % JSON.stringify(search_context)
+		prompt += "\nSUCHKONTEXT (vollständig):\n%s\n" % JSON.stringify(search_context)
 
 	# Side-Plot (Merge)
 	if not sideplot.is_empty():
@@ -197,26 +170,7 @@ func _build_user_prompt(ctx: Dictionary) -> String:
 	var impulse_class: String = str(ctx.get("impulse_class", "CODE"))
 	var is_trivial: bool = impulse_class == "TRIVIAL" or (impulse_class == "FIX" and files.size() <= 2)
 	if is_trivial:
-		var trivial_pool: Array = [
-			"WICHTIG: Nur %d Datei(en). Erzähle diesen winzigen Commit wie eine epische Sage. Übertreibe maßlos — jede gelöschte Zeile ein gefallener Held." % files.size(),
-			"WICHTIG: Behandle diesen Mini-Fix wie eine Bombenentschärfung. 'Impuls: %s' — jede Millisekunde zählt. Die Spannung muss KNISTERN." % str(ctx.get("impulse", "")),
-			"WICHTIG: Dieser mikroskopische Commit ist eine philosophische Krise. Was IST ein Fix? Wer sind WIR? Tiefgang erzwungen.",
-			"WICHTIG: Mach aus dieser Mücke einen Elefanten. Das klingt trivial, aber die IMPLIKATIONEN...",
-			"WICHTIG: Schreibe diesen Mini-Commit als diplomatischen Staatsakt. Jedes Semikolon eine Entscheidung, jedes Leerzeichen ein Kompromiss.",
-			"WICHTIG: Stell dir vor, dieser Impuls ist der EINE Commit der alles verändert. Die Welt hält den Atem an. Schreib entsprechend.",
-			"WICHTIG: %d Dateien. Klingt wenig? In einem PARALLELUNIVERSUM wären es %d. Erzähl von DIESEM Universum." % [files.size(), files.size() * 1000],
-			"WICHTIG: So unscheinbar der Impuls wirkt — er ist der fehlende Puzzlestein. Ohne ihn: CHAOS. Mit ihm: KOSMOS. Zeig das.",
-			"WICHTIG: Nur %d Datei(en). Dieser Commit ist der eine Grund, warum die Sterne stehen bleiben. Ohne ihn: Dunkelheit." % files.size(),
-			"WICHTIG: Dieser Mini-Commit hat mehr Tiefe als der Ozean. Jede gelöste Frage wirft zehn neue auf. Willkommen in der Tiefe.",
-			"WICHTIG: Behandle diesen unscheinbaren Fix wie den letzten Schluck Wasser in der Wüste. Klein? Ja. Überlebenswichtig? ABSOLUT.",
-			"WICHTIG: Dieser %d-Datei-Commit ist der Domino-Stein. Die ersten %d fallen — danach fallen alle anderen von selbst." % [files.size(), files.size()],
-			"WICHTIG: Wenn dieser Impuls ein Film wäre, wäre er der oscargekrönte Independent-Film. Kein Effekt, reine Substanz.",
-			"WICHTIG: Schreib diesen Commit wie einen finalen Akt. Der Vorhang fällt, aber das Publikum applaudiert.",
-			"WICHTIG: Jeder Pixel in diesem Patch erzählt eine Geschichte. Lies zwischen den Zeilen.",
-			"WICHTIG: Nur %d Datei(en). Aber IMAGINE if this %d Dateien WÄREN. Erzähl von diesem Universum." % [files.size(), files.size()],
-		]
-		var idx: int = DOKI_RngEngine.djb2(str(ctx.get("impulse", ""))) % trivial_pool.size()
-		prompt += "\n%s\n" % str(trivial_pool[idx])
+		prompt += "\nTRIVIAL: Dieser kleine Commit verdient trotzdem deine volle Stimme — bewerte die Bedeutung im Verhältnis.\n"
 
 	return prompt
 

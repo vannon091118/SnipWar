@@ -94,8 +94,8 @@ func run() -> Dictionary:
 	# prepare (Datei verändert, Datei hinzugefügt/entfernt) blockt den Commit,
 	# OHNE die Datei zu normalisieren oder umzuschreiben (CON-005).
 	var diff_output: String = _git.diff_cached()
-	var live_byte_digest: String = IMPACT_RESOLVER.staged_byte_digest(diff_output)
-	var live_path_digest: String = IMPACT_RESOLVER.path_digest(full_staged)
+	var live_byte_digest: String = IMPACT_RESOLVER.staged_byte_digest(_strip_auto_managed_diff(diff_output))
+	var live_path_digest: String = IMPACT_RESOLVER.path_digest(staged)
 	var prepared_byte_digest: String = str(session.get("staged_byte_digest", ""))
 	var prepared_path_digest: String = str(session.get("scope_path_digest", ""))
 	if prepared_byte_digest.is_empty() or prepared_path_digest.is_empty():
@@ -130,6 +130,30 @@ static func _without_auto_managed(files: Array) -> Array:
 		if not AUTO_MANAGED.has(str(f).get_file()):
 			result.append(str(f))
 	return result
+
+
+## Filtert auto-managed Dateien aus einem `git diff --cached`-String heraus.
+## Der Diff wird in Per-Datei-Sektionen gesplittet (jede beginnt mit `diff --git`),
+## und Sektionen deren Dateiname in AUTO_MANAGED steht werden entfernt.
+## Das verhindert Byte-Drift, wenn `finish` die DOKI-Artefakte staged.
+static func _strip_auto_managed_diff(diff_output: String) -> String:
+	if diff_output.is_empty():
+		return ""
+	var sections: PackedStringArray = diff_output.split("diff --git ")
+	var kept: Array[String] = []
+	for i in range(1, sections.size()):  # skip [0] = prefix before first diff
+		var header: String = sections[i].split("\n")[0]
+		# header sieht aus wie: a/path/to/file.json b/path/to/file.json
+		var path_match := RegEx.new()
+		path_match.compile("^[^ ]+ b/(.+)$")
+		var m := path_match.search(header.strip_edges())
+		if m != null:
+			var filepath: String = m.get_string(1)
+			if not AUTO_MANAGED.has(filepath.get_file()):
+				kept.append("diff --git " + sections[i])
+		else:
+			kept.append("diff --git " + sections[i])
+	return "".join(kept)
 
 
 ## V10-003: Verify AGENT_ACTIVITY_SEED against agent_activity.sh registry

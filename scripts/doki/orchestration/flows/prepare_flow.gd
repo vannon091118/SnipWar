@@ -19,6 +19,7 @@ var _index_store: DOKI_ChangeIndexStore
 var _session_builder: DOKI_SessionBuilder
 var _artifacts: DOKI_ArtifactWriter
 const IMPACT_RESOLVER: Script = preload("res://scripts/preflight_v2/change_impact_resolver.gd")
+const AUTO_MANAGED: Array = ["narrative_chain.json", "change_index.json", "CHANGELOG.md", ".commit_msg.txt", "arcs.json"]
 
 
 func _init(
@@ -97,9 +98,10 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	# recompute diese Werte und weist jeglichen Drift ab (Byte-/Scope-Drift
 	# nach prepare → kein grüner Commit, ohne die Datei umzuschreiben).
 	var diff_output: String = _git.diff_cached()
-	var scope_path_digest: String = IMPACT_RESOLVER.path_digest(staged)
+	var non_auto_staged: Array = _without_auto_managed(staged)
+	var scope_path_digest: String = IMPACT_RESOLVER.path_digest(non_auto_staged)
 	var scope_constraint_digest: String = IMPACT_RESOLVER.constraint_digest(impact.get("constraints", []))
-	var staged_byte_digest: String = IMPACT_RESOLVER.staged_byte_digest(diff_output)
+	var staged_byte_digest: String = IMPACT_RESOLVER.staged_byte_digest(_strip_auto_managed_diff(diff_output))
 	_write_scope_file(impact)
 	_write_agent_binding(agent_name, activity_seed)
 
@@ -277,3 +279,32 @@ func _verify_agent_activity_seed(agent_name: String, activity_seed: String) -> D
 	if registered_seed != activity_seed:
 		return {"ok": false, "error": "AGENT_ACTIVITY_SEED mismatch: provided seed does not match registered seed for agent '%s'." % agent_name}
 	return {"ok": true}
+
+
+static func _without_auto_managed(files: Array) -> Array:
+	var result: Array = []
+	for f in files:
+		if not AUTO_MANAGED.has(str(f).get_file()):
+			result.append(str(f))
+	return result
+
+
+## Filtert auto-managed Dateien aus einem `git diff --cached`-String heraus.
+## Muss mit gate_flow.gd:_strip_auto_managed_diff übereinstimmen.
+static func _strip_auto_managed_diff(diff_output: String) -> String:
+	if diff_output.is_empty():
+		return ""
+	var sections: PackedStringArray = diff_output.split("diff --git ")
+	var kept: Array[String] = []
+	for i in range(1, sections.size()):
+		var header: String = sections[i].split("\n")[0]
+		var path_match := RegEx.new()
+		path_match.compile("^[^ ]+ b/(.+)$")
+		var m := path_match.search(header.strip_edges())
+		if m != null:
+			var filepath: String = m.get_string(1)
+			if not AUTO_MANAGED.has(filepath.get_file()):
+				kept.append("diff --git " + sections[i])
+		else:
+			kept.append("diff --git " + sections[i])
+	return "".join(kept)
