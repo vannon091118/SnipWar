@@ -53,3 +53,4 @@ node_modules/
 narrative_runtime/state/
 __pycache__/
 *.pyc
+/.doki/reset_audit.log

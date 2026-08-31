@@ -59,7 +59,7 @@ func run() -> Dictionary:
 	if not existing_entries.is_empty():
 		var last_existing: Dictionary = existing_entries[existing_entries.size() - 1]
 		if str(last_existing.get("hash", "")) == head and str(last_existing.get("composite", "")) == str(session.get("composite", "")):
-			var restage: Dictionary = _git.stage(["narrative_chain.json", "change_index.json", "scripts/doki/data/arcs.json"])
+			var restage: Dictionary = _git.stage([".doki/narrative_chain.json", ".doki/change_index.json", "scripts/doki/data/arcs.json"])
 			if not restage["ok"]:
 				return {"ok": false, "error": "finalize: narrative Dateien konnten nicht gestaged werden: %s" % str(restage.get("stderr", "?"))}
 			_artifacts.cleanup_transients()
@@ -119,7 +119,7 @@ func run() -> Dictionary:
 	# nur chain + arcs neu und staged diese für den nächsten Commit.
 	var date_str: String = _chain_store.entry_timestamp(int(session.get("p_id", 1)))
 	_artifacts.apply_finalize_artifacts(session, index, date_str)
-	var stage_res: Dictionary = _git.stage(["narrative_chain.json", "change_index.json", "scripts/doki/data/arcs.json"])
+	var stage_res: Dictionary = _git.stage([".doki/narrative_chain.json", ".doki/change_index.json", "scripts/doki/data/arcs.json"])
 	if not stage_res["ok"]:
 		return {"ok": false, "error": "finalize: narrative Dateien konnten nicht gestaged werden: %s" % str(stage_res.get("stderr", "?"))}
 
@@ -144,7 +144,7 @@ func _sync_amended_entry_hash() -> Dictionary:
 		return {"ok": true}
 	chain = sync["chain"]
 	_chain_store.save(chain)
-	var stage_res: Dictionary = _git.stage(["narrative_chain.json"])
+	var stage_res: Dictionary = _git.stage([".doki/narrative_chain.json"])
 	if not stage_res["ok"]:
 		return {"ok": false, "error": "finalize: narrative_chain.json konnte nicht gestaged werden: %s" % str(stage_res.get("stderr", "?"))}
 	return {"ok": true}

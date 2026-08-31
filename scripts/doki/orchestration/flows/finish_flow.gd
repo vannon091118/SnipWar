@@ -87,6 +87,13 @@ func run(body: String) -> Dictionary:
 
 	session["body_text"] = body
 	session["state"] = DOKI_SessionStore.STATE_VERIFIED
+	# V2-003: Zustandsmaschine konsistent halten — prepared → verified, damit
+	# finalize's ensure_state(VERIFIED) die Transition als gültig erkennt.
+	# (Vorher blieb prev_state=idle stehen, finalize no-op't still und die
+	# Chain wurde nie angehängt.)
+	session["prev_state"] = DOKI_SessionStore.STATE_PREPARED
+	var seed: String = str(session.get("activity_seed", ""))
+	session = _session_store._sign_session(session, seed)
 	_session_store.save(session)
 
 	return {"ok": true, "message": full_message, "soft_errors": verify_result["soft_errors"], "reason_lines": message.get("reason_lines", [])}

@@ -9466,6 +9466,69 @@
 			"seq": 119,
 			"subject": "Ghost verzeichnet: final takeover: narrative_runtime redundancy… — nach Echo",
 			"summary": "Ghost protokolliert, was still im System doppelt lief und jetzt nicht mehr."
+		},
+		{
+			"a": 48,
+			"arc": "a56",
+			"c": 120,
+			"composite": "c120j28n11a48p54",
+			"data_changes": [
+				{
+					"deletions": 3.0,
+					"file": ".githooks/commit-msg",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 7.0,
+					"file": ".githooks/pre-commit",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "narrative_runtime/gate_cli.py",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/chain/session_store.gd",
+					"insertions": 18.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/orchestration/flows/gate_flow.gd",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/preflight/constraint_narrative_runtime.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/testing/narrative_runtime_gate_test.gd",
+					"insertions": 13.0
+				}
+			],
+			"date": "2026-08-27 00:00:00",
+			"hash": "f62ae4fae87effb3e8119da691c3c60790710de5",
+			"j": 28,
+			"model_id": "claude-sonnet-4",
+			"mood": "warm",
+			"n": 11,
+			"narrator": "Null",
+			"p": 54,
+			"p_id": 120,
+			"prev_hash": "75785de7da2987fdf22d3fe65c4d2a8ac9a727fd3662715be31a70fab4eb92fc",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Ghost",
+			"seq": 120,
+			"subject": "Null: Repariere DOKI Commit-Fluss: Session-Per… — nach Ghost",
+			"summary": "Es wird eh wieder irgendwo kaputtgehen. Aber naja — ich hab's diesmal bis zum Ende durchgezogen, und das Fundament ist realer geworden, als ich zugeben will. Der Bogen, den Ghost im letzten Akt geb..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
