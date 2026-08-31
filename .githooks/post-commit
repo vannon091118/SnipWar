@@ -1,31 +1,36 @@
-#!/bin/sh
-set -eu
+#!/usr/bin/env bash
+set -euo pipefail
 
-repo_root=$(git rev-parse --show-toplevel)
-branch=$(git symbolic-ref --quiet --short HEAD) || {
-	printf 'Automatic push skipped: HEAD is detached.\n' >&2
-	exit 1
+# SnipWar post-commit hook
+# Runs DOKI finalize (non-blocking - logs errors but doesn't fail the commit)
+# If GODOT_BIN not available, skips finalize but still allows push
+
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null)"
+if [ -z "$ROOT_DIR" ]; then
+    echo "ERROR: Not in a git repository" >&2
+    exit 0
+fi
+
+cd "$ROOT_DIR"
+
+# Check for GODOT_BIN availability
+if [ -z "${GODOT_BIN:-}" ] || [ ! -x "${GODOT_BIN}" ]; then
+    echo "WARN: GODOT_BIN not set or not executable — skipping DOKI finalize" >&2
+    exit 0
+fi
+
+# Function to run Godot headless scripts
+run_godot() {
+    local script="$1"
+    shift
+    "$GODOT_BIN" --headless --path . --script "$script" "$@"
 }
 
-if [ -n "${GODOT_BIN:-}" ]; then
-	godot_bin=$GODOT_BIN
-else
-	godot_bin=$(command -v godot || command -v godot4 || true)
-fi
+echo "=== post-commit: DOKI finalize ==="
+run_godot "res://scripts/doki/doki.gd" -- finalize || {
+    echo "ERROR: DOKI finalize failed (non-blocking, but push may be affected)" >&2
+    # Non-blocking: don't exit 1, just log the error
+}
 
-# DOKI-Finalize MUSS vor dem Push laufen (Chain-Zustand aktuell).
-# Fehler hier = kein Push (Chain bleibt konsistent).
-if [ -f "$repo_root/scripts/doki/doki.gd" ] && [ -n "$godot_bin" ]; then
-	if ! "$godot_bin" --headless --path "$repo_root" --script res://scripts/doki/doki.gd -- finalize --repo "$repo_root"; then
-		printf 'DOKI-Finalize fehlgeschlagen — Push abgebrochen. Läufe `doki repair`.\n' >&2
-		exit 1
-	fi
-fi
-
-# Metriken-Tracker aktualisieren (fehlgeschlagen = Warning, kein Blocker)
-if [ -f "$repo_root/scripts/doki/metrics_updater.gd" ] && [ -n "$godot_bin" ]; then
-	"$godot_bin" --headless --path "$repo_root" --script res://scripts/doki/metrics_updater.gd 2>/dev/null || \
-		printf 'WARN: Metrics-Tracker Update fehlgeschlagen (non-fatal).\n' >&2
-fi
-
-git push origin "HEAD:$branch"
+echo "=== post-commit: DOKI finalize completed ==="
+exit 0

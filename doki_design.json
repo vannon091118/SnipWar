@@ -1,0 +1,237 @@
+{
+  "design_id": "doki_pure_python_v1",
+  "version": "1.0.0",
+  "name": "Pure-Python DOKI",
+  "description": "Git-native narrative commit layer with deterministic artifact generation, zero Godot dependency",
+  "architecture": {
+    "core_principle": "Git is truth, SQLite is reconstructible archive",
+    "layers": [
+      {
+        "name": "CLI Layer",
+        "module": "doki.cli",
+        "responsibilities": ["Command parsing", "Subcommand dispatch", "Exit codes", "Help generation"],
+        "commands": ["prepare", "finish", "finalize", "status", "recover", "verify", "prune"]
+      },
+      {
+        "name": "Session Layer",
+        "module": "doki.session",
+        "responsibilities": ["Agent check-in/out", "Scope tracking", "Seed generation", "Activity ledger"],
+        "state_machine": ["IDLE", "CHECKED_IN", "PREPARED", "FINISHED", "FINALIZED", "ERRORED"]
+      },
+      {
+        "name": "Scope Layer",
+        "module": "doki.scope",
+        "responsibilities": ["Staged file analysis", "Dependency graph", "Impact radius", "Atomic group validation"],
+        "atomic_groups": [
+          "transit_dispatch",
+          "navigation",
+          "planets_catalog",
+          "gamestate_resources",
+          "shipbuilding_research",
+          "combat_simulation",
+          "procedural_world",
+          "sectorsystem",
+          "save_load",
+          "conceptindex_search",
+          "global_search",
+          "doki_commitlayer",
+          "narrative_runtime"
+        ]
+      },
+      {
+        "name": "Narrative Layer",
+        "module": "doki.narrative",
+        "responsibilities": ["Narrator persona selection", "Body generation", "Chain linking", "Arc extraction"],
+        "personas": ["archivist", "engineer", "strategist", "explorer", "diplomat"]
+      },
+      {
+        "name": "Artifacts Layer",
+        "module": "doki.artifacts",
+        "responsibilities": ["change_index.json", "CHANGELOG.md", "narrative_chain.json", "arcs.json"],
+        "formats": ["json", "markdown"],
+        "deterministic": true
+      },
+      {
+        "name": "Determinism Layer",
+        "module": "doki.determinism",
+        "responsibilities": ["Content hashing", "Timestamp normalization", "Sort stabilization", "Reproducible builds"],
+        "strategies": ["sha256_content", "iso8601_utc", "lexicographic_sort", "no_random_uuids"]
+      },
+      {
+        "name": "Recovery Layer",
+        "module": "doki.recovery",
+        "responsibilities": ["Stale agent detection", "Forced checkout", "Takeover protocol", "Orphan cleanup"],
+        "triggers": ["no_checkout_24h", "agent_crash", "manual_override", "seed_conflict"]
+      },
+      {
+        "name": "Self-Check Layer",
+        "module": "doki.selfcheck",
+        "responsibilities": ["Pre-commit validation", "Post-commit verification", "Chain integrity", "Artifact completeness"],
+        "checks": ["staged_files_exist", "scope_matches_staged", "narrative_body_valid", "artifacts_writable", "git_clean"]
+      }
+    ],
+    "data_flow": [
+      "check_in -> session.create(scope_from_staged)",
+      "prepare -> session.prepare(narrator_persona)",
+      "finish -> session.finish(body_file) -> artifacts.generate()",
+      "finalize -> session.finalize() -> chain.append() -> arcs.update()",
+      "recover -> session.recover(agent_id) -> scope.restore()"
+    ]
+  },
+  "cli": {
+    "entry_point": "python -m doki.cli",
+    "subcommands": {
+      "check-in": {
+        "args": ["--agent", "--task", "--scope-from-staged"],
+        "output": "session_id, seed",
+        "exit_codes": {0: "OK", 1: "STAGED_EMPTY", 2: "AGENT_CONFLICT", 3: "SCOPE_INVALID"}
+      },
+      "check-out": {
+        "args": ["--force"],
+        "output": "cleanup_report",
+        "exit_codes": {0: "OK", 1: "NO_ACTIVE_SESSION", 2: "FORCE_REQUIRED"}
+      },
+      "prepare": {
+        "args": ["<impulse>", "--persona"],
+        "output": ".doki/narrator_body.md template",
+        "exit_codes": {0: "OK", 1: "NO_SESSION", 2: "INVALID_PERSONA"}
+      },
+      "finish": {
+        "args": ["--body-file"],
+        "output": "stages change_index.json, CHANGELOG.md",
+        "exit_codes": {0: "OK", 1: "NO_SESSION", 2: "BODY_MISSING", 3: "ARTIFACT_WRITE_FAILED"}
+      },
+      "finalize": {
+        "args": [],
+        "output": "stages narrative_chain.json, arcs.json",
+        "exit_codes": {0: "OK", 1: "NOT_FINISHED", 2: "CHAIN_WRITE_FAILED"}
+      },
+      "status": {
+        "args": ["--json"],
+        "output": "session_state, agent, scope, seed, staged_files",
+        "exit_codes": {0: "OK"}
+      },
+      "recover": {
+        "args": ["--agent", "--takeover"],
+        "output": "recovered_session_id",
+        "exit_codes": {0: "OK", 1: "NOT_STALE", 2: "ACTIVE_CONFLICT", 3: "TAKEOVER_DENIED"}
+      },
+      "verify": {
+        "args": ["--full"],
+        "output": "verification_report",
+        "exit_codes": {0: "PASS", 1: "FAIL"}
+      },
+      "prune": {
+        "args": ["--force", "--older-than"],
+        "output": "pruned_count",
+        "exit_codes": {0: "OK", 1: "NOTHING_TO_PRUNE"}
+      }
+    },
+    "environment": {
+      "AGENT_NAME": "required",
+      "GODOT_BIN": "optional",
+      "DOKI_ROOT": "auto-detect .git"
+    }
+  },
+  "hooks": {
+    "pre-commit": {
+      "script": ".githooks/pre-commit",
+      "actions": ["doki verify --full", "compile_gate", "test_all"],
+      "failure_mode": "block"
+    },
+    "prepare-commit-msg": {
+      "script": ".githooks/prepare-commit-msg",
+      "actions": ["doki finalize", "read .commit_msg.txt"],
+      "failure_mode": "warn"
+    },
+    "post-commit": {
+      "script": ".githooks/post-commit",
+      "actions": ["doki prune --force", "index_update"],
+      "failure_mode": "ignore"
+    }
+  },
+  "session": {
+    "storage": ".doki/sessions/{session_id}.json",
+    "schema": {
+      "session_id": "uuid4",
+      "agent": "string",
+      "task": "string",
+      "scope": "file_list",
+      "seed": "hex64",
+      "state": "enum",
+      "created_at": "iso8601",
+      "updated_at": "iso8601",
+      "check_in_time": "iso8601",
+      "prepare_time": "iso8601|null",
+      "finish_time": "iso8601|null",
+      "finalize_time": "iso8601|null",
+      "narrator_persona": "enum|null",
+      "body_file": "path|null",
+      "artifacts": {"change_index": "path", "changelog": "path", "narrative_chain": "path|null", "arcs": "path|null"}
+    },
+    "locking": "filelock with 5s timeout",
+    "cleanup": "prune removes sessions older than 7 days or --force"
+  },
+  "scope": {
+    "source": "git diff --cached --name-only",
+    "expansion": "dependency_graph from concept_index",
+    "validation": "atomic_group_coverage >= 1",
+    "output": "scope.json with files, groups, deps, radius"
+  },
+  "narrative": {
+    "body_template": "---\nagent: {agent}\ntask: {task}\npersona: {persona}\nseed: {seed}\n---\n\n{narrative_text}",
+    "persona_prompts": {
+      "archivist": "Precise, factual, chronological. Focus on what changed and why.",
+      "engineer": "Technical, structural. Focus on architecture, invariants, trade-offs.",
+      "strategist": "Goal-oriented. Focus on strategic impact, risks, decisions.",
+      "explorer": "Discovery-focused. Focus on unknowns, findings, new territory.",
+      "diplomat": "Collaborative. Focus on interfaces, contracts, team impact."
+    },
+    "chain_linking": "prev_hash = sha256(prev_chain_entry)",
+    "arc_extraction": "group by atomic_group across last 50 commits"
+  },
+  "artifacts": {
+    "change_index.json": {
+      "schema": {"commit": "sha", "agent": "string", "task": "string", "scope": "file_list", "timestamp": "iso8601", "seed": "hex64"},
+      "sort": "lexicographic by file path"
+    },
+    "CHANGELOG.md": {
+      "format": "markdown",
+      "sections": ["Added", "Changed", "Fixed", "Removed", "Security"],
+      "group_by": "atomic_group"
+    },
+    "narrative_chain.json": {
+      "schema": [{"commit": "sha", "agent": "string", "persona": "string", "body_hash": "sha256", "prev_hash": "sha256", "timestamp": "iso8601"}],
+      "immutable": true
+    },
+    "arcs.json": {
+      "schema": {"arc_id": "string", "atomic_group": "string", "commits": "sha_list", "summary": "string", "updated_at": "iso8601"},
+      "max_arcs": 100
+    }
+  },
+  "determinism": {
+    "hash_algorithm": "sha256",
+    "timestamp_format": "iso8601_utc_no_millis",
+    "sort_keys": true,
+    "no_uuids_in_artifacts": true,
+    "seed_derivation": "blake2b(agent + task + scope_files + timestamp)",
+    "reproducibility_test": "run twice -> identical artifacts"
+  },
+  "recovery": {
+    "stale_threshold_hours": 24,
+    "detection": "scan .doki/sessions for CHECKED_IN/PREPARED without update",
+    "forced_checkout": "doki check-out --force writes recovery log",
+    "takeover_conditions": ["stale", "no_active_conflict", "explicit_takeover_flag"],
+    "orphan_cleanup": "sessions without git branch reference"
+  },
+  "self_check": {
+    "pre_commit": ["staged_files_exist", "scope_matches_staged", "narrative_body_valid", "artifacts_writable", "git_status_clean"],
+    "post_commit": ["artifacts_staged", "chain_append_verified", "arcs_updated", "session_archived"],
+    "continuous": ["concept_index_fresh", "global_search_indexed", "no_orphan_sessions"]
+  },
+  "integration": {
+    "godot_fallback": "python -m narrative_runtime.gate_cli --root .",
+    "preflight_trigger": "doki finish triggers preflight cheap-path for python-only",
+    "mcp_compatible": true
+  }
+}

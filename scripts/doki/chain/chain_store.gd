@@ -1,6 +1,6 @@
 class_name DOKI_ChainStore
 extends RefCounted
-## Verwaltet narrative_chain.json (Repo-Root).
+## Verwaltet narrative_chain.json (in .doki/).
 ## Format (Port aus XBridge.CommitLayer):
 ## {
 ##   "genesis_composite": "c0j0n0a0p0",
@@ -8,16 +8,17 @@ extends RefCounted
 ##   "genesis_date": "2026-08-26 00:00:00",   ← einmalig beim init gesetzt (danach fix)
 ##   "anchor": { "hash": "...", "subject": "...", "date": "..." },  ← Git-HEAD beim init
 ##   "entries": [ { seq, hash, composite, mood, narrator, model_id, summary,
-##                  subject, prev_narrator, prev_model, date, data_changes } ]
+##                  subject, prev_narrator, prev_model, date, data_changes,
+##                  prev_hash } ]  ← prev_hash = SHA256 of previous entry (V6-002)
 ## }
-## subject = echter Git-Subject (build_subject, inkl. „— nach <Vorgänger>");
+## subject = echter Git-Subject (build_subject, inkl. "— nach <Vorgänger>");
 ## summary = erste Body-Zeile des Narrators (bewusst beides gespeichert).
 
 var _path: String
 
 
 func _init(repo_root: String) -> void:
-	_path = repo_root.path_join("narrative_chain.json")
+	_path = repo_root.path_join(".doki").path_join("narrative_chain.json")
 
 
 func path() -> String:
@@ -57,16 +58,26 @@ func _empty() -> Dictionary:
 	}
 
 
-func save(chain: Dictionary) -> void:
-	var file := FileAccess.open(_path, FileAccess.WRITE)
+## ─── Atomic write with tmp+rename (V7-001) ───────────────────────────────
+static func _atomic_write(path: String, content: String) -> void:
+	var dir_path: String = path.get_base_dir()
+	DirAccess.make_dir_recursive_absolute(dir_path)
+	var tmp_path: String = path + ".tmp"
+	var file := FileAccess.open(tmp_path, FileAccess.WRITE)
 	if file == null:
-		push_error("DOKI: narrative_chain.json nicht schreibbar: %s" % _path)
+		push_error("DOKI: %s nicht schreibbar: %s" % [path, tmp_path])
 		return
-	file.store_string(JSON.stringify(chain, "\t"))
+	file.store_string(content)
 	file.close()
+	DirAccess.remove_absolute(path)
+	DirAccess.rename_absolute(tmp_path, path)
 
 
-## Genesis einmalig setzen: Anker = aktueller HEAD, genesis_date = heute.
+func save(chain: Dictionary) -> void:
+	_atomic_write(_path, JSON.stringify(chain, "\t"))
+
+
+## Genesis einmalig setzen: Anker = aktueller HEAD, genesis_date = first commit timestamp.
 ## Danach ist alles deterministisch (Timestamps = genesis_date-Tag + posmod(seq, 24) Uhrzeit).
 func init_genesis(head_hash: String, head_subject: String, head_date: String) -> Dictionary:
 	var chain: Dictionary = read()
@@ -78,7 +89,8 @@ func init_genesis(head_hash: String, head_subject: String, head_date: String) ->
 		"date": head_date,
 	}
 	if str(chain.get("genesis_date", "")).is_empty():
-		chain["genesis_date"] = Time.get_date_string_from_system() + " 00:00:00"
+		# genesis_date from first commit (V5-002)
+		chain["genesis_date"] = head_date.substr(0, 10) + " 00:00:00"
 	save(chain)
 	return chain
 
@@ -152,6 +164,26 @@ func append_entry(
 	var chain: Dictionary = read()
 	var all: Array = chain.get("entries", [])
 	var seq: int = all.size() + 1
+	
+	# Compute prev_hash: SHA256 of previous entry (V6-002)
+	var prev_hash: String = ""
+	if not all.is_empty():
+		var prev_entry: Dictionary = all[all.size() - 1]
+		# Hash all fields except prev_hash itself
+		var ctx := HashingContext.new()
+		ctx.start(HashingContext.HASH_SHA256)
+		var prev_keys: Array = prev_entry.keys()
+		prev_keys.sort()
+		for k in prev_keys:
+			if k == "prev_hash":
+				continue
+			var v: Variant = prev_entry[k]
+			if v is Dictionary or v is Array:
+				ctx.update(JSON.stringify(v).to_utf8_buffer())
+			else:
+				ctx.update(str(v).to_utf8_buffer())
+		prev_hash = ctx.finish().hex_encode()
+	
 	var entry := {
 		"seq": seq,
 		"hash": commit_hash,
@@ -163,14 +195,14 @@ func append_entry(
 		"summary": _truncate(summary, 200),
 		"subject": _truncate(subject, 200),
 		"arc": arc_id,
-		"p_id": seq,  # Plot-ID ist SEQUENZ (p1, p2, p3…) — wie im Original. Das
-		              # RNG-gezogene Composite-p bleibt als Referenz-Feld unten.
+		"p_id": seq,
 		"c": counter,
 		"j": j,
 		"n": n,
 		"a": a,
 		"p": p,
 		"data_changes": data_changes,
+		"prev_hash": prev_hash,
 	}
 	if not prev_narrator.is_empty():
 		entry["prev_narrator"] = prev_narrator
@@ -188,10 +220,69 @@ func seed_history(entries: Array) -> Dictionary:
 	var all: Array = chain.get("entries", [])
 	for e in entries:
 		e["seq"] = all.size() + 1
+		# Compute prev_hash for seeded entries too
+		if not all.is_empty():
+			var prev_entry: Dictionary = all[all.size() - 1]
+			var ctx := HashingContext.new()
+			ctx.start(HashingContext.HASH_SHA256)
+			var prev_keys: Array = prev_entry.keys()
+			prev_keys.sort()
+			for k in prev_keys:
+				if k == "prev_hash":
+					continue
+				var v: Variant = prev_entry[k]
+				if v is Dictionary or v is Array:
+					ctx.update(JSON.stringify(v).to_utf8_buffer())
+				else:
+					ctx.update(str(v).to_utf8_buffer())
+			e["prev_hash"] = ctx.finish().hex_encode()
+		else:
+			e["prev_hash"] = ""
 		all.append(e)
 	chain["entries"] = all
 	save(chain)
 	return {"ok": true, "count": entries.size()}
+
+
+## Verify chain integrity (V6-004): check all entry hashes and prev_hash links
+func verify_chain_integrity() -> Dictionary:
+	var chain: Dictionary = read()
+	var all: Array = chain.get("entries", [])
+	var errors: Array = []
+	
+	var expected_c: int = 0
+	for i in range(all.size()):
+		var entry: Dictionary = all[i]
+		var seq: int = int(entry.get("seq", 0))
+		var c: int = int(entry.get("c", 0))
+		
+		expected_c += 1
+		if c != expected_c:
+			errors.append("Entry %d: c=%d, expected %d" % [seq, c, expected_c])
+		
+		# Verify prev_hash link
+		if i > 0:
+			var prev_entry: Dictionary = all[i - 1]
+			var ctx := HashingContext.new()
+			ctx.start(HashingContext.HASH_SHA256)
+			var prev_keys: Array = prev_entry.keys()
+			prev_keys.sort()
+			for k in prev_keys:
+				if k == "prev_hash":
+					continue
+				var v: Variant = prev_entry[k]
+				if v is Dictionary or v is Array:
+					ctx.update(JSON.stringify(v).to_utf8_buffer())
+				else:
+					ctx.update(str(v).to_utf8_buffer())
+			var computed_prev_hash: String = ctx.finish().hex_encode()
+			var stored_prev_hash: String = str(entry.get("prev_hash", ""))
+			if computed_prev_hash != stored_prev_hash:
+				errors.append("Entry %d: prev_hash mismatch (chain broken)" % seq)
+	
+	if errors.is_empty():
+		return {"ok": true}
+	return {"ok": false, "errors": errors}
 
 
 static func _truncate(s: String, max_len: int) -> String:

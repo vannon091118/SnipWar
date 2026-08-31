@@ -5,7 +5,7 @@
 **VERBINDLICHE ENGINE-SPEZIFIKATION · DETERMINISTISCHE VERTRÄGE · REPRODUZIERBARE ENGINE-STATE-WELT**
 
 [![Engine: Godot 4.7](https://img.shields.io/badge/Engine-Godot%204.7-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/)
-[![Preflight](https://img.shields.io/badge/Preflight-43%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-automatisierte-preflight-suite-v2-architecture)
+[![Preflight](https://img.shields.io/badge/Preflight-45%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-automatisierte-preflight-suite-v2-architecture)
 [![Sprache: GDScript](https://img.shields.io/badge/GDScript-4.7-blue?style=for-the-badge)](#-architektur--vom-katalog-zum-spielstand)
 
 </div>
@@ -31,7 +31,7 @@
 # Smoke-Test (Bootet Hauptszene, beendet nach 2 Sekunden)
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Vollständige Preflight-Prüfung (44 Constraints)
+# Vollständige Preflight-Prüfung (45 Constraints)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x
 ```
 
@@ -207,7 +207,7 @@ Die Preflight-Suite in `scripts/preflight.gd` ist ein maßgeschnederter, Headles
 - `--reverse`: Führt Constraints in umgekehrter Reihenfolge aus (Isolations-Test).
 - `--list`: Listet alle registrierten Constraints auf.
 
-### Die 43 Preflight-Constraints
+### Die 44 Preflight-Constraints
 
 | # | Constraint | Test-Fokus | Execution Mode |
 |:---:|:---|:---|:---:|
@@ -254,11 +254,13 @@ Die Preflight-Suite in `scripts/preflight.gd` ist ein maßgeschnederter, Headles
 | 41 | `world_details_and_scale` | Planeten-Größenprofile & Detail-Seeds | Scene |
 | 42 | `world_generator_scaling` | Deterministische Welt- & Katalog-Generierung | Pure |
 | 43 | `world_planets_and_dispatch` | Planeten-Netzwerk & Routen-Erstellung | Scene |
+| 44 | `agent_activity` | AgentGate Registry, Staged Coverage & Collision Signal | Pure |
 
 > [!NOTE]
-> Die Constraints 33 (`save_game_roundtrip`) und 27 (`narrative_runtime`) sind die
+> Die Constraints 33 (`save_game_roundtrip`), 27 (`narrative_runtime`) und 44 (`agent_activity`) sind die
 > **Modularisierungs-Verträge**: Chronicle-Payload überlebt den Roundtrip
-> (4 Checks) und die Narrative Runtime bleibt konform (G1–G24).
+> (4 Checks) und die Narrative Runtime bleibt konform (G1–G24), während AgentGate
+> die Commit-Autorisierung sicherstellt.
 
 ---
 
@@ -287,7 +289,7 @@ Cleanup          → tote Pfade entfernt; Fallbacks dokumentiert [Phase 9]
 | Datei | Zweck |
 |-------|-------|
 | `scripts/config/game_constants.gd` | Dependency-freie StringName-Konstanten (Compile-Zyklus-Fix) |
-| `scripts/preflight/constraint_narrative_runtime.gd` | 43. Constraint: Narrative Gate fail-closed |
+| `scripts/preflight/constraint_narrative_runtime.gd` | 44. Constraint: Narrative Gate fail-closed |
 | `scripts/history/historical_snapshot.gd` | Pure Snapshot-Datenklasse |
 | `scripts/history/playback_controller.gd` | Snapshot-Playback (nur Snapshots) |
 | `scripts/ui/history/historical_renderer.gd` | Snapshot-Renderer (SVG-Wiederverwendung) |
@@ -346,7 +348,7 @@ Jeder Commit läuft unumgehbar durch folgende Stufen:
 | Szenen (`.tscn`) | **16** |
 | Textur- & Audio-Assets | **419** |
 | Engine-Ressourcen (`.tres`) | **91** |
-| Preflight Coverage | **44 / 44 Constraints PASS** |
+| Preflight Coverage | **45 / 45 Constraints PASS** |
 
 ---
 

@@ -2,6 +2,7 @@ class_name DOKI_RngEngine
 extends RefCounted
 ## Deterministische RNG-Engine, Port aus dem XBridge.DOKI-System (RngEngine.cs, 1:1).
 ## KEIN RandomNumberGenerator, KEINE Zeit — alles reine Funktion des Inputs.
+## Domain separation via HMAC (V8-002), integer arithmetic (V8-003), mood pool guard (V8-004).
 
 ## Feld-Definitionen: Key, Source ("sequence" | "rng"), Default-Pool (rng only).
 ## Reihenfolge definiert das Composite-Format.
@@ -17,6 +18,9 @@ const COMPOSITE_REGEX: String = "^c(\\d+)j(\\d+)n(\\d+)a(\\d+)p(\\d+)$"
 const GENESIS_COMPOSITE: String = "c0j0n0a0p0"
 const GENESIS_MOOD: String = "genesis"
 
+## Domain separation key for HMAC (V8-002)
+const DOMAIN_KEY: String = "DOKI_RNG_DERIVE_V2"
+
 
 ## ─── djb2 (deterministischer 32-bit Hash) ───────────────────────────────
 static func djb2(str: String) -> int:
@@ -25,6 +29,21 @@ static func djb2(str: String) -> int:
 		var c: int = str.unicode_at(i)
 		hash = ((hash << 5) + hash + c) & 0xFFFFFFFF
 	return hash
+
+
+## ─── HMAC-SHA256 for domain separation (V8-002) ──────────────────────────
+static func _hmac_sha256(key: String, data: String) -> String:
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	# Simple HMAC: SHA256(key + SHA256(key + data))
+	var inner_ctx := HashingContext.new()
+	inner_ctx.start(HashingContext.HASH_SHA256)
+	inner_ctx.update(key.to_utf8_buffer())
+	inner_ctx.update(data.to_utf8_buffer())
+	var inner_hash: PackedByteArray = inner_ctx.finish()
+	ctx.update(key.to_utf8_buffer())
+	ctx.update(inner_hash)
+	return ctx.finish().hex_encode()
 
 
 ## ─── Composite: Kennen/Aufbauen ─────────────────────────────────────────
@@ -49,9 +68,13 @@ static func build_composite(fields: Dictionary) -> String:
 
 
 ## ─── Mood deterministisch, garantiert != prev_mood ───────────────────────
+## Guard pool_size >= 2 (V8-004)
 static func select_mood(j: int, prev_mood: String, pool: Array) -> String:
 	if pool.is_empty():
 		return "neutral"
+	if pool.size() < 2:
+		# Can't guarantee != prev_mood with only 1 mood
+		return pool[0]
 	var mood_index: int = posmod(j, pool.size())
 	if pool[mood_index] == prev_mood:
 		mood_index = posmod(mood_index + 1, pool.size())
@@ -93,6 +116,7 @@ static func decode_j(j: int, mood_pool: Array, decoding: Dictionary) -> Dictiona
 ## ─── Derive: nächster Composite aus vorherigem + Inhalt ─────────────────
 ## Kausaler Seed: Composite + Tree-State + Diff-Inhalt + Impuls.
 ## Gleicher Input → identischer Composite (Narrator, Mood, Tone).
+## Domain separation via HMAC (V8-002), deterministic inputs only (V5-001).
 static func derive(
 	prev_composite: String,
 	tree_hash: String,
@@ -106,7 +130,12 @@ static func derive(
 	assert(not diff_hash.is_empty(), "derive: diffHash ist Pflichtfeld.")
 
 	var prev: Dictionary = parse_composite(prev_composite)
-	var seed: int = djb2(prev_composite + tree_hash + diff_hash + impulse)
+	
+	# Domain-separated seed via HMAC (V8-002)
+	var seed_data: String = prev_composite + tree_hash + diff_hash + impulse
+	var hmac_result: String = _hmac_sha256(DOMAIN_KEY, seed_data)
+	# Use first 8 hex chars (32 bits) as seed
+	var seed: int = int("0x" + hmac_result.substr(0, 8))
 	var rng := DOKI_XorShift128.new(seed)
 
 	var next: Dictionary = {}

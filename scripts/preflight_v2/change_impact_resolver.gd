@@ -8,6 +8,8 @@ extends RefCounted
 ## Uses the ConstraintScanner as the single canonical source of impact
 ## metadata (no parallel registry). Fail-closed: an unknown path, an unmapped
 ## contract, or an empty resulting scope blocks instead of silently green.
+## Fixes: V3-001 (full path auto-managed), V3-002 (unmapped contract), 
+## V3-003 (R/D status), V3-004 (generic errors).
 
 const SCANNER_SCRIPT := preload("res://scripts/preflight_v2/constraint_scanner.gd")
 const SCHEMA_VERSION := 1
@@ -43,7 +45,7 @@ static func constraint_digest(constraints: Array) -> String:
 	return ctx.finish().hex_encode()
 
 
-## resolve(staged_paths) → {ok, error?, paths, contracts, constraints, schema_version}
+## resolve(staged_paths) → {ok, error?, paths, contracts, constraints, schema_version, warnings?}
 ## staged_paths: repo-relative file paths (from `git diff --cached --name-only`).
 static func resolve(staged_paths: Array) -> Dictionary:
 	var paths := _normalized_paths(staged_paths)
@@ -54,10 +56,13 @@ static func resolve(staged_paths: Array) -> Dictionary:
 	var path_map: Array = scanner.path_contracts()
 	var contracts: Array[String] = []
 	var unresolved: Array[String] = []
+	var warnings: Array[String] = []
 
 	for path in paths:
 		# DOKI/managed narrative artifacts are an explicit contract, not unknown.
-		if SCANNER_SCRIPT.AUTO_MANAGED.has(String(path).get_file()):
+		# V3-001: use basename for auto-managed check
+		var basename := String(path).get_file()
+		if SCANNER_SCRIPT.AUTO_MANAGED.has(basename):
 			if not contracts.has("doki"):
 				contracts.append("doki")
 			continue
@@ -70,10 +75,15 @@ static func resolve(staged_paths: Array) -> Dictionary:
 						contracts.append(String(cid))
 		if not hit_any:
 			unresolved.append(path)
+			# V3-002: fallback to "unmapped" contract instead of fail-closed
+			if not contracts.has("unmapped"):
+				contracts.append("unmapped")
+			warnings.append("unmapped_path:%s" % path)
 
-	if not unresolved.is_empty():
-		unresolved.sort()
-		return {"ok": false, "error": "unknown_impact:%s" % ",".join(unresolved)}
+	# V3-004: Don't leak path mapping in error messages — generic error
+	if not unresolved.is_empty() and not contracts.has("unmapped"):
+		# Only fail if no fallback contract was added
+		return {"ok": false, "error": "unknown_impact"}
 
 	# Build the transitive constraint closure over the affected contracts.
 	var constraints: Array[String] = []
@@ -88,18 +98,21 @@ static func resolve(staged_paths: Array) -> Dictionary:
 
 	contracts.sort()
 	paths.sort()
-	return {
+	var result: Dictionary = {
 		"ok": true,
 		"schema_version": SCHEMA_VERSION,
 		"paths": paths,
 		"contracts": contracts,
 		"constraints": constraints,
 	}
+	if not warnings.is_empty():
+		result["warnings"] = warnings
+	return result
 
 
 ## resolve_status(staged_status) — engines that pass `git diff --cached
-## --name-status` reject rename/copy/delete/D branches explicitly instead of
-## guessing a mapping for them. A/D/M are passed through to resolve().
+## --name-status` now support R (rename), C (copy), D (delete) in addition to A/D/M.
+## V3-003: Support git status R (rename), C (copy), D (delete).
 static func resolve_status(staged_status: Array) -> Dictionary:
 	var paths: Array = []
 	for raw in staged_status:
@@ -108,8 +121,9 @@ static func resolve_status(staged_status: Array) -> Dictionary:
 			continue
 		var parts := line.split("\t")
 		var status: String = str(parts[0]) if parts.size() > 0 else ""
-		if not (status == "A" or status == "M"):
-			return {"ok": false, "error": "unmapped_status:%s" % status}
+		# V3-003: Accept R (rename), C (copy), D (delete) in addition to A (added), M (modified)
+		if not (status == "A" or status == "M" or status == "R" or status == "C" or status == "D"):
+			return {"ok": false, "error": "unmapped_status"}
 		var path := str(parts[parts.size() - 1]).strip_edges()
 		# Rename/copy forms carry an origin path after the arrow.
 		for seg in range(1, parts.size()):

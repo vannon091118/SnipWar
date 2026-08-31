@@ -1,0 +1,390 @@
+{
+  "preflight_system": {
+    "file": "scripts/preflight.gd",
+    "version": "v2 (Optimized)",
+    "total_constraints": 44,
+    "constraints": [
+      {"id": "agent_activity", "type": "pure", "category": "preflight", "description": "AgentGate registry, staged coverage and collision signal", "file": "scripts/preflight/constraint_agent_activity.gd", "requires_scene": false},
+      {"id": "scene_boot", "type": "scene", "category": "ui_flow", "description": "Boots the starfield background, validates the default scenario/world wiring", "file": "scripts/preflight/constraint_scene_boot.gd", "requires_scene": true},
+      {"id": "game_state_compatibility", "type": "scene", "category": "game_state", "description": "Guards the public GameState facade against domain-split drift", "file": "scripts/preflight/constraint_game_state_compatibility.gd", "requires_scene": true},
+      {"id": "concept_index", "type": "pure", "category": "preflight", "description": "Validates the conceptual code index", "file": "scripts/preflight/constraint_concept_index.gd", "requires_scene": false},
+      {"id": "global_search", "type": "pure", "category": "preflight", "description": "Validates the real global-search engine (SearchCore)", "file": "scripts/preflight/constraint_global_search.gd", "requires_scene": false},
+      {"id": "mechanic_coverage", "type": "pure", "category": "preflight", "description": "Mechanic registry coverage", "file": "scripts/preflight/constraint_mechanic_coverage.gd", "requires_scene": false},
+      {"id": "dead_code", "type": "pure", "category": "preflight", "description": "Dead code detection", "file": "scripts/preflight/constraint_dead_code.gd", "requires_scene": false},
+      {"id": "mcp_capture_contract", "type": "pure", "category": "mcp", "description": "MCP capture contract validation", "file": "scripts/preflight/constraint_mcp_capture_contract.gd", "requires_scene": false},
+      {"id": "docs_integrity", "type": "pure", "category": "docs", "description": "Central docs integrity: duplicated headings/table blocks, broken markdown table structure", "file": "scripts/preflight/constraint_docs_integrity.gd", "requires_scene": false},
+      {"id": "narrative_runtime", "type": "pure", "category": "doki", "description": "Narrative runtime validation", "file": "scripts/preflight/constraint_narrative_runtime.gd", "requires_scene": false},
+      {"id": "cluster_generation", "type": "scene", "category": "world", "description": "Cluster generation validation", "file": "scripts/preflight/constraint_cluster_generation.gd", "requires_scene": true},
+      {"id": "ship_transit_and_arrival", "type": "scene", "category": "ships", "description": "Ship transit and arrival validation", "file": "scripts/preflight/constraint_ship_transit_and_arrival.gd", "requires_scene": true},
+      {"id": "ship_catalog_and_assembly", "type": "scene", "category": "ships", "description": "Ship catalog and assembly validation", "file": "scripts/preflight/constraint_ship_catalog_and_assembly.gd", "requires_scene": true},
+      {"id": "local_resources", "type": "scene", "category": "economy", "description": "Local resources validation", "file": "scripts/preflight/constraint_local_resources.gd", "requires_scene": true},
+      {"id": "pause_and_context", "type": "scene", "category": "ui_flow", "description": "Pause and context validation", "file": "scripts/preflight/constraint_pause_and_context.gd", "requires_scene": true},
+      {"id": "navigation_growth", "type": "scene", "category": "navigation", "description": "Navigation growth validation", "file": "scripts/preflight/constraint_navigation_growth.gd", "requires_scene": true},
+      {"id": "effects_and_traits", "type": "scene", "category": "ships", "description": "Effects and traits validation", "file": "scripts/preflight/constraint_effects_and_traits.gd", "requires_scene": true},
+      {"id": "historical_world", "type": "scene", "category": "history", "description": "Historical world validation", "file": "scripts/preflight/constraint_historical_world.gd", "requires_scene": true},
+      {"id": "camera_and_input", "type": "scene", "category": "ui_flow", "description": "Camera and input validation", "file": "scripts/preflight/constraint_camera_and_input.gd", "requires_scene": true},
+      {"id": "world_planets_and_dispatch", "type": "scene", "category": "world", "description": "World planets and dispatch validation", "file": "scripts/preflight/constraint_world_planets_and_dispatch.gd", "requires_scene": true},
+      {"id": "sector_classification", "type": "scene", "category": "sectors", "description": "Sector classification validation", "file": "scripts/preflight/constraint_sector_classification.gd", "requires_scene": true},
+      {"id": "module_damage_model", "type": "scene", "category": "combat", "description": "Module damage model validation", "file": "scripts/preflight/constraint_module_damage_model.gd", "requires_scene": true},
+      {"id": "upgrade_catalog", "type": "scene", "category": "economy", "description": "Upgrade catalog validation", "file": "scripts/preflight/constraint_upgrade_catalog.gd", "requires_scene": true},
+      {"id": "economy_production", "type": "scene", "category": "economy", "description": "Economy production validation", "file": "scripts/preflight/constraint_economy_production.gd", "requires_scene": true},
+      {"id": "world_generator_scaling", "type": "scene", "category": "world", "description": "World generator scaling validation", "file": "scripts/preflight/constraint_world_generator_scaling.gd", "requires_scene": true},
+      {"id": "resources_and_seed", "type": "scene", "category": "economy", "description": "Resources and seed validation", "file": "scripts/preflight/constraint_resources_and_seed.gd", "requires_scene": true},
+      {"id": "ingame_player_and_transitions", "type": "scene", "category": "ui_flow", "description": "In-game player and transitions validation", "file": "scripts/preflight/constraint_ingame_player_and_transitions.gd", "requires_scene": true},
+      {"id": "save_game_roundtrip", "type": "scene", "category": "save", "description": "Save game roundtrip validation (FULL REBOOT)", "file": "scripts/preflight/constraint_save_game_roundtrip.gd", "requires_scene": true},
+      {"id": "mission_semantics", "type": "scene", "category": "combat", "description": "Mission semantics validation", "file": "scripts/preflight/constraint_mission_semantics.gd", "requires_scene": true},
+      {"id": "conquest_grid_combat", "type": "scene", "category": "fleet", "description": "Conquest grid combat validation", "file": "scripts/preflight/constraint_conquest_grid_combat.gd", "requires_scene": true},
+      {"id": "layers_2_and_3", "type": "scene", "category": "fleet", "description": "Layers 2 and 3 validation", "file": "scripts/preflight/constraint_layers_2_and_3.gd", "requires_scene": true},
+      {"id": "main_menu_and_flow", "type": "scene", "category": "ui_flow", "description": "Main menu and flow validation", "file": "scripts/preflight/constraint_main_menu_and_flow.gd", "requires_scene": true},
+      {"id": "flight_and_dispatch", "type": "scene", "category": "fleet", "description": "Flight and dispatch validation", "file": "scripts/preflight/constraint_flight_and_dispatch.gd", "requires_scene": true},
+      {"id": "world_details_and_scale", "type": "scene", "category": "world", "description": "World details and scale validation", "file": "scripts/preflight/constraint_world_details_and_scale.gd", "requires_scene": true},
+      {"id": "research_ship", "type": "scene", "category": "ships", "description": "Research ship validation", "file": "scripts/preflight/constraint_research_ship.gd", "requires_scene": true},
+      {"id": "context_handover", "type": "scene", "category": "ui_flow", "description": "Context handover validation (FULL REBOOT)", "file": "scripts/preflight/constraint_context_handover.gd", "requires_scene": true},
+      {"id": "cpu_dispatch", "type": "scene", "category": "fleet", "description": "CPU dispatch validation", "file": "scripts/preflight/constraint_cpu_dispatch.gd", "requires_scene": true},
+      {"id": "grid_system", "type": "scene", "category": "world", "description": "Grid system validation", "file": "scripts/preflight/constraint_grid_system.gd", "requires_scene": true},
+      {"id": "chunk_expansion", "type": "scene", "category": "world", "description": "Chunk expansion validation", "file": "scripts/preflight/constraint_chunk_expansion.gd", "requires_scene": true},
+      {"id": "selection_and_context", "type": "scene", "category": "ui_flow", "description": "Selection and context validation", "file": "scripts/preflight/constraint_selection_and_context.gd", "requires_scene": true},
+      {"id": "paper_style", "type": "scene", "category": "ui_flow", "description": "Paper style validation", "file": "scripts/preflight/constraint_paper_style.gd", "requires_scene": true},
+      {"id": "layer_independence", "type": "scene", "category": "ui_flow", "description": "Layer independence validation", "file": "scripts/preflight/constraint_layer_independence.gd", "requires_scene": true},
+      {"id": "colony_milestone", "type": "scene", "category": "ui_flow", "description": "Colony milestone validation", "file": "scripts/preflight/constraint_colony_milestone.gd", "requires_scene": true},
+      {"id": "event_log", "type": "scene", "category": "history", "description": "Event log validation", "file": "scripts/preflight/constraint_event_log.gd", "requires_scene": true},
+      {"id": "save_game_slots", "type": "scene", "category": "save", "description": "Save game slots validation", "file": "scripts/preflight/constraint_save_game_slots.gd", "requires_scene": true}
+    ],
+    "execution_model": {
+      "parallel_workers": false,
+      "description": "No parallel workers in Godot 4.7 - OS.execute from threads is unreliable. Sequential execution with shared in-memory CodeIndex.",
+      "fixture_sharing": "V2Fixture boots scene ONCE, then uses reset_state() between constraints. Full reboot after destructive constraints (save_game_roundtrip, context_handover).",
+      "state_reset": "Checkpoint/verify system in V2Context captures ownership, resources, techs, upgrades, worker counts, transit count, node count before each constraint. verify_checkpoint() runs after each constraint and records isolation_warnings."
+    },
+    "mcp_json_output": {
+      "format": "JSON with ok, verdict, constraints (total/passed/failed), assertions (run/passed/failed), duration_ms, timings (per constraint), failures",
+      "file": "scripts/preflight.gd:495-518",
+      "trigger": "--mcp-json=<path> CLI argument"
+    },
+    "watchdog_timeout": {
+      "env_var": "PREFLIGHT_WATCHDOG_SECONDS",
+      "cli_arg": "--watchdog=<seconds>",
+      "default": "disabled (0 = no timeout)",
+      "behavior": "Creates timer, on timeout prints ABORT message and exits with code 124",
+      "file": "scripts/preflight.gd:41-48"
+    },
+    "cheap_path_vs_full_path": {
+      "python_only": "Marked as 'python' severity in agent_activity.sh classify_file(). Uses cheap-path without scene preflight. Constraint 'agent_activity' is pure and delegates to hook.",
+      "code_changes": "Marked as 'scoped' or 'full' severity. Uses DOKI scope/full preflight. ChangeImpactResolver resolves staged files to contracts to constraints.",
+      "file": "scripts/agent_activity.sh:35-38"
+    },
+    "result_caching": {
+      "mechanism": "HEAD-keyed cache in test_all.gd (not in preflight.gd directly). test_all.gd caches entry test results by file digest + git write-tree hash.",
+      "preflight_caching": "Preflight is NEVER cached (line 90 in test_all.gd: 'Preflight wird nie gecacht (Full-Run-Garantie bleibt beim Hook)')",
+      "file": "scripts/testing/test_all.gd:160-172, 90"
+    }
+  },
+  "compile_gate": {
+    "file": "scripts/testing/compile_gate.gd",
+    "reload_api_usage": {
+      "method": "load() gets cached script, then source_code overwritten with disk content, then reload() called",
+      "reason": "load() returns Script even on parse error; reload() returns ERR_PARSE_ERROR deterministically",
+      "lines": "105-130"
+    },
+    "scan_paths": [
+      "res://scripts",
+      "res://addons/gdscript_mcp"
+    ],
+    "evidence_output": {
+      "path": "user://mcp_evidence/compile_gate.json",
+      "tmp_path": "user://mcp_evidence/compile_gate.<PID>.tmp (PID-keyed for parallel runs)",
+      "atomic_write": "Write to tmp, then rename_absolute to final path",
+      "cleanup": "Stale PID tmp files cleaned up on each run",
+      "lines": "14-21, 59-88"
+    },
+    "exit_codes": {
+      "0": "All scripts compile clean",
+      "1": "At least one compilation failure",
+      "3": "Watchdog timeout (COMPILE_GATE_WATCHDOG_SECONDS)"
+    },
+    "failure_modes": {
+      "parse_error": "reload() returns ERR_PARSE_ERROR",
+      "already_in_use": "ERR_ALREADY_IN_USE means live instances exist (resources loaded at startup) - counted as live_verified",
+      "unreadable": "FileAccess returns empty string",
+      "load_null": "load() returns null"
+    },
+    "watchdog": {
+      "env_var": "COMPILE_GATE_WATCHDOG_SECONDS",
+      "exit_code": 3
+    }
+  },
+  "test_all": {
+    "file": "scripts/testing/test_all.gd",
+    "entry_tests": 8,
+    "entry_test_discovery": "scripts/testing/*_test.gd (excluding dbg_* prefix)",
+    "tests_found_by_glob": [
+      "scripts/testing/audio_analyzer_entry_test.gd",
+      "scripts/testing/chain_validate_entry_test.gd",
+      "scripts/testing/chronicle_core_test.gd",
+      "scripts/testing/chronicle_lifecycle_test.gd",
+      "scripts/testing/credit_income_behavior_test.gd",
+      "scripts/testing/docs_integrity_entry_test.gd",
+      "scripts/testing/e1_vault_core_semantics_test.gd",
+      "scripts/testing/e2_e4_economy_units_test.gd",
+      "scripts/testing/history_economy_behavior_test.gd",
+      "scripts/testing/history_economy_seams_test.gd",
+      "scripts/testing/historical_playback_test.gd",
+      "scripts/testing/historical_replay.gd",
+      "scripts/testing/historical_world_flow_test.gd",
+      "scripts/testing/mcp_capture_entry_test.gd",
+      "scripts/testing/phase01_world_identity_roster_test.gd",
+      "scripts/testing/r008_world_ui_boundary_test.gd",
+      "scripts/testing/scenario_loader.gd",
+      "scripts/testing/scenario_snapshot.gd",
+      "scripts/testing/test_determinism.gd",
+      "scripts/testing/mechanic_registry.gd",
+      "scripts/testing/change_impact_resolver_test.gd"
+    ],
+    "note": "21 test files discovered by glob, but test_all.gd filters for *_test.gd excluding dbg_* - actual count varies",
+    "preflight_integration": {
+      "runs_after_entry_tests": true,
+      "serial_execution": true,
+      "command": "preflight.gd -x (fail-fast)",
+      "never_cached": true,
+      "line": "scripts/testing/test_all.gd:86-92"
+    },
+    "cache_mechanism": {
+      "type": "HEAD-keyed",
+      "key": "git write-tree hash + file SHA-256 digest",
+      "scope": "Entry tests only (preflight never cached)",
+      "storage": "user://mcp_evidence/test_cache/test_cache.json",
+      "atomic_write": "PID-keyed tmp + rename_absolute",
+      "lines": "scripts/testing/test_all.gd:160-237"
+    },
+    "options": {
+      "TEST_ALL_FILTER": "Run only tests with term in path",
+      "TEST_ALL_SKIP_PREFLIGHT": "Skip preflight (1 = skip)",
+      "TEST_ALL_TIMEOUT": "Optional timeout per test (default 0 = no timeout)",
+      "TEST_ALL_NO_CACHE": "Disable result cache (1 = disable)",
+      "lines": "scripts/testing/test_all.gd:17-21"
+    }
+  },
+  "git_hooks": {
+    "directory": ".git/hooks",
+    "current_hooks": "NONE found in workspace",
+    "expected_per_agents_md": [
+      "pre-commit",
+      "prepare-commit-msg",
+      "commit-msg",
+      "post-commit"
+    ],
+    "doki_integration": {
+      "gate_flow": "scripts/doki/orchestration/flows/gate_flow.gd - runs as pre-commit gate",
+      "checks": [
+        "Rebase detection (skips if rebase in progress)",
+        "Amend detection (skips if HEAD is DOKI commit and session idle)",
+        "Session state must be VERIFIED",
+        ".commit_msg.txt must exist and not be empty",
+        "Ownership token must match (single active owner)",
+        "Snapshot gate: staged files must match session snapshot (excluding auto-managed)",
+        "Scope gate: resolved verification scope must match prepare scope",
+        "Byte drift gate: staged bytes must match prepare digest",
+        "Path drift gate: staged path set must match prepare digest",
+        "Path gate: staged files must match snapshot"
+      ],
+      "auto_managed_files": ["narrative_chain.json", "change_index.json", "CHANGELOG.md", ".commit_msg.txt", "arcs.json"],
+      "file": "scripts/doki/orchestration/flows/gate_flow.gd:8-103"
+    }
+  },
+  "agent_activity_script": {
+    "file": "scripts/agent_activity.sh",
+    "check_in": {
+      "scope_capture": "--scope-from-staged captures git diff --cached --name-only",
+      "files_param": "--files <list> or --scope-from-staged",
+      "seed_generation": "agent:$AGENT_NAME:doki:$DOKI_AGENT_SEED if DOKI_AGENT_SEED set, else agent:$AGENT_NAME:$(hostname):$$:$check_in_time",
+      "collision_detection": "Fails if another ACTIVE agent has same file (unless AGENT_ACTIVITY_ADOPT_SCOPE=1)",
+      "lines": "39-68"
+    },
+    "check_out": {
+      "force_flag": "--force required if staged work exists",
+      "behavior": "Sets out timestamp, beat=0, status=NO-OUT",
+      "lines": "71"
+    },
+    "seed_generation": {
+      "command": "seed <agent>",
+      "source": "Registry field 'seed' + 'beat' must be > 0",
+      "lines": "29"
+    },
+    "prune": {
+      "stale_detection": "STALE if age > TTL (2700s), RECHECK-REQUIRED if age > 3600s, NO-OUT if age > 7200s or beat <= 0",
+      "force_flag": "--force removes registry and files, --purge removes archive too",
+      "lines": "74, 30-33"
+    },
+    "doki_integration": {
+      "prepare_flow_requires": "AGENT_NAME and AGENT_ACTIVITY_SEED env vars from check-in",
+      "gate_flow_checks": "Ownership token validation, session state VERIFIED",
+      "lines": "scripts/doki/orchestration/flows/prepare_flow.gd:66-69, scripts/doki/orchestration/flows/gate_flow.gd:45-53"
+    }
+  },
+  "staging_commit_flow": {
+    "staged_file_capture": "git diff --cached --name-only --diff-filter=ACMR (agent_activity.sh:39)",
+    "git_add_pattern": "Explicit files only (AGENTS.md: 'Kein git add -A'), DOKI stages narrative artifacts automatically",
+    "commit_message": ".commit_msg.txt generated by DOKI finish_flow, then 'git commit -F .commit_msg.txt'",
+    "doki_sequence": {
+      "prepare": "doki prepare '<impuls>' - resolves impact, writes .doki/scope.json, .doki/agent_binding.json, generates prompt",
+      "gate": "doki gate (or gate_flow) - validates session, scope, byte/path drift, ownership",
+      "finish": "doki finish --body-file .doki/narrator_body.md - runs 10 checks, writes .commit_msg.txt, change_index.json, CHANGELOG.md, stages them",
+      "commit": "git commit -F .commit_msg.txt (manual per AGENTS.md)",
+      "finalize": "doki finalize - appends to narrative_chain.json, advances arcs, stages chain/index/arcs for next commit"
+    },
+    "files": [
+      "scripts/doki/orchestration/flows/prepare_flow.gd",
+      "scripts/doki/orchestration/flows/gate_flow.gd",
+      "scripts/doki/orchestration/flows/finish_flow.gd",
+      "scripts/doki/orchestration/flows/finalize_flow.gd",
+      "scripts/agent_activity.sh",
+      "AGENTS.md"
+    ]
+  },
+  "scope_determination": {
+    "agents_md_rule": "Stage-Set ist die Coverage-Quelle; manuelle 166-Datei-Listen sind nicht zulässig (AGENTS.md:7)",
+    "flow": {
+      "1_staged": "git diff --cached --name-only",
+      "2_check_in": "agent_activity.sh check-in --scope-from-staged captures staged files",
+      "3_prepare": "DOKI prepare_flow runs ChangeImpactResolver.resolve(staged) -> {constraints, contracts, paths}",
+      "4_scope_file": "Writes .doki/scope.json with constraints + contracts",
+      "5_gate": "GateFlow re-resolves scope from full staged (including auto-managed) and compares to prepare scope",
+      "6_preflight": "preflight.gd --scope=<manifest> runs only those constraints"
+    },
+    "bypasses": {
+      "manual_scope_override": "preflight.gd --scope=<manifest> or --scope=<csv> bypasses ChangeImpactResolver (fails if unknown/empty)",
+      "stale_agent_takeover": "agent_activity.sh takeover --from <stale_agent> --reason <...> allowed only for stale/NO-OUT agents without ACTIVE collision",
+      "adopt_scope": "AGENT_ACTIVITY_ADOPT_SCOPE=1 allows check-in despite active other lock"
+    },
+    "files": [
+      "scripts/preflight_v2/change_impact_resolver.gd",
+      "scripts/doki/orchestration/flows/prepare_flow.gd:81-98",
+      "scripts/doki/orchestration/flows/gate_flow.gd:62-75",
+      "scripts/agent_activity.sh:45-55"
+    ]
+  },
+  "preflight_v2": {
+    "directory": "scripts/preflight_v2/",
+    "files": [
+      "constraint_scanner.gd - Dynamic constraint discovery + canonical contract/path mappings",
+      "v2_context.gd - PreflightV2Context with checkpointing, phase tracking, fail-fast flag",
+      "v2_fixture.gd - V2Fixture wraps PreflightFixture, adds reset_state() for lightweight resets",
+      "change_impact_resolver.gd - Staged files -> contracts -> constraint closure (fail-closed)",
+      "preflight_code_index.gd - Shared in-memory codebase index (built once, used by all pure constraints)"
+    ],
+    "differences_from_v1": {
+      "v1_location": "scripts/preflight.gd (original) - now replaced by v2 entry point",
+      "v2_entry_point": "scripts/preflight.gd now imports and uses v2 modules",
+      "key_improvements": [
+        "Single scene boot + state resets instead of full reboot per constraint",
+        "Shared CodeIndex built once for all pure constraints",
+        "Checkpoint/verify system for state isolation detection",
+        "Fail-fast flag instead of tree.quit(1) - allows summary to print",
+        "Content-addressed scope digests (byte/path/constraint)",
+        "Deterministic contract-based scope resolution (fail-closed)",
+        "Phase separation: pure (no scene) then scene (shared fixture)"
+      ],
+      "constraint_registry": "Auto-discovered from res://scripts/preflight/constraint_*.gd via ConstraintScanner",
+      "contracts": "14 contracts defined in constraint_scanner.gd:21-37 (_CONTRACT_CONSTRAINTS)",
+      "path_mappings": "119 glob-to-contract mappings in constraint_scanner.gd:42-119 (_PATH_CONTRACTS)"
+    }
+  },
+  "anomalies": [
+    {
+      "id": "ANOM-001",
+      "area": "git_hooks",
+      "severity": "critical",
+      "description": "No git hooks found in .git/hooks/ directory. AGENTS.md mandates pre-commit, prepare-commit-msg, commit-msg, post-commit hooks but none exist.",
+      "evidence": "glob('.git/hooks/*') returned empty",
+      "impact": "AgentGate check-in, DOKI gate, preflight verification not enforced at commit time"
+    },
+    {
+      "id": "ANOM-002",
+      "area": "preflight",
+      "severity": "high",
+      "description": "Preflight not integrated into git hooks. AGENTS.md says 'Der Hook führt AgentGate einmal aus' but no hook exists to run it.",
+      "evidence": "AGENTS.md:10 mentions hook runs AgentGate; .git/hooks/ empty",
+      "impact": "Verification runs only manually, not automatically on commit"
+    },
+    {
+      "id": "ANOM-003",
+      "area": "scope_determination",
+      "severity": "high",
+      "description": "Scope resolution fails closed for unknown paths, but _PATH_CONTRACTS may not cover all repo paths. Unmapped paths cause prepare to fail.",
+      "evidence": "change_impact_resolver.gd:74-76 returns error 'unknown_impact' for unmapped paths",
+      "impact": "New file patterns not in _PATH_CONTRACTS block commits until mappings added"
+    },
+    {
+      "id": "ANOM-004",
+      "area": "staged_capture",
+      "severity": "medium",
+      "description": "agent_activity.sh staged_files() uses git diff --cached --name-only --diff-filter=ACMR. Renames (R) and copies (C) with different names may not be captured correctly.",
+      "evidence": "agent_activity.sh:39, change_impact_resolver.gd:111 rejects non-A/M status",
+      "impact": "Renamed/copied files may not be included in scope"
+    },
+    {
+      "id": "ANOM-005",
+      "area": "cache_invalidation",
+      "severity": "medium",
+      "description": "test_all.gd cache keyed by git write-tree hash. If working tree has unstaged changes, write-tree still reflects HEAD, not working state. Cache may incorrectly hit.",
+      "evidence": "test_all.gd:190-193 _current_tree_hash() uses 'git write-tree' which only reflects staged/index state",
+      "impact": "Cache hits may occur even when unstaged changes affect test behavior"
+    },
+    {
+      "id": "ANOM-006",
+      "area": "constraint_drift",
+      "severity": "high",
+      "description": "Constraint registry in constraint_scanner.gd has 44 constraints, but _CONTRACT_CONSTRAINTS maps only 43 unique constraint IDs (module_damage_model appears in both 'ships' and 'combat'). Some constraints may not be in any contract.",
+      "evidence": "constraint_scanner.gd:21-37 _CONTRACT_CONSTRAINTS, glob found 44 constraint files",
+      "impact": "Constraints not in any contract will never run in scoped mode"
+    },
+    {
+      "id": "ANOM-007",
+      "area": "watchdog",
+      "severity": "low",
+      "description": "Watchdog/timeout disabled by default (0 = no timeout) for preflight, compile_gate, and test_all. Long-running hangs possible.",
+      "evidence": "preflight.gd:43, compile_gate.gd:29-34, test_all.gd:24-25, AGENTS.md:10",
+      "impact": "No automatic abort on infinite loops or deadlocks"
+    },
+    {
+      "id": "ANOM-008",
+      "area": "dual_preflight",
+      "severity": "medium",
+      "description": "Two preflight systems coexist: v1 (scripts/preflight/constraint_*.gd - 44 constraint implementations) and v2 (scripts/preflight_v2/ - runner, scanner, context, fixture). v2 entry point is scripts/preflight.gd which imports v2 modules but constraints remain in v1 directory.",
+      "evidence": "preflight.gd:10-13 imports v2 modules; constraint files in scripts/preflight/; v2 modules in scripts/preflight_v2/",
+      "impact": "Confusion about which is 'source of truth'; v1 constraints not migrated to v2 structure"
+    },
+    {
+      "id": "ANOM-009",
+      "area": "preflight_v1_legacy",
+      "severity": "low",
+      "description": "Original preflight.gd (v1) appears to have been replaced by v2 entry point. No legacy preflight.gd backup found.",
+      "evidence": "scripts/preflight.gd is now the v2 runner (extends SceneTree, uses v2 modules)",
+      "impact": "If v2 has bugs, no fallback to v1"
+    },
+    {
+      "id": "ANOM-010",
+      "area": "agent_activity_preflight_delegation",
+      "severity": "medium",
+      "description": "constraint_agent_activity.gd delegates to hook with check(true, 'AgentGate: delegated to pre-commit hook') - always passes. If hook missing (ANOM-001), this constraint provides zero verification.",
+      "evidence": "scripts/preflight/constraint_agent_activity.gd:14-18",
+      "impact": "False green in preflight when hooks not installed"
+    },
+    {
+      "id": "ANOM-011",
+      "area": "scope_drift_after_prepare",
+      "severity": "high",
+      "description": "GateFlow validates byte/path drift against prepare digests, but if user stages additional files after prepare, gate fails. However, user could unstage files and re-run prepare - but DOKI doesn't prevent this workflow gap.",
+      "evidence": "gate_flow.gd:77-91 drift checks",
+      "impact": "User can bypass scope validation by re-running prepare after modifying staging"
+    },
+    {
+      "id": "ANOM-012",
+      "area": "auto_managed_exclusion",
+      "severity": "medium",
+      "description": "Auto-managed files (narrative_chain.json, change_index.json, CHANGELOG.md, .commit_msg.txt, arcs.json) excluded from snapshot/path/byte drift checks. If these are manually modified, drift not detected.",
+      "evidence": "gate_flow.gd:8-10, gate_flow.gd:112-116 _without_auto_managed()",
+      "impact": "Manual edits to DOKI artifacts could slip through"
+    }
+  ]
+}

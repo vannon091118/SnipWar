@@ -26,6 +26,14 @@ func _init() -> void:
 	_test_entity_window_decay()
 	_test_min_commits_for_climax()
 	_test_new_recur_weight_swap()
+	# V9-001-004: Expanded self-check tests
+	_test_hook_integration()
+	_test_agent_activity_integration()
+	_test_scope_unknown_fallback()
+	_test_atomic_writes()
+	_test_recovery_determinism()
+	_test_verifier_check8_missing_file()
+	_test_doki_story_amend_repair_rebase()
 
 	print("")
 	print("═══════════════════════════════════════")
@@ -639,6 +647,201 @@ func _test_new_recur_weight_swap() -> void:
 	var arc_refactor: Dictionary = {"weight": 0.0, "climax_weight": 5.0, "commit_count": 5, "seen_entities": []}
 	var forecast_refactor: Dictionary = DOKI_ArcEngine.new("res://scripts/doki/data").forecast_weight(arc_refactor, ["F-1", "F-2"], false, "REFACTOR")
 	_expect("refactor: eligible", bool(forecast_refactor["climax_eligible"]))
+
+
+## ─── V9-001: Hook Integration Tests ─────────────────────────────────────
+func _test_hook_integration() -> void:
+	# Verify .githooks directory and scripts exist
+	_expect("hook: .githooks/pre-commit exists", FileAccess.file_exists(".githooks/pre-commit"))
+	_expect("hook: .githooks/commit-msg exists", FileAccess.file_exists(".githooks/commit-msg"))
+	_expect("hook: .githooks/post-commit exists", FileAccess.file_exists(".githooks/post-commit"))
+	_expect("hook: install_hooks.sh exists", FileAccess.file_exists("scripts/doki/install_hooks.sh"))
+	
+	# Verify hook content has DOKI gate calls
+	var pre_commit: String = FileAccess.get_file_as_string(".githooks/pre-commit")
+	_expect("hook: pre-commit calls doki gate", pre_commit.contains("doki.gd -- gate"))
+	
+	var commit_msg: String = FileAccess.get_file_as_string(".githooks/commit-msg")
+	_expect("hook: commit-msg calls doki verify-only", commit_msg.contains("doki.gd -- verify-only"))
+	
+	var post_commit: String = FileAccess.get_file_as_string(".githooks/post-commit")
+	_expect("hook: post-commit calls doki finalize", post_commit.contains("doki.gd -- finalize"))
+
+
+## ─── V9-001: Agent Activity Integration Tests ───────────────────────────
+func _test_agent_activity_integration() -> void:
+	# Verify agent_activity.sh exists and has required functions
+	_expect("agent_activity: script exists", FileAccess.file_exists("scripts/agent_activity.sh"))
+	var script: String = FileAccess.get_file_as_string("scripts/agent_activity.sh")
+	_expect("agent_activity: has check_in", script.contains("check_in()"))
+	_expect("agent_activity: has seed_for", script.contains("seed_for()"))
+	_expect("agent_activity: has run_gate", script.contains("run_gate()"))
+	_expect("agent_activity: has hmac_sha256", script.contains("hmac_sha256()"))
+	
+	# Verify ADOPT_SCOPE bypass removed (V10-005)
+	_expect("agent_activity: ADOPT_SCOPE bypass removed", not script.contains("AGENT_ACTIVITY_ADOPT_SCOPE"))
+	
+	# Verify seed derivation uses HMAC
+	_expect("agent_activity: seed uses HMAC", script.contains("hmac_seed"))
+
+
+## ─── V9-001/002: Scope Unknown Fallback Tests ───────────────────────────
+func _test_scope_unknown_fallback() -> void:
+	# Test ChangeImpactResolver with unknown path falls back to "unmapped" contract
+	var resolver := preload("res://scripts/preflight_v2/change_impact_resolver.gd")
+	
+	# Unknown path should not fail-closed but add "unmapped" contract with warning
+	var result: Dictionary = resolver.resolve(["scripts/unknown/path.gd"])
+	_expect("scope: unknown path adds unmapped contract", result.get("ok", false) == true)
+	_expect("scope: unmapped in contracts", (result.get("contracts", []) as Array).has("unmapped"))
+	_expect("scope: warning present", (result.get("warnings", []) as Array).size() > 0)
+	
+	# Generic error message (V3-004) - no path leak
+	var result_fail: Dictionary = resolver.resolve(["scripts/unknown/path.gd"])
+	if not bool(result_fail.get("ok", true)):
+		var error_msg: String = str(result_fail.get("error", ""))
+		_expect("scope: generic error (no path leak)", not error_msg.contains("unknown/path.gd"))
+	
+	# Test R/D status support (V3-003)
+	var status_result: Dictionary = resolver.resolve_status(["R\told/path.gd\tnew/path.gd"])
+	_expect("scope: rename status supported", status_result.get("ok", false) == true)
+	var delete_result: Dictionary = resolver.resolve_status(["D\tdeleted/path.gd"])
+	_expect("scope: delete status supported", delete_result.get("ok", false) == true)
+
+
+## ─── V9-001: Atomic Writes Tests ────────────────────────────────────────
+func _test_atomic_writes() -> void:
+	var scratch: String = "user://tmp_atomic_test"
+	DirAccess.make_dir_recursive_absolute(scratch)
+	
+	# Test _atomic_write helper pattern
+	var test_path: String = scratch.path_join("test.txt")
+	var test_content: String = "test content"
+	
+	# Use the same pattern as in our code
+	var tmp_path: String = test_path + ".tmp"
+	var file := FileAccess.open(tmp_path, FileAccess.WRITE)
+	_expect("atomic: can open tmp file", file != null)
+	if file != null:
+		file.store_string(test_content)
+		file.close()
+		DirAccess.remove_absolute(test_path)
+		DirAccess.rename_absolute(tmp_path, test_path)
+		_expect("atomic: file exists after rename", FileAccess.file_exists(test_path))
+		_expect("atomic: content correct", FileAccess.get_file_as_string(test_path) == test_content)
+	
+	# Cleanup
+	_remove_recursive(scratch)
+
+
+## ─── V9-001: Recovery Determinism Tests ─────────────────────────────────
+func _test_recovery_determinism() -> void:
+	# Test deterministic timestamp generation (genesis + offset)
+	var scratch: String = "user://tmp_recovery_test"
+	DirAccess.make_dir_recursive_absolute(scratch)
+	
+	# Create mock chain with genesis_date
+	var chain: Dictionary = {
+		"genesis_date": "2026-01-01 00:00:00",
+		"entries": [
+			{"seq": 1, "c": 1}, {"seq": 2, "c": 2}, {"seq": 3, "c": 3}
+		]
+	}
+	var chain_path: String = scratch.path_join("narrative_chain.json")
+	var file := FileAccess.open(chain_path, FileAccess.WRITE)
+	file.store_string(JSON.stringify(chain))
+	file.close()
+	
+	# Test recovery log timestamp is deterministic
+	var finalize_flow := preload("res://scripts/doki/orchestration/flows/finalize_flow.gd")
+	var ts1: String = finalize_flow._get_deterministic_timestamp(scratch)
+	var ts2: String = finalize_flow._get_deterministic_timestamp(scratch)
+	_expect("recovery: deterministic timestamp", ts1 == ts2)
+	_expect("recovery: timestamp format", ts1.begins_with("2026-01-01"))
+	
+	# Test recovery log entries use deterministic timestamp
+	finalize_flow.record_recovery(scratch, "test_kind", "test reason")
+	var log: Array = finalize_flow.recovery_read(scratch)
+	_expect("recovery: log has entry", log.size() == 1)
+	_expect("recovery: entry has deterministic timestamp", str(log[0].get("at", "")) == ts1)
+	
+	# Cleanup
+	_remove_recursive(scratch)
+
+
+## ─── V9-002: Verifier Check 8 Missing File Tests ────────────────────────
+func _test_verifier_check8_missing_file() -> void:
+	var verifier: DOKI_Verifier = _fixture_verifier()
+	var chain: Dictionary = _fixture_chain()
+	var session: Dictionary = _fixture_session(chain)
+	var good: String = _fixture_message(session)
+	
+	# Test Check 8 fails when CHANGELOG.md missing
+	var result: Dictionary = verifier.validate(good, session, chain, ["scripts/x.gd"], [])
+	# Check 8 should pass with our fixture setup (files created in _setup_docs)
+	
+	# Create a test with missing narrative_chain.json
+	var scratch: String = "user://tmp_check8_test"
+	DirAccess.make_dir_recursive_absolute(scratch)
+	DirAccess.remove_absolute(scratch.path_join(".doki"))
+	
+	var verifier2: DOKI_Verifier = DOKI_Verifier.new(DOKI_NarratorCatalog.new("res://scripts/doki/data"), scratch)
+	var result2: Dictionary = verifier2.validate(good, session, chain, ["scripts/x.gd"], [])
+	_expect("check8: fails when narrative_chain.json missing", _has_hard(result2, "CHECK 8"))
+	
+	# Create .doki/narrative_chain.json
+	DirAccess.make_dir_recursive_absolute(scratch.path_join(".doki"))
+	var nc_file := FileAccess.open(scratch.path_join(".doki/narrative_chain.json"), FileAccess.WRITE)
+	nc_file.store_string(JSON.stringify({"entries": []}))
+	nc_file.close()
+	
+	# Also need arcs.json
+	DirAccess.make_dir_recursive_absolute(scratch.path_join("scripts/doki/data"))
+	var arcs_file := FileAccess.open(scratch.path_join("scripts/doki/data/arcs.json"), FileAccess.WRITE)
+	arcs_file.store_string(JSON.stringify({"arcs": {}, "active": ""}))
+	arcs_file.close()
+	
+	var result3: Dictionary = verifier2.validate(good, session, chain, ["scripts/x.gd"], [])
+	_expect("check8: passes when all doc files exist", not _has_hard(result3, "CHECK 8"))
+	
+	# Cleanup
+	_remove_recursive(scratch)
+
+
+## ─── V9-003/004: DOKI Story Test Coverage (amend, repair, rebase, concurrent) ─────
+func _test_doki_story_amend_repair_rebase() -> void:
+	# Test amend flow
+	var orchestrator := DOKI_CommitOrchestrator.new(".")
+	var head_msg: String = _fixture_amend_head()
+	var body: String = "Amended body with proper causal structure — deshalb wurde der Fix angewendet."
+	var amend_result: Dictionary = DOKI_CommitOrchestrator.reconstruct_amend_message(head_msg, body)
+	_expect("story: amend reconstruction works", amend_result.get("ok", false))
+	
+	# Test verify_amend passes
+	var verifier: DOKI_Verifier = _fixture_verifier()
+	var vr: Dictionary = verifier.validate_amend(str(amend_result["message"]), _fixture_amend_chain(), [])
+	_expect("story: verify_amend passes", vr["success"])
+	
+	# Test repair orphaned verified decision logic
+	var repair_decision: Dictionary = DOKI_FinalizeFlow.verified_orphan_decision("same_hash", "same_hash", true)
+	_expect("story: orphan decision correct", bool(repair_decision["orphaned"]))
+	
+	var commit_decision: Dictionary = DOKI_FinalizeFlow.verified_orphan_decision("new_hash", "old_hash", true)
+	_expect("story: commit exists decision correct", not bool(commit_decision["orphaned"]))
+	
+	# Test hash sync for amend
+	var sync_result: Dictionary = DOKI_FinalizeFlow.amended_entry_hash_sync(_fixture_amend_chain(), "new_hash", head_msg)
+	_expect("story: amend hash sync works", bool(sync_result.get("changed", false)))
+	
+	# Test concurrent session claim rejection (via session store)
+	var session_store := DOKI_SessionStore.new("user://tmp_concurrent")
+	var claim1: Dictionary = session_store.claim("agent:test:seed:123")
+	_expect("story: first claim succeeds", bool(claim1.get("ok", false)))
+	var claim2: Dictionary = session_store.claim("agent:other:seed:456")
+	_expect("story: second claim rejected", not bool(claim2.get("ok", false)))
+	
+	# Cleanup
+	_remove_recursive("user://tmp_concurrent")
 
 
 static func _has_hard(result: Dictionary, check_prefix: String) -> bool:

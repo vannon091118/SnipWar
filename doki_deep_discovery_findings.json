@@ -1,0 +1,448 @@
+{
+  "1_DOKI_CLI": {
+    "file": "scripts/doki/doki.gd",
+    "subcommands": {
+      "init": {
+        "description": "Genesis: Chain am HEAD verankern (einmalig). Option --seed-last N: letzte N Commits als Chain-Vorgeschichte",
+        "flow": "init_flow(seed_last) -> chain_store.init_genesis() -> optional seed_history() -> stage narrative files -> session_store.reset()"
+      },
+      "prepare": {
+        "description": "idle -> prepared (nach git add; schreibt .doki/prompt.txt). Requires: AGENT_NAME, AGENT_ACTIVITY_SEED env vars, staged files",
+        "flow": "prepare_flow.run(impulse, model_id) -> ensure idle -> check repo -> staged files non-empty -> claim ownership -> resolve impact scope -> write scope.json + agent_binding.json -> derive composite (RNG) -> build session -> build prompt -> save session -> write prompt.txt"
+      },
+      "finish": {
+        "description": "prepared -> verified. Body via --body, --body-file, or --stdin. Runs 10 checks (1-6 soft, 7-10 hard). Writes .commit_msg.txt + early artifacts (change_index.json, CHANGELOG.md) + stages them",
+        "flow": "finish_flow.run(body) -> ensure prepared -> analyze diff -> assemble message -> validate (10 checks) -> if hard errors: return errors -> write artifacts -> save session as verified -> return message"
+      },
+      "amend": {
+        "description": "DOKI-Message des letzten Commits nachbearbeiten (Body ersetzen). Checks 1-8 (chain-verankert), Check 9 (RNG-Replay) übersprungen",
+        "flow": "amend(body) -> reconstruct_amend_message(head_msg, body) -> verifier.validate_amend() -> write_commit_msg()"
+      },
+      "verify-only": {
+        "description": "Checks 1-10 auf Message (commit-msg Hook). Keine Nebenwirkungen",
+        "flow": "verify_only(message) -> if session not verified: try amend mode -> verifier.validate() or validate_amend()"
+      },
+      "gate": {
+        "description": "pre-commit Gate (Session + Snapshot + .commit_msg.txt). Ausnahmen: rebase, amend bestehender DOKI-Commits",
+        "flow": "gate_flow.run() -> check rebase -> check session state (must be verified) -> check .commit_msg.txt exists -> ownership gate -> snapshot gate -> scope gate -> byte/path drift gate -> path gate"
+      },
+      "finalize": {
+        "description": "verified -> idle (idempotent). Chain-Append, Arc-Advance, finalize artifacts (narrative_chain.json, arcs.json, change_index.json), stage them, cleanup transients",
+        "flow": "finalize_flow.run() -> ensure verified (or idempotent) -> check HEAD changed -> idempotency guard (chain already has entry) -> chain_store.append_entry() -> index_store.link_commit() -> arc_engine.advance() -> artifact_writer.apply_finalize_artifacts() -> stage narrative files -> cleanup_transients() -> session_store.reset()"
+      },
+      "repair": {
+        "description": "Recovery: Crash / rebase / amend. 1) orphaned verified reset, 2) prepared reset, 3) chain anchor rebase",
+        "flow": "finalize_flow.repair() -> if verified orphan: record recovery, reset session -> if prepared: reset -> if chain anchor != HEAD: re-anchor"
+      },
+      "status": {
+        "description": "Zustand + Chain-Info (reine Lese-Sicht)",
+        "flow": "status_flow.run() -> read chain + session -> return state"
+      }
+    },
+    "state_machine": {
+      "states": ["idle", "prepared", "verified"],
+      "transitions": {
+        "idle -> prepared": "prepare (requires staged files, AGENT_NAME, AGENT_ACTIVITY_SEED)",
+        "prepared -> verified": "finish (requires body, passes 10 checks)",
+        "verified -> idle": "finalize (idempotent, after git commit)",
+        "verified -> idle (repair)": "orphaned verified: HEAD unchanged, no commit -> atomic reset",
+        "prepared -> idle (repair)": "aborted prepare -> reset",
+        "any -> idle (init)": "first init"
+      },
+      "enforcement": "SessionStore.ensure_state() validates expected state before each flow"
+    },
+    "error_handling": {
+      "exit_codes": {
+        "0": "success",
+        "1": "generic failure",
+        "2": "usage error / unknown command",
+        "3": "git repo not found (agent_activity.sh)"
+      },
+      "error_format": "JSON with {\"ok\": false, \"error\": \"...\"} if --json, else printed with ✗ prefix",
+      "soft_errors": "warnings (checks 1-6) printed but don't block",
+      "hard_errors": "blocks (checks 7-10/11) cause exit 1"
+    },
+    "scope_determination": {
+      "source": "staged files from git diff --cached",
+      "impact_resolution": "IMPACT_RESOLVER.resolve(staged) from preflight_v2/change_impact_resolver.gd",
+      "scope_artifacts": ".doki/scope.json (constraints + contracts), .doki/agent_binding.json",
+      "content_addressed": "scope_path_digest, scope_constraint_digest, staged_byte_digest stored in session",
+      "gate_verification": "Gate recomputes digests and compares to session values (fail-closed on drift)"
+    }
+  },
+  "2_Chain_Storage": {
+    "chain_store_gd": {
+      "file": "scripts/doki/chain/chain_store.gd",
+      "storage_location": "narrative_chain.json (repo root)",
+      "format": {
+        "genesis_composite": "c0j0n0a0p0",
+        "genesis_mood": "genesis",
+        "genesis_date": "set once at init (YYYY-MM-DD 00:00:00), then fixed",
+        "anchor": "{hash, subject, date} = Git HEAD at init",
+        "entries": "[{seq, hash, composite, mood, narrator, model_id, summary, subject, prev_narrator, prev_model, date, arc, p_id, c, j, n, a, p, data_changes}]"
+      },
+      "deterministic_timestamps": "entry_timestamp(seq): genesis_date day + hour = posmod(seq, 24)",
+      "integrity_checks": "JSON parse normalizes all numbers to int (Godot 4.7 parses JSON numbers as float)",
+      "seed_history": "init --seed-last N: derives deterministic composites from existing commits using subject+hash as diff_hash"
+    },
+    "session_store_gd": {
+      "file": "scripts/doki/chain/session_store.gd",
+      "storage_location": ".doki/session.json (gitignored)",
+      "state_machine": "idle -> prepared -> verified -> idle (unidirectional)",
+      "single_active_owner": {
+        "mechanism": "owner.json with owner_token (agent:NAME:seed:SEED)",
+        "claim": "fails if another agent holds active lock (fail-closed, no destructive cleanup)",
+        "release": "only releases own lock",
+        "assert_owner": "validates token matches before operations"
+      },
+      "default_session": "60+ fields including composite, seed, tree_hash, diff_hash, impulse, narrator, mood, tone, structure, callback, model_id, prev_narrator, file_snapshot, impact, git_head_before, scope digests, p_id, c, j, n, a, p, arc_id, arc_name, is_arc_climax, sideplot, impulse_class, relationship, body_text, reason_lines"
+    },
+    "change_index_store_gd": {
+      "file": "scripts/doki/chain/change_index_store.gd",
+      "storage_location": "change_index.json (repo root)",
+      "format": {
+        "version": 2,
+        "entities": "{F-###: {id, type, name, path, status, first_p, last_p, history: [{p_id, action, lines}]}, C-###: ...}",
+        "commits": "{git_hash: {p_id, composite, c, entities: [F-###, C-###]}}"
+      },
+      "id_stability": "Lookup by (path, type, name) -> existing ID across commits",
+      "id_format": "F-### for files, C-### for components (prefix includes dash)"
+    },
+    "file_locations": {
+      "narrative_chain.json": "repo root (committed)",
+      "change_index.json": "repo root (committed)",
+      "CHANGELOG.md": "repo root (committed)",
+      "arcs.json": "scripts/doki/data/arcs.json (committed)",
+      "session.json": ".doki/session.json (gitignored, transient)",
+      "owner.json": ".doki/owner.json (gitignored, transient)",
+      "prompt.txt": ".doki/prompt.txt (gitignored, transient)",
+      "scope.json": ".doki/scope.json (gitignored, transient)",
+      "agent_binding.json": ".doki/agent_binding.json (gitignored, transient)",
+      "recovery_log.json": ".doki/recovery_log.json (gitignored, transient)",
+      "block_report.md": ".doki/block_report.md (gitignored, transient)"
+    }
+  },
+  "3_Orchestration_Flows": {
+    "prepare_flow_gd": {
+      "file": "scripts/doki/orchestration/flows/prepare_flow.gd",
+      "key_operations": [
+        "ensure session idle",
+        "check git repo + staged files non-empty",
+        "require AGENT_NAME + AGENT_ACTIVITY_SEED env vars",
+        "single-active-owner claim (fail-closed)",
+        "IMPACT_RESOLVER.resolve(staged) -> verification scope",
+        "write .doki/scope.json + .doki/agent_binding.json",
+        "compute digests: scope_path_digest, scope_constraint_digest, staged_byte_digest",
+        "derive composite via RNG (prev_composite + tree_hash + diff_hash + impulse)",
+        "decode j -> tone/structure/callback, select mood (!= prev_mood)",
+        "select narrator (n index), prev_narrator from chain",
+        "build sideplot context, change index analyze, arc forecast weight",
+        "build relationship context",
+        "session_builder.build_session() with all derived data",
+        "search_context if impulse requests search/analyse/audit",
+        "voice.build_prompts() -> write .doki/prompt.txt",
+        "save session (state=prepared)"
+      ],
+      "determinism": "All RNG via djb2 hash of inputs, no DateTime.now, no RandomNumberGenerator"
+    },
+    "finish_flow_gd": {
+      "file": "scripts/doki/orchestration/flows/finish_flow.gd",
+      "key_operations": [
+        "ensure session prepared",
+        "analyze staged diff -> entities",
+        "message_builder.assemble() -> full_message with subject, tokens, arc, reason_lines",
+        "verifier.validate() 10 checks (1-6 soft, 7-10 hard)",
+        "if hard errors: return phase=verify with errors",
+        "write session fields: subject, reason_lines, _entities, _index",
+        "artifact_writer.apply_commit_artifacts() -> writes .commit_msg.txt, change_index.json, CHANGELOG.md, stages them",
+        "parse next_arc from body (NÄCHSTER ARC: name — theme)",
+        "save session (state=verified)"
+      ],
+      "verify_only": "Separate path for commit-msg hook; handles amend mode if session idle + HEAD is DOKI commit"
+    },
+    "gate_flow_gd": {
+      "file": "scripts/doki/orchestration/flows/gate_flow.gd",
+      "key_operations": [
+        "skip if rebase in progress",
+        "skip if amend of existing DOKI commit (session idle + HEAD contains [COMPOSITE:)",
+        "require session state = verified",
+        "require .commit_msg.txt exists and non-empty",
+        "ownership gate: session owner_token must match current agent",
+        "snapshot gate: staged files (minus auto-managed) must match session.file_snapshot",
+        "scope gate: re-resolve scope from FULL staged diff (including auto-managed), compare constraints to prepare-time",
+        "byte/path drift gate: recompute staged_byte_digest and path_digest, compare to session",
+        "path gate: staged files must exactly match snapshot"
+      ],
+      "auto_managed_files": ["narrative_chain.json", "change_index.json", "CHANGELOG.md", ".commit_msg.txt", "arcs.json"]
+    },
+    "finalize_flow_gd": {
+      "file": "scripts/doki/orchestration/flows/finalize_flow.gd",
+      "key_operations": [
+        "ensure session verified (or idempotent if already done)",
+        "check HEAD changed from session.git_head_before",
+        "idempotency guard: if chain last entry has same hash+composite -> just restage narrative files + reset session",
+        "chain_store.append_entry() with deterministic timestamp",
+        "index_store.link_commit() with git hash",
+        "arc_engine.advance() -> may advance arc (writes arcs.json)",
+        "artifact_writer.apply_finalize_artifacts() -> saves index, stages chain + arcs + index",
+        "cleanup_transients() -> removes .commit_msg.txt, .doki/prompt.txt, .doki/narrator_body.md",
+        "session_store.reset() -> idle",
+        "repair: handles orphaned verified (HEAD unchanged), prepared reset, chain anchor rebase"
+      ],
+      "amended_entry_hash_sync": "Static function to update chain entry hash after git commit --amend (same composite, new hash)"
+    },
+    "status_flow_gd": {
+      "file": "scripts/doki/orchestration/flows/status_flow.gd",
+      "key_operations": "Read chain + session, return state, initialized, anchor, entries count, last entry, composite, narrator, mood, p_id, impulse, latest_c"
+    }
+  },
+  "4_Core_Components": {
+    "commit_orchestrator_gd": {
+      "file": "scripts/doki/orchestration/commit_orchestrator.gd",
+      "role": "Central coordinator, wires all stores/engines/flows",
+      "initialization": "Creates all stores (chain, session, index), engines (catalog, moods, git, sideplot, arc, relationship, voice, change_index_engine, verifier), builders (session, message, artifacts), flows (prepare, finish, finalize, gate, status)",
+      "delegation": "prepare -> prepare_flow, finish -> finish_flow, finalize -> finalize_flow, gate -> gate_flow, status -> status_flow, amend -> local reconstruct + verifier.validate_amend",
+      "block_report": "Writes .doki/block_report.md on any hard block"
+    },
+    "session_builder_gd": {
+      "file": "scripts/doki/orchestration/session_builder.gd",
+      "role": "Builds session dict from prepare results + builds narrative context for voice_composer",
+      "build_session": "Combines derive_result, impulse, model_id, prev_composite/mood/narrator/model/class, staged files, head_hash, sideplot, relationship, arc, arc_forecast, mood_pool, plot_id",
+      "build_narrative_context": "Extracts files from analyze entities, gets effective attitudes from catalog + mood modifiers"
+    },
+    "git_helper_gd": {
+      "file": "scripts/doki/orchestration/git_helper.gd",
+      "role": "All git operations, strict exit code handling",
+      "operations": [
+        "run(args) -> {ok, stdout, stderr, exit_code}",
+        "check_repo(), head_hash_short/full(), head_subject(), head_date()",
+        "head_message() (full %B)",
+        "head_tree_hash() (HEAD^{tree})",
+        "staged_files() (diff --cached --name-only)",
+        "diff_cached() (raw diff for seed)",
+        "search_context() -> runs global_search.gd + concept_index.gd (only if impulse requests search)",
+        "unstaged_diffs() (filters warning: lines)",
+        "last_commits(n) for init --seed-last",
+        "commit_tree_hash(hash) for seeding",
+        "stage(files), is_merge_in_progress(), is_rebase_in_progress()"
+      ]
+    },
+    "artifact_writer_gd": {
+      "file": "scripts/doki/orchestration/artifact_writer.gd",
+      "role": "Writes narrative artifacts AFTER verification passes",
+      "apply_commit_artifacts": "finish phase: save change_index.json, write CHANGELOG entry, write .commit_msg.txt, stage CHANGELOG + change_index (early artifact writing)",
+      "write_commit_msg": "legacy: only writes .commit_msg.txt (used by amend)",
+      "apply_finalize_artifacts": "finalize phase: save change_index.json (with commit hash now known)",
+      "write_prompt_file": "writes .doki/prompt.txt with SYSTEM/USER prompts + task instruction",
+      "cleanup_transients": "removes .commit_msg.txt, .doki/prompt.txt, .doki/narrator_body.md"
+    },
+    "change_index_engine_gd": {
+      "file": "scripts/doki/orchestration/change_index_engine.gd",
+      "role": "Extracts entities from staged diff (F-### files, C-### components)",
+      "analyze": "Parses git diff --cached hunks, extracts symbols (func/class/const/signal) with line numbers, ensures entities in index, builds data_changes (insertions/deletions per file)",
+      "diff_parsing": "Handles diff --git headers, +++ path (strips a/b/ prefix), @@ hunk headers, tracks insertions/deletions",
+      "symbol_extraction": "Regex: ^\\+?\\s*(func|class_name|class|const|signal)\\s+([a-zA-Z_][a-zA-Z0-9_]*)"
+    }
+  },
+  "5_Narrative_Engine": {
+    "voice_composer_gd": {
+      "file": "scripts/doki/prompt/voice_composer.gd",
+      "build_prompts": "build_system_prompt + build_user_prompt",
+      "system_prompt": "Character (name, role, voice, tone_brief, style_sample), mood expression (lived not named), category calibration, attitudes (7 dimensions), prev_narrator context, relationship context, writing rules (story not report, mood via style, causal connectors, no bullets), side-plot merge rules",
+      "user_prompt": "ARC_CLIMAX handling, impulse, category, direction change, structure, technical text, side-plot commits, files list, sidejoke, trivial enforcement (deterministic exaggeration via djb2)",
+      "build_subject": "Narrator-specific subject templates with prev_narrator appended (— nach X)",
+      "classify_impulse": "Regex-based: DOKU, FIX, REFACTOR, BUILD, TEST-ASSET, TRIVIAL, CODE (default)"
+    },
+    "arc_engine_gd": {
+      "file": "scripts/doki/prompt/arc_engine.gd",
+      "weights": "BASE=0.5, NEW_ENTITY=0.4, RECUR_ENTITY=0.2, MERGE_BONUS=1.0",
+      "thresholds": "MIN_COMMITS_FOR_CLIMAX=2, ENTITY_WINDOW=50 (sliding)",
+      "non_narrative_classes": "FIX, DOKU, TRIVIAL, TEST-ASSET -> weight 0, no climax",
+      "maintenance_classes": "REFACTOR, BUILD -> weight 0.25, climax allowed",
+      "forecast_weight": "Called from prepare, computes weight from change_entities + is_merge + impulse_class",
+      "advance": "Called from finalize, updates arc weight/seen_entities, on climax: completes arc, creates next arc (a{N+1}), adopts narrator's next_arc suggestion"
+    },
+    "relationship_engine_gd": {
+      "file": "scripts/doki/prompt/relationship_engine.gd",
+      "deterministic": "Uses only chain timestamps (seq distance), no DateTime.now",
+      "sentiment_formula": "5.0 - bug_commits*1.2 + clean_commits*0.5 - fix_count*2.4 + days_since*0.1, clamped 0-10",
+      "tone_directive": "Generated from sentiment + fix_count + bug_commits"
+    },
+    "sideplot_engine_gd": {
+      "file": "scripts/doki/prompt/sideplot_engine.gd",
+      "detection": "Checks .git/MERGE_HEAD, runs git commands to find source/target branch, divergence point, side commits, narrators from chain"
+    },
+    "narrator_catalog_gd": {
+      "file": "scripts/doki/character/narrator_catalog.gd",
+      "data_source": "scripts/doki/data/narrators.json (14 characters)",
+      "selection": "n from composite (1-14) -> characters[index]",
+      "effective_attitudes": "base + mood_modifiers, clamped 0-10"
+    },
+    "mood_overlay_gd": {
+      "file": "scripts/doki/character/mood_overlay.gd",
+      "data_source": "scripts/doki/data/moods.json",
+      "mood_pool": "10 moods",
+      "decoding": "j % 10 -> tone, j % 7 -> structure, j > 50 -> callback",
+      "category_calibration": "Adjusts mood expression per impulse_class (DOKU/FIX/TRIVIAL dampened)",
+      "mood_expression": "How mood is LIVED in text (style/wording/rhythm), never named"
+    },
+    "data_files": {
+      "arcs.json": "56+ arcs, active=a56, each with id, name, theme, status, weight, climax_weight, commit_count, seen_entities, span, version, completed_at",
+      "moods.json": "Full mood definitions with expressions, category calibration, attitude modifiers, decoding rules, narrator_mood_combination examples",
+      "narrators.json": "14 characters with index, name, role, voice_traits, tone_brief, style_sample, attitudes (7 dims), verifier_rules (min/max words, regex), relationships",
+      "prompt_templates.json": "Templates for mood_rules, attitude_texts, structure_hints, trivial_pool, subject_templates",
+      "doki_config.json": "rng_limits (j:99, n:14, a:52, p:52), mood_pool_size:10, verifier.mood_uniqueness_check: true"
+    }
+  },
+  "6_State_Cache": {
+    "session_state": ".doki/session.json (gitignored) - single source of truth",
+    "scope_determination": "staged files -> IMPACT_RESOLVER.resolve() -> scope.json (constraints/contracts) + session digests (path, constraint, byte)",
+    "agent_activity_integration": "AGENT_NAME + AGENT_ACTIVITY_SEED from agent_activity.sh check-in -> owner_token -> session.claim() -> gate.assert_owner()",
+    "cache_locations": {
+      ".doki/session.json": "current session state",
+      ".doki/owner.json": "ownership lock",
+      ".doki/scope.json": "verification scope manifest",
+      ".doki/agent_binding.json": "agent name + activity seed",
+      ".doki/prompt.txt": "generated prompt for narrator",
+      ".doki/narrator_body.md": "body written by narrator (via finish --body-file)",
+      ".doki/block_report.md": "diagnostic on hard block",
+      ".doki/recovery_log.json": "repair audit trail"
+    },
+    "invalidation": "session_store.reset() clears session + releases ownership; finalize_flow.cleanup_transients() removes prompt/body/commit_msg"
+  },
+  "7_Integration_Points": {
+    "agent_activity_sh": {
+      "check_in": "Records agent, task, files (--scope-from-staged uses git diff --cached), generates seed (agent:name:hostname:pid:time or agent:name:doki:DOKI_AGENT_SEED), writes registry + files list",
+      "check_out": "Requires --force if staged files exist, sets beat=0, status=NO-OUT",
+      "gate": "Validates seed matches, checks staged files covered by check-in (or auto-managed), checks branch rewind, checks active other locks",
+      "recheck_in": "For stale/NO-OUT agents: audit files with reasons, re-activate",
+      "scope_feeding": "--scope-from-staged feeds staged files to DOKI prepare via AGENT_ACTIVITY_SEED env var"
+    },
+    "preflight_gate": {
+      "integration": "DOKI gate_flow runs before commit, preflight.gd runs as separate CI step (compile_gate + test_all + preflight -x)",
+      "scope_mode": "preflight --scope=.doki/scope.json (machine-resolved constraints, fail-closed on empty/unknown)",
+      "cheap_path": "Python-only staged files -> severity=python (no scene boot)",
+      "full_path": "Code changes -> severity=scoped/full (scene boot)"
+    },
+    "mcp_evidence": {
+      "preflight": "--mcp-json output for chain controller",
+      "doki_selfcheck": "35 deterministic regression tests",
+      "doki_story_test": "5-commit E2E test with real git commits (in test worktree)"
+    }
+  },
+  "8_Self_Check_Tests": {
+    "doki_selfcheck_gd": {
+      "file": "scripts/doki/doki_selfcheck.gd",
+      "total_checks": 35,
+      "checks": [
+        "_setup_docs: creates CHANGELOG.md + change_index.json for tests",
+        "_test_rng_determinism: same input -> same composite/seed/mood; different impulse/diff -> different composite; c increments; fields in range",
+        "_test_xorshift: same seed -> same sequence; values in range; different seed -> different sequence",
+        "_test_composite_roundtrip: parse/build roundtrip",
+        "_test_mood_norepeat: select_mood guarantees != prev_mood",
+        "_test_decode_j: genesis tone, tone j%10, callback j>50",
+        "_test_classify_impulse: FIX, DOKU, REFACTOR, CODE, TRIVIAL",
+        "_test_verifier_positive: derive-based fixtures (chain entry 1 -> session entry 2), all checks pass",
+        "_test_verifier_hard_blocks: CHECK 7 (impulse missing, stale composite), CHECK 8 (unstaged doc diff), CHECK 9 (chain gap, RNG manipulation)",
+        "_test_verifier_file_limit: under/at/over MAX_FILES_PER_COMMIT; auto-managed narrative files excluded",
+        "_test_checks_soft: weak message (bullets, no causal connectors) -> soft errors only, success=true",
+        "_test_amend_reconstruction: normal replace, [MODEL: in body text doesn't break, non-DOKI head blocked, reconstructed passes validate_amend",
+        "_test_amend_hash_sync: same composite new hash -> sync; same hash -> idempotent; different composite -> no sync; no composite -> no sync; empty chain -> ok",
+        "_test_repair_orphaned_verified: decision logic (HEAD==anchor -> orphaned), atomic reset + recovery log, after reset flow works",
+        "_test_prompt_voice_lived: all moods have expression, all chars have style_sample, all categories have calibration, prompt contains them, DOKU calibration dampens euphoria",
+        "_test_entity_window_decay: <50 stays, =50 stays, >50 capped at last 50",
+        "_test_min_commits_for_climax: 0/1 commits -> no climax, 2+ -> climax allowed",
+        "_test_new_recur_weight_swap: NEW_ENTITY_WEIGHT (0.4) > RECUR_ENTITY_WEIGHT (0.2); FIX not eligible; REFACTOR eligible with half base"
+      ]
+    },
+    "doki_story_test_gd": {
+      "file": "scripts/doki/doki_story_test.gd",
+      "description": "5-commit E2E story test with real git commits in test worktree",
+      "story_steps": [
+        "Dispatch-Logik für Worker-Konvois (CODE)",
+        "Bug: Worker landen doppelt (FIX)",
+        "Test-Assets: drei Konvoi-Szenarien (TEST-ASSET)",
+        "Doku des Transit-Systems (DOKU)",
+        "Refactor: Flugzeit-Modul verallgemeinern (REFACTOR)"
+      ],
+      "verifications": "c-sequence gapless, p-sequence monotonic, narrator variance >=2, mood non-repeat adjacent, predecessor mentioned (causality), RNG replay per entry, CHANGELOG 1:1 sync, reason_lines per file, finalize retry idempotent"
+    }
+  },
+  "9_Anomalies_Found": {
+    "duplicate_state_locations": {
+      "finding": "narrative_chain.json, change_index.json, CHANGELOG.md, arcs.json exist at repo root (committed) AND are managed by DOKI flows. .doki/ directory holds transient state (session, owner, scope, prompt, etc.)",
+      "severity": "info",
+      "note": "This is by design: narrative artifacts are committed, session state is transient. However, arcs.json lives in scripts/doki/data/ not .doki/ which is inconsistent"
+    },
+    "missing_doki_directory": {
+      "finding": ".doki/ directory is created on-demand by prepare_flow._write_scope_file() and artifact_writer.write_prompt_file() via DirAccess.make_dir_recursive_absolute()",
+      "severity": "low",
+      "note": "No explicit .doki creation at init; first prepare creates it. Could be an issue if init runs without prepare"
+    },
+    "stale_session_handling": {
+      "finding": "repair() handles orphaned verified (HEAD unchanged) by atomic reset + recovery log. Prepared sessions reset on repair. Chain anchor re-anchored on rebase/amend",
+      "severity": "info",
+      "note": "Verified orphan decision: HEAD == git_head_before -> orphaned (commit never happened or lost). Chain/Index files NOT touched (by contract)"
+    },
+    "scope_determination_bypasses": {
+      "finding": "Gate re-resolves scope from FULL staged diff (including auto-managed narrative files) and compares to prepare-time constraints. Byte/path digests computed from full diff. Any drift blocks commit",
+      "severity": "info",
+      "note": "Fail-closed: unknown/empty impact blocks prepare. Drift after prepare blocks gate. No auto-normalization"
+    },
+    "git_hook_integration_gaps": {
+      "finding": "No .githooks/ directory found in workspace. AGENTS.md mentions hooks but they're not present in the repo",
+      "severity": "high",
+      "details": [
+        "pre-commit should run: agent_activity.sh gate (or doki gate)",
+        "commit-msg should run: doki verify-only .commit_msg.txt",
+        "post-commit should run: doki finalize",
+        "prepare-commit-msg not used (DOKI writes .commit_msg.txt directly)"
+      ],
+      "agent_activity_sh_integration": "agent_activity.sh has gate|run-preflight command but no hook installer"
+    },
+    "determinism_violations": {
+      "finding": "System is designed for full determinism. RNG uses djb2 + XorShift128 (no RandomNumberGenerator). Timestamps: genesis_date fixed at init, entry timestamps = genesis_date day + posmod(seq, 24). Mood selection guarantees != prev_mood. Arc advance uses deterministic weights",
+      "potential_issues": [
+        "Time.get_datetime_string_from_system() used in FinalizeFlow.record_recovery() and metrics_updater.gd (non-deterministic but only for logging)",
+        "OS.get_ticks_msec() used in SessionStore.claim() for owner claimed_at (non-deterministic but only for lock timestamp)",
+        "FileAccess.get_file_as_string() for CHANGELOG.md in metrics_updater (read-only)"
+      ],
+      "severity": "low"
+    },
+    "file_locking_concurrent_access": {
+      "finding": "Single-Active-Owner pattern in SessionStore (owner.json with token) prevents concurrent prepare from different agents. However:",
+      "issues": [
+        "No file locking on narrative_chain.json / change_index.json / arcs.json during concurrent finalize (unlikely as gate ensures single agent)",
+        "agent_activity.sh state in .git/agent-activity/ (per worktree) - no cross-worktree coordination",
+        "DOKI CLI runs via Godot headless - no process-level locking beyond owner_token"
+      ],
+      "severity": "medium"
+    },
+    "other_anomalies": [
+      {
+        "finding": "MAX_FILES_PER_COMMIT = -1 (unlimited) in verifier.gd but check_10 still exists and filters auto-managed files. The limit is effectively disabled but code path remains",
+        "severity": "low"
+      },
+      {
+        "finding": "SessionStore.default_session() has 80+ fields - large state object. Some fields like 'baseline_identity', 'scope_path_digest' duplicated from prepare_flow",
+        "severity": "info"
+      },
+      {
+        "finding": "arcs.json stores 56+ arcs with thousands of entity IDs in seen_arrays. ENTITY_WINDOW=50 limits active arc but completed arcs keep full history",
+        "severity": "info"
+      },
+      {
+        "finding": "SidePlotEngine uses OS.execute for git commands (direct shell) while GitHelper uses OS.execute with array args. Inconsistent git execution",
+        "severity": "low"
+      },
+      {
+        "finding": "prompt_templates.json exists but voice_composer.gd hardcodes most templates (subject_templates, trivial_pool, structure_hints). Data-driven approach partially implemented",
+        "severity": "info"
+      },
+      {
+        "finding": "DOKI_RngEngine.derive() asserts tree_hash and diff_hash non-empty but prepare_flow computes diff_hash = djb2(diff_output) which could be empty string if diff_cached returns empty (though staged files check prevents this)",
+        "severity": "low"
+      }
+    ]
+  }
+}

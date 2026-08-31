@@ -1,26 +1,54 @@
-#!/bin/sh
-set -eu
+#!/usr/bin/env bash
+set -euo pipefail
 
-message_file=$1
-repo_root=$(git rev-parse --show-toplevel)
+# SnipWar commit-msg hook
+# Validates commit message via DOKI finish (blocking)
+# Exits 1 if GODOT_BIN not available or validation fails
 
-if [ -n "${GODOT_BIN:-}" ]; then
-	godot_bin=$GODOT_BIN
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null)"
+if [ -z "$ROOT_DIR" ]; then
+    echo "ERROR: Not in a git repository" >&2
+    exit 1
+fi
+
+cd "$ROOT_DIR"
+
+MSG_FILE="$1"
+if [ -z "$MSG_FILE" ] || [ ! -f "$MSG_FILE" ]; then
+    echo "ERROR: Commit message file not provided" >&2
+    exit 1
+fi
+
+# Check for GODOT_BIN availability
+if [ -z "${GODOT_BIN:-}" ] || [ ! -x "${GODOT_BIN}" ]; then
+    echo "WARN: GODOT_BIN not set or not executable — skipping DOKI verify-only" >&2
+    exit 0
+fi
+
+# Function to run Godot headless scripts
+run_godot() {
+    local script="$1"
+    shift
+    "$GODOT_BIN" --headless --path . --script "$script" "$@"
+}
+
+# Read the commit message
+COMMIT_MSG="$(cat "$MSG_FILE")"
+
+# Check if this is a DOKI commit (has the expected format)
+# DOKI commits have a specific structure with [NARRATOR:], [COMPOSITE:], etc.
+if echo "$COMMIT_MSG" | grep -q '^\[NARRATOR:\]'; then
+    echo "=== commit-msg: DOKI verify-only ==="
+    run_godot "res://scripts/doki/doki.gd" -- verify-only || {
+        echo "ERROR: DOKI commit message validation failed" >&2
+        exit 1
+    }
+    echo "=== commit-msg: DOKI validation passed ==="
 else
-	godot_bin=$(command -v godot || command -v godot4 || true)
+    echo "WARN: Commit message does not appear to be a DOKI-generated message" >&2
+    echo "Expected format: [NARRATOR:...] [MODEL:...] [IMPULSE:...] [COMPOSITE:...]" >&2
+    echo "Use DOKI prepare/finish to generate proper commit messages" >&2
+    exit 1
 fi
 
-# Der awk-Begründungszeilen-Check ist entfallen:
-# DOKI generiert die Begründungszeilen maschinell im .commit_msg.txt.
-
-if [ -z "$godot_bin" ] || [ ! -x "$godot_bin" ]; then
-	exit 0
-fi
-
-# Erneute Verifikation der Message (Checks 1-9, keine Nebenwirkungen).
-if [ -f "$repo_root/scripts/doki/doki.gd" ]; then
-	if ! "$godot_bin" --headless --path "$repo_root" --script res://scripts/doki/doki.gd -- verify-only "$message_file" --repo "$repo_root"; then
-		printf '\nDOKI-Verify blockiert den Commit — die Message hat harte Fehler (Checks 7-9).\n' >&2
-		exit 1
-	fi
-fi
+exit 0

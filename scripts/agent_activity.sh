@@ -7,6 +7,12 @@ NO_OUT_RECHECK_SECONDS="${AGENT_ACTIVITY_RECHECK_TTL:-3600}"
 NO_OUT_MAX_SECONDS="${AGENT_ACTIVITY_MAX_TTL:-7200}"
 
 now() { date +%s 2>/dev/null || echo 0; }
+hmac_sha256() {
+  local key="$1" data="$2"
+  printf '%s' "$data" | openssl dgst -sha256 -hmac "$key" -binary 2>/dev/null | xxd -p -c 256 | tr -d '\n' || \
+  printf '%s' "$data" | python3 -c "import hmac,hashlib,sys; print(hmac.new(sys.argv[1].encode(), sys.stdin.read().encode(), hashlib.sha256).hexdigest())" "$key" 2>/dev/null || \
+  echo "hmac_unavailable"
+}
 die() { printf 'AGENTGATE ERROR: %s\n' "$1" >&2; exit "${2:-1}"; }
 repo_root() { git rev-parse --show-toplevel 2>/dev/null || die "kein git-Repo" 3; }
 state_dir() {
@@ -48,23 +54,26 @@ check_in() {
   a=${a:-$(resolve_identity || true)}; [ -n "$a" ] || die "Agent-Identität fehlt" 2; [ "${#FILES[@]}" -gt 0 ] || die "--files erforderlich" 2
   if [ -n "$ex" ]; then case "$ex" in unowned|branch|emergency|legacy) ;; *) die "ungültige Exception" 2;; esac; [ -n "$reason" ] || die "--reason erforderlich" 2; else [ -n "$task" ] || die "--task erforderlich" 2; fi
   local f holder
-  if [ "${AGENT_ACTIVITY_ADOPT_SCOPE:-0}" != "1" ]; then
-    for f in "${FILES[@]}"; do if holder=$(has_active_other_lock "$f" "$a"); then die "Kollision: $f von $holder" 2; fi; done
-  else
-    journal "$a" adopt-scope "${#FILES[@]} files; existing branch scope explicitly adopted"
-  fi
-  local check_in_time existing_seed seed
+  # V10-005: Remove AGENT_ACTIVITY_ADOPT_SCOPE bypass — always enforce collision detection
+  for f in "${FILES[@]}"; do if holder=$(has_active_other_lock "$f" "$a"); then die "Kollision: $f von $holder" 2; fi; done
+  local check_in_time existing_seed seed scope_hash
   check_in_time=$(load_field "$a" in || true); check_in_time=${check_in_time:-$(now)}
   [ -n "$a" ] || die "Agent-Identität fehlt" 2
   existing_seed=$(load_field "$a" seed || true)
-  seed=${existing_seed:-agent:$a:$(hostname 2>/dev/null || echo unknown):$$:$check_in_time}
-  local doki_seed="${DOKI_AGENT_SEED:-}"
-  if [ -n "$doki_seed" ]; then
-    seed="agent:$a:doki:$doki_seed"
+  # Generate deterministic seed: HMAC(secret, agent:task:scope:timestamp)
+  # Scope is the sorted list of staged files
+  scope_hash=$(printf '%s\n' "${FILES[@]}" | sort | sha256sum | cut -d' ' -f1)
+  local secret="${AGENT_ACTIVITY_SECRET:-snipwar-agent-gate-2026}"
+  seed="agent:$a:task:$task:scope:$scope_hash:time:$check_in_time"
+  local hmac_seed; hmac_seed=$(hmac_sha256 "$secret" "$seed")
+  seed="hmac:$hmac_seed"
+  # Reject any user-provided DOKI_AGENT_SEED (must be generated, not set)
+  if [ -n "${DOKI_AGENT_SEED:-}" ]; then
+    journal "$a" seed-reject "user-provided DOKI_AGENT_SEED ignored"
   fi
   local registry_file; registry_file=$(reg_file "$a"); ensure_state >/dev/null; { printf 'agent=%s\n' "$a"; printf 'pid=%s\n' "$$"; printf 'host=%s\n' "$(hostname 2>/dev/null || echo unknown)"; printf 'cwd=%s\n' "$(pwd)"; printf 'branch=%s\n' "$(git branch --show-current 2>/dev/null || echo unknown)"; printf 'head=%s\n' "$(git rev-parse HEAD 2>/dev/null || echo unknown)"; printf 'task=%s\n' "$task"; printf 'in=%s\n' "$check_in_time"; printf 'beat=%s\n' "$(now)"; printf 'status=ACTIVE\n'; printf 'seed=%s\n' "$seed"; printf 'updates=%s\n' "$(( $(load_field "$a" updates || echo 0) + 1 ))"; } > "$registry_file"; write_files "$a" "${FILES[@]}"
   if [ -n "$ex" ]; then printf '%s|%s|%s\n' "$(now)" "$ex" "${FILES[0]}" >> "$(exc_file "$a")"; journal "$a" exception "$ex:$reason"; else journal "$a" check-in "${FILES[*]}"; fi
-  printf 'CHECKED IN: %s severity=%s\n' "$a" "$(classify_list "${FILES[@]}")"
+  printf 'CHECKED IN: %s severity=%s seed=%s\n' "$a" "$(classify_list "${FILES[@]}")" "$seed"
 }
 update_agent() { local a=$(resolve_identity || true) reason="" branch=""; FILES=(); while [ "$#" -gt 0 ]; do case "$1" in --files) shift; while [ "$#" -gt 0 ] && [[ "$1" != --* ]]; do FILES+=("$1"); shift; done;; --branch) branch=${2:-}; shift 2;; --reason) reason=${2:-}; shift 2;; *) die "unbekanntes update-Argument" 2;; esac; done; [ -f "$(reg_file "$a")" ] || die "kein Check-In" 2; [ -n "$reason" ] || die "--reason erforderlich" 2; [ "${#FILES[@]}" -gt 0 ] && write_files "$a" "${FILES[@]}"; [ -n "$branch" ] && set_field "$a" branch "$branch"; set_field "$a" beat "$(now)"; set_field "$a" updates "$(( $(load_field "$a" updates || echo 0) + 1 ))"; journal "$a" update "$reason"; }
 heartbeat() { local a=$(resolve_identity || true) from to; [ -f "$(reg_file "$a")" ] || die "kein Check-In" 2; from=$(load_field "$a" beat || echo 0); to=$(now); set_field "$a" beat "$to"; set_field "$a" status ACTIVE; journal "$a" heartbeat "from=$from to=$to reason=renewed files=$(tr '\n' ',' < "$(files_file "$a")" 2>/dev/null)"; }
@@ -81,9 +90,16 @@ run_gate() {  local a=$(resolve_identity || true) staged f h bad=0 severity=pyth
   if [ -f "$(reg_file "$a")" ] && is_no_out_agent "$a"; then journal "$a" no-out "from=$(load_field "$a" beat || echo 0) to=$(now) reason=max-check-time files=$(tr '\n' ',' < "$(files_file "$a")" 2>/dev/null)"; echo "AGENTGATE NO-OUT: $a check-in expired; re-check-in required"; return 0; fi
   if [ -f "$(reg_file "$a")" ] && [ "$(agent_status "$a")" = RECHECK-REQUIRED ]; then journal "$a" recheck-required "from=$(load_field "$a" beat || echo 0) to=$(now) reason=one-hour-check"; echo "AGENTGATE WARN: $a re-check-in required after one hour"; fi
   staged=$(git diff --cached --name-only --diff-filter=ACMR); [ -n "$staged" ] || { echo 'AGENTGATE PASS: keine staged Dateien'; return; }
-  if [ -n "${AGENT_ACTIVITY_SEED:-}" ]; then
-    local registered_seed; registered_seed=$(load_field "$a" seed || true)
-    [ -n "$registered_seed" ] && [ "$registered_seed" = "$AGENT_ACTIVITY_SEED" ] || { echo 'AGENTGATE BLOCK: AGENT_ACTIVITY_SEED mismatch or missing'; return 1; }
+  # Validate HMAC seed from registry
+  local registered_seed; registered_seed=$(load_field "$a" seed || true)
+  if [ -z "$registered_seed" ] || [ "${registered_seed#hmac:}" = "$registered_seed" ]; then
+    echo 'AGENTGATE BLOCK: no valid HMAC seed in registry; check-in required'
+    return 1
+  fi
+  # Reject any user-provided DOKI_AGENT_SEED env var
+  if [ -n "${DOKI_AGENT_SEED:-}" ]; then
+    echo 'AGENTGATE BLOCK: DOKI_AGENT_SEED must not be set externally; seed is generated by check-in'
+    return 1
   fi
   [ -f "$(reg_file "$a")" ] || { echo "AGENTGATE BLOCK: kein Check-In; Remedy: check-in --agent $a --task ... --files ..."; return 1; }
   current_branch=$(git branch --show-current 2>/dev/null || echo unknown); registered_branch=$(load_field "$a" branch || echo ''); registered_head=$(load_field "$a" head || echo '')

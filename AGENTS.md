@@ -14,18 +14,41 @@ Verifikations-SSOT: Der Hook führt AgentGate einmal aus. `agent_activity` im Pr
 export GODOT_BIN="C:/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console.exe"
 export AGENT_NAME="buffy"
 # Suche: concept_search.gd für Architektur; global_search.gd für Volltext und Kontext.
+# Python-Godot Parity (falls Godot Binary nicht verfügbar):
+#   python -m narrative_runtime.gate_cli --root .
+#   python -m docs.reference.python_preflight --full
 ```
+
+### Git Hook Installation (once per clone)
+```bash
+bash scripts/doki/install_hooks.sh
+```
+This symlinks `.githooks/*` to `.git/hooks/` and sets `core.hooksPath`.
+Hooks require `GODOT_BIN` to be set and executable.
 
 1. **SELECT:** `cat ROADMAP.md` lesen, höchsten nicht blockierten Slice wählen.
 2. **VERIFY:** betroffene Dateien und Abhängigkeiten lesen; nicht raten.
 3. **IMPLEMENT:** minimale atomare Änderung; neue `class_name` mit Editor-Scan und `.uid`-Sidecar.
 4. **GATE:**
 ```bash
-$GODOT_BIN --headless --path . --script res://scripts/testing/compile_gate.gd
-$GODOT_BIN --headless --path . --script res://scripts/testing/test_all.gd
-$GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x
+# Unified Check: ein Befehl, scope-kontrolliert.
+# Scope wird aus staged files bestimmt; jede Datei außerhalb
+# muss über --takeover begründet werden.
+$GODOT_BIN --headless --path . --script res://scripts/check.gd -x
 ```
-   Pflicht: `RESULT: PASSED`; Headless-Rauschen am Ende ignorieren, echte Fehler beheben.
+   Äquivalent zu compile_gate + test_all + preflight in einem Durchlauf.
+   Für isolierte Phasen:
+```bash
+$GODOT_BIN --headless --path . --script res://scripts/check.gd --skip-tests --skip-preflight -x  # nur compile
+$GODOT_BIN --headless --path . --script res://scripts/check.gd --scope-report                    # nur scope-analyse
+$GODOT_BIN --headless --path . --script res://scripts/check.gd --full -x                        # voll-lauf
+```
+   Pflicht: `RESULT: ALL PASSED`; Headless-Rauschen am Ende ignorieren, echte Fehler beheben.
+   **Fallback (ohne Godot Binary):**
+```bash
+python -m narrative_runtime.gate_cli --root .
+python -m docs.reference.python_preflight --full
+```
 5. **DOCS:** ROADMAP/FINDINGS synchron halten; neue Befunde dokumentieren.
 6. **DOKI:**
 ```bash

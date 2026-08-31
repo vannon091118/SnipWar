@@ -9384,6 +9384,88 @@
 			"seq": 118,
 			"subject": "Echo erinnert: Sandbox-Determinismus korrigieren: exakter… — nach Thinker",
 			"summary": "Die Sandbox behauptete, DOKI zu simulieren, aber ihre Zufallsmaschine erzählte eine andere Geschichte. Das war kein Stilunterschied, sondern ein deterministischer Bruch: Ein einzelner 32-Bit-Zustan..."
+		},
+		{
+			"a": 36,
+			"arc": "a56",
+			"c": 119,
+			"composite": "c119j28n8a36p93",
+			"data_changes": [
+				{
+					"deletions": 11.0,
+					"file": ".githooks/pre-commit",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "AGENTS.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "addons/gdscript_mcp/runtime/tools/systems/mcp_audio_tools.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "audio_analysis.json",
+					"insertions": 114.0
+				},
+				{
+					"deletions": 13.0,
+					"file": "docs/METRICS_TRACKER.md",
+					"insertions": 13.0
+				},
+				{
+					"deletions": 29.0,
+					"file": "narrative_runtime/gate.py",
+					"insertions": 46.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "narrative_runtime/relationships.py",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 12.0,
+					"file": "narrative_runtime/store.py",
+					"insertions": 15.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/README.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/core/verifier.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 15.0,
+					"file": "task_plan.md",
+					"insertions": 14.0
+				}
+			],
+			"date": "2026-08-27 23:00:00",
+			"hash": "d454df8894e9ff3edddbb5cffcdec7dd15811929",
+			"j": 28,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 8,
+			"narrator": "Ghost",
+			"p": 93,
+			"p_id": 119,
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Echo",
+			"seq": 119,
+			"subject": "Ghost verzeichnet: final takeover: narrative_runtime redundancy… — nach Echo",
+			"summary": "Ghost protokolliert, was still im System doppelt lief und jetzt nicht mehr."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

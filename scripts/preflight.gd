@@ -75,6 +75,16 @@ func _init() -> void:
 	if args.get("reverse", false):
 		pipeline = _reverse_pipeline(pipeline)
 
+	# --- Cheap Path: filter to pure constraints only (python-only severity) ---
+	var cheap_path: bool = args.get("cheap_path", false)
+	if cheap_path:
+		var filtered: Array[Dictionary] = []
+		for entry in pipeline:
+			if not entry["requires_scene"]:
+				filtered.append(entry)
+		pipeline = filtered
+		print("[preflight-v2] Cheap Path enabled: running %d pure constraints only (severity=python)" % pipeline.size())
+
 	if pipeline.is_empty():
 		print("[preflight-v2] Warning: No constraints matched filter: '%s'" % filter_query)
 		quit(0)
@@ -372,6 +382,8 @@ func _parse_cli_arguments() -> Dictionary:
 		"help": false,
 		"reverse": false,
 		"mcp_json": "",
+		"cheap_path": false,
+		"severity": "full",
 	}
 	var all_args: PackedStringArray = OS.get_cmdline_args()
 	all_args.append_array(OS.get_cmdline_user_args())
@@ -398,6 +410,13 @@ func _parse_cli_arguments() -> Dictionary:
 			parsed["scope"] = arg.trim_prefix("--scope=")
 		elif arg.begins_with("--watchdog="):
 			parsed["watchdog"] = arg.trim_prefix("--watchdog=")
+		elif arg == "--cheap-path":
+			parsed["cheap_path"] = true
+			parsed["severity"] = "python"
+		elif arg.begins_with("--severity="):
+			parsed["severity"] = arg.trim_prefix("--severity=")
+			if parsed["severity"] == "python":
+				parsed["cheap_path"] = true
 	return parsed
 
 func _print_help() -> void:
@@ -417,11 +436,21 @@ Options:
   --watchdog=<seconds>     Optional abort watchdog; omitted/0 means no timeout.
   --list, -l               List all available constraints.
   --help, -h               Show this help message.
+  --cheap-path             Run only pure constraints (no scene boot) — for python-only changes.
+  --severity=<level>       Severity level: python (cheap), scoped, full (default).
+                           Set by agent_activity.sh classify_staged().
 
 Architecture (v2):
   Phase 1: Pure constraints (no scene needed) — fastest possible execution
   Phase 2: Scene constraints — scene booted ONCE, state resets between each
   Full re-boot after destructive constraints (save_game_roundtrip, context_handover)
+
+Cheap Path Constraints (pure only):
+  agent_activity, chunk_expansion, cluster_generation, concept_index, conquest_grid_combat,
+  cpu_dispatch, dead_code, docs_integrity, effects_and_traits, flight_and_dispatch,
+  global_search, grid_system, layer_independence, mechanic_coverage, mcp_capture_contract,
+  module_damage_model, navigation_growth, paper_style, resources_and_seed, save_game_slots,
+  sector_classification, upgrade_catalog, world_generator_scaling
 """)
 
 

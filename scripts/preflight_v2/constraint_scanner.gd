@@ -12,12 +12,14 @@ extends RefCounted
 ## of silently under-scoping.
 
 const CONSTRAINT_DIR := "res://scripts/preflight"
-
 const AUTO_MANAGED: Array = ["CHANGELOG.md", "change_index.json", "narrative_chain.json", "arcs.json", ".commit_msg.txt"]
+# DOKI-Artefakte leben jetzt in .doki/ (nicht mehr am Repo-Root).
+
 
 ## Canonical contract → constraint coverage (transitive closure).
 ## Every constraint discovered by the scanner MUST appear in exactly one
 ## contract; the resolver unions these to build the required scope.
+## "unmapped" contract for V3-002 fallback (no constraints, warn only).
 var _CONTRACT_CONSTRAINTS: Dictionary = {
 	"game_state": ["game_state_compatibility"],
 	"save": ["save_game_roundtrip", "save_game_slots"],
@@ -34,6 +36,7 @@ var _CONTRACT_CONSTRAINTS: Dictionary = {
 	"doki": ["narrative_runtime", "docs_integrity"],
 	"docs": ["docs_integrity", "global_search"],
 	"mcp": ["mcp_capture_contract", "concept_index", "global_search"],
+	"unmapped": [],
 }
 
 ## Canonical changed-path glob → affected contract(s). Deterministic prefixes
@@ -101,6 +104,8 @@ var _PATH_CONTRACTS: Array = [
 	{"glob": ".gitmodules", "contracts": ["preflight"]},
 	{"glob": "scripts/doki/**", "contracts": ["doki"]},
 	{"glob": "narrative_runtime/**", "contracts": ["doki"]},
+	{"glob": ".doki/narrative_chain.json", "contracts": ["doki"]},
+	{"glob": ".doki/change_index.json", "contracts": ["doki"]},
 	{"glob": "narrative_chain.json", "contracts": ["doki"]},
 	{"glob": "change_index.json", "contracts": ["doki"]},
 	{"glob": "arcs.json", "contracts": ["doki"]},

@@ -27,7 +27,7 @@
 
 ## 1. Aktueller Status
 
-SnipWar ist ein strategischer Overworld-Prototyp mit funktionierendem Karten-, Transit-, Ressourcen-, Forschungs-, Upgrade-, Scout- und deterministischem Konfliktkern. Die bisher implementierten Phasen (EffectDefinition, Trait-Erweiterungen, Planetensignaturen, Raffinerie-Konvertierung, Perimeter-Slots & Reichweite, CompositeShipView, FleetSnapshot, FleetBattleSimulator, ConquestSimulator und Replay-Szenen) sind implementiert und in `scripts/preflight.gd` (aktuell 44 Constraints, V2 Architecture mit Auto-Discovery) verifiziert.
+SnipWar ist ein strategischer Overworld-Prototyp mit funktionierendem Karten-, Transit-, Ressourcen-, Forschungs-, Upgrade-, Scout- und deterministischem Konfliktkern. Die bisher implementierten Phasen (EffectDefinition, Trait-Erweiterungen, Planetensignaturen, Raffinerie-Konvertierung, Perimeter-Slots & Reichweite, CompositeShipView, FleetSnapshot, FleetBattleSimulator, ConquestSimulator und Replay-Szenen) sind implementiert und in `scripts/preflight.gd` (aktuell 45 Constraints, V2 Architecture mit Auto-Discovery) verifiziert.
 
 Der Startpunkt ist `scenes/main_menu/main_menu.tscn` (Neues Spiel / Weiter / Beenden). Die Strategie-Overworld liegt in `scenes/world/world.tscn` mit `WorldBootstrap` als Wurzel; Layer-2-/Layer-3-Replays sind eigene Szenen (`battle_scene.tscn`, `conquest_scene.tscn`). Autoloads: `EventBus`, `GameState`, `WorldChronicle`, `GameCycleManager`, `SceneDirectorService`, `SaveGameService`, `EventLog`, `TouchFeedbackLayer` (plus die MCP-Autoloads `McpRuntime`, `McpProjectAdapter` aus dem Addon). `WorldBootstrap._enter_tree()` wählt das aktive Szenario, finalisiert den Layout-Seed und generiert den Planetenkatalog, bevor es GameState, PlanetField und MeteorField konfiguriert; `Bootstrap` dealt danach nur die Ressourcen. Szenen-Wechsel laufen über den `SceneDirectorService` (Custom-Switcher), Kontext über `GameState.pending_battle_context`/`reconnect_world`/`RunSession`.
 
@@ -278,7 +278,7 @@ Ein separater Main-Scene-Smoke-Test ist:
 godot --headless --path . --quit-after 2
 ```
 
-Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgeführt und meldete `RESULT: PASSED (43 constraints)`; auch der Main-Scene-Smoke-Test mit `--quit-after 2` war erfolgreich. Die Aussagen oben wurden aus Code, Resources, den vorhandenen Preflight-Assertions und diesem Lauf abgeleitet.
+Die Suite wurde mit Godot 4.7.2 aus dem bereitgestellten lokalen Binary ausgeführt und meldete `RESULT: PASSED (45 constraints)`; auch der Main-Scene-Smoke-Test mit `--quit-after 2` war erfolgreich. Die Aussagen oben wurden aus Code, Resources, den vorhandenen Preflight-Assertions und diesem Lauf abgeleitet.
 
 ## 15. Feature-Matrix
 

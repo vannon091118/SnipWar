@@ -34,6 +34,10 @@ func _init(
 func run() -> Dictionary:
 	var state: Dictionary = _session_store.ensure_state(DOKI_SessionStore.STATE_VERIFIED)
 	if not state["ok"]:
+		# Idle state is rejected - finalize requires VERIFIED (V2-004)
+		var session: Dictionary = _session_store.read()
+		if str(session.get("state", "")) == DOKI_SessionStore.STATE_IDLE:
+			return {"ok": false, "error": "finalize: Session ist idle — VERIFIED erforderlich. Kein gültiger DOKI-Flow zum Abschließen."}
 		# Idempotent: idle → prüfen, ob ein Amend den letzten Chain-Hash verändert hat
 		# (dann Eintrag-Hash nachziehen), sonst nichts zu tun (kein Fehler).
 		var amend_fix: Dictionary = _sync_amended_entry_hash()
@@ -173,8 +177,23 @@ static func amended_entry_hash_sync(chain: Dictionary, head: String, head_msg: S
 ## Verwaiste/reparierte Sessions werden nach .doki/recovery_log.json protokolliert
 ## (.doki ist gitignored). Bewusst KEINE Chain-/Index-Datei: diese dürfen im
 ## verwaisten verified-Fall per Vertrag unangetastet bleiben.
+## Deterministic timestamp: genesis_date + entry offset (V4-004, V5-003).
 static func recovery_log_path(repo_root: String) -> String:
 	return repo_root.path_join(".doki").path_join("recovery_log.json")
+
+
+static func _get_deterministic_timestamp(repo_root: String) -> String:
+	var chain_store := DOKI_ChainStore.new(repo_root)
+	var chain: Dictionary = chain_store.read()
+	var genesis_date: String = str(chain.get("genesis_date", ""))
+	if genesis_date.is_empty():
+		genesis_date = "2026-01-01 00:00:00"
+	var entries: Array = chain.get("entries", [])
+	# Offset = number of entries + 1 (next sequence)
+	var offset: int = entries.size() + 1
+	var date_part: String = genesis_date.substr(0, 10)
+	var hour: int = posmod(offset, 24)
+	return "%s %02d:00:00" % [date_part, hour]
 
 
 static func record_recovery(repo_root: String, kind: String, reason: String) -> void:
@@ -187,13 +206,25 @@ static func record_recovery(repo_root: String, kind: String, reason: String) -> 
 	entries.append({
 		"kind": kind,
 		"reason": reason,
-		"at": Time.get_datetime_string_from_system(),
+		"at": _get_deterministic_timestamp(repo_root),
 	})
 	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
-	var file := FileAccess.open(path, FileAccess.WRITE)
-	if file != null:
-		file.store_string(JSON.stringify(entries, "\t"))
-		file.close()
+	var content: String = JSON.stringify(entries, "\t")
+	_atomic_write(path, content)
+
+
+static func _atomic_write(path: String, content: String) -> void:
+	var dir_path: String = path.get_base_dir()
+	DirAccess.make_dir_recursive_absolute(dir_path)
+	var tmp_path: String = path + ".tmp"
+	var file := FileAccess.open(tmp_path, FileAccess.WRITE)
+	if file == null:
+		push_error("DOKI: %s nicht schreibbar: %s" % [path, tmp_path])
+		return
+	file.store_string(content)
+	file.close()
+	DirAccess.remove_absolute(path)
+	DirAccess.rename_absolute(tmp_path, path)
 
 
 ## Liest das Recovery-Log zurück (für Selfcheck/Diagnose; leer, wenn keins).
@@ -215,6 +246,7 @@ static func recovery_read(repo_root: String) -> Array:
 ## -F .commit_msg.txt` nie ausgeführt bzw. der Commit ist verloren → die
 ## verified-Session ist VERWAIST. commit_msg_exists verstärkt nur die Begründung,
 ## ändert die Entscheidung aber nicht (die Message überlebt einen echten Commit).
+## Also: don't reset if commit exists (V4-002).
 static func verified_orphan_decision(head: String, git_head_before: String, commit_msg_exists: bool) -> Dictionary:
 	var commit_created: bool = not git_head_before.is_empty() and not head.is_empty() and head != git_head_before
 	if commit_created:
@@ -223,6 +255,13 @@ static func verified_orphan_decision(head: String, git_head_before: String, comm
 	var msg_note: String = "ausstehende Message .commit_msg.txt noch vorhanden" if commit_msg_exists else "ausstehende Message fehlt"
 	var reason: String = "Verwaiste verified-Session atomar auf idle zurückgesetzt: HEAD steht noch auf dem Session-Anker %s, es wurde kein DOKI-Commit erzeugt; %s — Chain- und Index-Dateien blieben unberührt." % [anchor_label, msg_note]
 	return {"orphaned": true, "reason": reason}
+
+
+static func posmod(value: int, mod: int) -> int:
+	var r: int = value % mod
+	if r < 0:
+		r += mod
+	return r
 
 
 ## repair() → {ok, repaired:[...]}

@@ -70,6 +70,11 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	if staged.is_empty():
 		return {"ok": false, "error": "Keine gestagten Änderungen — erst `git add <dateien>`, dann prepare."}
 
+	# V10-001: Verify AGENT_ACTIVITY_SEED against agent_activity.sh registry
+	var seed_check: Dictionary = _verify_agent_activity_seed(agent_name, activity_seed)
+	if not bool(seed_check.get("ok", false)):
+		return seed_check
+
 	# Single-Active-Owner (TASK-013, RISK-003): fail-closed, kein destruktives
 	# Cleanup. Der Owner-Token ist prozess-eindeutig; ein zweiter aktiver Agent
 	# wird abgewiesen — nie automatisch überschrieben.
@@ -172,6 +177,9 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	session["staged_byte_digest"] = staged_byte_digest
 	session["baseline_identity"] = str(result.get("tree_hash", ""))
 	session["owner_token"] = owner_token
+	# V10-004: Store agent_name and activity_seed in session for gate verification
+	session["agent_name"] = agent_name
+	session["activity_seed"] = activity_seed
 	# Limits in die Session — Check 9 (RNG-Replay) muss exakt dieselben
 	# Ziehungs-Grenzen verwenden wie prepare, sonst divergiert der RNG-Zustand.
 	session["limits"] = limits.duplicate()
@@ -191,29 +199,45 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	ctx["search_contract"] = "Read the COMPLETE Global Search JSON and Concept Search output before writing the body."
 	session["search_context"] = search
 	session["prompt"] = _voice.build_prompts(ctx)
-	_session_store.save(session)
+	
+	# Transition state atomically with integrity hash (V2-001, V2-003)
+	var transition_result: Dictionary = _session_store.transition_state(DOKI_SessionStore.STATE_PREPARED, activity_seed)
+	if not bool(transition_result.get("ok", false)):
+		_session_store.release_ownership(owner_token)
+		return transition_result
+	
 	var prompt_path: String = _artifacts.write_prompt_file(session["prompt"], str(session["narrator"]), str(session["mood"]))
-	return {"ok": true, "session": session, "prompt_path": prompt_path, "scope": impact}
+	return {"ok": true, "session": transition_result["session"], "prompt_path": prompt_path, "scope": impact}
 
 
 ## Persistiert den resolved Verification-Scope als JSON-Manifest für den
 ## Preflight-Hook (.doki ist gitignored): {constraints:[...], contracts:[...]}.
 func _write_agent_binding(agent_name: String, activity_seed: String) -> void:
 	var binding := {"agent_name": agent_name, "activity_seed": activity_seed, "owner_token": "agent:%s:seed:%s" % [agent_name, activity_seed]}
-	var file := FileAccess.open(_repo_root.path_join(".doki/agent_binding.json"), FileAccess.WRITE)
-	if file != null:
-		file.store_string(JSON.stringify(binding, "\t"))
-		file.close()
+	var content: String = JSON.stringify(binding, "\t")
+	_atomic_write(_repo_root.path_join(".doki/agent_binding.json"), content)
+
 
 func _write_scope_file(impact: Dictionary) -> void:
 	var dir_path: String = _repo_root.path_join(".doki")
 	DirAccess.make_dir_recursive_absolute(dir_path)
-	var file := FileAccess.open(dir_path.path_join("scope.json"), FileAccess.WRITE)
+	var content: String = JSON.stringify({"constraints": impact.get("constraints", []), "contracts": impact.get("contracts", [])}, "\t")
+	_atomic_write(dir_path.path_join("scope.json"), content)
+
+
+## ─── Atomic write helper ─────────────────────────────────────────────────
+static func _atomic_write(path: String, content: String) -> void:
+	var dir_path: String = path.get_base_dir()
+	DirAccess.make_dir_recursive_absolute(dir_path)
+	var tmp_path: String = path + ".tmp"
+	var file := FileAccess.open(tmp_path, FileAccess.WRITE)
 	if file == null:
-		push_warning("DOKI: scope.json konnte nicht geschrieben werden: %s" % dir_path)
+		push_error("DOKI: %s nicht schreibbar: %s" % [path, tmp_path])
 		return
-	file.store_string(JSON.stringify({"constraints": impact.get("constraints", []), "contracts": impact.get("contracts", [])}, "\t"))
+	file.store_string(content)
 	file.close()
+	DirAccess.remove_absolute(path)
+	DirAccess.rename_absolute(tmp_path, path)
 
 
 ## Prozesseeindeutiger Ownership-Token (Single-Active-Owner, RISK-003).
@@ -223,3 +247,30 @@ func _ownership_token() -> String:
 	if agent_name.is_empty() or activity_seed.is_empty():
 		return ""
 	return "agent:%s:seed:%s" % [agent_name, activity_seed]
+
+
+## V10-001: Verify AGENT_ACTIVITY_SEED against agent_activity.sh registry
+func _verify_agent_activity_seed(agent_name: String, activity_seed: String) -> Dictionary:
+	# Call agent_activity.sh seed <agent> to get registered seed
+	var output: Array = []
+	var repo_root: String = ProjectSettings.globalize_path("res://")
+	var script_path: String = repo_root + "scripts/agent_activity.sh"
+	# Resolve bash path: Windows needs full path (Git Bash), Unix uses PATH
+	var bash_path: String = OS.get_environment("SHELL")
+	if bash_path.is_empty() or not FileAccess.file_exists(bash_path):
+		# Try common Windows Git Bash locations
+		for candidate in ["C:/Program Files/Git/usr/bin/bash.exe", "C:/Program Files/Git/bin/bash.exe"]:
+			if FileAccess.file_exists(candidate):
+				bash_path = candidate
+				break
+	if bash_path.is_empty():
+		bash_path = "bash"  # Fallback: hope it's in PATH
+	var exit_code: int = OS.execute(bash_path, [script_path, "seed", agent_name], output, true)
+	if exit_code != 0:
+		return {"ok": false, "error": "AGENT_ACTIVITY_SEED verification failed: agent '%s' not checked in or registry error (exit=%d)." % [agent_name, exit_code]}
+	var registered_seed: String = str(output[0]).strip_edges() if output.size() > 0 else ""
+	if registered_seed.is_empty():
+		return {"ok": false, "error": "AGENT_ACTIVITY_SEED verification failed: no seed registered for agent '%s'." % agent_name}
+	if registered_seed != activity_seed:
+		return {"ok": false, "error": "AGENT_ACTIVITY_SEED mismatch: provided seed does not match registered seed for agent '%s'." % agent_name}
+	return {"ok": true}

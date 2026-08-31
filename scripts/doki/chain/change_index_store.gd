@@ -1,7 +1,7 @@
 class_name DOKI_ChangeIndexStore
 extends RefCounted
 ## Registry für F-xxx (Dateien) und C-xxx (Komponenten/Klassen/Funktionen) IDs.
-## change_index.json (Repo-Root):
+## change_index.json (in .doki/):
 ## {
 ##   "version": 2,
 ##   "entities": { "F-001": { id, type, name, path, status, first_p, last_p, history: [{p_id, action, lines}] } },
@@ -13,7 +13,7 @@ var _path: String
 
 
 func _init(repo_root: String) -> void:
-	_path = repo_root.path_join("change_index.json")
+	_path = repo_root.path_join(".doki").path_join("change_index.json")
 
 
 func path() -> String:
@@ -52,13 +52,23 @@ func _default() -> Dictionary:
 	return {"version": 2, "entities": {}, "commits": {}}
 
 
-func save(index: Dictionary) -> void:
-	var file := FileAccess.open(_path, FileAccess.WRITE)
+## ─── Atomic write with tmp+rename (V7-001) ───────────────────────────────
+static func _atomic_write(path: String, content: String) -> void:
+	var dir_path: String = path.get_base_dir()
+	DirAccess.make_dir_recursive_absolute(dir_path)
+	var tmp_path: String = path + ".tmp"
+	var file := FileAccess.open(tmp_path, FileAccess.WRITE)
 	if file == null:
-		push_error("DOKI: change_index.json nicht schreibbar: %s" % _path)
+		push_error("DOKI: %s nicht schreibbar: %s" % [path, tmp_path])
 		return
-	file.store_string(JSON.stringify(index, "\t"))
+	file.store_string(content)
 	file.close()
+	DirAccess.remove_absolute(path)
+	DirAccess.rename_absolute(tmp_path, path)
+
+
+func save(index: Dictionary) -> void:
+	_atomic_write(_path, JSON.stringify(index, "\t"))
 
 
 ## Repo-Root für laterale Datei-Pfade (normalisierte "/").

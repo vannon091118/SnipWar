@@ -13,6 +13,16 @@ const TARGET_DOCS: Array[String] = [
 	"res://CHANGELOG.md",
 ]
 
+## Doku-Dateien, die die Constraint-Anzahl behaupten (muss mit Scanner übereinstimmen).
+const CONSTRAINT_COUNT_DOCS: Array[String] = [
+	"res://ARCHITECTURE.md",
+	"res://DESIGN.md",
+	"res://ROADMAP.md",
+	"res://docs/README.md",
+]
+
+const SCANNER_SCRIPT := preload("res://scripts/preflight_v2/constraint_scanner.gd")
+
 const HEADING_PATTERN := "^(#{1,6})\\s+(.+?)\\s*#*\\s*$"
 const SEPARATOR_CHARS := "|:- "
 
@@ -42,6 +52,17 @@ func run(ctx: PreflightContext) -> bool:
 		total_headings += int(counts["headings"])
 		total_tables += int(counts["tables"])
 		print("[docs_integrity] %s: %d headings, %d table blocks" % [label, int(counts["headings"]), int(counts["tables"])])
+	
+	# ─── Constraint-Anzahl-Drift-Check (R-002 Lücke) ───────────────────
+	# Die Doku behauptet eine Constraint-Anzahl; der Scanner registriert die
+	# echte Zahl. Abweichung = stiller Drift (genau die Klasse die R-002 beheben sollte).
+	var scanner := SCANNER_SCRIPT.new()
+	var registry: Array[Dictionary] = scanner.scan()
+	var live_constraint_count: int = registry.size()
+	var count_findings: Array[String] = _check_constraint_count(live_constraint_count, ctx)
+	all_findings.append_array(count_findings)
+	print("[docs_integrity] Constraint count: %d live (scanner) vs docs claims" % live_constraint_count)
+	
 	if not all_findings.is_empty():
 		var shown := mini(all_findings.size(), 40)
 		for i in range(shown):
@@ -49,10 +70,40 @@ func run(ctx: PreflightContext) -> bool:
 		if all_findings.size() > shown:
 			print("[docs_integrity]   ... %d weitere Findings" % (all_findings.size() - shown))
 	return ctx.check(all_findings.is_empty(),
-		"Docs integrity: %d headings, %d table blocks across %d files, %d findings" % [
-			total_headings, total_tables, TARGET_DOCS.size(), all_findings.size(),
+		"Docs integrity: %d headings, %d table blocks across %d files, %d findings, %d constraints live" % [
+			total_headings, total_tables, TARGET_DOCS.size(), all_findings.size(), live_constraint_count,
 		],
-		{"findings": all_findings})
+		{"findings": all_findings, "live_constraint_count": live_constraint_count})
+
+
+## ─── Constraint-Anzahl-Drift-Check ─────────────────────────────────────
+## Prüft, ob die Doku die gleiche Constraint-Anzahl behauptet wie der Scanner
+## live registriert. Erkennt „44 Constraints“ im Text wenn eigentlich 45 existieren.
+func _check_constraint_count(live_count: int, ctx: PreflightContext) -> Array[String]:
+	var findings: Array[String] = []
+	# Regex: „NN Constraints“ oder „NN/NN Constraints“ oder „NN / NN Constraints“
+	# Aber NICHT: „top-N Constraints“ (Teilmenge) oder URL-kodierte „%20Constraints“.
+	var count_regex := RegEx.new()
+	count_regex.compile("(?<!top-)(?<!%)\\b(\\d+)\\s*(?:/\\s*(\\d+))?\\s*[Cc]onstraints")
+	
+	for path in CONSTRAINT_COUNT_DOCS:
+		var label: String = path.replace("res://", "")
+		var text: String = ctx.code_index.get_file_content(path)
+		if text.is_empty():
+			continue
+		var lines: PackedStringArray = text.split("\n")
+		for line_num in range(1, lines.size() + 1):
+			var line: String = String(lines[line_num - 1]).trim_suffix("\r")
+			# Überspringe historische Lauf-Belege (datierte Einträge in FINDINGS)
+			if label.begins_with("docs/FINDINGS") and (line.contains("R-002:") or line.contains("GEFIXT") or line.contains("PL-A")):
+				continue
+			var m := count_regex.search(line)
+			if m == null:
+				continue
+			var claimed: int = int(m.get_string(1))
+			if claimed != live_count:
+				findings.append("%s:%d claims %d constraints, scanner has %d (drift!)" % [label, line_num, claimed, live_count])
+	return findings
 
 
 ## Pure Analyse: keine IO, keine Member-Mutation außer den Ergebnissen.

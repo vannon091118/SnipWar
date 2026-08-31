@@ -35,7 +35,22 @@ func run() -> Dictionary:
 		return {"ok": false, "error": "Kein DOKI-Flow aktiv. Ablauf: git add → doki prepare → doki finish → git commit -F .commit_msg.txt"}
 
 	if state != DOKI_SessionStore.STATE_VERIFIED:
-		return {"ok": false, "error": "Session ist '%s' — es wurde kein verlifizierter Commit vorbereitet (doki finish)." % state}	# .commit_msg.txt muss existieren und nicht leer sein
+		return {"ok": false, "error": "Session ist '%s' — es wurde kein verlifizierter Commit vorbereitet (doki finish)." % state}
+	
+	# V10-003: Always require AGENT_ACTIVITY_SEED, fail if missing
+	var activity_seed: String = str(session.get("activity_seed", ""))
+	if activity_seed.is_empty():
+		return {"ok": false, "error": "AGENT_ACTIVITY_SEED fehlt in Session — prepare ohne Agent-Activity-Check-In gelaufen? Bitte `doki prepare` erneut."}
+	
+	# Verify AGENT_ACTIVITY_SEED against registry
+	var agent_name: String = str(session.get("agent_name", ""))
+	if agent_name.is_empty():
+		return {"ok": false, "error": "AGENT_NAME fehlt in Session — prepare ohne Agent-Activity-Check-In gelaufen? Bitte `doki prepare` erneut."}
+	var seed_check: Dictionary = _verify_agent_activity_seed(agent_name, activity_seed)
+	if not bool(seed_check.get("ok", false)):
+		return seed_check
+
+	# .commit_msg.txt muss existieren und nicht leer sein
 	var msg_path: String = _repo_root.path_join(".commit_msg.txt")
 	if not FileAccess.file_exists(msg_path):
 		return {"ok": false, "error": ".commit_msg.txt fehlt — der Commit darf nur über `doki finish` entstehen."}
@@ -115,3 +130,18 @@ static func _without_auto_managed(files: Array) -> Array:
 		if not AUTO_MANAGED.has(str(f).get_file()):
 			result.append(str(f))
 	return result
+
+
+## V10-003: Verify AGENT_ACTIVITY_SEED against agent_activity.sh registry
+func _verify_agent_activity_seed(agent_name: String, activity_seed: String) -> Dictionary:
+	# Call agent_activity.sh seed <agent> to get registered seed
+	var output: Array = []
+	var exit_code: int = OS.execute("bash", ["scripts/agent_activity.sh", "seed", agent_name], output, true)
+	if exit_code != 0:
+		return {"ok": false, "error": "AGENT_ACTIVITY_SEED verification failed: agent '%s' not checked in or registry error." % agent_name}
+	var registered_seed: String = str(output[0]).strip_edges() if output.size() > 0 else ""
+	if registered_seed.is_empty():
+		return {"ok": false, "error": "AGENT_ACTIVITY_SEED verification failed: no seed registered for agent '%s'." % agent_name}
+	if registered_seed != activity_seed:
+		return {"ok": false, "error": "AGENT_ACTIVITY_SEED mismatch: provided seed does not match registered seed for agent '%s'." % agent_name}
+	return {"ok": true}

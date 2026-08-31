@@ -1,0 +1,244 @@
+{
+  "design_id": "preflight_pure_python_v1",
+  "version": "1.0.0",
+  "name": "Pure-Python Preflight",
+  "description": "Godot-independent verification pipeline with staged execution modes, deterministic caching, and optional watchdog",
+  "architecture": {
+    "core_principle": "Verify without Godot binary; delegate to Godot when available",
+    "layers": [
+      {
+        "name": "Constraints Layer",
+        "module": "preflight.constraints",
+        "responsibilities": ["Rule definitions", "Severity levels", "Exemption registry", "Rule composition"],
+        "rule_types": ["naming_convention", "export_enum_usage", "tool_resource_pattern", "multimesh_order", "array_map_typing", "config_autoload_cycle", "class_name_uid", "nodename_stringname", "scene_tree_quit_return"],
+        "severities": ["ERROR", "WARN", "INFO"],
+        "exemptions": {"file": "preflight_exemptions.json", "inline": "# preflight:ignore[rule_id]"}
+      },
+      {
+        "name": "Runner Layer",
+        "module": "preflight.runner",
+        "responsibilities": ["Stage orchestration", "Parallel execution", "Result aggregation", "Exit code mapping"],
+        "stages": [
+          {"id": "syntax", "name": "GDScript Syntax", "parallel": true, "tools": ["gdlint", "gdformat --check"]},
+          {"id": "types", "name": "Static Types", "parallel": true, "tools": ["gdscript_type_check"]},
+          {"id": "constraints", "name": "Constraint Rules", "parallel": true, "tools": ["preflight.constraints"]},
+          {"id": "compile", "name": "Compile Gate", "parallel": false, "tools": ["godot --headless --script compile_gate.gd"]},
+          {"id": "tests", "name": "Test Suite", "parallel": false, "tools": ["godot --headless --script test_all.gd"]},
+          {"id": "scene", "name": "Scene Preflight", "parallel": false, "tools": ["godot --headless --script preflight.gd -x"]}
+        ],
+        "modes": {
+          "cheap": {"stages": ["syntax", "types", "constraints"], "trigger": "python-only staged files"},
+          "full": {"stages": ["syntax", "types", "constraints", "compile", "tests", "scene"], "trigger": "code changes staged"},
+          "scope": {"stages": "dynamic based on atomic_group", "trigger": "doki scope analysis"}
+        }
+      },
+      {
+        "name": "Modes Layer",
+        "module": "preflight.modes",
+        "responsibilities": ["Mode selection", "Stage filtering", "Godot availability check", "Fallback orchestration"],
+        "mode_selection": {
+          "algorithm": "analyze_staged_files() -> if python_only: cheap elif godot_available: full else: scope_fallback",
+          "python_only_patterns": ["**/*.py", "**/doki/**", "**/scripts/docs/**", "**/*.md", "**/*.json", "**/*.yaml"],
+          "code_change_patterns": ["**/*.gd", "**/*.tscn", "**/*.tres", "**/*.gdshader"],
+          "godot_check": "which $GODOT_BIN && $GODOT_BIN --version"
+        },
+        "scope_fallback": {"stages": ["syntax", "types", "constraints"], "note": "compile/tests/scene skipped, marked DEGRADED"}
+      },
+      {
+        "name": "Output Layer",
+        "module": "preflight.output",
+        "responsibilities": ["Structured results", "Machine-readable JSON", "Human summary", "CI integration"],
+        "formats": {
+          "json": {"schema": {"stages": [{"id": "string", "status": "PASS|FAIL|SKIP|DEGRADED", "duration_ms": "int", "issues": [{"rule": "string", "severity": "ERROR|WARN|INFO", "file": "string", "line": "int", "message": "string"}]}], "summary": {"passed": "int", "failed": "int", "skipped": "int", "degraded": "int", "total_duration_ms": "int"}, "mode": "string", "timestamp": "iso8601"}},
+          "junit": "for CI consumption",
+          "summary": "colorized terminal output"
+        },
+        "exit_codes": {0: "ALL_PASS", 1: "ANY_FAIL", 2: "DEGRADED", 3: "INTERNAL_ERROR", 4: "GODOT_UNAVAILABLE_FULL_REQUIRED"}
+      },
+      {
+        "name": "Watchdog Layer",
+        "module": "preflight.watchdog",
+        "responsibilities": ["Timeout enforcement", "Progress heartbeat", "Graceful termination", "Partial results preservation"],
+        "configuration": {
+          "enabled": "env PREFLIGHT_WATCHDOG_SECONDS or --watchdog=<sec>",
+          "default_disabled": true,
+          "stages_with_watchdog": ["compile", "tests", "scene"],
+          "heartbeat_interval_sec": 10,
+          "grace_period_sec": 5
+        },
+        "behavior": "SIGTERM -> wait grace -> SIGKILL -> write partial results with DEGRADED status"
+      },
+      {
+        "name": "Cache Layer",
+        "module": "preflight.cache",
+        "responsibilities": ["Incremental verification", "Content-addressable storage", "Cache invalidation", "Hit/miss metrics"],
+        "storage": ".preflight/cache/{content_hash}.json",
+        "key_derivation": "blake2b(file_content + rule_version + tool_version)",
+        "invalidation": ["file_mtime_change", "rule_version_change", "tool_version_change", "config_change"],
+        "max_size_mb": 500,
+        "eviction": "LRU",
+        "stats": "hit_rate, miss_rate, size_mb"
+      },
+      {
+        "name": "Integration Layer",
+        "module": "preflight.integration",
+        "responsibilities": ["DOKI hook integration", "Git hook installation", "MCP server", "CI/CD hooks"],
+        "doki_hooks": {
+          "prepare": "cheap mode for python-only",
+          "finish": "full mode for code changes",
+          "verify": "full mode always"
+        },
+        "git_hooks": {"install": "scripts/doki/install_hooks.sh", "path": ".githooks/* -> .git/hooks/"},
+        "mcp": {"server": "preflight.mcp.server", "tools": ["run_preflight", "get_cache_stats", "clear_cache"]},
+        "ci": {"github_actions": ".github/workflows/preflight.yml", "gitlab_ci": ".gitlab-ci.yml"}
+      },
+      {
+        "name": "Catalog Layer",
+        "module": "preflight.catalog",
+        "responsibilities": ["Rule registry", "Documentation generation", "Rule testing", "Version tracking"],
+        "catalog_file": "preflight_catalog.json",
+        "rule_schema": {"id": "string", "name": "string", "description": "string", "severity": "ERROR|WARN|INFO", "category": "string", "auto_fixable": "bool", "test_cases": [{"input": "string", "expected": "PASS|FAIL"}]},
+        "generation": "python -m preflight.catalog generate --output docs/preflight_rules.md"
+      }
+    ],
+    "data_flow": [
+      "staged_files -> mode_selection -> stage_filter",
+      "stage_filter -> parallel_executor(stages)",
+      "each_stage -> cache.check -> run_if_miss -> cache.store",
+      "results -> aggregator -> output_formatter",
+      "output -> exit_code -> CI/doki"
+    ]
+  },
+  "constraints": {
+    "naming_convention": {
+      "id": "PF001",
+      "pattern": "^[a-z_][a-z0-9_]*$ for files, PascalCase for classes",
+      "severity": "ERROR",
+      "auto_fix": false
+    },
+    "export_enum_usage": {
+      "id": "PF002",
+      "pattern": "@export_enum must use String or int, not StringName",
+      "severity": "ERROR",
+      "auto_fix": true
+    },
+    "tool_resource_pattern": {
+      "id": "PF003",
+      "pattern": "@tool resources must have @tool on script",
+      "severity": "ERROR",
+      "auto_fix": false
+    },
+    "multimesh_order": {
+      "id": "PF004",
+      "pattern": "Mesh must be set before instance_count on MultiMeshInstance2D",
+      "severity": "WARN",
+      "auto_fix": false
+    },
+    "array_map_typing": {
+      "id": "PF005",
+      "pattern": "Array.map() returns untyped; use explicit iteration for typed arrays",
+      "severity": "WARN",
+      "auto_fix": false
+    },
+    "config_autoload_cycle": {
+      "id": "PF006",
+      "pattern": "Config Resources must not reference GameState default (use GameConstants)",
+      "severity": "ERROR",
+      "auto_fix": false
+    },
+    "class_name_uid": {
+      "id": "PF007",
+      "pattern": "New class_name requires editor scan and .uid sidecar committed",
+      "severity": "ERROR",
+      "auto_fix": false
+    },
+    "nodename_stringname": {
+      "id": "PF008",
+      "pattern": "Node.name is StringName; cast to String before string operations",
+      "severity": "WARN",
+      "auto_fix": true
+    },
+    "scene_tree_quit_return": {
+      "id": "PF009",
+      "pattern": "SceneTree.quit() does not return; must have explicit return after",
+      "severity": "ERROR",
+      "auto_fix": true
+    }
+  },
+  "runner": {
+    "parallel_strategy": "thread_pool for syntax/types/constraints; sequential for compile/tests/scene",
+    "max_workers": "cpu_count - 1",
+    "timeout_per_stage": {"syntax": 30, "types": 60, "constraints": 30, "compile": 120, "tests": 300, "scene": 120},
+    "retry_policy": {"max_retries": 1, "retry_on": ["TIMEOUT", "TRANSIENT_ERROR"]}
+  },
+  "modes": {
+    "cheap": {
+      "description": "Python-only changes; no Godot required",
+      "stages": ["syntax", "types", "constraints"],
+      "duration_target_sec": 15,
+      "use_case": "doki prepare, docs, configs, scripts"
+    },
+    "full": {
+      "description": "Complete verification with Godot",
+      "stages": ["syntax", "types", "constraints", "compile", "tests", "scene"],
+      "duration_target_sec": 300,
+      "use_case": "doki finish, pre-push, CI"
+    },
+    "scope": {
+      "description": "Atomic-group targeted verification",
+      "stages": "dynamic",
+      "duration_target_sec": 60,
+      "use_case": "doki check-in, targeted verify"
+    },
+    "degraded": {
+      "description": "Godot unavailable; best-effort static checks",
+      "stages": ["syntax", "types", "constraints"],
+      "exit_code": 2,
+      "use_case": "CI without Godot, emergency verify"
+    }
+  },
+  "output": {
+    "json_path": ".preflight/result.json",
+    "junit_path": ".preflight/junit.xml",
+    "summary_fields": ["mode", "overall_status", "stage_count", "issue_count_by_severity", "duration_ms", "cache_hit_rate"],
+    "ci_annotations": "GitHub Actions format for inline PR comments"
+  },
+  "watchdog": {
+    "opt_in_only": true,
+    "env_var": "PREFLIGHT_WATCHDOG_SECONDS",
+    "cli_flag": "--watchdog",
+    "compile_gate_env": "COMPILE_GATE_WATCHDOG_SECONDS",
+    "test_all_env": "TEST_ALL_TIMEOUT",
+    "behavior_on_timeout": "SIGTERM -> 5s grace -> SIGKILL -> DEGRADED result"
+  },
+  "cache": {
+    "enabled_by_default": true,
+    "dir": ".preflight/cache",
+    "key_algorithm": "blake2b",
+    "invalidation_triggers": ["content_hash", "rule_set_version", "tool_version", "preflight_config_version"],
+    "max_entries": 10000,
+    "cleanup": "on startup if > max_size_mb"
+  },
+  "integration": {
+    "doki_prepare": "cheap mode",
+    "doki_finish": "full mode if code changes else cheap",
+    "doki_verify": "full mode",
+    "git_pre_commit": "full mode",
+    "git_pre_push": "full mode",
+    "ci_pipeline": "full mode with junit output",
+    "mcp_tools": ["run_preflight(mode, scope)", "get_cache_stats()", "clear_cache()", "list_rules()"]
+  },
+  "catalog": {
+    "source": "preflight/constraints/*.py",
+    "output": "preflight_catalog.json",
+    "docs": "docs/preflight_rules.md",
+    "versioning": "semver in catalog",
+    "test_runner": "python -m preflight.catalog test"
+  },
+  "python_fallback": {
+    "compile_gate": "python -m narrative_runtime.gate_cli --root .",
+    "test_all": "python -m narrative_runtime.gate_cli --root . --tests",
+    "scene_preflight": "python -m docs.reference.python_preflight --full",
+    "parity_requirement": "exit codes and issue format must match Godot output"
+  }
+}

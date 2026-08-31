@@ -294,11 +294,12 @@ func check_7_causality(message: String, session: Dictionary) -> Dictionary:
 
 ## ─── Check 8: DocSync (HARTER BLOCK) ────────────────────────────────────
 ## Doku-Dateien müssen existieren, nicht leer sein und KEINE ungestagten
-## Diffs haben („verwaiste" Zwischenzustände sind blockiert).
+## Diffs haben ("verwaiste" Zwischenzustände sind blockiert).
 ## Die Staging-Anforderung ist bewusst KEIN Teil des Checks: die Artefakte
 ## werden erst NACH bestandener Verifikation geschrieben+gestaged
 ## (apply_commit_artifacts) — zum Check-Zeitpunkt kann die aktuelle
 ## Commit-Doku also noch gar nicht gestaged sein.
+## V9-002: Test verifier Check 8 for missing file.
 func check_8_docsync(message: String, session: Dictionary, staged_file_names: Array, unstaged_doc_diffs: Array) -> Dictionary:
 	var ok: bool = true
 	var problems: Array = []
@@ -310,15 +311,30 @@ func check_8_docsync(message: String, session: Dictionary, staged_file_names: Ar
 	elif FileAccess.get_file_as_string(_changelog_path).strip_edges().is_empty():
 		ok = false
 		problems.append("CHANGELOG.md ist leer.")
-	if not FileAccess.file_exists(_repo_root.path_join("change_index.json")):
+	
+	# change_index.json (now in .doki/)
+	var change_index_path: String = _repo_root.path_join(".doki").path_join("change_index.json")
+	if not FileAccess.file_exists(change_index_path):
 		ok = false
 		problems.append("change_index.json existiert nicht.")
+	
+	# narrative_chain.json (now in .doki/)
+	var narrative_chain_path: String = _repo_root.path_join(".doki").path_join("narrative_chain.json")
+	if not FileAccess.file_exists(narrative_chain_path):
+		ok = false
+		problems.append("narrative_chain.json existiert nicht.")
+	
+	# arcs.json (in scripts/doki/data/)
+	var arcs_path: String = _repo_root.path_join("scripts/doki/data/arcs.json")
+	if not FileAccess.file_exists(arcs_path):
+		ok = false
+		problems.append("arcs.json existiert nicht.")
 
 	# 8b: keine ungestagten Diffs auf den Doku-Dateien (finalize staged seine
-	# Updates selbst → nach finalize ist alles staged oder clean).
+	# Updates selbst — nach finalize ist alles staged oder clean).
 	for d in unstaged_doc_diffs:
 		var dn: String = str(d).get_file()
-		if dn == "CHANGELOG.md" or dn == "change_index.json" or dn == "narrative_chain.json":
+		if dn == "CHANGELOG.md" or dn == "change_index.json" or dn == "narrative_chain.json" or dn == "arcs.json":
 			ok = false
 			problems.append("Ungestagter Diff auf Doku-Datei: %s (Läufe `doki repair`.)" % str(d))
 

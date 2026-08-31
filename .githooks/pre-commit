@@ -1,49 +1,69 @@
-#!/bin/sh
-set -eu
+#!/usr/bin/env bash
+set -euo pipefail
 
-repo_root=$(git rev-parse --show-toplevel)
+# SnipWar pre-commit hook
+# Runs: DOKI prepare + gate → Unified Check (compile + preflight + tests, scope-kontrolliert)
+# Exits 1 if GODOT_BIN not available or any check fails
 
-if [ -n "${GODOT_BIN:-}" ]; then
-	godot_bin=$GODOT_BIN
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null)"
+if [ -z "$ROOT_DIR" ]; then
+    echo "ERROR: Not in a git repository" >&2
+    exit 1
+fi
+
+cd "$ROOT_DIR"
+
+# Check for GODOT_BIN availability
+if [ -z "${GODOT_BIN:-}" ] || [ ! -x "${GODOT_BIN}" ]; then
+    echo "ERROR: GODOT_BIN not set or not executable (required for pre-commit gate)" >&2
+    echo "Set: export GODOT_BIN=/path/to/godot_console" >&2
+    exit 1
+fi
+
+# Function to run Godot headless scripts
+run_godot() {
+    local script="$1"
+    shift
+    "$GODOT_BIN" --headless --path . --script "$script" "$@"
+}
+
+# Determine severity from agent_activity.sh classify_staged
+SEVERITY="full"
+if [ -f "scripts/agent_activity.sh" ]; then
+    CLASSIFIED_SEVERITY=$(bash scripts/agent_activity.sh classify-staged 2>/dev/null || echo "full")
+    case "$CLASSIFIED_SEVERITY" in
+        python|scoped|full) SEVERITY="$CLASSIFIED_SEVERITY" ;;
+        *) SEVERITY="full" ;;
+    esac
+    echo "=== pre-commit: Staged changes classified as severity=$SEVERITY ==="
+fi
+
+echo "=== pre-commit: DOKI prepare ==="
+run_godot "res://scripts/doki/doki.gd" -- prepare "pre-commit gate" || {
+    echo "ERROR: DOKI prepare failed" >&2
+    exit 1
+}
+
+echo "=== pre-commit: DOKI gate ==="
+run_godot "res://scripts/doki/doki.gd" -- gate || {
+    echo "ERROR: DOKI gate failed" >&2
+    exit 1
+}
+
+echo "=== pre-commit: Unified Check (compile + preflight + tests, scope=$SEVERITY) ==="
+if [ "$SEVERITY" = "python" ]; then
+    # Cheap path: compile + pure constraints only, no tests
+    run_godot "res://scripts/check.gd" --cheap-path --skip-tests -x || {
+        echo "ERROR: Unified Check (cheap path) failed" >&2
+        exit 1
+    }
 else
-	godot_bin=$(command -v godot || command -v godot4 || true)
+    # Full path: compile + preflight + tests, scope-gefiltert aus staged files
+    run_godot "res://scripts/check.gd" -x || {
+        echo "ERROR: Unified Check failed" >&2
+        exit 1
+    }
 fi
 
-git diff --cached --check
-
-if [ -z "$godot_bin" ] || [ ! -x "$godot_bin" ]; then
-	printf 'Godot executable not found: set GODOT_BIN to the console binary (or put godot on PATH).\n' >&2
-	exit 1
-fi
-
-# 0) AgentGate — Datei-Check-In/Kollision/Drift vor allen weiteren Gates.
-if ! bash "$repo_root/scripts/agent_activity.sh" run-preflight; then
-	printf '\nAgentGate blockiert den Commit. Remedy: check-in/update/recheck-in --audit.\n' >&2
-	exit 1
-fi
-
-# 1) Preflight-Gate — NUR scoped (Scope-Manifest aus DOKI prepare). Kein
-#    Full-Preflight im Hook: der Voll-Lauf ist ausschließlich manuell
-#    ($GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x).
-scope_file="$repo_root/.doki/scope.json"
-if [ -f "$scope_file" ]; then
-	"$godot_bin" --headless --path "$repo_root" --script res://scripts/preflight.gd --scope="$scope_file" --fail-fast
-else
-	printf 'Preflight: kein Scope-Manifest — scoped run übersprungen (full preflight nur manuell).\n'
-fi
-
-# 2) Mechanische Gates (unabhängig, jedes mit eigenem Evidence-Artfakt in user://mcp_evidence/)
-for gate in scripts/testing/chain_manifest_gate.gd scripts/testing/compile_gate.gd scripts/testing/chain_validate_entry_test.gd; do
-	if ! "$godot_bin" --headless --path "$repo_root" --script "res://$gate"; then
-		printf '\nGate blockiert den Commit: %s\nEvidence: user://mcp_evidence/\n' "$gate" >&2
-		exit 1
-	fi
-done
-
-# 3) DOKI-Gate (nur wenn initialisiert)
-if [ -f "$repo_root/scripts/doki/doki.gd" ]; then
-	if ! "$godot_bin" --headless --path "$repo_root" --script res://scripts/doki/doki.gd -- gate --repo "$repo_root"; then
-		printf '\nDOKI-Gate blockiert den Commit — Ablauf: git add → doki prepare → doki finish → git commit -F .commit_msg.txt\n' >&2
-		exit 1
-	fi
-fi
+echo "=== pre-commit: All checks passed ==="
+exit 0

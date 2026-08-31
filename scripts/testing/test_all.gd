@@ -10,14 +10,20 @@ extends SceneTree
 ## Bei parallelen Agenten überspringt jeder Agent die Tests, die ein voriger Lauf
 ## bereits grün bestätigt hat → kein Prozesssturm bei Wiederholung.
 ##
+## Deterministischer Modus (TEST_ALL_DETERMINISTIC=1):
+##   - Setzt PREFLIGHT_LAYOUT_SEED=424242 für alle Subprozesse
+##   - Deaktiviert RNG in Tests wo möglich
+##   - Erzwingt festen Seed für alle Simulationen
+##
 ## Verwendung:
 ##   $GODOT_BIN --headless --path . --script res://scripts/testing/test_all.gd
 ##
 ## Optionen (über Umgebungsvariablen):
-##   TEST_ALL_FILTER=<term>     — nur Tests mit <term> im Pfad ausführen
-##   TEST_ALL_SKIP_PREFLIGHT=1  — Preflight überspringen
-##   TEST_ALL_TIMEOUT=<sek>     — optionaler Abbruch pro Test (Standard: 0 = kein Timeout)
-##   TEST_ALL_NO_CACHE=1        — Ergebnis-Cache deaktivieren (Volllauf)
+##   TEST_ALL_FILTER=<term>         — nur Tests mit <term> im Pfad ausführen
+##   TEST_ALL_SKIP_PREFLIGHT=1      — Preflight überspringen
+##   TEST_ALL_TIMEOUT=<sek>         — optionaler Abbruch pro Test (Standard: 0 = kein Timeout)
+##   TEST_ALL_NO_CACHE=1            — Ergebnis-Cache deaktivieren (Volllauf)
+##   TEST_ALL_DETERMINISTIC=1       — Deterministischer Modus (feste Seeds, no RNG)
 ##
 ## Exit: 0 = alle grün, 1 = mindestens ein Fehler
 
@@ -60,11 +66,17 @@ func _run_all() -> void:
 	if timeout < 0:
 		timeout = 0
 	var use_cache: bool = OS.get_environment("TEST_ALL_NO_CACHE") != "1"
+	var deterministic: bool = OS.get_environment("TEST_ALL_DETERMINISTIC") == "1"
+	
+	if deterministic:
+		print("Deterministic mode: ENABLED (PREFLIGHT_LAYOUT_SEED=424242)")
+		OS.set_environment("PREFLIGHT_LAYOUT_SEED", "424242")
 
 	# --- Entry-Tests entdecken ---
 	var test_files: PackedStringArray = _discover_tests("res://scripts/testing/", filter)
 	print("Found %d entry tests in scripts/testing/" % test_files.size())
 	print("Cache: %s" % ("enabled" if use_cache else "disabled"))
+	print("Deterministic: %s" % ("enabled" if deterministic else "disabled"))
 	print("")
 
 	# --- Cache lesen ---
@@ -80,7 +92,11 @@ func _run_all() -> void:
 			print("  [CACHED] %-40s (cache-hit, skipped)" % label)
 			continue
 
-		var result: Dictionary = _run_subprocess(godot_bin, ["--headless", "--path", ".", "--script", path], timeout)
+		var args: PackedStringArray = ["--headless", "--path", ".", "--script", path]
+		if deterministic:
+			args.push_back("--fixed-fps")
+			args.push_back("60")
+		var result: Dictionary = _run_subprocess(godot_bin, args, timeout)
 		_results.append({"label": label, "path": path, "ok": result.get("ok", false), "exit": result.get("exit", -1), "ms": result.get("ms", 0), "cached": false})
 
 	# --- Preflight (seriell; Shared-Fixture ist exklusiv) ---
@@ -88,7 +104,11 @@ func _run_all() -> void:
 		print("")
 		print("Running preflight -x ...")
 		# Preflight wird nie gecacht (Full-Run-Garantie bleibt beim Hook)
-		var pf_result: Dictionary = _run_subprocess(godot_bin, ["--headless", "--path", ".", "--script", "res://scripts/preflight.gd", "-x"], PREFLIGHT_TIMEOUT)
+		var pf_args: PackedStringArray = ["--headless", "--path", ".", "--script", "res://scripts/preflight.gd", "-x"]
+		if deterministic:
+			pf_args.push_back("--fixed-fps")
+			pf_args.push_back("60")
+		var pf_result: Dictionary = _run_subprocess(godot_bin, pf_args, PREFLIGHT_TIMEOUT)
 		_results.append({"label": "preflight -x", "path": "res://scripts/preflight.gd", "ok": pf_result.get("ok", false), "exit": pf_result.get("exit", -1), "ms": pf_result.get("ms", 0), "cached": false})
 
 	# --- Cache aktualisieren (nur grüne Entry-Tests) ---
