@@ -1,8 +1,8 @@
 {
 	"anchor": {
-		"date": "2026-08-29 21:37:43 +0200",
-		"hash": "c7c507b1b44c5aee90125ab14ced063471d796d1",
-		"subject": "Flux â€” also â€” AUDIT-3-Provenance-Instrumente verankert:â€¦ â€” nach Devin"
+		"date": "2026-08-31 22:02:49 +0200",
+		"hash": "2626fc890f9b540010c30fc18c1ea9aeef528f66",
+		"subject": "Basher (15 files): Vier P0-Fixe + Byte-Drift-Gate Fix +â€¦ â€” nach Thinker"
 	},
 	"entries": [
 		{
@@ -9700,6 +9700,104 @@
 			"seq": 122,
 			"subject": "Bereinige CHANGELOG-Orphan-Einträge (6 Composites… [Analyse: Thinker] — nach Vannon",
 			"summary": "Ich zähle sechs Geister im Changelog, die nie einen Commit hatten. Kontext: der Changelog trug 115 Einträge, aber sechs davon verwiesen auf Composites, die keine Git-Historie kennt — Überreste abge..."
+		},
+		{
+			"a": 15,
+			"arc": "a57",
+			"c": 123,
+			"composite": "c123j45n2a15p55",
+			"data_changes": [
+				{
+					"deletions": 7201.0,
+					"file": ".doki/change_index.json",
+					"insertions": 7260.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_chain.json",
+					"insertions": 48.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 74.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/check.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 19.0,
+					"file": "scripts/doki/data/prompt_templates.json",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/doki_selfcheck.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/doki/orchestration/artifact_writer.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/doki/orchestration/commit_orchestrator.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/orchestration/flows/gate_flow.gd",
+					"insertions": 26.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 33.0
+				},
+				{
+					"deletions": 64.0,
+					"file": "scripts/doki/prompt/voice_composer.gd",
+					"insertions": 18.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/objects/planets/arrival/planet_arrival_resolver.gd",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/state/game_state.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/testing/save_load_roundtrip_test.gd",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 03:00:00",
+			"hash": "2626fc890f9b540010c30fc18c1ea9aeef528f66",
+			"j": 45,
+			"model_id": "claude-sonnet-4",
+			"mood": "neugierig",
+			"n": 2,
+			"narrator": "Basher",
+			"p": 55,
+			"p_id": 123,
+			"prev_hash": "dbf8a098c213deb2017e4e2131c3def48d23d0cc4d83d73c9c1641a3ae843b35",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Thinker",
+			"seq": 123,
+			"subject": "Basher (15 files): Vier P0-Fixe + Byte-Drift-Gate Fix +… — nach Thinker",
+			"summary": "git add. prepare. finish. commit. Das ist der Flow. Heute: sechs Fixes deployt. Status:"
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
@@ -9764,6 +9862,10 @@
 		},
 		{
 			"at_hash": "c7c507b1b44c5aee90125ab14ced063471d796d1",
+			"note": "Anker nach rebase/amend/force-push neu verankert."
+		},
+		{
+			"at_hash": "2626fc890f9b540010c30fc18c1ea9aeef528f66",
 			"note": "Anker nach rebase/amend/force-push neu verankert."
 		}
 	]

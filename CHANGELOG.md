@@ -2383,3 +2383,13 @@ Vier P0-Fixe + Byte-Drift-Gate Fix + save_load_roundtrip_test Fix + Prompt-Berei
 - scripts/objects/planets/arrival/planet_arrival_resolver.gd: Fehler behoben (F-603).
 - scripts/state/game_state.gd: Fehler behoben (F-065).
 - scripts/testing/save_load_roundtrip_test.gd: Fehler behoben (F-604).
+
+## 2026-08-27 04:00:00 — p124 · c124j10n4a8p117 · Vannon · sachlich
+
+**DOKI finalize Chain-Eintrag 123 — nach Basher**
+
+DOKI finalize Chain-Eintrag 123
+
+- .doki/change_index.json: Tooling erweitert (F-586).
+- .doki/narrative_chain.json: Tooling erweitert (F-587).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
