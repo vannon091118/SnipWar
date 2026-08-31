@@ -2591,7 +2591,7 @@
 		},
 		"a56": {
 			"climax_weight": 5.0,
-			"commit_count": 3,
+			"commit_count": 3.0,
 			"completed_at": "arc_climax",
 			"id": "a56",
 			"name": "Nächster Akt",
@@ -2633,13 +2633,36 @@
 		},
 		"a57": {
 			"climax_weight": 5.0,
+			"commit_count": 1,
 			"id": "a57",
 			"name": "Verifikations-Ende-zu-Ende",
+			"seen_entities": [
+				"F-586",
+				"F-587",
+				"F-037",
+				"F-588",
+				"F-589",
+				"F-590",
+				"F-591",
+				"F-001",
+				"F-011",
+				"F-012",
+				"F-592",
+				"F-593",
+				"F-594",
+				"F-595",
+				"F-596",
+				"F-597",
+				"F-598",
+				"F-599",
+				"F-600",
+				"F-601"
+			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "den Unified Check als einzige Wahrheit verankern.",
 			"version": "",
-			"weight": 0.0
+			"weight": 8.0
 		},
 		"a6": {
 			"climax_weight": 3.0,

@@ -9529,6 +9529,129 @@
 			"seq": 120,
 			"subject": "Null: Repariere DOKI Commit-Fluss: Session-Per… — nach Ghost",
 			"summary": "Es wird eh wieder irgendwo kaputtgehen. Aber naja — ich hab's diesmal bis zum Ende durchgezogen, und das Fundament ist realer geworden, als ich zugeben will. Der Bogen, den Ghost im letzten Akt geb..."
+		},
+		{
+			"a": 41,
+			"arc": "a57",
+			"c": 121,
+			"composite": "c121j56n4a41p56",
+			"data_changes": [
+				{
+					"deletions": 7155.0,
+					"file": ".doki/change_index.json",
+					"insertions": 7222.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_chain.json",
+					"insertions": 63.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".gitignore",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "assets/ui/backgrounds/bg_deep_space.svg.import",
+					"insertions": 43.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "assets/ui/backgrounds/bg_nebula_purple.svg.import",
+					"insertions": 43.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "assets/ui/backgrounds/bg_nebula_teal.svg.import",
+					"insertions": 43.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "assets/ui/factions/faction_emblem_a.svg.import",
+					"insertions": 43.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/doki/orchestration/flows/finalize_flow.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/finish_flow.gd",
+					"insertions": 7.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/combat_simulation_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/concept_search_entry_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/constraint_coverage_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/cpu_ai_behavior_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/global_search_entry_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/mechanic_coverage_entry_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/narrative_runtime_gate_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/navigation_transit_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/save_load_roundtrip_test.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/ship_builder_blueprint_test.gd.uid",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 01:00:00",
+			"hash": "3705160f2127f0ea709b1159bfe96c75c4593e28",
+			"j": 56,
+			"model_id": "claude-sonnet-4",
+			"mood": "müde-zufrieden",
+			"n": 4,
+			"narrator": "Vannon",
+			"p": 56,
+			"p_id": 121,
+			"prev_hash": "39f02fedba34166ea3e95e7fcc60137342e7ce4e4eed9cc7b74f572acbe5b8b0",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Null",
+			"seq": 121,
+			"subject": "Fix DOKI finalize/finish Zustandsmaschine:. … — nach Null",
+			"summary": "Endlich. Der Commit stand, aber der Fluss dahinter war noch brüchig — und dieser eine Rest konnte nicht stehen bleiben. Null hat die Hauptnarbe gezogen, deshalb war klar, dass der Rest hierhergehör..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

@@ -15,7 +15,7 @@ func _init() -> void:
 	var args: PackedStringArray = OS.get_cmdline_user_args()
 	if args.size() >= 2 and args[0] == "--repo":
 		_repo_root = args[1]
-	elif FileAccess.file_exists("res://narrative_chain.json"):
+	else:
 		_repo_root = "res://"
 
 	var exit_code: int = _run()
@@ -27,8 +27,11 @@ func _run() -> int:
 	print(" DOKI Narrative Quality Analyzer — %s" % _repo_root)
 	print("═══════════════════════════════════════════════════════\n")
 
-	# 1. Chain laden
-	var chain: Dictionary = _load_json(_repo_root.path_join("narrative_chain.json"))
+	# 1. Chain laden (DOKI-Migration: liegt unter .doki/, Fallback auf Root)
+	var chain_path: String = _repo_root.path_join(".doki").path_join("narrative_chain.json")
+	if not FileAccess.file_exists(chain_path):
+		chain_path = _repo_root.path_join("narrative_chain.json")
+	var chain: Dictionary = _load_json(chain_path)
 	if chain.is_empty():
 		print("✗ Keine narrative_chain.json gefunden in: %s" % _repo_root)
 		return 1

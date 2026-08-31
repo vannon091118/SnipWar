@@ -1026,6 +1026,33 @@
 			],
 			"p_id": 103.0
 		},
+		"3705160f2127f0ea709b1159bfe96c75c4593e28": {
+			"c": 121,
+			"composite": "c121j56n4a41p56",
+			"entities": [
+				"F-586",
+				"F-587",
+				"F-037",
+				"F-588",
+				"F-589",
+				"F-590",
+				"F-591",
+				"F-001",
+				"F-011",
+				"F-012",
+				"F-592",
+				"F-593",
+				"F-594",
+				"F-595",
+				"F-596",
+				"F-597",
+				"F-598",
+				"F-599",
+				"F-600",
+				"F-601"
+			],
+			"p_id": 121
+		},
 		"3a8ac091fc1b6ae5c795231d291a87c974dde55a": {
 			"c": 53.0,
 			"composite": "c53j53n14a12p18",
@@ -2995,7 +3022,7 @@
 			"p_id": 38.0
 		},
 		"f62ae4fae87effb3e8119da691c3c60790710de5": {
-			"c": 120,
+			"c": 120.0,
 			"composite": "c120j28n11a48p54",
 			"entities": [
 				"F-584",
@@ -3010,7 +3037,7 @@
 				"C-853",
 				"C-854"
 			],
-			"p_id": 120
+			"p_id": 120.0
 		},
 		"f6da54b78be26d34c9451041f8d0f20231003554": {
 			"c": 64.0,
@@ -32633,6 +32660,166 @@
 			"last_p": 120.0,
 			"name": "narrative_runtime_gate_test.gd",
 			"path": "scripts/testing/narrative_runtime_gate_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-586": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-586",
+			"last_p": 121.0,
+			"name": "change_index.json",
+			"path": ".doki/change_index.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-587": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-587",
+			"last_p": 121.0,
+			"name": "narrative_chain.json",
+			"path": ".doki/narrative_chain.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-588": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-588",
+			"last_p": 121.0,
+			"name": "bg_deep_space.svg.import",
+			"path": "assets/ui/backgrounds/bg_deep_space.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-589": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-589",
+			"last_p": 121.0,
+			"name": "bg_nebula_purple.svg.import",
+			"path": "assets/ui/backgrounds/bg_nebula_purple.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-590": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-590",
+			"last_p": 121.0,
+			"name": "bg_nebula_teal.svg.import",
+			"path": "assets/ui/backgrounds/bg_nebula_teal.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-591": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-591",
+			"last_p": 121.0,
+			"name": "faction_emblem_a.svg.import",
+			"path": "assets/ui/factions/faction_emblem_a.svg.import",
+			"status": "created",
+			"type": "file"
+		},
+		"F-592": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-592",
+			"last_p": 121.0,
+			"name": "combat_simulation_test.gd.uid",
+			"path": "scripts/testing/combat_simulation_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-593": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-593",
+			"last_p": 121.0,
+			"name": "concept_search_entry_test.gd.uid",
+			"path": "scripts/testing/concept_search_entry_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-594": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-594",
+			"last_p": 121.0,
+			"name": "constraint_coverage_test.gd.uid",
+			"path": "scripts/testing/constraint_coverage_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-595": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-595",
+			"last_p": 121.0,
+			"name": "cpu_ai_behavior_test.gd.uid",
+			"path": "scripts/testing/cpu_ai_behavior_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-596": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-596",
+			"last_p": 121.0,
+			"name": "global_search_entry_test.gd.uid",
+			"path": "scripts/testing/global_search_entry_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-597": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-597",
+			"last_p": 121.0,
+			"name": "mechanic_coverage_entry_test.gd.uid",
+			"path": "scripts/testing/mechanic_coverage_entry_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-598": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-598",
+			"last_p": 121.0,
+			"name": "narrative_runtime_gate_test.gd.uid",
+			"path": "scripts/testing/narrative_runtime_gate_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-599": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-599",
+			"last_p": 121.0,
+			"name": "navigation_transit_test.gd.uid",
+			"path": "scripts/testing/navigation_transit_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-600": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-600",
+			"last_p": 121.0,
+			"name": "save_load_roundtrip_test.gd.uid",
+			"path": "scripts/testing/save_load_roundtrip_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-601": {
+			"first_p": 121.0,
+			"history": [],
+			"id": "F-601",
+			"last_p": 121.0,
+			"name": "ship_builder_blueprint_test.gd.uid",
+			"path": "scripts/testing/ship_builder_blueprint_test.gd.uid",
 			"status": "created",
 			"type": "file"
 		}
