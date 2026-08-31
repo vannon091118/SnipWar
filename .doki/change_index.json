@@ -729,6 +729,29 @@
 			],
 			"p_id": 27.0
 		},
+		"2626fc890f9b540010c30fc18c1ea9aeef528f66": {
+			"c": 123.0,
+			"composite": "c123j45n2a15p55",
+			"entities": [
+				"F-586",
+				"F-587",
+				"F-002",
+				"F-602",
+				"F-001",
+				"F-445",
+				"F-017",
+				"F-009",
+				"F-010",
+				"F-013",
+				"F-181",
+				"F-016",
+				"F-603",
+				"F-065",
+				"F-604",
+				"C-1296"
+			],
+			"p_id": 123.0
+		},
 		"26d2624e9e1793ff8f535c38291ea6c641732d7d": {
 			"c": 84.0,
 			"composite": "c84j76n10a27p54",
@@ -1027,7 +1050,7 @@
 			"p_id": 103.0
 		},
 		"3705160f2127f0ea709b1159bfe96c75c4593e28": {
-			"c": 121,
+			"c": 121.0,
 			"composite": "c121j56n4a41p56",
 			"entities": [
 				"F-586",
@@ -1051,7 +1074,7 @@
 				"F-600",
 				"F-601"
 			],
-			"p_id": 121
+			"p_id": 121.0
 		},
 		"3a8ac091fc1b6ae5c795231d291a87c974dde55a": {
 			"c": 53.0,
@@ -11939,6 +11962,110 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1296": {
+			"first_p": 123.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 123.0
+				},
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 123.0
+				},
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 123.0
+				},
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 123.0
+				}
+			],
+			"id": "C-1296",
+			"last_p": 123.0,
+			"name": "AUTO_MANAGED",
+			"path": "scripts/doki/orchestration/flows/prepare_flow.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1297": {
+			"first_p": 125.0,
+			"history": [
+				{
+					"lines": [
+						30.0
+					],
+					"p_id": 125.0
+				},
+				{
+					"lines": [
+						30.0
+					],
+					"p_id": 125.0
+				}
+			],
+			"id": "C-1297",
+			"last_p": 125.0,
+			"name": "PREFLIGHT_LOCK",
+			"path": "scripts/check.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1298": {
+			"first_p": 125.0,
+			"history": [
+				{
+					"lines": [
+						397.0
+					],
+					"p_id": 125.0
+				},
+				{
+					"lines": [
+						397.0
+					],
+					"p_id": 125.0
+				}
+			],
+			"id": "C-1298",
+			"last_p": 125.0,
+			"name": "_exit",
+			"path": "scripts/check.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1299": {
+			"first_p": 125.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 125.0
+				},
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 125.0
+				}
+			],
+			"id": "C-1299",
+			"last_p": 125.0,
+			"name": "_PreflightLock",
+			"path": "scripts/preflight.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-130": {
 			"first_p": 36.0,
 			"history": [
@@ -11953,6 +12080,144 @@
 			"last_p": 36.0,
 			"name": "seqSteps",
 			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1300": {
+			"first_p": 125.0,
+			"history": [
+				{
+					"lines": [
+						233.0
+					],
+					"p_id": 125.0
+				},
+				{
+					"lines": [
+						233.0
+					],
+					"p_id": 125.0
+				}
+			],
+			"id": "C-1300",
+			"last_p": 125.0,
+			"name": "_preflight_exit",
+			"path": "scripts/preflight.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1301": {
+			"first_p": 125.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 125.0
+				},
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 125.0
+				}
+			],
+			"id": "C-1301",
+			"last_p": 125.0,
+			"name": "LOCK_PATH",
+			"path": "scripts/preflight_lock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1302": {
+			"first_p": 125.0,
+			"history": [
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 125.0
+				},
+				{
+					"lines": [
+						25.0
+					],
+					"p_id": 125.0
+				}
+			],
+			"id": "C-1302",
+			"last_p": 125.0,
+			"name": "STALE_SECONDS",
+			"path": "scripts/preflight_lock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1303": {
+			"first_p": 125.0,
+			"history": [
+				{
+					"lines": [
+						26.0
+					],
+					"p_id": 125.0
+				},
+				{
+					"lines": [
+						26.0
+					],
+					"p_id": 125.0
+				}
+			],
+			"id": "C-1303",
+			"last_p": 125.0,
+			"name": "POLL_MS",
+			"path": "scripts/preflight_lock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1304": {
+			"first_p": 125.0,
+			"history": [
+				{
+					"lines": [
+						28.0
+					],
+					"p_id": 125.0
+				},
+				{
+					"lines": [
+						28.0
+					],
+					"p_id": 125.0
+				}
+			],
+			"id": "C-1304",
+			"last_p": 125.0,
+			"name": "MAX_WAIT_SECONDS",
+			"path": "scripts/preflight_lock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1305": {
+			"first_p": 125.0,
+			"history": [
+				{
+					"lines": [
+						30.0
+					],
+					"p_id": 125.0
+				},
+				{
+					"lines": [
+						30.0
+					],
+					"p_id": 125.0
+				}
+			],
+			"id": "C-1305",
+			"last_p": 125.0,
+			"name": "_PREFLIGHT_LOCK",
+			"path": "scripts/testing/test_all.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -32820,6 +33085,46 @@
 			"last_p": 121.0,
 			"name": "ship_builder_blueprint_test.gd.uid",
 			"path": "scripts/testing/ship_builder_blueprint_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-602": {
+			"first_p": 123.0,
+			"history": [],
+			"id": "F-602",
+			"last_p": 123.0,
+			"name": "check.gd",
+			"path": "scripts/check.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-603": {
+			"first_p": 123.0,
+			"history": [],
+			"id": "F-603",
+			"last_p": 123.0,
+			"name": "planet_arrival_resolver.gd",
+			"path": "scripts/objects/planets/arrival/planet_arrival_resolver.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-604": {
+			"first_p": 123.0,
+			"history": [],
+			"id": "F-604",
+			"last_p": 123.0,
+			"name": "save_load_roundtrip_test.gd",
+			"path": "scripts/testing/save_load_roundtrip_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-605": {
+			"first_p": 125.0,
+			"history": [],
+			"id": "F-605",
+			"last_p": 125.0,
+			"name": "preflight_lock.gd",
+			"path": "scripts/preflight_lock.gd",
 			"status": "created",
 			"type": "file"
 		}

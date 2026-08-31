@@ -549,9 +549,8 @@ func _test_prompt_voice_lived() -> void:
 	# 4. Prompt lebt die Stimme: Beispiel + Mood-Ausdruck + Kalibrierung + Anti-Naming
 	var ctx: Dictionary = _fixture_voice_ctx(catalog, "Buffy", "sarkastisch", "CODE")
 	var sys: String = str(composer.build_prompts(ctx)["system"])
-	_expect("voice-lived: Stil-Beispiel im Prompt", sys.contains("SO SCHREIBST DU") and sys.contains(str(catalog.by_name("Buffy").get("style_sample", ""))))
-	_expect("voice-lived: Mood-Ausdruck statt nur Name", sys.contains("SO LEBST DU DEN MOOD") and sys.contains("passiv-aggressiv"))
-	_expect("voice-lived: Kategorie-Kalibrierung im Prompt", sys.contains("KALIBRIERUNG (Kategorie CODE)"))
+	_expect("voice-lived: Mood-Ausdruck im Prompt", sys.contains("MOOD-AUSDRUCK") and sys.contains("passiv-aggressiv"))
+	_expect("voice-lived: Kategorie-Kalibrierung im Prompt", sys.contains("KALIBRIERUNG (CODE)"))
 	_expect("voice-lived: Anti-Naming-Regel (NIE Mood beim Namen)", sys.contains("(NIE)"))
 
 	# 5. Doku-Arbeit dämpft Euphorie: triumphierender Mood + DOKU-Kategorie → nüchtern

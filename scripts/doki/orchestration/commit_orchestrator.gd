@@ -149,7 +149,7 @@ func init_flow(seed_last: int = 0) -> Dictionary:
 			file.close()
 	# Die Doku-Artefakte + Chain sofort stagen — sie reisen mit dem ersten
 	# DOKI-Commit (und Check 8 + Gate bleiben sauber).
-	git.stage(["CHANGELOG.md", "change_index.json", "narrative_chain.json"])
+	git.stage(["CHANGELOG.md", ".doki/change_index.json", ".doki/narrative_chain.json"])
 	session_store.reset()
 	return {"ok": true, "anchor": chain.get("anchor", {}), "genesis_date": chain.get("genesis_date", ""), "seeded": seeded}
 

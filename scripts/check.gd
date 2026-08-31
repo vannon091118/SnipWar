@@ -282,6 +282,8 @@ func _run_tests(args: Dictionary) -> void:
 		"combat": "combat",
 		"navigation": "navigation",
 		"fleet": "navigation",
+		"world": "world",
+		"sectors": "sector",
 		"doki": "chain",
 		"preflight": "constraint",
 		"mcp": "mcp",

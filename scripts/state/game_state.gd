@@ -1197,7 +1197,7 @@ func validate() -> PackedStringArray:
 	var errors := PackedStringArray()
 	for p_id in faction_domain.ownership:
 		var faction: StringName = faction_domain.ownership[p_id]
-		if faction != FACTION_PLAYER and faction != FACTION_CPU and faction != FACTION_NEUTRAL:
+		if faction != FACTION_PLAYER and faction != FACTION_CPU and faction != FACTION_NEUTRAL and faction != FACTION_UNINHABITED:
 			errors.append("Invalid faction for planet %s: %s" % [p_id, faction])
 	return errors
 

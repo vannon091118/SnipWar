@@ -56,7 +56,8 @@ static func simulate_ship_arrival(planet: Planet, arriving_fleet: FleetSnapshot,
 		return out
 	var resolved_role: StringName = ship_role if not String(ship_role).is_empty() else arriving_fleet.mission_role
 	if resolved_role == &"colony":
-		if planet.get_faction() == GameState.FACTION_NEUTRAL:
+		var planet_faction: StringName = planet.get_faction()
+		if planet_faction == GameState.FACTION_NEUTRAL or planet_faction == GameState.FACTION_UNINHABITED:
 			var state: Node = GameStateAccess.autoload(planet)
 			if state != null and state.has_scanned_planet(attacking_faction, planet.planet_id):
 				out["result"] = Planet.ARRIVAL_SETTLED
@@ -145,7 +146,8 @@ static func _resolve_ship_vs_fleet(planet: Planet, arriving_fleet: FleetSnapshot
 
 static func _resolve_colony_ship_arrival(planet: Planet, arriving_fleet: FleetSnapshot, attacking_faction: StringName, out: Dictionary) -> Dictionary:
 	var state: Node = GameStateAccess.autoload(planet)
-	if planet.get_faction() != GameState.FACTION_NEUTRAL or state == null or not state.has_scanned_planet(attacking_faction, planet.planet_id):
+	var colony_faction: StringName = planet.get_faction()
+	if (colony_faction != GameState.FACTION_NEUTRAL and colony_faction != GameState.FACTION_UNINHABITED) or state == null or not state.has_scanned_planet(attacking_faction, planet.planet_id):
 		out["result"] = Planet.ARRIVAL_REJECTED
 		return out
 	var settlers: int = maxi(arriving_fleet.ships.size() * 10, 1)
@@ -236,7 +238,8 @@ static func _resolve_colony(planet: Planet, source_faction: StringName, amount: 
 	var incoming: int = maxi(amount, 0)
 	if incoming <= 0 or source_faction.is_empty() or source_faction == GameState.FACTION_NEUTRAL:
 		return Planet.ARRIVAL_REJECTED
-	if planet.get_faction() != GameState.FACTION_NEUTRAL:
+	var target_faction: StringName = planet.get_faction()
+	if target_faction != GameState.FACTION_NEUTRAL and target_faction != GameState.FACTION_UNINHABITED:
 		return Planet.ARRIVAL_REJECTED
 	planet.set_faction(source_faction)
 	planet.register_workers(incoming)

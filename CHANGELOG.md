@@ -2287,3 +2287,99 @@ Sandbox-Determinismus korrigieren: exakter DOKI-XorShift128-Port, Reference-Snap
 - scripts/ui/vault_bar.gd: Tooling erweitert (F-470).
 - scripts/ui/world/planet_world_ui.gd: Tooling erweitert (F-421).
 - task_plan.md: Tooling erweitert (F-388).
+
+## 2026-08-27 03:00:00 — p123 · c123j12n11a20p101 · Null · triumphierend
+
+**Null: Vier P0-Fixe: FACTION_UNINHABITED in… — nach Thinker**
+
+Vier P0-Fixe: FACTION_UNINHABITED in validate+colony, DOKI .doki/ staging, check.gd world/sectors mappings. Prompt-Bereinigung: Beispielsätze entfernt, explizit→implizit, AUFGABE komprimiert
+
+- scripts/check.gd: Tooling erweitert (F-602).
+- scripts/doki/data/prompt_templates.json: Tooling erweitert (F-445).
+- scripts/doki/doki_selfcheck.gd: Tooling erweitert (F-017).
+- scripts/doki/orchestration/artifact_writer.gd: Tooling erweitert (F-009).
+- scripts/doki/orchestration/commit_orchestrator.gd: Tooling erweitert (F-010).
+- scripts/doki/prompt/voice_composer.gd: Tooling erweitert (F-016).
+- scripts/objects/planets/arrival/planet_arrival_resolver.gd: Tooling erweitert (F-603).
+- scripts/state/game_state.gd: Tooling erweitert (F-065).
+
+## 2026-08-27 03:00:00 — p123 · c123j64n4a10p118 · Vannon · selbstironisch
+
+**Vier P0-Fixe + Byte-Drift-Gate. … — nach Thinker**
+
+Vier P0-Fixe + Byte-Drift-Gate Fix: auto-managed Dateien vom Digest ausschliessen. Prompt-Bereinigung: Beispiels→implizit, AUFGABE komprimiert
+
+- .doki/change_index.json: Fehler behoben (F-586).
+- CHANGELOG.md: Fehler behoben (F-002).
+- scripts/check.gd: Fehler behoben (F-602).
+- scripts/doki/data/prompt_templates.json: Fehler behoben (F-445).
+- scripts/doki/doki_selfcheck.gd: Fehler behoben (F-017).
+- scripts/doki/orchestration/artifact_writer.gd: Fehler behoben (F-009).
+- scripts/doki/orchestration/commit_orchestrator.gd: Fehler behoben (F-010).
+- scripts/doki/orchestration/flows/gate_flow.gd: Fehler behoben (F-013).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Fehler behoben (F-181).
+- scripts/doki/prompt/voice_composer.gd: Fehler behoben (F-016).
+- scripts/objects/planets/arrival/planet_arrival_resolver.gd: Fehler behoben (F-603).
+- scripts/state/game_state.gd: Fehler behoben (F-065).
+
+## 2026-08-27 03:00:00 — p123 · c123j52n5a40p77 · Squizzle · triumphierend
+
+**Squizzles Fall: Vier P0-Fixe + Byte-Drift-Gate Fix +… — nach Thinker**
+
+Vier P0-Fixe + Byte-Drift-Gate Fix + save_load_roundtrip_test Fix
+
+- .doki/change_index.json: Fehler behoben (F-586).
+- CHANGELOG.md: Fehler behoben (F-002).
+- scripts/check.gd: Fehler behoben (F-602).
+- scripts/doki/data/prompt_templates.json: Fehler behoben (F-445).
+- scripts/doki/doki_selfcheck.gd: Fehler behoben (F-017).
+- scripts/doki/orchestration/artifact_writer.gd: Fehler behoben (F-009).
+- scripts/doki/orchestration/commit_orchestrator.gd: Fehler behoben (F-010).
+- scripts/doki/orchestration/flows/gate_flow.gd: Fehler behoben (F-013).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Fehler behoben (F-181).
+- scripts/doki/prompt/voice_composer.gd: Fehler behoben (F-016).
+- scripts/objects/planets/arrival/planet_arrival_resolver.gd: Fehler behoben (F-603).
+- scripts/state/game_state.gd: Fehler behoben (F-065).
+- scripts/testing/save_load_roundtrip_test.gd: Fehler behoben (F-604).
+
+## 2026-08-27 03:00:00 — p123 · c123j83n10a4p16 · Glitch · triumphierend
+
+**Glitch ermittelt: Vier P0-Fixe + Byte-Drift-Gate Fix +… — nach Thinker**
+
+Vier P0-Fixe + Byte-Drift-Gate Fix + save_load_roundtrip_test Fix + Prompt-Bereinigung
+
+- .doki/change_index.json: Fehler behoben (F-586).
+- CHANGELOG.md: Fehler behoben (F-002).
+- scripts/check.gd: Fehler behoben (F-602).
+- scripts/doki/data/prompt_templates.json: Fehler behoben (F-445).
+- scripts/doki/doki_selfcheck.gd: Fehler behoben (F-017).
+- scripts/doki/orchestration/artifact_writer.gd: Fehler behoben (F-009).
+- scripts/doki/orchestration/commit_orchestrator.gd: Fehler behoben (F-010).
+- scripts/doki/orchestration/flows/gate_flow.gd: Fehler behoben (F-013).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Fehler behoben (F-181).
+- scripts/doki/prompt/voice_composer.gd: Fehler behoben (F-016).
+- scripts/objects/planets/arrival/planet_arrival_resolver.gd: Fehler behoben (F-603).
+- scripts/state/game_state.gd: Fehler behoben (F-065).
+- scripts/testing/save_load_roundtrip_test.gd: Fehler behoben (F-604).
+
+## 2026-08-27 03:00:00 — p123 · c123j45n2a15p55 · Basher · neugierig
+
+**Basher (15 files): Vier P0-Fixe + Byte-Drift-Gate Fix +… — nach Thinker**
+
+Vier P0-Fixe + Byte-Drift-Gate Fix + save_load_roundtrip_test Fix + Prompt-Bereinigung
+
+- .doki/change_index.json: Fehler behoben (F-586).
+- .doki/narrative_chain.json: Fehler behoben (F-587).
+- CHANGELOG.md: Fehler behoben (F-002).
+- scripts/check.gd: Fehler behoben (F-602).
+- scripts/doki/data/arcs.json: Fehler behoben (F-001).
+- scripts/doki/data/prompt_templates.json: Fehler behoben (F-445).
+- scripts/doki/doki_selfcheck.gd: Fehler behoben (F-017).
+- scripts/doki/orchestration/artifact_writer.gd: Fehler behoben (F-009).
+- scripts/doki/orchestration/commit_orchestrator.gd: Fehler behoben (F-010).
+- scripts/doki/orchestration/flows/gate_flow.gd: Fehler behoben (F-013).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Fehler behoben (F-181).
+- scripts/doki/prompt/voice_composer.gd: Fehler behoben (F-016).
+- scripts/objects/planets/arrival/planet_arrival_resolver.gd: Fehler behoben (F-603).
+- scripts/state/game_state.gd: Fehler behoben (F-065).
+- scripts/testing/save_load_roundtrip_test.gd: Fehler behoben (F-604).
