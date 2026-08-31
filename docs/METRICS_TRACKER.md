@@ -1,6 +1,6 @@
 # 🔢 NARRATIVE METRICS TRACKER
 > Automatisch aktualisiert nach jedem DOKI-Commit.
-> Letzte Aktualisierung: `2026-08-31T02:38:19` | Chain-Eintrag: `c119` | Arc: `a56`
+> Letzte Aktualisierung: `2026-08-31T04:02:02` | Chain-Eintrag: `c119` | Arc: `a56`
 
 ---
 
@@ -22,15 +22,15 @@
 | 🟢 Sage | 15 | 0 | 14 | 1 | **+4.6** |
 | 🟢 Devin | 9 | 0 | 9 | 0 | **+4.5** |
 | 🟢 Squizzle | 9 | 0 | 9 | 0 | **+4.5** |
-| 🟢 Spark | 8 | 0 | 8 | 0 | **+4.0** |
 | 🟢 Buffy | 11 | 1 | 10 | 0 | **+3.8** |
+| 🟢 Spark | 7 | 0 | 7 | 0 | **+3.5** |
 | 🟢 Basher | 9 | 1 | 8 | 0 | **+2.8** |
 | 🟢 Argos | 10 | 0 | 9 | 1 | **+2.1** |
 | 🟢 Glitch | 4 | 0 | 4 | 0 | **+2.0** |
 | 🟢 Null | 7 | 1 | 6 | 0 | **+1.8** |
 | 🟢 Echo | 3 | 0 | 3 | 0 | **+1.5** |
+| 🟢 Ghost | 8 | 0 | 7 | 1 | **+1.1** |
 | 🟡 Vannon | 11 | 1 | 9 | 1 | **+0.9** |
-| 🟡 Ghost | 7 | 0 | 6 | 1 | **+0.6** |
 | 🟡 Flux | 7 | 0 | 6 | 1 | **+0.6** |
 | 🔴 Thinker | 9 | 2 | 5 | 2 | **-4.7** |
 
@@ -40,9 +40,9 @@
 
 | Mood | Anzahl | % |
 |------|--------|---|
-| trocken | 15 | 13% |
+| trocken | 16 | 13% |
 | triumphierend | 15 | 13% |
-| alarmiert | 14 | 12% |
+| alarmiert | 13 | 11% |
 | neugierig | 13 | 11% |
 | erschöpft | 12 | 10% |
 | müde-zufrieden | 11 | 9% |
