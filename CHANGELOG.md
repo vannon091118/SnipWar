@@ -2383,3 +2383,22 @@ Vier P0-Fixe + Byte-Drift-Gate Fix + save_load_roundtrip_test Fix + Prompt-Berei
 - scripts/objects/planets/arrival/planet_arrival_resolver.gd: Fehler behoben (F-603).
 - scripts/state/game_state.gd: Fehler behoben (F-065).
 - scripts/testing/save_load_roundtrip_test.gd: Fehler behoben (F-604).
+
+## 2026-08-27 04:00:00 — p124 · c124j8n7a2p60 · Argos · trocken
+
+**Argos: 1 Dateien — Fix AssetLibrary-Texturscan: .… — nach Basher**
+
+Fix AssetLibrary-Texturscan: .import/.uid-Sidecars überspringen statt als Ressource zu laden — eliminiert 200+ 'No loader found'-Fehler und Magenta-Pool-Verschmutzung beim World-Boot (docs/ui_flow)
+
+- scripts/config/asset_library.gd: Dokumentation aktualisiert (F-471).
+
+## 2026-08-27 04:00:00 — p124 · c124j39n3a43p20 · Thinker · warm
+
+**Fix AssetLibrary-Texturscan: .import/.uid-Sidecars… [Analyse: Thinker] — nach Basher**
+
+Fix AssetLibrary-Texturscan: .import/.uid-Sidecars überspringen statt laden — eliminiert 200+ No-loader-Fehler und Magenta-Pool-Verschmutzung; korrigiere ship_builder_blueprint_test auf reale Katalog-ID hull_t1 (vorbestehender Testfehler blockierte das Gate)
+
+- .doki/change_index.json: Fehler behoben (F-586).
+- CHANGELOG.md: Fehler behoben (F-002).
+- scripts/config/asset_library.gd: Fehler behoben (F-471).
+- scripts/testing/ship_builder_blueprint_test.gd: Fehler behoben (F-606).

@@ -19,6 +19,11 @@ static func _scan_textures(path: String) -> Array[Texture2D]:
 			# Skip hidden files
 			file_name = dir.get_next()
 			continue
+		if file_name.ends_with(".import") or file_name.ends_with(".uid"):
+			# Skip Godot import-metadata sidecars (.svg.import, .uid) —
+			# they are not resources and produce "No loader found" errors.
+			file_name = dir.get_next()
+			continue
 		var full_path = path.path_join(file_name)
 		if dir.current_is_dir():
 			textures.append_array(_scan_textures(full_path))
