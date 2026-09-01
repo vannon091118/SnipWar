@@ -74,11 +74,13 @@ func run() -> Dictionary:
 	var staged: Array = _without_auto_managed(full_staged)
 	var snapshot: Array = _without_auto_managed(session.get("file_snapshot", []))
 
-	# Scope-Gate: der MACHINE-resolvable Verification-Scope (über den VOLLEN
-	# Staged-Diff, der auch die Auto-Managed-Artefakte enthält — exakt wie im
-	# prepare) muss dem prepared Scope entsprechen. Unknown/leerer Impact
-	# blockt fail-closed.
-	var scope: Dictionary = _resolve_scope(full_staged)
+	# Scope-Gate: der MACHINE-resolvable Verification-Scope (über den
+	# auto-managed-gefilterten Staged-Diff — exakt wie im prepare, wo die
+	# finalize-Artefakte noch NICHT gestaged sind) muss dem prepared Scope
+	# entsprechen. Unknown/leerer Impact blockt fail-closed.
+	# (F-606-Fortsetzung: ohne den Filter driftet der Scope, sobald finish die
+	# Artefakte staged — doki-Contract constraints kommen hinzu ≠ prepare-Scope.)
+	var scope: Dictionary = _resolve_scope(staged)
 	if not bool(scope.get("ok", false)):
 		return {"ok": false, "error": "Scope-Auflösung fehlgeschlagen: %s — Impact-Unknown/leer darf nie grün werden." % str(scope.get("error", "unresolved_impact"))}
 	var prepared_scope: Array = session.get("impact", {}).get("constraints", []) if session.get("impact", {}) is Dictionary else []

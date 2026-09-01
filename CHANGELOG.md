@@ -2402,3 +2402,26 @@ Fix AssetLibrary-Texturscan: .import/.uid-Sidecars überspringen statt laden —
 - CHANGELOG.md: Fehler behoben (F-002).
 - scripts/config/asset_library.gd: Fehler behoben (F-471).
 - scripts/testing/ship_builder_blueprint_test.gd: Fehler behoben (F-606).
+
+## 2026-08-27 05:00:00 — p125 · c125j7n8a46p10 · Ghost · alarmiert
+
+**Ghost verzeichnet: Preflight-Mutex TASK-015: preflight_lock.gd mit… — nach Thinker**
+
+Preflight-Mutex TASK-015: preflight_lock.gd mit PID-Liveness-Stale-Erkennung (toter Holder wird sofort übernommen statt 20-min-Einfrieren); DOKI-Gate/Prepare-Flow-Härtung, Hook-Sicherung (reject-only Codebuff-Header, DOKI-only Commit-Prompting), AgentGate-Doku — Takeover-Slice der zuvor durch Chain-Lücke blockierten Session
+
+- .doki/change_index.json: Dokumentation aktualisiert (F-586).
+- .doki/narrative_chain.json: Dokumentation aktualisiert (F-587).
+- .githooks/commit-msg: Dokumentation aktualisiert (F-584).
+- .githooks/post-commit: Dokumentation aktualisiert (F-333).
+- AGENTS.md: Dokumentation aktualisiert (F-019).
+- docs/FINDINGS.md: Dokumentation aktualisiert (F-046).
+- scripts/check.gd: Dokumentation aktualisiert (F-602).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+- scripts/doki/doki-commit.sh: Dokumentation aktualisiert (F-607).
+- scripts/doki/orchestration/flows/gate_flow.gd: Dokumentation aktualisiert (F-013).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Dokumentation aktualisiert (F-181).
+- scripts/doki/orchestration/git_helper.gd: Dokumentation aktualisiert (F-336).
+- scripts/preflight.gd: Dokumentation aktualisiert (F-343).
+- scripts/preflight_lock.gd: Dokumentation aktualisiert (F-605).
+- scripts/preflight_lock.gd.uid: Dokumentation aktualisiert (F-608).
+- scripts/testing/test_all.gd: Dokumentation aktualisiert (F-384).

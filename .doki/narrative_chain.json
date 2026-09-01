@@ -9798,6 +9798,49 @@
 			"seq": 123,
 			"subject": "Basher (15 files): Vier P0-Fixe + Byte-Drift-Gate Fix +… — nach Thinker",
 			"summary": "git add. prepare. finish. commit. Das ist der Flow. Heute: sechs Fixes deployt. Status:"
+		},
+		{
+			"a": 43,
+			"arc": "a57",
+			"c": 124,
+			"composite": "c124j39n3a43p20",
+			"data_changes": [
+				{
+					"deletions": 7278.0,
+					"file": ".doki/change_index.json",
+					"insertions": 7278.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/config/asset_library.gd",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/testing/ship_builder_blueprint_test.gd",
+					"insertions": 1.0
+				}
+			],
+			"date": "2026-08-27 04:00:00",
+			"hash": "31fcfee62efea134d056cf2841ff4ee02b193f60",
+			"j": 39,
+			"model_id": "claude-sonnet-4",
+			"mood": "warm",
+			"n": 3,
+			"narrator": "Thinker",
+			"p": 20,
+			"p_id": 124,
+			"prev_hash": "ea914cc073e7f4b725db25d389bb082ce4e15c6cf1dc09935b592f1890f3c358",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Basher",
+			"seq": 124,
+			"subject": "Fix AssetLibrary-Texturscan: .import/.uid-Sidecars… [Analyse: Thinker] — nach Basher",
+			"summary": "Kontext: Der Weltstart hat zweihundert Fehlermeldungen produziert, bevor auch nur ein Planet gerendert war. asset_library.gd hat beim Textur-Scan jede Datei im Verzeichnis geladen — auch die .impor..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

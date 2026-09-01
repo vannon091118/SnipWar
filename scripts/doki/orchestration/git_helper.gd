@@ -201,3 +201,24 @@ func is_rebase_in_progress() -> bool:
 		return true
 	var r2: Dictionary = run(["rev-parse", "--git-path", "rebase-apply"])
 	return r2["ok"] and FileAccess.file_exists(r2["stdout"].strip_edges())
+
+
+## Nicht-ignorierte untracked Dateien (nicht `!!`).
+func untracked_files() -> Array:
+	var r: Dictionary = run(["status", "--porcelain"])
+	var files: Array = []
+	if not r["ok"]:
+		return files
+	for line in str(r["stdout"]).split("\n"):
+		var l: String = line.strip_edges()
+		if l.is_empty():
+			continue
+		if l.begins_with("?? "):
+			files.append(l.substr(3))
+	return files
+
+
+## Aktueller Branch-Name (fuer `git push origin <branch>`).
+func current_branch() -> String:
+	var r: Dictionary = run(["rev-parse", "--abbrev-ref", "HEAD"])
+	return r["stdout"].strip_edges() if r["ok"] else ""

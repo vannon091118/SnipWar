@@ -30,11 +30,13 @@ extends SceneTree
 const DEFAULT_TIMEOUT := 0
 const PREFLIGHT_TIMEOUT := 0
 const CACHE_DIR := "user://mcp_evidence/test_cache"
+const _PREFLIGHT_LOCK := preload("res://scripts/preflight_lock.gd")
 
 
 var _results: Array[Dictionary] = []
 var _frame: int = 0
 var _ran: bool = false
+var _lock_token: String = ""
 
 
 func _process(_delta: float) -> bool:
@@ -67,7 +69,18 @@ func _run_all() -> void:
 		timeout = 0
 	var use_cache: bool = OS.get_environment("TEST_ALL_NO_CACHE") != "1"
 	var deterministic: bool = OS.get_environment("TEST_ALL_DETERMINISTIC") == "1"
-	
+
+	# ─── Preflight-Mutex (TASK-015): NUR EIN Lauf gleichzeitig ──────────
+	if OS.get_environment("PREFLIGHT_LOCK_HELD") != "1":
+		var lock_res: Dictionary = _PREFLIGHT_LOCK.acquire_blocking("test_all.gd")
+		if not bool(lock_res.get("ok", false)):
+			printerr("[test_all] FATAL: %s" % str(lock_res.get("error", "preflight-lock fehlgeschlagen")))
+			_exit(1)
+			return
+		_lock_token = str(lock_res.get("token", ""))
+	else:
+		print("[preflight-lock] von übergeordnetem Runner gehalten — skip acquire")
+
 	if deterministic:
 		print("Deterministic mode: ENABLED (PREFLIGHT_LAYOUT_SEED=424242)")
 		OS.set_environment("PREFLIGHT_LAYOUT_SEED", "424242")
@@ -108,7 +121,10 @@ func _run_all() -> void:
 		if deterministic:
 			pf_args.push_back("--fixed-fps")
 			pf_args.push_back("60")
+		# Subprozess erbt das Lock-Flag: der Child-Preflight acquiriert NICHT erneut.
+		OS.set_environment("PREFLIGHT_LOCK_HELD", "1")
 		var pf_result: Dictionary = _run_subprocess(godot_bin, pf_args, PREFLIGHT_TIMEOUT)
+		OS.set_environment("PREFLIGHT_LOCK_HELD", "")
 		_results.append({"label": "preflight -x", "path": "res://scripts/preflight.gd", "ok": pf_result.get("ok", false), "exit": pf_result.get("exit", -1), "ms": pf_result.get("ms", 0), "cached": false})
 
 	# --- Cache aktualisieren (nur grüne Entry-Tests) ---
@@ -299,4 +315,6 @@ func _exit(code: int) -> void:
 		print("\nAll tests passed.")
 	else:
 		print("\nSome tests FAILED.")
+	_PREFLIGHT_LOCK.release(_lock_token)
+	_lock_token = ""
 	quit(code)

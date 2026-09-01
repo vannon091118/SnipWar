@@ -26,10 +26,16 @@ run_godot() {
     "$GODOT_BIN" --headless --path . --script "$script" "$@"
 }
 
+# Wenn der DOKI-Wrapper aktiv ist, fuehrt dieser finalize kontrolliert aus.
+# Doppeltes Finalize waere ein Fehler; daher hier skippen.
+if [ "${DOKI_WRAPPER_ACTIVE:-}" = "1" ]; then
+    echo "=== post-commit: DOKI finalize (SKIP — Wrapper aktiv) ==="
+    exit 0
+fi
+
 echo "=== post-commit: DOKI finalize ==="
 run_godot "res://scripts/doki/doki.gd" -- finalize || {
     echo "ERROR: DOKI finalize failed (non-blocking, but push may be affected)" >&2
-    # Non-blocking: don't exit 1, just log the error
 }
 
 echo "=== post-commit: DOKI finalize completed ==="

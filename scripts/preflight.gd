@@ -11,9 +11,11 @@ const _V2Ctx := preload("res://scripts/preflight_v2/v2_context.gd")
 const _V2Fixture := preload("res://scripts/preflight_v2/v2_fixture.gd")
 const _Scanner := preload("res://scripts/preflight_v2/constraint_scanner.gd")
 const _CodeIndex := preload("res://scripts/preflight_v2/preflight_code_index.gd")
+const _PreflightLock := preload("res://scripts/preflight_lock.gd")
 
 # Built from scanner registry at startup; used by _is_pure() for every constraint.
 var _registry: Array[Dictionary] = []
+var _lock_token: String = ""
 
 # Constraints that corrupt the scene state and require a full re-boot after them.
 const FULL_REBOOT_IDS: Array[String] = ["save_game_roundtrip", "context_handover"]
@@ -33,6 +35,19 @@ func _init() -> void:
 		quit(0)
 		return
 
+	# ─── Preflight-Mutex (TASK-015): NUR EIN Lauf gleichzeitig ────────────
+	# Wenn ein übergeordneter Runner (check.gd / test_all.gd) das Lock hält
+	# (ENV-Flag), acquiriert der Subprozess NICHT erneut (Deadlock-Schutz).
+	if OS.get_environment("PREFLIGHT_LOCK_HELD") != "1":
+		var lock_res: Dictionary = _PreflightLock.acquire_blocking("preflight.gd")
+		if not bool(lock_res.get("ok", false)):
+			printerr("[preflight-v2] FATAL: %s" % str(lock_res.get("error", "preflight-lock fehlgeschlagen")))
+			quit(1)
+			return
+		_lock_token = str(lock_res.get("token", ""))
+	else:
+		print("[preflight-lock] von übergeordnetem Runner gehalten — skip acquire")
+
 	var ctx = _V2Ctx.new(self)
 	ctx.verbose = args.get("verbose", false)
 	ctx.fail_fast = args.get("fail_fast", false)
@@ -44,14 +59,14 @@ func _init() -> void:
 	if watchdog_seconds > 0.0:
 		create_timer(watchdog_seconds).timeout.connect(func() -> void:
 			print("\n[preflight-v2] ABORT: watchdog timeout (%ds)" % int(watchdog_seconds))
-			quit(124)
+			_preflight_exit(124)
 		)
 
 	_registry = _Scanner.new().scan()
 	var registry: Array[Dictionary] = _registry
 	if registry.is_empty():
 		print("[preflight-v2] FATAL: No constraints discovered from preflight/ directory")
-		quit(1)
+		_preflight_exit(1)
 		return
 
 	var filter_query: String = args.get("filter", "")
@@ -64,7 +79,7 @@ func _init() -> void:
 		var scope: Dictionary = _resolve_scope(scope_spec, registry)
 		if not scope["ok"]:
 			print("[preflight-v2] FATAL: Ungültiger Verification-Scope — %s" % str(scope["error"]))
-			quit(1)
+			_preflight_exit(1)
 			return
 		for entry in registry:
 			if (scope["ids"] as Array).has(String(entry["id"])):
@@ -87,7 +102,7 @@ func _init() -> void:
 
 	if pipeline.is_empty():
 		print("[preflight-v2] Warning: No constraints matched filter: '%s'" % filter_query)
-		quit(0)
+		_preflight_exit(0)
 		return
 
 	# --- Split into phases ---
@@ -153,7 +168,7 @@ func _init() -> void:
 			_print_summary(ctx, pipeline.size(), constraints_passed, constraints_failed,
 				(Time.get_ticks_usec() - suite_start_usec) / 1000.0)
 			await fixture.cleanup()
-			quit(1)
+			_preflight_exit(1)
 			return
 
 		# Wire up ctx references from V2Fixture
@@ -213,9 +228,17 @@ func _init() -> void:
 		_write_mcp_json(mcp_json_path, ctx, constraints_passed, constraints_failed, total_ms, pipeline.size())
 
 	if ctx.failure_count > 0 or constraints_failed > 0:
-		quit(1)
+		_preflight_exit(1)
 	else:
-		quit(0)
+		_preflight_exit(0)
+
+
+## Central exit: gibt das Preflight-Lock frei (no-op ohne Token) und beendet.
+func _preflight_exit(code: int) -> void:
+	_PreflightLock.release(_lock_token)
+	_lock_token = ""
+	quit(code)
+	return
 
 
 # --- Runner ---

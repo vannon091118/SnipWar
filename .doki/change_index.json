@@ -988,6 +988,17 @@
 			],
 			"p_id": 54
 		},
+		"31fcfee62efea134d056cf2841ff4ee02b193f60": {
+			"c": 124,
+			"composite": "c124j39n3a43p20",
+			"entities": [
+				"F-586",
+				"F-002",
+				"F-471",
+				"F-606"
+			],
+			"p_id": 124
+		},
 		"343cabf4025280c9193c9dfaa559654af36c0e37": {
 			"c": 80,
 			"composite": "c80j59n4a10p9",
@@ -12011,6 +12022,12 @@
 						30
 					],
 					"p_id": 125
+				},
+				{
+					"lines": [
+						30
+					],
+					"p_id": 125
 				}
 			],
 			"id": "C-1297",
@@ -12034,6 +12051,12 @@
 						397
 					],
 					"p_id": 125
+				},
+				{
+					"lines": [
+						397
+					],
+					"p_id": 125
 				}
 			],
 			"id": "C-1298",
@@ -12046,6 +12069,12 @@
 		"C-1299": {
 			"first_p": 125,
 			"history": [
+				{
+					"lines": [
+						11
+					],
+					"p_id": 125
+				},
 				{
 					"lines": [
 						11
@@ -12097,6 +12126,12 @@
 						233
 					],
 					"p_id": 125
+				},
+				{
+					"lines": [
+						233
+					],
+					"p_id": 125
 				}
 			],
 			"id": "C-1300",
@@ -12118,6 +12153,12 @@
 				{
 					"lines": [
 						22
+					],
+					"p_id": 125
+				},
+				{
+					"lines": [
+						23
 					],
 					"p_id": 125
 				}
@@ -12143,6 +12184,12 @@
 						25
 					],
 					"p_id": 125
+				},
+				{
+					"lines": [
+						26
+					],
+					"p_id": 125
 				}
 			],
 			"id": "C-1302",
@@ -12164,6 +12211,12 @@
 				{
 					"lines": [
 						26
+					],
+					"p_id": 125
+				},
+				{
+					"lines": [
+						30
 					],
 					"p_id": 125
 				}
@@ -12189,6 +12242,12 @@
 						28
 					],
 					"p_id": 125
+				},
+				{
+					"lines": [
+						32
+					],
+					"p_id": 125
 				}
 			],
 			"id": "C-1304",
@@ -12212,12 +12271,69 @@
 						30
 					],
 					"p_id": 125
+				},
+				{
+					"lines": [
+						30
+					],
+					"p_id": 125
 				}
 			],
 			"id": "C-1305",
 			"last_p": 125,
 			"name": "_PREFLIGHT_LOCK",
 			"path": "scripts/testing/test_all.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1306": {
+			"first_p": 125,
+			"history": [
+				{
+					"lines": [
+						204
+					],
+					"p_id": 125
+				}
+			],
+			"id": "C-1306",
+			"last_p": 125,
+			"name": "untracked_files",
+			"path": "scripts/doki/orchestration/git_helper.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1307": {
+			"first_p": 125,
+			"history": [
+				{
+					"lines": [
+						219
+					],
+					"p_id": 125
+				}
+			],
+			"id": "C-1307",
+			"last_p": 125,
+			"name": "current_branch",
+			"path": "scripts/doki/orchestration/git_helper.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1308": {
+			"first_p": 125,
+			"history": [
+				{
+					"lines": [
+						29
+					],
+					"p_id": 125
+				}
+			],
+			"id": "C-1308",
+			"last_p": 125,
+			"name": "PROBE_MIN_AGE_SECONDS",
+			"path": "scripts/preflight_lock.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -33135,6 +33251,26 @@
 			"last_p": 124,
 			"name": "ship_builder_blueprint_test.gd",
 			"path": "scripts/testing/ship_builder_blueprint_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-607": {
+			"first_p": 125,
+			"history": [],
+			"id": "F-607",
+			"last_p": 125,
+			"name": "doki-commit.sh",
+			"path": "scripts/doki/doki-commit.sh",
+			"status": "created",
+			"type": "file"
+		},
+		"F-608": {
+			"first_p": 125,
+			"history": [],
+			"id": "F-608",
+			"last_p": 125,
+			"name": "preflight_lock.gd.uid",
+			"path": "scripts/preflight_lock.gd.uid",
 			"status": "created",
 			"type": "file"
 		}

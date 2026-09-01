@@ -64,6 +64,11 @@ func run(impulse: String, model_id: String) -> Dictionary:
 		return {"ok": false, "error": "Kein Git-Repository: %s" % _repo_root}
 
 	var staged: Array = _git.staged_files()
+	# Auto-managed DOKI-Artefakte (finalize-Produkte) können bereits gestaged
+	# herumliegen (letzter finalize vor diesem prepare). Der Verification-Scope
+	# muss auf der GEFILTERTEN Liste resolvieren — identisch zum Gate (F-606):
+	# sonst driftet der Scope, sobald finish die Artefakte (erneut) stagt.
+	var non_auto_staged: Array = _without_auto_managed(staged)
 	var agent_name := OS.get_environment("AGENT_NAME").strip_edges()
 	var activity_seed := OS.get_environment("AGENT_ACTIVITY_SEED").strip_edges()
 	if agent_name.is_empty() or activity_seed.is_empty():
@@ -88,7 +93,7 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	# Verification-Scope des echten Diffs wird VOR dem Prompt bestimmt und in
 	# der Session + .doki/scope.json (für den Preflight-Hook) persistiert.
 	# Unknown/leer blockt fail-closed (nie ein grüner leere Run).
-	var impact: Dictionary = IMPACT_RESOLVER.resolve(staged)
+	var impact: Dictionary = IMPACT_RESOLVER.resolve(non_auto_staged)
 	if not bool(impact.get("ok", false)):
 		_session_store.release_ownership(owner_token)
 		return {"ok": false, "error": "Impact-Auflösung fehlgeschlagen: %s" % str(impact.get("error", "unresolved_impact"))}
@@ -98,7 +103,6 @@ func run(impulse: String, model_id: String) -> Dictionary:
 	# recompute diese Werte und weist jeglichen Drift ab (Byte-/Scope-Drift
 	# nach prepare → kein grüner Commit, ohne die Datei umzuschreiben).
 	var diff_output: String = _git.diff_cached()
-	var non_auto_staged: Array = _without_auto_managed(staged)
 	var scope_path_digest: String = IMPACT_RESOLVER.path_digest(non_auto_staged)
 	var scope_constraint_digest: String = IMPACT_RESOLVER.constraint_digest(impact.get("constraints", []))
 	var staged_byte_digest: String = IMPACT_RESOLVER.staged_byte_digest(_strip_auto_managed_diff(diff_output))

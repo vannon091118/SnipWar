@@ -1,5 +1,6 @@
 
 - **Commits:** Immer nach Beendigung der Aufgabe committen, wenn Änderungen vorhanden sind. Kein `git add -A`, kein `git commit -m`, kein `--no-verify`. Feature-Branches: lokalen Stand auf Main cherry-picken und von Main aus committen (nicht direkt auf Feature-Branch committen). Pushes laufen automatisiert über DOKI (by Design: jeder Commit ist durch mehrere Systeme abgesichert und reviewbar). PRs nur mit ausdrücklichem Auftrag.
+- **Bot-Trailer verboten:** Zeilen wie `🤖 Generated with Codebuff` oder `Co-Authored-By: Codebuff <noreply@codebuff.com>` dürfen NIEMALS in einer Commit-Message stehen — kein Agent fügt sie ein. Der commit-msg-Hook weist jede Message mit diesem Header hart zurück; ausschließlich DOKI-Narrator-Prompting ist zulässig.
 - Save-Slot 0 ist echter Spielstand und darf nie von Tests gelöscht werden; Slots 1–7 sind Test-Slots.
 - Kein Commit ohne aktiven AgentGate-Check-In, der alle staged Dateien abdeckt; `--no-verify` ist unzulässig.
 

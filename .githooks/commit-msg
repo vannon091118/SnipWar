@@ -19,8 +19,23 @@ if [ -z "$MSG_FILE" ] || [ ! -f "$MSG_FILE" ]; then
     exit 1
 fi
 
+# ─── Bot-Trailer-Verbot (Vannon-Regel: NIEMALS in einer Commit-Message) ─────
+# Der Header wird NICHT bereinigt oder toleriert: jeder Codebuff-Trailer
+# verwirft den Commit. So kann kein verbotener Header trotz Hook-Fehler oder
+# Encoding-/Whitespace-Variante in der Historie landen.
+if grep -qE 'Generated[[:space:]]+with[[:space:]]+Codebuff\b|Co-Authored-By:[[:space:]]*Codebuff\b' "$MSG_FILE"; then
+    echo "ERROR: Verbotener Codebuff-Header erkannt — Commit abgelehnt." >&2
+    echo "Ausschließlich DOKI-Narrator-Prompting ist zulässig; Trailer entfernen und erneut über DOKI erstellen." >&2
+    exit 1
+fi
+
 # Check for GODOT_BIN availability
 if [ -z "${GODOT_BIN:-}" ] || [ ! -x "${GODOT_BIN}" ]; then
+    # Bei DOKI-Commits (erkennbar an [NARRATOR:]) ist GODOT_BIN Pflicht
+    if grep -q '\[NARRATOR:' "$MSG_FILE" 2>/dev/null; then
+        echo "ERROR: GODOT_BIN nicht verfuegbar — DOKI-Commit kann nicht validiert werden." >&2
+        exit 1
+    fi
     echo "WARN: GODOT_BIN not set or not executable — skipping DOKI verify-only" >&2
     exit 0
 fi
@@ -34,6 +49,28 @@ run_godot() {
 
 # Read the commit message
 COMMIT_MSG="$(cat "$MSG_FILE")"
+
+# ─── Transport-Commit-Erkennung (TASK-015) ─────────────────────────────────
+# Ein Commit, der NUR auto-managed DOKI-Artefakte enthält (finalize-Produkte:
+# narrative_chain.json, change_index.json, CHANGELOG.md, arcs.json), ist ein
+# TRANSPORT-Commit — er transportiert fertige Artefakte, erzeugt keine neue
+# Arbeit. Er braucht KEINE DOKI-Tokens und keine Message-Validierung.
+# Ohne diese Ausnahme entsteht der finalize-Loop: finalize staged Artefakte →
+# Commit braucht Tokens → Tokens nur via prepare/finish → neuer Chain-Eintrag
+# → finalize schreibt wieder Artefakte → Endlosschleife.
+TRANSPORT_COMMIT=1
+while IFS= read -r staged_file; do
+    [ -z "$staged_file" ] && continue
+    case "$staged_file" in
+        .doki/narrative_chain.json|.doki/change_index.json|CHANGELOG.md|scripts/doki/data/arcs.json) ;;
+        *) TRANSPORT_COMMIT=0; break ;;
+    esac
+done < <(git diff --cached --name-only)
+
+if [ "$TRANSPORT_COMMIT" -eq 1 ]; then
+    echo "=== commit-msg: Transport-Commit (nur DOKI-Artefakte) — Message-Validierung übersprungen ==="
+    exit 0
+fi
 
 # Check if this is a DOKI commit (has the expected format)
 # DOKI commits have a specific structure with [NARRATOR:], [MODEL:], [COMPOSITE:]
