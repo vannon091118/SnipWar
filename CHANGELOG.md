@@ -2750,3 +2750,12 @@ Vertrags-SSOT: eine maschinenlesbare Quelle (contract_map.json) für Pfad-Klassi
 - scripts/preflight_v2/constraint_scanner.gd: Fehler behoben (F-433).
 - scripts/preflight_v2/contract_map.json: Fehler behoben (F-838).
 - scripts/testing/contract_map_test.gd: Fehler behoben (F-839).
+
+## 2026-08-27 10:00:00 — p130 · c130j15n2a44p39 · Basher · neugierig
+
+**Basher (2 files): Content-neutraler Merge-Weg: DOKI-Gate und… — nach Devin**
+
+Content-neutraler Merge-Weg: DOKI-Gate und pre-commit erkennen einen Merge ohne Staged-Inhalt (Branch ist Superset des Base) und überspringen die inhaltlichen Gates — analog zum bestehenden Rebase-Skip. Merge mit echten Konflikt-Änderungen läuft weiterhin voll durch die Zeremonie.
+
+- .githooks/pre-commit: Tooling erweitert (F-125).
+- scripts/doki/orchestration/flows/gate_flow.gd: Tooling erweitert (F-013).

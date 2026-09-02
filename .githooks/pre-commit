@@ -22,6 +22,19 @@ fi
 
 cd "$ROOT_DIR"
 
+# Content-neutraler Merge: Der Branch ist ein Superset des Base, der Merge
+# committet KEINE neue Arbeit (Staged-Diff leer) — er zeichnet nur die
+# Konvergenz mit dem Base auf (z.B. um einen CONFLICTING-PR-Status zu klären).
+# Der DOKI-Gate erkennt dies via merge-noop; der Verify-Treiber hätte keinen
+# Staged-Scope und würde sonst einen unnötigen Voll-Lauf starten, weshalb er
+# für diesen Fall übersprungen wird. Ein Merge MIT echten Konflikt-Änderungen
+# (Staged nicht leer) läuft weiterhin vollständig durch alle Gates.
+MERGE_HEAD_PATH="$(git rev-parse --git-path MERGE_HEAD 2>/dev/null)"
+SKIP_VERIFY=0
+if [ -n "$MERGE_HEAD_PATH" ] && [ -f "$MERGE_HEAD_PATH" ] && [ -z "$(git diff --cached --name-only)" ]; then
+    SKIP_VERIFY=1
+fi
+
 # Check for GODOT_BIN availability
 if [ -z "${GODOT_BIN:-}" ] || [ ! -x "${GODOT_BIN}" ]; then
     echo "ERROR: GODOT_BIN not set or not executable (required for pre-commit gate)" >&2
@@ -70,19 +83,23 @@ run_godot "res://scripts/doki/doki.gd" -- gate || {
     exit 1
 }
 
-echo "=== pre-commit: Verification driver (compile + preflight + tests, scope=$SEVERITY) ==="
-if [ "$SEVERITY" = "python" ]; then
-    # Cheap path: compile + pure constraints only, no tests
-    run_verify --cheap-path --skip-tests --fail-fast || {
-        echo "ERROR: Verification driver (cheap path) failed" >&2
-        exit 1
-    }
+if [ "$SKIP_VERIFY" -eq 1 ]; then
+    echo "=== pre-commit: Content-neutraler Merge — Verify-Treiber übersprungen (kein Staged-Inhalt) ==="
 else
-    # Full path: compile + preflight + tests, scope-gefiltert aus staged files
-    run_verify --fail-fast || {
-        echo "ERROR: Verification driver failed" >&2
-        exit 1
-    }
+    echo "=== pre-commit: Verification driver (compile + preflight + tests, scope=$SEVERITY) ==="
+    if [ "$SEVERITY" = "python" ]; then
+        # Cheap path: compile + pure constraints only, no tests
+        run_verify --cheap-path --skip-tests --fail-fast || {
+            echo "ERROR: Verification driver (cheap path) failed" >&2
+            exit 1
+        }
+    else
+        # Full path: compile + preflight + tests, scope-gefiltert aus staged files
+        run_verify --fail-fast || {
+            echo "ERROR: Verification driver failed" >&2
+            exit 1
+        }
+    fi
 fi
 
 echo "=== pre-commit: All checks passed ==="
