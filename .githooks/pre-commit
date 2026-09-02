@@ -2,17 +2,16 @@
 set -euo pipefail
 
 # SnipWar pre-commit hook
-# Runs: DOKI gate (Session verified? Snapshot-Match? .commit_msg.txt?) →
-#       Verification driver (compile + preflight + tests, scope-kontrolliert)
-#       Der Treiber ist ein externes Python-Skript (scripts/verify.py); die
-#       Engine orchestriert nicht mehr selbst und hält kein eigenes Lock.
-# Exits 1 if GODOT_BIN not available or any check fails
+# Runs: Commit-group guard → Verification driver (compile + preflight + tests,
+#       scope-kontrolliert aus dem Staged-Set).
+# Der Treiber ist ein externes Python-Skript (scripts/verify.py); er hält das
+# OS-Lock und ruft Godot pro Phase EINMAL auf.
 #
-# Der DOKI-Ablauf ist laut AGENTS.md/README: git add → doki prepare →
-# body schreiben → doki finish → git commit -F .commit_msg.txt. prepare und
-# finish macht der AGENT manuell; der pre-commit-Hook feuert das DOKI-Gate
-# (prüft verified + Snapshot + Coverage + .commit_msg.txt), KEIN zweites
-# prepare (das würde die bereits verified Session überschreiben).
+# DOKI ist seit der Entkopplung ein extern gearbeitetes System (gepinntes Home,
+# siehe docs/DOKI_PIN.md): prepare/finish/finalize laufen als Agent-Schritt über
+# das Home, NICHT mehr als Hook-Gate. Dieser Hook verifiziert den Staged-Stand
+# nur noch mechanisch (Guard + Verify-Treiber). Es gibt KEIN zweites prepare.
+# Exits 1 if GODOT_BIN not available or any check fails
 
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null)"
 if [ -z "$ROOT_DIR" ]; then
@@ -25,10 +24,10 @@ cd "$ROOT_DIR"
 # Content-neutraler Merge: Der Branch ist ein Superset des Base, der Merge
 # committet KEINE neue Arbeit (Staged-Diff leer) — er zeichnet nur die
 # Konvergenz mit dem Base auf (z.B. um einen CONFLICTING-PR-Status zu klären).
-# Der DOKI-Gate erkennt dies via merge-noop; der Verify-Treiber hätte keinen
-# Staged-Scope und würde sonst einen unnötigen Voll-Lauf starten, weshalb er
-# für diesen Fall übersprungen wird. Ein Merge MIT echten Konflikt-Änderungen
-# (Staged nicht leer) läuft weiterhin vollständig durch alle Gates.
+# Der Verify-Treiber hätte keinen Staged-Scope und würde sonst einen unnötigen
+# Voll-Lauf starten, weshalb er für diesen Fall übersprungen wird. Ein Merge
+# MIT echten Konflikt-Änderungen (Staged nicht leer) läuft weiterhin vollständig
+# durch alle Gates.
 MERGE_HEAD_PATH="$(git rev-parse --git-path MERGE_HEAD 2>/dev/null)"
 SKIP_VERIFY=0
 if [ -n "$MERGE_HEAD_PATH" ] && [ -f "$MERGE_HEAD_PATH" ] && [ -z "$(git diff --cached --name-only)" ]; then
@@ -41,13 +40,6 @@ if [ -z "${GODOT_BIN:-}" ] || [ ! -x "${GODOT_BIN}" ]; then
     echo "Set: export GODOT_BIN=/path/to/godot_console" >&2
     exit 1
 fi
-
-# Function to run Godot headless scripts
-run_godot() {
-    local script="$1"
-    shift
-    "$GODOT_BIN" --headless --path . --script "$script" "$@"
-}
 
 # Function to run the external verification driver (owns the OS-level lock,
 # scope resolution, compile gate, preflight, and test orchestration)
@@ -74,12 +66,6 @@ fi
 echo "=== pre-commit: Commit-group guard ==="
 bash scripts/commit_group_guard.sh check || {
     echo "ERROR: Commit spans multiple atomic commit groups" >&2
-    exit 1
-}
-
-echo "=== pre-commit: DOKI gate ==="
-run_godot "res://scripts/doki/doki.gd" -- gate || {
-    echo "ERROR: DOKI gate failed" >&2
     exit 1
 }
 

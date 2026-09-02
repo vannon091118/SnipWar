@@ -30,7 +30,7 @@ class ConstraintPhase(Enum):
     SYNTAX = 0          # Syntax, parse, basic structure
     STRUCTURE = 1       # File structure, imports, references
     SEMANTIC = 2        # Semantic analysis, cross-references
-    CONTRACT = 3        # Contract validation (DOKI, ConceptIndex, etc.)
+    CONTRACT = 3        # Contract validation (ConceptIndex, etc.)
     DOCS = 4            # Documentation integrity
     INTEGRATION = 5     # Integration checks (require Godot)
     RUNTIME = 6         # Full runtime simulation (require Godot)
@@ -47,7 +47,7 @@ class ConstraintMetadata:
     contracts: list[str] = field(default_factory=list)  # Affected contracts
     requires_scene: bool = False
     destructive: bool = False  # Requires full reboot after
-    auto_managed: bool = False  # DOKI-managed files
+    auto_managed: bool = False  # auto-managed narrative/doc artifacts
     estimated_duration_ms: int = 1000
 
     def __lt__(self, other: "ConstraintMetadata") -> bool:
@@ -203,7 +203,6 @@ class ConstraintRegistry:
             ("colony_milestone", "Colony Milestone", "Validates colony milestone progression", ConstraintPhase.RUNTIME, ["ui_flow"], True, False, 2000),
             ("historical_world", "Historical World", "Validates historical world bootstrap and playback", ConstraintPhase.RUNTIME, ["history"], True, False, 4000),
             ("event_log", "Event Log", "Validates event log integrity", ConstraintPhase.RUNTIME, ["history"], True, False, 2000),
-            ("narrative_runtime", "Narrative Runtime", "Validates narrative runtime (Python) integration", ConstraintPhase.CONTRACT, ["doki"], False, False, 3000),
             ("save_game_roundtrip", "Save Game Roundtrip", "Save/load roundtrip validation", ConstraintPhase.INTEGRATION, ["save"], True, True, 5000),
             ("navigation_growth", "Navigation Growth", "Validates navigation field growth and waypoint logic", ConstraintPhase.INTEGRATION, ["navigation"], True, False, 3000),
         ]

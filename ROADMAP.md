@@ -83,7 +83,7 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 - **CURRENT (vor Fix):** ARCHITECTURE.md:349 (38); DESIGN §1 (39)/§14 (34); docs/README (36 ×3); PLAN.md (36); GAME_CYCLE (34); AGENTS (40); DESIGN SO1 (8 Autoloads).
 - **DEPENDS:** R-001 · **BLOCKS:** —
 - **MODULES:** Doku
-- **DoD:** Alle MDs nennen 45 Constraints / 10 Autoloads; historische datierte Lauf-Belege bleiben unangetastet.
+- **DoD:** Alle MDs nannten 45 Preflight-Constraints / 10 Autoloads (Stand vor der DOKI-Entkopplung; heute 44, `docs/DOKI_PIN.md`); historische datierte Lauf-Belege bleiben unangetastet.
 - **STATUS:** `VERIFIED`
 
 ### R-003 — Repo-Hygiene: kilo.json, snapshots/, tmp_* — **P0** ✅ VERIFIED
@@ -265,13 +265,13 @@ R-016 Refinery serialisierbar / mech_frame entscheiden
 | D-01 | ROADMAP.md auf aktuellen Stand bringen (dieser Schritt) | ✅ ERLEDIGT | |
 | L-01..L-04 | Lore-Dateien anlegen (`res/lore/*.md`) | 🟡 STRUKTUR ✅, INHALT PENDING | LORE.md |
 | L-05..L-19 | Lore-Inhalte (Eisen-Grenze, Ressourcen, Fraktionen, Konsequenzen) | TODO | Abhängig von L-01..L-04 |
-| G-01 | Globale DOKI-/Preflight-Prüfung (45/45 PASS) | TODO | Nach allen Implementationen |
+| G-01 | Globale Preflight-Prüfung (44/44 PASS; DOKI entkoppelt ins gepinnte Home) | ✅ ERLEDIGT | docs/DOKI_PIN.md |
 
 ### P1 — Hoher Architektur-Effekt
 
 | ID | Titel | Status | Hinweis |
 |---|---|---|---|
-| I-02 | DOKI-Testzählung „65 Tests" nicht reproduzierbar (F-306) | 🟡 OFFEN | doki_selfcheck.gd |
+| I-02 | DOKI-Testzählung „65 Tests" nicht reproduzierbar (F-306) | ✅ ERLEDIGT | Entkopplung: doki_selfcheck lebt im Home (111/111 Checks) |
 | Q-03 | Tutorial-Overlay für MCP UX-Scan UNSICHTBAR (QA2-MCP-6) | 🟡 OFFEN | tutorial_director |
 | Q-04 | Progressions-Gate „erstes Schiff": Werft nicht gebaut | 🟡 OFFEN | Abhängig von Q-03 |
 | Q-05 | Tutorial Schritt 2: grüner Ziel-Marker fehlt (OFFEN-2) | 🟡 OFFEN | tutorial_director |

@@ -71,7 +71,7 @@ graph TD
 
 | Dokument | Pfad | Zweck & Inhalt |
 |:---|:---|:---|
-| **System-Architektur** | [`ARCHITECTURE.md`](../ARCHITECTURE.md) | **Harte technische Ground Truth:** Godot 4.7 Specs, CLI-Suchtools (`concept_search`, `global_search`), SSO Domänen-Modell (`GameState`), 44 Preflight-Constraints, DOKI & S.C.O.U.T. Tooling, Transit- & KI-Formeln. |
+| **System-Architektur** | [`ARCHITECTURE.md`](../ARCHITECTURE.md) | **Harte technische Ground Truth:** Godot 4.7 Specs, CLI-Suchtools (`concept_search`, `global_search`), SSO Domänen-Modell (`GameState`), 44 Preflight-Constraints, entkoppeltes DOKI-Home ([`DOKI_PIN.md`](DOKI_PIN.md)) & S.C.O.U.T. Tooling, Transit- & KI-Formeln. |
 | **System-Spezifikation** | [`DESIGN.md`](../DESIGN.md) | **Verbindlicher technischer MVP-Vertrag** (*„Code schlägt Dokument“*). Enthält deterministische Algorithmen (Flugzeit, Dispatch, Combat-Resolve), GameState-Fassadenarchitektur mit 4 Domänen-Managern, unendliche Chunk-Welt, aktuelle Layer-2/3-Replays und Feature-Matrix. |
 
 ---
@@ -81,7 +81,7 @@ graph TD
 
 | Dokument | Pfad | Zweck & Inhalt |
 |:---|:---|:---|
-| **Agenten- & Entwicklerregeln** | [`AGENTS.md`](../AGENTS.md) | **Faktengetreue operative Leitlinien:** Godot-Headless-Regeln, modulares Preflight-Design (45 Constraints, `PreflightFixture`-Isolation, Seed `424242`), atomare Commit-Gruppen (`Change Together`), Godot-Fallstricke und unumgehbare Git-Hook-Kette. |
+| **Agenten- & Entwicklerregeln** | [`AGENTS.md`](../AGENTS.md) | **Faktengetreue operative Leitlinien:** Godot-Headless-Regeln, modulares Preflight-Design (44 Constraints, `PreflightFixture`-Isolation, Seed `424242`), atomare Commit-Gruppen (`Change Together`), Godot-Fallstricke und unumgehbare Git-Hook-Kette. |
 
 ---
 
@@ -109,4 +109,4 @@ graph TD
 
 1. **Wahrheitsgebot:** Keine hypothetischen oder unvollständigen Features dürfen in `AGENTS.md`, `DESIGN.md` oder `README.md` als implementiert dokumentiert werden, wenn kein Laufzeitverbraucher und keine Preflight-Abdeckung existieren.
 2. **Synchronisation bei Änderungen:** Änderungen an Schnittstellen müssen zeitgleich in Code, Preflight und dem zugehörigen Modulvertrag aktualisiert werden (siehe `Change/commit together` in `AGENTS.md`).
-3. **Preflight-Konsistenz:** Die Anzahl der Constraints (aktuell **45 Constraints**) und die CLI-Flags (`--verbose`, `--fail-fast`, `--filter`, `--reverse`, `--list`) müssen über alle Dokumente einheitlich geführt werden.
+3. **Preflight-Konsistenz:** Die Anzahl der Constraints (aktuell **44 Constraints**) und die CLI-Flags (`--verbose`, `--fail-fast`, `--filter`, `--reverse`, `--list`) müssen über alle Dokumente einheitlich geführt werden.

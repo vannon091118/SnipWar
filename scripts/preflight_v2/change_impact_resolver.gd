@@ -58,12 +58,13 @@ static func resolve(staged_paths: Array) -> Dictionary:
 	var contracts: Array[String] = []
 
 	for path in paths:
-		# DOKI/managed narrative artifacts are an explicit contract, not unknown.
+		# Managed narrative artifacts are an explicit contract, not unknown.
+		# DOKI ist entkoppelt (docs/DOKI_PIN.md): sie resolven auf preflight.
 		# V3-001: use basename for auto-managed check
 		var basename := String(path).get_file()
 		if SCANNER_SCRIPT.AUTO_MANAGED.has(basename):
-			if not contracts.has("doki"):
-				contracts.append("doki")
+			if not contracts.has("preflight"):
+				contracts.append("preflight")
 			continue
 		var hit_any: bool = false
 		for rule in path_map:

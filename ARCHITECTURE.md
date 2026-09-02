@@ -5,7 +5,7 @@
 **VERBINDLICHE ENGINE-SPEZIFIKATION · DETERMINISTISCHE VERTRÄGE · REPRODUZIERBARE ENGINE-STATE-WELT**
 
 [![Engine: Godot 4.7](https://img.shields.io/badge/Engine-Godot%204.7-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org/)
-[![Preflight](https://img.shields.io/badge/Preflight-45%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-automatisierte-preflight-suite-v2-architecture)
+[![Preflight](https://img.shields.io/badge/Preflight-44%20Constraints%20PASS-2ea44f?style=for-the-badge)](#-automatisierte-preflight-suite-v2-architecture)
 [![Sprache: GDScript](https://img.shields.io/badge/GDScript-4.7-blue?style=for-the-badge)](#-architektur--vom-katalog-zum-spielstand)
 
 </div>
@@ -31,7 +31,7 @@
 # Smoke-Test (Bootet Hauptszene, beendet nach 2 Sekunden)
 $GODOT_BIN --headless --path . --quit-after 2
 
-# Vollständige Preflight-Prüfung (45 Constraints)
+# Vollständige Preflight-Prüfung (44 Constraints)
 $GODOT_BIN --headless --path . --script res://scripts/preflight.gd -x
 ```
 
@@ -237,30 +237,13 @@ Die Preflight-Suite in `scripts/preflight.gd` ist ein maßgeschnederter, Headles
 | 24 | `mechanic_coverage` | Mechanik-Erkennung & Szenario-Abdeckung | Pure |
 | 25 | `mission_semantics` | Military/Colony/Cargo/Collect Missionsregeln | Scene |
 | 26 | `module_damage_model` | Modul-Schadensmodell (Konquest) | Pure |
-| 27 | `narrative_runtime` | Narrative Runtime Gate G1–G24 (fail-closed, read-only) | Pure |
-| 28 | `navigation_growth` | Waypoint-Graphen & KNN-NavigationField | Pure |
-| 29 | `paper_style` | Paper-Visuallinie & Asset-Integrität | Pure |
-| 30 | `pause_and_context` | Modal-Hierarchie & Pausen-Gating | Scene |
-| 31 | `research_ship` | Forschungs-Schiff & Auftragslogik | Scene |
-| 32 | `resources_and_seed` | Seed-Invarianz & `deal_resources()` | Scene |
-| 33 | `save_game_roundtrip` | Verlustfreier Save/Load Roundtrip **+ Chronicle-Payload-Vertrag** | Scene |
-| 34 | `save_game_slots` | Save-Slot Write/Read/Corruption Checks | Pure |
-| 35 | `scene_boot` | Bootszenen-Hierarchie & Viewport-Handling | Scene |
-| 36 | `sector_classification` | Sektor-Typisierung & Flavor-Zuordnung | Pure |
-| 37 | `selection_and_context` | `SelectionService` & Kontextmenü-Gating | Scene |
-| 38 | `ship_catalog_and_assembly` | Teile-Katalog, Rumpfmontage & Tech-Gating | Scene |
-| 39 | `ship_transit_and_arrival` | ShipBase Transit & Conquest/Battle Triggers | Scene |
-| 40 | `upgrade_catalog` | Upgrades, Voraussetzungen & Exklusivitäten | Pure |
-| 41 | `world_details_and_scale` | Planeten-Größenprofile & Detail-Seeds | Scene |
-| 42 | `world_generator_scaling` | Deterministische Welt- & Katalog-Generierung | Pure |
-| 43 | `world_planets_and_dispatch` | Planeten-Netzwerk & Routen-Erstellung | Scene |
-| 44 | `agent_activity` | AgentGate Registry, Staged Coverage & Collision Signal | Pure |
-
+| 27 | | 28 | | 29 | | 30 | | 31 | | 32 | | 33 | | 34 | | 35 | | 36 | | 37 | | 38 | | 39 | | 40 | | 41 | | 42 | | 43 | 
 > [!NOTE]
-> Die Constraints 33 (`save_game_roundtrip`), 27 (`narrative_runtime`) und 44 (`agent_activity`) sind die
+> Die Constraints 32 (`save_game_roundtrip`) und 43 (`agent_activity`) sind die
 > **Modularisierungs-Verträge**: Chronicle-Payload überlebt den Roundtrip
-> (4 Checks) und die Narrative Runtime bleibt konform (G1–G24), während AgentGate
-> die Commit-Autorisierung sicherstellt.
+> (4 Checks), während AgentGate die Commit-Autorisierung sicherstellt.
+> Die Narrative Runtime ist entkoppelt (gepinntes Home, `docs/DOKI_PIN.md`)
+> und kein Preflight-Constraint mehr.
 
 ---
 
@@ -310,13 +293,14 @@ Cleanup          → tote Pfade entfernt; Fallbacks dokumentiert [Phase 9]
   1. Screenshots dürfen **nur** via Async-Handler nach `frame_post_draw` aufgenommen werden (`mcp_capture_contract`).
   2. Jedes Capture erfordert OCR-/visuellen Beweis (`visual_evidence`).
 
-### 📜 DOKI — Deterministisches Commit-Gate
-- **Pfad:** `scripts/doki/`
-- **Funktion:** Verhindert rohe Commits (`git commit -m` wird per Hook geblockt). Erzwingt erzählte Commit-Bodys.
+### 📜 DOKI — Deterministisches Commit-Gate (extern gepinnt)
+- **Home:** `C:/Users/Vannon/Desktop/doki/` (eigenes Projekt + eigenes git-Repo, `docs/DOKI_PIN.md`).
+- **Funktion:** Erzwingt erzählte Commit-Bodys über `prepare`/`finish` (Agent-Schritt über das Home, KEIN Hook-Gate mehr).
 - **Composite-Hash-Seed:** `Djb2(prevComposite + TreeHash + DiffHash + Impuls) → XorShift128`.
 - **Composite-Format:** `c<count>j<jitter>n<narrator>a<arc>p<plot>` (z. B. `c17j48n14a1p1`).
 - **Charaktere (14):** 1. Buffy, 2. Basher, 3. Thinker, 4. Vannon, 5. Squizzle, 6. Devin, 7. Argos, 8. Ghost, 9. Spark, 10. Glitch, 11. Null, 12. Echo, 13. Flux, 14. Sage.
 - **9 Integrity Checks:** 1–6 weich (Stil, Tokens, Narrator-Match), 7–9 HART (Kausalität, DocSync, ChainAudit).
+- **Per-Repo-State:** `narrative_chain.json`, `change_index.json`, `arcs.json` unter `.doki/`, `CHANGELOG.md` am Root.
 
 ---
 
@@ -325,17 +309,17 @@ Cleanup          → tote Pfade entfernt; Fallbacks dokumentiert [Phase 9]
 Jeder Commit läuft unumgehbar durch folgende Stufen:
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌──────────────┐
-│ pre-commit  │────▶│ commit-msg  │────▶│ post-commit  │
-│             │     │             │     │              │
-│ whitespace  │     │ DOKI-Flow   │     │ push origin  │
-│ + preflight │     │ (Narrator)  │     │ HEAD:main    │
-└─────────────┘     └─────────────┘     └──────────────┘
+┌─────────────┐     ┌─────────────┐
+│ pre-commit  │────▶│ commit-msg  │
+│             │     │             │
+│ guard       │     │ Trailer-Ban │
+│ + AgentGate │     │ (nur Text)  │
+│ + verify.py │     │             │
+└─────────────┘     └─────────────┘
 ```
 
-1. **`pre-commit`**: Führt Preflight aus. Bei Fehlschlag bricht der Commit ab.
-2. **`commit-msg`**: Verifiziert den DOKI-Erzähl-Body (`finish --body-file .doki/narrator_body.md`).
-3. **`post-commit`**: Pusht den Commit sofort auf `origin/main`.
+1. **`pre-commit`**: Commit-Group-Guard + AgentGate + Verify-Treiber (compile + preflight + Tests, scope-kontrolliert). Bei Fehlschlag bricht der Commit ab.
+2. **`commit-msg`**: Verwirft verbotene Bot-Trailer (Codebuff-Header). Der DOKI-Erzähl-Body entsteht vor dem Commit über das gepinnte Home (`docs/DOKI_PIN.md`); der Hook validiert ihn nicht mehr.
 
 ---
 
@@ -348,7 +332,7 @@ Jeder Commit läuft unumgehbar durch folgende Stufen:
 | Szenen (`.tscn`) | **16** |
 | Textur- & Audio-Assets | **419** |
 | Engine-Ressourcen (`.tres`) | **91** |
-| Preflight Coverage | **45 / 45 Constraints PASS** |
+| Preflight Coverage | **44 / 44 Constraints PASS** |
 
 ---
 

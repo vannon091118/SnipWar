@@ -176,7 +176,7 @@ class DocsIntegrityConstraint(PureConstraint):
             name="Documentation Integrity",
             description="Checks FINDINGS.md, CHANGELOG.md for duplicate headings, broken tables",
             phase=ConstraintPhase.DOCS,
-            contracts=["docs", "doki"],
+            contracts=["docs"],
             estimated_duration_ms=1500,
         )
 
@@ -414,7 +414,7 @@ class DeadCodeConstraint(PureConstraint):
     def _candidate_reason(self, name: str, file: str) -> str:
         if file.startswith("addons/mcp/"):
             return "MCP external/registry candidate"
-        if file.startswith("scripts/preflight/") or file.startswith("scripts/doki/"):
+        if file.startswith("scripts/preflight/"):
             return "test/tooling entrypoint candidate"
         if name.startswith("get_") or name.startswith("can_") or name.startswith("has_"):
             return "read/API candidate"
@@ -429,7 +429,7 @@ class DeadCodeConstraint(PureConstraint):
                 return True
         if file.startswith("addons/mcp/") and name in ["dispatch_tool", "dispatch_async", "get_tool_defs"]:
             return True
-        if file.startswith("scripts/preflight/") or file.startswith("scripts/doki/"):
+        if file.startswith("scripts/preflight/"):
             return True
         return False
 

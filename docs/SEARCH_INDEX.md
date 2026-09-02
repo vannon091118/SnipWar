@@ -57,12 +57,12 @@
 - `Gate G1-G24 → narrative_runtime/gate.py + gate_cli.py : read-only-Verify; 43. Preflight-Constraint (constraint_narrative_runtime.gd)`
 - `182 Matrix → narrative_runtime/relationships.py : 8 Achsen (trust/respect/irritation/affinity/competence_confidence/resentment/curiosity/defensiveness)`
 
-## DOKI
+## DOKI (gepinntes Home, entkoppelt)
 
-- `DOKI CLI → scripts/doki/doki.gd : init/prepare/finish/amend/verify-only/finalize/repair/status/gate`
-- `Composite → scripts/doki/core : c17j48n14a1p1 — Commit-Counter/Narrator/Jitter/Arc/Plot; deterministisch`
-- `14 Narratoren → scripts/doki/character : Buffy/Basher/Thinker/Vannon/Squizzle/Devin/Argos/Ghost/Spark/Glitch/Null/Echo/Flux/Sage`
-- `Chain → narrative_chain.json : Git-Wahrheit; ChainStore in scripts/doki/chain/chain_store.gd`
+- `DOKI CLI → C:/Users/Vannon/Desktop/doki/ : bin/doki prepare|finish|status|gate … (eigenes Projekt + git-Repo, docs/DOKI_PIN.md)`
+- `Composite → doki/core im Home : c17j48n14a1p1 — Commit-Counter/Narrator/Jitter/Arc/Plot; deterministisch`
+- `14 Narratoren → doki/character im Home : Buffy/Basher/Thinker/Vannon/Squizzle/Devin/Argos/Ghost/Spark/Glitch/Null/Echo/Flux/Sage`
+- `Chain → .doki/narrative_chain.json : Git-Wahrheit; ChainStore im Home (doki/chain/chain_store.gd)`
 
 ## UI & Presentation
 

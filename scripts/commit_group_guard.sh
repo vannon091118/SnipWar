@@ -316,15 +316,16 @@ cmd_self_test() {
   }
   # Disjunkte Domänen müssen blocken.
   expect_block scripts/flight_time.gd scripts/objects/ships/ship_manager.gd
-  expect_block scripts/dispatch.gd scripts/doki/core/verifier.gd
+  expect_block scripts/dispatch.gd scripts/objects/ships/ship_manager.gd
   # History-Chronik ist der Kampf-Domäne adjazend, nicht disjunkt:
   # gemeinsamer Schnitt -> PASS (F1-Grenze wird inhaltlich, nicht per Guard, gezogen).
   expect_pass scripts/objects/conflict_manager.gd scripts/history/world_chronicle.gd
-  expect_block .githooks/pre-commit scripts/objects/ships/ship_manager.gd
+  # Hooks sind ALL_DOMAINS (blocken nie mit Domänen); echte Disjunktheit statt dessen an global_search testen.
+  expect_block scripts/global_search.gd scripts/objects/ships/ship_manager.gd
   # Gemeinsamer Schnitt muss durchgehen (Overlaps der SSOT).
   expect_pass scripts/state/game_state.gd scripts/state/save_game_service.gd
   expect_pass scripts/state/game_state.gd scripts/flight_time.gd
-  expect_pass scripts/doki/core/verifier.gd .githooks/pre-commit
+  expect_pass scripts/verify.py .githooks/pre-commit
   expect_pass AGENTS.md scripts/global_search.gd
   expect_pass scripts/preflight.gd scripts/objects/ships/ship_manager.gd
   # AUTO-Ride-alongs (Docs, DOKI-Artefakte) stören nie.
@@ -335,10 +336,10 @@ cmd_self_test() {
   expect_block totally/unknown/newfile.xyz
   expect_block scripts/state/game_state.gd totally/unknown/newfile.xyz
   # allow-multi ohne Grund ist ein Fehler; mit Grund geht durch.
-  if cmd_check --allow-multi "" --files scripts/flight_time.gd scripts/doki/x.gd >/dev/null 2>&1; then
+  if cmd_check --allow-multi "" --files scripts/flight_time.gd scripts/objects/ships/ship_manager.gd >/dev/null 2>&1; then
     echo "self-test FAIL (allow-multi ohne Grund musste fehlschlagen)"; failures=$((failures+1))
   fi
-  if ! cmd_check --allow-multi "koordinierter Twin-Commit" --files scripts/flight_time.gd scripts/doki/x.gd >/dev/null 2>&1; then
+  if ! cmd_check --allow-multi "koordinierter Twin-Commit" --files scripts/flight_time.gd scripts/objects/ships/ship_manager.gd >/dev/null 2>&1; then
     echo "self-test FAIL (allow-multi mit Grund musste durchgehen)"; failures=$((failures+1))
   fi
   if [ "$failures" -eq 0 ]; then

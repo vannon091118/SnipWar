@@ -230,7 +230,7 @@ def run_tests(contracts: list[str], full: bool, fail_fast: bool) -> int:
     contract_to_substring = {
         "ships": "ship", "economy": "economy", "save": "save",
         "combat": "combat", "navigation": "navigation", "fleet": "navigation",
-        "world": "world", "sectors": "sector", "doki": "chain",
+        "world": "world", "sectors": "sector",
         "preflight": "constraint", "mcp": "mcp", "docs": "docs",
         "history": "historical", "game_state": "save", "ui_flow": "r008",
     }
@@ -244,8 +244,10 @@ def run_tests(contracts: list[str], full: bool, fail_fast: bool) -> int:
                     substrings.append(s)
             elif c not in unmapped_contracts:
                 unmapped_contracts.append(c)
-        if "doki" in contracts:
-            for extra in ("narrative_runtime", "chain"):
+        # DOKI ist entkoppelt (docs/DOKI_PIN.md): narrative Artefakte
+        # resolven auf preflight; die Chain-Validierung bleibt im Scope.
+        if "preflight" in contracts:
+            for extra in ("chain_validate",):
                 if extra not in substrings:
                     substrings.append(extra)
     tests = discover_tests()

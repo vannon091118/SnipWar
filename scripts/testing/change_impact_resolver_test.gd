@@ -41,9 +41,10 @@ func _init() -> void:
 	_check(not deletion_unknown.ok and String(deletion_unknown.error).begins_with("unknown_impact"),
 		"deletion of unknown path rejects")
 
-	# Managed narrative artifacts resolve (doki contract), never unknown.
+	# Managed narrative artifacts resolve (preflight contract), never unknown.
+	# DOKI ist entkoppelt (docs/DOKI_PIN.md) — kein doki-Contract mehr.
 	var auto: Dictionary = RESOLVER.resolve(["narrative_chain.json"])
-	_check(auto.ok and auto.contracts.has("doki"), "auto-managed artifacts map to doki contract")
+	_check(auto.ok and auto.contracts.has("preflight"), "auto-managed artifacts map to preflight contract")
 
 	# Scanner coverage: every constraint belongs to at least one contract.
 	var scanner = SCANNER.new()

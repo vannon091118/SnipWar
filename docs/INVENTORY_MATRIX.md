@@ -97,20 +97,20 @@
 | `narrative_runtime/store.py` | SQLite-Archiv |
 | `narrative_runtime/gate.py` + `gate_cli.py` | G1–G24 Gate (read-only) |
 | `scripts/testing/narrative_runtime_gate.gd` | Godot-Entry-Test |
-| `scripts/preflight/constraint_narrative_runtime.gd` | **43. Preflight-Constraint** (fail-closed, ~18 s) |
 
-## H. DOKI (Git-gebunden, inward-only)
+## H. DOKI (extern gepinnt, entkoppelt — docs/DOKI_PIN.md)
 
-| Datei | Rolle |
+| Pfad | Rolle |
 |-------|-------|
-| `scripts/doki/doki.gd` | CLI (init/prepare/finish/amend/verify-only/finalize/repair/status/gate) |
-| `scripts/doki/core/` | Rng/Verifier |
-| `scripts/doki/chain/` | Stores (Chain/Session/ChangeIndex) |
-| `scripts/doki/character/` | 14 Narratoren, Moods |
-| `scripts/doki/prompt/` | VoiceComposer, SideplotEngine |
-| `scripts/doki/orchestration/` | Flows (prepare/finish/finalize/gate) |
-| `scripts/doki/data/arcs.json` | Arc-Definitionen |
-| `scripts/doki/metrics_updater.gd` | METRICS_TRACKER.md |
+| `C:/Users/Vannon/Desktop/doki/doki/doki.gd` | CLI (init/prepare/finish/amend/verify-only/finalize/repair/status/gate) |
+| `C:/Users/Vannon/Desktop/doki/doki/core/` | Rng/Verifier/Digest |
+| `C:/Users/Vannon/Desktop/doki/doki/chain/` | Stores (Chain/Session/ChangeIndex) |
+| `C:/Users/Vannon/Desktop/doki/doki/character/` | 14 Narratoren, Moods |
+| `C:/Users/Vannon/Desktop/doki/doki/prompt/` | VoiceComposer, ArcEngine |
+| `C:/Users/Vannon/Desktop/doki/doki/orchestration/` | Flows (prepare/finish/finalize/gate) |
+| `C:/Users/Vannon/Desktop/doki/narrative_runtime/` | Python-Runtime (Gate-CLI, stdlib-only) |
+| `.doki/arcs.json` (Repo) | Arc-Definitionen (per-Repo-State) |
+| `.doki/change_index.json`, `.doki/narrative_chain.json` (Repo) | Narrative-State, commit-pflichtig |
 
 ## I. UI (Presentation)
 
@@ -170,5 +170,5 @@
 | `_find_chunk_coordinator`/`_find_economy_manager`-Fallbacks in GameState | `chronicle_lifecycle_test` läuft ohne Welt-Szene und nutzt sie (dokumentierter Fallback) |
 | `SimulationOverlay`/`ChronicleArchiveView` | Geplante History-UI-Grundlage (§14), noch unverdrahtet |
 | `narrative_runtime/` (Python) | Vertrag: NICHT nach GDScript portieren |
-| `scripts/doki/` | Eigenständig, keine Gameplay-Kopplung |
+| `C:/Users/Vannon/Desktop/doki/` (Home) | Eigenständig, keine Gameplay-Kopplung |
 | `GameStateAccess` | Etablierter Autoload-Helper, 12+ Consumer |

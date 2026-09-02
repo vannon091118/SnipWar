@@ -6,7 +6,8 @@
     "Semantics: rules are ordered, FIRST MATCH WINS for the guard; the resolver unions contracts of all matching rules (breadth for tests).",
     "Every rule carries BOTH 'contracts' (preflight scope) and 'groups' (commit atomicity).",
     "Special group values: \"AUTO\" = auto-managed ride-along (mask 0, never classified); \"ALL_DOMAINS\" = preflight.gd multi-domain mask.",
-    "A file matching NO rule is unknown: the resolver fails closed (unknown_impact); the guard FAILS the commit (no free ride on mask 0)."
+    "A file matching NO rule is unknown: the resolver fails closed (unknown_impact); the guard FAILS the commit (no free ride on mask 0).",
+    "DOKI ist entkoppelt (docs/DOKI_PIN.md): keys/doki + narrative_runtime entfernt; narrative Artefakte (.doki/**, arcs.json, CHANGELOG) sind AUTO-Ride-alongs mit preflight/docs-Contract."
   ],
   "groups": [
     "transit",
@@ -20,8 +21,7 @@
     "save",
     "concept",
     "global_search",
-    "doki",
-    "narrative"
+    "mcp"
   ],
   "rules": [
     {
@@ -41,120 +41,80 @@
     {
       "glob": "CHANGELOG.md",
       "contracts": [
-        "doki"
+        "docs"
       ],
       "groups": "AUTO"
     },
     {
       "glob": "change_index.json",
       "contracts": [
-        "doki"
+        "preflight"
       ],
       "groups": "AUTO"
     },
     {
       "glob": "narrative_chain.json",
       "contracts": [
-        "doki"
+        "preflight"
       ],
       "groups": "AUTO"
     },
     {
       "glob": "arcs.json",
       "contracts": [
-        "doki"
-      ],
-      "groups": "AUTO"
-    },
-    {
-      "glob": "scripts/doki/data/arcs.json",
-      "contracts": [
-        "doki"
+        "preflight"
       ],
       "groups": "AUTO"
     },
     {
       "glob": ".commit_msg.txt",
       "contracts": [
-        "doki"
+        "preflight"
       ],
       "groups": "AUTO"
     },
     {
       "glob": ".doki/**",
       "contracts": [
-        "doki"
+        "preflight"
       ],
       "groups": "AUTO"
     },
     {
       "glob": ".freebuff/**",
       "contracts": [
-        "doki"
+        "docs"
       ],
       "groups": "AUTO"
     },
     {
       "glob": ".agents/**",
       "contracts": [
-        "doki"
+        "docs"
       ],
       "groups": "AUTO"
     },
     {
       "glob": ".claude/**",
       "contracts": [
-        "doki"
+        "docs"
       ],
       "groups": "AUTO"
     },
     {
-      "glob": "scripts/doki/NARRATIVE_ENGINE_DESIGN.md",
-      "contracts": [
-        "doki",
-        "docs"
-      ],
-      "groups": [
-        "doki",
-        "narrative"
-      ]
-    },
-    {
       "glob": "scripts/doki/**",
       "contracts": [
-        "doki"
+        "preflight"
       ],
-      "groups": [
-        "doki"
-      ]
+      "groups": "AUTO",
+      "note": "entkoppelt (docs/DOKI_PIN.md) — Pfad darf nicht wiederkommen; nur für Deletion-Auflösung"
     },
     {
       "glob": ".githooks/**",
       "contracts": [
-        "preflight",
-        "doki"
+        "preflight"
       ],
-      "groups": [
-        "doki"
-      ]
-    },
-    {
-      "glob": ".doki/narrative_runtime/**",
-      "contracts": [
-        "doki"
-      ],
-      "groups": [
-        "narrative"
-      ]
-    },
-    {
-      "glob": "narrative_runtime/**",
-      "contracts": [
-        "doki"
-      ],
-      "groups": [
-        "narrative"
-      ]
+      "groups": "ALL_DOMAINS"
     },
     {
       "glob": ".gitignore",
@@ -162,9 +122,7 @@
         "docs",
         "preflight"
       ],
-      "groups": [
-        "narrative"
-      ]
+      "groups": "AUTO"
     },
     {
       "glob": "AGENTS.md",
@@ -172,9 +130,7 @@
         "docs"
       ],
       "groups": [
-        "doki",
-        "global_search",
-        "narrative"
+        "global_search"
       ]
     },
     {
@@ -183,8 +139,7 @@
         "preflight"
       ],
       "groups": [
-        "concept",
-        "doki"
+        "concept"
       ]
     },
     {
@@ -1122,7 +1077,7 @@
         "mcp"
       ],
       "groups": [
-        "doki"
+        "mcp"
       ]
     },
     {
@@ -1150,8 +1105,7 @@
     {
       "glob": "*.json",
       "contracts": [
-        "docs",
-        "doki"
+        "docs"
       ],
       "groups": "AUTO"
     },
@@ -1162,7 +1116,7 @@
         "game_state"
       ],
       "groups": [
-        "doki"
+        "game_state"
       ]
     },
     {

@@ -70,7 +70,7 @@ func run(ctx: PreflightContext) -> bool:
 func _candidate_reason(name: String, file: String) -> String:
 	if file.begins_with("res://addons/mcp/"):
 		return "MCP external/registry candidate"
-	if file.begins_with("res://scripts/preflight/") or file.begins_with("res://scripts/doki/"):
+	if file.begins_with("res://scripts/preflight/"):
 		return "test/tooling entrypoint candidate"
 	if name.begins_with("get_") or name.begins_with("can_") or name.begins_with("has_"):
 		return "read/API candidate"
@@ -84,6 +84,6 @@ func _is_known_entrypoint(name: String, file: String) -> bool:
 			return true
 	if file.begins_with("res://addons/mcp/") and (name == "dispatch_tool" or name == "dispatch_async" or name == "get_tool_defs"):
 		return true
-	if file.begins_with("res://scripts/preflight/") or file.begins_with("res://scripts/doki/"):
+	if file.begins_with("res://scripts/preflight/"):
 		return true
 	return false

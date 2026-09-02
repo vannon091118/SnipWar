@@ -13,7 +13,7 @@ extends RefCounted
 
 const CONSTRAINT_DIR := "res://scripts/preflight"
 const AUTO_MANAGED: Array = ["CHANGELOG.md", "change_index.json", "narrative_chain.json", "arcs.json", ".commit_msg.txt"]
-# DOKI-Artefakte leben jetzt in .doki/ (nicht mehr am Repo-Root).
+# Narrative Artefakte leben in .doki/; sie resolven auf den preflight-Scope.
 
 ## V3-009: Die Pfad→Contract-Tabelle lebt als maschinenlesbare SSOT in
 ## scripts/preflight_v2/contract_map.json. Leser: ChangeImpactResolver (hier),
@@ -41,7 +41,6 @@ var _CONTRACT_CONSTRAINTS: Dictionary = {
 	"combat": ["module_damage_model", "conquest_grid_combat", "layers_2_and_3", "mission_semantics"],
 	"ui_flow": ["main_menu_and_flow", "pause_and_context", "ingame_player_and_transitions", "selection_and_context", "camera_and_input", "scene_boot", "paper_style", "layer_independence", "context_handover", "colony_milestone"],
 	"preflight": ["agent_activity", "concept_index", "global_search", "mechanic_coverage", "dead_code", "mcp_capture_contract"],
-	"doki": ["narrative_runtime", "docs_integrity"],
 	"docs": ["docs_integrity", "global_search"],
 	"mcp": ["mcp_capture_contract", "concept_index", "global_search"],
 	"unmapped": [],
@@ -117,17 +116,17 @@ var _PATH_CONTRACTS: Array = [
 	{"glob": "scripts/tools/**", "contracts": ["preflight"]},
 	{"glob": ".githooks/**", "contracts": ["preflight"]},
 	{"glob": ".gitmodules", "contracts": ["preflight"]},
-	{"glob": "scripts/doki/**", "contracts": ["doki"]},
-	{"glob": ".doki/narrative_runtime/**", "contracts": ["doki"]},
-	{"glob": ".doki/narrative_chain.json", "contracts": ["doki"]},
-	{"glob": ".doki/change_index.json", "contracts": ["doki"]},
-	{"glob": "narrative_chain.json", "contracts": ["doki"]},
-	{"glob": "change_index.json", "contracts": ["doki"]},
-	{"glob": "arcs.json", "contracts": ["doki"]},
+	# DOKI entkoppelt (docs/DOKI_PIN.md): narrative Artefakte sind
+	# per-repo-State und werden vom preflight-Scope abgedeckt.
+	{"glob": ".doki/narrative_chain.json", "contracts": ["preflight"]},
+	{"glob": ".doki/change_index.json", "contracts": ["preflight"]},
+	{"glob": "narrative_chain.json", "contracts": ["preflight"]},
+	{"glob": "change_index.json", "contracts": ["preflight"]},
+	{"glob": "arcs.json", "contracts": ["preflight"]},
 	{"glob": "addons/mcp/**", "contracts": ["mcp"]},
 	{"glob": "docs/**", "contracts": ["docs"]},
 	{"glob": "*.md", "contracts": ["docs"]},
-	{"glob": "*.json", "contracts": ["docs", "doki"]},
+	{"glob": "*.json", "contracts": ["docs"]},
 	{"glob": "project.godot", "contracts": ["ui_flow", "game_state"]},
 	{"glob": "icon.svg", "contracts": ["ui_flow"]},
 	{"glob": "plan/**", "contracts": ["docs"]},

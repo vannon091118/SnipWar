@@ -52,7 +52,7 @@ Vor Änderungen lesen:
 - `PLAN.md`
 - `docs/CODEBASE_AUDIT.md`
 - `docs/FINDINGS.md`
-- `scripts/doki/README.md`
+- `C:/Users/Vannon/Desktop/doki/README.md` (DOKI-Home, gepinnt — `docs/DOKI_PIN.md`)
 - bei MCP-Arbeit zusätzlich `addons/gdscript_mcp/AGENTS.md`
 
 Keine lokalen Änderungen anderer Arbeitsstände überschreiben, stashen oder zurücksetzen.
@@ -64,7 +64,7 @@ Keine lokalen Änderungen anderer Arbeitsstände überschreiben, stashen oder zu
 - `EventBus` ist die Grenze zwischen Gameplay und Chronik.
 - `HistoryEvent` bleibt sprachneutral; Locale-Templates sind reine Projektion.
 - Snapshots und Renderer dürfen nicht direkt auf Simulatorinternals oder `GameState` zugreifen.
-- DOKI bleibt reines Commit-Gate und wird nicht mit der Spielhistorie gekoppelt.
+- DOKI bleibt reines Commit-Gate (gepinntes Home, entkoppelt) und wird nicht mit der Spielhistorie gekoppelt.
 - Slot 0 ist ein echter Spielstand und darf für Tests nie gelöscht oder überschrieben werden.
 
 ## 6. Verifikation vor Commit
@@ -79,25 +79,25 @@ Keine lokalen Änderungen anderer Arbeitsstände überschreiben, stashen oder zu
 
 Erwartung: `RESULT: PASSED`. Headless-RID-Leaks und Reload-Rauschen sind nur dann akzeptabel, wenn der Prozess mit Erfolg beendet und die Assertions bestanden sind.
 
-## 7. DOKI-Commitablauf
+## 7. DOKI-Commitablauf (über das gepinnte Home)
 
-Direkte Commits ohne DOKI sind verboten:
+Direkte Commits ohne DOKI sind verboten — `prepare`/`finish` laufen über das entkoppelte Home (`C:/Users/Vannon/Desktop/doki/`, `docs/DOKI_PIN.md`):
 
 ```bash
 git add <gezielte-dateien>
-"$GODOT_BIN" --headless --path . --script res://scripts/doki/doki.gd -- prepare "<präziser Impuls>"
-# Narrator-Body nach .doki/prompt.txt schreiben
-"$GODOT_BIN" --headless --path . --script res://scripts/doki/doki.gd -- finish --body-file .doki/narrator_body.md
+bash C:/Users/Vannon/Desktop/doki/bin/doki prepare "<präziser Impuls>"
+# Narrator-Body nach .doki/narrator_body.md schreiben
+bash C:/Users/Vannon/Desktop/doki/bin/doki finish --body-file .doki/narrator_body.md
 git commit -F .commit_msg.txt
 ```
 
 Bei einem abgebrochenen Flow:
 
 ```bash
-"$GODOT_BIN" --headless --path . --script res://scripts/doki/doki.gd -- repair
+bash C:/Users/Vannon/Desktop/doki/bin/doki repair
 ```
 
-DOKI-Artefakte (`narrative_chain.json`, `change_index.json`, `CHANGELOG.md`, `scripts/doki/data/arcs.json`) werden vom Flow verwaltet. Sie nicht manuell rekonstruieren.
+DOKI-Artefakte (`.doki/narrative_chain.json`, `.doki/change_index.json`, `CHANGELOG.md`, `.doki/arcs.json`) werden vom Flow verwaltet. Sie nicht manuell rekonstruieren.
 
 ## 8. Sicheres Synchronisieren zwischen Systemen
 
@@ -112,7 +112,7 @@ Wenn der Push vom ersten System erledigt wurde, reicht auf dem zweiten System ei
 git switch -c phase-1/<kurzer-name>
 ```
 
-Vor dem Wechsel zwischen Systemen müssen Änderungen entweder committed und gepusht oder bewusst lokal dokumentiert sein. Uncommitted DOKI-Sessions nicht auf das zweite System übertragen; dort `doki repair` ausführen.
+Vor dem Wechsel zwischen Systemen müssen Änderungen entweder committed und gepusht oder bewusst lokal dokumentiert sein. Uncommitted DOKI-Sessions nicht auf das zweite System übertragen; dort im Ziel-Repo `bash C:/Users/Vannon/Desktop/doki/bin/doki repair` ausführen.
 
 ## 9. Phase-1-Arbeitsprotokoll
 

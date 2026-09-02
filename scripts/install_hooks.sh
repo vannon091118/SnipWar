@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# DOKI Git Hooks Installer
-# Symlinks .githooks/* to .git/hooks/
-# Run this once after cloning the repo
+# SnipWar Git Hooks Installer
+# Symlinks .githooks/* to .git/hooks/ and sets core.hooksPath.
+# Run this once after cloning the repo.
+#
+# Die Hooks brauchen kein DOKI mehr (Entkopplung, docs/DOKI_PIN.md) —
+# nur GODOT_BIN für den Verify-Treiber.
 
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null)"
 if [ -z "$ROOT_DIR" ]; then
@@ -32,12 +35,12 @@ for hook in "$GITHOOKS_DIR"/*; do
     [ -f "$hook" ] || continue
     hook_name="$(basename "$hook")"
     target="$GIT_HOOKS_DIR/$hook_name"
-    
+
     # Remove existing hook (file or symlink)
     if [ -e "$target" ] || [ -L "$target" ]; then
         rm -f "$target"
     fi
-    
+
     # Create symlink
     ln -s "$hook" "$target"
     chmod +x "$hook"
@@ -48,7 +51,7 @@ done
 git config core.hooksPath "$GITHOOKS_DIR"
 
 echo "Git hooks installed successfully."
-echo "Hooks will run on: pre-commit, commit-msg, post-commit"
+echo "Hooks will run on: pre-commit, commit-msg"
 echo ""
-echo "Note: GODOT_BIN must be set and executable for hooks to run fully."
+echo "Note: GODOT_BIN must be set and executable for the pre-commit gate to run fully."
 echo "      export GODOT_BIN=/path/to/godot_console"

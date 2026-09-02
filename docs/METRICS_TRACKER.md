@@ -1,5 +1,5 @@
 # 🔢 NARRATIVE METRICS TRACKER
-> Automatisch aktualisiert nach jedem DOKI-Commit.
+> Automatisch aktualisiert nach jedem Commit über das DOKI-Home (gepinnt, docs/DOKI_PIN.md).
 > Letzte Aktualisierung: `2026-08-31T04:02:02` | Chain-Eintrag: `c119` | Arc: `a56`
 
 ---
@@ -137,4 +137,4 @@
 
 ---
 
-*Dieses Dokument wird nach jedem DOKI-Finalize-Flow automatisch aktualisiert.*
+*Dieses Dokument wird nach jedem DOKI-Flow (prepare/finish über das gepinnte Home) automatisch aktualisiert.*

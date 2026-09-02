@@ -192,8 +192,8 @@ $GODOT_BIN --headless --path . --script res://scripts/concept_search.gd fleet
 
 Hinter der Fassade des Spiels arbeitet eine außergewöhnliche Entwicklungs- und Testmaschinerie:
 
-### 📜 DOKI — Das erzählende Commit-Tor
-In diesem Projekt gibt es keine leeren Commit-Nachrichten. Das **DOKI-System** fängt jeden Entwicklungsschritt ab. Ein deterministischer Hash-Generator wählt aus **14 Charakter-Persönlichkeiten** (vom zynischen Architekten *Devin* über den Forensiker *Squizzle* bis zum philosophischen Nihilisten *Null*) und **10 Stimmungs-Overlays**. Jeder Commit wird als fortlaufendes Kapitel einer galaktischen Chronik dokumentiert.
+### 📜 DOKI — Das erzählende Commit-Tor (gepinnt, entkoppelt)
+In diesem Projekt gibt es keine leeren Commit-Nachrichten. Das **DOKI-System** (gepinnt in `C:/Users/Vannon/Desktop/doki/`, siehe `docs/DOKI_PIN.md`) fängt jeden Entwicklungsschritt ab. Ein deterministischer Hash-Generator wählt aus **14 Charakter-Persönlichkeiten** (vom zynischen Architekten *Devin* über den Forensiker *Squizzle* bis zum philosophischen Nihilisten *Null*) und **10 Stimmungs-Overlays**. Jeder Commit wird als fortlaufendes Kapitel einer galaktischen Chronik dokumentiert — der Agent ruft `prepare`/`finish` über das Home auf, die Erzählkette bleibt im Repo (`.doki/narrative_chain.json`).
 
 ### 👁️ S.C.O.U.T. & Die Audio-Vision-Schicht
 Während keine Tastatur berührt wird, übernehmen autonome KI-Agenten das Steuer. Über das integrierte MCP-System (**S.C.O.U.T.**) steuern sie Raumflotten, untersuchen das Spielgeschehen mittels **Tesseract-OCR**, analysieren Benutzeroberflächen pixelgenau und bewerten die Soundlandschaft über **Goertzel-Spektrogramme und K-Weighted LUFS-Meter**.
