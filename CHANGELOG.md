@@ -2896,3 +2896,14 @@ DOKI-Entkopplung: Engine (scripts/doki) und Python-Runtime (.doki/narrative_runt
 - scripts/testing/narrative_runtime_gate_test.gd: Dokumentation aktualisiert (F-585).
 - scripts/testing/narrative_runtime_gate_test.gd.uid: Dokumentation aktualisiert (F-598).
 - scripts/verify.py: Dokumentation aktualisiert (F-836).
+
+## 2026-08-27 12:00:00 — p132 · c132j36n8a60p17 · Ghost · müde-zufrieden
+
+**Ghost verzeichnet: AGENTS.md auf die entkoppelte Realität umgestellt… — nach Buffy**
+
+AGENTS.md auf die entkoppelte Realität umgestellt (DOKI-Aufrufe über das gepinnte Home, Hook-Installation via scripts/install_hooks.sh, Commit-Gruppen-Tabelle ohne DOKI/Narrative-Runtime) + finalize-Artefakte für Commit 145fc2d
+
+- .doki/arcs.json: Umstrukturiert (F-877).
+- .doki/change_index.json: Umstrukturiert (F-586).
+- .doki/narrative_chain.json: Umstrukturiert (F-587).
+- AGENTS.md: Umstrukturiert (F-019).

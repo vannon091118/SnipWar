@@ -11529,6 +11529,679 @@
 			"seq": 130,
 			"subject": "Basher (2 files): Content-neutraler Merge-Weg: DOKI-Gate und… — nach Devin",
 			"summary": "WARUM UNVERMEIDLICH: Der Vertrags-SSOT-Arc hat die zwei verstreuten Pfad-Tabellen zu EINER Quelle zusammengezogen. Aber dabei blieb eine Lücke: Ein Merge, der nur die Konvergenz mit dem Base aufzei..."
+		},
+		{
+			"a": 1,
+			"arc": "",
+			"c": 131,
+			"composite": "c131j78n1a1p47",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/README.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/__init__.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/__main__.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/beliefs.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/cli.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/commit_hook.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/context.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/errors.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/gate.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/gate_cli.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/observe.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/personality.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/perspectives.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/public_state.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/relationships.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/sandbox/__init__.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/sandbox/generators.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/sandbox/metrics.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/sandbox/reference/snapshot.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/sandbox/runner.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/spotlight.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/store.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/tests/__init__.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/tests/test_relationship_sprint.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/tests/test_runtime.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/tests/test_v2_conformance.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/threads.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 68.0,
+					"file": ".githooks/commit-msg",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".githooks/post-commit",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 28.0,
+					"file": ".githooks/pre-commit",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 37.0,
+					"file": "ARCHITECTURE.md",
+					"insertions": 21.0
+				},
+				{
+					"deletions": 63.0,
+					"file": "DESIGN.md",
+					"insertions": 26.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "README.md",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "ROADMAP.md",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 10.0,
+					"file": "docs/DEVELOPMENT_PROTOCOL.md",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/DOKI_PIN.md",
+					"insertions": 78.0
+				},
+				{
+					"deletions": 12.0,
+					"file": "docs/INVENTORY_MATRIX.md",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "docs/METRICS_TRACKER.md",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "docs/README.md",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "docs/SEARCH_INDEX.md",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "docs/reference/python_preflight/constraints.py",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "docs/reference/python_preflight/pure_constraints.py",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 9.0,
+					"file": "docs/reference/python_preflight/scope.py",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "scripts/commit_group_guard.sh",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/concept_index.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 15.0,
+					"file": "scripts/docs/AGENTS_REFERENCE.md",
+					"insertions": 16.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/NARRATIVE_ENGINE_DESIGN.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/README.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/chain_store.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/chain_store.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/change_index_store.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/change_index_store.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/session_store.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/chain/session_store.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/character/mood_overlay.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/character/mood_overlay.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/character/narrator_catalog.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/character/narrator_catalog.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/rng_engine.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/rng_engine.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/verifier.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/verifier.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/xorshift128.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/core/xorshift128.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/doki_config.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/moods.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/narrators.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/data/prompt_templates.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki-commit.sh",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_analyze.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_analyze.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_selfcheck.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_selfcheck.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_story_test.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/doki_story_test.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/metrics_updater.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/metrics_updater.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/artifact_writer.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/artifact_writer.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/block_report.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/block_report.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/change_index_engine.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/change_index_engine.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/commit_orchestrator.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/commit_orchestrator.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/finalize_flow.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/finalize_flow.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/finish_flow.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/finish_flow.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/gate_flow.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/gate_flow.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/prepare_flow.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/status_flow.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/flows/status_flow.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/git_helper.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/git_helper.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/message_builder.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/message_builder.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/session_builder.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/orchestration/session_builder.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/arc_engine.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/arc_engine.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/prompt_engine.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/prompt_engine.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/relationship_engine.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/relationship_engine.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/sideplot_engine.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/sideplot_engine.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/voice_composer.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/prompt/voice_composer.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/reset_stale_session.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/doki/reset_stale_session.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "scripts/install_hooks.sh",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/preflight/constraint_dead_code.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_narrative_runtime.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight/constraint_narrative_runtime.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/preflight_v2/change_impact_resolver.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 10.0,
+					"file": "scripts/preflight_v2/constraint_scanner.gd",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 70.0,
+					"file": "scripts/preflight_v2/contract_map.json",
+					"insertions": 24.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/testing/change_impact_resolver_test.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/testing/compile_gate.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/narrative_runtime_gate.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/narrative_runtime_gate.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/narrative_runtime_gate_test.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/narrative_runtime_gate_test.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/verify.py",
+					"insertions": 5.0
+				}
+			],
+			"date": "2026-08-27 11:00:00",
+			"hash": "145fc2d17a0b406cc3fae7e9b252a3a38ee09c78",
+			"j": 78,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 1,
+			"narrator": "Buffy",
+			"p": 47,
+			"p_id": 131,
+			"prev_hash": "f909bf2c2c1331d6c2ee77fd8be0c048be48cc9847c9aa3ec11c1bedf6ec8bf4",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Basher",
+			"seq": 131,
+			"subject": "[Buffy] DOKI-Entkopplung: Engine (scripts/doki) und… — nach Basher",
+			"summary": "Bashers jüngste Transport- und Vertrags-SSOT-Arbeit hatte die maschinenlesbare Grundlage bereits gelegt; deshalb konnte der CommitLayer heute aus dem Spiel-Repo ausziehen — nicht verkleinert, sonde..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
