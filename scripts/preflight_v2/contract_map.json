@@ -1,0 +1,1202 @@
+{
+  "schema_version": 1,
+  "_doc": [
+    "Single machine-readable source for path classification (AGENTS.md 'Atomare Commit-Gruppen' + preflight scope).",
+    "Readers: scripts/preflight_v2/change_impact_resolver.gd (via constraint_scanner.path_contracts), scripts/commit_group_guard.sh, docs/reference/python_preflight/scope.py.",
+    "Semantics: rules are ordered, FIRST MATCH WINS for the guard; the resolver unions contracts of all matching rules (breadth for tests).",
+    "Every rule carries BOTH 'contracts' (preflight scope) and 'groups' (commit atomicity).",
+    "Special group values: \"AUTO\" = auto-managed ride-along (mask 0, never classified); \"ALL_DOMAINS\" = preflight.gd multi-domain mask.",
+    "A file matching NO rule is unknown: the resolver fails closed (unknown_impact); the guard FAILS the commit (no free ride on mask 0)."
+  ],
+  "groups": [
+    "transit",
+    "navigation",
+    "planets",
+    "game_state",
+    "ships",
+    "combat",
+    "world",
+    "sectors",
+    "save",
+    "concept",
+    "global_search",
+    "doki",
+    "narrative"
+  ],
+  "rules": [
+    {
+      "glob": "*.uid",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": "*.import",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": "CHANGELOG.md",
+      "contracts": [
+        "doki"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": "change_index.json",
+      "contracts": [
+        "doki"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": "narrative_chain.json",
+      "contracts": [
+        "doki"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": "arcs.json",
+      "contracts": [
+        "doki"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": "scripts/doki/data/arcs.json",
+      "contracts": [
+        "doki"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": ".commit_msg.txt",
+      "contracts": [
+        "doki"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": ".doki/**",
+      "contracts": [
+        "doki"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": ".freebuff/**",
+      "contracts": [
+        "doki"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": ".agents/**",
+      "contracts": [
+        "doki"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": ".claude/**",
+      "contracts": [
+        "doki"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": "scripts/doki/NARRATIVE_ENGINE_DESIGN.md",
+      "contracts": [
+        "doki",
+        "docs"
+      ],
+      "groups": [
+        "doki",
+        "narrative"
+      ]
+    },
+    {
+      "glob": "scripts/doki/**",
+      "contracts": [
+        "doki"
+      ],
+      "groups": [
+        "doki"
+      ]
+    },
+    {
+      "glob": ".githooks/**",
+      "contracts": [
+        "preflight",
+        "doki"
+      ],
+      "groups": [
+        "doki"
+      ]
+    },
+    {
+      "glob": ".doki/narrative_runtime/**",
+      "contracts": [
+        "doki"
+      ],
+      "groups": [
+        "narrative"
+      ]
+    },
+    {
+      "glob": "narrative_runtime/**",
+      "contracts": [
+        "doki"
+      ],
+      "groups": [
+        "narrative"
+      ]
+    },
+    {
+      "glob": ".gitignore",
+      "contracts": [
+        "docs",
+        "preflight"
+      ],
+      "groups": [
+        "narrative"
+      ]
+    },
+    {
+      "glob": "AGENTS.md",
+      "contracts": [
+        "docs"
+      ],
+      "groups": [
+        "doki",
+        "global_search",
+        "narrative"
+      ]
+    },
+    {
+      "glob": "scripts/concept_index.gd",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": [
+        "concept",
+        "doki"
+      ]
+    },
+    {
+      "glob": "scripts/global_search.gd",
+      "contracts": [
+        "preflight",
+        "docs"
+      ],
+      "groups": [
+        "global_search"
+      ]
+    },
+    {
+      "glob": "scripts/preflight.gd",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "scripts/preflight_lock.gd",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "scripts/check.gd",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "scripts/preflight_v2_runner.gd",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "scripts/state/game_state.gd",
+      "contracts": [
+        "game_state",
+        "save"
+      ],
+      "groups": [
+        "transit",
+        "game_state",
+        "save"
+      ]
+    },
+    {
+      "glob": "scripts/state/run_save_data.gd",
+      "contracts": [
+        "save"
+      ],
+      "groups": [
+        "save"
+      ]
+    },
+    {
+      "glob": "scripts/state/save_game_service.gd",
+      "contracts": [
+        "save"
+      ],
+      "groups": [
+        "save"
+      ]
+    },
+    {
+      "glob": "scripts/state/domains/**",
+      "contracts": [
+        "game_state",
+        "economy"
+      ],
+      "groups": [
+        "game_state",
+        "save"
+      ]
+    },
+    {
+      "glob": "*bootstrap.gd",
+      "contracts": [
+        "world",
+        "game_state"
+      ],
+      "groups": [
+        "game_state"
+      ]
+    },
+    {
+      "glob": "scripts/flight_time.gd",
+      "contracts": [
+        "fleet"
+      ],
+      "groups": [
+        "transit"
+      ]
+    },
+    {
+      "glob": "scripts/dispatch.gd",
+      "contracts": [
+        "fleet"
+      ],
+      "groups": [
+        "transit"
+      ]
+    },
+    {
+      "glob": "*worker_cluster.*",
+      "contracts": [
+        "fleet"
+      ],
+      "groups": [
+        "transit"
+      ]
+    },
+    {
+      "glob": "*planet_network.gd",
+      "contracts": [
+        "navigation"
+      ],
+      "groups": [
+        "transit",
+        "navigation"
+      ]
+    },
+    {
+      "glob": "*worker_manager.gd",
+      "contracts": [
+        "fleet"
+      ],
+      "groups": [
+        "transit",
+        "navigation"
+      ]
+    },
+    {
+      "glob": "*navigation_field.gd",
+      "contracts": [
+        "navigation"
+      ],
+      "groups": [
+        "navigation",
+        "world"
+      ]
+    },
+    {
+      "glob": "*navigation_waypoint.gd",
+      "contracts": [
+        "navigation"
+      ],
+      "groups": [
+        "navigation"
+      ]
+    },
+    {
+      "glob": "*seeded_layout.gd",
+      "contracts": [
+        "world",
+        "sectors"
+      ],
+      "groups": [
+        "navigation",
+        "planets",
+        "sectors",
+        "save"
+      ]
+    },
+    {
+      "glob": "*/planet.tscn",
+      "contracts": [
+        "world"
+      ],
+      "groups": [
+        "planets"
+      ]
+    },
+    {
+      "glob": "scripts/objects/planets/planet.gd",
+      "contracts": [
+        "world",
+        "economy",
+        "navigation"
+      ],
+      "groups": [
+        "planets"
+      ]
+    },
+    {
+      "glob": "*planet_arrival_resolver.gd",
+      "contracts": [
+        "world",
+        "navigation"
+      ],
+      "groups": [
+        "planets"
+      ]
+    },
+    {
+      "glob": "*planet_trait_aggregator.gd",
+      "contracts": [
+        "world"
+      ],
+      "groups": [
+        "planets"
+      ]
+    },
+    {
+      "glob": "*planet_view.gd",
+      "contracts": [
+        "ui_flow"
+      ],
+      "groups": [
+        "planets"
+      ]
+    },
+    {
+      "glob": "*ship_part_definition.gd",
+      "contracts": [
+        "ships"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "*ship_blueprint.gd",
+      "contracts": [
+        "ships"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "*ship_part_catalog*",
+      "contracts": [
+        "ships"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "*technology_definition.gd",
+      "contracts": [
+        "ships"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "*ship_manager.gd",
+      "contracts": [
+        "ships",
+        "fleet"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "scripts/ui/dossier/**",
+      "contracts": [
+        "ships",
+        "economy"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "*fleet_battle_simulator.gd",
+      "contracts": [
+        "combat",
+        "fleet"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "*conquest_simulator.gd",
+      "contracts": [
+        "combat",
+        "fleet"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "*composite_ship_view.gd",
+      "contracts": [
+        "ships"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "*conflict_manager.gd",
+      "contracts": [
+        "combat",
+        "fleet"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "*fleet_snapshot.gd",
+      "contracts": [
+        "fleet"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scenes/*battle*",
+      "contracts": [
+        "combat",
+        "mcp"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scenes/*conquest*",
+      "contracts": [
+        "combat"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "*world_config.gd",
+      "contracts": [
+        "world",
+        "sectors"
+      ],
+      "groups": [
+        "world",
+        "sectors"
+      ]
+    },
+    {
+      "glob": "scripts/history/**",
+      "contracts": [
+        "history"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "*world_generator.gd",
+      "contracts": [
+        "world"
+      ],
+      "groups": [
+        "world"
+      ]
+    },
+    {
+      "glob": "*chunk_coordinator.gd",
+      "contracts": [
+        "world"
+      ],
+      "groups": [
+        "world"
+      ]
+    },
+    {
+      "glob": "*planet_procedural.gd",
+      "contracts": [
+        "world"
+      ],
+      "groups": [
+        "world"
+      ]
+    },
+    {
+      "glob": "*sector_flavor*",
+      "contracts": [
+        "sectors"
+      ],
+      "groups": [
+        "sectors"
+      ]
+    },
+    {
+      "glob": "*sector_anchor.gd",
+      "contracts": [
+        "sectors"
+      ],
+      "groups": [
+        "sectors"
+      ]
+    },
+    {
+      "glob": "*sector_classifier.gd",
+      "contracts": [
+        "sectors"
+      ],
+      "groups": [
+        "sectors"
+      ]
+    },
+    {
+      "glob": "*resource_pool*.tres",
+      "contracts": [
+        "economy"
+      ],
+      "groups": [
+        "game_state"
+      ]
+    },
+    {
+      "glob": "scripts/ui/main_menu.gd",
+      "contracts": [
+        "ui_flow"
+      ],
+      "groups": [
+        "save"
+      ]
+    },
+    {
+      "glob": "scripts/ui/pause/**",
+      "contracts": [
+        "ui_flow"
+      ],
+      "groups": [
+        "save"
+      ]
+    },
+    {
+      "glob": "*constraint_concept_index.gd",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": [
+        "concept"
+      ]
+    },
+    {
+      "glob": "*mechanic_registry.gd",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": [
+        "concept"
+      ]
+    },
+    {
+      "glob": "*scenario_loader.gd",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": [
+        "concept"
+      ]
+    },
+    {
+      "glob": "*scenario_snapshot.gd",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": [
+        "concept"
+      ]
+    },
+    {
+      "glob": "scripts/state/run_session.gd",
+      "contracts": [
+        "save",
+        "ui_flow"
+      ],
+      "groups": [
+        "save"
+      ]
+    },
+    {
+      "glob": "scripts/state/chunk_save_data.gd",
+      "contracts": [
+        "save"
+      ],
+      "groups": [
+        "save"
+      ]
+    },
+    {
+      "glob": "scripts/state/event_bus.gd",
+      "contracts": [
+        "history"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/state/event_log.gd",
+      "contracts": [
+        "history"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/ui/history/**",
+      "contracts": [
+        "history"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/config/resource_pool*",
+      "contracts": [
+        "economy"
+      ],
+      "groups": [
+        "game_state"
+      ]
+    },
+    {
+      "glob": "scripts/config/asset_library.gd",
+      "contracts": [
+        "docs",
+        "ui_flow"
+      ],
+      "groups": [
+        "planets"
+      ]
+    },
+    {
+      "glob": "scripts/config/ship_*",
+      "contracts": [
+        "ships"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "scripts/config/fleet_snapshot.gd",
+      "contracts": [
+        "fleet"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/objects/ships/**",
+      "contracts": [
+        "ships",
+        "fleet"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "scripts/objects/workers/**",
+      "contracts": [
+        "ships"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "scripts/config/economy_config.gd",
+      "contracts": [
+        "economy"
+      ],
+      "groups": [
+        "game_state"
+      ]
+    },
+    {
+      "glob": "scripts/config/*upgrade*",
+      "contracts": [
+        "economy",
+        "ships"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "scripts/config/effect_*",
+      "contracts": [
+        "ships",
+        "economy"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "scripts/config/module_*",
+      "contracts": [
+        "combat"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/config/assault_*",
+      "contracts": [
+        "combat"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/config/navigation_*",
+      "contracts": [
+        "navigation"
+      ],
+      "groups": [
+        "navigation"
+      ]
+    },
+    {
+      "glob": "scripts/config/cpu_*",
+      "contracts": [
+        "fleet"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/config/*dispatch*",
+      "contracts": [
+        "fleet"
+      ],
+      "groups": [
+        "transit"
+      ]
+    },
+    {
+      "glob": "scripts/config/world_*",
+      "contracts": [
+        "world"
+      ],
+      "groups": [
+        "world"
+      ]
+    },
+    {
+      "glob": "scripts/config/cluster_*",
+      "contracts": [
+        "world",
+        "sectors"
+      ],
+      "groups": [
+        "world"
+      ]
+    },
+    {
+      "glob": "scripts/config/sector_*",
+      "contracts": [
+        "sectors"
+      ],
+      "groups": [
+        "sectors"
+      ]
+    },
+    {
+      "glob": "scripts/config/planet_*",
+      "contracts": [
+        "world"
+      ],
+      "groups": [
+        "planets"
+      ]
+    },
+    {
+      "glob": "scripts/config/paper_style*",
+      "contracts": [
+        "ui_flow"
+      ],
+      "groups": [
+        "save"
+      ]
+    },
+    {
+      "glob": "scripts/bootstrap/**",
+      "contracts": [
+        "world",
+        "game_state"
+      ],
+      "groups": [
+        "game_state"
+      ]
+    },
+    {
+      "glob": "scripts/state/playback_controller.gd",
+      "contracts": [
+        "history",
+        "ui_flow"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/objects/planets/**",
+      "contracts": [
+        "world",
+        "economy",
+        "navigation"
+      ],
+      "groups": [
+        "planets"
+      ]
+    },
+    {
+      "glob": "scripts/objects/conflict_manager.gd",
+      "contracts": [
+        "combat",
+        "fleet"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/objects/meteors/**",
+      "contracts": [
+        "world"
+      ],
+      "groups": [
+        "world"
+      ]
+    },
+    {
+      "glob": "scripts/battle/**",
+      "contracts": [
+        "combat",
+        "mcp"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/conquest/**",
+      "contracts": [
+        "combat",
+        "fleet"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/simulation/**",
+      "contracts": [
+        "combat"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scenes/main_menu/**",
+      "contracts": [
+        "ui_flow"
+      ],
+      "groups": [
+        "save"
+      ]
+    },
+    {
+      "glob": "scenes/ui/**",
+      "contracts": [
+        "ui_flow"
+      ],
+      "groups": [
+        "save"
+      ]
+    },
+    {
+      "glob": "scenes/objects/**",
+      "contracts": [
+        "ui_flow",
+        "ships"
+      ],
+      "groups": [
+        "planets"
+      ]
+    },
+    {
+      "glob": "scenes/battle/**",
+      "contracts": [
+        "combat",
+        "mcp"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scenes/conquest/**",
+      "contracts": [
+        "combat"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scenes/world/**",
+      "contracts": [
+        "world",
+        "ui_flow"
+      ],
+      "groups": [
+        "world"
+      ]
+    },
+    {
+      "glob": "scenes/historical_world/**",
+      "contracts": [
+        "history",
+        "ui_flow"
+      ],
+      "groups": [
+        "combat"
+      ]
+    },
+    {
+      "glob": "scripts/ui/**",
+      "contracts": [
+        "ui_flow",
+        "history"
+      ],
+      "groups": [
+        "save"
+      ]
+    },
+    {
+      "glob": "scripts/ui/tech_menu/**",
+      "contracts": [
+        "ships",
+        "economy"
+      ],
+      "groups": [
+        "ships"
+      ]
+    },
+    {
+      "glob": "scripts/testing/mechanic_registry.gd",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": [
+        "concept"
+      ]
+    },
+    {
+      "glob": "scripts/preflight/**",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "scripts/preflight_v2/**",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "scripts/testing/**",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "scripts/tools/**",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "scripts/verify.py",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": ".gitmodules",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "scripts/agent_activity.sh",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "scripts/*.sh",
+      "contracts": [
+        "preflight"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "addons/mcp/**",
+      "contracts": [
+        "mcp"
+      ],
+      "groups": [
+        "doki"
+      ]
+    },
+    {
+      "glob": "docs/reference/**",
+      "contracts": [
+        "preflight",
+        "docs"
+      ],
+      "groups": "ALL_DOMAINS"
+    },
+    {
+      "glob": "docs/**",
+      "contracts": [
+        "docs"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": "*.md",
+      "contracts": [
+        "docs"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": "*.json",
+      "contracts": [
+        "docs",
+        "doki"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": "project.godot",
+      "contracts": [
+        "ui_flow",
+        "game_state"
+      ],
+      "groups": [
+        "doki"
+      ]
+    },
+    {
+      "glob": "icon.svg",
+      "contracts": [
+        "ui_flow"
+      ],
+      "groups": [
+        "planets"
+      ]
+    },
+    {
+      "glob": "plan/**",
+      "contracts": [
+        "docs"
+      ],
+      "groups": "AUTO"
+    },
+    {
+      "glob": "assets/**",
+      "contracts": [
+        "docs",
+        "ui_flow"
+      ],
+      "groups": [
+        "planets"
+      ]
+    },
+    {
+      "glob": "ROADMAP.md",
+      "contracts": [
+        "docs"
+      ],
+      "groups": "AUTO"
+    }
+  ]
+}

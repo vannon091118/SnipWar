@@ -2738,3 +2738,15 @@ Pfad-Migration Nachzug: Addon-interne Referenzen addons/gdscript_mcp→addons/mc
 - addons/mcp/testing/scenarios/main_menu_buttons.tres: Dokumentation aktualisiert (F-833).
 - addons/mcp/testing/scenarios/smoke_direct_tools.tres: Dokumentation aktualisiert (F-834).
 - scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
+
+## 2026-08-27 09:00:00 — p129 · c129j18n6a40p56 · Devin · trocken
+
+**Devin sagt: Vertrags-SSOT: eine maschinenlesbare Quelle… — nach Thinker**
+
+Vertrags-SSOT: eine maschinenlesbare Quelle (contract_map.json) für Pfad-Klassifikation — ChangeImpactResolver liest Contracts, Commit-Group-Guard liest Groups daraus; unklassifizierte Datei blockt fail-closed statt freizufahren; Multi-Segment-Wildcard-Matcher-Fix im Resolver
+
+- scripts/commit_group_guard.sh: Fehler behoben (F-837).
+- scripts/preflight_v2/change_impact_resolver.gd: Fehler behoben (F-432).
+- scripts/preflight_v2/constraint_scanner.gd: Fehler behoben (F-433).
+- scripts/preflight_v2/contract_map.json: Fehler behoben (F-838).
+- scripts/testing/contract_map_test.gd: Fehler behoben (F-839).
