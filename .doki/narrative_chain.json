@@ -11448,6 +11448,54 @@
 			"seq": 128,
 			"subject": "Pfad-Migration Nachzug: Addon-interne Referenzen… [Analyse: Thinker] — nach Vannon",
 			"summary": "Der Blob ist tot, lang lebe der Blob. Nachzug: cb49b46 zog die Addon-internen Referenzen nicht mit — project.godot, Constraints, Tests, Docs auf Repo-Ebene: sauber. Innerhalb des Addons selbst: 26 ..."
+		},
+		{
+			"a": 40,
+			"arc": "a59",
+			"c": 129,
+			"composite": "c129j18n6a40p56",
+			"data_changes": [
+				{
+					"deletions": 64.0,
+					"file": "scripts/commit_group_guard.sh",
+					"insertions": 213.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/preflight_v2/change_impact_resolver.gd",
+					"insertions": 20.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/preflight_v2/constraint_scanner.gd",
+					"insertions": 29.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_v2/contract_map.json",
+					"insertions": 1202.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/contract_map_test.gd",
+					"insertions": 138.0
+				}
+			],
+			"date": "2026-08-27 09:00:00",
+			"hash": "3fdff4a8250834fb3e0c4ca29325f9f2f1c841d9",
+			"j": 18,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 6,
+			"narrator": "Devin",
+			"p": 56,
+			"p_id": 129,
+			"prev_hash": "92b6a4d1ba9db29d629c49a50c17d23cdfea7326c03aab211f612397d9b2ce1e",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Thinker",
+			"seq": 129,
+			"subject": "Devin sagt: Vertrags-SSOT: eine maschinenlesbare Quelle… — nach Thinker",
+			"summary": "Zwei Karten für dasselbe Terrain. Der Commit-Group-Guard hatte seine eigene Pfad→Gruppen-Tabelle, der ChangeImpactResolver eine andere Pfad→Contracts-Tabelle. Irgendwann laufen sie auseinander — ge..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
