@@ -11240,6 +11240,214 @@
 			"seq": 127,
 			"subject": "Fail-closed verify.py: Deletionen erreichen. … — nach Basher",
 			"summary": "Prüfe den Prüfer. Das war die eine Regel dieses Arcs, und dieser Commit ist ihr Ende — denn heute wurde der Prüfer selbst geprüft, und er hat standgehalten, nachdem drei Lücken gestopft wurden."
+		},
+		{
+			"a": 38,
+			"arc": "a59",
+			"c": 128,
+			"composite": "c128j66n3a38p28",
+			"data_changes": [
+				{
+					"deletions": 8.0,
+					"file": "addons/mcp/AGENTS.md",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "addons/mcp/AGENT_WORKFLOW.md",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/CONTEXT_AUTONOMY_AUDIT.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 11.0,
+					"file": "addons/mcp/MCP_INDEX.md",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "addons/mcp/PERSISTENCE.md",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/client/mcp_connector_selftest.js",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "addons/mcp/editor/gdscript_mcp_plugin.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/editor/mcp_dock.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/editor/mcp_dock.tscn",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_capability_planner.gd",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 7.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_chain_controller.gd",
+					"insertions": 7.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_contract_gate.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_project_tools.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_workspace_journal.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 14.0,
+					"file": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+					"insertions": 14.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "addons/mcp/runtime/host/mcp_runtime.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 10.0,
+					"file": "addons/mcp/runtime/host/mcp_server.gd",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/runtime/protocol/mcp_protocol.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/runtime/tools/e2e/mcp_e2e.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "addons/mcp/runtime/tools/e2e/mcp_playthrough_tools.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/runtime/tools/runtime/mcp_runtime_tools.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_worker.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "addons/mcp/testing/e2e/mcp_playthrough_driver.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "addons/mcp/testing/mcp_autonomy_contract_test.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "addons/mcp/testing/mcp_autonomy_write_gate_test.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 26.0,
+					"file": "addons/mcp/testing/mcp_build_check.gd",
+					"insertions": 26.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "addons/mcp/testing/mcp_player_contract_test.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "addons/mcp/testing/mcp_red_team_test.gd",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "addons/mcp/testing/mcp_test_runner.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/testing/mcp_test_scenario.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "addons/mcp/testing/mcp_workspace_contract_test.gd",
+					"insertions": 5.0
+				},
+				{
+					"deletions": 8.0,
+					"file": "addons/mcp/testing/portable/run_portable_smoke.sh",
+					"insertions": 8.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/testing/portable/templates/project.godot.tpl",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/testing/scenarios/main_menu_buttons.tres",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "addons/mcp/testing/scenarios/smoke_direct_tools.tres",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 25.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 65.0
+				}
+			],
+			"date": "2026-08-27 08:00:00",
+			"hash": "52838ff0ef95e05f0d1edddb77aaa647df38e8de",
+			"j": 66,
+			"model_id": "claude-sonnet-4",
+			"mood": "müde-zufrieden",
+			"n": 3,
+			"narrator": "Thinker",
+			"p": 28,
+			"p_id": 128,
+			"prev_hash": "44cf81d66b5e9b28fa4abbb98d97edeaef857cdb0f19333e349c8a78a7113451",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Vannon",
+			"seq": 128,
+			"subject": "Pfad-Migration Nachzug: Addon-interne Referenzen… [Analyse: Thinker] — nach Vannon",
+			"summary": "Der Blob ist tot, lang lebe der Blob. Nachzug: cb49b46 zog die Addon-internen Referenzen nicht mit — project.godot, Constraints, Tests, Docs auf Repo-Ebene: sauber. Innerhalb des Addons selbst: 26 ..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
