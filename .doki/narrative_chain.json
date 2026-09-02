@@ -122,6 +122,64 @@
 			"seq": 2,
 			"subject": "Spark entdeckt: verify.py migration: externe Orchestrierung… — nach Flux",
 			"summary": "Verify.py Migration: Orchestration wandert aus der Engine."
+		},
+		{
+			"a": 32,
+			"arc": "a58",
+			"c": 3,
+			"composite": "c3j56n8a32p2",
+			"data_changes": [
+				{
+					"deletions": 47.0,
+					"file": ".doki/change_index.json",
+					"insertions": 74.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_chain.json",
+					"insertions": 98.0
+				},
+				{
+					"deletions": 6.0,
+					"file": ".githooks/pre-commit",
+					"insertions": 25.0
+				},
+				{
+					"deletions": 6.0,
+					"file": "AGENTS.md",
+					"insertions": 12.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/commit_group_guard.sh",
+					"insertions": 209.0
+				},
+				{
+					"deletions": 18.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 30.0
+				},
+				{
+					"deletions": 16.0,
+					"file": "scripts/doki/doki_selfcheck.gd",
+					"insertions": 23.0
+				}
+			],
+			"date": "2026-09-01 03:00:00",
+			"hash": "0262c8c012eda35f1e93739fa6951b76ff56da0a",
+			"j": 56,
+			"model_id": "claude-sonnet-4",
+			"mood": "müde-zufrieden",
+			"n": 8,
+			"narrator": "Ghost",
+			"p": 2,
+			"p_id": 3,
+			"prev_hash": "6d2c4f24f73b80964a724db05c7be083daf433cec2bb5b1a7d51adf0303cea19",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Spark",
+			"seq": 3,
+			"subject": "Ghost verzeichnet: Hook und Dokumentation auf den neuen… — nach Spark",
+			"summary": "Der CommitLayer selbst zieht mit: Der pre-commit-Hook ruft jetzt den externen"
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

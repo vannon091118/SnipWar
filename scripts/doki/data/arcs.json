@@ -2633,7 +2633,7 @@
 		},
 		"a57": {
 			"climax_weight": 5.0,
-			"commit_count": 5,
+			"commit_count": 5.0,
 			"completed_at": "arc_climax",
 			"id": "a57",
 			"name": "Verifikations-Ende-zu-Ende",
@@ -2697,13 +2697,23 @@
 		},
 		"a58": {
 			"climax_weight": 5.0,
+			"commit_count": 1,
 			"id": "a58",
 			"name": "Nächster Akt",
+			"seen_entities": [
+				"F-016",
+				"F-017",
+				"F-018",
+				"F-019",
+				"F-020",
+				"F-021",
+				"F-022"
+			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
-			"weight": 0.0
+			"weight": 3.05
 		},
 		"a6": {
 			"climax_weight": 3.0,

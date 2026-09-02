@@ -1,7 +1,21 @@
 {
 	"commits": {
+		"0262c8c012eda35f1e93739fa6951b76ff56da0a": {
+			"c": 3,
+			"composite": "c3j56n8a32p2",
+			"entities": [
+				"F-016",
+				"F-017",
+				"F-018",
+				"F-019",
+				"F-020",
+				"F-021",
+				"F-022"
+			],
+			"p_id": 3
+		},
 		"c0fb4a8a4a49b5a7baec3c9018406ac6ea0ff15b": {
-			"c": 2,
+			"c": 2.0,
 			"composite": "c2j67n9a9p1",
 			"entities": [
 				"F-001",
@@ -24,293 +38,293 @@
 				"C-003",
 				"C-004"
 			],
-			"p_id": 2
+			"p_id": 2.0
 		}
 	},
 	"entities": {
 		"C-001": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [
 				{
 					"lines": [
-						15
+						15.0
 					],
-					"p_id": 2
+					"p_id": 2.0
 				}
 			],
 			"id": "C-001",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "RESOLVER",
 			"path": "scripts/preflight_v2/scope_dump.gd",
 			"status": "modified",
 			"type": "component"
 		},
 		"C-002": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [
 				{
 					"lines": [
-						17
+						17.0
 					],
-					"p_id": 2
+					"p_id": 2.0
 				}
 			],
 			"id": "C-002",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "MARKER",
 			"path": "scripts/preflight_v2/scope_dump.gd",
 			"status": "modified",
 			"type": "component"
 		},
 		"C-003": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [
 				{
 					"lines": [
-						19
+						19.0
 					],
-					"p_id": 2
+					"p_id": 2.0
 				}
 			],
 			"id": "C-003",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "_init",
 			"path": "scripts/preflight_v2/scope_dump.gd",
 			"status": "modified",
 			"type": "component"
 		},
 		"C-004": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [
 				{
 					"lines": [
-						57
+						57.0
 					],
-					"p_id": 2
+					"p_id": 2.0
 				}
 			],
 			"id": "C-004",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "VerifyLock",
 			"path": "scripts/verify.py",
 			"status": "modified",
 			"type": "component"
 		},
 		"F-001": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-001",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "CHANGELOG.md",
 			"path": "CHANGELOG.md",
 			"status": "created",
 			"type": "file"
 		},
 		"F-002": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-002",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "FINDINGS.md",
 			"path": "docs/FINDINGS.md",
 			"status": "created",
 			"type": "file"
 		},
 		"F-003": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-003",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "check.gd",
 			"path": "scripts/check.gd",
 			"status": "created",
 			"type": "file"
 		},
 		"F-004": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-004",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "check.gd.uid",
 			"path": "scripts/check.gd.uid",
 			"status": "created",
 			"type": "file"
 		},
 		"F-005": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-005",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "preflight.gd",
 			"path": "scripts/preflight.gd",
 			"status": "created",
 			"type": "file"
 		},
 		"F-006": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-006",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "preflight_lock.gd",
 			"path": "scripts/preflight_lock.gd",
 			"status": "created",
 			"type": "file"
 		},
 		"F-007": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-007",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "preflight_lock.gd.uid",
 			"path": "scripts/preflight_lock.gd.uid",
 			"status": "created",
 			"type": "file"
 		},
 		"F-008": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-008",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "change_impact_resolver.gd",
 			"path": "scripts/preflight_v2/change_impact_resolver.gd",
 			"status": "created",
 			"type": "file"
 		},
 		"F-009": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-009",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "constraint_scanner.gd",
 			"path": "scripts/preflight_v2/constraint_scanner.gd",
 			"status": "created",
 			"type": "file"
 		},
 		"F-010": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-010",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "scope_dump.gd",
 			"path": "scripts/preflight_v2/scope_dump.gd",
 			"status": "created",
 			"type": "file"
 		},
 		"F-011": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-011",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "v2_fixture.gd",
 			"path": "scripts/preflight_v2/v2_fixture.gd",
 			"status": "created",
 			"type": "file"
 		},
 		"F-012": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-012",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "preflight_v2_runner.gd",
 			"path": "scripts/preflight_v2_runner.gd",
 			"status": "created",
 			"type": "file"
 		},
 		"F-013": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-013",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "global_search_entry_test.gd",
 			"path": "scripts/testing/global_search_entry_test.gd",
 			"status": "created",
 			"type": "file"
 		},
 		"F-014": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-014",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "test_all.gd",
 			"path": "scripts/testing/test_all.gd",
 			"status": "created",
 			"type": "file"
 		},
 		"F-015": {
-			"first_p": 2,
+			"first_p": 2.0,
 			"history": [],
 			"id": "F-015",
-			"last_p": 2,
+			"last_p": 2.0,
 			"name": "verify.py",
 			"path": "scripts/verify.py",
 			"status": "created",
 			"type": "file"
 		},
 		"F-016": {
-			"first_p": 3,
+			"first_p": 3.0,
 			"history": [],
 			"id": "F-016",
-			"last_p": 3,
+			"last_p": 3.0,
 			"name": "change_index.json",
 			"path": ".doki/change_index.json",
 			"status": "created",
 			"type": "file"
 		},
 		"F-017": {
-			"first_p": 3,
+			"first_p": 3.0,
 			"history": [],
 			"id": "F-017",
-			"last_p": 3,
+			"last_p": 3.0,
 			"name": "narrative_chain.json",
 			"path": ".doki/narrative_chain.json",
 			"status": "created",
 			"type": "file"
 		},
 		"F-018": {
-			"first_p": 3,
+			"first_p": 3.0,
 			"history": [],
 			"id": "F-018",
-			"last_p": 3,
+			"last_p": 3.0,
 			"name": "pre-commit",
 			"path": ".githooks/pre-commit",
 			"status": "created",
 			"type": "file"
 		},
 		"F-019": {
-			"first_p": 3,
+			"first_p": 3.0,
 			"history": [],
 			"id": "F-019",
-			"last_p": 3,
+			"last_p": 3.0,
 			"name": "AGENTS.md",
 			"path": "AGENTS.md",
 			"status": "created",
 			"type": "file"
 		},
 		"F-020": {
-			"first_p": 3,
+			"first_p": 3.0,
 			"history": [],
 			"id": "F-020",
-			"last_p": 3,
+			"last_p": 3.0,
 			"name": "commit_group_guard.sh",
 			"path": "scripts/commit_group_guard.sh",
 			"status": "created",
 			"type": "file"
 		},
 		"F-021": {
-			"first_p": 3,
+			"first_p": 3.0,
 			"history": [],
 			"id": "F-021",
-			"last_p": 3,
+			"last_p": 3.0,
 			"name": "arcs.json",
 			"path": "scripts/doki/data/arcs.json",
 			"status": "created",
 			"type": "file"
 		},
 		"F-022": {
-			"first_p": 3,
+			"first_p": 3.0,
 			"history": [],
 			"id": "F-022",
-			"last_p": 3,
+			"last_p": 3.0,
 			"name": "doki_selfcheck.gd",
 			"path": "scripts/doki/doki_selfcheck.gd",
 			"status": "created",
