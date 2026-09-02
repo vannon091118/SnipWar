@@ -526,3 +526,14 @@ fake Stimme, kein Composite-Claim.
 **Nach-Push-Taktung (Regel):** Nach jedem Push: `git status` prüfen; wenn
 finalize-Artefakte gestaged sind, GENAU EIN Transport-Commit, dann fertig —
 kein zweiter, kein Loop (finalize ist idempotent: idle-Session staged nichts).
+
+## Correction: `mechanic_coverage` scans no repository files (verify.py migration)
+
+Frühere Annahme korrigiert: `scripts/preflight/constraint_mechanic_coverage.gd`
+führt KEINEN Repository-weiten Scan durch. Es reflektiert in-process über die
+`MechanicRegistry` (Signal-Enumeration) und validiert Scenario-Metadaten.
+Ein früherer Kill nach 400 s war ein externes Test-Cap, nicht das Gewicht des
+Constraints. Der Constraint bleibt deshalb bewusst in Godot (Python-Port würde
+GDScript-Reflektion nachbauen — die Godot/Python-Divergenz, vor der die Doku
+warnt). Orchestration lebt jetzt in `scripts/verify.py`; die Engine startet
+keine Godot-Prozesse mehr und hält kein eigenes Lock (OS-Datei-Lock im Treiber).

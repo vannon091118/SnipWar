@@ -2425,3 +2425,52 @@ Preflight-Mutex TASK-015: preflight_lock.gd mit PID-Liveness-Stale-Erkennung (to
 - scripts/preflight_lock.gd: Dokumentation aktualisiert (F-605).
 - scripts/preflight_lock.gd.uid: Dokumentation aktualisiert (F-608).
 - scripts/testing/test_all.gd: Dokumentation aktualisiert (F-384).
+
+## 2026-08-27 06:00:00 — p126 · c126j30n2a35p3 · Basher · sachlich
+
+**Basher (6 files): Commit-group guard: enforce atomic commit groups… — nach Ghost**
+
+Commit-group guard: enforce atomic commit groups in pre-commit (Phase 0)
+
+- .doki/change_index.json: Implementiert und integriert (F-586).
+- .doki/narrative_chain.json: Implementiert und integriert (F-587).
+- .githooks/pre-commit: Implementiert und integriert (F-125).
+- AGENTS.md: Implementiert und integriert (F-019).
+- scripts/commit_group_guard.sh: Implementiert und integriert (F-609).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-08-27 06:00:00 — p126 · c126j97n7a31p125 · Argos · trocken
+
+**Argos: 7 Dateien — verify.py migration: externe O… — nach Ghost**
+
+verify.py migration: externe Orchestrierung ersetzt check.gd; Engine-Lock entfernt
+
+- .doki/change_index.json: Implementiert und integriert (F-586).
+- .doki/narrative_chain.json: Implementiert und integriert (F-587).
+- .githooks/pre-commit: Implementiert und integriert (F-125).
+- AGENTS.md: Implementiert und integriert (F-019).
+- CHANGELOG.md: Implementiert und integriert (F-002).
+- scripts/commit_group_guard.sh: Implementiert und integriert (F-609).
+- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+
+## 2026-09-01 02:00:00 — p2 · c2j67n9a9p1 · Spark · alarmiert
+
+**Spark entdeckt: verify.py migration: externe Orchestrierung… — nach Flux**
+
+verify.py migration: externe Orchestrierung ersetzt check.gd; Engine-Lock entfernt
+
+- CHANGELOG.md: Implementiert und integriert (F-001).
+- docs/FINDINGS.md: Implementiert und integriert (F-002).
+- scripts/check.gd: Implementiert und integriert (F-003).
+- scripts/check.gd.uid: Implementiert und integriert (F-004).
+- scripts/preflight.gd: Implementiert und integriert (F-005).
+- scripts/preflight_lock.gd: Implementiert und integriert (F-006).
+- scripts/preflight_lock.gd.uid: Implementiert und integriert (F-007).
+- scripts/preflight_v2/change_impact_resolver.gd: Implementiert und integriert (F-008).
+- scripts/preflight_v2/constraint_scanner.gd: Implementiert und integriert (F-009).
+- scripts/preflight_v2/scope_dump.gd: Implementiert und integriert (F-010).
+- scripts/preflight_v2/v2_fixture.gd: Implementiert und integriert (F-011).
+- scripts/preflight_v2_runner.gd: Implementiert und integriert (F-012).
+- scripts/testing/global_search_entry_test.gd: Implementiert und integriert (F-013).
+- scripts/testing/test_all.gd: Implementiert und integriert (F-014).
+- scripts/verify.py: Implementiert und integriert (F-015).

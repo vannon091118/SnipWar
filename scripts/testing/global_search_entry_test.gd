@@ -22,7 +22,7 @@ func _run() -> void:
 		_failures.append("SearchCore run() returned empty result for 'GameState'")
 
 	# Test 2: Results contain matches
-	var matches: Array = result.get("matches", [])
+	var matches: Array = result.get("results", [])
 	if matches.is_empty():
 		_failures.append("SearchCore returned no matches for 'GameState'")
 	else:
@@ -40,8 +40,8 @@ func _run() -> void:
 	var classes: Dictionary = result.get("classes_available", {})
 	if classes.is_empty():
 		_failures.append("SearchCore classes_available is empty")
-	elif not classes.has("GameState"):
-		_failures.append("SearchCore classes_available missing GameState")
+	elif not classes.has("SearchCore") or not classes.has("AssetLibrary"):
+		_failures.append("SearchCore classes_available missing known class_name declarations (SearchCore/AssetLibrary)")
 
 	# Test 4: Regex search
 	core.configure("func\\s+_ready", [], [], 20, 1, true)
@@ -52,7 +52,7 @@ func _run() -> void:
 	# Test 5: Type filter (gd only)
 	core.configure("class_name", ["gd"], [], 50, 0, false)
 	var gd_result: Dictionary = core.run()
-	var gd_matches: Array = gd_result.get("matches", [])
+	var gd_matches: Array = gd_result.get("results", [])
 	for m in gd_matches:
 		var path: String = str(m.get("file", m.get("path", "")))
 		if not path.ends_with(".gd"):
