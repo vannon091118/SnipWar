@@ -8,8 +8,9 @@ extends RefCounted
 ## Uses the ConstraintScanner as the single canonical source of impact
 ## metadata (no parallel registry). Fail-closed: an unknown path, an unmapped
 ## contract, or an empty resulting scope blocks instead of silently green.
-## Fixes: V3-001 (full path auto-managed), V3-002 (unmapped contract), 
-## V3-003 (R/D status), V3-004 (generic errors).
+## Fixes: V3-001 (full path auto-managed), V3-002 (unknown path rejects —
+## the old "unmapped"-Fallback that produced a warning-green scope was removed),
+## V3-003 (R/D status), V3-004 (generic errors, no path leak).
 
 const SCANNER_SCRIPT := preload("res://scripts/preflight_v2/constraint_scanner.gd")
 const SCHEMA_VERSION := 1
@@ -55,8 +56,6 @@ static func resolve(staged_paths: Array) -> Dictionary:
 	var scanner = SCANNER_SCRIPT.new()
 	var path_map: Array = scanner.path_contracts()
 	var contracts: Array[String] = []
-	var unresolved: Array[String] = []
-	var warnings: Array[String] = []
 
 	for path in paths:
 		# DOKI/managed narrative artifacts are an explicit contract, not unknown.
@@ -74,16 +73,11 @@ static func resolve(staged_paths: Array) -> Dictionary:
 					if not contracts.has(String(cid)):
 						contracts.append(String(cid))
 		if not hit_any:
-			unresolved.append(path)
-			# V3-002: fallback to "unmapped" contract instead of fail-closed
-			if not contracts.has("unmapped"):
-				contracts.append("unmapped")
-			warnings.append("unmapped_path:%s" % path)
-
-	# V3-004: Don't leak path mapping in error messages — generic error
-	if not unresolved.is_empty() and not contracts.has("unmapped"):
-		# Only fail if no fallback contract was added
-		return {"ok": false, "error": "unknown_impact"}
+			# V3-002: Unbekannter Pfad blockt hart (fail-closed). Der frühere
+			# "unmapped"-Fallback produzierte einen warnenden Grün-Scope und
+			# umging damit die Vertragspflicht „unknown impact muss blocken“.
+			# V3-004: Generischer Fehler, kein Pfad-Leak in der Meldung.
+			return {"ok": false, "error": "unknown_impact"}
 
 	# Build the transitive constraint closure over the affected contracts.
 	var constraints: Array[String] = []
@@ -98,16 +92,13 @@ static func resolve(staged_paths: Array) -> Dictionary:
 
 	contracts.sort()
 	paths.sort()
-	var result: Dictionary = {
+	return {
 		"ok": true,
 		"schema_version": SCHEMA_VERSION,
 		"paths": paths,
 		"contracts": contracts,
 		"constraints": constraints,
 	}
-	if not warnings.is_empty():
-		result["warnings"] = warnings
-	return result
 
 
 ## resolve_status(staged_status) — engines that pass `git diff --cached

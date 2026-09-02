@@ -22,6 +22,10 @@ var _initial_homeworlds: Dictionary = {}   # faction -> planet_id
 var _initial_resources: Dictionary = {}    # planet_id -> resource_id
 var _initial_starting_workers: Dictionary = {}  # planet_id -> int
 var _initial_snapshot_valid: bool = false
+## Initiale FoV-Region (Boot-Zeitpunkt) — reset_state stellt die aktive
+## Chunk-Menge deterministisch auf diesen Bestand zurück (node_count-Baseline).
+var _initial_fov_region: Rect2 = Rect2()
+var _initial_fov_region_valid: bool = false
 
 
 func _init(p_tree: SceneTree) -> void:
@@ -64,6 +68,23 @@ func _capture_initial_baseline() -> void:
 	_initial_homeworlds[GameState.FACTION_PLAYER] = state.call("homeworld_for", GameState.FACTION_PLAYER)
 	_initial_homeworlds[GameState.FACTION_CPU] = state.call("homeworld_for", GameState.FACTION_CPU)
 	_initial_snapshot_valid = true
+
+	# Initiale FoV-Region einfrieren (identische Berechnung wie SeededLayout._ready):
+	# gleiche Region + gleicher Seed => deterministisch gleiche Chunk-Zellenmenge.
+	_initial_fov_region_valid = false
+	var wc: WorldConfig = base.world_config
+	if wc != null and wc.is_infinite_world() and base.field != null:
+		var coordinator: ChunkCoordinator = base.field.get_chunk_coordinator()
+		if coordinator != null:
+			var radius_cells: int = int(coordinator.call("player_fov_radius"))
+			var cs := wc.resolved_cell_size()
+			_initial_fov_region = Rect2(Vector2.ZERO, wc.design_size).grow(float(radius_cells) * cs.x)
+			_initial_fov_region_valid = true
+			print("[v2-fixture][dbg] baseline captured: radius=%d region=%s children=%d" % [radius_cells, str(_initial_fov_region), base.field.get_child_count()])
+		else:
+			print("[v2-fixture][dbg] baseline capture: coordinator NULL")
+	else:
+		print("[v2-fixture][dbg] baseline capture: non-infinite or no config (wc=%s field=%s)" % [str(wc != null), str(base.field != null)])
 
 
 ## Lightweight state-only reset.  Restores the initial baseline without
@@ -143,6 +164,33 @@ func reset_state(ctx: PreflightContext) -> bool:
 	# and verify the reset is a true baseline rather than merely a new run.
 	_disable_automation()
 	state.call("set_jobs_auto_advance", false)
+
+	# 10. Chunk-Welt auf den Boot-Bestand zurücksetzen (Ursache der
+	# node_count_drift): Im Constraint hinzugefügte Chunk-Planeten werden per
+	# Halt-Phase gecullt, evictete Baseline-Planeten deterministisch neu
+	# gespawnt (gleicher Seed, gleiche FoV-Region wie beim Boot).
+	if _initial_fov_region_valid:
+		var coordinator: ChunkCoordinator = base.field.get_chunk_coordinator()
+		if coordinator != null:
+			var _dbg_extras: Array = []
+			for _c in base.field.get_children():
+				if not (_c is Planet):
+					_dbg_extras.append(String(_c.name))
+			print("[v2-fixture][dbg] chunk-sync before=" + str(base.field.get_child_count()) + " extras=" + str(_dbg_extras))
+			var _dbg_tail: Array = []
+			for _i in range(base.field.get_child_count() - 5, base.field.get_child_count()):
+				var _n = base.field.get_child(_i)
+				_dbg_tail.append(String(_n.name) + "/" + _n.get_class() + "/" + str(_n.get_script()) + "/" + String(_n.global_position))
+			print("[v2-fixture][dbg] tail: " + str(_dbg_tail))
+			coordinator.ensure_chunks_active([_initial_fov_region], &"xl")
+			# Deferred Frees der Halt-Phase abarbeiten, damit child_count sofort stimmt.
+			await tree.process_frame
+			print("[v2-fixture][dbg] chunk-sync after=" + str(base.field.get_child_count()) + " baseline_ok=" + str(_initial_fov_region_valid))
+		else:
+			print("[v2-fixture][dbg] chunk-sync: coordinator NULL")
+	else:
+		print("[v2-fixture][dbg] chunk-sync: region invalid")
+
 	if base.network != null and base.network.has_method("_refresh_fog_of_war"):
 		base.network.call("_refresh_fog_of_war")
 

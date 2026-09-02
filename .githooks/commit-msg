@@ -19,8 +19,23 @@ if [ -z "$MSG_FILE" ] || [ ! -f "$MSG_FILE" ]; then
     exit 1
 fi
 
+# ─── Bot-Trailer-Verbot (Vannon-Regel: NIEMALS in einer Commit-Message) ─────
+# Der Header wird NICHT bereinigt oder toleriert: jeder Codebuff-Trailer
+# verwirft den Commit. So kann kein verbotener Header trotz Hook-Fehler oder
+# Encoding-/Whitespace-Variante in der Historie landen.
+if grep -qE 'Generated[[:space:]]+with[[:space:]]+Codebuff\b|Co-Authored-By:[[:space:]]*Codebuff\b' "$MSG_FILE"; then
+    echo "ERROR: Verbotener Codebuff-Header erkannt — Commit abgelehnt." >&2
+    echo "Ausschließlich DOKI-Narrator-Prompting ist zulässig; Trailer entfernen und erneut über DOKI erstellen." >&2
+    exit 1
+fi
+
 # Check for GODOT_BIN availability
 if [ -z "${GODOT_BIN:-}" ] || [ ! -x "${GODOT_BIN}" ]; then
+    # Bei DOKI-Commits (erkennbar an [NARRATOR:]) ist GODOT_BIN Pflicht
+    if grep -q '\[NARRATOR:' "$MSG_FILE" 2>/dev/null; then
+        echo "ERROR: GODOT_BIN nicht verfuegbar — DOKI-Commit kann nicht validiert werden." >&2
+        exit 1
+    fi
     echo "WARN: GODOT_BIN not set or not executable — skipping DOKI verify-only" >&2
     exit 0
 fi
@@ -46,8 +61,8 @@ COMMIT_MSG="$(cat "$MSG_FILE")"
 TRANSPORT_COMMIT=1
 while IFS= read -r staged_file; do
     [ -z "$staged_file" ] && continue
-    case "$(basename "$staged_file")" in
-        narrative_chain.json|change_index.json|CHANGELOG.md|arcs.json) ;;
+    case "$staged_file" in
+        .doki/narrative_chain.json|.doki/change_index.json|CHANGELOG.md|scripts/doki/data/arcs.json) ;;
         *) TRANSPORT_COMMIT=0; break ;;
     esac
 done < <(git diff --cached --name-only)

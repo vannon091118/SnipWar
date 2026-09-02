@@ -9909,6 +9909,54 @@
 			"seq": 125,
 			"subject": "Ghost verzeichnet: Preflight-Mutex TASK-015 + Transport-Commit-Modus… — nach Vannon",
 			"summary": "Die Chronik verzeichnet diesen Tag: Der Loop, der jeden Takt erstickte, wurde von vier Regeln ersetzt."
+		},
+		{
+			"a": 31,
+			"arc": "a58",
+			"c": 126,
+			"composite": "c126j33n2a31p46",
+			"data_changes": [
+				{
+					"deletions": 227.0,
+					"file": ".doki/change_index.json",
+					"insertions": 33061.0
+				},
+				{
+					"deletions": 94.0,
+					"file": ".doki/narrative_chain.json",
+					"insertions": 9893.0
+				},
+				{
+					"deletions": 91.0,
+					"file": "CHANGELOG.md",
+					"insertions": 26.0
+				},
+				{
+					"deletions": 11.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 48.0,
+					"file": "scripts/doki/data/arcs.json",
+					"insertions": 44.0
+				}
+			],
+			"date": "2026-08-27 06:00:00",
+			"hash": "c8fc20e2eecde730727fd9ab6f8902ef77f230a5",
+			"j": 33,
+			"model_id": "claude-sonnet-4",
+			"mood": "selbstironisch",
+			"n": 2,
+			"narrator": "Basher",
+			"p": 46,
+			"p_id": 126,
+			"prev_hash": "1227e31785f669dd181cdae4abd20077fd9ca5cced8cc9a42fe8352d02f6cf64",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Ghost",
+			"seq": 126,
+			"subject": "Basher (5 files): Merge origin/main into doki-squash:… — nach Ghost",
+			"summary": "Zwei Stränge, ein Merge. Auf doki-squash lief die Migration: Orchestrierung wanderte in scripts/verify.py, Engine-Lock und check.gd flogen raus. Parallel lief backup-before-squash weiter — Prefligh..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

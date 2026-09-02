@@ -19,7 +19,7 @@ func _run() -> void:
 		_failures.append("Default ShipPartCatalog failed to preload")
 	else:
 		# Test 2: Catalog resolves known part IDs
-		var hull: ShipPartDefinition = catalog.resolve(&"hull_t1_scout")
+		var hull: ShipPartDefinition = catalog.resolve(&"hull_t1")
 		if hull == null:
 			_failures.append("Catalog could not resolve hull_t1_scout")
 		else:

@@ -2423,3 +2423,15 @@ Preflight-Mutex TASK-015 + Transport-Commit-Modus + Scope-Filter F-606 + FINDING
 - scripts/preflight.gd: Implementiert und integriert (F-343).
 - scripts/preflight_lock.gd: Implementiert und integriert (F-605).
 - scripts/testing/test_all.gd: Implementiert und integriert (F-384).
+
+## 2026-08-27 06:00:00 — p126 · c126j33n2a31p46 · Basher · selbstironisch
+
+**Basher (5 files): Merge origin/main into doki-squash:… — nach Ghost**
+
+Merge origin/main into doki-squash: verify.py-Orchestrierung trifft gesquashte Main-Artefakte — Konflikt-Auflösung zugunsten akkumulierter DOKI-SSOT (Chain 125) und externer Treiber-Serialisierung
+
+- .doki/change_index.json: Tooling erweitert (F-586).
+- .doki/narrative_chain.json: Tooling erweitert (F-587).
+- CHANGELOG.md: Tooling erweitert (F-002).
+- docs/FINDINGS.md: Tooling erweitert (F-046).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).

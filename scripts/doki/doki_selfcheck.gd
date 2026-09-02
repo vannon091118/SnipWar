@@ -686,26 +686,33 @@ func _test_agent_activity_integration() -> void:
 
 ## ─── V9-001/002: Scope Unknown Fallback Tests ───────────────────────────
 func _test_scope_unknown_fallback() -> void:
-	# Test ChangeImpactResolver with unknown path falls back to "unmapped" contract
+	# ChangeImpactResolver: unknown path blocks hard (fail-closed, V3-002).
+	# Der frühere "unmapped"-Fallback (warnender Grün-Scope) wurde entfernt:
+	# unbekannter Einfluss muss den Lauf blocken, nie still grün werden.
 	var resolver := preload("res://scripts/preflight_v2/change_impact_resolver.gd")
-	
-	# Unknown path should not fail-closed but add "unmapped" contract with warning
+
+	# Unknown path must fail closed with a generic error (V3-004, no path leak).
 	var result: Dictionary = resolver.resolve(["scripts/unknown/path.gd"])
-	_expect("scope: unknown path adds unmapped contract", result.get("ok", false) == true)
-	_expect("scope: unmapped in contracts", (result.get("contracts", []) as Array).has("unmapped"))
-	_expect("scope: warning present", (result.get("warnings", []) as Array).size() > 0)
-	
-	# Generic error message (V3-004) - no path leak
-	var result_fail: Dictionary = resolver.resolve(["scripts/unknown/path.gd"])
-	if not bool(result_fail.get("ok", true)):
-		var error_msg: String = str(result_fail.get("error", ""))
-		_expect("scope: generic error (no path leak)", not error_msg.contains("unknown/path.gd"))
-	
-	# Test R/D status support (V3-003)
-	var status_result: Dictionary = resolver.resolve_status(["R\told/path.gd\tnew/path.gd"])
+	_expect("scope: unknown path fails closed", result.get("ok", false) == false)
+	var error_msg: String = str(result.get("error", ""))
+	_expect("scope: error is unknown_impact", error_msg == "unknown_impact")
+	_expect("scope: generic error (no path leak)", not error_msg.contains("unknown/path.gd"))
+
+	# Auto-managed DOKI artifacts still resolve (never unknown).
+	var auto: Dictionary = resolver.resolve(["narrative_chain.json"])
+	_expect("scope: auto-managed artifact resolves", auto.get("ok", false) == true)
+
+	# R/D status support (V3-003): known path via rename/delete still resolves.
+	var status_result: Dictionary = resolver.resolve_status(["R\told/path.gd\tscripts/state/game_state.gd"])
 	_expect("scope: rename status supported", status_result.get("ok", false) == true)
-	var delete_result: Dictionary = resolver.resolve_status(["D\tdeleted/path.gd"])
+	var delete_result: Dictionary = resolver.resolve_status(["D\tscripts/state/game_state.gd"])
 	_expect("scope: delete status supported", delete_result.get("ok", false) == true)
+
+	# Unknown path via rename/delete also fails closed.
+	var rename_unknown: Dictionary = resolver.resolve_status(["R\told/path.gd\tnew/path.gd"])
+	_expect("scope: rename of unknown path fails closed", rename_unknown.get("ok", false) == false)
+	var delete_unknown: Dictionary = resolver.resolve_status(["D\tdeleted/path.gd"])
+	_expect("scope: delete of unknown path fails closed", delete_unknown.get("ok", false) == false)
 
 
 ## ─── V9-001: Atomic Writes Tests ────────────────────────────────────────

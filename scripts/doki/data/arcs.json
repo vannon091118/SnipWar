@@ -2681,7 +2681,7 @@
 		},
 		"a58": {
 			"climax_weight": 5.0,
-			"commit_count": 1,
+			"commit_count": 2,
 			"id": "a58",
 			"name": "Fundament-Dichtprüfung",
 			"seen_entities": [
@@ -2703,13 +2703,15 @@
 				"C-1302",
 				"C-1303",
 				"C-1304",
-				"C-1305"
+				"C-1305",
+				"F-587",
+				"F-001"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "systematische Verifikation aller P1-Befunde gegen die jetzt geschlossenen P0-Fixes.",
 			"version": "",
-			"weight": 8.1
+			"weight": 10.75
 		},
 		"a6": {
 			"climax_weight": 3.0,

@@ -11,11 +11,9 @@ const _V2Ctx := preload("res://scripts/preflight_v2/v2_context.gd")
 const _V2Fixture := preload("res://scripts/preflight_v2/v2_fixture.gd")
 const _Scanner := preload("res://scripts/preflight_v2/constraint_scanner.gd")
 const _CodeIndex := preload("res://scripts/preflight_v2/preflight_code_index.gd")
-const _PreflightLock := preload("res://scripts/preflight_lock.gd")
 
 # Built from scanner registry at startup; used by _is_pure() for every constraint.
 var _registry: Array[Dictionary] = []
-var _lock_token: String = ""
 
 # Constraints that corrupt the scene state and require a full re-boot after them.
 const FULL_REBOOT_IDS: Array[String] = ["save_game_roundtrip", "context_handover"]
@@ -35,19 +33,8 @@ func _init() -> void:
 		quit(0)
 		return
 
-	# ─── Preflight-Mutex (TASK-015): NUR EIN Lauf gleichzeitig ────────────
-	# Wenn ein übergeordneter Runner (check.gd / test_all.gd) das Lock hält
-	# (ENV-Flag), acquiriert der Subprozess NICHT erneut (Deadlock-Schutz).
-	if OS.get_environment("PREFLIGHT_LOCK_HELD") != "1":
-		var lock_res: Dictionary = _PreflightLock.acquire_blocking("preflight.gd")
-		if not bool(lock_res.get("ok", false)):
-			printerr("[preflight-v2] FATAL: %s" % str(lock_res.get("error", "preflight-lock fehlgeschlagen")))
-			quit(1)
-			return
-		_lock_token = str(lock_res.get("token", ""))
-	else:
-		print("[preflight-lock] von übergeordnetem Runner gehalten — skip acquire")
-
+	# Serialisierung übernimmt der externe Treiber (scripts/verify.py) per
+	# OS-Datei-Lock; die Engine selbst sperrt nicht mehr.
 	var ctx = _V2Ctx.new(self)
 	ctx.verbose = args.get("verbose", false)
 	ctx.fail_fast = args.get("fail_fast", false)
@@ -190,10 +177,6 @@ func _init() -> void:
 			if ctx.fail_fast and (not result[0] or ctx.early_exit_requested):
 				early_exit = true
 
-			# Verify state isolation (non-blocking warning)
-			if not ctx.verify_checkpoint():
-				pass  # Warnings already recorded in isolation_warnings
-
 			# Full reboot after destructive constraints (save_game_roundtrip, context_handover)
 			if entry["id"] in FULL_REBOOT_IDS:
 				if not early_exit:
@@ -217,6 +200,14 @@ func _init() -> void:
 						print("[preflight-v2] FATAL: Fallback re-boot also failed")
 						early_exit = true
 
+			# Verify state isolation NACH Reset/Reboot (non-blocking warning). Der
+			# Check misst damit das Residuum — was der Reset NICHT wiederhergestellt
+			# hat — statt der gewollten Szenario-Mutation des Constraints selbst
+			# (Kauf/Forschung/Eroberung/Flug), die reset_state zurückrollt.
+			if not early_exit:
+				if not ctx.verify_checkpoint():
+					pass  # Warnings already recorded in isolation_warnings
+
 		await fixture.cleanup()
 
 	var total_ms: float = (Time.get_ticks_usec() - suite_start_usec) / 1000.0
@@ -233,10 +224,8 @@ func _init() -> void:
 		_preflight_exit(0)
 
 
-## Central exit: gibt das Preflight-Lock frei (no-op ohne Token) und beendet.
+## Central exit: beendet den Preflight-Lauf.
 func _preflight_exit(code: int) -> void:
-	_PreflightLock.release(_lock_token)
-	_lock_token = ""
 	quit(code)
 	return
 
