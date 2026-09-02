@@ -17,7 +17,7 @@ export GODOT_BIN="C:/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console
 export AGENT_NAME="buffy"
 # Suche: concept_search.gd für Architektur; global_search.gd für Volltext und Kontext.
 # Python-Godot Parity (falls Godot Binary nicht verfügbar):
-#   python -m narrative_runtime.gate_cli --root .
+#   python -c "import sys; sys.path.insert(0, '.doki'); from narrative_runtime.gate_cli import main; SystemExit(main())" --root .
 #   python -m docs.reference.python_preflight --full
 ```
 
@@ -50,7 +50,7 @@ python scripts/verify.py --full --fail-fast                         # voll-lauf
    Pflicht: `RESULT: ALL PASSED`; Headless-Rauschen am Ende ignorieren, echte Fehler beheben.
    **Fallback (ohne Godot Binary):**
 ```bash
-python -m narrative_runtime.gate_cli --root .
+python -c "import sys; sys.path.insert(0, '.doki'); from narrative_runtime.gate_cli import main; SystemExit(main())" --root .
 python -m docs.reference.python_preflight --full
 ```
 5. **DOCS:** ROADMAP/FINDINGS synchron halten; neue Befunde dokumentieren.
@@ -83,7 +83,7 @@ git commit -F .commit_msg.txt
 | ConceptIndex & Suche | `concept_index.gd`, `constraint_concept_index.gd`, `mechanic_registry.gd`, `scenario_loader.gd`, `scenario_snapshot.gd`, `preflight.gd` |
 | Global Search | `global_search.gd`, `AGENTS.md` |
 | DOKI CommitLayer | `scripts/doki/**`, Chain/Index/CHANGELOG, `.githooks/*`, `AGENTS.md`, `scripts/concept_index.gd` |
-| Narrative Runtime | `narrative_runtime/**`, `.gitignore`, `scripts/doki/NARRATIVE_ENGINE_DESIGN.md`, `AGENTS.md` |
+| Narrative Runtime | `.doki/narrative_runtime/**`, `.gitignore`, `scripts/doki/NARRATIVE_ENGINE_DESIGN.md`, `AGENTS.md` |
 
 ## Godot-Fallenstricke
 - `@export_enum` ist String/Integer, nicht `StringName`.
@@ -100,4 +100,4 @@ git commit -F .commit_msg.txt
 - Narrative Runtime: `scripts/doki/NARRATIVE_ENGINE_DESIGN.md` — Git/DOKI ist Wahrheit, SQLite ist rekonstruierbares Archiv und darf DOKI nicht blockieren.
 - Vollständige Suche/Preflight/MCP/Godot-Details: `scripts/docs/AGENTS_REFERENCE.md`.
 - Findings: `docs/FINDINGS.md`; Architektur: `ARCHITECTURE.md`, `DESIGN.md`, `VISION.md`.
-- MCP-Testregeln: `addons/gdscript_mcp/AGENTS.md`.
+- MCP-Testregeln: `addons/mcp/AGENTS.md`.

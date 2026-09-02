@@ -145,6 +145,25 @@ static func _matches(path: String, glob: String) -> bool:
 	if glob.ends_with("**"):
 		return path.begins_with(glob.trim_suffix("**"))
 	if "*" in glob:
+		# V3-009: Multi-Segment-Wildcards mit geordnetem Containment —
+		# "*worker_cluster.*" darf nicht alles matchen (ends_with("") ist
+		# immer true). Prefix, Suffix und jede Zwischen-Segment in Reihenfolge.
 		var fixed: PackedStringArray = glob.split("*")
-		return path.begins_with(str(fixed[0])) and path.ends_with(str(fixed[fixed.size() - 1]))
+		var prefix := str(fixed[0])
+		var suffix := str(fixed[fixed.size() - 1])
+		if not path.begins_with(prefix):
+			return false
+		if not path.ends_with(suffix):
+			return false
+		var cursor := prefix.length()
+		var ceiling := path.length() - suffix.length()
+		for i in range(1, fixed.size() - 1):
+			var seg := str(fixed[i])
+			if seg.is_empty():
+				continue
+			var idx := path.find(seg, cursor)
+			if idx < 0 or idx + seg.length() > ceiling:
+				return false
+			cursor = idx + seg.length()
+		return true
 	return path == glob

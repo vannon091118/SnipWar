@@ -24,7 +24,7 @@ const CACHE_PATH := "user://narrative_runtime_cache.json"
 # .doki/ (nicht mehr am Repo-Root). Fallback auf Root für ältere Stände.
 const CHAIN_PATH := "res://.doki/narrative_chain.json"
 const CHANGE_INDEX_PATH := "res://.doki/change_index.json"
-const RUNTIME_DIR := "res://narrative_runtime"
+const RUNTIME_DIR := "res://.doki/narrative_runtime"
 
 func run(ctx: PreflightContext) -> bool:
 	var root := ProjectSettings.globalize_path("res://")
@@ -41,12 +41,16 @@ func run(ctx: PreflightContext) -> bool:
 		return ctx.check(all_pass, msg, result)
 	# --- Cache miss: Python-Subprocess ausführen ---
 	var output: Array = []
+	# Pfad-Migration: Runtime lebt unter .doki/narrative_runtime. Aufruf mit
+	# explizitem sys.path (Package-Kontext für die relativen Imports), statt
+	# PYTHONPATH im Hook-Kontext setzen zu müssen.
+	var py_code := "import sys; sys.path.insert(0, r'%s'); from narrative_runtime.gate_cli import main; raise SystemExit(main())" % root.path_join(".doki")
 	var py_bin := "python3"
-	var exit_code: int = OS.execute(py_bin, ["-m", "narrative_runtime.gate_cli", "--root", root], output, true)
+	var exit_code: int = OS.execute(py_bin, ["-c", py_code, "--root", root], output, true)
 	if exit_code != OK:
 		output = []
 		py_bin = "python"
-		exit_code = OS.execute(py_bin, ["-m", "narrative_runtime.gate_cli", "--root", root], output, true)
+		exit_code = OS.execute(py_bin, ["-c", py_code, "--root", root], output, true)
 	var raw := ""
 	if not output.is_empty():
 		raw = String(output[0]).strip_edges()

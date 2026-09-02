@@ -1166,6 +1166,26 @@
 			],
 			"p_id": 125.0
 		},
+		"3fdff4a8250834fb3e0c4ca29325f9f2f1c841d9": {
+			"c": 129.0,
+			"composite": "c129j18n6a40p56",
+			"entities": [
+				"F-837",
+				"F-432",
+				"F-433",
+				"F-838",
+				"F-839",
+				"C-1370",
+				"C-1371",
+				"C-1372",
+				"C-1373",
+				"C-1374",
+				"C-1375",
+				"C-1376",
+				"C-1377"
+			],
+			"p_id": 129.0
+		},
 		"4117d9a951a3f3c7e9b8cb21b17ef121010ee3fe": {
 			"c": 115.0,
 			"composite": "c115j82n13a51p113",
@@ -1403,6 +1423,114 @@
 				"C-892"
 			],
 			"p_id": 101.0
+		},
+		"52838ff0ef95e05f0d1edddb77aaa647df38e8de": {
+			"c": 128.0,
+			"composite": "c128j66n3a38p28",
+			"entities": [
+				"F-634",
+				"F-635",
+				"F-636",
+				"F-638",
+				"F-639",
+				"F-642",
+				"F-713",
+				"F-715",
+				"F-717",
+				"F-725",
+				"F-727",
+				"F-729",
+				"F-733",
+				"F-735",
+				"F-747",
+				"F-749",
+				"F-751",
+				"F-755",
+				"F-771",
+				"F-775",
+				"F-781",
+				"F-793",
+				"F-809",
+				"F-811",
+				"F-813",
+				"F-815",
+				"F-817",
+				"F-819",
+				"F-821",
+				"F-823",
+				"F-825",
+				"F-827",
+				"F-829",
+				"F-832",
+				"F-833",
+				"F-834",
+				"F-001",
+				"C-1306",
+				"C-1307",
+				"C-1308",
+				"C-1309",
+				"C-1310",
+				"C-1311",
+				"C-1312",
+				"C-1313",
+				"C-1314",
+				"C-1315",
+				"C-1316",
+				"C-1317",
+				"C-1318",
+				"C-1319",
+				"C-1320",
+				"C-1321",
+				"C-1322",
+				"C-1323",
+				"C-1324",
+				"C-1325",
+				"C-1326",
+				"C-1327",
+				"C-1328",
+				"C-1329",
+				"C-1330",
+				"C-1331",
+				"C-1332",
+				"C-1333",
+				"C-1334",
+				"C-1335",
+				"C-1336",
+				"C-1337",
+				"C-1338",
+				"C-1339",
+				"C-1340",
+				"C-1341",
+				"C-1342",
+				"C-1343",
+				"C-1344",
+				"C-1345",
+				"C-1346",
+				"C-1347",
+				"C-1348",
+				"C-1349",
+				"C-1350",
+				"C-1351",
+				"C-1352",
+				"C-1353",
+				"C-1354",
+				"C-1355",
+				"C-1356",
+				"C-1357",
+				"C-1358",
+				"C-1359",
+				"C-1360",
+				"C-1361",
+				"C-1362",
+				"C-1363",
+				"C-1364",
+				"C-1365",
+				"C-1366",
+				"C-1367",
+				"C-1368",
+				"C-1369"
+			],
+			"p_id": 128.0
 		},
 		"5bc899b56982f3b9676e93bc1c5d773c05c42f94": {
 			"c": 40.0,
@@ -2141,6 +2269,15 @@
 			],
 			"p_id": 78.0
 		},
+		"be29131933205c00962c4a7543f8c016f53a3b64": {
+			"c": 130,
+			"composite": "c130j15n2a44p39",
+			"entities": [
+				"F-125",
+				"F-013"
+			],
+			"p_id": 130
+		},
 		"bf2cf55bb2aacf85e3f457695484541a3c72abbf": {
 			"c": 16.0,
 			"composite": "c16j24n8a2p12",
@@ -2336,7 +2473,7 @@
 			"p_id": 104.0
 		},
 		"c8fc20e2eecde730727fd9ab6f8902ef77f230a5": {
-			"c": 126,
+			"c": 126.0,
 			"composite": "c126j33n2a31p46",
 			"entities": [
 				"F-586",
@@ -2345,7 +2482,7 @@
 				"F-046",
 				"F-001"
 			],
-			"p_id": 126
+			"p_id": 126.0
 		},
 		"caeed225d6e93fbfd5c0160e8f62c616aefbbf31": {
 			"c": 25.0,
@@ -2367,6 +2504,270 @@
 				"C-032"
 			],
 			"p_id": 25.0
+		},
+		"cb49b46c6c2c5ce84266c015a5e2e2db46c2c963": {
+			"c": 127.0,
+			"composite": "c127j98n4a50p92",
+			"entities": [
+				"F-606",
+				"F-607",
+				"F-608",
+				"F-609",
+				"F-610",
+				"F-611",
+				"F-612",
+				"F-613",
+				"F-614",
+				"F-615",
+				"F-616",
+				"F-617",
+				"F-618",
+				"F-619",
+				"F-620",
+				"F-621",
+				"F-622",
+				"F-623",
+				"F-624",
+				"F-625",
+				"F-626",
+				"F-627",
+				"F-628",
+				"F-629",
+				"F-630",
+				"F-631",
+				"F-632",
+				"F-037",
+				"F-019",
+				"F-199",
+				"F-020",
+				"F-068",
+				"F-633",
+				"F-634",
+				"F-635",
+				"F-636",
+				"F-637",
+				"F-638",
+				"F-639",
+				"F-640",
+				"F-641",
+				"F-642",
+				"F-643",
+				"F-644",
+				"F-645",
+				"F-646",
+				"F-647",
+				"F-648",
+				"F-649",
+				"F-650",
+				"F-651",
+				"F-652",
+				"F-653",
+				"F-654",
+				"F-655",
+				"F-656",
+				"F-657",
+				"F-658",
+				"F-659",
+				"F-660",
+				"F-661",
+				"F-662",
+				"F-663",
+				"F-664",
+				"F-665",
+				"F-666",
+				"F-667",
+				"F-668",
+				"F-669",
+				"F-670",
+				"F-671",
+				"F-672",
+				"F-673",
+				"F-674",
+				"F-675",
+				"F-676",
+				"F-677",
+				"F-678",
+				"F-679",
+				"F-680",
+				"F-681",
+				"F-682",
+				"F-683",
+				"F-684",
+				"F-685",
+				"F-686",
+				"F-687",
+				"F-688",
+				"F-689",
+				"F-690",
+				"F-691",
+				"F-692",
+				"F-693",
+				"F-694",
+				"F-695",
+				"F-696",
+				"F-697",
+				"F-698",
+				"F-699",
+				"F-700",
+				"F-701",
+				"F-702",
+				"F-703",
+				"F-704",
+				"F-705",
+				"F-706",
+				"F-707",
+				"F-708",
+				"F-709",
+				"F-710",
+				"F-711",
+				"F-712",
+				"F-713",
+				"F-714",
+				"F-715",
+				"F-716",
+				"F-717",
+				"F-718",
+				"F-719",
+				"F-720",
+				"F-721",
+				"F-722",
+				"F-723",
+				"F-724",
+				"F-725",
+				"F-726",
+				"F-727",
+				"F-728",
+				"F-729",
+				"F-730",
+				"F-731",
+				"F-732",
+				"F-733",
+				"F-734",
+				"F-735",
+				"F-736",
+				"F-737",
+				"F-738",
+				"F-739",
+				"F-740",
+				"F-741",
+				"F-742",
+				"F-743",
+				"F-744",
+				"F-745",
+				"F-746",
+				"F-747",
+				"F-748",
+				"F-749",
+				"F-750",
+				"F-751",
+				"F-752",
+				"F-753",
+				"F-754",
+				"F-755",
+				"F-756",
+				"F-757",
+				"F-758",
+				"F-759",
+				"F-760",
+				"F-761",
+				"F-762",
+				"F-763",
+				"F-764",
+				"F-765",
+				"F-766",
+				"F-767",
+				"F-768",
+				"F-769",
+				"F-770",
+				"F-771",
+				"F-772",
+				"F-773",
+				"F-774",
+				"F-775",
+				"F-776",
+				"F-777",
+				"F-778",
+				"F-779",
+				"F-780",
+				"F-781",
+				"F-782",
+				"F-783",
+				"F-784",
+				"F-785",
+				"F-786",
+				"F-787",
+				"F-788",
+				"F-789",
+				"F-790",
+				"F-791",
+				"F-792",
+				"F-793",
+				"F-794",
+				"F-795",
+				"F-796",
+				"F-797",
+				"F-798",
+				"F-799",
+				"F-800",
+				"F-801",
+				"F-802",
+				"F-803",
+				"F-804",
+				"F-805",
+				"F-806",
+				"F-807",
+				"F-808",
+				"F-809",
+				"F-810",
+				"F-811",
+				"F-812",
+				"F-813",
+				"F-814",
+				"F-815",
+				"F-816",
+				"F-817",
+				"F-818",
+				"F-819",
+				"F-820",
+				"F-821",
+				"F-822",
+				"F-823",
+				"F-824",
+				"F-825",
+				"F-826",
+				"F-827",
+				"F-828",
+				"F-829",
+				"F-830",
+				"F-831",
+				"F-832",
+				"F-833",
+				"F-834",
+				"F-046",
+				"F-456",
+				"F-458",
+				"F-187",
+				"F-061",
+				"F-149",
+				"F-353",
+				"F-433",
+				"F-835",
+				"F-268",
+				"F-122",
+				"F-126",
+				"F-434",
+				"F-123",
+				"F-154",
+				"F-197",
+				"F-585",
+				"F-836",
+				"C-308",
+				"C-1121",
+				"C-223",
+				"C-224",
+				"C-225"
+			],
+			"p_id": 127.0
 		},
 		"cb69ee7ba579a50e90360ed6d7f800341bbf87e4": {
 			"c": 30.0,
@@ -7271,10 +7672,16 @@
 						22.0
 					],
 					"p_id": 110.0
+				},
+				{
+					"lines": [
+						24.0
+					],
+					"p_id": 127.0
 				}
 			],
 			"id": "C-1121",
-			"last_p": 110.0,
+			"last_p": 127.0,
 			"name": "RUNTIME_DIR",
 			"path": "scripts/preflight/constraint_narrative_runtime.gd",
 			"status": "modified",
@@ -12269,6 +12676,74 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1306": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1306",
+			"last_p": 128.0,
+			"name": "RUNTIME_CLIENT_SCRIPT",
+			"path": "addons/mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1307": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						15.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1307",
+			"last_p": 128.0,
+			"name": "RUNTIME_CLIENT_PATH",
+			"path": "addons/mcp/editor/mcp_dock.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1308": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						6.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1308",
+			"last_p": 128.0,
+			"name": "CONTRACTS_PATH",
+			"path": "addons/mcp/runtime/autonomy/mcp_capability_planner.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1309": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1309",
+			"last_p": 128.0,
+			"name": "PROJECT_ADAPTER_PATH",
+			"path": "addons/mcp/runtime/autonomy/mcp_capability_planner.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-131": {
 			"first_p": 36.0,
 			"history": [
@@ -12283,6 +12758,176 @@
 			"last_p": 36.0,
 			"name": "seq",
 			"path": "addons/gdscript_mcp/client/agent_repair_loop.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1310": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1310",
+			"last_p": 128.0,
+			"name": "ARCHIVE_PATH",
+			"path": "addons/mcp/runtime/autonomy/mcp_capability_planner.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1311": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1311",
+			"last_p": 128.0,
+			"name": "WORKSPACE_JOURNAL_PATH",
+			"path": "addons/mcp/runtime/autonomy/mcp_capability_planner.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1312": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1312",
+			"last_p": 128.0,
+			"name": "PROJECT_TOOLS_PATH",
+			"path": "addons/mcp/runtime/autonomy/mcp_capability_planner.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1313": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						14.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1313",
+			"last_p": 128.0,
+			"name": "CHAIN_DIR",
+			"path": "addons/mcp/runtime/autonomy/mcp_chain_controller.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1314": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						5.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1314",
+			"last_p": 128.0,
+			"name": "PATH_VALIDATOR_SCRIPT",
+			"path": "addons/mcp/runtime/autonomy/mcp_project_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1315": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						6.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1315",
+			"last_p": 128.0,
+			"name": "JOURNAL_PATH",
+			"path": "addons/mcp/runtime/autonomy/mcp_project_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1316": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						4.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1316",
+			"last_p": 128.0,
+			"name": "PATH_VALIDATOR_SCRIPT",
+			"path": "addons/mcp/runtime/autonomy/mcp_workspace_journal.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1317": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1317",
+			"last_p": 128.0,
+			"name": "RUNTIME_TOOLS_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1318": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1318",
+			"last_p": 128.0,
+			"name": "VISION_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1319": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1319",
+			"last_p": 128.0,
+			"name": "DEBUG_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -12303,6 +12948,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1320": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1320",
+			"last_p": 128.0,
+			"name": "UX_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1321": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						14.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1321",
+			"last_p": 128.0,
+			"name": "E2E_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1322": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						15.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1322",
+			"last_p": 128.0,
+			"name": "PLAYTHROUGH_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1323": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1323",
+			"last_p": 128.0,
+			"name": "GAME_SYSTEMS_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1324": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1324",
+			"last_p": 128.0,
+			"name": "GAMEPLAY_TOOLS_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1325": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1325",
+			"last_p": 128.0,
+			"name": "CUSTOM_LOADER_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1326": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1326",
+			"last_p": 128.0,
+			"name": "CODE_ANALYZER_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1327": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1327",
+			"last_p": 128.0,
+			"name": "GOAL_PLAYER_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1328": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1328",
+			"last_p": 128.0,
+			"name": "AUTONOMY_PLANNER_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1329": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						22.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1329",
+			"last_p": 128.0,
+			"name": "AUTONOMY_CONTRACTS_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-133": {
 			"first_p": 36.0,
 			"history": [
@@ -12317,6 +13132,176 @@
 			"last_p": 36.0,
 			"name": "PORT",
 			"path": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1330": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						23.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1330",
+			"last_p": 128.0,
+			"name": "CHAIN_CONTROLLER_PATH",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1331": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						5.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1331",
+			"last_p": 128.0,
+			"name": "MCP_SERVER_PATH",
+			"path": "addons/mcp/runtime/host/mcp_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1332": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						6.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1332",
+			"last_p": 128.0,
+			"name": "INPUT_SCHEDULER_PATH",
+			"path": "addons/mcp/runtime/host/mcp_runtime.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1333": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1333",
+			"last_p": 128.0,
+			"name": "REGISTRY_PATH",
+			"path": "addons/mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1334": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1334",
+			"last_p": 128.0,
+			"name": "CONTEXT_STORE_PATH",
+			"path": "addons/mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1335": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1335",
+			"last_p": 128.0,
+			"name": "LIFECYCLE_PATH",
+			"path": "addons/mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1336": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1336",
+			"last_p": 128.0,
+			"name": "PROTOCOL_PATH",
+			"path": "addons/mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1337": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1337",
+			"last_p": 128.0,
+			"name": "VISION_WORKER_PATH",
+			"path": "addons/mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1338": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1338",
+			"last_p": 128.0,
+			"name": "AGENT_ACTIVITY_PATH",
+			"path": "addons/mcp/runtime/host/mcp_server.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1339": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						13.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1339",
+			"last_p": 128.0,
+			"name": "RUN_TRACE_PATH",
+			"path": "addons/mcp/runtime/host/mcp_server.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -12337,6 +13322,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1340": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1340",
+			"last_p": 128.0,
+			"name": "ARCHIVE_PATH",
+			"path": "addons/mcp/runtime/tools/e2e/mcp_e2e.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1341": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						4.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1341",
+			"last_p": 128.0,
+			"name": "ARCHIVE_PATH",
+			"path": "addons/mcp/runtime/tools/e2e/mcp_playthrough_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1342": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						5.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1342",
+			"last_p": 128.0,
+			"name": "VISION_PATH",
+			"path": "addons/mcp/runtime/tools/e2e/mcp_playthrough_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1343": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1343",
+			"last_p": 128.0,
+			"name": "INPUT_SCHEDULER_PATH",
+			"path": "addons/mcp/runtime/tools/runtime/mcp_runtime_tools.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1344": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						16.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1344",
+			"last_p": 128.0,
+			"name": "VISION_PATH",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1345": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1345",
+			"last_p": 128.0,
+			"name": "RUNTIME_TOOLS_PATH",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1346": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						18.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1346",
+			"last_p": 128.0,
+			"name": "DEBUG_PATH",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1347": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						5.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1347",
+			"last_p": 128.0,
+			"name": "DEFAULT_SCRIPT",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_worker.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1348": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1348",
+			"last_p": 128.0,
+			"name": "E2E_PATH",
+			"path": "addons/mcp/testing/e2e/mcp_playthrough_driver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1349": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1349",
+			"last_p": 128.0,
+			"name": "REGISTRY_PATH",
+			"path": "addons/mcp/testing/e2e/mcp_playthrough_driver.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-135": {
 			"first_p": 36.0,
 			"history": [
@@ -12351,6 +13506,176 @@
 			"last_p": 36.0,
 			"name": "status",
 			"path": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1350": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1350",
+			"last_p": 128.0,
+			"name": "INPUT_SCHEDULER_PATH",
+			"path": "addons/mcp/testing/e2e/mcp_playthrough_driver.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1351": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						3.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1351",
+			"last_p": 128.0,
+			"name": "CONTRACTS_PATH",
+			"path": "addons/mcp/testing/mcp_autonomy_contract_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1352": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						4.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1352",
+			"last_p": 128.0,
+			"name": "PLANNER_PATH",
+			"path": "addons/mcp/testing/mcp_autonomy_contract_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1353": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						3.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1353",
+			"last_p": 128.0,
+			"name": "PLANNER_PATH",
+			"path": "addons/mcp/testing/mcp_autonomy_write_gate_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1354": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						4.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1354",
+			"last_p": 128.0,
+			"name": "VALIDATOR_PATH",
+			"path": "addons/mcp/testing/mcp_autonomy_write_gate_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1355": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						5.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1355",
+			"last_p": 128.0,
+			"name": "GATE_PATH",
+			"path": "addons/mcp/testing/mcp_player_contract_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1356": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						6.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1356",
+			"last_p": 128.0,
+			"name": "PROTOCOL_PATH",
+			"path": "addons/mcp/testing/mcp_player_contract_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1357": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1357",
+			"last_p": 128.0,
+			"name": "RUNTIME_TOOLS_PATH",
+			"path": "addons/mcp/testing/mcp_player_contract_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1358": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1358",
+			"last_p": 128.0,
+			"name": "SERVER_PATH",
+			"path": "addons/mcp/testing/mcp_player_contract_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1359": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						7.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1359",
+			"last_p": 128.0,
+			"name": "GATE_PATH",
+			"path": "addons/mcp/testing/mcp_red_team_test.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -12371,6 +13696,176 @@
 			"status": "modified",
 			"type": "component"
 		},
+		"C-1360": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						8.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1360",
+			"last_p": 128.0,
+			"name": "PROTOCOL_PATH",
+			"path": "addons/mcp/testing/mcp_red_team_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1361": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1361",
+			"last_p": 128.0,
+			"name": "RUNTIME_TOOLS_PATH",
+			"path": "addons/mcp/testing/mcp_red_team_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1362": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1362",
+			"last_p": 128.0,
+			"name": "SERVER_PATH",
+			"path": "addons/mcp/testing/mcp_red_team_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1363": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1363",
+			"last_p": 128.0,
+			"name": "CHAIN_PATH",
+			"path": "addons/mcp/testing/mcp_red_team_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1364": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						12.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1364",
+			"last_p": 128.0,
+			"name": "AGENT_PATH",
+			"path": "addons/mcp/testing/mcp_red_team_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1365": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						10.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1365",
+			"last_p": 128.0,
+			"name": "SCENARIO_DIR",
+			"path": "addons/mcp/testing/mcp_test_runner.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1366": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1366",
+			"last_p": 128.0,
+			"name": "REGISTRY_PATH",
+			"path": "addons/mcp/testing/mcp_test_runner.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1367": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						4.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1367",
+			"last_p": 128.0,
+			"name": "PATH_VALIDATOR_PATH",
+			"path": "addons/mcp/testing/mcp_workspace_contract_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1368": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						5.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1368",
+			"last_p": 128.0,
+			"name": "JOURNAL_PATH",
+			"path": "addons/mcp/testing/mcp_workspace_contract_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1369": {
+			"first_p": 128.0,
+			"history": [
+				{
+					"lines": [
+						6.0
+					],
+					"p_id": 128.0
+				}
+			],
+			"id": "C-1369",
+			"last_p": 128.0,
+			"name": "PROJECT_TOOLS_PATH",
+			"path": "addons/mcp/testing/mcp_workspace_contract_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
 		"C-137": {
 			"first_p": 36.0,
 			"history": [
@@ -12385,6 +13880,142 @@
 			"last_p": 36.0,
 			"name": "names",
 			"path": "addons/gdscript_mcp/client/mcp_connector_selftest.js",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1370": {
+			"first_p": 129.0,
+			"history": [
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 129.0
+				}
+			],
+			"id": "C-1370",
+			"last_p": 129.0,
+			"name": "CONTRACT_MAP_PATH",
+			"path": "scripts/preflight_v2/constraint_scanner.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1371": {
+			"first_p": 129.0,
+			"history": [
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 129.0
+				}
+			],
+			"id": "C-1371",
+			"last_p": 129.0,
+			"name": "SCANNER",
+			"path": "scripts/testing/contract_map_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1372": {
+			"first_p": 129.0,
+			"history": [
+				{
+					"lines": [
+						11.0
+					],
+					"p_id": 129.0
+				}
+			],
+			"id": "C-1372",
+			"last_p": 129.0,
+			"name": "MAP_PATH",
+			"path": "scripts/testing/contract_map_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1373": {
+			"first_p": 129.0,
+			"history": [
+				{
+					"lines": [
+						17.0
+					],
+					"p_id": 129.0
+				}
+			],
+			"id": "C-1373",
+			"last_p": 129.0,
+			"name": "_init",
+			"path": "scripts/testing/contract_map_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1374": {
+			"first_p": 129.0,
+			"history": [
+				{
+					"lines": [
+						92.0
+					],
+					"p_id": 129.0
+				}
+			],
+			"id": "C-1374",
+			"last_p": 129.0,
+			"name": "_matches",
+			"path": "scripts/testing/contract_map_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1375": {
+			"first_p": 129.0,
+			"history": [
+				{
+					"lines": [
+						121.0
+					],
+					"p_id": 129.0
+				}
+			],
+			"id": "C-1375",
+			"last_p": 129.0,
+			"name": "_check",
+			"path": "scripts/testing/contract_map_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1376": {
+			"first_p": 129.0,
+			"history": [
+				{
+					"lines": [
+						130.0
+					],
+					"p_id": 129.0
+				}
+			],
+			"id": "C-1376",
+			"last_p": 129.0,
+			"name": "_fail",
+			"path": "scripts/testing/contract_map_test.gd",
+			"status": "modified",
+			"type": "component"
+		},
+		"C-1377": {
+			"first_p": 129.0,
+			"history": [
+				{
+					"lines": [
+						135.0
+					],
+					"p_id": 129.0
+				}
+			],
+			"id": "C-1377",
+			"last_p": 129.0,
+			"name": "_finish",
+			"path": "scripts/testing/contract_map_test.gd",
 			"status": "modified",
 			"type": "component"
 		},
@@ -13853,10 +15484,16 @@
 						22.0
 					],
 					"p_id": 42.0
+				},
+				{
+					"lines": [
+						19.0
+					],
+					"p_id": 127.0
 				}
 			],
 			"id": "C-223",
-			"last_p": 42.0,
+			"last_p": 127.0,
 			"name": "CHAIN_DIR",
 			"path": "scripts/testing/chain_manifest_gate.gd",
 			"status": "modified",
@@ -13870,10 +15507,16 @@
 						23.0
 					],
 					"p_id": 42.0
+				},
+				{
+					"lines": [
+						20.0
+					],
+					"p_id": 127.0
 				}
 			],
 			"id": "C-224",
-			"last_p": 42.0,
+			"last_p": 127.0,
 			"name": "SERVER_PATH",
 			"path": "scripts/testing/chain_manifest_gate.gd",
 			"status": "modified",
@@ -13887,10 +15530,16 @@
 						24.0
 					],
 					"p_id": 42.0
+				},
+				{
+					"lines": [
+						21.0
+					],
+					"p_id": 127.0
 				}
 			],
 			"id": "C-225",
-			"last_p": 42.0,
+			"last_p": 127.0,
 			"name": "REGISTRY_PATH",
 			"path": "scripts/testing/chain_manifest_gate.gd",
 			"status": "modified",
@@ -15304,10 +16953,16 @@
 						12.0
 					],
 					"p_id": 47.0
+				},
+				{
+					"lines": [
+						9.0
+					],
+					"p_id": 127.0
 				}
 			],
 			"id": "C-308",
-			"last_p": 47.0,
+			"last_p": 127.0,
 			"name": "SCAN_ROOT",
 			"path": "scripts/preflight/constraint_mcp_capture_contract.gd",
 			"status": "modified",
@@ -33173,6 +34828,2346 @@
 			"last_p": 125.0,
 			"name": "preflight_lock.gd",
 			"path": "scripts/preflight_lock.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-606": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-606",
+			"last_p": 127.0,
+			"name": "README.md",
+			"path": ".doki/narrative_runtime/README.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-607": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-607",
+			"last_p": 127.0,
+			"name": "__init__.py",
+			"path": ".doki/narrative_runtime/__init__.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-608": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-608",
+			"last_p": 127.0,
+			"name": "__main__.py",
+			"path": ".doki/narrative_runtime/__main__.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-609": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-609",
+			"last_p": 127.0,
+			"name": "beliefs.py",
+			"path": ".doki/narrative_runtime/beliefs.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-610": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-610",
+			"last_p": 127.0,
+			"name": "cli.py",
+			"path": ".doki/narrative_runtime/cli.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-611": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-611",
+			"last_p": 127.0,
+			"name": "commit_hook.py",
+			"path": ".doki/narrative_runtime/commit_hook.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-612": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-612",
+			"last_p": 127.0,
+			"name": "context.py",
+			"path": ".doki/narrative_runtime/context.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-613": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-613",
+			"last_p": 127.0,
+			"name": "errors.py",
+			"path": ".doki/narrative_runtime/errors.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-614": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-614",
+			"last_p": 127.0,
+			"name": "gate.py",
+			"path": ".doki/narrative_runtime/gate.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-615": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-615",
+			"last_p": 127.0,
+			"name": "gate_cli.py",
+			"path": ".doki/narrative_runtime/gate_cli.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-616": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-616",
+			"last_p": 127.0,
+			"name": "observe.py",
+			"path": ".doki/narrative_runtime/observe.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-617": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-617",
+			"last_p": 127.0,
+			"name": "personality.py",
+			"path": ".doki/narrative_runtime/personality.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-618": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-618",
+			"last_p": 127.0,
+			"name": "perspectives.py",
+			"path": ".doki/narrative_runtime/perspectives.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-619": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-619",
+			"last_p": 127.0,
+			"name": "public_state.py",
+			"path": ".doki/narrative_runtime/public_state.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-620": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-620",
+			"last_p": 127.0,
+			"name": "relationships.py",
+			"path": ".doki/narrative_runtime/relationships.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-621": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-621",
+			"last_p": 127.0,
+			"name": "__init__.py",
+			"path": ".doki/narrative_runtime/sandbox/__init__.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-622": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-622",
+			"last_p": 127.0,
+			"name": "generators.py",
+			"path": ".doki/narrative_runtime/sandbox/generators.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-623": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-623",
+			"last_p": 127.0,
+			"name": "metrics.py",
+			"path": ".doki/narrative_runtime/sandbox/metrics.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-624": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-624",
+			"last_p": 127.0,
+			"name": "snapshot.json",
+			"path": ".doki/narrative_runtime/sandbox/reference/snapshot.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-625": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-625",
+			"last_p": 127.0,
+			"name": "runner.py",
+			"path": ".doki/narrative_runtime/sandbox/runner.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-626": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-626",
+			"last_p": 127.0,
+			"name": "spotlight.py",
+			"path": ".doki/narrative_runtime/spotlight.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-627": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-627",
+			"last_p": 127.0,
+			"name": "store.py",
+			"path": ".doki/narrative_runtime/store.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-628": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-628",
+			"last_p": 127.0,
+			"name": "__init__.py",
+			"path": ".doki/narrative_runtime/tests/__init__.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-629": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-629",
+			"last_p": 127.0,
+			"name": "test_relationship_sprint.py",
+			"path": ".doki/narrative_runtime/tests/test_relationship_sprint.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-630": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-630",
+			"last_p": 127.0,
+			"name": "test_runtime.py",
+			"path": ".doki/narrative_runtime/tests/test_runtime.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-631": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-631",
+			"last_p": 127.0,
+			"name": "test_v2_conformance.py",
+			"path": ".doki/narrative_runtime/tests/test_v2_conformance.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-632": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-632",
+			"last_p": 127.0,
+			"name": "threads.py",
+			"path": ".doki/narrative_runtime/threads.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-633": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-633",
+			"last_p": 127.0,
+			"name": ".mcp.json",
+			"path": "addons/mcp/.mcp.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-634": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-634",
+			"last_p": 127.0,
+			"name": "AGENTS.md",
+			"path": "addons/mcp/AGENTS.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-635": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-635",
+			"last_p": 127.0,
+			"name": "AGENT_WORKFLOW.md",
+			"path": "addons/mcp/AGENT_WORKFLOW.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-636": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-636",
+			"last_p": 127.0,
+			"name": "CONTEXT_AUTONOMY_AUDIT.md",
+			"path": "addons/mcp/CONTEXT_AUTONOMY_AUDIT.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-637": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-637",
+			"last_p": 127.0,
+			"name": "MCP_ANOMALIES.md",
+			"path": "addons/mcp/MCP_ANOMALIES.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-638": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-638",
+			"last_p": 127.0,
+			"name": "MCP_INDEX.md",
+			"path": "addons/mcp/MCP_INDEX.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-639": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-639",
+			"last_p": 127.0,
+			"name": "PERSISTENCE.md",
+			"path": "addons/mcp/PERSISTENCE.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-640": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-640",
+			"last_p": 127.0,
+			"name": "PLAYTEST_HANDOFF.md",
+			"path": "addons/mcp/PLAYTEST_HANDOFF.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-641": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-641",
+			"last_p": 127.0,
+			"name": "agent_repair_loop.js",
+			"path": "addons/mcp/client/agent_repair_loop.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-642": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-642",
+			"last_p": 127.0,
+			"name": "mcp_connector_selftest.js",
+			"path": "addons/mcp/client/mcp_connector_selftest.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-643": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-643",
+			"last_p": 127.0,
+			"name": "mcp_stdio_bridge.py",
+			"path": "addons/mcp/client/mcp_stdio_bridge.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-644": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-644",
+			"last_p": 127.0,
+			"name": "mcp_stdio_bridge_legacy.js",
+			"path": "addons/mcp/client/mcp_stdio_bridge_legacy.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-645": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-645",
+			"last_p": 127.0,
+			"name": "mcp_stresstest.js",
+			"path": "addons/mcp/client/mcp_stresstest.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-646": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-646",
+			"last_p": 127.0,
+			"name": "package-lock.json",
+			"path": "addons/mcp/client/package-lock.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-647": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-647",
+			"last_p": 127.0,
+			"name": "package.json",
+			"path": "addons/mcp/client/package.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-648": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-648",
+			"last_p": 127.0,
+			"name": "MCP_PLAYTEST_REPORT.md",
+			"path": "addons/mcp/client/playthroughs/MCP_PLAYTEST_REPORT.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-649": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-649",
+			"last_p": 127.0,
+			"name": "UX_REPORT.md",
+			"path": "addons/mcp/client/playthroughs/UX_REPORT.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-650": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-650",
+			"last_p": 127.0,
+			"name": "atomic_client.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_client.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-651": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-651",
+			"last_p": 127.0,
+			"name": "atomic_game_state_summary.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_game_state_summary.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-652": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-652",
+			"last_p": 127.0,
+			"name": "atomic_runtime_click.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_runtime_click.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-653": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-653",
+			"last_p": 127.0,
+			"name": "atomic_runtime_find.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_runtime_find.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-654": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-654",
+			"last_p": 127.0,
+			"name": "atomic_runtime_find_node.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_runtime_find_node.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-655": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-655",
+			"last_p": 127.0,
+			"name": "atomic_runtime_logs.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_runtime_logs.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-656": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-656",
+			"last_p": 127.0,
+			"name": "atomic_runtime_mouse_move.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_runtime_mouse_move.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-657": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-657",
+			"last_p": 127.0,
+			"name": "atomic_runtime_scan.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_runtime_scan.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-658": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-658",
+			"last_p": 127.0,
+			"name": "atomic_runtime_scene_tree.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_runtime_scene_tree.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-659": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-659",
+			"last_p": 127.0,
+			"name": "atomic_runtime_screenshot.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_runtime_screenshot.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-660": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-660",
+			"last_p": 127.0,
+			"name": "atomic_runtime_scroll.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_runtime_scroll.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-661": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-661",
+			"last_p": 127.0,
+			"name": "atomic_runtime_wait.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_runtime_wait.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-662": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-662",
+			"last_p": 127.0,
+			"name": "atomic_session.js",
+			"path": "addons/mcp/client/playthroughs/atomic/atomic_session.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-663": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-663",
+			"last_p": 127.0,
+			"name": "mcp_file_driver.js",
+			"path": "addons/mcp/client/playthroughs/atomic/mcp_file_driver.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-664": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-664",
+			"last_p": 127.0,
+			"name": "mcp_player_atom.js",
+			"path": "addons/mcp/client/playthroughs/atomic/mcp_player_atom.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-665": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-665",
+			"last_p": 127.0,
+			"name": "scan_compact.js",
+			"path": "addons/mcp/client/playthroughs/atomic/scan_compact.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-666": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-666",
+			"last_p": 127.0,
+			"name": "chain_build.js",
+			"path": "addons/mcp/client/playthroughs/chain_build.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-667": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-667",
+			"last_p": 127.0,
+			"name": "chain_camera_pan.js",
+			"path": "addons/mcp/client/playthroughs/chain_camera_pan.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-668": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-668",
+			"last_p": 127.0,
+			"name": "first_ship_atomic.trace.json",
+			"path": "addons/mcp/client/playthroughs/first_ship_atomic.trace.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-669": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-669",
+			"last_p": 127.0,
+			"name": "_mcp_explore.js",
+			"path": "addons/mcp/client/playthroughs/legacy/_mcp_explore.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-670": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-670",
+			"last_p": 127.0,
+			"name": "_mcp_node_client.js",
+			"path": "addons/mcp/client/playthroughs/legacy/_mcp_node_client.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-671": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-671",
+			"last_p": 127.0,
+			"name": "_mcp_planet_panel.js",
+			"path": "addons/mcp/client/playthroughs/legacy/_mcp_planet_panel.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-672": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-672",
+			"last_p": 127.0,
+			"name": "_mcp_planet_view.js",
+			"path": "addons/mcp/client/playthroughs/legacy/_mcp_planet_view.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-673": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-673",
+			"last_p": 127.0,
+			"name": "_mcp_play.js",
+			"path": "addons/mcp/client/playthroughs/legacy/_mcp_play.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-674": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-674",
+			"last_p": 127.0,
+			"name": "_mcp_research.js",
+			"path": "addons/mcp/client/playthroughs/legacy/_mcp_research.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-675": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-675",
+			"last_p": 127.0,
+			"name": "_mcp_research_click.js",
+			"path": "addons/mcp/client/playthroughs/legacy/_mcp_research_click.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-676": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-676",
+			"last_p": 127.0,
+			"name": "_mcp_research_flow.js",
+			"path": "addons/mcp/client/playthroughs/legacy/_mcp_research_flow.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-677": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-677",
+			"last_p": 127.0,
+			"name": "_mcp_state_explore.js",
+			"path": "addons/mcp/client/playthroughs/legacy/_mcp_state_explore.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-678": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-678",
+			"last_p": 127.0,
+			"name": "_mcp_wait_research.js",
+			"path": "addons/mcp/client/playthroughs/legacy/_mcp_wait_research.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-679": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-679",
+			"last_p": 127.0,
+			"name": "_mcp_werkstatt.js",
+			"path": "addons/mcp/client/playthroughs/legacy/_mcp_werkstatt.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-680": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-680",
+			"last_p": 127.0,
+			"name": "mcp_lib.js",
+			"path": "addons/mcp/client/playthroughs/mcp_lib.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-681": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-681",
+			"last_p": 127.0,
+			"name": "_mcp_explore.js",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_explore.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-682": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-682",
+			"last_p": 127.0,
+			"name": "_mcp_game_state.json",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_game_state.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-683": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-683",
+			"last_p": 127.0,
+			"name": "_mcp_node_client.js",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_node_client.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-684": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-684",
+			"last_p": 127.0,
+			"name": "_mcp_planet_panel.js",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_planet_panel.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-685": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-685",
+			"last_p": 127.0,
+			"name": "_mcp_planet_view.js",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_planet_view.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-686": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-686",
+			"last_p": 127.0,
+			"name": "_mcp_planet_view.json",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_planet_view.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-687": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-687",
+			"last_p": 127.0,
+			"name": "_mcp_play.js",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_play.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-688": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-688",
+			"last_p": 127.0,
+			"name": "_mcp_research.js",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_research.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-689": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-689",
+			"last_p": 127.0,
+			"name": "_mcp_research_click.js",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_research_click.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-690": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-690",
+			"last_p": 127.0,
+			"name": "_mcp_research_click.json",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_research_click.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-691": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-691",
+			"last_p": 127.0,
+			"name": "_mcp_research_flow.js",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_research_flow.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-692": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-692",
+			"last_p": 127.0,
+			"name": "_mcp_research_view.json",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_research_view.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-693": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-693",
+			"last_p": 127.0,
+			"name": "_mcp_state_explore.js",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_state_explore.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-694": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-694",
+			"last_p": 127.0,
+			"name": "_mcp_state_explore.json",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_state_explore.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-695": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-695",
+			"last_p": 127.0,
+			"name": "_mcp_tools_list.json",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_tools_list.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-696": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-696",
+			"last_p": 127.0,
+			"name": "_mcp_wait_research.js",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_wait_research.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-697": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-697",
+			"last_p": 127.0,
+			"name": "_mcp_werkstatt.js",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_werkstatt.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-698": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-698",
+			"last_p": 127.0,
+			"name": "_mcp_werkstatt_view.json",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_mcp_werkstatt_view.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-699": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-699",
+			"last_p": 127.0,
+			"name": "_ux_report_1.json",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_ux_report_1.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-700": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-700",
+			"last_p": 127.0,
+			"name": "_ux_report_2.json",
+			"path": "addons/mcp/client/playthroughs/session_dumps/_ux_report_2.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-701": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-701",
+			"last_p": 127.0,
+			"name": "step1_main_menu.js",
+			"path": "addons/mcp/client/playthroughs/step1_main_menu.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-702": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-702",
+			"last_p": 127.0,
+			"name": "step2_panels.js",
+			"path": "addons/mcp/client/playthroughs/step2_panels.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-703": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-703",
+			"last_p": 127.0,
+			"name": "step3_planets.js",
+			"path": "addons/mcp/client/playthroughs/step3_planets.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-704": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-704",
+			"last_p": 127.0,
+			"name": "step4_planet_click.js",
+			"path": "addons/mcp/client/playthroughs/step4_planet_click.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-705": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-705",
+			"last_p": 127.0,
+			"name": "visible_autonomy_probe.js",
+			"path": "addons/mcp/client/playthroughs/visible_autonomy_probe.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-706": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-706",
+			"last_p": 127.0,
+			"name": "deu.traineddata",
+			"path": "addons/mcp/client/tessdata/deu.traineddata",
+			"status": "created",
+			"type": "file"
+		},
+		"F-707": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-707",
+			"last_p": 127.0,
+			"name": "deu.traineddata.gz",
+			"path": "addons/mcp/client/tessdata/deu.traineddata.gz",
+			"status": "created",
+			"type": "file"
+		},
+		"F-708": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-708",
+			"last_p": 127.0,
+			"name": "deu.traineddata.tmp",
+			"path": "addons/mcp/client/tessdata/deu.traineddata.tmp",
+			"status": "created",
+			"type": "file"
+		},
+		"F-709": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-709",
+			"last_p": 127.0,
+			"name": "test_mcp_python.py",
+			"path": "addons/mcp/client/test_mcp_python.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-710": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-710",
+			"last_p": 127.0,
+			"name": "vision_worker.py",
+			"path": "addons/mcp/client/vision_worker.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-711": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-711",
+			"last_p": 127.0,
+			"name": "vision_worker_benchmark.py",
+			"path": "addons/mcp/client/vision_worker_benchmark.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-712": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-712",
+			"last_p": 127.0,
+			"name": "vision_worker_legacy.js",
+			"path": "addons/mcp/client/vision_worker_legacy.js",
+			"status": "created",
+			"type": "file"
+		},
+		"F-713": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-713",
+			"last_p": 127.0,
+			"name": "gdscript_mcp_plugin.gd",
+			"path": "addons/mcp/editor/gdscript_mcp_plugin.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-714": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-714",
+			"last_p": 127.0,
+			"name": "gdscript_mcp_plugin.gd.uid",
+			"path": "addons/mcp/editor/gdscript_mcp_plugin.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-715": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-715",
+			"last_p": 127.0,
+			"name": "mcp_dock.gd",
+			"path": "addons/mcp/editor/mcp_dock.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-716": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-716",
+			"last_p": 127.0,
+			"name": "mcp_dock.gd.uid",
+			"path": "addons/mcp/editor/mcp_dock.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-717": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-717",
+			"last_p": 127.0,
+			"name": "mcp_dock.tscn",
+			"path": "addons/mcp/editor/mcp_dock.tscn",
+			"status": "created",
+			"type": "file"
+		},
+		"F-718": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-718",
+			"last_p": 127.0,
+			"name": "mcp_runtime_client.gd",
+			"path": "addons/mcp/editor/mcp_runtime_client.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-719": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-719",
+			"last_p": 127.0,
+			"name": "mcp_runtime_client.gd.uid",
+			"path": "addons/mcp/editor/mcp_runtime_client.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-720": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-720",
+			"last_p": 127.0,
+			"name": "preflight_core.json",
+			"path": "addons/mcp/mcp_chains/preflight_core.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-721": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-721",
+			"last_p": 127.0,
+			"name": "world_smoke.json",
+			"path": "addons/mcp/mcp_chains/world_smoke.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-722": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-722",
+			"last_p": 127.0,
+			"name": "plugin.cfg",
+			"path": "addons/mcp/plugin.cfg",
+			"status": "created",
+			"type": "file"
+		},
+		"F-723": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-723",
+			"last_p": 127.0,
+			"name": "mcp_autonomy_contracts.gd",
+			"path": "addons/mcp/runtime/autonomy/mcp_autonomy_contracts.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-724": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-724",
+			"last_p": 127.0,
+			"name": "mcp_autonomy_contracts.gd.uid",
+			"path": "addons/mcp/runtime/autonomy/mcp_autonomy_contracts.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-725": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-725",
+			"last_p": 127.0,
+			"name": "mcp_capability_planner.gd",
+			"path": "addons/mcp/runtime/autonomy/mcp_capability_planner.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-726": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-726",
+			"last_p": 127.0,
+			"name": "mcp_capability_planner.gd.uid",
+			"path": "addons/mcp/runtime/autonomy/mcp_capability_planner.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-727": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-727",
+			"last_p": 127.0,
+			"name": "mcp_chain_controller.gd",
+			"path": "addons/mcp/runtime/autonomy/mcp_chain_controller.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-728": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-728",
+			"last_p": 127.0,
+			"name": "mcp_chain_controller.gd.uid",
+			"path": "addons/mcp/runtime/autonomy/mcp_chain_controller.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-729": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-729",
+			"last_p": 127.0,
+			"name": "mcp_contract_gate.gd",
+			"path": "addons/mcp/runtime/autonomy/mcp_contract_gate.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-730": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-730",
+			"last_p": 127.0,
+			"name": "mcp_contract_gate.gd.uid",
+			"path": "addons/mcp/runtime/autonomy/mcp_contract_gate.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-731": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-731",
+			"last_p": 127.0,
+			"name": "mcp_path_validator.gd",
+			"path": "addons/mcp/runtime/autonomy/mcp_path_validator.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-732": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-732",
+			"last_p": 127.0,
+			"name": "mcp_path_validator.gd.uid",
+			"path": "addons/mcp/runtime/autonomy/mcp_path_validator.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-733": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-733",
+			"last_p": 127.0,
+			"name": "mcp_project_tools.gd",
+			"path": "addons/mcp/runtime/autonomy/mcp_project_tools.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-734": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-734",
+			"last_p": 127.0,
+			"name": "mcp_project_tools.gd.uid",
+			"path": "addons/mcp/runtime/autonomy/mcp_project_tools.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-735": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-735",
+			"last_p": 127.0,
+			"name": "mcp_workspace_journal.gd",
+			"path": "addons/mcp/runtime/autonomy/mcp_workspace_journal.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-736": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-736",
+			"last_p": 127.0,
+			"name": "mcp_workspace_journal.gd.uid",
+			"path": "addons/mcp/runtime/autonomy/mcp_workspace_journal.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-737": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-737",
+			"last_p": 127.0,
+			"name": "mcp_context_store.gd",
+			"path": "addons/mcp/runtime/context/mcp_context_store.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-738": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-738",
+			"last_p": 127.0,
+			"name": "mcp_context_store.gd.uid",
+			"path": "addons/mcp/runtime/context/mcp_context_store.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-739": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-739",
+			"last_p": 127.0,
+			"name": "mcp_playthrough_archive.gd",
+			"path": "addons/mcp/runtime/context/mcp_playthrough_archive.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-740": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-740",
+			"last_p": 127.0,
+			"name": "mcp_playthrough_archive.gd.uid",
+			"path": "addons/mcp/runtime/context/mcp_playthrough_archive.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-741": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-741",
+			"last_p": 127.0,
+			"name": "mcp_run_trace.gd",
+			"path": "addons/mcp/runtime/context/mcp_run_trace.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-742": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-742",
+			"last_p": 127.0,
+			"name": "mcp_run_trace.gd.uid",
+			"path": "addons/mcp/runtime/context/mcp_run_trace.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-743": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-743",
+			"last_p": 127.0,
+			"name": "mcp_custom_tool_loader.gd",
+			"path": "addons/mcp/runtime/core/mcp_custom_tool_loader.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-744": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-744",
+			"last_p": 127.0,
+			"name": "mcp_custom_tool_loader.gd.uid",
+			"path": "addons/mcp/runtime/core/mcp_custom_tool_loader.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-745": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-745",
+			"last_p": 127.0,
+			"name": "mcp_project_adapter.gd",
+			"path": "addons/mcp/runtime/core/mcp_project_adapter.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-746": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-746",
+			"last_p": 127.0,
+			"name": "mcp_project_adapter.gd.uid",
+			"path": "addons/mcp/runtime/core/mcp_project_adapter.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-747": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-747",
+			"last_p": 127.0,
+			"name": "mcp_tool_registry.gd",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-748": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-748",
+			"last_p": 127.0,
+			"name": "mcp_tool_registry.gd.uid",
+			"path": "addons/mcp/runtime/core/mcp_tool_registry.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-749": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-749",
+			"last_p": 127.0,
+			"name": "mcp_runtime.gd",
+			"path": "addons/mcp/runtime/host/mcp_runtime.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-750": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-750",
+			"last_p": 127.0,
+			"name": "mcp_runtime.gd.uid",
+			"path": "addons/mcp/runtime/host/mcp_runtime.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-751": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-751",
+			"last_p": 127.0,
+			"name": "mcp_server.gd",
+			"path": "addons/mcp/runtime/host/mcp_server.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-752": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-752",
+			"last_p": 127.0,
+			"name": "mcp_server.gd.uid",
+			"path": "addons/mcp/runtime/host/mcp_server.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-753": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-753",
+			"last_p": 127.0,
+			"name": "mcp_lifecycle.gd",
+			"path": "addons/mcp/runtime/lifecycle/mcp_lifecycle.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-754": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-754",
+			"last_p": 127.0,
+			"name": "mcp_lifecycle.gd.uid",
+			"path": "addons/mcp/runtime/lifecycle/mcp_lifecycle.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-755": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-755",
+			"last_p": 127.0,
+			"name": "mcp_protocol.gd",
+			"path": "addons/mcp/runtime/protocol/mcp_protocol.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-756": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-756",
+			"last_p": 127.0,
+			"name": "mcp_protocol.gd.uid",
+			"path": "addons/mcp/runtime/protocol/mcp_protocol.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-757": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-757",
+			"last_p": 127.0,
+			"name": "mcp_agent_activity.gd",
+			"path": "addons/mcp/runtime/tools/agent/mcp_agent_activity.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-758": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-758",
+			"last_p": 127.0,
+			"name": "mcp_agent_activity.gd.uid",
+			"path": "addons/mcp/runtime/tools/agent/mcp_agent_activity.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-759": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-759",
+			"last_p": 127.0,
+			"name": "mcp_debug.gd",
+			"path": "addons/mcp/runtime/tools/debug/mcp_debug.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-760": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-760",
+			"last_p": 127.0,
+			"name": "mcp_debug.gd.uid",
+			"path": "addons/mcp/runtime/tools/debug/mcp_debug.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-761": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-761",
+			"last_p": 127.0,
+			"name": "mcp_debug_helpers.gd",
+			"path": "addons/mcp/runtime/tools/debug/mcp_debug_helpers.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-762": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-762",
+			"last_p": 127.0,
+			"name": "mcp_debug_helpers.gd.uid",
+			"path": "addons/mcp/runtime/tools/debug/mcp_debug_helpers.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-763": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-763",
+			"last_p": 127.0,
+			"name": "mcp_debug_perf.gd",
+			"path": "addons/mcp/runtime/tools/debug/mcp_debug_perf.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-764": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-764",
+			"last_p": 127.0,
+			"name": "mcp_debug_perf.gd.uid",
+			"path": "addons/mcp/runtime/tools/debug/mcp_debug_perf.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-765": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-765",
+			"last_p": 127.0,
+			"name": "mcp_debug_project.gd",
+			"path": "addons/mcp/runtime/tools/debug/mcp_debug_project.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-766": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-766",
+			"last_p": 127.0,
+			"name": "mcp_debug_project.gd.uid",
+			"path": "addons/mcp/runtime/tools/debug/mcp_debug_project.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-767": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-767",
+			"last_p": 127.0,
+			"name": "mcp_debug_runtime.gd",
+			"path": "addons/mcp/runtime/tools/debug/mcp_debug_runtime.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-768": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-768",
+			"last_p": 127.0,
+			"name": "mcp_debug_runtime.gd.uid",
+			"path": "addons/mcp/runtime/tools/debug/mcp_debug_runtime.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-769": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-769",
+			"last_p": 127.0,
+			"name": "mcp_code_analyzer.gd",
+			"path": "addons/mcp/runtime/tools/e2e/mcp_code_analyzer.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-770": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-770",
+			"last_p": 127.0,
+			"name": "mcp_code_analyzer.gd.uid",
+			"path": "addons/mcp/runtime/tools/e2e/mcp_code_analyzer.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-771": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-771",
+			"last_p": 127.0,
+			"name": "mcp_e2e.gd",
+			"path": "addons/mcp/runtime/tools/e2e/mcp_e2e.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-772": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-772",
+			"last_p": 127.0,
+			"name": "mcp_e2e.gd.uid",
+			"path": "addons/mcp/runtime/tools/e2e/mcp_e2e.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-773": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-773",
+			"last_p": 127.0,
+			"name": "mcp_goal_player.gd",
+			"path": "addons/mcp/runtime/tools/e2e/mcp_goal_player.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-774": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-774",
+			"last_p": 127.0,
+			"name": "mcp_goal_player.gd.uid",
+			"path": "addons/mcp/runtime/tools/e2e/mcp_goal_player.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-775": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-775",
+			"last_p": 127.0,
+			"name": "mcp_playthrough_tools.gd",
+			"path": "addons/mcp/runtime/tools/e2e/mcp_playthrough_tools.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-776": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-776",
+			"last_p": 127.0,
+			"name": "mcp_playthrough_tools.gd.uid",
+			"path": "addons/mcp/runtime/tools/e2e/mcp_playthrough_tools.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-777": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-777",
+			"last_p": 127.0,
+			"name": "mcp_gameplay_tools.gd",
+			"path": "addons/mcp/runtime/tools/gameplay/mcp_gameplay_tools.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-778": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-778",
+			"last_p": 127.0,
+			"name": "mcp_gameplay_tools.gd.uid",
+			"path": "addons/mcp/runtime/tools/gameplay/mcp_gameplay_tools.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-779": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-779",
+			"last_p": 127.0,
+			"name": "mcp_input_scheduler.gd",
+			"path": "addons/mcp/runtime/tools/runtime/mcp_input_scheduler.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-780": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-780",
+			"last_p": 127.0,
+			"name": "mcp_input_scheduler.gd.uid",
+			"path": "addons/mcp/runtime/tools/runtime/mcp_input_scheduler.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-781": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-781",
+			"last_p": 127.0,
+			"name": "mcp_runtime_tools.gd",
+			"path": "addons/mcp/runtime/tools/runtime/mcp_runtime_tools.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-782": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-782",
+			"last_p": 127.0,
+			"name": "mcp_runtime_tools.gd.uid",
+			"path": "addons/mcp/runtime/tools/runtime/mcp_runtime_tools.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-783": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-783",
+			"last_p": 127.0,
+			"name": "mcp_audio_tools.gd",
+			"path": "addons/mcp/runtime/tools/systems/mcp_audio_tools.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-784": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-784",
+			"last_p": 127.0,
+			"name": "mcp_audio_tools.gd.uid",
+			"path": "addons/mcp/runtime/tools/systems/mcp_audio_tools.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-785": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-785",
+			"last_p": 127.0,
+			"name": "mcp_ux_classify.gd",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_classify.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-786": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-786",
+			"last_p": 127.0,
+			"name": "mcp_ux_classify.gd.uid",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_classify.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-787": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-787",
+			"last_p": 127.0,
+			"name": "mcp_ux_detect.gd",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_detect.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-788": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-788",
+			"last_p": 127.0,
+			"name": "mcp_ux_detect.gd.uid",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_detect.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-789": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-789",
+			"last_p": 127.0,
+			"name": "mcp_ux_geometry.gd",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_geometry.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-790": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-790",
+			"last_p": 127.0,
+			"name": "mcp_ux_geometry.gd.uid",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_geometry.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-791": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-791",
+			"last_p": 127.0,
+			"name": "mcp_ux_live.gd",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_live.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-792": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-792",
+			"last_p": 127.0,
+			"name": "mcp_ux_live.gd.uid",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_live.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-793": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-793",
+			"last_p": 127.0,
+			"name": "mcp_ux_pipeline.gd",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-794": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-794",
+			"last_p": 127.0,
+			"name": "mcp_ux_pipeline.gd.uid",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_pipeline.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-795": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-795",
+			"last_p": 127.0,
+			"name": "mcp_ux_text.gd",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_text.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-796": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-796",
+			"last_p": 127.0,
+			"name": "mcp_ux_text.gd.uid",
+			"path": "addons/mcp/runtime/tools/ux/mcp_ux_text.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-797": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-797",
+			"last_p": 127.0,
+			"name": "mcp_vision.gd",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-798": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-798",
+			"last_p": 127.0,
+			"name": "mcp_vision.gd.uid",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-799": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-799",
+			"last_p": 127.0,
+			"name": "mcp_vision_capture.gd",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_capture.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-800": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-800",
+			"last_p": 127.0,
+			"name": "mcp_vision_capture.gd.uid",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_capture.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-801": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-801",
+			"last_p": 127.0,
+			"name": "mcp_vision_color.gd",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_color.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-802": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-802",
+			"last_p": 127.0,
+			"name": "mcp_vision_color.gd.uid",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_color.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-803": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-803",
+			"last_p": 127.0,
+			"name": "mcp_vision_compare.gd",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_compare.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-804": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-804",
+			"last_p": 127.0,
+			"name": "mcp_vision_compare.gd.uid",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_compare.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-805": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-805",
+			"last_p": 127.0,
+			"name": "mcp_vision_detect.gd",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_detect.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-806": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-806",
+			"last_p": 127.0,
+			"name": "mcp_vision_detect.gd.uid",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_detect.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-807": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-807",
+			"last_p": 127.0,
+			"name": "mcp_vision_helpers.gd",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_helpers.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-808": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-808",
+			"last_p": 127.0,
+			"name": "mcp_vision_helpers.gd.uid",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_helpers.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-809": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-809",
+			"last_p": 127.0,
+			"name": "mcp_vision_worker.gd",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_worker.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-810": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-810",
+			"last_p": 127.0,
+			"name": "mcp_vision_worker.gd.uid",
+			"path": "addons/mcp/runtime/tools/vision/mcp_vision_worker.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-811": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-811",
+			"last_p": 127.0,
+			"name": "mcp_playthrough_driver.gd",
+			"path": "addons/mcp/testing/e2e/mcp_playthrough_driver.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-812": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-812",
+			"last_p": 127.0,
+			"name": "mcp_playthrough_driver.gd.uid",
+			"path": "addons/mcp/testing/e2e/mcp_playthrough_driver.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-813": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-813",
+			"last_p": 127.0,
+			"name": "mcp_autonomy_contract_test.gd",
+			"path": "addons/mcp/testing/mcp_autonomy_contract_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-814": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-814",
+			"last_p": 127.0,
+			"name": "mcp_autonomy_contract_test.gd.uid",
+			"path": "addons/mcp/testing/mcp_autonomy_contract_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-815": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-815",
+			"last_p": 127.0,
+			"name": "mcp_autonomy_write_gate_test.gd",
+			"path": "addons/mcp/testing/mcp_autonomy_write_gate_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-816": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-816",
+			"last_p": 127.0,
+			"name": "mcp_autonomy_write_gate_test.gd.uid",
+			"path": "addons/mcp/testing/mcp_autonomy_write_gate_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-817": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-817",
+			"last_p": 127.0,
+			"name": "mcp_build_check.gd",
+			"path": "addons/mcp/testing/mcp_build_check.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-818": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-818",
+			"last_p": 127.0,
+			"name": "mcp_build_check.gd.uid",
+			"path": "addons/mcp/testing/mcp_build_check.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-819": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-819",
+			"last_p": 127.0,
+			"name": "mcp_player_contract_test.gd",
+			"path": "addons/mcp/testing/mcp_player_contract_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-820": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-820",
+			"last_p": 127.0,
+			"name": "mcp_player_contract_test.gd.uid",
+			"path": "addons/mcp/testing/mcp_player_contract_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-821": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-821",
+			"last_p": 127.0,
+			"name": "mcp_red_team_test.gd",
+			"path": "addons/mcp/testing/mcp_red_team_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-822": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-822",
+			"last_p": 127.0,
+			"name": "mcp_red_team_test.gd.uid",
+			"path": "addons/mcp/testing/mcp_red_team_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-823": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-823",
+			"last_p": 127.0,
+			"name": "mcp_test_runner.gd",
+			"path": "addons/mcp/testing/mcp_test_runner.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-824": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-824",
+			"last_p": 127.0,
+			"name": "mcp_test_runner.gd.uid",
+			"path": "addons/mcp/testing/mcp_test_runner.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-825": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-825",
+			"last_p": 127.0,
+			"name": "mcp_test_scenario.gd",
+			"path": "addons/mcp/testing/mcp_test_scenario.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-826": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-826",
+			"last_p": 127.0,
+			"name": "mcp_test_scenario.gd.uid",
+			"path": "addons/mcp/testing/mcp_test_scenario.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-827": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-827",
+			"last_p": 127.0,
+			"name": "mcp_workspace_contract_test.gd",
+			"path": "addons/mcp/testing/mcp_workspace_contract_test.gd",
+			"status": "created",
+			"type": "file"
+		},
+		"F-828": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-828",
+			"last_p": 127.0,
+			"name": "mcp_workspace_contract_test.gd.uid",
+			"path": "addons/mcp/testing/mcp_workspace_contract_test.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-829": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-829",
+			"last_p": 127.0,
+			"name": "run_portable_smoke.sh",
+			"path": "addons/mcp/testing/portable/run_portable_smoke.sh",
+			"status": "created",
+			"type": "file"
+		},
+		"F-830": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-830",
+			"last_p": 127.0,
+			"name": ".gdignore",
+			"path": "addons/mcp/testing/portable/templates/.gdignore",
+			"status": "created",
+			"type": "file"
+		},
+		"F-831": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-831",
+			"last_p": 127.0,
+			"name": "bootstrap_button.tscn",
+			"path": "addons/mcp/testing/portable/templates/bootstrap_button.tscn",
+			"status": "created",
+			"type": "file"
+		},
+		"F-832": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-832",
+			"last_p": 127.0,
+			"name": "project.godot.tpl",
+			"path": "addons/mcp/testing/portable/templates/project.godot.tpl",
+			"status": "created",
+			"type": "file"
+		},
+		"F-833": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-833",
+			"last_p": 127.0,
+			"name": "main_menu_buttons.tres",
+			"path": "addons/mcp/testing/scenarios/main_menu_buttons.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-834": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-834",
+			"last_p": 127.0,
+			"name": "smoke_direct_tools.tres",
+			"path": "addons/mcp/testing/scenarios/smoke_direct_tools.tres",
+			"status": "created",
+			"type": "file"
+		},
+		"F-835": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-835",
+			"last_p": 127.0,
+			"name": "scope_dump.gd.uid",
+			"path": "scripts/preflight_v2/scope_dump.gd.uid",
+			"status": "created",
+			"type": "file"
+		},
+		"F-836": {
+			"first_p": 127.0,
+			"history": [],
+			"id": "F-836",
+			"last_p": 127.0,
+			"name": "verify.py",
+			"path": "scripts/verify.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-837": {
+			"first_p": 129.0,
+			"history": [],
+			"id": "F-837",
+			"last_p": 129.0,
+			"name": "commit_group_guard.sh",
+			"path": "scripts/commit_group_guard.sh",
+			"status": "created",
+			"type": "file"
+		},
+		"F-838": {
+			"first_p": 129.0,
+			"history": [],
+			"id": "F-838",
+			"last_p": 129.0,
+			"name": "contract_map.json",
+			"path": "scripts/preflight_v2/contract_map.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-839": {
+			"first_p": 129.0,
+			"history": [],
+			"id": "F-839",
+			"last_p": 129.0,
+			"name": "contract_map_test.gd",
+			"path": "scripts/testing/contract_map_test.gd",
 			"status": "created",
 			"type": "file"
 		}

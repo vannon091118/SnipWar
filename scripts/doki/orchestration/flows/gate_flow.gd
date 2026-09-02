@@ -25,6 +25,18 @@ func run() -> Dictionary:
 	if _git.is_rebase_in_progress():
 		return {"ok": true, "skipped": "rebase"}
 
+	# Merge-Konvergenz (content-neutral): Ist der Branch ein Superset des Base,
+	# erzeugt der Merge KEINE neue Arbeit — der Staged-Diff (ohne auto-managed)
+	# ist leer. Analog zum Rebase-Skip: die eigentliche Arbeit wurde bereits auf
+	# dem Branch committet, der Merge zeichnet nur die Konvergenz mit dem Base
+	# auf (nötig, um z.B. einen CONFLICTING-PR-Status zu klären). Ein Merge MIT
+	# echten Konflikt-Änderungen (Staged nicht leer) läuft weiterhin normal durch
+	# die Zeremonie.
+	if _git.is_merge_in_progress():
+		var merge_staged: Array = _without_auto_managed(_git.staged_files())
+		if merge_staged.is_empty():
+			return {"ok": true, "skipped": "merge-noop"}
+
 	var session: Dictionary = _session_store.read()
 	var state: String = str(session.get("state", "idle"))
 

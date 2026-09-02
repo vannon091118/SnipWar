@@ -31,8 +31,8 @@ SceneDirectorService="*res://scripts/ui/scene_director.gd"
 SaveGameService="*res://scripts/state/save_game_service.gd"
 EventLog="*res://scripts/state/event_log.gd"
 TouchFeedbackLayer="*res://scripts/ui/touch_feedback_layer.gd"
-McpRuntime="*res://addons/gdscript_mcp/runtime/host/mcp_runtime.gd"
-McpProjectAdapter="*res://addons/gdscript_mcp/runtime/core/mcp_project_adapter.gd"
+McpRuntime="*res://addons/mcp/runtime/host/mcp_runtime.gd"
+McpProjectAdapter="*res://addons/mcp/runtime/core/mcp_project_adapter.gd"
 
 [display]
 
@@ -44,7 +44,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gdscript_mcp/plugin.cfg")
+enabled=PackedStringArray("res://addons/mcp/plugin.cfg")
 
 [input]
 

@@ -23,6 +23,22 @@ Options:
   --scope-report                        Only print scope analysis
   --help / -h
 
+Scope states (three distinct semantics, never conflated):
+  staged  + empty stage   → deliberate full run (documented default behavior)
+  staged  + non-empty     → resolve via ChangeImpactResolver (SSOT bridge)
+  manifest specified but missing/unreadable
+                          → exit 2 (fail closed) — an explicitly requested
+                            scope that cannot be resolved never silently
+                            degrades into a full run
+
+Deletions: staged paths are collected via `git diff --cached --name-status`
+(ACMRD). Deleted files reach the ChangeImpactResolver like any other change —
+removed .gd files must no longer exist on disk and the full compile gate
+still validates the remaining tree.
+
+Test selection is fail-closed: a resolved scope with relevant contracts but
+zero matched tests is a FAILURE (exit 1), not a skipped pass.
+
 Exit: 0 = all green, 1 = failure, 2 = scope unresolvable (fail closed).
 """
 from __future__ import annotations
@@ -111,18 +127,42 @@ def resolve_scope(paths: list[str]) -> dict:
     marker = "@@SCOPE_JSON@@"
     for line in (proc.stdout + proc.stderr).splitlines():
         if line.startswith(marker):
-            return json.loads(line[len(marker):])
+            result = json.loads(line[len(marker):])
+            # Track deletions so the compile phase can verify they actually
+            # happened on disk (deleted .gd must be gone).
+            result["deleted_paths"] = [p for p in paths if not (REPO_ROOT / p).exists()]
+            return result
     return {"ok": False, "error": f"scope_dump produced no {marker} output"}
 
 
 def staged_paths() -> list[str]:
+    """Staged paths INCLUDING deletions (V3-005 fix).
+
+    Uses `git diff --cached --name-status --diff-filter=ACMRD` so D and R
+    entries reach the ChangeImpactResolver instead of being silently dropped
+    from the scope. Status semantics:
+      A/M/D → the path itself (deletions MUST resolve to contracts).
+      R/C   → only the NEW (surviving) path; the old side is consumed by the
+              rename and has no independent impact model — resolving it would
+              resurrect a dead path (fail-closed trap on every rename commit).
+    """
     proc = subprocess.run(
-        ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"],
+        ["git", "diff", "--cached", "--name-status", "--diff-filter=ACMRD"],
         cwd=REPO_ROOT, capture_output=True, text=True,
     )
     if proc.returncode != 0:
         return []
-    return [line for line in proc.stdout.splitlines() if line.strip()]
+    paths: list[str] = []
+    for line in proc.stdout.splitlines():
+        if not line.strip():
+            continue
+        parts = line.split("\t")
+        # parts[0] = status; R/C carry old→new, take the surviving side only.
+        if parts and parts[0].startswith(("R", "C")) and len(parts) >= 3:
+            paths.append(parts[-1].strip())
+        elif len(parts) >= 2:
+            paths.append(parts[-1].strip())
+    return paths
 
 
 # ── Godot phase invocations (one process per phase, never nested) ────────
@@ -135,19 +175,33 @@ def run_godot(args: list[str], timeout: int = 3600) -> int:
     return proc.returncode
 
 
-def run_compile_gate(full: bool, gd_files: list[str]) -> int:
+def run_compile_gate(full: bool, gd_files: list[str], deleted_files: list[str]) -> int:
     if full:
         return run_godot(["--script", "res://scripts/testing/compile_gate.gd"])
-    # Scope mode: per-file compile via the engine's script loader.
-    bad = []
-    for p in gd_files:
-        code = run_godot(["--check-only", "--script", f"res://{p}"], timeout=120)
+    # Scope mode (V3-006 fix, honest semantics):
+    # 1. Deleted .gd files MUST no longer exist on disk — a deletion that
+    #    leaves its file behind is an inconsistent staged state, fail.
+    # 2. Modified .gd files are compiled in ONE batched Godot process via
+    #    the full compile gate (which scans every script anyway). This keeps
+    #    the "one Godot process per phase" contract instead of spawning one
+    #    process per file.
+    for p in deleted_files:
+        if not p.endswith(".gd"):
+            continue
+        if (REPO_ROOT / p).exists():
+            print(f"[verify] compile FAIL: deleted file still present: {p}")
+            return 1
+        print(f"[verify] [PASS] compile (deleted, absent on disk): {p}")
+    survivors = [p for p in gd_files if p not in deleted_files]
+    if survivors:
+        code = run_godot(["--script", "res://scripts/testing/compile_gate.gd"],
+                         timeout=3600)
         if code != 0:
-            bad.append(p)
-    if bad:
-        print(f"[verify] compile FAIL: {', '.join(bad)}")
-        return 1
-    print(f"[verify] [PASS] compile ({len(gd_files)} scoped .gd files)")
+            print("[verify] compile FAIL (full gate over scoped survivors)")
+            return 1
+        print(f"[verify] [PASS] compile (full gate, {len(survivors)} scoped .gd survivors)")
+    else:
+        print("[verify] [PASS] compile (deletions only, no surviving .gd to compile)")
     return 0
 
 
@@ -169,6 +223,10 @@ def discover_tests() -> list[str]:
 
 
 def run_tests(contracts: list[str], full: bool, fail_fast: bool) -> int:
+    # V3-007 fix: test selection must fail closed. A resolved scope names
+    # relevant contracts; if the heuristic below cannot map them to at least
+    # one test, that is a FAILURE (exit 1), never a skipped pass. The only
+    # legitimate skip is an explicitly requested --skip-tests.
     contract_to_substring = {
         "ships": "ship", "economy": "economy", "save": "save",
         "combat": "combat", "navigation": "navigation", "fleet": "navigation",
@@ -177,24 +235,29 @@ def run_tests(contracts: list[str], full: bool, fail_fast: bool) -> int:
         "history": "historical", "game_state": "save", "ui_flow": "r008",
     }
     substrings: list[str] = []
+    unmapped_contracts: list[str] = []
     if not full:
         for c in contracts:
             s = contract_to_substring.get(c, "")
-            if s and s not in substrings:
-                substrings.append(s)
+            if s:
+                if s not in substrings:
+                    substrings.append(s)
+            elif c not in unmapped_contracts:
+                unmapped_contracts.append(c)
         if "doki" in contracts:
             for extra in ("narrative_runtime", "chain"):
                 if extra not in substrings:
                     substrings.append(extra)
-        if not substrings:
-            print("[verify] [SKIP] no tests for scope contracts")
-            return 0
     tests = discover_tests()
     if substrings:
         tests = [t for t in tests if any(s in t for s in substrings)]
-    if not tests:
-        print("[verify] [SKIP] no tests matched")
-        return 0
+    if not full and not tests:
+        detail = (f"unmapped contracts: {', '.join(unmapped_contracts)}"
+                  if unmapped_contracts else
+                  f"contracts: {', '.join(contracts) or '(none)'}")
+        print(f"[verify] FAIL: no tests matched relevant scope ({detail}) — "
+              f"fail closed (SKIP is not a pass)")
+        return 1
     failures = 0
     for t in tests:
         code = run_godot(["--script", f"res://scripts/testing/{t}"],
@@ -211,6 +274,16 @@ def run_tests(contracts: list[str], full: bool, fail_fast: bool) -> int:
 
 
 # ── Main ─────────────────────────────────────────────────────────────────
+
+def _resolve_or_fail(paths: list[str]) -> dict:
+    """Bridge to the ChangeImpactResolver; exit 2 (fail closed) on any
+    resolution error. Never synthesizes a permissive scope."""
+    scope = resolve_scope(paths)
+    if not scope.get("ok", False):
+        print(f"[verify] FATAL: scope unresolvable — {scope.get('error', 'unknown')}")
+        sys.exit(2)
+    return scope
+
 
 def main() -> int:
     ap = argparse.ArgumentParser(prog="verify.py")
@@ -233,21 +306,37 @@ def main() -> int:
     if args.full:
         scope = {"ok": True, "full": True, "constraints": [], "contracts": [], "paths": []}
     else:
-        paths = staged_paths() if args.scope == "staged" else []
-        if args.scope != "staged" and Path(args.scope).is_file():
-            manifest = json.loads(Path(args.scope).read_text(encoding="utf-8"))
-            paths = list(manifest.get("paths", []))
-        if args.takeover:
-            paths += [t.strip() for t in args.takeover.split(",") if t.strip()]
-        if not paths:
-            print("[verify] no staged files — full run")
-            scope = {"ok": True, "full": True, "constraints": [], "contracts": [], "paths": []}
+        if args.scope == "staged":
+            paths = staged_paths()
+            if not paths:
+                # Only the explicit default (empty stage) is a deliberate full run.
+                print("[verify] no staged files — full run (staged scope empty)")
+                scope = {"ok": True, "full": True, "constraints": [], "contracts": [], "paths": []}
+            else:
+                scope = _resolve_or_fail(paths)
         else:
-            scope = resolve_scope(paths)
-            if not scope.get("ok", False):
-                print(f"[verify] FATAL: scope unresolvable — {scope.get('error', 'unknown')}")
+            # Explicit manifest: three distinct states, never silent degradation.
+            manifest_path = Path(args.scope)
+            if not manifest_path.is_file():
+                print(f"[verify] FATAL: scope manifest not found: {args.scope} — "
+                      f"fail closed (exit 2), no fallback to full run")
                 return 2
-            print(f"[verify] scope: {len(paths)} files → "
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                paths = list(manifest.get("paths", []))
+            except (json.JSONDecodeError, OSError) as exc:
+                print(f"[verify] FATAL: scope manifest unreadable — {exc} — fail closed")
+                return 2
+            if not paths:
+                print("[verify] FATAL: scope manifest is empty — fail closed "
+                      "(use --scope=staged or --full explicitly)")
+                return 2
+            scope = _resolve_or_fail(paths)
+        if isinstance(scope, dict) and not scope.get("full") and args.takeover:
+            takeover = [t.strip() for t in args.takeover.split(",") if t.strip()]
+            scope = _resolve_or_fail(list(scope.get("paths", [])) + takeover)
+        if isinstance(scope, dict) and not scope.get("full"):
+            print(f"[verify] scope: {len(scope.get('paths', []))} files → "
                   f"{len(scope.get('contracts', []))} contracts → "
                   f"{len(scope.get('constraints', []))} constraints")
             if args.scope_report:
@@ -266,7 +355,8 @@ def main() -> int:
         # ── Phase 2: compile ──
         if not args.skip_compile:
             gd = [p for p in scope.get("paths", []) if p.endswith(".gd")]
-            if run_compile_gate(bool(scope.get("full")), gd) != 0:
+            deleted = [p for p in scope.get("deleted_paths", []) if p.endswith(".gd")]
+            if run_compile_gate(bool(scope.get("full")), gd, deleted) != 0:
                 failures += 1
                 if args.fail_fast:
                     return _finish(failures)

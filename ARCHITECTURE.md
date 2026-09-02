@@ -303,7 +303,7 @@ Cleanup          → tote Pfade entfernt; Fallbacks dokumentiert [Phase 9]
 ## 🔬 EIGENE DEVELOPER- & AGENTEN-INFRASTRUKTUR
 
 ### 📡 S.C.O.U.T. — Model Context Protocol Bridge
-- **Pfad:** `addons/gdscript_mcp/`
+- **Pfad:** `addons/mcp/`
 - **Funktion:** Ermöglicht KI-Agenten die Steuerung und Inspektion des laufenden Spiels (Port 9090 Runtime, Port 9091 Editor).
 - **Werkzeug-Umfang:** Over 107 registrierte Tools.
 - **Vertrags-Regeln:**

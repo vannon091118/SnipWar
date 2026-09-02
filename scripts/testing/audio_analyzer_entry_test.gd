@@ -24,7 +24,7 @@ func _init() -> void:
 		print("[t] WATCHDOG TIMEOUT")
 		quit(3)
 	)
-	var registry: RefCounted = load("res://addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd").new()
+	var registry: RefCounted = load("res://addons/mcp/runtime/core/mcp_tool_registry.gd").new()
 	var evidence: Array = []
 
 	print("AUDIO_ANALYZER_ENTRY: Testing hybrid audio pipeline...")

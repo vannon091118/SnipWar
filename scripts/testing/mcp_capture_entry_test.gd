@@ -30,7 +30,7 @@ func _init() -> void:
 		print("[t] WATCHDOG TIMEOUT — an await never resolved")
 		quit(3)
 	)
-	var registry: RefCounted = load("res://addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd").new()
+	var registry: RefCounted = load("res://addons/mcp/runtime/core/mcp_tool_registry.gd").new()
 	var evidence: Array = []
 
 	# T1 — sync surface must refuse runtime_ux_find explicitly (its screenshot
@@ -90,7 +90,7 @@ func _init() -> void:
 	# T9 — OFFEN-3/4 contracts: fire-and-forget routing decision + evidence
 	# freshness (pure statics on the real server script) + the pipeline's
 	# non-coroutine live-only path used by the decoupled analyze.
-	var server_script: GDScript = load("res://addons/gdscript_mcp/runtime/host/mcp_server.gd")
+	var server_script: GDScript = load("res://addons/mcp/runtime/host/mcp_server.gd")
 	var decoupled_hit: bool = server_script.is_ux_analyze_decoupled("runtime_ux_analyze", {"include_visual": true})
 	var decoupled_miss_a: bool = server_script.is_ux_analyze_decoupled("runtime_ux_analyze", {"include_visual": false})
 	var decoupled_miss_b: bool = server_script.is_ux_analyze_decoupled("runtime_click", {"include_visual": true})

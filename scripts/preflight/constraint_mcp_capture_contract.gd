@@ -9,7 +9,7 @@ extends RefCounted
 ##   C. Screenshot-touchende Tools tragen `_async=true`, damit Clients den
 ##      Vertrag Input → frame_post_draw → IST-Screenshot → Prüfung erzwingen.
 
-const SCAN_ROOT: String = "res://addons/gdscript_mcp"
+const SCAN_ROOT: String = "res://addons/mcp"
 
 # Screenshot-touchende Tools → Datei, deren get_tool_defs() die Def baut.
 const ASYNC_TOOLS: Dictionary = {

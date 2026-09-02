@@ -15,6 +15,14 @@ const CONSTRAINT_DIR := "res://scripts/preflight"
 const AUTO_MANAGED: Array = ["CHANGELOG.md", "change_index.json", "narrative_chain.json", "arcs.json", ".commit_msg.txt"]
 # DOKI-Artefakte leben jetzt in .doki/ (nicht mehr am Repo-Root).
 
+## V3-009: Die Pfad→Contract-Tabelle lebt als maschinenlesbare SSOT in
+## scripts/preflight_v2/contract_map.json. Leser: ChangeImpactResolver (hier),
+## commit_group_guard.sh (Gruppen-Maske) und docs/reference/python_preflight.
+## Eine Tabelle für beide Systeme — kein Driftgenerator mehr.
+const CONTRACT_MAP_PATH := "res://scripts/preflight_v2/contract_map.json"
+var _path_contracts_cache: Array = []
+var _path_contracts_loaded := false
+
 
 ## Canonical contract → constraint coverage (transitive closure).
 ## Every constraint discovered by the scanner MUST appear in exactly one
@@ -110,13 +118,13 @@ var _PATH_CONTRACTS: Array = [
 	{"glob": ".githooks/**", "contracts": ["preflight"]},
 	{"glob": ".gitmodules", "contracts": ["preflight"]},
 	{"glob": "scripts/doki/**", "contracts": ["doki"]},
-	{"glob": "narrative_runtime/**", "contracts": ["doki"]},
+	{"glob": ".doki/narrative_runtime/**", "contracts": ["doki"]},
 	{"glob": ".doki/narrative_chain.json", "contracts": ["doki"]},
 	{"glob": ".doki/change_index.json", "contracts": ["doki"]},
 	{"glob": "narrative_chain.json", "contracts": ["doki"]},
 	{"glob": "change_index.json", "contracts": ["doki"]},
 	{"glob": "arcs.json", "contracts": ["doki"]},
-	{"glob": "addons/gdscript_mcp/**", "contracts": ["mcp"]},
+	{"glob": "addons/mcp/**", "contracts": ["mcp"]},
 	{"glob": "docs/**", "contracts": ["docs"]},
 	{"glob": "*.md", "contracts": ["docs"]},
 	{"glob": "*.json", "contracts": ["docs", "doki"]},
@@ -208,9 +216,28 @@ func contract_constraints(contract_id: String) -> Array[String]:
 	return contract_to_id_list(_CONTRACT_CONSTRAINTS.get(contract_id, []))
 
 
-## Canonical path glob → affected contract ids.
+## Canonical path glob → affected contract ids (V3-009: geladen aus
+## contract_map.json; fehlt/ungültig → leer + Fehler = fail-closed, da der
+## Resolver jeden Pfad dann als unknown_impact blockt).
 func path_contracts() -> Array:
-	return _PATH_CONTRACTS
+	if _path_contracts_loaded:
+		return _path_contracts_cache
+	_path_contracts_loaded = true
+	if not FileAccess.file_exists(CONTRACT_MAP_PATH):
+		push_error("[constraint_scanner] contract_map.json fehlt — Scope-Auflösung fail-closed")
+		return _path_contracts_cache
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(CONTRACT_MAP_PATH))
+	if parsed is Dictionary and parsed.has("rules") and parsed["rules"] is Array:
+		var rules: Array = parsed["rules"]
+		for rule in rules:
+			if rule is Dictionary and rule.has("glob") and rule.has("contracts"):
+				_path_contracts_cache.append({
+					"glob": String(rule["glob"]),
+					"contracts": rule["contracts"],
+				})
+	else:
+		push_error("[constraint_scanner] contract_map.json ungültig — Scope-Auflösung fail-closed")
+	return _path_contracts_cache
 
 
 func _has_interface(instance: RefCounted) -> bool:

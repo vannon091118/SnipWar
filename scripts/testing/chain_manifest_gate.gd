@@ -19,9 +19,9 @@ extends SceneTree
 ## Usage:
 ##   "$GODOT_BIN" --headless --path . --script res://scripts/testing/chain_manifest_gate.gd
 
-const CHAIN_DIR := "res://addons/gdscript_mcp/mcp_chains"
-const SERVER_PATH := "res://addons/gdscript_mcp/runtime/host/mcp_server.gd"
-const REGISTRY_PATH := "res://addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd"
+const CHAIN_DIR := "res://addons/mcp/mcp_chains"
+const SERVER_PATH := "res://addons/mcp/runtime/host/mcp_server.gd"
+const REGISTRY_PATH := "res://addons/mcp/runtime/core/mcp_tool_registry.gd"
 
 const EXPECT_OPS := ["==", "!=", ">=", "<=", ">", "<", "contains", "has_key"]
 const SUPPORTED_MODES := ["auto", "headless", "visible"]
