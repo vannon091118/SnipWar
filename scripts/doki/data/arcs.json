@@ -1,5 +1,5 @@
 {
-	"active": "a59",
+	"active": "a60",
 	"arcs": {
 		"a1": {
 			"climax_weight": 3.0,
@@ -2745,12 +2745,11 @@
 		},
 		"a59": {
 			"climax_weight": 5.0,
-			"commit_count": 2,
+			"commit_count": 3,
+			"completed_at": "arc_climax",
 			"id": "a59",
 			"name": "Vertrags-SSOT",
 			"seen_entities": [
-				"C-1333",
-				"C-1334",
 				"C-1335",
 				"C-1336",
 				"C-1337",
@@ -2798,13 +2797,15 @@
 				"C-1374",
 				"C-1375",
 				"C-1376",
-				"C-1377"
+				"C-1377",
+				"F-125",
+				"F-013"
 			],
 			"span": "heute → offen",
-			"status": "active",
+			"status": "completed",
 			"theme": "Gruppen und Contracts aus einer Quelle. Der Commit-Group-Guard hat seine eigene Pfad-Tabelle, der Resolver eine andere. Zwei Karten für dasselbe Terrain sind der nächste Driftgenerator. Eine maschinenlesbare Quelle, aus der beide lesen — das ist die offene Baustelle.",
 			"version": "",
-			"weight": 45.6
+			"weight": 46.65
 		},
 		"a6": {
 			"climax_weight": 3.0,
@@ -2845,6 +2846,16 @@
 			"theme": "Neuer Handlungsbogen — Thema offen (wird vom ersten Commit des Arcs geprägt).",
 			"version": "",
 			"weight": 11.15
+		},
+		"a60": {
+			"climax_weight": 5.0,
+			"id": "a60",
+			"name": "Merge-Hygiene",
+			"span": "heute → offen",
+			"status": "active",
+			"theme": "Merge-Konvergenz automatisiert verifizieren, statt sie pro Commit neu zu erkaufen.",
+			"version": "",
+			"weight": 0.0
 		},
 		"a7": {
 			"climax_weight": 3.0,
