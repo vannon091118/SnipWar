@@ -12202,6 +12202,49 @@
 			"seq": 131,
 			"subject": "[Buffy] DOKI-Entkopplung: Engine (scripts/doki) und… — nach Basher",
 			"summary": "Bashers jüngste Transport- und Vertrags-SSOT-Arbeit hatte die maschinenlesbare Grundlage bereits gelegt; deshalb konnte der CommitLayer heute aus dem Spiel-Repo ausziehen — nicht verkleinert, sonde..."
+		},
+		{
+			"a": 60,
+			"arc": "a60",
+			"c": 132,
+			"composite": "c132j36n8a60p17",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": ".doki/arcs.json",
+					"insertions": 3031.0
+				},
+				{
+					"deletions": 8131.0,
+					"file": ".doki/change_index.json",
+					"insertions": 8268.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_chain.json",
+					"insertions": 673.0
+				},
+				{
+					"deletions": 22.0,
+					"file": "AGENTS.md",
+					"insertions": 21.0
+				}
+			],
+			"date": "2026-08-27 12:00:00",
+			"hash": "bdc54a95c131d3e28a429952cc0a1896093dcebf",
+			"j": 36,
+			"model_id": "claude-sonnet-4",
+			"mood": "müde-zufrieden",
+			"n": 8,
+			"narrator": "Ghost",
+			"p": 17,
+			"p_id": 132,
+			"prev_hash": "137133a4a10109d2e8349cb70a1eea1e2d61b52417c4fc376eead3e0a8322048",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Buffy",
+			"seq": 132,
+			"subject": "Ghost verzeichnet: AGENTS.md auf die entkoppelte Realität umgestellt… — nach Buffy",
+			"summary": "Ghost übernimmt nach Buffy und räumt die letzte Baustelle der Entkopplung ab, denn die operative Leitlinie musste zur neuen Realität passen: AGENTS.md ruft DOKI jetzt über das gepinnte Home auf (`b..."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

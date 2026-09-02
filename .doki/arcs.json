@@ -2849,14 +2849,10 @@
 		},
 		"a60": {
 			"climax_weight": 5.0,
-			"commit_count": 1,
+			"commit_count": 2,
 			"id": "a60",
 			"name": "Merge-Hygiene",
 			"seen_entities": [
-				"F-009",
-				"F-856",
-				"F-439",
-				"F-440",
 				"F-857",
 				"F-858",
 				"F-010",
@@ -2902,13 +2898,17 @@
 				"F-198",
 				"F-585",
 				"F-598",
-				"F-836"
+				"F-836",
+				"F-877",
+				"F-586",
+				"F-587",
+				"F-019"
 			],
 			"span": "heute → offen",
 			"status": "active",
 			"theme": "Merge-Konvergenz automatisiert verifizieren, statt sie pro Commit neu zu erkaufen.",
 			"version": "",
-			"weight": 52.0
+			"weight": 53.85
 		},
 		"a7": {
 			"climax_weight": 3.0,
