@@ -3,7 +3,9 @@ set -euo pipefail
 
 # SnipWar pre-commit hook
 # Runs: DOKI gate (Session verified? Snapshot-Match? .commit_msg.txt?) →
-#       Unified Check (compile + preflight + tests, scope-kontrolliert)
+#       Verification driver (compile + preflight + tests, scope-kontrolliert)
+#       Der Treiber ist ein externes Python-Skript (scripts/verify.py); die
+#       Engine orchestriert nicht mehr selbst und hält kein eigenes Lock.
 # Exits 1 if GODOT_BIN not available or any check fails
 #
 # Der DOKI-Ablauf ist laut AGENTS.md/README: git add → doki prepare →
@@ -34,6 +36,14 @@ run_godot() {
     "$GODOT_BIN" --headless --path . --script "$script" "$@"
 }
 
+# Function to run the external verification driver (owns the OS-level lock,
+# scope resolution, compile gate, preflight, and test orchestration)
+run_verify() {
+    shift_args=()
+    for arg in "$@"; do shift_args+=("$arg"); done
+    python scripts/verify.py "${shift_args[@]}"
+}
+
 # Determine severity from agent_activity.sh classify_staged
 SEVERITY="full"
 if [ -f "scripts/agent_activity.sh" ]; then
@@ -45,23 +55,32 @@ if [ -f "scripts/agent_activity.sh" ]; then
     echo "=== pre-commit: Staged changes classified as severity=$SEVERITY ==="
 fi
 
+# Phase 0 guard: reject staged sets spanning disjoint atomic commit groups
+# (AGENTS.md table). Escape hatch: --allow-multi with a reason + [TAKEOVER:...]
+# trailer in the commit body.
+echo "=== pre-commit: Commit-group guard ==="
+bash scripts/commit_group_guard.sh check || {
+    echo "ERROR: Commit spans multiple atomic commit groups" >&2
+    exit 1
+}
+
 echo "=== pre-commit: DOKI gate ==="
 run_godot "res://scripts/doki/doki.gd" -- gate || {
     echo "ERROR: DOKI gate failed" >&2
     exit 1
 }
 
-echo "=== pre-commit: Unified Check (compile + preflight + tests, scope=$SEVERITY) ==="
+echo "=== pre-commit: Verification driver (compile + preflight + tests, scope=$SEVERITY) ==="
 if [ "$SEVERITY" = "python" ]; then
     # Cheap path: compile + pure constraints only, no tests
-    run_godot "res://scripts/check.gd" --cheap-path --skip-tests -x || {
-        echo "ERROR: Unified Check (cheap path) failed" >&2
+    run_verify --cheap-path --skip-tests --fail-fast || {
+        echo "ERROR: Verification driver (cheap path) failed" >&2
         exit 1
     }
 else
     # Full path: compile + preflight + tests, scope-gefiltert aus staged files
-    run_godot "res://scripts/check.gd" -x || {
-        echo "ERROR: Unified Check failed" >&2
+    run_verify --fail-fast || {
+        echo "ERROR: Verification driver failed" >&2
         exit 1
     }
 fi

@@ -3,6 +3,7 @@
 - **Bot-Trailer verboten:** Zeilen wie `🤖 Generated with Codebuff` oder `Co-Authored-By: Codebuff <noreply@codebuff.com>` dürfen NIEMALS in einer Commit-Message stehen — kein Agent fügt sie ein. Der commit-msg-Hook weist jede Message mit diesem Header hart zurück; ausschließlich DOKI-Narrator-Prompting ist zulässig.
 - Save-Slot 0 ist echter Spielstand und darf nie von Tests gelöscht werden; Slots 1–7 sind Test-Slots.
 - Kein Commit ohne aktiven AgentGate-Check-In, der alle staged Dateien abdeckt; `--no-verify` ist unzulässig.
+- **Commit-Group-Guard (Pflicht):** `.githooks/pre-commit` führt `bash scripts/commit_group_guard.sh check` aus und lehnt Commits ab, deren Staged-Set disjunkte atomare Gruppen mischt (Audit F3, vgl. `8a1eeb2`). Bewusste Ausnahmen: `bash scripts/commit_group_guard.sh check --allow-multi "<grund>"` + `[TAKEOVER: <grund>]`-Zeile im Commit-Body. Regressionen: `bash scripts/commit_group_guard.sh self-test`.
 
 ## CHECK-IN / CHECK-OUT
 Nach VERIFY: `bash scripts/agent_activity.sh check-in --agent "$AGENT_NAME" --task "..." --scope-from-staged`; danach `export AGENT_ACTIVITY_SEED="$(bash scripts/agent_activity.sh seed "$AGENT_NAME")"` vor DOKI prepare. Das Stage-Set ist die Coverage-Quelle; manuelle 166-Datei-Listen sind nicht zulässig.
@@ -32,17 +33,19 @@ Hooks require `GODOT_BIN` to be set and executable.
 3. **IMPLEMENT:** minimale atomare Änderung; neue `class_name` mit Editor-Scan und `.uid`-Sidecar.
 4. **GATE:**
 ```bash
-# Unified Check: ein Befehl, scope-kontrolliert.
+# Verification Driver: ein Befehl, scope-kontrolliert.
 # Scope wird aus staged files bestimmt; jede Datei außerhalb
-# muss über --takeover begründet werden.
-$GODOT_BIN --headless --path . --script res://scripts/check.gd -x
+# muss über --takeover begründet werden. Der Treiber ist ein
+# externes Python-Skript — es orchestriert Prozesse, hält das
+# OS-Lock und ruft Godot pro Phase EINMAL auf (kein Godot-in-Godot).
+python scripts/verify.py --fail-fast
 ```
    Äquivalent zu compile_gate + test_all + preflight in einem Durchlauf.
    Für isolierte Phasen:
 ```bash
-$GODOT_BIN --headless --path . --script res://scripts/check.gd --skip-tests --skip-preflight -x  # nur compile
-$GODOT_BIN --headless --path . --script res://scripts/check.gd --scope-report                    # nur scope-analyse
-$GODOT_BIN --headless --path . --script res://scripts/check.gd --full -x                        # voll-lauf
+python scripts/verify.py --skip-preflight --skip-tests --fail-fast  # nur compile
+python scripts/verify.py --scope-report                             # nur scope-analyse
+python scripts/verify.py --full --fail-fast                         # voll-lauf
 ```
    Pflicht: `RESULT: ALL PASSED`; Headless-Rauschen am Ende ignorieren, echte Fehler beheben.
    **Fallback (ohne Godot Binary):**
@@ -61,6 +64,9 @@ git commit -F .commit_msg.txt
 ```
    `finish` schreibt/staged `change_index.json` und `CHANGELOG.md`; `finalize` schreibt/staged danach `narrative_chain.json` und `arcs.json` für den nächsten Commit.
 7. **RE-AUDIT:** `git status`, `git log --oneline -1`, Regressionen und Artefaktzustand prüfen.
+
+## Atomare Commit-Gruppen — gemeinsam ändern
+> **Guard (Pflicht):** `.githooks/pre-commit` führt `bash scripts/commit_group_guard.sh check` vor dem DOKI-Gate aus. Ein Commit, dessen Staged-Set Dateien aus disjunkten Gruppen mischt, wird abgelehnt. Bewusste Ausnahme: `bash scripts/commit_group_guard.sh check --allow-multi "<grund>"` + `[TAKEOVER: <grund>]`-Zeile im Commit-Body. Regression: `bash scripts/commit_group_guard.sh self-test`.
 
 ## Atomare Commit-Gruppen — gemeinsam ändern
 | Bereich | Verbindliche Dateien |

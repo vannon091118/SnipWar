@@ -24,6 +24,104 @@
 			"seeded": true,
 			"seq": 1,
 			"summary": "Ghost verzeichnet: Preflight-Mutex TASK-015: preflight_lock.gd mitâ€¦ â€” nach Thinker"
+		},
+		{
+			"a": 9,
+			"arc": "a57",
+			"c": 2,
+			"composite": "c2j67n9a9p1",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": "CHANGELOG.md",
+					"insertions": 27.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/check.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/check.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 22.0,
+					"file": "scripts/preflight.gd",
+					"insertions": 11.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_lock.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_lock.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 18.0,
+					"file": "scripts/preflight_v2/change_impact_resolver.gd",
+					"insertions": 9.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_v2/constraint_scanner.gd",
+					"insertions": 7.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_v2/scope_dump.gd",
+					"insertions": 37.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_v2/v2_fixture.gd",
+					"insertions": 48.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_v2_runner.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/testing/global_search_entry_test.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 18.0,
+					"file": "scripts/testing/test_all.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/verify.py",
+					"insertions": 304.0
+				}
+			],
+			"date": "2026-09-01 02:00:00",
+			"hash": "c0fb4a8a4a49b5a7baec3c9018406ac6ea0ff15b",
+			"j": 67,
+			"model_id": "claude-sonnet-4",
+			"mood": "alarmiert",
+			"n": 9,
+			"narrator": "Spark",
+			"p": 1,
+			"p_id": 2,
+			"prev_hash": "6493af8a603a8e4402a3b770904a20a33000df67add9de6c58f6d709de5bf907",
+			"prev_model": "history",
+			"prev_narrator": "Flux",
+			"seq": 2,
+			"subject": "Spark entdeckt: verify.py migration: externe Orchestrierung… — nach Flux",
+			"summary": "Verify.py Migration: Orchestration wandert aus der Engine."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",

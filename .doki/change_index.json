@@ -1,5 +1,32 @@
 {
-	"commits": {},
+	"commits": {
+		"c0fb4a8a4a49b5a7baec3c9018406ac6ea0ff15b": {
+			"c": 2,
+			"composite": "c2j67n9a9p1",
+			"entities": [
+				"F-001",
+				"F-002",
+				"F-003",
+				"F-004",
+				"F-005",
+				"F-006",
+				"F-007",
+				"F-008",
+				"F-009",
+				"F-010",
+				"F-011",
+				"F-012",
+				"F-013",
+				"F-014",
+				"F-015",
+				"C-001",
+				"C-002",
+				"C-003",
+				"C-004"
+			],
+			"p_id": 2
+		}
+	},
 	"entities": {
 		"C-001": {
 			"first_p": 2,
@@ -216,6 +243,76 @@
 			"last_p": 2,
 			"name": "verify.py",
 			"path": "scripts/verify.py",
+			"status": "created",
+			"type": "file"
+		},
+		"F-016": {
+			"first_p": 3,
+			"history": [],
+			"id": "F-016",
+			"last_p": 3,
+			"name": "change_index.json",
+			"path": ".doki/change_index.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-017": {
+			"first_p": 3,
+			"history": [],
+			"id": "F-017",
+			"last_p": 3,
+			"name": "narrative_chain.json",
+			"path": ".doki/narrative_chain.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-018": {
+			"first_p": 3,
+			"history": [],
+			"id": "F-018",
+			"last_p": 3,
+			"name": "pre-commit",
+			"path": ".githooks/pre-commit",
+			"status": "created",
+			"type": "file"
+		},
+		"F-019": {
+			"first_p": 3,
+			"history": [],
+			"id": "F-019",
+			"last_p": 3,
+			"name": "AGENTS.md",
+			"path": "AGENTS.md",
+			"status": "created",
+			"type": "file"
+		},
+		"F-020": {
+			"first_p": 3,
+			"history": [],
+			"id": "F-020",
+			"last_p": 3,
+			"name": "commit_group_guard.sh",
+			"path": "scripts/commit_group_guard.sh",
+			"status": "created",
+			"type": "file"
+		},
+		"F-021": {
+			"first_p": 3,
+			"history": [],
+			"id": "F-021",
+			"last_p": 3,
+			"name": "arcs.json",
+			"path": "scripts/doki/data/arcs.json",
+			"status": "created",
+			"type": "file"
+		},
+		"F-022": {
+			"first_p": 3,
+			"history": [],
+			"id": "F-022",
+			"last_p": 3,
+			"name": "doki_selfcheck.gd",
+			"path": "scripts/doki/doki_selfcheck.gd",
 			"status": "created",
 			"type": "file"
 		}

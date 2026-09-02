@@ -2474,3 +2474,17 @@ verify.py migration: externe Orchestrierung ersetzt check.gd; Engine-Lock entfer
 - scripts/testing/global_search_entry_test.gd: Implementiert und integriert (F-013).
 - scripts/testing/test_all.gd: Implementiert und integriert (F-014).
 - scripts/verify.py: Implementiert und integriert (F-015).
+
+## 2026-09-01 03:00:00 — p3 · c3j56n8a32p2 · Ghost · müde-zufrieden
+
+**Ghost verzeichnet: Hook und Dokumentation auf den neuen… — nach Spark**
+
+Hook und Dokumentation auf den neuen Verification-Driver umgestellt; selfcheck auf Fail-Closed-Vertrag gepolt
+
+- .doki/change_index.json: Tooling erweitert (F-016).
+- .doki/narrative_chain.json: Tooling erweitert (F-017).
+- .githooks/pre-commit: Tooling erweitert (F-018).
+- AGENTS.md: Tooling erweitert (F-019).
+- scripts/commit_group_guard.sh: Tooling erweitert (F-020).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-021).
+- scripts/doki/doki_selfcheck.gd: Tooling erweitert (F-022).
