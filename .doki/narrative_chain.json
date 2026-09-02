@@ -9957,6 +9957,1289 @@
 			"seq": 126,
 			"subject": "Basher (5 files): Merge origin/main into doki-squash:… — nach Ghost",
 			"summary": "Zwei Stränge, ein Merge. Auf doki-squash lief die Migration: Orchestrierung wanderte in scripts/verify.py, Engine-Lock und check.gd flogen raus. Parallel lief backup-before-squash weiter — Prefligh..."
+		},
+		{
+			"a": 50,
+			"arc": "a58",
+			"c": 127,
+			"composite": "c127j98n4a50p92",
+			"data_changes": [
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/README.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/__init__.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/__main__.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/beliefs.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/cli.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/commit_hook.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/context.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/errors.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/gate.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 1.0,
+					"file": ".doki/narrative_runtime/gate_cli.py",
+					"insertions": 6.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/observe.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/personality.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/perspectives.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/public_state.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/relationships.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/sandbox/__init__.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/sandbox/generators.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/sandbox/metrics.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/sandbox/reference/snapshot.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/sandbox/runner.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/spotlight.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/store.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/tests/__init__.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/tests/test_relationship_sprint.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/tests/test_runtime.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/tests/test_v2_conformance.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": ".doki/narrative_runtime/threads.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 1.0,
+					"file": ".gitignore",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "AGENTS.md",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "ARCHITECTURE.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "DESIGN.md",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "README.md",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/.mcp.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/AGENTS.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/AGENT_WORKFLOW.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/CONTEXT_AUTONOMY_AUDIT.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/MCP_ANOMALIES.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/MCP_INDEX.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/PERSISTENCE.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/PLAYTEST_HANDOFF.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/agent_repair_loop.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/mcp_connector_selftest.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/mcp_stdio_bridge.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/mcp_stdio_bridge_legacy.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/mcp_stresstest.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/package-lock.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/package.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/MCP_PLAYTEST_REPORT.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/UX_REPORT.md",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_client.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_game_state_summary.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_runtime_click.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_runtime_find.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_runtime_find_node.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_runtime_logs.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_runtime_mouse_move.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_runtime_scan.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_runtime_scene_tree.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_runtime_screenshot.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_runtime_scroll.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_runtime_wait.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/atomic_session.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/mcp_file_driver.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/mcp_player_atom.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/atomic/scan_compact.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/chain_build.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/chain_camera_pan.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/first_ship_atomic.trace.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/legacy/_mcp_explore.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/legacy/_mcp_node_client.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/legacy/_mcp_planet_panel.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/legacy/_mcp_planet_view.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/legacy/_mcp_play.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/legacy/_mcp_research.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/legacy/_mcp_research_click.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/legacy/_mcp_research_flow.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/legacy/_mcp_state_explore.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/legacy/_mcp_wait_research.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/legacy/_mcp_werkstatt.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/mcp_lib.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_explore.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_game_state.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_node_client.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_planet_panel.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_planet_view.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_planet_view.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_play.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_research.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_research_click.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_research_click.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_research_flow.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_research_view.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_state_explore.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_state_explore.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_tools_list.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_wait_research.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_werkstatt.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_mcp_werkstatt_view.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_ux_report_1.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/session_dumps/_ux_report_2.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/step1_main_menu.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/step2_panels.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/step3_planets.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/step4_planet_click.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/playthroughs/visible_autonomy_probe.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/tessdata/deu.traineddata",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/tessdata/deu.traineddata.gz",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/tessdata/deu.traineddata.tmp",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/test_mcp_python.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/vision_worker.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/vision_worker_benchmark.py",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/client/vision_worker_legacy.js",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/editor/gdscript_mcp_plugin.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/editor/gdscript_mcp_plugin.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/editor/mcp_dock.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/editor/mcp_dock.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/editor/mcp_dock.tscn",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/editor/mcp_runtime_client.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/editor/mcp_runtime_client.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/mcp_chains/preflight_core.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/mcp_chains/world_smoke.json",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/plugin.cfg",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_autonomy_contracts.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_autonomy_contracts.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_capability_planner.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_capability_planner.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_chain_controller.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_chain_controller.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_contract_gate.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_contract_gate.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_path_validator.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_path_validator.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_project_tools.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_project_tools.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_workspace_journal.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/autonomy/mcp_workspace_journal.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/context/mcp_context_store.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/context/mcp_context_store.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/context/mcp_playthrough_archive.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/context/mcp_playthrough_archive.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/context/mcp_run_trace.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/context/mcp_run_trace.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/core/mcp_custom_tool_loader.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/core/mcp_custom_tool_loader.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/core/mcp_project_adapter.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/core/mcp_project_adapter.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/core/mcp_tool_registry.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/core/mcp_tool_registry.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/host/mcp_runtime.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/host/mcp_runtime.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/host/mcp_server.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/host/mcp_server.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/lifecycle/mcp_lifecycle.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/lifecycle/mcp_lifecycle.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/protocol/mcp_protocol.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/protocol/mcp_protocol.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/agent/mcp_agent_activity.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/agent/mcp_agent_activity.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/debug/mcp_debug.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/debug/mcp_debug.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/debug/mcp_debug_helpers.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/debug/mcp_debug_helpers.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/debug/mcp_debug_perf.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/debug/mcp_debug_perf.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/debug/mcp_debug_project.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/debug/mcp_debug_project.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/debug/mcp_debug_runtime.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/debug/mcp_debug_runtime.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/e2e/mcp_code_analyzer.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/e2e/mcp_code_analyzer.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/e2e/mcp_e2e.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/e2e/mcp_e2e.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/e2e/mcp_goal_player.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/e2e/mcp_goal_player.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/e2e/mcp_playthrough_tools.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/e2e/mcp_playthrough_tools.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/gameplay/mcp_gameplay_tools.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/gameplay/mcp_gameplay_tools.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/runtime/mcp_input_scheduler.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/runtime/mcp_input_scheduler.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/runtime/mcp_runtime_tools.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/runtime/mcp_runtime_tools.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/systems/mcp_audio_tools.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/systems/mcp_audio_tools.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_classify.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_classify.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_detect.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_detect.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_geometry.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_geometry.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_live.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_live.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_pipeline.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_pipeline.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_text.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/ux/mcp_ux_text.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_capture.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_capture.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_color.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_color.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_compare.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_compare.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_detect.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_detect.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_helpers.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_helpers.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_worker.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/runtime/tools/vision/mcp_vision_worker.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/e2e/mcp_playthrough_driver.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/e2e/mcp_playthrough_driver.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_autonomy_contract_test.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_autonomy_contract_test.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_autonomy_write_gate_test.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_autonomy_write_gate_test.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_build_check.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_build_check.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_player_contract_test.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_player_contract_test.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_red_team_test.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_red_team_test.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_test_runner.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_test_runner.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_test_scenario.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_test_scenario.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_workspace_contract_test.gd",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/mcp_workspace_contract_test.gd.uid",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/portable/run_portable_smoke.sh",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/portable/templates/.gdignore",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/portable/templates/bootstrap_button.tscn",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/portable/templates/project.godot.tpl",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/scenarios/main_menu_buttons.tres",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "addons/mcp/testing/scenarios/smoke_direct_tools.tres",
+					"insertions": 0.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "docs/FINDINGS.md",
+					"insertions": 39.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "docs/reference/python_preflight/pure_constraints.py",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "docs/reference/python_preflight/scope.py",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "project.godot",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/preflight/constraint_dead_code.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/preflight/constraint_mcp_capture_contract.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/preflight/constraint_narrative_runtime.gd",
+					"insertions": 7.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/preflight_v2/constraint_scanner.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/preflight_v2/scope_dump.gd.uid",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/testing/audio_analyzer_entry_test.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 3.0,
+					"file": "scripts/testing/chain_manifest_gate.gd",
+					"insertions": 3.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/testing/chain_validate_entry_test.gd",
+					"insertions": 1.0
+				},
+				{
+					"deletions": 0.0,
+					"file": "scripts/testing/change_impact_resolver_test.gd",
+					"insertions": 10.0
+				},
+				{
+					"deletions": 4.0,
+					"file": "scripts/testing/compile_gate.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 2.0,
+					"file": "scripts/testing/mcp_capture_entry_test.gd",
+					"insertions": 2.0
+				},
+				{
+					"deletions": 1.0,
+					"file": "scripts/testing/narrative_runtime_gate.gd",
+					"insertions": 4.0
+				},
+				{
+					"deletions": 5.0,
+					"file": "scripts/testing/narrative_runtime_gate_test.gd",
+					"insertions": 7.0
+				},
+				{
+					"deletions": 35.0,
+					"file": "scripts/verify.py",
+					"insertions": 125.0
+				}
+			],
+			"date": "2026-08-27 07:00:00",
+			"hash": "cb49b46c6c2c5ce84266c015a5e2e2db46c2c963",
+			"j": 98,
+			"model_id": "claude-sonnet-4",
+			"mood": "trocken",
+			"n": 4,
+			"narrator": "Vannon",
+			"p": 92,
+			"p_id": 127,
+			"prev_hash": "2bedae061b6b65e833f5ce738573908f9bf9289ecb1863364f7b6a1c02c6fe64",
+			"prev_model": "claude-sonnet-4",
+			"prev_narrator": "Basher",
+			"seq": 127,
+			"subject": "Fail-closed verify.py: Deletionen erreichen. … — nach Basher",
+			"summary": "Prüfe den Prüfer. Das war die eine Regel dieses Arcs, und dieser Commit ist ihr Ende — denn heute wurde der Prüfer selbst geprüft, und er hat standgehalten, nachdem drei Lücken gestopft wurden."
 		}
 	],
 	"genesis_composite": "c0j0n0a0p0",
