@@ -133,9 +133,9 @@ Editor-Boot (`_register_project_integration()` in `editor/gdscript_mcp_plugin.gd
 ergänzt es idempotent:
 
 1. **Autoloads** (nur wenn fehlend): `McpRuntime` →
-   `res://addons/gdscript_mcp/runtime/host/mcp_runtime.gd` und
+   `res://addons/mcp/runtime/host/mcp_runtime.gd` und
    `McpProjectAdapter` →
-   `res://addons/gdscript_mcp/runtime/core/mcp_project_adapter.gd`.
+   `res://addons/mcp/runtime/core/mcp_project_adapter.gd`.
    Beide sind als Autoloads **inert**: ohne den Start-Flag `--mcp` kehrt
    `_ready()` früh zurück und es startet kein MCP-Server.
 2. **`application/mcp/*`-Settings** (nur wenn fehlend):
@@ -168,8 +168,8 @@ SnipWar-Defaults zurück (`res://scripts/preflight.gd` bzw.
 
 ### Einbindung ohne SnipWar (Schritt für Schritt)
 
-1. Plugin-Ordner unter `res://addons/gdscript_mcp/` ablegen (Kopie, submodule
-   oder Packaged Release). Das gut bekannte `addons/gdscript_mcp`-Verzeichnis ist
+1. Plugin-Ordner unter `res://addons/mcp/` ablegen (Kopie, submodule
+   oder Packaged Release). Das gut bekannte `addons/mcp`-Verzeichnis ist
    erwartet — intern sind alle `res://addons/...`-Pfade addon-intern und
    redlicherweise an diesen Well-known-Pfad gebunden.
 2. In **Project Settings → Plugins**: `GDScript MCP Bridge` aktivieren. Das
@@ -353,7 +353,7 @@ Diese Tools gehören zum automatisierten E2E-/Diagnosemodus und sind **kein** si
 ### Chain Controller (5 Tools) — `runtime/autonomy/mcp_chain_controller.gd`
 Dekaratve Kettenschritt-Orchestrierung für kombinierte Headless- und Visible-Testläufe:
 - `runtime_chain_validate` — Kette vor Validierung auf Atomgrenzen, sichtbare Verbote, Screenshot-Gründe und Context-Limits prüfen (auch per `chain_id`)
-- `runtime_chain_run` (async) — validierte Kette aus Preconditions, Tools, Assertions und Evidenzerfassung ausführen; `chain_id` lädt ein versioniertes Manifest (`res://addons/gdscript_mcp/mcp_chains/<id>.json`)
+- `runtime_chain_run` (async) — validierte Kette aus Preconditions, Tools, Assertions und Evidenzerfassung ausführen; `chain_id` lädt ein versioniertes Manifest (`res://addons/mcp/mcp_chains/<id>.json`)
 - `runtime_chain_trace` — Letzten Ausführungs-Trace und Teilschritt-Verdicts abfragen
 - `runtime_chain_list` — Versionierte Chain-Manifeste im Katalog auflisten (id, name, description, mode, steps)
 - `runtime_chain_load` — Manifest laden + validieren, Definition für `runtime_chain_run` zurückgeben
@@ -363,7 +363,7 @@ Dekaratve Kettenschritt-Orchestrierung für kombinierte Headless- und Visible-Te
 GameState-Node als base_instance hat (z.B. `has_active_run()`). Alternativ
 deklarativ: `expect: {key, op, value}` gegen das Tool-Result.
 
-**Versionierte Chain-Manifeste (F5):** `res://addons/gdscript_mcp/mcp_chains/*.json`
+**Versionierte Chain-Manifeste (F5):** `res://addons/mcp/mcp_chains/*.json`
 (überschreibbar über `application/mcp/chain_dir`). Jedes Manifest durchläuft
 `runtime_chain_validate`, bevor es ausgeführt wird — ein „PASS" ist nur echt,
 wenn die Kette wirklich so lief. Mitgeliefert: `preflight_core` (headless,
@@ -424,7 +424,7 @@ Die sichtbare Spielererkundung ist kein Gesamt-E2E-Skript: Nach jedem einzelnen 
 
 ```bash
 # Playthrough sichtbar im Spielfenster (voll Renderer, kein Headless):
-$GODOT_BIN --path . --script res://addons/gdscript_mcp/testing/e2e/mcp_playthrough_driver.gd
+$GODOT_BIN --path . --script res://addons/mcp/testing/e2e/mcp_playthrough_driver.gd
 $GODOT_BIN --path . --script ... --mcp-e2e=new_game_to_world
 $GODOT_BIN --path . --script ... --mcp-e2e-list
 
@@ -455,14 +455,14 @@ dann:
 $GODOT_BIN --path . -- --mcp --mcp-port 9090 --mcp-transport tcp
 
 # 2. Connecten (Python, Runtime-TCP):
-node addons/gdscript_mcp/client/playthroughs/atomic/mcp_player_atom.js runtime_mcp_status '{}'
+node addons/mcp/client/playthroughs/atomic/mcp_player_atom.js runtime_mcp_status '{}'
 # Für viele atomare Aktionen: einen persistenten Socket/Handshake nutzen
-node addons/gdscript_mcp/client/playthroughs/atomic/atomic_session.js
+node addons/mcp/client/playthroughs/atomic/atomic_session.js
 # stdin: eine JSON-Zeile pro MCP-Call, z. B. {"tool":"runtime_ux_scan","args":{"max_controls":120}}
 # Empfohlen für viele atomare Aktionen — direkte Ausführung über mcp_file_driver
 # (ein Prozess + Handshake pro Lauf, eine Zeile = genau ein MCP-Call):
 MCP_PORT=9090 MCP_COMMANDS=/tmp/mcp_cmds.jsonl MCP_OUTPUT=/tmp/mcp_out.jsonl\
-  node addons/gdscript_mcp/client/playthroughs/atomic/mcp_file_driver.js
+  node addons/mcp/client/playthroughs/atomic/mcp_file_driver.js
 echo '{"tool":"runtime_ux_scan","args":{}}' >> /tmp/mcp_cmds.jsonl   # Befehle anhängen
 tail -1 /tmp/mcp_out.jsonl                                            # eine Ergebnis-Zeile pro Befehl
 echo '{"command":"close"}' >> /tmp/mcp_cmds.jsonl                     # sauber beenden
@@ -491,7 +491,7 @@ echo '{"command":"close"}' >> /tmp/mcp_cmds.jsonl                     # sauber b
 ## Dateiübersicht (nach Rollen gruppiert)
 
 ```
-addons/gdscript_mcp/
+addons/mcp/
 ├── AGENTS.md                        MCP-Test-Doktrin (Pflicht-Lese)
 ├── MCP_INDEX.md                     Diese Datei (Architektur & Tools)
 ├── PERSISTENCE.md                   Persistenz-Landkarte (Pflicht-Lese)

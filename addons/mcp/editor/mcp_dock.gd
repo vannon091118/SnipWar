@@ -15,7 +15,7 @@ class_name McpDock
 ## (MCP_EMBEDDED-Env). Der Dock verbindet sich automatisch auf 9090.
 signal runtime_launch_requested(profile: String)
 
-const RUNTIME_CLIENT_PATH := "res://addons/gdscript_mcp/editor/mcp_runtime_client.gd"
+const RUNTIME_CLIENT_PATH := "res://addons/mcp/editor/mcp_runtime_client.gd"
 const PROFILE_CONFIG_PATH := "user://gdscript_mcp_profile.cfg"
 const RUNTIME_PORT := 9090
 const AUTO_CONNECT_RETRY_SECONDS := 0.35

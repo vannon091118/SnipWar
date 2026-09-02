@@ -13,7 +13,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gdscript_mcp/plugin.cfg")
+enabled=PackedStringArray("res://addons/mcp/plugin.cfg")
 
 [rendering]
 

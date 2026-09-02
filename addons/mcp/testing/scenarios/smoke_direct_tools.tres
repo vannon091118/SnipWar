@@ -1,6 +1,6 @@
 [gd_resource type="Resource" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://addons/gdscript_mcp/testing/mcp_test_scenario.gd" id="1_scenario"]
+[ext_resource type="Script" path="res://addons/mcp/testing/mcp_test_scenario.gd" id="1_scenario"]
 
 [resource]
 script = ExtResource("1_scenario")

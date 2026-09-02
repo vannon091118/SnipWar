@@ -77,7 +77,7 @@ Der Server hängt bei unerwarteten Lagen **automatisch** `visual_evidence` an:
 
 ### 7. Externe MCP-Clients (stdio_bridge) — absolute Pfade Pflicht
 - Externe Clients (z. B. Freebuff „choose tools“) starten
-  `python addons/gdscript_mcp/client/mcp_stdio_bridge.py` oft mit **ihrem eigenen
+  `python addons/mcp/client/mcp_stdio_bridge.py` oft mit **ihrem eigenen
   cwd** (z. B. `%USERPROFILE%`) — relative Pfade lösen dann gegen
   `C:\Users\<User>\addons\...` auf → `MODULE_NOT_FOUND`, der Server startet
   nie (Befund MCP-08 in `docs/FINDINGS.md`).
@@ -112,13 +112,13 @@ Der Server hängt bei unerwarteten Lagen **automatisch** `visual_evidence` an:
 
 | Thema | Datei |
 |-------|-------|
-| MCP-Test-Doktrin (diese Datei) | `addons/gdscript_mcp/AGENTS.md` |
-| MCP-Architektur & Tools | `addons/gdscript_mcp/MCP_INDEX.md` |
-| MCP-Workflow & Modi | `addons/gdscript_mcp/AGENT_WORKFLOW.md` |
-| MCP-Spieler-Vertrag | `addons/gdscript_mcp/PLAYTEST_HANDOFF.md` |
-| MCP-Anomalien (GAME vs MCP) | `addons/gdscript_mcp/MCP_ANOMALIES.md` |
-| MCP-Persistenz (Landkarte, TTLs, Backup) | `addons/gdscript_mcp/PERSISTENCE.md` |
-| Live-Playthrough-Archiv | `addons/gdscript_mcp/client/playthroughs/MCP_PLAYTEST_REPORT.md` |
+| MCP-Test-Doktrin (diese Datei) | `addons/mcp/AGENTS.md` |
+| MCP-Architektur & Tools | `addons/mcp/MCP_INDEX.md` |
+| MCP-Workflow & Modi | `addons/mcp/AGENT_WORKFLOW.md` |
+| MCP-Spieler-Vertrag | `addons/mcp/PLAYTEST_HANDOFF.md` |
+| MCP-Anomalien (GAME vs MCP) | `addons/mcp/MCP_ANOMALIES.md` |
+| MCP-Persistenz (Landkarte, TTLs, Backup) | `addons/mcp/PERSISTENCE.md` |
+| Live-Playthrough-Archiv | `addons/mcp/client/playthroughs/MCP_PLAYTEST_REPORT.md` |
 | Zentrale Findings (Spiel + MCP, getrennt) | `docs/FINDINGS.md` |
 | Spiel-Doku | `DESIGN.md`, `VISION.md` |
 | Projekt-Instruktion (Spiel, Preflight, DOKI) | `AGENTS.md` (Projekt-Wurzel) |

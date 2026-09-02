@@ -6,11 +6,11 @@ class_name McpCapabilityPlanner
 ## behind set_mutations_allowed — writes stay inside user://mcp_workspaces and
 ## are preimaged + rollbackable. Probes always stay read-only.
 
-const CONTRACTS_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_autonomy_contracts.gd"
-const PROJECT_ADAPTER_PATH := "res://addons/gdscript_mcp/runtime/core/mcp_project_adapter.gd"
-const ARCHIVE_PATH := "res://addons/gdscript_mcp/runtime/context/mcp_playthrough_archive.gd"
-const WORKSPACE_JOURNAL_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_workspace_journal.gd"
-const PROJECT_TOOLS_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_project_tools.gd"
+const CONTRACTS_PATH := "res://addons/mcp/runtime/autonomy/mcp_autonomy_contracts.gd"
+const PROJECT_ADAPTER_PATH := "res://addons/mcp/runtime/core/mcp_project_adapter.gd"
+const ARCHIVE_PATH := "res://addons/mcp/runtime/context/mcp_playthrough_archive.gd"
+const WORKSPACE_JOURNAL_PATH := "res://addons/mcp/runtime/autonomy/mcp_workspace_journal.gd"
+const PROJECT_TOOLS_PATH := "res://addons/mcp/runtime/autonomy/mcp_project_tools.gd"
 
 var _contracts: RefCounted
 var _registry: RefCounted

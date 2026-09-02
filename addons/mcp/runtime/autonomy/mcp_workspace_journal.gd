@@ -4,7 +4,7 @@ class_name McpWorkspaceJournal
 ## Slice B - isolierter Run-Workspace mit Baseline-Fingerprint, Preimages,
 ## Hash/Diff-Nachweis und explizitem Datei-Rollback.
 
-const PATH_VALIDATOR_SCRIPT := preload("res://addons/gdscript_mcp/runtime/autonomy/mcp_path_validator.gd")
+const PATH_VALIDATOR_SCRIPT := preload("res://addons/mcp/runtime/autonomy/mcp_path_validator.gd")
 const WORKSPACE_ROOT := "user://mcp_workspaces"
 const STATE_CLEAN := "CLEAN"
 const STATE_DIRTY := "DIRTY"

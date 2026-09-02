@@ -13,10 +13,10 @@ const PREFLIGHT_POLL_MS := 400
 const PREFLIGHT_OUT_PATH := "user://mcp_preflight_result.json"
 
 # Versionierte Chain-Manifeste (F5): wiederholbare, deklarative Testketten als
-# JSON-Dateien unter addons/gdscript_mcp/mcp_chains/<id>.json (HARD SEPARATION:
+# JSON-Dateien unter addons/mcp/mcp_chains/<id>.json (HARD SEPARATION:
 # MCP-Assets leben ausschließlich im Addon, nie im Spiel-Root; überschreibbar
 # über application/mcp/chain_dir).
-const CHAIN_DIR := "res://addons/gdscript_mcp/mcp_chains"
+const CHAIN_DIR := "res://addons/mcp/mcp_chains"
 
 # Host-Tools leben NICHT in der Registry — der Server dispatched sie über
 # _dispatch_host_tool_for_chain als Fallback (set_host_dispatch). Die
@@ -53,11 +53,11 @@ static func get_tool_defs() -> Array:
 	return [
 		{
 			"name": "runtime_chain_run",
-			"description": "Execute a declarative multi-step test or feature verification chain. Pass chain_id to run a versioned manifest from the chain catalog (res://addons/gdscript_mcp/mcp_chains), or inline steps for ad-hoc chains",
+			"description": "Execute a declarative multi-step test or feature verification chain. Pass chain_id to run a versioned manifest from the chain catalog (res://addons/mcp/mcp_chains), or inline steps for ad-hoc chains",
 			"inputSchema": {
 				"type": "object",
 				"properties": {
-					"chain_id": {"type": "string", "description": "Versioned chain manifest id (res://addons/gdscript_mcp/mcp_chains/<id>.json). Overrides inline steps"},
+					"chain_id": {"type": "string", "description": "Versioned chain manifest id (res://addons/mcp/mcp_chains/<id>.json). Overrides inline steps"},
 					"name": {"type": "string", "description": "Human-readable chain name"},
 					"mode": {"type": "string", "enum": ["auto", "headless", "visible"], "default": "auto"},
 					"stop_on_failure": {"type": "boolean", "default": true},
@@ -93,7 +93,7 @@ static func get_tool_defs() -> Array:
 		},
 		{
 			"name": "runtime_chain_list",
-			"description": "List versioned chain manifests from the chain catalog (res://addons/gdscript_mcp/mcp_chains/*.json): id, name, description, mode, step count",
+			"description": "List versioned chain manifests from the chain catalog (res://addons/mcp/mcp_chains/*.json): id, name, description, mode, step count",
 			"inputSchema": {"type": "object", "properties": {}},
 		},
 		{
@@ -504,7 +504,7 @@ static func _resolve_preflight_path() -> String:
 # ═══════════════════════════════════════════════════════════════════════════
 
 ## Löst das Manifest-Verzeichnis auf (application/mcp/chain_dir, Default
-## res://addons/gdscript_mcp/mcp_chains).
+## res://addons/mcp/mcp_chains).
 static func _resolve_chain_dir() -> String:
 	var configured := str(ProjectSettings.get_setting("application/mcp/chain_dir", CHAIN_DIR))
 	if configured.begins_with("res://") or configured.begins_with("user://"):
@@ -512,7 +512,7 @@ static func _resolve_chain_dir() -> String:
 	return CHAIN_DIR
 
 
-## Lädt und validiert ein Manifest (res://addons/gdscript_mcp/mcp_chains/<id>.json).
+## Lädt und validiert ein Manifest (res://addons/mcp/mcp_chains/<id>.json).
 func load_manifest(chain_id: String) -> Dictionary:
 	var id := chain_id.strip_edges()
 	if id == "":

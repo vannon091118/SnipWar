@@ -5,10 +5,10 @@ extends SceneTree
 ## Er beweist, dass die Vertragslogik (Gate, Truncation, Smooth-Step-Mathe,
 ## Headless-Verweigerung) funktioniert, und zählt getrennt vom Live-Gameplay-PASS.
 
-const GATE_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_contract_gate.gd"
-const PROTOCOL_PATH := "res://addons/gdscript_mcp/runtime/protocol/mcp_protocol.gd"
-const RUNTIME_TOOLS_PATH := "res://addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd"
-const SERVER_PATH := "res://addons/gdscript_mcp/runtime/host/mcp_server.gd"
+const GATE_PATH := "res://addons/mcp/runtime/autonomy/mcp_contract_gate.gd"
+const PROTOCOL_PATH := "res://addons/mcp/runtime/protocol/mcp_protocol.gd"
+const RUNTIME_TOOLS_PATH := "res://addons/mcp/runtime/tools/runtime/mcp_runtime_tools.gd"
+const SERVER_PATH := "res://addons/mcp/runtime/host/mcp_server.gd"
 
 const PLAYER_BLOCKED := [
 	"runtime_goal_play", "runtime_goal_sequence", "runtime_goal_check", "runtime_goal_history",

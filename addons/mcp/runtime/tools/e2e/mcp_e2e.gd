@@ -9,7 +9,7 @@ class_name McpE2E
 ## an agent would do remotely. Results + anomalies (EventLog errors/warnings)
 ## are collected per scenario.
 
-const ARCHIVE_PATH := "res://addons/gdscript_mcp/runtime/context/mcp_playthrough_archive.gd"
+const ARCHIVE_PATH := "res://addons/mcp/runtime/context/mcp_playthrough_archive.gd"
 
 var _registry: RefCounted
 var _archive: RefCounted

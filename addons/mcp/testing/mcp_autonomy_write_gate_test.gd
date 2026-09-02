@@ -3,8 +3,8 @@ extends SceneTree
 ## Slice D write-gate contract test: workspace tools in the planner
 ## respect the mutations_allowed gate and journal all writes.
 
-const PLANNER_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_capability_planner.gd"
-const VALIDATOR_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_path_validator.gd"
+const PLANNER_PATH := "res://addons/mcp/runtime/autonomy/mcp_capability_planner.gd"
+const VALIDATOR_PATH := "res://addons/mcp/runtime/autonomy/mcp_path_validator.gd"
 
 var _failed := 0
 
@@ -94,7 +94,7 @@ func _run() -> void:
 
 	# ── res:// write still blocked ─────────────────────────────────
 	var res_write: Variant = planner.dispatch_tool("runtime_autonomy_write", {
-		"path": "res://addons/gdscript_mcp/blocked.gd",
+		"path": "res://addons/mcp/blocked.gd",
 		"content": "x",
 	})
 	_check(not bool((res_write as Dictionary).get("ok", true)), "res:// write blocked even when authorized")
@@ -146,7 +146,7 @@ func _run() -> void:
 	_check(bool((rollback as Dictionary).get("ok", false)), "rollback succeeds")
 
 	# ── Import / Export (gated apply) ───────────────────────────────
-	var fixture_path := "res://addons/gdscript_mcp/testing/import_export_fixture.gd"
+	var fixture_path := "res://addons/mcp/testing/import_export_fixture.gd"
 	var fixture_content := "extends RefCounted\n\nvar marker := 1\n\nfunc get_marker() -> int:\n\treturn marker\n"
 	var fixture_f := FileAccess.open(fixture_path, FileAccess.WRITE)
 	fixture_f.store_string(fixture_content)

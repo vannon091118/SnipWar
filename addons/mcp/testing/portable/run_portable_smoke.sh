@@ -10,7 +10,7 @@
 #      headless; liefert echte [PASS]/[FAIL]-Zeilen).
 #
 # Usage:
-#   bash addons/gdscript_mcp/testing/portable/run_portable_smoke.sh \
+#   bash addons/mcp/testing/portable/run_portable_smoke.sh \
 #        "/c/Users/Vannon/Desktop/godu/Godot_v4.7.2-stable_win64_console.exe"
 # Env: MCP_SMOKE_VERBOSE=1 für mehr Ausgabe, MCP_SMOKE_KEEP=1 zum Temp-Ordner behalten.
 
@@ -27,7 +27,7 @@ if [[ ! -f "$GODOT_BIN" ]]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ADDON_DIR="$SCRIPT_DIR/../.."                 # addons/gdscript_mcp
+ADDON_DIR="$SCRIPT_DIR/../.."                 # addons/mcp
 TPL_DIR="$SCRIPT_DIR/templates"
 
 if [[ -n "${MCP_SMOKE_KEEP:-}" ]]; then
@@ -37,15 +37,15 @@ else
   FIXTURE="$(mktemp -d "${TMPDIR:-/tmp}/gdscript_mcp_smoke.XXXXXX")"
 fi
 mkdir -p "$FIXTURE/addons"
-cp -r "$ADDON_DIR" "$FIXTURE/addons/gdscript_mcp"
+cp -r "$ADDON_DIR" "$FIXTURE/addons/mcp"
 cp "$TPL_DIR/project.godot.tpl" "$FIXTURE/project.godot"
 cp "$TPL_DIR/bootstrap_button.tscn" "$FIXTURE/bootstrap_button.tscn"
 
 # Portables Szenario für den sichtbaren Runner (liegt im Addon-Kopier-Ordner).
-cat > "$FIXTURE/addons/gdscript_mcp/testing/scenarios/portable_smoke.tres" <<'ENDOFTRES'
+cat > "$FIXTURE/addons/mcp/testing/scenarios/portable_smoke.tres" <<'ENDOFTRES'
 [gd_resource type="Resource" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://addons/gdscript_mcp/testing/mcp_test_scenario.gd" id="1_scenario"]
+[ext_resource type="Script" path="res://addons/mcp/testing/mcp_test_scenario.gd" id="1_scenario"]
 
 [resource]
 script = ExtResource("1_scenario")
@@ -90,8 +90,8 @@ if [[ "${PIPESTATUS[0]}" -ne 0 ]]; then
 else
   echo "[A-OK]   Editor-Boot OK. Prüfe registrierte Autoloads + Settings …"
   # project.godot speichert Autoloads mit Anführungszeichen: McpRuntime="*res://..."
-  for key in "McpRuntime=\"*res://addons/gdscript_mcp/runtime/host/mcp_runtime.gd\"" \
-             "McpProjectAdapter=\"*res://addons/gdscript_mcp/runtime/core/mcp_project_adapter.gd\""; do
+  for key in "McpRuntime=\"*res://addons/mcp/runtime/host/mcp_runtime.gd\"" \
+             "McpProjectAdapter=\"*res://addons/mcp/runtime/core/mcp_project_adapter.gd\""; do
     if grep -qF "$key" "$FIXTURE/project.godot"; then
       echo "  [A-OK] autoload: $key"
     else
@@ -114,7 +114,7 @@ echo ""
 echo "================= PHASE B — Sichtbarer runtime_ux_scan/click (echter Renderer) ================="
 # Sichtbarer Runner: verbietet Headless selbst (quit(2)). Öffnet ein echtes Fenster.
 PHASE_B_OUT="$FIXTURE/phase_b_output.txt"
-"$GODOT_BIN" --path "$FIXTURE" --script "res://addons/gdscript_mcp/testing/mcp_test_runner.gd" \
+"$GODOT_BIN" --path "$FIXTURE" --script "res://addons/mcp/testing/mcp_test_runner.gd" \
   --mcp-test-filter=portable_smoke --mcp-test-verbose >"$PHASE_B_OUT" 2>&1
 if grep -q "\[PASS\] portable_smoke" "$PHASE_B_OUT"; then
   echo "[B-OK]   Sichtbarer portable_smoke-Run: PASS"

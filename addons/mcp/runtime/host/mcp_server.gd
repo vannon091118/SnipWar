@@ -7,13 +7,13 @@ class_name GdscriptMcpServer
 signal log_message(message: String, is_error: bool)
 signal status_changed(status: String)
 
-const REGISTRY_PATH := "res://addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd"
-const CONTEXT_STORE_PATH := "res://addons/gdscript_mcp/runtime/context/mcp_context_store.gd"
-const LIFECYCLE_PATH := "res://addons/gdscript_mcp/runtime/lifecycle/mcp_lifecycle.gd"
-const PROTOCOL_PATH := "res://addons/gdscript_mcp/runtime/protocol/mcp_protocol.gd"
-const VISION_WORKER_PATH := "res://addons/gdscript_mcp/runtime/tools/vision/mcp_vision_worker.gd"
-const AGENT_ACTIVITY_PATH := "res://addons/gdscript_mcp/runtime/tools/agent/mcp_agent_activity.gd"
-const RUN_TRACE_PATH := "res://addons/gdscript_mcp/runtime/context/mcp_run_trace.gd"
+const REGISTRY_PATH := "res://addons/mcp/runtime/core/mcp_tool_registry.gd"
+const CONTEXT_STORE_PATH := "res://addons/mcp/runtime/context/mcp_context_store.gd"
+const LIFECYCLE_PATH := "res://addons/mcp/runtime/lifecycle/mcp_lifecycle.gd"
+const PROTOCOL_PATH := "res://addons/mcp/runtime/protocol/mcp_protocol.gd"
+const VISION_WORKER_PATH := "res://addons/mcp/runtime/tools/vision/mcp_vision_worker.gd"
+const AGENT_ACTIVITY_PATH := "res://addons/mcp/runtime/tools/agent/mcp_agent_activity.gd"
+const RUN_TRACE_PATH := "res://addons/mcp/runtime/context/mcp_run_trace.gd"
 
 const DEFAULT_PORT := 9090
 const RUNTIME_TICK_INTERVAL := 0.05
@@ -80,7 +80,7 @@ func start_server(port: int = DEFAULT_PORT, transport: String = "tcp", config: D
 	_frame_budget_ms = float(config.get("frame_budget_ms", 1.5))
 	_verbose = bool(config.get("verbose", false))
 	_editor_write_enabled = bool(config.get("editor_write_enabled", false))
-	var contract_gate_script: Resource = load("res://addons/gdscript_mcp/runtime/autonomy/mcp_contract_gate.gd")
+	var contract_gate_script: Resource = load("res://addons/mcp/runtime/autonomy/mcp_contract_gate.gd")
 	if contract_gate_script == null:
 		_log("Failed to load contract gate", true)
 		return false
@@ -346,7 +346,7 @@ func _dispatch_host_tool_for_chain(tool_name: String, args: Dictionary) -> Varia
 	return {"error": "Unknown host tool: " + tool_name}
 
 func _register_host_tools() -> void:
-	var contracts = load("res://addons/gdscript_mcp/runtime/autonomy/mcp_autonomy_contracts.gd")
+	var contracts = load("res://addons/mcp/runtime/autonomy/mcp_autonomy_contracts.gd")
 	var host_tools := [
 		{
 			"name": "runtime_mcp_status",
@@ -1115,7 +1115,7 @@ func _create_vision_worker(config: Dictionary) -> void:
 		_worker.configure({
 			"vision_worker_enabled": bool(config.get("vision_worker_enabled", true)),
 			"vision_worker_command": str(config.get("vision_worker_command", "python")),
-			"vision_worker_script": str(config.get("vision_worker_script", "res://addons/gdscript_mcp/client/vision_worker.py")),
+			"vision_worker_script": str(config.get("vision_worker_script", "res://addons/mcp/client/vision_worker.py")),
 			"vision_worker_port": int(config.get("vision_worker_port", 9127)),
 			"vision_worker_ocr_command": str(config.get("vision_worker_ocr_command", "")),
 			"context_root": _context_store.get_root_path() if _context_store != null else "",

@@ -10,7 +10,7 @@ class_name GDScriptMcpPlugin
 ##   2. Bietet den QA-Live-Dock an (Spiel starten, Live-Pipeline).
 ##   3. Startet das Spiel als separaten Prozess und wartet auf den Handshake.
 
-const RUNTIME_CLIENT_SCRIPT = "res://addons/gdscript_mcp/editor/mcp_runtime_client.gd"
+const RUNTIME_CLIENT_SCRIPT = "res://addons/mcp/editor/mcp_runtime_client.gd"
 
 const RUNTIME_PORT := 9090
 
@@ -35,8 +35,8 @@ const EMBEDDED_WRITES_ENV := "MCP_EMBEDDED_WRITES"
 # Die Autoloads sind inert ohne den Game-Start-Flag --mcp (mcp_runtime.gd
 # _ready() kehrt früh zurück); GameState/EventLog bleiben projektseitig.
 const AUTOLOADS := {
-	"McpRuntime": "*res://addons/gdscript_mcp/runtime/host/mcp_runtime.gd",
-	"McpProjectAdapter": "*res://addons/gdscript_mcp/runtime/core/mcp_project_adapter.gd",
+	"McpRuntime": "*res://addons/mcp/runtime/host/mcp_runtime.gd",
+	"McpProjectAdapter": "*res://addons/mcp/runtime/core/mcp_project_adapter.gd",
 }
 # Achtung: Die beiden Pfade unter application/mcp/* sind DEFAULTS (SnipWar).
 # Andere Projekte überschreiben sie in ihrer own project.godot — das Addon
@@ -58,7 +58,7 @@ var _runtime_profile := "player"
 func _enter_tree() -> void:
 	_register_project_integration()
 
-	_dock = preload("res://addons/gdscript_mcp/editor/mcp_dock.tscn").instantiate()
+	_dock = preload("res://addons/mcp/editor/mcp_dock.tscn").instantiate()
 	add_control_to_dock(DOCK_SLOT_LEFT_UL, _dock)
 	_dock.runtime_launch_requested.connect(_on_runtime_launch_requested)
 

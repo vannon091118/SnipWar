@@ -12,7 +12,7 @@ class_name McpRuntimeTools
 ## requirement, works while the game window is unfocused).
 
 const TOOL_PREFIX := "runtime_"
-const INPUT_SCHEDULER_PATH := "res://addons/gdscript_mcp/runtime/tools/runtime/mcp_input_scheduler.gd"
+const INPUT_SCHEDULER_PATH := "res://addons/mcp/runtime/tools/runtime/mcp_input_scheduler.gd"
 
 
 # ═══════════════════════════════════════════════════════════════════════════

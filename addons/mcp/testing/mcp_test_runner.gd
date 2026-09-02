@@ -2,7 +2,7 @@ extends SceneTree
 
 ## McpTestRunner — Deterministic MCP test orchestrator (like Preflight for MCP tools).
 ##
-## Usage: godot --path . --script res://addons/gdscript_mcp/testing/mcp_test_runner.gd
+## Usage: godot --path . --script res://addons/mcp/testing/mcp_test_runner.gd
 ##        [--mcp-test-filter=<id>] [--mcp-test-verbose] [--mcp-test-list]
 ##
 ## Reads enabled scenarios from user://mcp_test_config.cfg,
@@ -10,9 +10,9 @@ extends SceneTree
 ##
 ## Requires a real renderer; headless MCP test execution is forbidden.
 
-const SCENARIO_DIR := "res://addons/gdscript_mcp/testing/scenarios/"
+const SCENARIO_DIR := "res://addons/mcp/testing/scenarios/"
 const CONFIG_PATH := "user://mcp_test_config.cfg"
-const REGISTRY_PATH := "res://addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd"
+const REGISTRY_PATH := "res://addons/mcp/runtime/core/mcp_tool_registry.gd"
 
 var _registry: RefCounted = null
 var _verbose: bool = false

@@ -2,7 +2,7 @@ extends RefCounted
 class_name McpContractGate
 
 ## McpContractGate — Session-Profile-Gate für den verbindlichen Spieler-Vertrag
-## (siehe addons/gdscript_mcp/PLAYTEST_HANDOFF.md).
+## (siehe addons/mcp/PLAYTEST_HANDOFF.md).
 ##
 ## Profile:
 ##   player  (Standard für Runtime-Sessions) — der Agent sieht und steuert das

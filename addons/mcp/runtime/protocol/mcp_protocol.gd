@@ -3,7 +3,7 @@ class_name McpProtocol
 
 ## McpProtocol — JSON-RPC 2.0 wire format for the MCP bridge.
 ## Pure static helpers, kept separate from transport + host lifecycle so the
-## protocol layer is physically isolated (addons/gdscript_mcp/runtime/protocol/).
+## protocol layer is physically isolated (addons/mcp/runtime/protocol/).
 ##
 ## Protocol: Model Context Protocol (tools subset), newline-delimited JSON-RPC 2.0.
 

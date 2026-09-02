@@ -23,7 +23,7 @@ manuelles Einfügen in `project.godot` nötig.
 
 ### Wie aktivieren
 
-1. Ordner unter `res://addons/gdscript_mcp/` ablegen (Kopie / submodule /
+1. Ordner unter `res://addons/mcp/` ablegen (Kopie / submodule /
    packaged Release).
 2. **Project Settings → Plugins**: `GDScript MCP Bridge` aktivieren.
 3. Beim nächsten Editor-Boot registriert das Plugin idempotent (nur fehlende):
@@ -236,7 +236,7 @@ Für geschlossene, vollautomatische Reparatur- und Feature-Entwicklungsläufe:
 
 Ausführung via CLI:
 ```bash
-node addons/gdscript_mcp/client/agent_repair_loop.js \
+node addons/mcp/client/agent_repair_loop.js \
   --file "res://scripts/..." \
   --old "old_code" \
   --new "new_code" \
@@ -252,7 +252,7 @@ Run-Trace (`user://mcp_traces/<run_id>.json`, Abruf über `runtime_run_trace
 status|snapshot|list|read`) — Tool-Calls, GameState-Fingerprints, Events und
 Verdict an EINER Trace-ID.
 
-## 🗂 Versionierte Chain-Manifeste (`res://addons/gdscript_mcp/mcp_chains/`)
+## 🗂 Versionierte Chain-Manifeste (`res://addons/mcp/mcp_chains/`)
 
 Wiederholbare Testketten als JSON (F5). Katalog ansehen, laden, ausführen:
 ```bash

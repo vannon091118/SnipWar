@@ -2694,3 +2694,47 @@ Fail-closed verify.py: Deletionen erreichen den Resolver (name-status ACMRD, Ren
 - scripts/testing/narrative_runtime_gate.gd: Tooling erweitert (F-197).
 - scripts/testing/narrative_runtime_gate_test.gd: Tooling erweitert (F-585).
 - scripts/verify.py: Tooling erweitert (F-836).
+
+## 2026-08-27 08:00:00 — p128 · c128j66n3a38p28 · Thinker · müde-zufrieden
+
+**Pfad-Migration Nachzug: Addon-interne Referenzen… [Analyse: Thinker] — nach Vannon**
+
+Pfad-Migration Nachzug: Addon-interne Referenzen addons/gdscript_mcp→addons/mcp gezogen (Docs, Editor-Plugin, Runtime-Tools, Tests)
+
+- addons/mcp/AGENTS.md: Dokumentation aktualisiert (F-634).
+- addons/mcp/AGENT_WORKFLOW.md: Dokumentation aktualisiert (F-635).
+- addons/mcp/CONTEXT_AUTONOMY_AUDIT.md: Dokumentation aktualisiert (F-636).
+- addons/mcp/MCP_INDEX.md: Dokumentation aktualisiert (F-638).
+- addons/mcp/PERSISTENCE.md: Dokumentation aktualisiert (F-639).
+- addons/mcp/client/mcp_connector_selftest.js: Dokumentation aktualisiert (F-642).
+- addons/mcp/editor/gdscript_mcp_plugin.gd: Dokumentation aktualisiert (F-713).
+- addons/mcp/editor/mcp_dock.gd: Dokumentation aktualisiert (F-715).
+- addons/mcp/editor/mcp_dock.tscn: Dokumentation aktualisiert (F-717).
+- addons/mcp/runtime/autonomy/mcp_capability_planner.gd: Dokumentation aktualisiert (F-725).
+- addons/mcp/runtime/autonomy/mcp_chain_controller.gd: Dokumentation aktualisiert (F-727).
+- addons/mcp/runtime/autonomy/mcp_contract_gate.gd: Dokumentation aktualisiert (F-729).
+- addons/mcp/runtime/autonomy/mcp_project_tools.gd: Dokumentation aktualisiert (F-733).
+- addons/mcp/runtime/autonomy/mcp_workspace_journal.gd: Dokumentation aktualisiert (F-735).
+- addons/mcp/runtime/core/mcp_tool_registry.gd: Dokumentation aktualisiert (F-747).
+- addons/mcp/runtime/host/mcp_runtime.gd: Dokumentation aktualisiert (F-749).
+- addons/mcp/runtime/host/mcp_server.gd: Dokumentation aktualisiert (F-751).
+- addons/mcp/runtime/protocol/mcp_protocol.gd: Dokumentation aktualisiert (F-755).
+- addons/mcp/runtime/tools/e2e/mcp_e2e.gd: Dokumentation aktualisiert (F-771).
+- addons/mcp/runtime/tools/e2e/mcp_playthrough_tools.gd: Dokumentation aktualisiert (F-775).
+- addons/mcp/runtime/tools/runtime/mcp_runtime_tools.gd: Dokumentation aktualisiert (F-781).
+- addons/mcp/runtime/tools/ux/mcp_ux_pipeline.gd: Dokumentation aktualisiert (F-793).
+- addons/mcp/runtime/tools/vision/mcp_vision_worker.gd: Dokumentation aktualisiert (F-809).
+- addons/mcp/testing/e2e/mcp_playthrough_driver.gd: Dokumentation aktualisiert (F-811).
+- addons/mcp/testing/mcp_autonomy_contract_test.gd: Dokumentation aktualisiert (F-813).
+- addons/mcp/testing/mcp_autonomy_write_gate_test.gd: Dokumentation aktualisiert (F-815).
+- addons/mcp/testing/mcp_build_check.gd: Dokumentation aktualisiert (F-817).
+- addons/mcp/testing/mcp_player_contract_test.gd: Dokumentation aktualisiert (F-819).
+- addons/mcp/testing/mcp_red_team_test.gd: Dokumentation aktualisiert (F-821).
+- addons/mcp/testing/mcp_test_runner.gd: Dokumentation aktualisiert (F-823).
+- addons/mcp/testing/mcp_test_scenario.gd: Dokumentation aktualisiert (F-825).
+- addons/mcp/testing/mcp_workspace_contract_test.gd: Dokumentation aktualisiert (F-827).
+- addons/mcp/testing/portable/run_portable_smoke.sh: Dokumentation aktualisiert (F-829).
+- addons/mcp/testing/portable/templates/project.godot.tpl: Dokumentation aktualisiert (F-832).
+- addons/mcp/testing/scenarios/main_menu_buttons.tres: Dokumentation aktualisiert (F-833).
+- addons/mcp/testing/scenarios/smoke_direct_tools.tres: Dokumentation aktualisiert (F-834).
+- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).

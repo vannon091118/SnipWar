@@ -7,12 +7,12 @@ extends SceneTree
 ## Chain-Validierung, Truncation, Freeze-Kontrakt) werden hier als Abwehr
 ## getestet; neue Lücken werden als [FAIL] gemeldet.
 
-const GATE_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_contract_gate.gd"
-const PROTOCOL_PATH := "res://addons/gdscript_mcp/runtime/protocol/mcp_protocol.gd"
-const RUNTIME_TOOLS_PATH := "res://addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd"
-const SERVER_PATH := "res://addons/gdscript_mcp/runtime/host/mcp_server.gd"
-const CHAIN_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_chain_controller.gd"
-const AGENT_PATH := "res://addons/gdscript_mcp/runtime/tools/agent/mcp_agent_activity.gd"
+const GATE_PATH := "res://addons/mcp/runtime/autonomy/mcp_contract_gate.gd"
+const PROTOCOL_PATH := "res://addons/mcp/runtime/protocol/mcp_protocol.gd"
+const RUNTIME_TOOLS_PATH := "res://addons/mcp/runtime/tools/runtime/mcp_runtime_tools.gd"
+const SERVER_PATH := "res://addons/mcp/runtime/host/mcp_server.gd"
+const CHAIN_PATH := "res://addons/mcp/runtime/autonomy/mcp_chain_controller.gd"
+const AGENT_PATH := "res://addons/mcp/runtime/tools/agent/mcp_agent_activity.gd"
 
 var _failed := 0
 var _checks := 0

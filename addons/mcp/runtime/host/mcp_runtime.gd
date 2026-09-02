@@ -5,8 +5,8 @@ extends Node
 ## Usage: godot -- --mcp [--mcp-port 9090] [--mcp-transport tcp]
 
 const DEFAULT_PORT := 9090
-const MCP_SERVER_PATH := "res://addons/gdscript_mcp/runtime/host/mcp_server.gd"
-const INPUT_SCHEDULER_PATH := "res://addons/gdscript_mcp/runtime/tools/runtime/mcp_input_scheduler.gd"
+const MCP_SERVER_PATH := "res://addons/mcp/runtime/host/mcp_server.gd"
+const INPUT_SCHEDULER_PATH := "res://addons/mcp/runtime/tools/runtime/mcp_input_scheduler.gd"
 const PROFILE_CONFIG_PATH := "user://gdscript_mcp_profile.cfg"
 
 # Embedded-Modus (OFFEN-1): Der Editor startet das Spiel via play_main_scene
@@ -65,7 +65,7 @@ func _ready() -> void:
 		"mcp_virtual_mouse_cursor": not ("--mcp-hide-virtual-cursor" in user_args),
 		"vision_worker_enabled": true if embedded else not ("--mcp-no-vision-worker" in user_args),
 		"vision_worker_command": _parse_string_arg(user_args, "--mcp-vision-command", "python"),
-		"vision_worker_script": _parse_string_arg(user_args, "--mcp-vision-script", "res://addons/gdscript_mcp/client/vision_worker.py"),
+		"vision_worker_script": _parse_string_arg(user_args, "--mcp-vision-script", "res://addons/mcp/client/vision_worker.py"),
 		"vision_worker_port": _parse_int_arg(user_args, "--mcp-vision-port", port + 37),
 		"vision_worker_ocr_command": _parse_string_arg(user_args, "--mcp-ocr-command", OS.get_environment(EMBEDDED_OCR_ENV)),
 		"autonomy_writes": (OS.get_environment(EMBEDDED_WRITES_ENV) == "1") if embedded else ("--mcp-autonomy-writes" in user_args),

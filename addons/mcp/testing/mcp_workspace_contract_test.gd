@@ -4,9 +4,9 @@ extends SceneTree
 ## Covers success, failure, and fail-closed edge cases (traversal, prefixes,
 ## res:// writes, hash mismatch, ambiguous patches, rollback, baseline verify).
 
-const PATH_VALIDATOR_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_path_validator.gd"
-const JOURNAL_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_workspace_journal.gd"
-const PROJECT_TOOLS_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_project_tools.gd"
+const PATH_VALIDATOR_PATH := "res://addons/mcp/runtime/autonomy/mcp_path_validator.gd"
+const JOURNAL_PATH := "res://addons/mcp/runtime/autonomy/mcp_workspace_journal.gd"
+const PROJECT_TOOLS_PATH := "res://addons/mcp/runtime/autonomy/mcp_project_tools.gd"
 
 const TEST_SESSION := "slice_bc_test_session"
 const TEST_PROJECT := "slice_bc_test_project"
@@ -172,7 +172,7 @@ func _test_project_tools(tools: RefCounted, journal: RefCounted) -> void:
 	var res_read: Dictionary = tools.read(PATH_VALIDATOR_PATH)
 	_check(bool(res_read.get("ok", false)), "read opens res:// file")
 	_check(int(res_read.get("bytes", 0)) > 0, "read returns byte count")
-	var missing_read: Dictionary = tools.read("res://addons/gdscript_mcp/nope_does_not_exist.gd")
+	var missing_read: Dictionary = tools.read("res://addons/mcp/nope_does_not_exist.gd")
 	_check(not bool(missing_read.get("ok", true)), "read reports missing file")
 
 	# Write: inside workspace only; res:// and outside paths blocked
@@ -183,7 +183,7 @@ func _test_project_tools(tools: RefCounted, journal: RefCounted) -> void:
 	_check(str(written.get("after_hash", "")) != "", "write returns after-hash")
 	_check(FileAccess.file_exists(target), "write created the file")
 
-	var res_write: Dictionary = tools.write("res://addons/gdscript_mcp/forbidden.gd", "x", "", TEST_SESSION)
+	var res_write: Dictionary = tools.write("res://addons/mcp/forbidden.gd", "x", "", TEST_SESSION)
 	_check(not bool(res_write.get("ok", true)), "res:// write blocked")
 	var outside_write: Dictionary = tools.write("user://mcp_workspaces/outside_probe.txt", "x", "", TEST_SESSION)
 	_check(not bool(outside_write.get("ok", true)), "write outside workspace blocked")

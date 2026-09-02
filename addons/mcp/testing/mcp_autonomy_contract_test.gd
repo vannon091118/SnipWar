@@ -3,8 +3,8 @@ extends SceneTree
 ## Slice-A contract test. This is a contract/probe test only; it does not count
 ## as the required visible FULL_MCP_PASS until run through a live MCP session.
 
-const CONTRACTS_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_autonomy_contracts.gd"
-const PLANNER_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_capability_planner.gd"
+const CONTRACTS_PATH := "res://addons/mcp/runtime/autonomy/mcp_autonomy_contracts.gd"
+const PLANNER_PATH := "res://addons/mcp/runtime/autonomy/mcp_capability_planner.gd"
 
 var _failed := 0
 

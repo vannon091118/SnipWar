@@ -8,14 +8,14 @@ extends SceneTree
 ## feeds the exact same tool calls an external MCP agent would issue.
 ##
 ## Usage (windowed, from project root):
-##   $GODOT_BIN --path . --script res://addons/gdscript_mcp/testing/e2e/mcp_playthrough_driver.gd
+##   $GODOT_BIN --path . --script res://addons/mcp/testing/e2e/mcp_playthrough_driver.gd
 ##   $GODOT_BIN --path . --script ... --mcp-e2e=new_game_to_world
 ##   $GODOT_BIN --path . --script ... --mcp-e2e-list
 
 const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"  # Default (SnipWar). Konfigurierbar über application/mcp/main_menu_scene.
-const E2E_PATH := "res://addons/gdscript_mcp/runtime/tools/e2e/mcp_e2e.gd"
-const REGISTRY_PATH := "res://addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd"
-const INPUT_SCHEDULER_PATH := "res://addons/gdscript_mcp/runtime/tools/runtime/mcp_input_scheduler.gd"
+const E2E_PATH := "res://addons/mcp/runtime/tools/e2e/mcp_e2e.gd"
+const REGISTRY_PATH := "res://addons/mcp/runtime/core/mcp_tool_registry.gd"
+const INPUT_SCHEDULER_PATH := "res://addons/mcp/runtime/tools/runtime/mcp_input_scheduler.gd"
 
 var _scenario := "main_menu"
 var _list_only := false

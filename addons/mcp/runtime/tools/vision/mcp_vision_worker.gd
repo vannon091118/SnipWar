@@ -5,7 +5,7 @@ extends Node
 
 const DEFAULT_COMMAND := "python"
 const DEFAULT_PORT := 9127
-const DEFAULT_SCRIPT := "res://addons/gdscript_mcp/client/vision_worker.py"
+const DEFAULT_SCRIPT := "res://addons/mcp/client/vision_worker.py"
 
 var _script_path := DEFAULT_SCRIPT
 var _context_root := ""

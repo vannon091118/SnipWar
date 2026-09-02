@@ -5,7 +5,7 @@ extends Resource
 ## McpTestScenario — Predefined, deterministic MCP test scenario stored as .tres.
 ## Generic: not coupled to any specific game, only Godot + MCP tools.
 ##
-## Usage: Create .tres files in res://addons/gdscript_mcp/testing/scenarios/
+## Usage: Create .tres files in res://addons/mcp/testing/scenarios/
 ##         McpTestRunner reads them, boots the scene, calls MCP tools,
 ##         and validates expected results.
 

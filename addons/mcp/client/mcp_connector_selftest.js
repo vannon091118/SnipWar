@@ -3,7 +3,7 @@
 // Verifies the exact registration path a client takes: TCP connect ->
 // initialize -> initialized -> tools/call. Read-only by contract: status,
 // tool list and one UX scan of the live scene tree. No game mutation.
-// Usage: MCP_PORT=9090 node addons/gdscript_mcp/client/mcp_connector_selftest.js
+// Usage: MCP_PORT=9090 node addons/mcp/client/mcp_connector_selftest.js
 const path = require('path');
 const { McpClient } = require(path.join(__dirname, 'playthroughs', 'mcp_lib.js'));
 

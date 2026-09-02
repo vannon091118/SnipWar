@@ -7,7 +7,7 @@
 > inzwischen größtenteils geschlossen (Belege in `docs/FINDINGS.md`):
 > **A (Edit-Workspace)** → `runtime_autonomy_*` journaled Workspace + Gated
 > Export; **B (Chain-Modell)** → `runtime_chain_*` mit Versionierung
-> (`res://addons/gdscript_mcp/mcp_chains/`); **C (Headless+Visible in einer Chain)** →
+> (`res://addons/mcp/mcp_chains/`); **C (Headless+Visible in einer Chain)** →
 > `preflight_constraint`-Subprozess-Schritt; **D (Evidence-Trace)** →
 > `McpRunTrace` (`user://mcp_traces/`); **G (Impact-Graph)** bleibt offen
 > (Code-Analyzer liefert Muster, keinen vollständigen Impact-Graphen).

@@ -5,8 +5,8 @@ class_name McpProjectTools
 ## Read erlaubt res:// und user:// read-only; Write ausschliesslich
 ## innerhalb des Workspace-Roots.
 
-const PATH_VALIDATOR_SCRIPT := preload("res://addons/gdscript_mcp/runtime/autonomy/mcp_path_validator.gd")
-const JOURNAL_PATH := "res://addons/gdscript_mcp/runtime/autonomy/mcp_workspace_journal.gd"
+const PATH_VALIDATOR_SCRIPT := preload("res://addons/mcp/runtime/autonomy/mcp_path_validator.gd")
+const JOURNAL_PATH := "res://addons/mcp/runtime/autonomy/mcp_workspace_journal.gd"
 const IMPORT_SUBDIR := "imports"
 
 var _journal: RefCounted = null

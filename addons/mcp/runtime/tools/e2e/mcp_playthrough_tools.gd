@@ -4,8 +4,8 @@ class_name McpPlaythroughTools
 ## Agent-facing playthrough API: expose the archive (success store) as MCP
 ## tools so the agent can actively drive and resume a full game run over time.
 
-const ARCHIVE_PATH := "res://addons/gdscript_mcp/runtime/context/mcp_playthrough_archive.gd"
-const VISION_PATH := "res://addons/gdscript_mcp/runtime/tools/vision/mcp_vision.gd"
+const ARCHIVE_PATH := "res://addons/mcp/runtime/context/mcp_playthrough_archive.gd"
+const VISION_PATH := "res://addons/mcp/runtime/tools/vision/mcp_vision.gd"
 
 var _archive: RefCounted
 var _registry: RefCounted

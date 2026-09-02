@@ -16,9 +16,9 @@ class_name McpUxPipeline
 ##   Stage 5: scene hint merge (live authoritative)
 ##   Stage 6: interactables (live + pixel candidates)
 
-const VISION_PATH := "res://addons/gdscript_mcp/runtime/tools/vision/mcp_vision.gd"
-const RUNTIME_TOOLS_PATH := "res://addons/gdscript_mcp/runtime/tools/runtime/mcp_runtime_tools.gd"
-const DEBUG_PATH := "res://addons/gdscript_mcp/runtime/tools/debug/mcp_debug.gd"
+const VISION_PATH := "res://addons/mcp/runtime/tools/vision/mcp_vision.gd"
+const RUNTIME_TOOLS_PATH := "res://addons/mcp/runtime/tools/runtime/mcp_runtime_tools.gd"
+const DEBUG_PATH := "res://addons/mcp/runtime/tools/debug/mcp_debug.gd"
 
 var _vision: RefCounted
 var _debug: RefCounted
