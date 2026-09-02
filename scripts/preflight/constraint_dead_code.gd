@@ -68,7 +68,7 @@ func run(ctx: PreflightContext) -> bool:
 	return ctx.check(true, "Dead-code usage reconstruction completed (%d unresolved candidates; warnings are non-blocking)" % candidates.size())
 
 func _candidate_reason(name: String, file: String) -> String:
-	if file.begins_with("res://addons/gdscript_mcp/"):
+	if file.begins_with("res://addons/mcp/"):
 		return "MCP external/registry candidate"
 	if file.begins_with("res://scripts/preflight/") or file.begins_with("res://scripts/doki/"):
 		return "test/tooling entrypoint candidate"
@@ -82,7 +82,7 @@ func _is_known_entrypoint(name: String, file: String) -> bool:
 	for prefix in KNOWN_PUBLIC_API_PREFIXES:
 		if name.begins_with(prefix):
 			return true
-	if file.begins_with("res://addons/gdscript_mcp/") and (name == "dispatch_tool" or name == "dispatch_async" or name == "get_tool_defs"):
+	if file.begins_with("res://addons/mcp/") and (name == "dispatch_tool" or name == "dispatch_async" or name == "get_tool_defs"):
 		return true
 	if file.begins_with("res://scripts/preflight/") or file.begins_with("res://scripts/doki/"):
 		return true

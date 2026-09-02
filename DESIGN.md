@@ -523,11 +523,11 @@ Ein Schritt gilt erst als abgeschlossen, wenn:
 | # | Constraint | Quelle | Status |
 |---|-----------|--------|--------|
 | SO1 | **Kein DOKI-Autoload:** `project.godot [autoload]` enthält 10 Autoloads (EventBus, GameState, WorldChronicle, GameCycleManager, SceneDirectorService, SaveGameService, EventLog, TouchFeedbackLayer, McpRuntime, McpProjectAdapter) — **kein DOKI-Eintrag** | `project.godot [autoload]` | ✅ |
-| SO2 | **Kein DOKI-Editor-Plugin:** `[editor_plugins]` aktiviert nur `res://addons/gdscript_mcp/plugin.cfg` | `project.godot:43–45` | ✅ |
+| SO2 | **Kein DOKI-Editor-Plugin:** `[editor_plugins]` aktiviert nur `res://addons/mcp/plugin.cfg` | `project.godot:43–45` | ✅ |
 | SO3 | **Keine DOKI-Klasse ist ein Node:** 20 von 24 Klassen `extends RefCounted` (können strukturell nicht im SceneTree hängen, kein `_ready`/`_process`); 4 `extends SceneTree` = reine CLI-Einstiege | grep über alle `scripts/doki/*.gd` | ✅ |
 | SO4 | **Keine Signale:** kein einziges `signal`/`emit_signal` in `scripts/doki/**` | grep | ✅ |
 | SO5 | **Keine Spiel-Referenzen auf DOKI:** `scenes/`, `scripts/` (außer Tooling), `addons/` referenzieren DOKI nirgends | grep | ✅ |
-| SO6 | **Keine DOKI-Referenzen im MCP-Addon** (`addons/gdscript_mcp/**`) | grep | ✅ |
+| SO6 | **Keine DOKI-Referenzen im MCP-Addon** (`addons/mcp/**`) | grep | ✅ |
 | SO7 | **Keine umgekehrten Imports:** `scripts/doki/**` referenziert `res://scenes`, `res://addons`, `GameState`, `McpRuntime` nirgends | grep | ✅ |
 | SO8 | **Aktivierung NUR via Git:** `core.hooksPath = .githooks` (Git-Config, nicht Godot) → pre-commit (Gate+Preflight), commit-msg (verify-only), post-commit (finalize+Push) | `.git/config` + `.githooks/*` | ✅ |
 | SO9 | **CLI-Einstiege nur `--script`:** `doki.gd`, `doki_analyze.gd`, `doki_selfcheck.gd`, `doki_story_test.gd` — niemals in einer Spiel-Session geladen | `extends SceneTree` | ✅ |

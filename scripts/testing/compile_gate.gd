@@ -1,6 +1,6 @@
 extends SceneTree
-## Mechanical compile gate: compiles EVERY GDScript in res://scripts, res://addons/gdscript_mcp,
-## res://scenes (embedded in .tscn), and validates Python imports in res://narrative_runtime.
+## Mechanical compile gate: compiles EVERY GDScript in res://scripts, res://addons/mcp,
+## res://scenes (embedded in .tscn), and validates Python imports in res://.doki/narrative_runtime.
 ## Uses the REAL GDScript compiler (reload() API) for .gd and embedded scripts.
 ## Hard gate: exit code 1 on ANY failure, 0 only on full clean.
 
@@ -22,9 +22,9 @@ func _init() -> void:
 			quit(3)
 		)
 	_collect_gd("res://scripts")
-	_collect_gd("res://addons/gdscript_mcp")
+	_collect_gd("res://addons/mcp")
 	_collect_tscn("res://scenes")
-	_collect_python("res://narrative_runtime")
+	_collect_python("res://.doki/narrative_runtime")
 	print("COMPILE_GATE: scanning ", _gd_files.size(), " .gd files, ", _tscn_files.size(), " .tscn files, ", _python_files.size(), " .py files")
 	for path in _gd_files:
 		_compile_gd(path)

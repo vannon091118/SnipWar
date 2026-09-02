@@ -10,7 +10,7 @@ const EVIDENCE_PATH := "user://mcp_evidence/chain_validate_entry.json"
 
 func _init() -> void:
 	print("[t] loading registry...")
-	var registry: RefCounted = load("res://addons/gdscript_mcp/runtime/core/mcp_tool_registry.gd").new()
+	var registry: RefCounted = load("res://addons/mcp/runtime/core/mcp_tool_registry.gd").new()
 	print("[t] registry new ok")
 	var tool_count: int = registry.get_all_tools().size()
 	print("[t] get_all_tools ok (", tool_count, " tools)")

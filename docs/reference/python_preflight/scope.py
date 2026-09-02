@@ -98,7 +98,7 @@ _PATH_CONTRACTS: list[dict[str, Any]] = [
     {"glob": "narrative_chain.json", "contracts": ["doki"]},
     {"glob": "change_index.json", "contracts": ["doki"]},
     {"glob": "arcs.json", "contracts": ["doki"]},
-    {"glob": "addons/gdscript_mcp/**", "contracts": ["mcp"]},
+    {"glob": "addons/mcp/**", "contracts": ["mcp"]},
     {"glob": "docs/**", "contracts": ["docs"]},
     {"glob": "*.md", "contracts": ["docs"]},
     {"glob": "*.json", "contracts": ["docs", "doki"]},

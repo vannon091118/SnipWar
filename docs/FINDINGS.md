@@ -526,3 +526,42 @@ fake Stimme, kein Composite-Claim.
 **Nach-Push-Taktung (Regel):** Nach jedem Push: `git status` prüfen; wenn
 finalize-Artefakte gestaged sind, GENAU EIN Transport-Commit, dann fertig —
 kein zweiter, kein Loop (finalize ist idempotent: idle-Session staged nichts).
+
+### F-609 — verify.py diff-filter fclose Deletionen aus dem Scope aus (GEFIXT)
+
+**Befund (Audit nach PR #5):** `staged_paths()` sammelte Staged-Files via
+`git diff --cached --name-only --diff-filter=ACMR` — das `D` fehlte. Gelöschte
+Dateien erreichten den ChangeImpactResolver nie, obwohl Resolver und Scanner
+explizit fail-closed für Deletionen gebaut wurden (Pfad→Contract-Mappings für
+die gelöschten check.gd/preflight_lock.gd/preflight_v2_runner.gd existieren).
+Die Kette „Deletion → Resolver → Contract" war architektonisch behauptet,
+aber im Hook-Eingang kaputt: Delete verschwand vor dem Resolver.
+
+**Fix (V3-005):** `git diff --cached --name-status --diff-filter=ACMRD`;
+Status-Spalte wird geparst, Rename-Träger tragen beide Seiten (Old = Deletion).
+Deleted .gd muss physisch vom Disk verschwunden sein (Inkonsistenz = FAIL);
+Rest-Compile läuft über den vollen compile_gate.gd statt pro-Datei-Prozessen
+(honoriert „ein Godot-Prozess pro Phase"). resolve_status(...) testet D-Status
+jetzt explizit (positiv + unknown-path-negativ) im Resolver-Test.
+
+### F-610 — verify.py --scope=Manifest fehlte → stiller Full-Run (GEFIXT)
+
+**Befund (Audit):** Explizit angeforderter, aber nicht auflösbarer Scope fiel
+in „no staged files — full run" durch. Das widerspricht dem eigenen
+Exit-2-Vertrag („scope unresolvable, fail closed") und verschiebt still das
+Security-Modell: Ein Tippfehler im Manifest-Pfad wurde zu einem Voll-Lauf
+mit allen Rechten.
+
+**Fix (V3-008):** Drei Zustände sauber getrennt: staged+leer = bewusster
+Full-Run (Default-Verhalten); Manifest fehlt/unlesbar/leer = jeweils hart
+exit 2 mit diskriminierender Meldung. Kein stiller Modus-Wechsel mehr.
+
+### F-611 — Test-Auswahl fail-closed: SKIP ist kein Pass (GEFIXT)
+
+**Befund (Audit):** Contract→Substring-Heuristik ohne Treffer →
+„[SKIP] no tests matched" → Exit 0. Ein relevanter Scope ohne zugeordnete
+Tests war also grün — das Gegenteil von Fail-Closed.
+
+**Fix (V3-007):** Auflösbarer Scope + relevanter Contracts + null gematchte
+Tests = FAILURE (Exit 1) mit Nennung der unmapped Contracts. Einziger
+legitimer Skip bleibt das explizite --skip-tests / --cheap-path.

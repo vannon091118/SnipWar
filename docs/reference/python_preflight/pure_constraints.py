@@ -412,7 +412,7 @@ class DeadCodeConstraint(PureConstraint):
         )
 
     def _candidate_reason(self, name: str, file: str) -> str:
-        if file.startswith("addons/gdscript_mcp/"):
+        if file.startswith("addons/mcp/"):
             return "MCP external/registry candidate"
         if file.startswith("scripts/preflight/") or file.startswith("scripts/doki/"):
             return "test/tooling entrypoint candidate"
@@ -427,7 +427,7 @@ class DeadCodeConstraint(PureConstraint):
         for prefix in known_prefixes:
             if name.startswith(prefix):
                 return True
-        if file.startswith("addons/gdscript_mcp/") and name in ["dispatch_tool", "dispatch_async", "get_tool_defs"]:
+        if file.startswith("addons/mcp/") and name in ["dispatch_tool", "dispatch_async", "get_tool_defs"]:
             return True
         if file.startswith("scripts/preflight/") or file.startswith("scripts/doki/"):
             return True

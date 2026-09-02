@@ -31,6 +31,16 @@ func _init() -> void:
 	var rename: Dictionary = RESOLVER.resolve_status(["R100\told.gd\tnew.gd"])
 	_check(not rename.ok, "rename status rejects")
 
+	# V3-005: Deletion status resolves (the deleted path must produce a
+	# contract scope — deletions reach the resolver, never dropped early).
+	var deletion: Dictionary = RESOLVER.resolve_status(["D\tscripts/state/chunk_save_data.gd"])
+	_check(deletion.ok and deletion.contracts.has("save"), "deletion status resolves to contract scope")
+
+	# V3-005: Deletion of an UNKNOWN path still fails closed.
+	var deletion_unknown: Dictionary = RESOLVER.resolve_status(["D\tsome/unknown/thing.gd"])
+	_check(not deletion_unknown.ok and String(deletion_unknown.error).begins_with("unknown_impact"),
+		"deletion of unknown path rejects")
+
 	# Managed narrative artifacts resolve (doki contract), never unknown.
 	var auto: Dictionary = RESOLVER.resolve(["narrative_chain.json"])
 	_check(auto.ok and auto.contracts.has("doki"), "auto-managed artifacts map to doki contract")

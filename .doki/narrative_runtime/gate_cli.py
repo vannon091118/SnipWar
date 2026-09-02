@@ -4,7 +4,12 @@ import argparse
 import json
 from pathlib import Path
 
-from .gate import run_gate
+try:
+    from .gate import run_gate
+except ImportError:  # executed as a plain script (python .doki/narrative_runtime/gate_cli.py)
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from gate import run_gate
 
 
 def main() -> int:

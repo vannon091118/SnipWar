@@ -50,7 +50,7 @@ node_modules/
 /.commit_msg.txt
 
 # Narrative Runtime (Python) — abgeleiteter State (jederzeit aus der Chain rekonstruierbar)
-narrative_runtime/state/
+.doki/narrative_runtime/state/
 __pycache__/
 *.pyc
 /.doki/reset_audit.log

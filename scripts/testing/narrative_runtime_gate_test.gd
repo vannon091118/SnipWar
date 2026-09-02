@@ -28,16 +28,18 @@ func _run() -> void:
 		_quit()
 		return
 	
-	# Try to run Python gate_cli
+	# Try to run Python gate_cli (Pfad-Migration: .doki/narrative_runtime,
+	# Package-Kontext via sys.path für die relativen Imports)
+	var py_code: String = "import sys; sys.path.insert(0, r'%s'); from narrative_runtime.gate_cli import main; raise SystemExit(main())" % ProjectSettings.globalize_path("res://").path_join(".doki")
 	var py_bin: String = "python3"
 	var output: Array = []
-	var exit_code: int = OS.execute(py_bin, ["-m", "narrative_runtime.gate_cli", "--root", ProjectSettings.globalize_path("res://")], output, true)
+	var exit_code: int = OS.execute(py_bin, ["-c", py_code, "--root", ProjectSettings.globalize_path("res://")], output, true)
 	
 	if exit_code != 0:
 		# Try python instead of python3
 		output = []
 		py_bin = "python"
-		exit_code = OS.execute(py_bin, ["-m", "narrative_runtime.gate_cli", "--root", ProjectSettings.globalize_path("res://")], output, true)
+		exit_code = OS.execute(py_bin, ["-c", py_code, "--root", ProjectSettings.globalize_path("res://")], output, true)
 	
 	if exit_code != 0:
 		var error_msg: String = "Narrative Runtime Gate: %s exited %d" % [py_bin, exit_code]
@@ -86,7 +88,7 @@ func _run() -> void:
 			_failures.append("Missing expected gate: %s" % expected)
 	
 	# Verify cache invalidation works (R-012)
-	var runtime_dir: String = "res://narrative_runtime"
+	var runtime_dir: String = "res://.doki/narrative_runtime"
 	var cache_path: String = "user://narrative_runtime_cache.json"
 	
 	if FileAccess.file_exists(cache_path):
@@ -119,7 +121,7 @@ func _compute_runtime_hash() -> String:
 			parts.append(f.get_as_text())
 			f.close()
 	
-	var runtime_dir: String = "res://narrative_runtime"
+	var runtime_dir: String = "res://.doki/narrative_runtime"
 	var dir := DirAccess.open(runtime_dir)
 	if dir != null:
 		var files: Array = []

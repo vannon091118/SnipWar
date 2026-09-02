@@ -211,7 +211,7 @@ Jede Zeile Code muss 40 strenge Architektur-Verträge passieren: Determinismus-S
 | 📖 **Feldberichte & Lore** | [`LORE.md`](LORE.md) | Die unzensierten Fragmente, Planeten-Dossiers und Zeugenaussagen. |
 | 🎯 **Entwicklungs-Vision** | [`VISION.md`](VISION.md) | Der langfristige 4X-Masterplan und die Roadmap. |
 | 🔍 **Befund-Register** | [`docs/FINDINGS.md`](docs/FINDINGS.md) | Zentrale Todo- & QA-Referenz: Verifizierte Fixes, OCR-Logs und offene Punkte. |
-| 🤖 **MCP-Agenten-Doktrin** | [`addons/gdscript_mcp/AGENTS.md`](addons/gdscript_mcp/AGENTS.md) | Handbuch für autonome Agenten, Remote-Testing und Vision-Pipelines. |
+| 🤖 **MCP-Agenten-Doktrin** | [`addons/mcp/AGENTS.md`](addons/mcp/AGENTS.md) | Handbuch für autonome Agenten, Remote-Testing und Vision-Pipelines. |
 
 ---
 
