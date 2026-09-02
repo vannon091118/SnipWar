@@ -2384,107 +2384,54 @@ Vier P0-Fixe + Byte-Drift-Gate Fix + save_load_roundtrip_test Fix + Prompt-Berei
 - scripts/state/game_state.gd: Fehler behoben (F-065).
 - scripts/testing/save_load_roundtrip_test.gd: Fehler behoben (F-604).
 
-## 2026-08-27 04:00:00 — p124 · c124j8n7a2p60 · Argos · trocken
+## 2026-08-27 04:00:00 — p124 · c124j10n4a8p117 · Vannon · sachlich
 
-**Argos: 1 Dateien — Fix AssetLibrary-Texturscan: .… — nach Basher**
+**DOKI finalize Chain-Eintrag 123 — nach Basher**
 
-Fix AssetLibrary-Texturscan: .import/.uid-Sidecars überspringen statt als Ressource zu laden — eliminiert 200+ 'No loader found'-Fehler und Magenta-Pool-Verschmutzung beim World-Boot (docs/ui_flow)
+DOKI finalize Chain-Eintrag 123
 
-- scripts/config/asset_library.gd: Dokumentation aktualisiert (F-471).
+- .doki/change_index.json: Tooling erweitert (F-586).
+- .doki/narrative_chain.json: Tooling erweitert (F-587).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
 
-## 2026-08-27 04:00:00 — p124 · c124j39n3a43p20 · Thinker · warm
+## 2026-08-27 05:00:00 — p125 · c125j94n5a15p37 · Squizzle · selbstironisch
 
-**Fix AssetLibrary-Texturscan: .import/.uid-Sidecars… [Analyse: Thinker] — nach Basher**
+**Squizzles Fall: Preflight-Mutex TASK-015 (1 Lauf, Warteschlange,… — nach Vannon**
 
-Fix AssetLibrary-Texturscan: .import/.uid-Sidecars überspringen statt laden — eliminiert 200+ No-loader-Fehler und Magenta-Pool-Verschmutzung; korrigiere ship_builder_blueprint_test auf reale Katalog-ID hull_t1 (vorbestehender Testfehler blockierte das Gate)
+Preflight-Mutex TASK-015 (1 Lauf, Warteschlange, Stale-Takeover) + Transport-Commit-Modus im commit-msg Hook + FINDINGS F-605..608 (Commit-Audit, Byte-Drift-Cause, Takt-Regel)
 
-- .doki/change_index.json: Fehler behoben (F-586).
-- CHANGELOG.md: Fehler behoben (F-002).
-- scripts/config/asset_library.gd: Fehler behoben (F-471).
-- scripts/testing/ship_builder_blueprint_test.gd: Fehler behoben (F-606).
+- .githooks/commit-msg: Tooling erweitert (F-584).
+- docs/FINDINGS.md: Tooling erweitert (F-046).
+- scripts/check.gd: Tooling erweitert (F-602).
+- scripts/preflight.gd: Tooling erweitert (F-343).
+- scripts/preflight_lock.gd: Tooling erweitert (F-605).
+- scripts/testing/test_all.gd: Tooling erweitert (F-384).
 
-## 2026-08-27 05:00:00 — p125 · c125j7n8a46p10 · Ghost · alarmiert
+## 2026-08-27 05:00:00 — p125 · c125j3n8a48p1 · Ghost · triumphierend
 
-**Ghost verzeichnet: Preflight-Mutex TASK-015: preflight_lock.gd mit… — nach Thinker**
+**Ghost verzeichnet: Preflight-Mutex TASK-015 + Transport-Commit-Modus… — nach Vannon**
 
-Preflight-Mutex TASK-015: preflight_lock.gd mit PID-Liveness-Stale-Erkennung (toter Holder wird sofort übernommen statt 20-min-Einfrieren); DOKI-Gate/Prepare-Flow-Härtung, Hook-Sicherung (reject-only Codebuff-Header, DOKI-only Commit-Prompting), AgentGate-Doku — Takeover-Slice der zuvor durch Chain-Lücke blockierten Session
-
-- .doki/change_index.json: Dokumentation aktualisiert (F-586).
-- .doki/narrative_chain.json: Dokumentation aktualisiert (F-587).
-- .githooks/commit-msg: Dokumentation aktualisiert (F-584).
-- .githooks/post-commit: Dokumentation aktualisiert (F-333).
-- AGENTS.md: Dokumentation aktualisiert (F-019).
-- docs/FINDINGS.md: Dokumentation aktualisiert (F-046).
-- scripts/check.gd: Dokumentation aktualisiert (F-602).
-- scripts/doki/data/arcs.json: Dokumentation aktualisiert (F-001).
-- scripts/doki/doki-commit.sh: Dokumentation aktualisiert (F-607).
-- scripts/doki/orchestration/flows/gate_flow.gd: Dokumentation aktualisiert (F-013).
-- scripts/doki/orchestration/flows/prepare_flow.gd: Dokumentation aktualisiert (F-181).
-- scripts/doki/orchestration/git_helper.gd: Dokumentation aktualisiert (F-336).
-- scripts/preflight.gd: Dokumentation aktualisiert (F-343).
-- scripts/preflight_lock.gd: Dokumentation aktualisiert (F-605).
-- scripts/preflight_lock.gd.uid: Dokumentation aktualisiert (F-608).
-- scripts/testing/test_all.gd: Dokumentation aktualisiert (F-384).
-
-## 2026-08-27 06:00:00 — p126 · c126j30n2a35p3 · Basher · sachlich
-
-**Basher (6 files): Commit-group guard: enforce atomic commit groups… — nach Ghost**
-
-Commit-group guard: enforce atomic commit groups in pre-commit (Phase 0)
+Preflight-Mutex TASK-015 + Transport-Commit-Modus + Scope-Filter F-606 + FINDINGS F-605..608
 
 - .doki/change_index.json: Implementiert und integriert (F-586).
-- .doki/narrative_chain.json: Implementiert und integriert (F-587).
-- .githooks/pre-commit: Implementiert und integriert (F-125).
-- AGENTS.md: Implementiert und integriert (F-019).
-- scripts/commit_group_guard.sh: Implementiert und integriert (F-609).
-- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
-
-## 2026-08-27 06:00:00 — p126 · c126j97n7a31p125 · Argos · trocken
-
-**Argos: 7 Dateien — verify.py migration: externe O… — nach Ghost**
-
-verify.py migration: externe Orchestrierung ersetzt check.gd; Engine-Lock entfernt
-
-- .doki/change_index.json: Implementiert und integriert (F-586).
-- .doki/narrative_chain.json: Implementiert und integriert (F-587).
-- .githooks/pre-commit: Implementiert und integriert (F-125).
-- AGENTS.md: Implementiert und integriert (F-019).
+- .githooks/commit-msg: Implementiert und integriert (F-584).
 - CHANGELOG.md: Implementiert und integriert (F-002).
-- scripts/commit_group_guard.sh: Implementiert und integriert (F-609).
-- scripts/doki/data/arcs.json: Implementiert und integriert (F-001).
+- docs/FINDINGS.md: Implementiert und integriert (F-046).
+- scripts/check.gd: Implementiert und integriert (F-602).
+- scripts/doki/orchestration/flows/gate_flow.gd: Implementiert und integriert (F-013).
+- scripts/doki/orchestration/flows/prepare_flow.gd: Implementiert und integriert (F-181).
+- scripts/preflight.gd: Implementiert und integriert (F-343).
+- scripts/preflight_lock.gd: Implementiert und integriert (F-605).
+- scripts/testing/test_all.gd: Implementiert und integriert (F-384).
 
-## 2026-09-01 02:00:00 — p2 · c2j67n9a9p1 · Spark · alarmiert
+## 2026-08-27 06:00:00 — p126 · c126j33n2a31p46 · Basher · selbstironisch
 
-**Spark entdeckt: verify.py migration: externe Orchestrierung… — nach Flux**
+**Basher (5 files): Merge origin/main into doki-squash:… — nach Ghost**
 
-verify.py migration: externe Orchestrierung ersetzt check.gd; Engine-Lock entfernt
+Merge origin/main into doki-squash: verify.py-Orchestrierung trifft gesquashte Main-Artefakte — Konflikt-Auflösung zugunsten akkumulierter DOKI-SSOT (Chain 125) und externer Treiber-Serialisierung
 
-- CHANGELOG.md: Implementiert und integriert (F-001).
-- docs/FINDINGS.md: Implementiert und integriert (F-002).
-- scripts/check.gd: Implementiert und integriert (F-003).
-- scripts/check.gd.uid: Implementiert und integriert (F-004).
-- scripts/preflight.gd: Implementiert und integriert (F-005).
-- scripts/preflight_lock.gd: Implementiert und integriert (F-006).
-- scripts/preflight_lock.gd.uid: Implementiert und integriert (F-007).
-- scripts/preflight_v2/change_impact_resolver.gd: Implementiert und integriert (F-008).
-- scripts/preflight_v2/constraint_scanner.gd: Implementiert und integriert (F-009).
-- scripts/preflight_v2/scope_dump.gd: Implementiert und integriert (F-010).
-- scripts/preflight_v2/v2_fixture.gd: Implementiert und integriert (F-011).
-- scripts/preflight_v2_runner.gd: Implementiert und integriert (F-012).
-- scripts/testing/global_search_entry_test.gd: Implementiert und integriert (F-013).
-- scripts/testing/test_all.gd: Implementiert und integriert (F-014).
-- scripts/verify.py: Implementiert und integriert (F-015).
-
-## 2026-09-01 03:00:00 — p3 · c3j56n8a32p2 · Ghost · müde-zufrieden
-
-**Ghost verzeichnet: Hook und Dokumentation auf den neuen… — nach Spark**
-
-Hook und Dokumentation auf den neuen Verification-Driver umgestellt; selfcheck auf Fail-Closed-Vertrag gepolt
-
-- .doki/change_index.json: Tooling erweitert (F-016).
-- .doki/narrative_chain.json: Tooling erweitert (F-017).
-- .githooks/pre-commit: Tooling erweitert (F-018).
-- AGENTS.md: Tooling erweitert (F-019).
-- scripts/commit_group_guard.sh: Tooling erweitert (F-020).
-- scripts/doki/data/arcs.json: Tooling erweitert (F-021).
-- scripts/doki/doki_selfcheck.gd: Tooling erweitert (F-022).
+- .doki/change_index.json: Tooling erweitert (F-586).
+- .doki/narrative_chain.json: Tooling erweitert (F-587).
+- CHANGELOG.md: Tooling erweitert (F-002).
+- docs/FINDINGS.md: Tooling erweitert (F-046).
+- scripts/doki/data/arcs.json: Tooling erweitert (F-001).
